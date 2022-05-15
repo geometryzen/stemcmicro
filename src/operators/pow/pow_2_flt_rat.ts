@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { flt, Flt } from "../../tree/flt/Flt";
 import { Rat } from "../../tree/rat/Rat";
@@ -15,8 +16,10 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Flt, Rat> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_flt_rat', MATH_POW, is_flt, is_rat, $);
+        this.hash = hash_binop_atom_atom(MATH_POW, HASH_FLT, HASH_RAT);
     }
     isScalar(): boolean {
         return true;

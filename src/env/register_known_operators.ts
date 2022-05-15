@@ -355,10 +355,10 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_mul_2_any_sym_sym);
     $.defineOperator(mul_2_mul_2_any_sym_mul_2_imu_sym);
     // Notice how we need three operators in order to provide canonical ordering.
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order: Num * Uom', MATH_MUL, is_num, is_uom));
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order: Sym * Blade', MATH_MUL, is_sym, is_blade));
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order: Sym * Uom', MATH_MUL, is_sym, is_uom));
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order: Blade * Uom', MATH_MUL, is_blade, is_uom));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order lhs assoc: Num * Uom', MATH_MUL, is_num, is_uom));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order lhs assoc: Sym * Blade', MATH_MUL, is_sym, is_blade));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order lhs assoc: Sym * Uom', MATH_MUL, is_sym, is_uom));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('canonical order lhs assoc: Blade * Uom', MATH_MUL, is_blade, is_uom));
     $.defineOperator(mul_2_mul_2_any_any_any);
     $.defineOperator(mul_2_mul_any);
     $.defineOperator(mul_2_mul_sym);

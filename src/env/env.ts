@@ -300,12 +300,12 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     }
                 }
             }
-            // Inspect which operators are assigned to which buckets...
             /*
+            // Inspect which operators are assigned to which buckets...
             for (const key in keydOps) {
                 const ops = keydOps[key];
                 console.log(`${key} ${ops.length}`);
-                if (ops.length > 10) {
+                if (ops.length > 5) {
                     for (const op of ops) {
                         console.log(`${key} ${op.name}  <<<<<<<`);
                     }
@@ -566,10 +566,11 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return [NOFLAGS, expr];
             }
             else if (is_cons(expr)) {
+                let changedExpr = false;
                 let curExpr: U = expr;
-                let done = false;
-                while (!done) {
-                    done = true;
+                let doneWithExpr = false;
+                while (!doneWithExpr) {
+                    doneWithExpr = true;
                     // keys are the buckets we should look in for operators from specific to generic.
                     const keys = hash_info(curExpr);
                     for (const key of keys) {
@@ -583,10 +584,12 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                 if (changedFlag(flags)) {
                                     // console.log(`CHANGED: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     curExpr = newExpr;
+                                    changedExpr = true;
                                     // if (typeof op.hash !== 'string') {
                                     // console.log(`CHANGED ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
                                     // }
-                                    done = false;
+                                    doneWithExpr = false;
+                                    doneWithKey = true;
                                     break;
                                 }
                                 else if (stableFlag(flags)) {
@@ -600,15 +603,12 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                 }
                             }
                         }
-                        if (!done) {
-                            break;
-                        }
                         if (doneWithKey) {
                             break;
                         }
                     }
                 }
-                return [curExpr.equals(expr) ? NOFLAGS : CHANGED, curExpr];
+                return [changedExpr ? CHANGED : NOFLAGS, curExpr];
             }
             else if (is_num(expr)) {
                 return [NOFLAGS, expr];

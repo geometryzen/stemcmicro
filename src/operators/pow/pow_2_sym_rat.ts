@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -19,8 +20,10 @@ type RHS = Rat;
 type EXPR = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_sym_rat', MATH_POW, is_sym, is_rat, $);
+        this.hash = hash_binop_atom_atom(MATH_POW, HASH_SYM, HASH_RAT);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: EXPR): boolean {

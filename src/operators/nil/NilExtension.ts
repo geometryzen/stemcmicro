@@ -1,0 +1,92 @@
+
+import { CostTable } from "../../env/CostTable";
+import { STABLE, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Cons, NIL, U } from "../../tree/tree";
+
+class Builder implements OperatorBuilder<Cons> {
+    create($: ExtensionEnv): Operator<Cons> {
+        return new NilExtension($);
+    }
+}
+
+class NilExtension implements Operator<Cons> {
+    constructor(private readonly $: ExtensionEnv) {
+        // Nothing to see here.
+    }
+    get key(): string {
+        return NIL.name;
+    }
+    get name(): string {
+        return 'NilExtension';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cost(expr: U, costs: CostTable): number {
+        return 1;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isImag(expr: Cons): boolean {
+        throw new Error("Nil Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isKind(expr: U): boolean {
+        return NIL.equals(expr);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isMinusOne(expr: Cons): boolean {
+        throw new Error("Nil Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isOne(expr: Cons): boolean {
+        return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isNil(expr: Cons): boolean {
+        throw new Error("Nil Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isReal(expr: Cons): boolean {
+        throw new Error("Nil Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isScalar(expr: Cons): boolean {
+        throw new Error("Nil Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isVector(expr: Cons): boolean {
+        throw new Error("Nil Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isZero(expr: Cons): boolean {
+        return false;
+    }
+    subst(expr: Cons, oldExpr: U, newExpr: U): U {
+        if (expr.equals(oldExpr)) {
+            return newExpr;
+        }
+        else {
+            return expr;
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toInfixString(expr: Cons): string {
+        return 'nil';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toListString(expr: Cons): string {
+        return '()';
+    }
+    transform(expr: U): [TFLAGS, U] {
+        if (NIL.equals(expr)) {
+            return [STABLE, NIL];
+        }
+        else {
+            return [NOFLAGS, expr];
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    valueOf(expr: Cons): U {
+        return NIL;
+    }
+}
+
+export const nil = new Builder();

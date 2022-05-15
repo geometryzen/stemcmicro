@@ -1,0 +1,34 @@
+
+import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { MATH_ADD } from "../../runtime/ns_math";
+import { is_rat } from "../../tree/rat/is_rat";
+import { Rat } from "../../tree/rat/Rat";
+import { Sym } from "../../tree/sym/Sym";
+import { Cons, is_cons, U } from "../../tree/tree";
+import { BCons } from "../helpers/BCons";
+import { Function2 } from "../helpers/Function2";
+
+class Builder implements OperatorBuilder<Cons> {
+    create($: ExtensionEnv): Operator<Cons> {
+        return new Op($);
+    }
+}
+
+/**
+ * Rat(0) + Cons => Cons
+ */
+class Op extends Function2<Rat, Cons> implements Operator<Cons> {
+    readonly hash: string;
+    constructor($: ExtensionEnv) {
+        super('add_2_rat_cons', MATH_ADD, is_rat, is_cons, $);
+        this.hash = `(+ Rat U)`;
+    }
+    transform2(opr: Sym, lhs: Rat, rhs: Cons, orig: BCons<Sym, Rat, Cons>): [TFLAGS, U] {
+        if (lhs.isZero()) {
+            return [CHANGED, rhs];
+        }
+        return [NOFLAGS, orig];
+    }
+}
+
+export const add_2_rat_cons = new Builder();

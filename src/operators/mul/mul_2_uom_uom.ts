@@ -1,0 +1,28 @@
+
+import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { MATH_MUL } from "../../runtime/ns_math";
+import { Sym } from "../../tree/sym/Sym";
+import { Cons, U } from "../../tree/tree";
+import { Uom } from "../../tree/uom/Uom";
+import { Function2 } from "../helpers/Function2";
+import { is_uom } from "../uom/UomExtension";
+
+class Builder implements OperatorBuilder<Cons> {
+    create($: ExtensionEnv): Operator<Cons> {
+        return new Op($);
+    }
+}
+
+/**
+ * Uom * Uom
+ */
+class Op extends Function2<Uom, Uom> implements Operator<Cons> {
+    constructor($: ExtensionEnv) {
+        super('mul_2_uom_uom', MATH_MUL, is_uom, is_uom, $);
+    }
+    transform2(opr: Sym, lhs: Uom, rhs: Uom): [TFLAGS, U] {
+        return [CHANGED, lhs.mul(rhs)];
+    }
+}
+
+export const mul_2_uom_uom = new Builder();

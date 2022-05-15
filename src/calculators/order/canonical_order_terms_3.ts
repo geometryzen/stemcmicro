@@ -1,0 +1,100 @@
+import { CHANGED, ExtensionEnv, NOFLAGS, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
+import { MATH_ADD } from "../../runtime/ns_math";
+import { Cons, is_cons, makeList, U } from "../../tree/tree";
+
+/**
+ * (X+Y)+Z transformation for canonical ordering.
+ * 
+ * Because operator '+' is left-associative, we assert that Y and Z are not additions.
+ * 
+ * There are two cases to consider according to whether X is an add expression or not.
+ * When X is not an add expression, it may be freely exchanged with Y or Z according to term comparison ordering.
+ * When X is an add expression it may not be exchanged. There is also no need to consider its content because this
+ * will have been handled by the prior case. So when X is an add expression, the only freedom is to order Y and Z.
+ */
+export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const hook = function (retval: U, description: string) {
+        // console.lg(`${$.toListString(t1)} ${$.toListString(t2)} ${$.toListString(t3)} => ${$.toListString(retval)} canonical_order_terms_3 @ ${description} orig = ${$.toListString(orig)}`);
+        return retval;
+    };
+    // console.log(`${$.toListString(X)} ${$.toListString(Y)} ${$.toListString(Z)} orig = ${$.toListString(orig)}`);
+    // assert_not_add(Y);
+    // assert_not_add(Z);
+    if (is_cons(t1) && is_add_2_any_any(t1)) {
+        return branch(t1, t2, t3, orig, $);
+    }
+    else {
+        // Cycling through here comparing pairs (s1,s2) then (s2,s3), then (s3,s1).
+        switch ($.compareTerms(t1, t2)) {
+            case SIGN_GT: {
+                // t2, t1
+                switch ($.compareTerms(t2, t3)) {
+                    case SIGN_GT: {
+                        // t3, t1, t1
+                        const t3t2 = makeList(MATH_ADD, t3, t2);
+                        return [CHANGED, hook(makeList(MATH_ADD, t3t2, t1), "A")];
+                    }
+                    default: {
+                        // t2, (t1,t3)
+                        switch ($.compareTerms(t3, t1)) {
+                            case SIGN_GT: {
+                                // t2, t1, t3
+                                const t2t1 = makeList(MATH_ADD, t2, t1);
+                                return [CHANGED, hook(makeList(MATH_ADD, t2t1, t3), "B")];
+                            }
+                            default: {
+                                // t2, t3, t1
+                                const t2t3 = makeList(MATH_ADD, t2, t3);
+                                return [CHANGED, hook($.valueOf(makeList(MATH_ADD, t2t3, t1)), "C")];
+                            }
+                        }
+                    }
+                }
+            }
+            default: {
+                // t1, t2
+                switch ($.compareTerms(t2, t3)) {
+                    case SIGN_GT: {
+                        // (t1,t3), t2
+                        switch ($.compareTerms(t3, t1)) {
+                            case SIGN_GT: {
+                                const t1t3 = makeList(MATH_ADD, t1, t3);
+                                return [CHANGED, hook(makeList(MATH_ADD, t1t3, t2), "D")];
+                            }
+                            default: {
+                                const t3t1 = makeList(MATH_ADD, t3, t1);
+                                return [CHANGED, hook(makeList(MATH_ADD, t3t1, t2), "E")];
+                            }
+                        }
+                    }
+                    default: {
+                        // t1, t2, t3
+                        if ($.isAssocL(MATH_ADD)) {
+                            return [NOFLAGS, hook(orig, "F")];
+                        }
+                        if ($.isAssocR(MATH_ADD)) {
+                            const t2t3 = makeList(MATH_ADD, t2, t3);
+                            return [CHANGED, hook(makeList(MATH_ADD, t1, t2t3), "G")];
+                        }
+                        return [NOFLAGS, hook(orig, "H")];
+                    }
+                }
+            }
+        }
+    }
+}
+
+function branch(X: Cons, Y: U, Z: U, orig: U, $: ExtensionEnv): [TFLAGS, U] {
+    switch ($.compareTerms(Y, Z)) {
+        case SIGN_GT: {
+            const addXZ = makeList(MATH_ADD, X, Z);
+            return [CHANGED, makeList(MATH_ADD, addXZ, Y)];
+        }
+        default: {
+            // t1, t2, t3
+            return [NOFLAGS, orig];
+        }
+    }
+}

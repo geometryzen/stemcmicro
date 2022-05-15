@@ -1,0 +1,31 @@
+import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Sym } from "../../tree/sym/Sym";
+import { U } from "../../tree/tree";
+import { Function1 } from "../helpers/Function1";
+import { UCons } from "../helpers/UCons";
+import { is_sym } from "../sym/is_sym";
+import { MATH_CONJUGATE } from "./MATH_CONJUGATE";
+
+class Builder implements OperatorBuilder<U> {
+    create($: ExtensionEnv): Operator<U> {
+        return new ConjSym($);
+    }
+}
+
+class ConjSym extends Function1<Sym> implements Operator<U> {
+    constructor($: ExtensionEnv) {
+        super('conj_sym', MATH_CONJUGATE, is_sym, $);
+    }
+    transform1(opr: Sym, arg: Sym, expr: UCons<Sym, Sym>): [TFLAGS, U] {
+        const $ = this.$;
+        // TODO: Strictly speaking we need the symbol to be a real number.
+        if ($.treatAsScalar(arg)) {
+            return [CHANGED, arg];
+        }
+        else {
+            return [NOFLAGS, expr];
+        }
+    }
+}
+
+export const conj_sym = new Builder();

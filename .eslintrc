@@ -1,0 +1,25 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+        // Make this "error" when releasing.
+        "brace-style": [
+            2,
+            "stroustrup"
+        ],
+        "no-console": "warn",
+        "no-param-reassign": "off",
+        "semi": [
+            2,
+            "always"
+        ]
+    }
+}

@@ -1,0 +1,73 @@
+import { ExtensionEnv } from './env/ExtensionEnv';
+import { defs } from './runtime/defs';
+import { create_tensor_elements } from './tree/tensor/create_tensor_elements';
+import { Tensor } from './tree/tensor/Tensor';
+import { zero } from './tree/rat/Rat';
+import { is_str } from './tree/str/is_str';
+import { car, cdr, is_cons, NIL, U } from './tree/tree';
+
+// both ints
+export function zero_matrix(i: number, j: number): Tensor<U> {
+    const elems = create_tensor_elements(i * j, zero);
+    const dims = [i, j];
+    return new Tensor(dims, elems);
+}
+
+export function unique(p: U) {
+    let p1 = NIL;
+    const p2 = NIL;
+    unique_f(p, p1, p2);
+    if (NIL !== p2) {
+        p1 = NIL;
+    }
+    p = p1;
+    return p;
+}
+
+function unique_f(p: U, p1: U, p2: U) {
+    if (is_str(p)) {
+        if (NIL === p1) {
+            p1 = p;
+        }
+        else if (p !== p1) {
+            p2 = p;
+        }
+        return;
+    }
+    while (is_cons(p)) {
+        unique_f(car(p), p1, p2);
+        if (NIL !== p2) {
+            return;
+        }
+        p = cdr(p);
+    }
+}
+
+// n an integer
+/**
+ * @deprecated until we decide whether to sort as terms or factors.
+ * @param n 
+ * @param $ 
+ */
+export function sort_stack(n: number, $: ExtensionEnv) {
+    const h = defs.tos - n;
+    const subsetOfStack = defs.stack.slice(h, h + n) as U[];
+    subsetOfStack.sort(function (a, b) {
+        return $.compare(a, b);
+    });
+    defs.stack = defs.stack
+        .slice(0, h)
+        .concat(subsetOfStack)
+        .concat(defs.stack.slice(h + n));
+}
+
+/**
+ * @deprecated Ambiguous Get client to use either sort_terms or sort_factors.
+ * @param arr 
+ * @param $ 
+ */
+export function sort(arr: U[], $: ExtensionEnv): void {
+    arr.sort(function (a, b) {
+        return $.compare(a, b);
+    });
+}

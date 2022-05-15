@@ -1,0 +1,17 @@
+node_modules
+bazel-out
+.idea
+.nyc_output/
+
+**/.DS_Store
+
+coverage/
+docs/
+dist/
+!dist/index.js
+
+!dist/runtime
+!dist/src
+
+!dist/runtime/*
+!dist/src/*

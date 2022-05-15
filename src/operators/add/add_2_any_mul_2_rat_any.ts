@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
@@ -24,8 +25,10 @@ function lhs_equals_rhs_rhs(lhs: U, rhs: BCons<Sym, Rat, U>): boolean {
  * X + (Rat * X) => (1 + Rat) * X
  */
 class Op extends Function2X<U, BCons<Sym, Rat, U>> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_any_mul_2_rat_any', MATH_ADD, is_any, and(is_cons, is_opr_2_lhs_any(MATH_MUL, is_rat)), lhs_equals_rhs_rhs, $);
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_ANY, MATH_MUL);
     }
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Rat, Sym>): [TFLAGS, U] {
         const succ = rhs.lhs.succ();

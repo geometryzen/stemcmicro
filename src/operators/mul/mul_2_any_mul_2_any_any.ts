@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -19,8 +20,10 @@ class Builder implements OperatorBuilder<Cons> {
  * a * (b * c) => (a * b) * c 
  */
 class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_any_mul_2_any_any', MATH_MUL, is_any, and(is_cons, is_mul_2_any_any), $);
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_ANY, MATH_MUL);
     }
     transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>, orig: BCons<Sym, U, BCons<Sym, U, U>>): [TFLAGS, U] {
         const $ = this.$;
@@ -28,8 +31,8 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
             const a = lhs;
             const b = rhs.lhs;
             const c = rhs.rhs;
-            const ab = makeList(opr, a, b);
-            return [CHANGED, makeList(rhs.opr, ab, c)];
+            const ab = $.valueOf(makeList(opr, a, b));
+            return [CHANGED, $.valueOf(makeList(rhs.opr, ab, c))];
         }
         return [NOFLAGS, orig];
     }

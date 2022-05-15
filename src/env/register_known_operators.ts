@@ -120,11 +120,11 @@ import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
 import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_any_any';
 import { mul } from '../operators/mul/mul';
 import { mul_2_any_any } from '../operators/mul/mul_2_any_any';
-import { mul_2_sym_imu } from '../operators/mul/mul_2_any_imu';
 import { mul_2_any_mul } from '../operators/mul/mul_2_any_mul';
 import { mul_2_any_mul_2_any_any } from '../operators/mul/mul_2_any_mul_2_any_any';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
-import { mul_2_blade_num } from '../operators/mul/mul_2_blade_num';
+import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
+import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
 import { mul_2_cons_rat } from '../operators/mul/mul_2_cons_rat';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
 import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
@@ -158,6 +158,7 @@ import { mul_2_scalar_mul_2_scalar_any } from '../operators/mul/mul_2_scalar_mul
 import { mul_2_sym_add_2_sym_sym } from '../operators/mul/mul_2_sym_add_2_sym_sym';
 import { mul_2_sym_blade } from '../operators/mul/mul_2_sym_blade';
 import { mul_2_sym_flt } from '../operators/mul/mul_2_sym_flt';
+import { mul_2_sym_imu } from '../operators/mul/mul_2_sym_imu';
 import { mul_2_sym_inner_2_sym_sym } from '../operators/mul/mul_2_sym_inner_2_sym_sym';
 import { mul_2_sym_mul_2_rat_any } from '../operators/mul/mul_2_sym_mul_2_rat_any';
 import { mul_2_sym_mul_2_sym_sym } from '../operators/mul/mul_2_sym_mul_2_sym_sym';
@@ -376,6 +377,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_sym_rat);
     $.defineOperator(mul_2_sym_num);
     $.defineOperator(mul_2_sym_sym);
+    $.defineOperator(mul_2_sym_imu);
     $.defineOperator(mul_2_pow_2_zzz_rat_aaa);
     $.defineOperator(mul_2_pow_2_xxx_any_pow_2_xxx_any);
     $.defineOperator(mul_2_any_mul_2_any_any);
@@ -390,10 +392,10 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_uom_flt);
     $.defineOperator(mul_2_uom_uom);
 
-    $.defineOperator(mul_2_blade_num);
+    $.defineOperator(mul_2_blade_flt);
+    $.defineOperator(mul_2_blade_rat);
     $.defineOperator(mul_2_blade_blade);
     $.defineOperator(mul_2_scalar_blade);
-    $.defineOperator(mul_2_sym_imu);
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
     $.defineOperator(mul);

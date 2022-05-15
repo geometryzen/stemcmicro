@@ -1,5 +1,6 @@
 
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -23,8 +24,10 @@ type EXPR = BCons<Sym, LHS, RHS>;
  * Rat * X
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_any', MATH_MUL, is_rat, is_any, $);
+        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_ANY);
     }
     isImag(expr: EXPR): boolean {
         const $ = this.$;

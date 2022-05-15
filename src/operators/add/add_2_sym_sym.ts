@@ -1,6 +1,6 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, SIGN_LT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -21,27 +21,10 @@ class Builder implements OperatorBuilder<Cons> {
  * a + a => 2 * a
  */
 class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_sym_sym', MATH_ADD, is_sym, is_sym, $);
-    }
-    cost(expr: BCons<Sym, Sym, Sym>, costs: CostTable, depth: number): number {
-        const baseCost = super.cost(expr, costs, depth);
-        switch (compare_sym_sym(expr.lhs, expr.rhs)) {
-            case SIGN_GT: {
-                return baseCost + 1;
-            }
-            case SIGN_LT: {
-                return baseCost;
-            }
-            default: {
-                if (expr.lhs.equals(expr.rhs)) {
-                    return baseCost + 1;
-                }
-                else {
-                    return baseCost;
-                }
-            }
-        }
+        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_SYM, HASH_SYM);
     }
     transform2(opr: Sym, lhs: Sym, rhs: Sym, orig: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         switch (compare_sym_sym(lhs, rhs)) {

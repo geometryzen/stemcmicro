@@ -1,10 +1,10 @@
 
-import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_BLADE, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { is_num } from "../../predicates/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { Num } from "../../tree/num/Num";
+import { is_rat } from "../../tree/rat/is_rat";
+import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
@@ -19,19 +19,18 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 type LHS = Blade;
-type RHS = Num;
-type EXPR = BCons<Sym, LHS, RHS>;
+type RHS = Rat;
+type EXP = BCons<Sym, LHS, RHS>;
 
 /**
- * Blade * Num => Num * Blade
+ * Blade * Rat => Rat * Blade
  */
-class Op extends Function2<Blade, Num> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly breaker = true;
+    readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('mul_2_blade_num', MATH_MUL, is_blade, is_num, $);
-    }
-    cost(expr: EXPR, costTable: CostTable, depth: number): number {
-        return super.cost(expr, costTable, depth) + 1;
+        super('mul_2_blade_rat', MATH_MUL, is_blade, is_rat, $);
+        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_BLADE, HASH_RAT);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
@@ -39,4 +38,4 @@ class Op extends Function2<Blade, Num> implements Operator<EXPR> {
     }
 }
 
-export const mul_2_blade_num = new Builder();
+export const mul_2_blade_rat = new Builder();

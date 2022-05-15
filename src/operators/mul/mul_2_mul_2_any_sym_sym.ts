@@ -1,6 +1,7 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
 import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -37,8 +38,10 @@ function symbols_must_exchange($: ExtensionEnv) {
  * (X * z) * a => X * (z * a) => X * (a * z) => (X * a) * z
  */
 class Op extends Function2X<BCons<Sym, U, Sym>, Sym> implements Operator<BCons<Sym, BCons<Sym, U, Sym>, Sym>> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_sym_sym', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_sym, symbols_must_exchange($), $);
+        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
     }
     cost(expr: BCons<Sym, BCons<Sym, U, Sym>, Sym>, costs: CostTable, depth: number): number {
         return super.cost(expr, costs, depth) + 1;
@@ -49,8 +52,8 @@ class Op extends Function2X<BCons<Sym, U, Sym>, Sym> implements Operator<BCons<S
             const X = lhs.lhs;
             const z = lhs.rhs;
             const a = rhs;
-            const Xa = makeList(opr, X, a);
-            const Xaz = makeList(lhs.opr, Xa, z);
+            const Xa = $.valueOf(makeList(opr, X, a));
+            const Xaz = $.valueOf(makeList(lhs.opr, Xa, z));
             return [CHANGED, Xaz];
         }
         return [NOFLAGS, orig];

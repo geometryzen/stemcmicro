@@ -1,5 +1,6 @@
 
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Flt, flt } from "../../tree/flt/Flt";
 import { is_flt } from "../../tree/flt/is_flt";
@@ -19,8 +20,10 @@ class Builder implements OperatorBuilder<Cons> {
  * Rat + Flt => Flt
  */
 class Op extends Function2<Rat, Flt> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_rat_flt', MATH_ADD, is_rat, is_flt, $);
+        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_FLT);
     }
     transform2(opr: Sym, lhs: Rat, rhs: Flt): [TFLAGS, U] {
         const lhsNum = lhs.toNumber();

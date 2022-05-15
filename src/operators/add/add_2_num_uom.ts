@@ -18,9 +18,9 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Num;
 type RHS = Uom;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('add_2_num_uom', MATH_ADD, is_num, is_uom, $);
     }

@@ -1,5 +1,5 @@
-import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -37,11 +37,10 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
     readonly breaker = true;
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_blade_blade', MATH_ADD, is_blade, is_blade, cross, $);
-    }
-    cost(expr: EXPR, costTable: CostTable, depth: number): number {
-        return super.cost(expr, costTable, depth) + 1;
+        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_BLADE, HASH_BLADE);
     }
     transform2(opr: Sym, lhs: LHS, rhs: LHS): [TFLAGS, U] {
         if (lhs.equals(rhs)) {

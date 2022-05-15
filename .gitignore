@@ -2,6 +2,7 @@ node_modules
 bazel-out
 .idea
 .nyc_output/
+dump.txt
 
 **/.DS_Store
 

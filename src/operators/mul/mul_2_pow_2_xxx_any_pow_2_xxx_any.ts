@@ -1,5 +1,6 @@
 
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -25,15 +26,18 @@ function cross(lhs: BCons<Sym, Sym, U>, rhs: BCons<Sym, Sym, U>): boolean {
  * (x ** a) * (x ** b) =>  x ** (a + b) 
  */
 class Op extends Function2X<BCons<Sym, Sym, U>, BCons<Sym, Sym, U>> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_pow_2_xxx_any_pow_2_xxx_any', MATH_MUL, and(is_cons, is_pow_2_sym_any), and(is_cons, is_pow_2_sym_any), cross, $);
+        this.hash = hash_binop_cons_cons(MATH_MUL, MATH_POW, MATH_POW);
     }
     transform2(opr: Sym, lhs: BCons<Sym, Sym, U>, rhs: BCons<Sym, Sym, U>): [TFLAGS, U] {
+        const $ = this.$;
         const sym = lhs.lhs;
         const a = lhs.rhs;
         const b = rhs.rhs;
-        const expo = makeList(MATH_ADD, a, b);
-        const D = makeList(MATH_POW, sym, expo);
+        const expo = $.valueOf(makeList(MATH_ADD, a, b));
+        const D = $.valueOf(makeList(MATH_POW, sym, expo));
         return [CHANGED, D];
     }
 }

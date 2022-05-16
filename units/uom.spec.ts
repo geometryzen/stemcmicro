@@ -281,7 +281,7 @@ describe("uom", function () {
             const engine = createSymEngine({ version: 2 });
             const $ = engine.$;
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual($.toInfixString(values[0]), "operator + (Num, Uom) is not supported.");
+            assert.strictEqual($.toInfixString(values[0]), "operator + (Flt, Uom) is not supported.");
             engine.release();
         });
         it("(Uom, Flt)", function () {
@@ -302,7 +302,7 @@ describe("uom", function () {
             ];
             const engine = createSymEngine({ version: 2 });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.$.toInfixString(values[0]), "operator + (Num, Uom) is not supported.");
+            assert.strictEqual(engine.$.toInfixString(values[0]), "operator + (Rat, Uom) is not supported.");
             engine.release();
         });
         it("(Uom, Rat)", function () {

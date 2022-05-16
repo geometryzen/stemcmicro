@@ -1,9 +1,11 @@
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { is_num } from "../../predicates/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
+import { is_rat } from "../../tree/rat/is_rat";
+import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -20,7 +22,7 @@ class Builder implements OperatorBuilder<Cons> {
 type LL = Num;
 type LR = U;
 type LHS = BCons<Sym, LL, LR>;
-type RHS = Num;
+type RHS = Rat;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
@@ -32,8 +34,10 @@ type EXP = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly breaker = true;
+    readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('mul_2_mul_2_num_any_num', MATH_MUL, and(is_cons, is_mul_2_num_any), is_num, $);
+        super('mul_2_mul_2_num_any_rat', MATH_MUL, and(is_cons, is_mul_2_num_any), is_rat, $);
+        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_RAT);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const num1 = lhs.lhs;
@@ -43,4 +47,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_mul_2_num_any_num = new Builder();
+export const mul_2_mul_2_num_any_rat = new Builder();

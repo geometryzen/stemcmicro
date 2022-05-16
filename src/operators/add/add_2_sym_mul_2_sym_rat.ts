@@ -1,6 +1,7 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { MATH_ADD } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -23,8 +24,10 @@ class Builder implements OperatorBuilder<Cons> {
 // a + (Sym * Rat) => a + (Rat * Sym)
 //
 class Op extends Function2<Sym, BCons<Sym, Sym, Rat>> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_sym_mul_2_sym_rat', MATH_ADD, is_sym, and(is_cons, is_mul_2_sym_rat), $);
+        this.hash = hash_binop_atom_cons(MATH_ADD, HASH_SYM, MATH_MUL);
     }
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Sym, Rat>, orig: BCons<Sym, Sym, BCons<Sym, Sym, Rat>>): [TFLAGS, U] {
         const $ = this.$;

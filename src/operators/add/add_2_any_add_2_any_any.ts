@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -23,9 +24,11 @@ export const add_2_any_add_2_any_any = new Builder();
  * X+(Y+Z) => (X+Y)+Z
  */
 class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<BCons<Sym, U, BCons<Sym, U, U>>> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         // TODO: Consider replacing the first argument with a matching function and(is_cons, is_add_2_any_any)
         super('add_2_any_add_2_any_any', MATH_ADD, is_any, and(is_cons, is_add_2_any_any), $);
+        this.hash = hash_binop_atom_cons(MATH_ADD, HASH_ANY, MATH_ADD);
     }
     transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>, orig: BCons<Sym, U, BCons<Sym, U, U>>): [TFLAGS, U] {
         const $ = this.$;

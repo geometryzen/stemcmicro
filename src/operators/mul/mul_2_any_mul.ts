@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -19,8 +20,10 @@ class Builder implements OperatorBuilder<Cons> {
  * (* a (* b1 b2 b3 ...)) => (* a b1 b2 b3 ...) 
  */
 class Op extends Function2<U, Cons> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_any_mul', MATH_MUL, is_any, and(is_cons, is_mul), $);
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_ANY, MATH_MUL);
     }
     transform2(opr: Sym, lhs: U, rhs: Cons, expr: BCons<Sym, U, Cons>): [TFLAGS, U] {
         const $ = this.$;

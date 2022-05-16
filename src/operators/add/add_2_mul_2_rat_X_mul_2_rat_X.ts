@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -27,14 +28,19 @@ function cross(lhs: BCons<Sym, Rat, U>, rhs: BCons<Sym, Rat, U>): boolean {
  * (p * X) + (q * X) => (p + q) * X
  */
 class Op extends Function2X<BCons<Sym, Rat, U>, BCons<Sym, Rat, U>> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_rat_X_mul_2_rat_X', MATH_ADD, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), cross, $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
     }
     transform2(opr: Sym, lhs: BCons<Sym, Rat, U>, rhs: BCons<Sym, Rat, U>): [TFLAGS, U] {
+        const $ = this.$;
         const p = lhs.lhs;
         const X = lhs.rhs;
         const q = rhs.lhs;
-        return [CHANGED, makeList(MATH_MUL, p.add(q), X)];
+        const pq = p.add(q);
+        const retval = $.valueOf(makeList(MATH_MUL, pq, X));
+        return [CHANGED, retval];
     }
 }
 

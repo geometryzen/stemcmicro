@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -98,8 +99,10 @@ class Builder implements OperatorBuilder<Cons> {
  * (a + b) + c
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_sym_sym_sym', MATH_ADD, and(is_cons, is_add_2_sym_sym), is_sym, $);
+        this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_SYM);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
         const $ = this.$;

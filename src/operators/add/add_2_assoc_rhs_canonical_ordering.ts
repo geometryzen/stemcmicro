@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -19,7 +20,7 @@ type LHS = U;
 type RL = U;
 type RR = U;
 type RHS = BCons<Sym, RL, RR>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
@@ -33,9 +34,11 @@ function cross($: ExtensionEnv) {
 /**
  * z + (a + X) => a + (z + X)
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_assoc_rhs_canonical_ordering', MATH_ADD, is_any, and(is_cons, is_add_2_any_any), cross($), $);
+        this.hash = hash_binop_atom_cons(MATH_ADD, HASH_ANY, MATH_ADD);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

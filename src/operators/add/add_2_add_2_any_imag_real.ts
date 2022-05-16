@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -17,7 +18,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = BCons<Sym, U, U>;
 type RHS = U;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
@@ -28,16 +29,19 @@ function cross($: ExtensionEnv) {
 /**
  * (X + imag) + real => (X + real) + imag
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_imag_real', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross($), $);
+        this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+        const $ = this.$;
         const X = lhs.lhs;
         const I = lhs.rhs;
         const R = rhs;
-        const XR = makeList(MATH_ADD, X, R);
-        const retval = makeList(MATH_ADD, XR, I);
+        const XR = $.valueOf(makeList(MATH_ADD, X, R));
+        const retval = $.valueOf(makeList(MATH_ADD, XR, I));
         return [CHANGED, retval];
     }
 }

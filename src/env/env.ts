@@ -300,8 +300,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     }
                 }
             }
-            /*
             // Inspect which operators are assigned to which buckets...
+            /*
             for (const key in keydOps) {
                 const ops = keydOps[key];
                 console.log(`${key} ${ops.length}`);
@@ -599,7 +599,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else {
-                                    console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
+                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
                                 }
                             }
                         }

@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -20,7 +21,7 @@ type LL = U;
 type LR = BCons<Sym, U, Blade>;
 type LHS = BCons<Sym, LL, LR>;
 type RHS = BCons<Sym, U, Blade>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
@@ -41,9 +42,11 @@ function cross($: ExtensionEnv) {
 /**
  * (X + b * blade) + c * blade => X + (b + c) * blade
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_assoc_lhs_factorize_blades', MATH_ADD, and(is_cons, is_add_2_any_mul_2_any_blade), and(is_cons, is_mul_2_any_blade), cross($), $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_ADD, MATH_MUL);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

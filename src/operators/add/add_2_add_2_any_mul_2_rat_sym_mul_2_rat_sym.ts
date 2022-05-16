@@ -1,5 +1,6 @@
 import { add_num_num } from "../../calculators/add/add_num_num";
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -26,7 +27,7 @@ type LHS = BCons<Sym, LL, LR>;
 type RR = Sym;
 type RL = Rat;
 type RHS = BCons<Sym, RL, RR>;
-type EXPR = BCons<Sym, LHS, RHS>
+type EXP = BCons<Sym, LHS, RHS>
 
 function cross(lhs: LHS, rhs: RHS): boolean {
     const x1 = lhs.rhs.rhs;
@@ -46,11 +47,13 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * (a + m * z) + (n * b)   (GT case)
  * (a + m * b) + (n * b)   (EQ case)
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_mul_2_rat_sym_mul_2_rat_sym', MATH_ADD, and(is_cons, is_add_2_any_mul_2_rat_sym), and(is_cons, is_mul_2_rat_sym), cross, $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_ADD, MATH_MUL);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const x1 = lhs.rhs.rhs;
         const x2 = rhs.rhs;
         switch (x1.compare(x2)) {

@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -19,7 +20,7 @@ type LL = U;
 type LR = BCons<Sym, U, U>;
 type LHS = BCons<Sym, LL, LR>;
 type RHS = BCons<Sym, U, U>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
@@ -46,9 +47,11 @@ const guardRHS = and(is_cons, is_opr_2_any_any(MATH_OUTER));
 /**
  * (X + a|b) + a^b => X + a*b
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('factorize_geometric_product_lhs_assoc', MATH_ADD, guardLHS, guardRHS, cross($), $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_ADD, MATH_OUTER);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {

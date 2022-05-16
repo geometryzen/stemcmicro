@@ -17,6 +17,12 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
+type LL = Num;
+type LR = U;
+type LHS = BCons<Sym, LL, LR>;
+type RHS = Num;
+type EXP = BCons<Sym, LHS, RHS>;
+
 /**
  * (Rat1 * X) * Rat2 => (Rat1 * Rat2) * X
  * 
@@ -24,12 +30,12 @@ class Builder implements OperatorBuilder<Cons> {
  * 
  * (Rat1 * X) * Rat2 => Rat1 * (X * Rat2) => Rat1 * (Rat2 * X) => (Rat1 * Rat2) * X
  */
-class Op extends Function2<BCons<Sym, Num, U>, Num> implements Operator<Cons> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly breaker = true;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_num_any_num', MATH_MUL, and(is_cons, is_mul_2_num_any), is_num, $);
     }
-    transform2(opr: Sym, lhs: BCons<Sym, Num, U>, rhs: Num): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const num1 = lhs.lhs;
         const X = lhs.rhs;
         const num2 = rhs;

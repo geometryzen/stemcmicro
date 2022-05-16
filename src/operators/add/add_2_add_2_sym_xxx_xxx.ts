@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -26,8 +27,10 @@ function cross(lhs: BCons<Sym, Sym, Sym>, rhs: Sym): boolean {
  * (a + b) + b => a + (2 * b)
  */
 class Op extends Function2X<BCons<Sym, Sym, Sym>, Sym> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_sym_xxx_xxx', MATH_ADD, and(is_cons, is_add_2_sym_sym), is_sym, cross, $);
+        this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_SYM);
     }
     transform2(opr: Sym, lhs: BCons<Sym, Sym, Sym>, rhs: Sym): [TFLAGS, U] {
         const A = lhs.lhs;

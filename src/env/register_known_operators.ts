@@ -42,7 +42,8 @@ import { add_2_rat_sym } from '../operators/add/add_2_rat_sym';
 import { add_2_sym_mul_2_sym_rat } from '../operators/add/add_2_sym_mul_2_sym_rat';
 import { add_2_sym_rat } from '../operators/add/add_2_sym_rat';
 import { add_2_sym_sym } from '../operators/add/add_2_sym_sym';
-import { add_2_uom_num } from '../operators/add/add_2_uom_num';
+import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
+import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
 import { add_2_zzz_mul_2_rat_aaa } from '../operators/add/add_2_zzz_mul_2_rat_aaa';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
@@ -277,7 +278,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_rat_rat);
     $.defineOperator(add_2_rat_sym);
     $.defineOperator(add_2_rat_cons);
-    $.defineOperator(add_2_uom_num);
+    $.defineOperator(add_2_uom_flt);
+    $.defineOperator(add_2_uom_rat);
 
     // Missing add_sym_flt
     // Missing add_sym_rat

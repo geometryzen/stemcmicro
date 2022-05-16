@@ -1,6 +1,7 @@
 import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { MATH_ADD } from "../../runtime/ns_math";
+import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
+import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -18,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Sym;
 type RHS = BCons<Sym, Rat, Sym>;
-type EXPR = BCons<Sym, LHS, RHS>
+type EXP = BCons<Sym, LHS, RHS>
 
 function cross(lhs: LHS, rhs: RHS): boolean {
     return rhs.lhs.isMinusOne() && lhs.equalsSym(rhs.rhs);
@@ -27,16 +28,18 @@ function cross(lhs: LHS, rhs: RHS): boolean {
 /**
  * x + (-1 * x) => 0, where 
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly breaker = true;
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_xxx_mul_2_rm1_xxx', MATH_ADD, is_sym, and(is_cons, is_mul_2_rat_sym), cross, $);
+        this.hash = hash_binop_atom_cons(MATH_ADD, HASH_SYM, MATH_MUL);
     }
-    cost(expr: EXPR, costTable: CostTable, depth: number): number {
+    cost(expr: EXP, costTable: CostTable, depth: number): number {
         return super.cost(expr, costTable, depth) + 1;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         return [CHANGED, zero];
     }
 }

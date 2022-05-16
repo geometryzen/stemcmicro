@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -22,7 +23,7 @@ type LHS = BCons<Sym, LL, LR>;
 type RL = Rat;
 type RR = Sym;
 type RHS = BCons<Sym, RL, RR>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 function cross(lhs: LHS, rhs: RHS): boolean {
     switch (lhs.rhs.compare(rhs.rhs)) {
@@ -40,9 +41,11 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * (X + c) + (k * b) => (X + (k * b)) + c
  * (X + c) + (k * c) => X + (K + 1) * c
  */
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_mul_2_rat_sym', MATH_ADD, and(is_cons, is_add_2_any_sym), and(is_cons, is_mul_2_rat_sym), cross, $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_ADD, MATH_MUL);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -23,16 +24,21 @@ type EXPR = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly breaker = true;
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_rat_any_mul_2_rat_any', MATH_MUL, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), $);
+        this.hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_MUL);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: BCons<Sym, LHS, RHS>): [TFLAGS, U] {
+        const $ = this.$;
         const n = lhs.lhs;
         const X = lhs.rhs;
         const m = rhs.lhs;
         const Y = rhs.rhs;
-        return [CHANGED, makeList(opr, n.mul(m), makeList(rhs.opr, X, Y))];
+        const XY = $.valueOf(makeList(rhs.opr, X, Y));
+        const retval = $.valueOf(makeList(opr, n.mul(m), XY));
+        return [CHANGED, retval];
     }
 }
 

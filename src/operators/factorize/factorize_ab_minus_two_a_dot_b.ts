@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -48,15 +49,18 @@ function cross($: ExtensionEnv) {
  * a * b - 2 (a | b) => - b * a
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('factorize_ab_minus_two_a_dot_b', MATH_ADD, and(is_cons, is_mul_2_sym_sym), and(is_cons, is_mul_2_rat_inner_2_sym_sym), cross($), $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
+        const $ = this.$;
         const a = lhs.lhs;
         const b = lhs.rhs;
-        const ba = makeList(MATH_MUL, b, a);
-        return [CHANGED, makeList(MATH_MUL, negOne, ba)];
+        const ba = $.valueOf(makeList(MATH_MUL, b, a));
+        return [CHANGED, $.valueOf(makeList(MATH_MUL, negOne, ba))];
     }
 }
 

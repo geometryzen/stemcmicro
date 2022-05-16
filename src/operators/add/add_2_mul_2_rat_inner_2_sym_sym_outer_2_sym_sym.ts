@@ -1,5 +1,6 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
+import { MATH_ADD, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -31,8 +32,10 @@ function cross(lhs: BCons<Sym, Rat, BCons<Sym, Sym, Sym>>, rhs: BCons<Sym, Sym, 
  * (-1 * a|b) + a^b => -b*a 
  */
 class Op extends Function2X<BCons<Sym, Rat, BCons<Sym, Sym, Sym>>, BCons<Sym, Sym, Sym>> implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym', MATH_ADD, and(is_cons, is_mul_2_rat_inner_2_sym_sym), and(is_cons, is_outer_2_sym_sym), cross, $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_OUTER);
     }
     transform2(opr: Sym, lhs: BCons<Sym, U, BCons<Sym, Sym, Sym>>, rhs: BCons<Sym, Sym, Sym>, orig: BCons<Sym, BCons<Sym, U, U>, BCons<Sym, U, U>>): [TFLAGS, U] {
         const $ = this.$;

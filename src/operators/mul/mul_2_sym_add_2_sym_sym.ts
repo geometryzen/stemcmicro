@@ -1,7 +1,7 @@
-import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { is_add_2_sym_sym } from "../add/is_add_2_sym_sym";
@@ -23,13 +23,10 @@ class Builder implements OperatorBuilder<Cons> {
  * Ideally it should be consolidated. 
  */
 class Op extends Function2<Sym, BCons<Sym, Sym, Sym>> implements Operator<BCons<Sym, Sym, BCons<Sym, Sym, Sym>>> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_add_2_sym_sym', MATH_MUL, is_sym, and(is_cons, is_add_2_sym_sym), $);
-    }
-    cost(expr: BCons<Sym, Sym, BCons<Sym, Sym, Sym>>, costs: CostTable, depth: number): number {
-        // Because we are dealing in Sym(bols) we can get the costs directly from the cost table.
-        // We could go through the environment ($) but that would be less efficient.
-        return super.cost(expr, costs, depth) + costs.getCost(MATH_MUL, this.$) + costs.getCost(expr.lhs, this.$);
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_ADD);
     }
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Sym, Sym>, expr: BCons<Sym, Sym, BCons<Sym, Sym, Sym>>): [TFLAGS, U] {
         const $ = this.$;
@@ -37,9 +34,9 @@ class Op extends Function2<Sym, BCons<Sym, Sym, Sym>> implements Operator<BCons<
             const a = lhs;
             const b = rhs.lhs;
             const c = rhs.rhs;
-            const ab = makeList(opr, a, b);
-            const ac = makeList(opr, a, c);
-            return [CHANGED, makeList(rhs.opr, ab, ac)];
+            const ab = $.valueOf(makeList(opr, a, b));
+            const ac = $.valueOf(makeList(opr, a, c));
+            return [CHANGED, $.valueOf(makeList(rhs.opr, ab, ac))];
         }
         return [NOFLAGS, expr];
     }

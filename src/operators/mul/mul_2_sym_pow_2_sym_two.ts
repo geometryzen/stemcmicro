@@ -1,6 +1,7 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -36,8 +37,10 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<Cons> {
     readonly name = 'mul_2_sym_pow_2_sym_two';
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_pow_2_sym_two', MATH_MUL, is_sym, and(is_cons, is_pow_2_sym_rat), cross($), $);
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_POW);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: BCons<Sym, LHS, RHS>): [TFLAGS, U] {
         const $ = this.$;

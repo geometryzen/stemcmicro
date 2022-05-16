@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -48,15 +49,19 @@ function cross($: ExtensionEnv) {
  * (+ (* (| b c) a) (* a (^ b c))) => (a * b) * c, where a,b,c vectors. (factorization).
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym', MATH_ADD, and(is_cons, is_mul_2_inner_2_sym_sym_sym), and(is_cons, is_mul_2_sym_outer_2_sym_sym), cross($), $);
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+        const $ = this.$;
         const a = lhs.rhs;
         const b = lhs.lhs.lhs;
         const c = lhs.lhs.rhs;
-        const bc = makeList(MATH_MUL, b, c);
-        return [CHANGED, makeList(MATH_MUL, a, bc)];
+        const bc = $.valueOf(makeList(MATH_MUL, b, c));
+        const retval = $.valueOf(makeList(MATH_MUL, a, bc));
+        return [CHANGED, retval];
     }
 }
 

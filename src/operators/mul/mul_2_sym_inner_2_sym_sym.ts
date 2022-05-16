@@ -1,7 +1,8 @@
 import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -26,8 +27,10 @@ function cross($: ExtensionEnv) {
  * a*(b|c) => (b|c)*a, where a,b,c are vectors.
  */
 class Op extends Function2X<Sym, BCons<Sym, Sym, Sym>> implements Operator<BCons<Sym, Sym, BCons<Sym, Sym, Sym>>> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_inner_2_sym_sym', MATH_MUL, is_sym, and(is_cons, is_inner_2_sym_sym), cross($), $);
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_INNER);
     }
     cost(expr: BCons<Sym, Sym, BCons<Sym, Sym, Sym>>, costs: CostTable, depth: number): number {
         return super.cost(expr, costs, depth) + 1;

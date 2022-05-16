@@ -1,6 +1,7 @@
 import { do_factorize_rhs } from "../../calculators/factorize/do_factorize_rhs";
 import { is_factorize_rhs } from "../../calculators/factorize/is_factorize_rhs";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -17,7 +18,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = U;
 type RHS = U;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cross($: ExtensionEnv) {
@@ -31,11 +32,13 @@ function cross($: ExtensionEnv) {
     };
 }
 
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_any_any_factorize_rhs', MATH_ADD, is_any, is_any, cross($), $);
+        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         return do_factorize_rhs(lhs, rhs, one, expr, $);
     }

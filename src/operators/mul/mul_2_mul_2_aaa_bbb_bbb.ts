@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -31,8 +32,10 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * (a * b) * b => a * (b**2), but only if associating to the right.
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_aaa_bbb_bbb', MATH_MUL, and(is_cons, is_mul_2_sym_sym), is_sym, cross, $);
+        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
     }
     transform2(opr: Sym, lhs: LHS, rhs: Sym, expr: EXPR): [TFLAGS, U] {
         const $ = this.$;

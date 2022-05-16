@@ -1,7 +1,8 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -35,8 +36,10 @@ function cross(lhs: Sym, rhs: BCons<Sym, Sym, Rat>): boolean {
 //
 class Op extends Function2X<Sym, BCons<Sym, Sym, Rat>> implements Operator<Cons> {
     readonly name = 'mul_2_zzz_pow_2_aaa_rat';
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_zzz_pow_2_aaa_rat', MATH_MUL, is_sym, and(is_cons, is_pow_2_sym_rat), cross, $);
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_POW);
     }
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Sym, Rat>): [TFLAGS, U] {
         return [CHANGED, makeList(opr, rhs, lhs)];

@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -26,8 +27,10 @@ type EXP = BCons<Sym, LHS, RHS>;
  * (Rat * Sym1) * Sym2 => Rat * (Sym1 * Sym2), when right associating only.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_rat_sym_sym', MATH_MUL, and(is_cons, is_mul_2_rat_sym), is_sym, $);
+        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: EXP): boolean {
@@ -46,8 +49,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             const n = lhs.lhs;
             const a = lhs.rhs;
             const b = rhs;
-            const ab = makeList(opr, a, b);
-            return [CHANGED, makeList(lhs.opr, n, ab)];
+            const ab = $.valueOf(makeList(opr, a, b));
+            const nab = $.valueOf(makeList(lhs.opr, n, ab));
+            return [CHANGED, nab];
         }
         return [NOFLAGS, expr];
     }

@@ -14,6 +14,8 @@ import { is_blade } from "../operators/blade/BladeExtension";
 import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
 import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
 import { is_err } from "../operators/err/is_err";
+import { associative_explicator } from "../operators/helpers/associative_explicator";
+import { associative_implicator } from "../operators/helpers/associative_implicator";
 import { is_sym } from "../operators/sym/is_sym";
 import { SymPattern } from "../operators/sym/SymPattern";
 import { Pattern } from "../patterns/Pattern";
@@ -204,6 +206,16 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        defineAssociative(opr: Sym): void {
+            // These operators should only be needed for the initial phase to
+            // get expressions into either Left- or Right-Associated form.
+            // The expressions from the scanner should be in the associated
+            // form. However, we implicate expressions prior to pretty.
+            // With a smarter serializer this would not be needed.
+            $.defineOperator(associative_explicator(opr));
+            $.defineOperator(associative_implicator(opr));
         },
         clearBindings(): void {
             symTab.clearBindings();

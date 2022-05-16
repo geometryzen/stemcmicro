@@ -3,7 +3,6 @@ import { abs_any } from '../operators/abs/abs_any';
 import { abs_rat } from '../operators/abs/abs_rat';
 import { abs_sym_real } from '../operators/abs/abs_sym_real';
 import { MATH_ABS } from '../operators/abs/MATH_ABS';
-import { add } from '../operators/add/add';
 import { add_2_add_2_any_any_any } from '../operators/add/add_2_add_2_any_any_any';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
 import { add_2_add_2_any_imag_real } from '../operators/add/add_2_add_2_any_imag_real';
@@ -12,7 +11,6 @@ import { add_2_add_2_any_mul_2_rat_sym_mul_2_rat_sym } from '../operators/add/ad
 import { add_2_add_2_any_mul_2_rat_sym } from '../operators/add/add_2_add_2_any_sym_mul_2_rat_sym';
 import { add_2_add_2_sym_sym_sym } from '../operators/add/add_2_add_2_sym_sym_sym';
 import { add_2_add_2_sym_xxx_xxx } from '../operators/add/add_2_add_2_sym_xxx_xxx';
-import { add_2_add_any } from '../operators/add/add_2_add_any';
 import { add_2_any_add } from '../operators/add/add_2_any_add';
 import { add_2_any_add_2_any_any } from '../operators/add/add_2_any_add_2_any_any';
 import { add_2_any_any } from '../operators/add/add_2_any_any';
@@ -121,7 +119,6 @@ import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_any_mul_2_scalar_any } from '../operators/lco/lco_2_any_mul_2_scalar_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
 import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_any_any';
-import { mul } from '../operators/mul/mul';
 import { mul_2_any_any } from '../operators/mul/mul_2_any_any';
 import { mul_2_any_mul } from '../operators/mul/mul_2_any_mul';
 import { mul_2_any_mul_2_any_any } from '../operators/mul/mul_2_any_mul_2_any_any';
@@ -144,8 +141,6 @@ import { mul_2_mul_2_num_any_rat } from '../operators/mul/mul_2_mul_2_num_any_ra
 import { mul_2_mul_2_rat_any_mul_2_rat_any } from '../operators/mul/mul_2_mul_2_rat_any_mul_2_rat_any';
 import { mul_2_mul_2_rat_sym_sym } from '../operators/mul/mul_2_mul_2_rat_sym_sym';
 import { mul_2_mul_2_sym_sym_sym } from '../operators/mul/mul_2_mul_2_sym_sym_sym';
-import { mul_2_mul_any } from '../operators/mul/mul_2_mul_any';
-import { mul_2_mul_sym } from '../operators/mul/mul_2_mul_sym';
 import { mul_2_one_any } from '../operators/mul/mul_2_one_any';
 import { mul_2_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_pow_2_xxx_rat_xxx } from '../operators/mul/mul_2_pow_2_xxx_rat_xxx';
@@ -301,7 +296,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_assoc_rhs_canonical_ordering);
     $.defineOperator(add_2_assoc_lhs_factorize_blades);
     $.defineOperator(add_2_add_2_any_any_any);
-    $.defineOperator(add_2_add_any);
+
     $.defineOperator(add_2_mul_2_rat_X_mul_2_rat_X);
     $.defineOperator(add_2_mul_2_rat_anX_anX);
     $.defineOperator(add_2_mul_2_rat_zzz_aaa);
@@ -318,7 +313,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_any_any_zero_sum);
     $.defineOperator(add_2_any_any_factorize_rhs);
     $.defineOperator(add_2_any_any);
-    $.defineOperator(add);
+
+    $.defineAssociative(MATH_ADD);
 
     $.defineOperator(pow_2_pow_2_any_any_any);
     $.defineOperator(pow_2_e_any);
@@ -369,8 +365,6 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('Sym * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_uom));
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('Blade * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_BLADE), MATH_MUL, is_blade, is_uom));
     $.defineOperator(mul_2_mul_2_any_any_any);
-    $.defineOperator(mul_2_mul_any);
-    $.defineOperator(mul_2_mul_sym);
     $.defineOperator(mul_2_pow_2_xxx_rat_xxx);
     // $.defineOperator(mul_2_outer_2_sym_sym_sym);
     $.defineOperator(mul_2_zzz_pow_2_aaa_rat);
@@ -407,7 +401,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_scalar_blade);
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
-    $.defineOperator(mul);
+    $.defineAssociative(MATH_MUL);
 
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);

@@ -72,6 +72,7 @@ export interface ExtensionEnv {
     cos(expr: U): U;
     cost(expr: U, depth: number): number;
     defineOperator(builder: OperatorBuilder<U>): void;
+    defineAssociative(opr: Sym): void;
     defineKey(sym: Sym): Sym;
     derivative(expr: U, wrt: U): U;
     divide(lhs: U, rhs: U): U;

@@ -18,29 +18,30 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
+type LHS = Sym;
+type RL = Sym;
+type RR = Rat;
+type RHS = BCons<Sym, RL, RR>;
+type EXP = BCons<Sym, LHS, RHS>
+
 //
 // TODO: This could be add_2_any_any, with the flip being done by mul_2_rat_sym
 //
-// a + (Sym * Rat) => a + (Rat * Sym)
+// Sym1 + (Sym2 * Rat) => Sym1 + (Rat * Sym2)
 //
-class Op extends Function2<Sym, BCons<Sym, Sym, Rat>> implements Operator<Cons> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_sym_mul_2_sym_rat', MATH_ADD, is_sym, and(is_cons, is_mul_2_sym_rat), $);
         this.hash = hash_binop_atom_cons(MATH_ADD, HASH_SYM, MATH_MUL);
     }
-    transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Sym, Rat>, orig: BCons<Sym, Sym, BCons<Sym, Sym, Rat>>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const hook = function (retval: U, description: string): U {
-            // console.lg(`${expr} => ${retval} @ add_2_sym_mul_2_sym_rat ${description}`);
-            return retval;
-        };
         if ($.explicateMode) {
             const retval = makeList(opr, lhs, binswap(rhs));
-            return [CHANGED, hook(retval, "A")];
+            return [CHANGED, retval];
         }
-        return [NOFLAGS, hook(orig, "B")];
+        return [NOFLAGS, orig];
     }
 }
 

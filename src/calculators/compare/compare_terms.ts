@@ -1,6 +1,6 @@
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
-import { compare_blades, is_blade } from "../../operators/blade/BladeExtension";
+import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_blade_rat } from "../../operators/mul/is_mul_2_blade_rat";
@@ -184,10 +184,10 @@ export function compare_terms(lhs: U, rhs: U): Sign {
     }
     if (is_blade(lhs)) {
         if (is_blade(rhs)) {
-            return compare_blades(lhs, rhs);
+            return compare_blade_blade(lhs, rhs);
         }
         if (is_cons(rhs) && is_mul_2_blade_rat(rhs)) {
-            return compare_blades(lhs, rhs.lhs);
+            return compare_blade_blade(lhs, rhs.lhs);
         }
         throw new Error(`lhs: Blade = ${lhs}, rhs = ${rhs}`);
     }

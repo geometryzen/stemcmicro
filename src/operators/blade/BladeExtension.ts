@@ -9,7 +9,7 @@ import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
  * Compares blades according to the canonical representation.
  * This may not be the ordering that is desired for pretty printing.
  */
-export function compare_blades(lhs: Blade, rhs: Blade): Sign {
+export function compare_blade_blade(lhs: Blade, rhs: Blade): Sign {
     // This ordering produces the canonical ordering in the Bitmap Representation.
     // See GEOMETRIC ALGEBRA for Computer Science, p 512.
     // e.g.

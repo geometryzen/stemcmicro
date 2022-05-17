@@ -16,6 +16,7 @@ type KIND = typeof NIL | typeof CONS | typeof ATOM;
 type INFO = { kind: KIND, parts: string[] };
 
 export const HASH_BLADE = 'Blade';
+export const HASH_ERR = 'Err';
 export const HASH_FLT = 'Flt';
 export const HASH_RAT = 'Rat';
 export const HASH_STR = 'Str';
@@ -23,6 +24,7 @@ export const HASH_SYM = 'Sym';
 export const HASH_TENSOR = 'Tensor';
 export const HASH_UOM = 'Uom';
 export const HASH_ANY = 'U';
+export const HASH_NIL = 'Nil';
 
 export function hash_binop_atom_atom(opr: Sym, lhs: string, rhs: string): string {
     return `(${opr.key()} ${lhs} ${rhs})`;
@@ -78,7 +80,7 @@ function compress(info: INFO): string {
             return info.parts[0];
         }
         default: {
-            return 'NIL';
+            return HASH_NIL;
         }
     }
 }
@@ -122,13 +124,13 @@ function hash_info_at_level(expr: U, level: number): INFO {
         return { kind: ATOM, parts: [HASH_FLT] };
     }
     if (is_nil(expr)) {
-        return { kind: NIL, parts: ['NIL'] };
+        return { kind: NIL, parts: [HASH_NIL] };
     }
     if (is_str(expr)) {
         return { kind: ATOM, parts: [HASH_STR] };
     }
     if (is_err(expr)) {
-        return { kind: ATOM, parts: ['Err'] };
+        return { kind: ATOM, parts: [HASH_ERR] };
     }
     throw new Error(`hash_string(${expr})`);
 }

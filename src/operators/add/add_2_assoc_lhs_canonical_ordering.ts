@@ -24,9 +24,11 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
+        /*
         if ($.implicateMode) {
             return false;
         }
+        */
         // const startTime = new Date().getTime();
         const retval = $.compareTerms(lhs.rhs, rhs) > 0;
         // const endTime = new Date().getTime();

@@ -1,7 +1,6 @@
 import { canonical_order_factors_3 } from "../../calculators/order/canonical_order_factors_3";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -24,8 +23,6 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-export const mul_2_sym_mul_2_sym_sym = new Builder();
-
 /**
  * a * (b * c)
  * 
@@ -43,12 +40,16 @@ class Op extends Function2<Sym, BCons<Sym, Sym, Sym>> implements Operator<Cons> 
         if ($.explicateMode) {
             return canoncal_reorder_factors_mul_sym_sym_sym(lhs, rhs, expr, $);
         }
+        /*
         if ($.implicateMode) {
             const a = lhs;
             const b = rhs.lhs;
             const c = rhs.rhs;
             return [CHANGED, makeList(MATH_MUL, a, b, c)];
         }
+        */
         return [NOFLAGS, expr];
     }
 }
+
+export const canonicalize_mul_2_sym_mul_2_sym_sym = new Builder();

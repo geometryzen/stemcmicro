@@ -24,9 +24,11 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
+        /*
         if ($.implicateMode) {
             return false;
         }
+        */
         return $.compareTerms(lhs, rhs.lhs) > 0;
     };
 }

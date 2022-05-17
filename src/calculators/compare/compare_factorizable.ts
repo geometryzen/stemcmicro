@@ -1,5 +1,5 @@
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { compare_blades, is_blade } from "../../operators/blade/BladeExtension";
+import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
 import { BCons } from "../../operators/helpers/BCons";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -11,7 +11,7 @@ import { compare } from "./compare";
  */
 export function compare_factorizable(lhs: BCons<Sym, U, U>, rhs: BCons<Sym, U, U>): Sign {
     if (is_blade(lhs.rhs) && is_blade(rhs.rhs)) {
-        switch (compare_blades(lhs.rhs, rhs.rhs)) {
+        switch (compare_blade_blade(lhs.rhs, rhs.rhs)) {
             case SIGN_GT: {
                 return SIGN_GT;
             }

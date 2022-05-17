@@ -109,9 +109,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         if ($.explicateMode) {
             return canoncal_reorder_terms_add_sym_sym_sym(lhs, rhs, orig, $);
         }
+        /*
         if ($.implicateMode) {
             return [CHANGED, makeList(opr, lhs.lhs, lhs.rhs, rhs)];
         }
+        */
         return [NOFLAGS, orig];
     }
 }

@@ -35,8 +35,14 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     get key(): string | undefined {
         return this.extension.key;
     }
+    get hash(): string | undefined {
+        return this.extension.hash;
+    }
     get name(): string {
         return this.extension.name;
+    }
+    get phases(): number | undefined {
+        return this.extension.phases;
     }
     isImag(expr: T): boolean {
         return this.extension.isImag(expr, this.$);

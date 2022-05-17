@@ -40,9 +40,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             const abc = $.valueOf(makeList(MATH_ADD, a, bc));
             return [CHANGED, abc];
         }
+        /*
         if ($.implicateMode) {
             return [CHANGED, $.valueOf(makeList(opr, lhs.lhs, lhs.rhs, rhs))];
         }
+        */
         return [NOFLAGS, orig];
     }
 }

@@ -14,15 +14,12 @@ describe("current", function () {
             `B = i * Bx + j * By + k * Bz`,
             `cross(A,B)`
         ];
-        const beginTime = new Date().getTime();
         const engine = createSymEngine();
-        const endTime = new Date().getTime();
-        console.log(`createSymEngine took ${endTime - beginTime} ms`);
         const $ = engine.$;
-        const startTime = new Date().getTime();
+        // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        const elapsedTime = new Date().getTime() - startTime;
-        console.log(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
+        // const elapsedTime = new Date().getTime() - startTime;
+        // console.log(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
         assert.strictEqual(print_expr(value, $), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
         engine.release();

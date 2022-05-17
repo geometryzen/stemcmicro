@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE_FLAG, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
@@ -15,13 +15,13 @@ class Builder implements OperatorBuilder<Cons> {
         // Nothing to see here.
     }
     create($: ExtensionEnv): Operator<Cons> {
-        return new Op(this.name, this.opr, $);
+        return new Implicator(this.name, this.opr, $);
     }
 }
 
 type LHS = Cons;
 type RHS = U;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 function is_opr(sym: Sym) {
     return function (expr: Cons): expr is Cons {
@@ -38,25 +38,24 @@ function is_opr(sym: Sym) {
 /**
  * (op (op a1 a2 a3 ...) b) => (op a1 a2 a3 ... b) 
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Implicator extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
+    readonly phases = PHASE_IMPLICATE_FLAG;
     constructor(name: string, opr: Sym, $: ExtensionEnv) {
+        // Ensure that the operator in the lhs operand is the same as the dominant operator symbol...
         super(name, opr, and(is_cons, is_opr(opr)), is_any, $);
         this.hash = hash_binop_cons_atom(opr, opr, HASH_ANY);
     }
-    cost(expr: EXPR, costTable: CostTable, depth: number): number {
+    cost(expr: EXP, costTable: CostTable, depth: number): number {
         // The extra cost for '+' proportional to depth is to encourage distribution law over addition expansion.
         return super.cost(expr, costTable, depth) + costTable.getCost(this.opr, this.$) * depth;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
-        if ($.implicateMode) {
-            return [CHANGED, makeList(this.opr, ...lhs.tail(), rhs)];
-        }
-        return [NOFLAGS, orig];
+        return [CHANGED, $.valueOf(makeList(this.opr, ...lhs.tail(), rhs))];
     }
 }
 
 export function associative_implicator(opr: Sym) {
-    return new Builder(`Associative implicator for ${opr.key()}`, opr);
+    return new Builder(`implicate ${opr.key()}`, opr);
 }

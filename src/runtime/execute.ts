@@ -6,7 +6,7 @@ import { create_source_trees } from '../scanner/create_source_tree';
 import { ScanOptions } from '../scanner/scan';
 import { subst } from '../subst';
 import { is_nil, NIL, U } from '../tree/tree';
-import { AUTOEXPAND, AUTOFACTOR, BAKE, IMPLICATE, PRETTYFMT, SYMBOL_I, SYMBOL_J } from './constants';
+import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, PRETTYFMT, SYMBOL_I, SYMBOL_J } from './constants';
 import { defs, halt, TOS } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
 
@@ -63,7 +63,7 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
 
     defs.prints.length = 0;
 
-    const value = top_level_fancy_transform(tree, $);
+    const value = top_level_transform(tree, $);
     // const value = top_level_basic_transform(tree, $);
 
     prints.push(...defs.prints);
@@ -96,7 +96,7 @@ export function check_stack() {
 /**
  *
  */
-export function top_level_fancy_transform(scanned: U, $: ExtensionEnv): U {
+export function top_level_transform(scanned: U, $: ExtensionEnv): U {
 
     const stack: U[] = [];
 
@@ -110,6 +110,14 @@ export function top_level_fancy_transform(scanned: U, $: ExtensionEnv): U {
     // $.setAssocL(MATH_ADD, true);
     // $.setAssocL(MATH_MUL, true);
     stack.push(scanned);
+
+    if (!$.isZero($.getBinding(EXPLICATE))) {
+        // console.lg("Implicating...");
+        let expr = stack.pop() as U;
+        expr = explicate(expr, $);
+        // console.lg(`implicated : ${print_expr(expr, $)}`);
+        stack.push(expr);
+    }
 
     // The normal start is defs.expanding => true.
     // AUTOEXPAND, by default is unbound. i.e. only bound to it's own symbol.
@@ -281,6 +289,23 @@ function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void
             stack.push(B);
             return;
         }
+    }
+}
+
+function explicate(input: U, $: ExtensionEnv): U {
+    const explicate = $.explicateMode;
+    const prettyfmt = $.prettyfmtMode;
+    const implicate = $.implicateMode;
+    $.setExplicate(true);
+    $.setPrettyFmt(false);
+    $.setImplicate(false);
+    try {
+        return transform(input, $);
+    }
+    finally {
+        $.setExplicate(explicate);
+        $.setPrettyFmt(prettyfmt);
+        $.setExplicate(implicate);
     }
 }
 

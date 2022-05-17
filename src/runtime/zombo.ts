@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../env/ExtensionEnv';
 import { Sym } from '../tree/sym/Sym';
 import { U } from '../tree/tree';
 import { hard_reset } from './defs';
-import { check_stack, top_level_fancy_transform } from './execute';
+import { check_stack, top_level_transform } from './execute';
 import { stack_list, stack_pop, stack_push } from './stack';
 import { zombo_parse } from './zombo_parse';
 
@@ -28,7 +28,7 @@ export function zombo(name: string, $: ExtensionEnv, ...argus: (string | number 
     const p1 = stack_pop();
 
     try {
-        return top_level_fancy_transform(p1, $);
+        return top_level_transform(p1, $);
     }
     catch (error) {
         hard_reset();

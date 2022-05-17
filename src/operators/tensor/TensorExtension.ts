@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
 import { Extension, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
 import { subst } from "../../subst";
@@ -82,7 +83,10 @@ class TensorExtension implements Extension<Tensor> {
         // Nothing to see here.
     }
     get key(): string {
-        return 'Tensor';
+        return HASH_TENSOR;
+    }
+    get hash(): string {
+        return HASH_TENSOR;
     }
     get name(): string {
         return 'TensorExtension';

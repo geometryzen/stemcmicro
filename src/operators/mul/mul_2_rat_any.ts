@@ -20,6 +20,21 @@ type LHS = Rat;
 type RHS = U;
 type EXPR = BCons<Sym, LHS, RHS>;
 
+//
+// TODO: We can choose whether to get reuse by extending classes or by containing functions, or both.
+//
+function multiply_rat_any(lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    if (lhs.isZero()) {
+        return [CHANGED, lhs];
+    }
+    else if (lhs.isOne()) {
+        return [CHANGED, rhs];
+    }
+    // TODO: It's important for this to be NOFLAGS rather than STABLE.
+    // e.g. Rat*(Blade*Uom) will not be processed further.
+    return [NOFLAGS, expr];
+}
+
 /**
  * Rat * X
  */
@@ -46,13 +61,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         return $.isVector(expr.rhs);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
-        if (lhs.isZero()) {
-            return [CHANGED, lhs];
-        }
-        else if (lhs.isOne()) {
-            return [CHANGED, rhs];
-        }
-        return [NOFLAGS, expr];
+        return multiply_rat_any(lhs, rhs, expr);
     }
 }
 

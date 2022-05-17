@@ -147,11 +147,19 @@ export interface OperatorBuilder<T extends U> {
     create($: ExtensionEnv): Operator<T>;
 }
 
+export const PHASE_EXPLICATE_FLAG = 1;
+export const PHASE_TRANSFORM_FLAG = 2;
+export const PHASE_COSMETICS_FLAG = 4;
+export const PHASE_IMPLICATE_FLAG = 8;
+export const PHASE_NONE = 0;
+export const PHASE_ALL = PHASE_EXPLICATE_FLAG | PHASE_TRANSFORM_FLAG | PHASE_COSMETICS_FLAG | PHASE_IMPLICATE_FLAG;
+
 export interface Operator<T extends U> {
     readonly key?: string;
     readonly name: string;
     readonly breaker?: boolean;
     readonly hash?: string;
+    readonly phases?: number;
     cost(expr: T, costs: CostTable, depth: number): number;
     isImag(expr: T): boolean;
     isKind(expr: U): boolean;
@@ -176,6 +184,7 @@ export interface Extension<T extends U> {
     readonly name: string;
     readonly breaker?: boolean;
     readonly hash?: string;
+    readonly phases?: number;
     cost(expr: T, costs: CostTable, depth: number, $: ExtensionEnv): number;
     isImag(expr: T, $: ExtensionEnv): boolean;
     isKind(expr: U, $: ExtensionEnv): boolean;

@@ -35,7 +35,7 @@ import { is_tensor } from "../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { is_uom } from "../tree/uom/is_uom";
 import { CostTable } from "./CostTable";
-import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, Sign, stableFlag, TFLAGS } from "./ExtensionEnv";
+import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_ALL, PHASE_COSMETICS_FLAG, PHASE_EXPLICATE_FLAG, PHASE_IMPLICATE_FLAG, PHASE_TRANSFORM_FLAG, Sign, stableFlag, TFLAGS } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -81,6 +81,9 @@ interface Assoc {
     rhs: boolean;
 }
 
+type Phase = typeof PHASE_EXPLICATE_FLAG | typeof PHASE_TRANSFORM_FLAG | typeof PHASE_IMPLICATE_FLAG | typeof PHASE_COSMETICS_FLAG;
+const phases = [PHASE_EXPLICATE_FLAG, PHASE_TRANSFORM_FLAG, PHASE_COSMETICS_FLAG, PHASE_IMPLICATE_FLAG];
+
 export function createEnv(options?: EnvOptions): ExtensionEnv {
 
     const config = config_from_options(options);
@@ -91,23 +94,25 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
 
     const builders: OperatorBuilder<U>[] = [];
     /**
-     * The operators in buckets that are determined by the operator.
+     * The operators in buckets that are determined by the phase and operator.
      */
-    const keydOps: { [key: string]: Operator<U>[] } = {};
+    const ops_by_phase: { [key: string]: Operator<U>[] }[] = [];
+    for (const phase of phases) {
+        ops_by_phase[phase] = {};
+    }
     const assocs: { [key: string]: Assoc } = {};
-    // const keydHash: { [hash: string]: number } = {};
 
     // The following two properties are mutually exclusive.
     let is_expanding_enabled = true;
     let is_factoring_enabled = false;
 
-    // The following two properties are mutually exclusive.
-    let explicate_mode = true;
-    let implicate_mode = false;
-
-    let prettyfmt_mode = false;
+    let current_phase: Phase = PHASE_TRANSFORM_FLAG;
 
     let fieldKind: 'R' | undefined = 'R';
+
+    function currentOps() {
+        return ops_by_phase[current_phase];
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function reverseAssocs() {
@@ -120,7 +125,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
     }
 
     function selectOperator(key: string, expr: U): Operator<U> {
-        const ops = keydOps[key];
+        const ops = currentOps()[key];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
                 if (op.isKind(expr)) {
@@ -130,7 +135,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for key ${key}`);
         }
         else {
-            throw new SystemError(`No operators for key ${key}`);
+            throw new SystemError(`No operators for key ${key} in phase ${current_phase}`);
         }
     }
 
@@ -197,8 +202,11 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         },
         reset(): void {
             builders.length = 0;
-            for (const key in keydOps) {
-                keydOps[key] = [];
+            for (const phase of phases) {
+                const ops = ops_by_phase[phase];
+                for (const key in ops) {
+                    ops[key] = [];
+                }
             }
         },
         resetSymTab(): void {
@@ -290,25 +298,33 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         initialize(): void {
             for (const builder of builders) {
                 const op = builder.create($);
-                if (op.hash) {
-                    if (!Array.isArray(keydOps[op.hash])) {
-                        keydOps[op.hash] = [op];
-                    }
-                    else {
-                        keydOps[op.hash].push(op);
-                    }
-                }
-                else {
-                    if (op.key) {
-                        if (!Array.isArray(keydOps[op.key])) {
-                            keydOps[op.key] = [op];
+                // If an operator does not restrict the phases to which it applies then it applies to all phases.
+                const phaseFlags = typeof op.phases === 'number' ? op.phases : PHASE_ALL;
+                for (const phase of phases) {
+                    if (phaseFlags & phase) {
+                        const ops = ops_by_phase[phase];
+                        if (op.hash) {
+                            if (!Array.isArray(ops[op.hash])) {
+                                ops[op.hash] = [op];
+                            }
+                            else {
+                                ops[op.hash].push(op);
+                            }
                         }
                         else {
-                            keydOps[op.key].push(op);
+                            if (op.key) {
+                                if (!Array.isArray(ops[op.key])) {
+                                    ops[op.key] = [op];
+                                }
+                                else {
+                                    ops[op.key].push(op);
+                                }
+                            }
+                            else {
+                                throw new SystemError(`${op.name} has no key and nohash`);
+                            }
                         }
-                    }
-                    else {
-                        throw new SystemError(`${op.name} has no key and nohash`);
+
                     }
                 }
             }
@@ -359,13 +375,13 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return is_factoring_enabled;
         },
         get explicateMode(): boolean {
-            return explicate_mode;
+            return current_phase === PHASE_EXPLICATE_FLAG;
         },
         get prettyfmtMode(): boolean {
-            return prettyfmt_mode;
+            return current_phase === PHASE_COSMETICS_FLAG;
         },
         get implicateMode(): boolean {
-            return implicate_mode;
+            return current_phase === PHASE_IMPLICATE_FLAG;
         },
         isImag(expr: U): boolean {
             return $.operatorFor(expr).isImag(expr);
@@ -451,7 +467,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             if (is_cons(expr)) {
                 const keys = hash_info(expr);
                 for (const key of keys) {
-                    const ops = keydOps[key];
+                    const ops = currentOps()[key];
                     if (Array.isArray(ops)) {
                         for (const op of ops) {
                             if (op.isKind(expr)) {
@@ -460,7 +476,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
-                throw new SystemError(`${expr}`);
+                throw new SystemError(`${expr}, current_phase = ${current_phase}`);
             }
             else if (is_num(expr)) {
                 return selectOperator(expr.name, expr);
@@ -539,24 +555,18 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
         },
         setExplicate(explicate: boolean): void {
-            explicate_mode = explicate;
             if (explicate) {
-                implicate_mode = false;
-                prettyfmt_mode = false;
+                current_phase = PHASE_EXPLICATE_FLAG;
             }
         },
         setImplicate(implicate: boolean): void {
-            implicate_mode = implicate;
             if (implicate) {
-                explicate_mode = false;
-                prettyfmt_mode = false;
+                current_phase = PHASE_IMPLICATE_FLAG;
             }
         },
         setPrettyFmt(prettying: boolean): void {
-            prettyfmt_mode = prettying;
             if (prettying) {
-                explicate_mode = false;
-                implicate_mode = false;
+                current_phase = PHASE_COSMETICS_FLAG;
             }
         },
         subtract(lhs: U, rhs: U): U {
@@ -581,14 +591,15 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 let changedExpr = false;
                 let curExpr: U = expr;
                 let doneWithExpr = false;
+                const pops = currentOps();
                 while (!doneWithExpr) {
                     doneWithExpr = true;
                     // keys are the buckets we should look in for operators from specific to generic.
                     const keys = hash_info(curExpr);
                     for (const key of keys) {
                         let doneWithKey = false;
-                        const ops = keydOps[key];
-                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : -1}`);
+                        const ops = pops[key];
+                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
@@ -611,7 +622,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else {
-                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
+                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${curExpr}`);
                                 }
                             }
                         }

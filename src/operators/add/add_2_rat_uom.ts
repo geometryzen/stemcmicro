@@ -29,6 +29,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+        // TODO: What if the Rat is zero?
         return [CHANGED, new Err('operator + (Rat, Uom) is not supported.')];
     }
 }

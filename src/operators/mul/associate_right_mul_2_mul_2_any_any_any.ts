@@ -26,7 +26,7 @@ type EXP = BCons<Sym, LHS, RHS>;
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('mul_2_mul_2_any_any_any', MATH_MUL, and(is_cons, is_mul_2_any_any), is_any, $);
+        super('associate_right_mul_2_mul_2_any_any_any', MATH_MUL, and(is_cons, is_mul_2_any_any), is_any, $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_ANY);
     }
     isImag(expr: EXP): boolean {
@@ -44,14 +44,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             const abc = $.valueOf(makeList(lhs.opr, a, bc));
             return [CHANGED, abc];
         }
-        if ($.implicateMode) {
-            const a = lhs.lhs;
-            const b = lhs.rhs;
-            const c = rhs;
-            return [CHANGED, $.valueOf(makeList(opr, a, b, c))];
-        }
         return [NOFLAGS, expr];
     }
 }
 
-export const mul_2_mul_2_any_any_any = new Builder();
+export const associate_right_mul_2_mul_2_any_any_any = new Builder();

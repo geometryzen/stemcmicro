@@ -1,7 +1,6 @@
 import { canonical_order_factors_3 } from "../../calculators/order/canonical_order_factors_3";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -29,9 +28,7 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 /**
- * (a * b) * c 
- *             => (* a b c) (implicating)
- *             reordering (no fundamental)
+ * (a * b) * c reordering (not fundamental)
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
@@ -45,17 +42,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        if ($.explicateMode) {
-            return canoncal_reorder_factors_mul_sym_sym_sym(lhs, rhs, expr, $);
-        }
-        if ($.implicateMode) {
-            const a = lhs.lhs;
-            const b = lhs.rhs;
-            const c = rhs;
-            return [CHANGED, makeList(MATH_MUL, a, b, c)];
-        }
-        return [NOFLAGS, expr];
+        return canoncal_reorder_factors_mul_sym_sym_sym(lhs, rhs, expr, $);
     }
 }
 
-export const mul_2_mul_2_sym_sym_sym = new Builder();
+export const canonicalize_mul_2_mul_2_sym_sym_sym = new Builder();

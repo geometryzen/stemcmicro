@@ -1,6 +1,7 @@
 
 import { CostTable } from "../../env/CostTable";
-import { STABLE, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_NIL } from "../../hashing/hash_info";
 import { Cons, NIL, U } from "../../tree/tree";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -15,6 +16,9 @@ class NilExtension implements Operator<Cons> {
     }
     get key(): string {
         return NIL.name;
+    }
+    get hash(): string {
+        return HASH_NIL;
     }
     get name(): string {
         return 'NilExtension';

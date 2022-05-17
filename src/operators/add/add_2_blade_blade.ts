@@ -6,7 +6,7 @@ import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { compare_blades, is_blade } from "../blade/BladeExtension";
+import { compare_blade_blade, is_blade } from "../blade/BladeExtension";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 
@@ -21,7 +21,7 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 function cross(lhs: LHS, rhs: RHS): boolean {
-    switch (compare_blades(lhs, rhs)) {
+    switch (compare_blade_blade(lhs, rhs)) {
         case SIGN_GT:
         case SIGN_EQ: {
             return true;

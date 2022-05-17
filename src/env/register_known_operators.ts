@@ -21,12 +21,14 @@ import { add_2_assoc_lhs_canonical_ordering } from '../operators/add/add_2_assoc
 import { add_2_assoc_lhs_factorize_blades } from '../operators/add/add_2_assoc_lhs_factorize_blades';
 import { add_2_assoc_rhs_canonical_ordering } from '../operators/add/add_2_assoc_rhs_canonical_ordering';
 import { add_2_blade_blade } from '../operators/add/add_2_blade_blade';
+import { add_2_blade_mul_2_rat_blade } from '../operators/add/add_2_blade_mul_2_rat_blade';
 import { add_2_canonical_ordering } from '../operators/add/add_2_canonical_ordering';
 import { add_2_cons_rat } from '../operators/add/add_2_cons_rat';
 import { add_2_flt_flt } from '../operators/add/add_2_flt_flt';
 import { add_2_flt_rat } from '../operators/add/add_2_flt_rat';
 import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
 import { add_2_imag_real } from '../operators/add/add_2_imag_real';
+import { add_2_mul_2_any_blade_mul_2_any_blade } from '../operators/add/add_2_mul_2_any_blade_mul_2_any_blade';
 import { add_2_mul_2_imu_sym_sym } from '../operators/add/add_2_mul_2_imu_sym_sym';
 import { add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_inner_sym_sym_sym_mul_2_sym_outer_2_sym_sym';
 import { add_2_mul_2_rat_anX_anX } from '../operators/add/add_2_mul_2_rat_anX_anX';
@@ -34,6 +36,7 @@ import { add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym } from '../operators/ad
 import { add_2_mul_2_rat_X_mul_2_rat_X } from '../operators/add/add_2_mul_2_rat_X_mul_2_rat_X';
 import { add_2_mul_2_rat_zzz_aaa } from '../operators/add/add_2_mul_2_rat_zzz_aaa';
 import { add_2_pow_2_any_any_mul_2_any_any } from '../operators/add/add_2_pow_2_any_any_mul_2_any_any';
+import { add_2_rat_blade } from '../operators/add/add_2_rat_blade';
 import { add_2_rat_cons } from '../operators/add/add_2_rat_cons';
 import { add_2_rat_flt } from '../operators/add/add_2_rat_flt';
 import { add_2_rat_rat } from '../operators/add/add_2_rat_rat';
@@ -119,6 +122,12 @@ import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_any_mul_2_scalar_any } from '../operators/lco/lco_2_any_mul_2_scalar_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
 import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_any_any';
+import { associate_right_mul_2_mul_2_any_any_any } from '../operators/mul/associate_right_mul_2_mul_2_any_any_any';
+import { canonicalize_mul_2_mul_2_sym_sym_sym } from '../operators/mul/canonicalize_mul_2_mul_2_sym_sym_sym';
+import { canonicalize_mul_2_sym_mul_2_sym_sym } from '../operators/mul/canonicalize_mul_2_sym_mul_2_sym_sym';
+import { implicate_mul_2_mul_2_any_any_any } from '../operators/mul/implicate_mul_2_mul_2_any_any_any';
+import { implicate_mul_2_mul_2_sym_sym_sym } from '../operators/mul/implicate_mul_2_mul_2_sym_sym_sym';
+import { implicate_mul_2_sym_mul_2_sym_sym } from '../operators/mul/implicate_mul_2_sym_mul_2_sym_sym';
 import { mul_2_any_any } from '../operators/mul/mul_2_any_any';
 import { mul_2_any_mul } from '../operators/mul/mul_2_any_mul';
 import { mul_2_any_mul_2_any_any } from '../operators/mul/mul_2_any_mul_2_any_any';
@@ -132,7 +141,6 @@ import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_an
 import { mul_2_flt_rat } from '../operators/mul/mul_2_flt_rat';
 import { mul_2_flt_uom } from '../operators/mul/mul_2_flt_uom';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
-import { mul_2_mul_2_any_any_any } from '../operators/mul/mul_2_mul_2_any_any_any';
 import { mul_2_mul_2_any_imu_imu } from '../operators/mul/mul_2_mul_2_any_imu_imu';
 import { mul_2_mul_2_any_sym_imu } from '../operators/mul/mul_2_mul_2_any_sym_imu';
 import { mul_2_mul_2_any_sym_mul_2_imu_sym } from '../operators/mul/mul_2_mul_2_any_sym_mul_2_imu_sym';
@@ -140,12 +148,12 @@ import { mul_2_mul_2_any_sym_sym } from '../operators/mul/mul_2_mul_2_any_sym_sy
 import { mul_2_mul_2_num_any_rat } from '../operators/mul/mul_2_mul_2_num_any_rat';
 import { mul_2_mul_2_rat_any_mul_2_rat_any } from '../operators/mul/mul_2_mul_2_rat_any_mul_2_rat_any';
 import { mul_2_mul_2_rat_sym_sym } from '../operators/mul/mul_2_mul_2_rat_sym_sym';
-import { mul_2_mul_2_sym_sym_sym } from '../operators/mul/mul_2_mul_2_sym_sym_sym';
 import { mul_2_one_any } from '../operators/mul/mul_2_one_any';
 import { mul_2_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_pow_2_xxx_rat_xxx } from '../operators/mul/mul_2_pow_2_xxx_rat_xxx';
 import { mul_2_pow_2_zzz_rat_aaa } from '../operators/mul/mul_2_pow_2_zzz_rat_aaa';
 import { mul_2_rat_any } from '../operators/mul/mul_2_rat_any';
+import { mul_2_rat_blade } from '../operators/mul/mul_2_rat_blade';
 import { mul_2_rat_flt } from '../operators/mul/mul_2_rat_flt';
 import { mul_2_rat_mul_2_rat_any } from '../operators/mul/mul_2_rat_mul_2_rat_any';
 import { mul_2_rat_mul_2_sym_sym } from '../operators/mul/mul_2_rat_mul_2_sym_sym';
@@ -159,7 +167,6 @@ import { mul_2_sym_flt } from '../operators/mul/mul_2_sym_flt';
 import { mul_2_sym_imu } from '../operators/mul/mul_2_sym_imu';
 import { mul_2_sym_inner_2_sym_sym } from '../operators/mul/mul_2_sym_inner_2_sym_sym';
 import { mul_2_sym_mul_2_rat_any } from '../operators/mul/mul_2_sym_mul_2_rat_any';
-import { mul_2_sym_mul_2_sym_sym } from '../operators/mul/mul_2_sym_mul_2_sym_sym';
 import { mul_2_sym_num } from '../operators/mul/mul_2_sym_num';
 import { mul_2_sym_pow_2_sym_two } from '../operators/mul/mul_2_sym_pow_2_sym_two';
 import { mul_2_sym_rat } from '../operators/mul/mul_2_sym_rat';
@@ -272,6 +279,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_flt_flt);
     $.defineOperator(add_2_flt_rat);
     $.defineOperator(add_2_flt_uom);
+    $.defineOperator(add_2_rat_blade);
     $.defineOperator(add_2_rat_uom);
     $.defineOperator(add_2_rat_flt);
     $.defineOperator(add_2_rat_rat);
@@ -286,6 +294,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_cons_rat);
     $.defineOperator(add_2_xxx_mul_2_rm1_xxx);
     $.defineOperator(add_2_any_mul_2_rat_any);
+    $.defineOperator(add_2_blade_mul_2_rat_blade);
     $.defineOperator(add_2_zzz_mul_2_rat_aaa);
     $.defineOperator(add_2_add_2_sym_xxx_xxx);
     $.defineOperator(add_2_add_2_sym_sym_sym);
@@ -301,6 +310,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_mul_2_rat_anX_anX);
     $.defineOperator(add_2_mul_2_rat_zzz_aaa);
     $.defineOperator(add_2_mul_2_imu_sym_sym);
+    $.defineOperator(add_2_mul_2_any_blade_mul_2_any_blade);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
     $.defineOperator(add_2_any_add_2_any_any);
     $.defineOperator(add_2_any_add);
@@ -338,6 +348,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_flt_uom);
     $.defineOperator(mul_2_flt_mul_2_flt_any);
 
+    $.defineOperator(mul_2_rat_blade);
     $.defineOperator(mul_2_rat_flt);
     $.defineOperator(mul_2_rat_rat);
     $.defineOperator(mul_2_rat_sym);
@@ -350,7 +361,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(simplify_mul_2_blade_mul_2_blade_any);
 
     $.defineOperator(mul_2_mul_2_aaa_bbb_bbb);
-    $.defineOperator(mul_2_mul_2_sym_sym_sym);
+    $.defineOperator(canonicalize_mul_2_mul_2_sym_sym_sym);
+    $.defineOperator(implicate_mul_2_mul_2_sym_sym_sym);
     $.defineOperator(mul_2_mul_2_rat_sym_sym);
     $.defineOperator(mul_2_mul_2_num_any_rat);
     $.defineOperator(mul_2_mul_2_any_imu_imu);
@@ -364,7 +376,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('Sym * Blade', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_blade));
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('Sym * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_uom));
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('Blade * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_BLADE), MATH_MUL, is_blade, is_uom));
-    $.defineOperator(mul_2_mul_2_any_any_any);
+    $.defineOperator(associate_right_mul_2_mul_2_any_any_any);
+    $.defineOperator(implicate_mul_2_mul_2_any_any_any);
     $.defineOperator(mul_2_pow_2_xxx_rat_xxx);
     // $.defineOperator(mul_2_outer_2_sym_sym_sym);
     $.defineOperator(mul_2_zzz_pow_2_aaa_rat);
@@ -372,7 +385,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_sym_inner_2_sym_sym);
     // Disable because it is a very strong canonicalizer.
     // $.defineOperator(mul_2_sym_outer_2_sym_sym);
-    $.defineOperator(mul_2_sym_mul_2_sym_sym);
+    $.defineOperator(canonicalize_mul_2_sym_mul_2_sym_sym);
+    $.defineOperator(implicate_mul_2_sym_mul_2_sym_sym);
     $.defineOperator(mul_2_sym_mul_2_rat_any);
     $.defineOperator(mul_2_sym_pow_2_sym_two);
     $.defineOperator(mul_2_sym_flt);

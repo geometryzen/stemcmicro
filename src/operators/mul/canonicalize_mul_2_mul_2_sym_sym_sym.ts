@@ -1,5 +1,5 @@
 import { canonical_order_factors_3 } from "../../calculators/order/canonical_order_factors_3";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -32,6 +32,8 @@ class Builder implements OperatorBuilder<Cons> {
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
+    // Assuming that there is a dependency on all features because of the use of compare factors.
+    readonly dependencies: FEATURE[] = ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'];
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_sym_sym_sym', MATH_MUL, and(is_cons, is_mul_2_sym_sym), is_sym, $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);

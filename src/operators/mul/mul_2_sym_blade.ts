@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -32,6 +32,7 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('mul_2_sym_blade', MATH_MUL, is_sym, is_blade, cross($), $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_BLADE);

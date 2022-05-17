@@ -37,7 +37,8 @@ export function stableFlag(flags: TFLAGS): boolean {
     return (flags & STABLE) === STABLE;
 }
 
-export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
+// TODO: Need to be able to handle positive and negative cases (like Vector).
+export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector' | '~Vector';
 
 export interface ExtensionEnv {
     addCost(pattern: Pattern, value: number): void;

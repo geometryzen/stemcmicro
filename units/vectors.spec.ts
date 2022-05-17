@@ -111,7 +111,9 @@ describe("vectors", function () {
             `A = e1 * Ax + e2 * Ay + e3 * Az`,
             `abs(A)`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
@@ -123,7 +125,10 @@ describe("vectors", function () {
             const lines: string[] = [
                 `(a*b)*c`
             ];
-            const engine = createSymEngine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createSymEngine({
+                dependencies: ['Vector'],
+                treatAsVectors: ['a', 'b', 'c']
+            });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(value, $), "(* a b c)");
@@ -162,7 +167,10 @@ describe("vectors", function () {
                 `implicate=1`,
                 `(a*n)*n - 2*(a|n)*n`,
             ];
-            const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
+            const engine = createSymEngine({
+                dependencies: ['Vector'],
+                treatAsVectors: ['a', 'n']
+            });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(value, $), "(* -1 n a n)");
@@ -174,7 +182,10 @@ describe("vectors", function () {
                 `implicate=0`,
                 `(a*n)*n - 2*(a|n)*n + n * a * n`,
             ];
-            const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
+            const engine = createSymEngine({
+                dependencies: ['Vector'],
+                treatAsVectors: ['a', 'n']
+            });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(value, $), "0");
@@ -202,7 +213,10 @@ describe("vectors", function () {
                 `implicate=1`,
                 `a*n - 2*(a|n)`,
             ];
-            const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
+            const engine = createSymEngine({
+                dependencies: ['Vector'],
+                treatAsVectors: ['a', 'n']
+            });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(value,$), "0");
@@ -295,7 +309,9 @@ describe("vectors", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `A`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(+ (* Ax i) (* Ay j) (* Az k))");
@@ -311,7 +327,9 @@ describe("vectors", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `abs(A)`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
@@ -328,7 +346,9 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A|B`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");

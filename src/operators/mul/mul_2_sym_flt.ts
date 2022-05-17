@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -29,6 +29,7 @@ type EXP = BCons<Sym, LHS, RHS>
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Flt'];
     constructor($: ExtensionEnv) {
         super('mul_2_sym_flt', MATH_MUL, is_sym, is_flt, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_FLT);

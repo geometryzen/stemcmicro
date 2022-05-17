@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
@@ -18,6 +18,7 @@ export const mul_2_flt_flt = new Builder();
 
 class Op extends Function2<Flt, Flt> implements Operator<Cons> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Flt'];
     constructor($: ExtensionEnv) {
         super('mul_2_flt_flt', MATH_MUL, is_flt, is_flt, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_FLT, HASH_FLT);

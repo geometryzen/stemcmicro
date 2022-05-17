@@ -10,7 +10,9 @@ describe("SI units", function () {
             `kg = uom("kilogram")`,
             `kg / 5`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Uom']
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), "(* 1/5 kg)");
@@ -23,7 +25,7 @@ describe("SI units", function () {
             `kg / 5.0`
         ];
         const engine = createSymEngine({
-            dependencies: ['Flt']
+            dependencies: ['Flt', 'Uom']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -39,7 +41,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("kilogram")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "kg");
@@ -49,7 +53,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("meter")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "m");
@@ -59,7 +65,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("second")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "s");
@@ -69,7 +77,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("coulomb")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "C");
@@ -79,7 +89,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("ampere")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "A");
@@ -89,7 +101,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("kelvin")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "K");
@@ -99,7 +113,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("mole")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "mol");
@@ -109,7 +125,9 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("candela")`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "cd");
@@ -123,7 +141,9 @@ describe("uom", function () {
                 `m = uom("meter")`,
                 `kg * m`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "kg m");
@@ -134,7 +154,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `5.0 * kg`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Flt', 'Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "5.0*kg");
@@ -146,7 +168,7 @@ describe("uom", function () {
                 `kg * 5.0`
             ];
             const engine = createSymEngine({
-                dependencies: ['Flt']
+                dependencies: ['Flt', 'Uom']
             });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -158,7 +180,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `2 * kg`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "2*kg");
@@ -169,7 +193,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg * 2`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "2*kg");
@@ -182,7 +208,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `e1 * kg`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "e1*kg");
@@ -195,7 +223,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg * e1`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "e1*kg");
@@ -209,7 +239,9 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `m / s`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
@@ -225,7 +257,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `5.0 / kg`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Flt', 'Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "5.0*kg ** -1");
@@ -237,7 +271,7 @@ describe("uom", function () {
                 `kg / 5.0`
             ];
             const engine = createSymEngine({
-                dependencies: ['Flt']
+                dependencies: ['Flt', 'Uom']
             });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -250,7 +284,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `2 / kg`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "2*kg ** -1");
@@ -261,7 +297,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg / 2`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "1/2*kg");
@@ -285,7 +323,10 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `6.0 + kg`
             ];
-            const engine = createSymEngine({ version: 2 });
+            const engine = createSymEngine({
+                dependencies: ['Flt', 'Uom'],
+                version: 2
+            });
             const $ = engine.$;
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(print_expr(values[0], $), "operator + (Flt, Uom) is not supported.");
@@ -297,7 +338,7 @@ describe("uom", function () {
                 `kg + 5.0`
             ];
             const engine = createSymEngine({
-                dependencies: ['Flt']
+                dependencies: ['Flt', 'Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
             const $ = engine.$;
@@ -319,7 +360,10 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg + 2`
             ];
-            const engine = createSymEngine({ version: 2 });
+            const engine = createSymEngine({
+                dependencies: ['Uom'],
+                version: 2
+            });
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(print_expr(values[0], engine.$), "operator + (Uom, Rat) is not supported.");
             engine.release();
@@ -333,7 +377,9 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `kg * m / s / s`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
@@ -351,7 +397,9 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `kg * m / (s * s)`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
@@ -369,7 +417,9 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `kg * m / s ** 2`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
@@ -390,7 +440,9 @@ describe("uom", function () {
                 `J = N * m`,
                 `J / C`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
@@ -407,7 +459,9 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `A * s`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(value)) {

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";
@@ -50,6 +50,7 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Vector'];
     constructor($: ExtensionEnv) {
         super('factorize_ab_minus_two_a_dot_b', MATH_ADD, and(is_cons, is_mul_2_sym_sym), and(is_cons, is_mul_2_rat_inner_2_sym_sym), cross($), $);
         this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);

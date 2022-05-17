@@ -139,7 +139,10 @@ describe("canon", function () {
             const lines: string[] = [
                 `(a|b)*c+(a|c)*b`
             ];
-            const engine = createSymEngine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createSymEngine({
+                dependencies: ['Vector'],
+                treatAsVectors: ['a', 'b', 'c']
+            });
             const $ = engine.$;
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(expr, $), '(+ (* (| a c) b) (* (| a b) c))');

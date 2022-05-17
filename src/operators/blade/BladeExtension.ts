@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, NOFLAGS, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_BLADE } from "../../hashing/hash_info";
 import { U } from "../../tree/tree";
 import { bitCount } from "../../tree/vec/bitCount";
 import { Blade } from "../../tree/vec/Blade";
@@ -49,8 +50,14 @@ class BladeExtension implements Extension<Blade> {
     get key(): string {
         return 'Blade';
     }
+    get hash(): string {
+        return HASH_BLADE;
+    }
     get name(): string {
         return 'BladeExtension';
+    }
+    get dependencies(): FEATURE[] {
+        return ['Blade'];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cost(expr: U, costs: CostTable): number {

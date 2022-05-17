@@ -18,7 +18,10 @@ describe("scalars", function () {
         const lines: string[] = [
             `b*a`,
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['a', 'b']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), "b*a");
@@ -28,7 +31,10 @@ describe("scalars", function () {
         const lines: string[] = [
             `b*a`,
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['a']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), "a*b");
@@ -38,7 +44,10 @@ describe("scalars", function () {
         const lines: string[] = [
             `b*a`,
         ];
-        const engine = createSymEngine({ treatAsVectors: ['b'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['b']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), "a*b");
@@ -48,7 +57,10 @@ describe("scalars", function () {
         const lines: string[] = [
             `y*x*b*a`,
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['a', 'b']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), "b*a*x*y");

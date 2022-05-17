@@ -6,7 +6,7 @@ import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
-import { MATH_VECTOR_OR_CROSS_PRODUCT } from "./MATH_VECTOR_OR_CROSS_PRODUCT";
+import { MATH_VECTOR_CROSS_PRODUCT } from "./MATH_VECTOR_CROSS_PRODUCT";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -24,7 +24,7 @@ type EXPR = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     constructor($: ExtensionEnv) {
-        super('cross_add_2_any_any_any', MATH_VECTOR_OR_CROSS_PRODUCT, and(is_cons, is_add_2_any_any), is_any, $);
+        super('cross_add_2_any_any_any', MATH_VECTOR_CROSS_PRODUCT, and(is_cons, is_add_2_any_any), is_any, $);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

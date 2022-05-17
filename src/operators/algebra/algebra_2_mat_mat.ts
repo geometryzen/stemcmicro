@@ -21,6 +21,7 @@ class Builder implements OperatorBuilder<U> {
  */
 class Op extends Function2<Tensor, Tensor> implements Operator<U> {
     readonly hash: string;
+    // TODO readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('algebra_2_tensor_tensor', new Sym('algebra'), is_tensor, is_tensor, $);
         this.hash = hash_binop_atom_atom(new Sym('algebra'), HASH_TENSOR, HASH_TENSOR);

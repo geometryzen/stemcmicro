@@ -1,4 +1,5 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -9,7 +10,7 @@ import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_blade_rat } from "../mul/is_mul_2_blade_rat";
 import { is_rat } from "../rat/RatExtension";
-import { MATH_VECTOR_OR_CROSS_PRODUCT } from "./MATH_VECTOR_OR_CROSS_PRODUCT";
+import { MATH_VECTOR_CROSS_PRODUCT } from "./MATH_VECTOR_CROSS_PRODUCT";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -22,8 +23,11 @@ type RHS = Blade;
 type EXPR = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+    readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
-        super('cross_blade_blade', MATH_VECTOR_OR_CROSS_PRODUCT, is_blade, is_blade, $);
+        super('cross_blade_blade', MATH_VECTOR_CROSS_PRODUCT, is_blade, is_blade, $);
+        this.hash = hash_binop_atom_atom(MATH_VECTOR_CROSS_PRODUCT, HASH_BLADE, HASH_BLADE);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {

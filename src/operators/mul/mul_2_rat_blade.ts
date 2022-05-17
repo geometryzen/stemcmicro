@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -29,6 +29,7 @@ type EXP = BCons<Sym, LHS, RHS>
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('mul_2_rat_blade', MATH_MUL, is_rat, is_blade, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_BLADE);

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Flt, flt } from "../../tree/flt/Flt";
@@ -17,6 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 class Op extends Function2<Flt, Rat> implements Operator<Cons> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Flt'];
     constructor($: ExtensionEnv) {
         super('add_2_flt_rat', MATH_ADD, is_flt, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_FLT, HASH_RAT);

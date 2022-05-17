@@ -96,7 +96,8 @@ describe("abs", function () {
             `abs(1+2.0*i)`,
         ];
         const engine = createSymEngine({
-            dependencies: ['Flt']
+            // FIXME: The absence of Imu causes this expression to loop.
+            dependencies: ['Flt', 'Imu']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);

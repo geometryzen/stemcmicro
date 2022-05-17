@@ -101,7 +101,7 @@ import { float_mul_2_flt_sym } from '../operators/float/float_mul_2_flt_sym';
 import { float_rat } from '../operators/float/float_rat';
 import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
-import { flt_builder } from '../operators/flt/FltExtension';
+import { flt_builder, is_flt } from '../operators/flt/FltExtension';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hyp } from '../operators/hyp/HypExtension';
@@ -136,6 +136,7 @@ import { mul_2_any_mul_2_any_any } from '../operators/mul/mul_2_any_mul_2_any_an
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
+import { mul_2_blade_sym } from '../operators/mul/mul_2_blade_sym';
 import { mul_2_cons_rat } from '../operators/mul/mul_2_cons_rat';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
 import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
@@ -173,6 +174,7 @@ import { mul_2_sym_num } from '../operators/mul/mul_2_sym_num';
 import { mul_2_sym_pow_2_sym_two } from '../operators/mul/mul_2_sym_pow_2_sym_two';
 import { mul_2_sym_rat } from '../operators/mul/mul_2_sym_rat';
 import { mul_2_sym_sym } from '../operators/mul/mul_2_sym_sym';
+import { mul_2_sym_sym_general } from '../operators/mul/mul_2_sym_sym_general';
 import { mul_2_uom_flt } from '../operators/mul/mul_2_uom_flt';
 import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
@@ -199,7 +201,7 @@ import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
 import { printlist_1_any } from '../operators/printlist/printlist_1_any';
 import { printlist_keyword } from '../operators/printlist/printlist_keyword';
-import { rat } from '../operators/rat/RatExtension';
+import { is_rat, rat } from '../operators/rat/RatExtension';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
@@ -227,8 +229,6 @@ import { is_uom, uom } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_TAU } from '../runtime/ns_math';
 import { SymEngineOptions } from '../runtime/symengine';
-import { is_flt } from '../tree/flt/is_flt';
-import { is_rat } from '../tree/rat/is_rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 
 
@@ -375,11 +375,11 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_mul_2_any_sym_mul_2_imu_sym);
     // Notice how we need three operators in order to provide canonical ordering.
     // TODO: DRY the duplication of hash specification and matching guard functions.
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('Flt * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_FLT), MATH_MUL, is_flt, is_uom));
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('Rat * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_RAT), MATH_MUL, is_flt, is_uom));
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('Sym * Blade', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_blade));
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('Sym * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_uom));
-    $.defineOperator(heterogenous_canonical_order_lhs_assoc('Blade * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_BLADE), MATH_MUL, is_blade, is_uom));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Flt * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_FLT), MATH_MUL, is_flt, is_uom));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Rat * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_RAT), MATH_MUL, is_flt, is_uom));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Sym * Blade', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_blade));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Sym * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_uom));
+    $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Blade * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_BLADE), MATH_MUL, is_blade, is_uom));
     $.defineOperator(associate_right_mul_2_mul_2_any_any_any);
     $.defineOperator(implicate_mul_2_mul_2_any_any_any);
     $.defineOperator(mul_2_pow_2_xxx_rat_xxx);
@@ -396,6 +396,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_sym_flt);
     $.defineOperator(mul_2_sym_rat);
     $.defineOperator(mul_2_sym_num);
+    $.defineOperator(mul_2_sym_sym_general);
     $.defineOperator(mul_2_sym_sym);
     $.defineOperator(mul_2_sym_imu);
     $.defineOperator(mul_2_pow_2_zzz_rat_aaa);
@@ -404,17 +405,18 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_any_mul);
 
     // TODO: Notice that this transformer is not being found because Num is not recognized in hashing...
-    $.defineOperator(heterogenous_canonical_order('canonical order: Flt * Uom', '(* Uom Flt)', MATH_MUL, is_flt, is_uom));
-    $.defineOperator(heterogenous_canonical_order('canonical order: Rat * Uom', '(* Uom Rat)', MATH_MUL, is_rat, is_uom));
-    $.defineOperator(heterogenous_canonical_order('canonical order: Sym * Blade', '(* Blade Sym)', MATH_MUL, is_sym, is_blade));
-    $.defineOperator(heterogenous_canonical_order('canonical order: Sym * Uom', '(* Uom Sym)', MATH_MUL, is_sym, is_uom));
-    $.defineOperator(heterogenous_canonical_order('canonical order: Blade * Uom', '(* Uom Blade)', MATH_MUL, is_blade, is_uom));
+    $.defineOperator(heterogenous_canonical_order('HCO: Flt * Uom', '(* Uom Flt)', MATH_MUL, is_flt, is_uom));
+    $.defineOperator(heterogenous_canonical_order('HCO: Rat * Uom', '(* Uom Rat)', MATH_MUL, is_rat, is_uom));
+    $.defineOperator(heterogenous_canonical_order('HCO: Sym * Blade', '(* Blade Sym)', MATH_MUL, is_sym, is_blade));
+    $.defineOperator(heterogenous_canonical_order('HCO: Sym * Uom', '(* Uom Sym)', MATH_MUL, is_sym, is_uom));
+    $.defineOperator(heterogenous_canonical_order('HCO: Blade * Uom', '(* Uom Blade)', MATH_MUL, is_blade, is_uom));
     $.defineOperator(mul_2_uom_rat);
     $.defineOperator(mul_2_uom_flt);
     $.defineOperator(mul_2_uom_uom);
 
     $.defineOperator(mul_2_blade_flt);
     $.defineOperator(mul_2_blade_rat);
+    $.defineOperator(mul_2_blade_sym);
     $.defineOperator(mul_2_blade_blade);
     $.defineOperator(mul_2_scalar_blade);
     $.defineOperator(mul_2_any_any);

@@ -33,7 +33,10 @@ describe("A bootstrap", function () {
             `autofactor=0`,
             `b*a`
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['a', 'b']
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(actual, $), "b*a");
@@ -45,7 +48,10 @@ describe("A bootstrap", function () {
             `autofactor=1`,
             `a|b+a^b`
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['a', 'b']
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(actual, $), "a*b");
@@ -57,7 +63,10 @@ describe("A bootstrap", function () {
             `autofactor=1`,
             `a|b-a^b`
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['a', 'b']
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(actual, $), "b*a");
@@ -160,7 +169,10 @@ describe("C bootstrap", function () {
         const lines: string[] = [
             `b*a`
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['a', 'b']
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), "(* b a)");

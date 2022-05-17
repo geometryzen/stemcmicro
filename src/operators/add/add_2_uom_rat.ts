@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Err } from "../../tree/err/Err";
@@ -23,6 +23,7 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Uom'];
     constructor($: ExtensionEnv) {
         super('add_2_uom_rat', MATH_ADD, is_uom, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_UOM, HASH_RAT);

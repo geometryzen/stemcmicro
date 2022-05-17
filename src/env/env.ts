@@ -665,8 +665,16 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
 function dependencies_satisfied(deps: FEATURE[] | undefined, includes: FEATURE[]): boolean {
     if (Array.isArray(deps)) {
         for (const dep of deps) {
-            if (includes.indexOf(dep) < 0) {
-                return false;
+            if (dep.startsWith('~')) {
+                const s = dep.substring(1) as FEATURE;
+                if (includes.indexOf(s) >= 0) {
+                    return false;
+                }
+            }
+            else {
+                if (includes.indexOf(dep) < 0) {
+                    return false;
+                }
             }
         }
         return true;

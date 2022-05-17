@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_FLT } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -22,6 +22,7 @@ class Builder implements OperatorBuilder<Cons> {
  */
 class Op extends Function2<Flt, BCons<Sym, Rat, Rat>> implements Operator<Cons> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Flt', 'Imu'];
     constructor($: ExtensionEnv) {
         super('mul_2_flt_imu', MATH_MUL, is_flt, is_imu, $);
         this.hash = hash_binop_atom_cons(MATH_MUL, HASH_FLT, MATH_POW);

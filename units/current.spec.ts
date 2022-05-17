@@ -1,10 +1,22 @@
 import { assert } from "chai";
-import { print_expr } from "../src/print";
+import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("current", function () {
-    it("cross(A,B)", function () {
+    it("(c+a)*b", function () {
+        const lines: string[] = [
+            `(c+a)*b`
+        ];
+        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const $ = engine.$;
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "(+ (* a b) (* b c))");
+        assert.strictEqual(print_expr(actual, $), "a*b+b*c");
+
+        engine.release();
+    });
+    xit("cross(A,B)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `i=G[1]`,

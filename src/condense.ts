@@ -1,7 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { gcd } from './gcd';
 import { multiply_noexpand } from './multiply';
-import { noexpand1 } from './runtime/defs';
+import { use_factoring_with_unary_function } from './runtime/defs';
 import { is_add } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { doexpand_eval } from './scripting/doexpand_eval';
@@ -17,7 +17,7 @@ export function Eval_condense(p1: U, $: ExtensionEnv): void {
 }
 
 export function condense(p1: U, $: ExtensionEnv): U {
-    return noexpand1(yycondense, p1, $);
+    return use_factoring_with_unary_function(yycondense, p1, $);
 }
 
 export function yycondense(p1: U, $: ExtensionEnv): U {

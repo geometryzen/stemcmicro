@@ -1,10 +1,12 @@
 import { bake } from "../bake";
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_COSMETICS_FLAG, PHASE_EXPANDING_FLAG, PHASE_EXPLICATE_FLAG, PHASE_FACTORING_FLAG, PHASE_IMPLICATE_FLAG } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../predicates/is_imu';
 import { create_source_trees } from '../scanner/create_source_tree';
 import { ScanOptions } from '../scanner/scan';
 import { subst } from '../subst';
+import { is_rat } from "../tree/rat/is_rat";
+import { Sym } from "../tree/sym/Sym";
 import { is_nil, NIL, U } from '../tree/tree';
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, PRETTYFMT, SYMBOL_I, SYMBOL_J } from './constants';
 import { defs, halt, TOS } from './defs';
@@ -89,9 +91,19 @@ export function check_stack() {
     }
 }
 
-// cannot reference symbols yet
-
-// returns NIL on stack if no result to print
+/**
+ * 
+ */
+function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
+    const binding = $.getBinding(sym);
+    if (is_nil(binding)) {
+        return true;
+    }
+    if (is_rat(binding)) {
+        return !binding.isZero();
+    }
+    return true;
+}
 
 /**
  *
@@ -111,32 +123,26 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
     // $.setAssocL(MATH_MUL, true);
     stack.push(scanned);
 
-    if (!$.isZero($.getBinding(EXPLICATE))) {
-        // console.lg("Implicating...");
+    if (isNotDisabled(EXPLICATE, $)) {
+        // console.log("Explicating...");
         let expr = stack.pop() as U;
         expr = explicate(expr, $);
-        // console.lg(`implicated : ${print_expr(expr, $)}`);
+        // console.log(`explicated : ${print_expr(expr, $)}`);
         stack.push(expr);
     }
 
     // The normal start is defs.expanding => true.
     // AUTOEXPAND, by default is unbound. i.e. only bound to it's own symbol.
-    // isZero operating on Sym returns false. Therefore setExpanding will be true.
+    // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!
-    const autoExpand = $.getBinding(AUTOEXPAND);
-    const expanding = !$.isZero(autoExpand);
-    if (expanding) {
-        $.setExpanding(expanding);
-        $.setFactoring(false);
+    if (isNotDisabled(AUTOEXPAND, $)) {
+        $.setPhase(PHASE_EXPANDING_FLAG);
         // console.lg("Expanding...");
         stack.push(transform(stack.pop() as U, $));
     }
 
-    const autoFactor = $.getBinding(AUTOFACTOR);
-    const factoring = !$.isZero(autoFactor);
-    if (factoring) {
-        $.setExpanding(false);
-        $.setFactoring(factoring);
+    if (isNotDisabled(AUTOFACTOR, $)) {
+        $.setPhase(PHASE_FACTORING_FLAG);
         // console.lg("Factoring...");
         stack.push(transform(stack.pop() as U, $));
         // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
@@ -162,14 +168,14 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
             stack.push(expr);
         }
 
-        if (!$.isZero($.getBinding(PRETTYFMT))) {
+        if (isNotDisabled(PRETTYFMT, $)) {
             // console.lg("Prettying...");
             const expr = prettyfmt(stack.pop() as U, $);
             // console.lg(`prettyfmt : ${print_expr(expr, $)}`);
             stack.push(expr);
         }
 
-        if (!$.isZero($.getBinding(IMPLICATE))) {
+        if (isNotDisabled(IMPLICATE, $)) {
             // console.lg("Implicating...");
             let expr = stack.pop() as U;
             expr = implicate(expr, $);
@@ -293,52 +299,34 @@ function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void
 }
 
 function explicate(input: U, $: ExtensionEnv): U {
-    const explicate = $.explicateMode;
-    const prettyfmt = $.prettyfmtMode;
-    const implicate = $.implicateMode;
-    $.setExplicate(true);
-    $.setPrettyFmt(false);
-    $.setImplicate(false);
+    const phase = $.getPhase();
+    $.setPhase(PHASE_EXPLICATE_FLAG);
     try {
         return transform(input, $);
     }
     finally {
-        $.setExplicate(explicate);
-        $.setPrettyFmt(prettyfmt);
-        $.setExplicate(implicate);
+        $.setPhase(phase);
     }
 }
 
 function implicate(input: U, $: ExtensionEnv): U {
-    const explicate = $.explicateMode;
-    const prettyfmt = $.prettyfmtMode;
-    const implicate = $.implicateMode;
-    $.setExplicate(false);
-    $.setPrettyFmt(false);
-    $.setImplicate(true);
+    const phase = $.getPhase();
+    $.setPhase(PHASE_IMPLICATE_FLAG);
     try {
         return transform(input, $);
     }
     finally {
-        $.setExplicate(explicate);
-        $.setPrettyFmt(prettyfmt);
-        $.setExplicate(implicate);
+        $.setPhase(phase);
     }
 }
 
 function prettyfmt(input: U, $: ExtensionEnv): U {
-    const explicate = $.explicateMode;
-    const prettyftm = $.prettyfmtMode;
-    const implicate = $.implicateMode;
-    $.setExplicate(false);
-    $.setPrettyFmt(true);
-    $.setImplicate(false);
+    const phase = $.getPhase();
+    $.setPhase(PHASE_COSMETICS_FLAG);
     try {
         return transform(input, $);
     }
     finally {
-        $.setExplicate(explicate);
-        $.setPrettyFmt(prettyftm);
-        $.setExplicate(implicate);
+        $.setPhase(phase);
     }
 }

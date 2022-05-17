@@ -2,7 +2,7 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
-import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER, MATH_POW } from "../../runtime/ns_math";
+import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, makeList, U } from "../../tree/tree";
@@ -95,6 +95,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                 return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
             }
             else if ($.treatAsVector(rhs)) {
+                // TODO: We should have a better way to determine when to replace a * b => a | b + a ^ b
+                /*
                 if ($.isExpanding()) {
                     // a * b => (a | b) + (a ^ b), when a and b are vectors and we are expanding. 
                     const a = lhs;
@@ -104,6 +106,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                     const sumIntExt = $.valueOf(makeList(MATH_ADD, innerAB, outerAB));
                     return [CHANGED, sumIntExt];
                 }
+                */
                 return [STABLE, expr];
             }
             else {

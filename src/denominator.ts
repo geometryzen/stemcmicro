@@ -2,7 +2,7 @@ import { mp_denominator } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_negative_term } from './is';
 import { multiply_items } from './multiply';
-import { rationalize } from './rationalize';
+import { rationalize_factoring } from './rationalize';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
@@ -38,7 +38,7 @@ export function denominator(expr: U, $: ExtensionEnv): U {
     };
     //console.trace "denominator of: " + p1
     if (is_add(expr)) {
-        expr = rationalize(expr, $);
+        expr = rationalize_factoring(expr, $);
     }
 
     // (denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)

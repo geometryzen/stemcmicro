@@ -1,4 +1,4 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_EXPANDING_FLAG } from "../env/ExtensionEnv";
 import { clear_patterns } from '../pattern';
 import { scan } from '../scanner/scan';
 import { defs } from './defs';
@@ -332,6 +332,8 @@ export function execute_definitions(options: SymEngineOptions | undefined, $: Ex
                 const [scanned, tree] = scan(defn_string, { useCaretForExponentiation: $.useCaretForExponentiation });
                 try {
                     if (scanned > 0) {
+                        // Evaluating the tree for the side-effect which is to establish a binding.
+                        $.setPhase(PHASE_EXPANDING_FLAG);
                         $.valueOf(tree);
                     }
                 }

@@ -2,7 +2,7 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_EXPANDING_FLAG, PHASE_FACTORING_FLAG } from "../env/ExtensionEnv";
 import { Flt, flt, piAsDouble, zeroAsDouble } from "../tree/flt/Flt";
 import { Num } from "../tree/num/Num";
 import { negOne, one, zero } from "../tree/rat/Rat";
@@ -263,47 +263,47 @@ export function hard_reset() {
     defs.frame = TOS;
 }
 
-export function noexpand1(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const prev_expanding = $.isExpanding();
-    $.setExpanding(false);
+export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
+    const phase = $.getPhase();
+    $.setPhase(PHASE_FACTORING_FLAG);
     try {
         return func(arg, $);
     }
     finally {
-        $.setExpanding(prev_expanding);
+        $.setPhase(phase);
     }
 }
 
-export function noexpand2(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const prev_expanding = $.isExpanding();
-    $.setExpanding(false);
+export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
+    const phase = $.getPhase();
+    $.setPhase(PHASE_FACTORING_FLAG);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setExpanding(prev_expanding);
+        $.setPhase(phase);
     }
 }
 
-export function doexpand1(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const prev_expanding = $.isExpanding();
-    $.setExpanding(true);
+export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
+    const phase = $.getPhase();
+    $.setPhase(PHASE_EXPANDING_FLAG);
     try {
         return func(arg, $);
     }
     finally {
-        $.setExpanding(prev_expanding);
+        $.setPhase(phase);
     }
 }
 
-export function doexpand2(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const prev_expanding = $.isExpanding();
-    $.setExpanding(true);
+export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
+    const phase = $.getPhase();
+    $.setPhase(PHASE_EXPANDING_FLAG);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setExpanding(prev_expanding);
+        $.setPhase(phase);
     }
 }
 

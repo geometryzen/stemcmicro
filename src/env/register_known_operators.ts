@@ -29,6 +29,7 @@ import { add_2_flt_rat } from '../operators/add/add_2_flt_rat';
 import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
 import { add_2_imag_real } from '../operators/add/add_2_imag_real';
 import { add_2_mul_2_any_blade_mul_2_any_blade } from '../operators/add/add_2_mul_2_any_blade_mul_2_any_blade';
+import { add_2_mul_2_any_vector_mul_2_any_vector } from '../operators/add/add_2_mul_2_any_vector_mul_2_any_vector';
 import { add_2_mul_2_imu_sym_sym } from '../operators/add/add_2_mul_2_imu_sym_sym';
 import { add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_inner_sym_sym_sym_mul_2_sym_outer_2_sym_sym';
 import { add_2_mul_2_rat_anX_anX } from '../operators/add/add_2_mul_2_rat_anX_anX';
@@ -311,6 +312,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_mul_2_rat_zzz_aaa);
     $.defineOperator(add_2_mul_2_imu_sym_sym);
     $.defineOperator(add_2_mul_2_any_blade_mul_2_any_blade);
+    $.defineOperator(add_2_mul_2_any_vector_mul_2_any_vector);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
     $.defineOperator(add_2_any_add_2_any_any);
     $.defineOperator(add_2_any_add);

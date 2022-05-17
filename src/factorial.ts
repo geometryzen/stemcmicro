@@ -3,7 +3,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
 import { FACTORIAL } from './runtime/constants';
-import { defs, moveTos, noexpand1 } from './runtime/defs';
+import { defs, moveTos, use_factoring_with_unary_function } from './runtime/defs';
 import { is_add, is_factorial, is_multiply, is_power } from './runtime/helpers';
 import { stack_pop, stack_push } from './runtime/stack';
 import { doexpand_eval } from './scripting/doexpand_eval';
@@ -39,7 +39,7 @@ export function factorial(p1: U): U {
 // all these simplifications
 // do happen automatically via simplify
 function simplifyfactorials(p1: U, $: ExtensionEnv): U {
-    return noexpand1(simplifyfactorials_, p1, $);
+    return use_factoring_with_unary_function(simplifyfactorials_, p1, $);
 }
 
 function simplifyfactorials_(p1: U, $: ExtensionEnv): U {

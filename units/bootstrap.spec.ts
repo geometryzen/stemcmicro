@@ -24,7 +24,7 @@ describe("A bootstrap", function () {
         const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(actual, $), "a|b+a^b");
+        assert.strictEqual(print_expr(actual, $), "a*b");
 
         engine.release();
     });
@@ -36,7 +36,7 @@ describe("A bootstrap", function () {
         const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(actual, $), "a|b-a^b");
+        assert.strictEqual(print_expr(actual, $), "b*a");
 
         engine.release();
     });

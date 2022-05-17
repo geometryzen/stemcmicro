@@ -22,26 +22,12 @@ class PrintList extends Function1<U> implements Operator<Cons> {
     }
     transform1(opr: Sym, arg: U): [TFLAGS, U] {
         const $ = this.$;
-        const explicate = $.explicateMode;
-        const prettying = $.prettyfmtMode;
-        const implicate = $.implicateMode;
-        $.setExplicate(false);
-        $.setPrettyFmt(false);
-        $.setImplicate(false);
-        try {
-            const value = $.valueOf(arg);
-            const argList = makeList(value);
-            if (is_cons(argList)) {
-                const texts = print_in_mode(argList, PRINTMODE_LIST, $);
-                defs.prints.push(...texts);
-            }
-            return [CHANGED, NIL];
+        const argList = makeList(arg);
+        if (is_cons(argList)) {
+            const texts = print_in_mode(argList, PRINTMODE_LIST, $);
+            defs.prints.push(...texts);
         }
-        finally {
-            $.setExplicate(explicate);
-            $.setPrettyFmt(prettying);
-            $.setImplicate(implicate);
-        }
+        return [CHANGED, NIL];
     }
 }
 

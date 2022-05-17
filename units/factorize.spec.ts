@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { factorizeL } from "../src/calculators/factorizeL";
 import { imu } from "../src/env/imu";
 import { makeList } from "../src/makeList";
-import { print_expr } from "../src/print";
+import { print_expr, print_list } from "../src/print";
 import { MATH_MUL } from "../src/runtime/ns_math";
 import { createSymEngine } from "../src/runtime/symengine";
 import { is_rat } from "../src/tree/rat/is_rat";
@@ -121,8 +121,8 @@ describe("factorizeR", function () {
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(* a b)');
-        assert.strictEqual($.toInfixString(actual), 'a*b');
+        assert.strictEqual(print_list(actual, $), '(* a b)');
+        assert.strictEqual(print_expr(actual, $), 'a*b');
         engine.release();
     });
     it("2 * X + X", function () {
@@ -133,8 +133,8 @@ describe("factorizeR", function () {
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(* 3 a b)');
-        assert.strictEqual($.toInfixString(actual), '3*a*b');
+        assert.strictEqual(print_list(actual, $), '(* 3 a b)');
+        assert.strictEqual(print_expr(actual, $), '3*a*b');
         engine.release();
     });
     it("X + 2 * X", function () {
@@ -145,8 +145,8 @@ describe("factorizeR", function () {
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(* 3 a b)');
-        assert.strictEqual($.toInfixString(actual), '3*a*b');
+        assert.strictEqual(print_list(actual, $), '(* 3 a b)');
+        assert.strictEqual(print_expr(actual, $), '3*a*b');
         engine.release();
     });
     it("-2 * X + X", function () {
@@ -157,13 +157,13 @@ describe("factorizeR", function () {
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(* -1 a b)');
-        assert.strictEqual($.toInfixString(actual), '-a*b');
+        assert.strictEqual(print_list(actual, $), '(* -1 a b)');
+        assert.strictEqual(print_expr(actual, $), '-a*b');
         engine.release();
     });
 });
 
-describe("", function(){
+describe("", function () {
     it("(X + 2 * A) + 3 * A", function () {
         const lines: string[] = [
             `implicate=1`,
@@ -172,8 +172,8 @@ describe("", function(){
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(* -1 a b)');
-        assert.strictEqual($.toInfixString(actual), '5*A+X');
+        // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
+        assert.strictEqual(print_expr(actual, $), '5*A+X');
         engine.release();
     });
     it("(X + 2 * A) + A", function () {
@@ -184,8 +184,8 @@ describe("", function(){
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(* -1 a b)');
-        assert.strictEqual($.toInfixString(actual), '3*A+X');
+        // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
+        assert.strictEqual(print_expr(actual, $), '3*A+X');
         engine.release();
     });
     it("(X + A) + 2 * A", function () {
@@ -196,8 +196,8 @@ describe("", function(){
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(* -1 a b)');
-        assert.strictEqual($.toInfixString(actual), '3*A+X');
+        // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
+        assert.strictEqual(print_expr(actual, $), '3*A+X');
         engine.release();
     });
     it("(X + 2 * A * B) + 3 * A * B", function () {
@@ -208,8 +208,8 @@ describe("", function(){
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(* -1 a b)');
-        assert.strictEqual($.toInfixString(actual), 'X+5*A*B');
+        // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
+        assert.strictEqual(print_expr(actual, $), 'X+5*A*B');
         engine.release();
     });
     it("(X + 2 * A * B) + A * B", function () {
@@ -220,8 +220,8 @@ describe("", function(){
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(* -1 a b)');
-        assert.strictEqual($.toInfixString(actual), 'X+3*A*B');
+        // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
+        assert.strictEqual(print_expr(actual, $), 'X+3*A*B');
         engine.release();
     });
     it("(X + A * B) + 2 * A * B", function () {
@@ -232,8 +232,8 @@ describe("", function(){
         const engine = createSymEngine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(* -1 a b)');
-        assert.strictEqual($.toInfixString(actual), 'X+3*A*B');
+        // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
+        assert.strictEqual(print_expr(actual, $), 'X+3*A*B');
         engine.release();
     });
 });

@@ -4,7 +4,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { is_num } from './predicates/is_num';
 import { METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
-import { DEBUG, defs, noexpand1 } from './runtime/defs';
+import { DEBUG, defs, use_factoring_with_unary_function } from './runtime/defs';
 import { NAME_SCRIPT_METAA } from './runtime/ns_script';
 import { scan_meta } from './scanner/scan';
 import { subst } from './subst';
@@ -252,7 +252,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
                 // conditions are not met, skip to the next binding of metas
                 continue;
             }
-            const arg2 = generalTransform ? noexpand1(function (x) {
+            const arg2 = generalTransform ? use_factoring_with_unary_function(function (x) {
                 return $.valueOf(x);
             }, A, $) : $.valueOf(A);
 

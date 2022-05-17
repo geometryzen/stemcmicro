@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { print_expr } from "../src/print";
+import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -20,7 +20,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(value), "");
+        // assert.strictEqual(print_list(value,$), "");
         assert.strictEqual(print_expr(value, $), "0");
         engine.release();
     });
@@ -40,7 +40,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(value), "");
+        // assert.strictEqual(print_list(value,$), "");
         assert.strictEqual(print_expr(value, $), "0");
         engine.release();
     });
@@ -58,7 +58,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(value), "");
+        // assert.strictEqual(print_list(value,$), "");
         assert.strictEqual(print_expr(value, $), "0");
         engine.release();
     });
@@ -77,7 +77,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(value), "");
+        // assert.strictEqual(print_list(value,$), "");
         assert.strictEqual(print_expr(value, $), "Ax*By*Cz-Ax*Bz*Cy-Ay*Bx*Cz+Ay*Bz*Cx+Az*Bx*Cy-Az*By*Cx");
         engine.release();
     });
@@ -95,7 +95,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(value), "");
+        // assert.strictEqual(print_list(value,$), "");
         assert.strictEqual(print_expr(value, $), "Ax*By*Cz-Ax*Bz*Cy-Ay*Bx*Cz+Ay*Bz*Cx+Az*Bx*Cy-Az*By*Cx");
         engine.release();
     });
@@ -114,7 +114,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(value), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
+        assert.strictEqual(print_list(value, $), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
         assert.strictEqual(print_expr(value, $), "(Ax**2+Ay**2+Az**2)**(1/2)");
         engine.release();
     });
@@ -126,7 +126,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(value), "(* a b c)");
+            assert.strictEqual(print_list(value, $), "(* a b c)");
             assert.strictEqual(print_expr(value, $), "a*b*c");
             engine.release();
         });
@@ -141,7 +141,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(value), "(* a b c)");
+            assert.strictEqual(print_list(value, $), "(* a b c)");
             assert.strictEqual(print_expr(value, $), "a*b*c");
             engine.release();
         });
@@ -152,7 +152,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(value), "(power (power a 2) 1/2)");
+            assert.strictEqual(print_list(value, $), "(power (power a 2) 1/2)");
             assert.strictEqual(print_expr(value, $), "(a**2)**(1/2)");
             engine.release();
         });
@@ -165,7 +165,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(value), "(* -1 n a n)");
+            assert.strictEqual(print_list(value, $), "(* -1 n a n)");
             assert.strictEqual(print_expr(value, $), "-n*a*n");
             engine.release();
         });
@@ -177,7 +177,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(value), "0");
+            assert.strictEqual(print_list(value, $), "0");
             assert.strictEqual(print_expr(value, $), "0");
             engine.release();
         });
@@ -193,7 +193,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(value), "0");
+            assert.strictEqual(print_list(value, $), "0");
             assert.strictEqual(print_expr(value, $), "0");
             engine.release();
         });
@@ -205,7 +205,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'n'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual($.toListString(value), "0");
+            // assert.strictEqual(print_list(value,$), "0");
             assert.strictEqual(print_expr(value, $), "-n*a");
             engine.release();
         });
@@ -218,7 +218,7 @@ describe("vectors", function () {
             const engine = createSymEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual($.toListString(value), "(* (| n n) a)");
+            // assert.strictEqual(print_list(value,$), "(* (| n n) a)");
             assert.strictEqual(print_expr(value, $), "a|b*c-a|c*b");
             engine.release();
         });
@@ -228,13 +228,12 @@ describe("vectors", function () {
 describe("vectors", function () {
     it("", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `x*y`,
         ];
         const engine = createSymEngine({ treatAsVectors: ['x', 'y'] });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "x|y+x^y");
+        assert.strictEqual(print_expr(value, $), "x*y");
         engine.release();
     });
     it("", function () {
@@ -277,6 +276,16 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "-x^y");
         engine.release();
     });
+    it("", function () {
+        const lines: string[] = [
+            `x|y+x^y`,
+        ];
+        const engine = createSymEngine({ treatAsVectors: ['x', 'y'] });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "x*y");
+        engine.release();
+    });
     it("A", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -289,7 +298,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(value), "(+ (* Ax i) (* Ay j) (* Az k))");
+        assert.strictEqual(print_list(value, $), "(+ (* Ax i) (* Ay j) (* Az k))");
         assert.strictEqual(print_expr(value, $), "Ax*i+Ay*j+Az*k");
         engine.release();
     });
@@ -305,7 +314,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(value), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
+        assert.strictEqual(print_list(value, $), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
         assert.strictEqual(print_expr(value, $), "(Ax**2+Ay**2+Az**2)**(1/2)");
         engine.release();
     });
@@ -322,7 +331,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(value), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
+        assert.strictEqual(print_list(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
         assert.strictEqual(print_expr(value, $), "Ax*Bx+Ay*By+Az*Bz");
         engine.release();
     });
@@ -339,7 +348,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(value), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
+        assert.strictEqual(print_list(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
         assert.strictEqual(print_expr(value, $), "Ax*Bx+Ay*By+Az*Bz");
         engine.release();
     });
@@ -356,7 +365,7 @@ describe("vectors", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(value), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
+        assert.strictEqual(print_list(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
         assert.strictEqual(print_expr(value, $), "Ax*Bx+Ay*By+Az*Bz");
         engine.release();
     });

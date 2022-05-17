@@ -6,7 +6,7 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("complex", function () {
     it("I", function () {
         const lines: string[] = [
-            `bake=1`,
+            `bake=0`,
             `implicate=1`,
             `y*x*i*2`,
         ];

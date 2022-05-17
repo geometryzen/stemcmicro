@@ -3,7 +3,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, is_poly_expanded_form } from './is';
 import { makeList } from './makeList';
 import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
-import { doexpand1 } from './runtime/defs';
+import { use_expanding_with_unary_function } from './runtime/defs';
 import { is_add, is_multiply } from './runtime/helpers';
 import { SystemError } from './runtime/SystemError';
 import { integer } from './tree/rat/Rat';
@@ -16,7 +16,7 @@ import { car, cons, is_cons, U } from './tree/tree';
  * @returns 
  */
 export function bake(expr: U, $: ExtensionEnv): U {
-    return doexpand1(bake_internal, expr, $);
+    return use_expanding_with_unary_function(bake_internal, expr, $);
 }
 
 export function bake_internal(expr: U, $: ExtensionEnv): U {

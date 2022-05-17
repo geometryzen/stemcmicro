@@ -1,7 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { guess } from './guess';
 import { is_rat_integer } from './is_rat_integer';
-import { multiply_items_noexpand } from './multiply';
+import { multiply_items_factoring } from './multiply';
 import { factor_number } from './pollard';
 import { MAXPRIMETAB, primetab } from './runtime/constants';
 import { halt } from './runtime/defs';
@@ -30,7 +30,7 @@ function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
     if (is_multiply(p1)) {
         const arr: U[] = [];
         p1.tail().forEach((el) => factor_term(arr, el, p2, $));
-        return multiply_items_noexpand(arr, $);
+        return multiply_items_factoring(arr, $);
     }
 
     const arr: U[] = [];

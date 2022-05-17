@@ -1,29 +1,29 @@
 import { condense } from './condense';
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { ExtensionEnv, PHASE_FACTORING_FLAG } from './env/ExtensionEnv';
 import { gcd } from './gcd';
 import { is_negative_number } from './is';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
-import { is_tensor } from './tree/tensor/is_tensor';
 import { one, zero } from './tree/rat/Rat';
+import { is_tensor } from './tree/tensor/is_tensor';
 import { is_cons, U } from './tree/tree';
 
 export function Eval_rationalize(expr: U, $: ExtensionEnv): void {
-    const result = rationalize($.valueOf(cadr(expr)), $);
+    const result = rationalize_factoring($.valueOf(cadr(expr)), $);
     stack_push(result);
 }
 
-export function rationalize(argList: U, $: ExtensionEnv): U {
-    const prev_expanding = $.isExpanding();
+export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
+    const phase = $.getPhase();
     // This is a slight departure from the 1.x code, which makes no sense.
-    $.setExpanding(false);
+    $.setPhase(PHASE_FACTORING_FLAG);
     try {
         const result = yyrationalize(argList, $);
         return result;
     }
     finally {
-        $.setExpanding(prev_expanding);
+        $.setPhase(phase);
     }
 }
 
@@ -110,7 +110,7 @@ function __rationalize_tensor(p1: U, $: ExtensionEnv): U {
     }
 
     const elems = p1.mapElements(function (x) {
-        return rationalize(x, $);
+        return rationalize_factoring(x, $);
     });
 
     return p1.withElements(elems);

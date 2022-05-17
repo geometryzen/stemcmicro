@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { print_list } from "../src/print";
+import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 import { VERSION_LATEST, VERSION_ONE } from "../src/runtime/version";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -12,8 +12,8 @@ describe("sandbox", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(power a (power b c))');
-        assert.strictEqual($.toInfixString(actual), 'a**(b**c)');
+        assert.strictEqual(print_list(actual, $), '(power a (power b c))');
+        assert.strictEqual(print_expr(actual, $), 'a**(b**c)');
         engine.release();
     });
 });
@@ -26,8 +26,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(power a b)');
-        assert.strictEqual($.toInfixString(actual), 'a**b');
+        assert.strictEqual(print_list(actual, $), '(power a b)');
+        assert.strictEqual(print_expr(actual, $), 'a**b');
         engine.release();
     });
     it("a^b should parse for version 1", function () {
@@ -38,8 +38,8 @@ describe("Exponentiation", function () {
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '(^ a b)');
-        assert.strictEqual($.toListString(actual), '(^ a b)');
-        assert.strictEqual($.toInfixString(actual), 'a^b');
+        assert.strictEqual(print_list(actual, $), '(^ a b)');
+        assert.strictEqual(print_expr(actual, $), 'a^b');
         engine.release();
     });
     it("operator should be right-associative", function () {
@@ -49,8 +49,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(power a (power b c))');
-        assert.strictEqual($.toInfixString(actual), 'a**(b**c)');
+        assert.strictEqual(print_list(actual, $), '(power a (power b c))');
+        assert.strictEqual(print_expr(actual, $), 'a**(b**c)');
         engine.release();
     });
     it("Exponentiation binds more tightly than multiplication", function () {
@@ -60,8 +60,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(* 1/2 a)');
-        assert.strictEqual($.toInfixString(actual), '1/2*a');
+        assert.strictEqual(print_list(actual, $), '(* 1/2 a)');
+        assert.strictEqual(print_expr(actual, $), '1/2*a');
         engine.release();
     });
     it("test A", function () {
@@ -71,8 +71,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), 'a');
-        assert.strictEqual($.toInfixString(actual), 'a');
+        assert.strictEqual(print_list(actual, $), 'a');
+        assert.strictEqual(print_expr(actual, $), 'a');
         engine.release();
     });
     it("test B", function () {
@@ -82,8 +82,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '(power 2 1/2)');
-        assert.strictEqual($.toInfixString(actual), '2**(1/2)');
+        assert.strictEqual(print_list(actual, $), '(power 2 1/2)');
+        assert.strictEqual(print_expr(actual, $), '2**(1/2)');
         engine.release();
     });
     it("pre-test C.1", function () {
@@ -93,8 +93,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '3/2');
-        assert.strictEqual($.toInfixString(actual), '3/2');
+        assert.strictEqual(print_list(actual, $), '3/2');
+        assert.strictEqual(print_expr(actual, $), '3/2');
         engine.release();
     });
     it("pre-test C.2", function () {
@@ -104,8 +104,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), '1/2');
-        assert.strictEqual($.toInfixString(actual), '1/2');
+        assert.strictEqual(print_list(actual, $), '1/2');
+        assert.strictEqual(print_expr(actual, $), '1/2');
         engine.release();
     });
     it("test C", function () {
@@ -115,8 +115,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(power 2 1/2)');
-        assert.strictEqual($.toInfixString(actual), '2*2**(1/2)');
+        // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
+        assert.strictEqual(print_expr(actual, $), '2*2**(1/2)');
         engine.release();
     });
     xit("test D", function () {
@@ -126,8 +126,8 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_LATEST });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(actual), '(power 2 1/2)');
-        assert.strictEqual($.toInfixString(actual), 'i*2**(1/2)');
+        // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
+        assert.strictEqual(print_expr(actual, $), 'i*2**(1/2)');
         engine.release();
     });
 });

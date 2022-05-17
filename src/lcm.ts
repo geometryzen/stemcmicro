@@ -1,6 +1,6 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { gcd } from './gcd';
-import { doexpand2 } from './runtime/defs';
+import { use_expanding_with_binary_function } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { car, cdr, is_cons, U } from './tree/tree';
 
@@ -15,7 +15,7 @@ export function Eval_lcm(p1: U, $: ExtensionEnv): void {
 }
 
 export function lcm(p1: U, p2: U, $: ExtensionEnv): U {
-    return doexpand2(yylcm, p1, p2, $);
+    return use_expanding_with_binary_function(yylcm, p1, p2, $);
 }
 
 function yylcm(p1: U, p2: U, $: ExtensionEnv): U {

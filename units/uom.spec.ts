@@ -1,5 +1,6 @@
 import { assert } from 'chai';
 import { is_uom } from '../index';
+import { print_expr, print_list } from '../src/print';
 import { createSymEngine } from '../src/runtime/symengine';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
@@ -12,8 +13,8 @@ describe("SI units", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), "(* 1/5 kg)");
-        assert.strictEqual($.toInfixString(actual), "1/5*kg");
+        assert.strictEqual(print_list(actual, $), "(* 1/5 kg)");
+        assert.strictEqual(print_expr(actual, $), "1/5*kg");
         engine.release();
     });
     it("(Uom, Flt)", function () {
@@ -24,8 +25,8 @@ describe("SI units", function () {
         const engine = createSymEngine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), "(* 0.2 kg)");
-        assert.strictEqual($.toInfixString(actual), "0.2*kg");
+        assert.strictEqual(print_list(actual, $), "(* 0.2 kg)");
+        assert.strictEqual(print_expr(actual, $), "0.2*kg");
         engine.release();
     });
 });
@@ -39,7 +40,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "kg");
+            assert.strictEqual(print_expr(actual, $), "kg");
             engine.release();
         });
         it("meter", function () {
@@ -49,7 +50,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "m");
+            assert.strictEqual(print_list(actual, $), "m");
             engine.release();
         });
         it("second", function () {
@@ -59,7 +60,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "s");
+            assert.strictEqual(print_list(actual, $), "s");
             engine.release();
         });
         it("coulomb", function () {
@@ -69,7 +70,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "C");
+            assert.strictEqual(print_list(actual, $), "C");
             engine.release();
         });
         it("ampere", function () {
@@ -79,7 +80,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "A");
+            assert.strictEqual(print_list(actual, $), "A");
             engine.release();
         });
         it("kelvin", function () {
@@ -89,7 +90,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "K");
+            assert.strictEqual(print_list(actual, $), "K");
             engine.release();
         });
         it("mole", function () {
@@ -99,7 +100,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "mol");
+            assert.strictEqual(print_list(actual, $), "mol");
             engine.release();
         });
         it("candela", function () {
@@ -109,7 +110,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "cd");
+            assert.strictEqual(print_list(actual, $), "cd");
             engine.release();
         });
     });
@@ -123,7 +124,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "kg m");
+            assert.strictEqual(print_list(actual, $), "kg m");
             engine.release();
         });
         it("(Flt, Uom)", function () {
@@ -134,7 +135,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "5.0*kg");
+            assert.strictEqual(print_expr(actual, $), "5.0*kg");
             engine.release();
         });
         it("(Uom, Flt)", function () {
@@ -145,7 +146,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "5.0*kg");
+            assert.strictEqual(print_expr(actual, $), "5.0*kg");
             engine.release();
         });
         it("(Num, Uom)", function () {
@@ -156,7 +157,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "2*kg");
+            assert.strictEqual(print_expr(actual, $), "2*kg");
             engine.release();
         });
         it("(Uom, Num)", function () {
@@ -167,7 +168,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "2*kg");
+            assert.strictEqual(print_expr(actual, $), "2*kg");
             engine.release();
         });
         it("(Vec, Uom)", function () {
@@ -180,7 +181,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "e1*kg");
+            assert.strictEqual(print_expr(actual, $), "e1*kg");
             engine.release();
         });
         it("(Uom, Vec)", function () {
@@ -193,7 +194,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "e1*kg");
+            assert.strictEqual(print_expr(actual, $), "e1*kg");
             engine.release();
         });
     });
@@ -208,7 +209,7 @@ describe("uom", function () {
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual($.toInfixString(actual), "m/s");
+                assert.strictEqual(print_expr(actual, $), "m/s");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -223,7 +224,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "5.0*kg ** -1");
+            assert.strictEqual(print_expr(actual, $), "5.0*kg ** -1");
             engine.release();
         });
         it("(Uom, Flt)", function () {
@@ -234,8 +235,8 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toListString(actual), "(* 0.2 kg)");
-            assert.strictEqual($.toInfixString(actual), "0.2*kg");
+            assert.strictEqual(print_list(actual, $), "(* 0.2 kg)");
+            assert.strictEqual(print_expr(actual, $), "0.2*kg");
             engine.release();
         });
         it("(Num, Uom)", function () {
@@ -246,7 +247,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "2*kg ** -1");
+            assert.strictEqual(print_expr(actual, $), "2*kg ** -1");
             engine.release();
         });
         it("(Uom, Num)", function () {
@@ -257,7 +258,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "1/2*kg");
+            assert.strictEqual(print_expr(actual, $), "1/2*kg");
             engine.release();
         });
     });
@@ -270,7 +271,7 @@ describe("uom", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual($.toInfixString(actual), "2*m");
+            assert.strictEqual(print_expr(actual, $), "2*m");
             engine.release();
         });
         it("(Flt, Uom)", function () {
@@ -328,7 +329,7 @@ describe("uom", function () {
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual($.toInfixString(actual), "N");
+                assert.strictEqual(print_expr(actual, $), "N");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -346,7 +347,7 @@ describe("uom", function () {
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual($.toInfixString(actual), "N");
+                assert.strictEqual(print_expr(actual, $), "N");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -364,7 +365,7 @@ describe("uom", function () {
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual($.toInfixString(actual), "N");
+                assert.strictEqual(print_expr(actual, $), "N");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -385,7 +386,7 @@ describe("uom", function () {
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual($.toInfixString(actual), "V");
+                assert.strictEqual(print_expr(actual, $), "V");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);

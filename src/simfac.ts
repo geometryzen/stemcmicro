@@ -2,7 +2,7 @@ import { add_terms } from './calculators/add/add_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factorial } from './factorial';
 import { equaln, is_num_and_eq_minus_one } from './is';
-import { multiply_items_noexpand } from './multiply';
+import { multiply_items_factoring } from './multiply';
 import { FACTORIAL } from './runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
@@ -69,7 +69,7 @@ function simfac_term(p1: U, $: ExtensionEnv): U {
         // do nothing
     }
 
-    return multiply_items_noexpand(factors, $);
+    return multiply_items_factoring(factors, $);
 }
 
 // try all pairs of factors

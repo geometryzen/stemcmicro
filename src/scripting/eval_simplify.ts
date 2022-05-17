@@ -1,6 +1,6 @@
 import { ExtensionEnv } from '../env/ExtensionEnv';
 import { INTEGRAL, MAX_CONSECUTIVE_APPLICATIONS_OF_ALL_RULES, MAX_CONSECUTIVE_APPLICATIONS_OF_SINGLE_RULE } from '../runtime/constants';
-import { defs, halt, noexpand1 } from '../runtime/defs';
+import { defs, halt, use_factoring_with_unary_function } from '../runtime/defs';
 import { stack_push } from '../runtime/stack';
 import { simplify } from '../simplify';
 import { transform } from '../transform';
@@ -29,7 +29,7 @@ function run_user_defined_simplifications(p: U, $: ExtensionEnv): U {
         return p;
     }
 
-    let F1 = noexpand1(function (x) {
+    let F1 = use_factoring_with_unary_function(function (x) {
         return $.valueOf(x);
     }, p, $);
 

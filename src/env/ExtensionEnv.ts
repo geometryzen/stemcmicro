@@ -81,6 +81,7 @@ export interface ExtensionEnv {
     factorize(poly: U, x: U): U;
     getBinding(sym: Sym): U;
     getBindings(): { sym: Sym, binding: U | undefined }[];
+    getPhase(): number;
     /**
      * Used to make the environment ready after all operator builders have been added.
      */
@@ -122,11 +123,7 @@ export interface ExtensionEnv {
     setAssocL(opr: Sym, value: boolean): void;
     setAssocR(opr: Sym, value: boolean): void;
     setBinding(sym: Sym, binding: U): void;
-    setExpanding(expanding: boolean): void;
-    setFactoring(factoring: boolean): void;
-    setExplicate(explicate: boolean): void;
-    setPrettyFmt(prettyfmt: boolean): void;
-    setImplicate(implicate: boolean): void;
+    setPhase(phase: number): void;
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;
     toListString(expr: U): string;
@@ -148,11 +145,16 @@ export interface OperatorBuilder<T extends U> {
 }
 
 export const PHASE_EXPLICATE_FLAG = 1;
-export const PHASE_TRANSFORM_FLAG = 2;
-export const PHASE_COSMETICS_FLAG = 4;
-export const PHASE_IMPLICATE_FLAG = 8;
-export const PHASE_NONE = 0;
-export const PHASE_ALL = PHASE_EXPLICATE_FLAG | PHASE_TRANSFORM_FLAG | PHASE_COSMETICS_FLAG | PHASE_IMPLICATE_FLAG;
+export const PHASE_EXPANDING_FLAG = 2;
+export const PHASE_FACTORING_FLAG = 4;
+export const PHASE_COSMETICS_FLAG = 8;
+export const PHASE_IMPLICATE_FLAG = 16;
+
+export const phases = [PHASE_EXPLICATE_FLAG, PHASE_EXPANDING_FLAG, PHASE_FACTORING_FLAG, PHASE_COSMETICS_FLAG, PHASE_IMPLICATE_FLAG];
+
+export const PHASE_FLAGS_NONE = 0;
+export const PHASE_FLAGS_ALL = PHASE_EXPLICATE_FLAG | PHASE_EXPANDING_FLAG | PHASE_FACTORING_FLAG | PHASE_COSMETICS_FLAG | PHASE_IMPLICATE_FLAG;
+export const PHASE_FLAGS_TRANSFORM = PHASE_EXPANDING_FLAG | PHASE_FACTORING_FLAG;
 
 export interface Operator<T extends U> {
     readonly key?: string;

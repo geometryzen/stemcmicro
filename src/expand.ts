@@ -11,7 +11,7 @@ import { multiply, multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';
 import { numerator } from './numerator';
 import { divpoly } from './quotient';
-import { doexpand1, doexpand2 } from './runtime/defs';
+import { use_expanding_with_unary_function, use_expanding_with_binary_function } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
@@ -94,7 +94,7 @@ function expand(F: U, X: U, $: ExtensionEnv): U {
 
     let result: U;
     if (is_tensor(C)) {
-        const inverse = doexpand1(inv, C, $);
+        const inverse = use_expanding_with_unary_function(inv, C, $);
         result = $.inner($.inner(inverse, B), A);
     }
     else {
@@ -304,7 +304,7 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     if (!p5.contains(p9)) {
         return [];
     }
-    const p8 = doexpand2(trivial_divide, p2, p5, $);
+    const p8 = use_expanding_with_binary_function(trivial_divide, p2, p5, $);
     if (is_power(p5)) {
         n = nativeInt(caddr(p5));
         p6 = cadr(p5);
@@ -318,9 +318,9 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < d; j++) {
             const arg6 = $.power(p6, integer(i));
-            const arg8 = doexpand2(multiply, p8, arg6, $);
+            const arg8 = use_expanding_with_binary_function(multiply, p8, arg6, $);
             const arg9 = $.power(p9, integer(j));
-            const multiplied = doexpand2(multiply, arg8, arg9, $);
+            const multiplied = use_expanding_with_binary_function(multiply, arg8, arg9, $);
             stack.push(multiplied);
         }
     }

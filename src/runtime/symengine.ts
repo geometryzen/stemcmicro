@@ -16,8 +16,11 @@ export interface Assoc {
     dir: 'L' | 'R'
 }
 
+export type DEPENDENCY = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
+
 export interface SymEngineOptions {
     assocs?: Assoc[];
+    dependencies?: string[];
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;

@@ -2,7 +2,7 @@ import { mp_numerator } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_negative_term } from './is';
 import { multiply_items } from './multiply';
-import { rationalize } from './rationalize';
+import { rationalize_factoring } from './rationalize';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
@@ -18,7 +18,7 @@ export function Eval_numerator(p1: U, $: ExtensionEnv): void {
 export function numerator(p1: U, $: ExtensionEnv): U {
     if (is_add(p1)) {
         //console.trace "rationalising "
-        p1 = rationalize(p1, $);
+        p1 = rationalize_factoring(p1, $);
     }
     // console.lg "rationalised: " + p1
 

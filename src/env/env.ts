@@ -35,7 +35,7 @@ import { is_tensor } from "../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { is_uom } from "../tree/uom/is_uom";
 import { CostTable } from "./CostTable";
-import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_ALL, PHASE_COSMETICS_FLAG, PHASE_EXPLICATE_FLAG, PHASE_IMPLICATE_FLAG, PHASE_TRANSFORM_FLAG, Sign, stableFlag, TFLAGS } from "./ExtensionEnv";
+import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS_FLAG, PHASE_EXPANDING_FLAG, PHASE_EXPLICATE_FLAG, PHASE_FACTORING_FLAG, PHASE_FLAGS_ALL, PHASE_IMPLICATE_FLAG, Sign, stableFlag, TFLAGS } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -81,9 +81,6 @@ interface Assoc {
     rhs: boolean;
 }
 
-type Phase = typeof PHASE_EXPLICATE_FLAG | typeof PHASE_TRANSFORM_FLAG | typeof PHASE_IMPLICATE_FLAG | typeof PHASE_COSMETICS_FLAG;
-const phases = [PHASE_EXPLICATE_FLAG, PHASE_TRANSFORM_FLAG, PHASE_COSMETICS_FLAG, PHASE_IMPLICATE_FLAG];
-
 export function createEnv(options?: EnvOptions): ExtensionEnv {
 
     const config = config_from_options(options);
@@ -102,16 +99,16 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
     }
     const assocs: { [key: string]: Assoc } = {};
 
-    // The following two properties are mutually exclusive.
-    let is_expanding_enabled = true;
-    let is_factoring_enabled = false;
-
-    let current_phase: Phase = PHASE_TRANSFORM_FLAG;
+    let current_phase: number = PHASE_EXPANDING_FLAG;
 
     let fieldKind: 'R' | undefined = 'R';
 
-    function currentOps() {
-        return ops_by_phase[current_phase];
+    function currentOps(): { [key: string]: Operator<U>[] } {
+        const ops = ops_by_phase[current_phase];
+        if (typeof ops === 'undefined') {
+            throw new Error(`currentOps(${current_phase})`);
+        }
+        return ops;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -295,11 +292,14 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         getBindings() {
             return symTab.getBindings();
         },
+        getPhase(): number {
+            return current_phase;
+        },
         initialize(): void {
             for (const builder of builders) {
                 const op = builder.create($);
                 // If an operator does not restrict the phases to which it applies then it applies to all phases.
-                const phaseFlags = typeof op.phases === 'number' ? op.phases : PHASE_ALL;
+                const phaseFlags = typeof op.phases === 'number' ? op.phases : PHASE_FLAGS_ALL;
                 for (const phase of phases) {
                     if (phaseFlags & phase) {
                         const ops = ops_by_phase[phase];
@@ -369,10 +369,10 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
         },
         isExpanding(): boolean {
-            return is_expanding_enabled;
+            return current_phase == PHASE_EXPANDING_FLAG;
         },
         isFactoring(): boolean {
-            return is_factoring_enabled;
+            return current_phase === PHASE_FACTORING_FLAG;
         },
         get explicateMode(): boolean {
             return current_phase === PHASE_EXPLICATE_FLAG;
@@ -542,32 +542,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         setBinding(sym: Sym, binding: U): void {
             symTab.setBinding(sym, binding);
         },
-        setExpanding(expanding: boolean): void {
-            is_expanding_enabled = expanding;
-            if (expanding) {
-                is_factoring_enabled = false;
-            }
-        },
-        setFactoring(factoring: boolean): void {
-            is_factoring_enabled = factoring;
-            if (factoring) {
-                is_expanding_enabled = false;
-            }
-        },
-        setExplicate(explicate: boolean): void {
-            if (explicate) {
-                current_phase = PHASE_EXPLICATE_FLAG;
-            }
-        },
-        setImplicate(implicate: boolean): void {
-            if (implicate) {
-                current_phase = PHASE_IMPLICATE_FLAG;
-            }
-        },
-        setPrettyFmt(prettying: boolean): void {
-            if (prettying) {
-                current_phase = PHASE_COSMETICS_FLAG;
-            }
+        setPhase(phase: number): void {
+            current_phase = phase;
         },
         subtract(lhs: U, rhs: U): U {
             const A = $.negate(rhs);

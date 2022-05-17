@@ -1,6 +1,7 @@
 
 import { assert } from "chai";
 import { ts_parse } from "../src/parser/ts_parse";
+import { print_list } from "../src/print";
 import { transform_tree } from "../src/runtime/execute";
 import { createSymEngine } from "../src/runtime/symengine";
 import { is_str } from "../src/tree/str/is_str";
@@ -16,13 +17,13 @@ describe("parser", function () {
         const engine = createSymEngine({ version: 2 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), "x");
+        assert.strictEqual(print_list(actual, $), "x");
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "x");
+        assert.strictEqual(print_list(tree, $), "x");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toListString(value), "x");
+        assert.strictEqual(print_list(value, $), "x");
         engine.release();
     });
     it("should be able to parse a Rat", function () {
@@ -32,13 +33,13 @@ describe("parser", function () {
         const engine = createSymEngine({ version: 2 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), "12345");
+        assert.strictEqual(print_list(actual, $), "12345");
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "12345");
+        assert.strictEqual(print_list(tree, $), "12345");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toListString(value), "12345");
+        assert.strictEqual(print_list(value, $), "12345");
         engine.release();
     });
     it("should be able to parse a Flt", function () {
@@ -48,13 +49,13 @@ describe("parser", function () {
         const engine = createSymEngine({ version: 2 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toListString(actual), "12345.0", "A");
+        assert.strictEqual(print_list(actual, $), "12345.0", "A");
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "12345.0", "B");
+        assert.strictEqual(print_list(tree, $), "12345.0", "B");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toListString(value), "12345.0", "C");
+        assert.strictEqual(print_list(value, $), "12345.0", "C");
         engine.release();
     });
     it("should be able to parse a Str", function () {
@@ -65,7 +66,7 @@ describe("parser", function () {
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
-        assert.strictEqual($.toListString(actual), '"Hello"');
+        assert.strictEqual(print_list(actual, $), '"Hello"');
         assert.isTrue(is_str(actual));
         if (is_str(actual)) {
             assert.strictEqual(actual.str, 'Hello');
@@ -77,9 +78,9 @@ describe("parser", function () {
         if (is_str(tree)) {
             assert.strictEqual(tree.str, 'Hello');
         }
-        assert.strictEqual($.toListString(tree), '"Hello"');
+        assert.strictEqual(print_list(tree, $), '"Hello"');
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toListString(value), '"Hello"');
+        assert.strictEqual(print_list(value, $), '"Hello"');
         engine.release();
     });
     it("should be able to parse a Str", function () {
@@ -90,7 +91,7 @@ describe("parser", function () {
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
-        assert.strictEqual($.toListString(actual), '"Hello"');
+        assert.strictEqual(print_list(actual, $), '"Hello"');
         assert.isTrue(is_str(actual));
         if (is_str(actual)) {
             assert.strictEqual(actual.str, 'Hello');
@@ -102,9 +103,9 @@ describe("parser", function () {
         if (is_str(tree)) {
             assert.strictEqual(tree.str, 'Hello');
         }
-        assert.strictEqual($.toListString(tree), '"Hello"');
+        assert.strictEqual(print_list(tree, $), '"Hello"');
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toListString(value), '"Hello"');
+        assert.strictEqual(print_list(value, $), '"Hello"');
         engine.release();
     });
     it("should be able to parse an additive (+) expression", function () {
@@ -117,7 +118,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(+ a b)");
+        assert.strictEqual(print_list(tree, $), "(+ a b)");
         const value = assert_one_value(transform_tree(tree, $));
         assert.strictEqual($.toInfixString(value), "a+b");
         engine.release();
@@ -132,7 +133,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(- a b)");
+        assert.strictEqual(print_list(tree, $), "(- a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "a-b");
         engine.release();
@@ -147,7 +148,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(* a b)");
+        assert.strictEqual(print_list(tree, $), "(* a b)");
         const value = assert_one_value(transform_tree(tree, $));
         assert.strictEqual($.toInfixString(value), "a*b");
         engine.release();
@@ -162,7 +163,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(/ a b)");
+        assert.strictEqual(print_list(tree, $), "(/ a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "a*b");
         engine.release();
@@ -177,7 +178,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(| a b)");
+        assert.strictEqual(print_list(tree, $), "(| a b)");
         const value = assert_one_value(transform_tree(tree, $));
         assert.strictEqual($.toInfixString(value), "a|b");
         engine.release();
@@ -192,7 +193,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(^ a b)");
+        assert.strictEqual(print_list(tree, $), "(^ a b)");
         const value = assert_one_value(transform_tree(tree, $));
         assert.strictEqual($.toInfixString(value), "a^b");
         engine.release();
@@ -207,7 +208,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(<< a b)");
+        assert.strictEqual(print_list(tree, $), "(<< a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "a<<b");
         engine.release();
@@ -222,7 +223,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(>> a b)");
+        assert.strictEqual(print_list(tree, $), "(>> a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "a<<b");
         engine.release();
@@ -237,7 +238,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(power a b)");
+        assert.strictEqual(print_list(tree, $), "(power a b)");
         const value = assert_one_value(transform_tree(tree, $));
         assert.strictEqual($.toInfixString(value), "a**b");
         engine.release();
@@ -252,7 +253,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(= x 3)");
+        assert.strictEqual(print_list(tree, $), "(= x 3)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "x=3");
         engine.release();
@@ -267,7 +268,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(: a A)");
+        assert.strictEqual(print_list(tree, $), "(: a A)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "x=3");
         engine.release();
@@ -282,7 +283,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(= (: a Real) b)");
+        assert.strictEqual(print_list(tree, $), "(= (: a Real) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "x=3");
         engine.release();
@@ -297,7 +298,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(= (: a Complex) b)");
+        assert.strictEqual(print_list(tree, $), "(= (: a Complex) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "x=3");
         engine.release();
@@ -312,7 +313,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual($.toListString(tree), "(= (: a Vec) b)");
+        assert.strictEqual(print_list(tree, $), "(= (: a Vec) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual($.toInfixString(value), "x=3");
         engine.release();

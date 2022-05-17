@@ -63,13 +63,13 @@ import { True } from './tree/boo/Boo';
 import { is_boo } from './tree/boo/is_boo';
 import { is_flt } from './tree/flt/is_flt';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from './tree/helpers';
-import { is_tensor } from './tree/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
 import { is_rat } from './tree/rat/is_rat';
 import { negOne, one, Rat, zero } from './tree/rat/Rat';
 import { assert_str } from './tree/str/assert_str';
 import { is_str } from './tree/str/is_str';
 import { Sym } from './tree/sym/Sym';
+import { is_tensor } from './tree/tensor/is_tensor';
+import { Tensor } from './tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, is_nil, NIL, U } from './tree/tree';
 import { is_uom } from './tree/uom/is_uom';
 import { is_vec } from './tree/vec/Algebra';
@@ -1743,7 +1743,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (!defs.codeGen) {
             const parameters = caddr(expr);
             str += print_str('function ');
-            const returned = $.toListString(parameters);
+            const returned = print_list(parameters, $);
             str += returned;
             str += print_str(' -> ');
         }

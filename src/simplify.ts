@@ -17,17 +17,17 @@ import { is_pow_2_any_any } from './operators/pow/is_pow_2_any_any';
 import { polar } from './polar';
 import { is_imu } from './predicates/is_imu';
 import { is_num } from './predicates/is_num';
-import { rationalize } from './rationalize';
+import { rationalize_factoring } from './rationalize';
 import { real } from './real';
 import { rect } from './rect';
 import { roots } from './roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from './runtime/constants';
 import { count, countOccurrencesOfSymbol } from './runtime/count';
-import { DEBUG, defs, noexpand1 } from './runtime/defs';
+import { DEBUG, defs, use_factoring_with_unary_function } from './runtime/defs';
 import { is_add, is_inner_or_dot, is_multiply, is_power } from './runtime/helpers';
 import { stack_pop } from './runtime/stack';
 import { simfac } from './simfac';
-import { transpose_noexpand } from './transpose';
+import { transpose_factoring } from './transpose';
 import { caddr, cadr } from './tree/helpers';
 import { is_rat } from './tree/rat/is_rat';
 import { half, integer, one, third, three, two, zero } from './tree/rat/Rat';
@@ -61,7 +61,7 @@ function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
 function simplify_if_contains_factorial(expr: U, $: ExtensionEnv): U {
     if (expr.contains(FACTORIAL)) {
         const p2 = simfac(expr, $);
-        const p3 = simfac(rationalize(expr, $), $);
+        const p3 = simfac(rationalize_factoring(expr, $), $);
         return count(p2) < count(p3) ? p2 : p3;
     }
     else {
@@ -140,7 +140,7 @@ function simplify_by_rationalizing(p1: U, $: ExtensionEnv): U {
     if (!(is_cons(p1) && is_add(p1))) {
         return p1;
     }
-    const p2 = rationalize(p1, $);
+    const p2 = rationalize_factoring(p1, $);
     if (count(p2) < count(p1)) {
         p1 = p2;
     }
@@ -161,7 +161,7 @@ function simplify_by_condensing(p1: U, $: ExtensionEnv): U {
 
 // this simplifies forms like (A-B) / (B-A)
 function simplify_a_minus_b_divided_by_b_minus_a(p1: U, $: ExtensionEnv): U {
-    const p2 = rationalize($.negate(rationalize($.negate(rationalize(p1, $)), $)), $);
+    const p2 = rationalize_factoring($.negate(rationalize_factoring($.negate(rationalize_factoring(p1, $)), $)), $);
     if (count(p2) < count(p1)) {
         p1 = p2;
     }
@@ -191,7 +191,7 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
                 arg1 = stack_pop();
             }
 
-            const p2 = transpose_noexpand(arg1, one, two, $);
+            const p2 = transpose_factoring(arg1, one, two, $);
 
             if (count(p2) < count(p1)) {
                 p1 = p2;
@@ -210,7 +210,7 @@ function simplify_by_expanding_denominators(p1: U, $: ExtensionEnv): U {
     if ($.isZero(p1)) {
         return p1;
     }
-    const p2 = rationalize($.inverse(rationalize($.inverse(rationalize(p1, $)), $)), $);
+    const p2 = rationalize_factoring($.inverse(rationalize_factoring($.inverse(rationalize_factoring(p1, $)), $)), $);
     if (count(p2) < count(p1)) {
         p1 = p2;
     }
@@ -411,7 +411,7 @@ function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
     //   17/2+3/2*5^(1/2) into 1/2*(17+3*5^(1/2))
     // so what we do is we count the powers and we check
     // which version has the least number of them.
-    const simplificationWithCondense = noexpand1(yycondense, simplificationWithoutCondense, $);
+    const simplificationWithCondense = use_factoring_with_unary_function(yycondense, simplificationWithoutCondense, $);
 
     // console.lg("occurrences of powers in " + simplificationWithoutCondense + " :" + countOccurrencesOfSymbol(POWER,simplificationWithoutCondense))
     // console.lg("occurrences of powers in " + simplificationWithCondense + " :" + countOccurrencesOfSymbol(POWER,simplificationWithCondense))

@@ -11,7 +11,7 @@ import { lcm } from './lcm';
 import { multiply_noexpand, negate_noexpand } from './multiply';
 import { divpoly } from './quotient';
 import { rect } from './rect';
-import { defs, moveTos, noexpand1, halt } from './runtime/defs';
+import { defs, moveTos, use_factoring_with_unary_function, halt } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
 import { integer, negOne, one, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -175,7 +175,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
                 if (!$.equals(checkingTheDivision, dividend)) {
                     stack_push(previousFactorisation);
 
-                    const arg2 = noexpand1(yycondense, dividend, $);
+                    const arg2 = use_factoring_with_unary_function(yycondense, dividend, $);
 
                     const arg1 = stack_pop();
                     return multiply_noexpand(arg1, arg2, $);
@@ -214,7 +214,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
     }
     p1 = temp;
 
-    p1 = noexpand1(yycondense, p1, $);
+    p1 = use_factoring_with_unary_function(yycondense, p1, $);
 
     // factor out negative sign
 

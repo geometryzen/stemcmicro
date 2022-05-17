@@ -5,7 +5,7 @@ import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { makeList } from './makeList';
 import { is_num } from './predicates/is_num';
 import { MULTIPLY } from './runtime/constants';
-import { doexpand2 } from './runtime/defs';
+import { use_expanding_with_binary_function } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
@@ -28,7 +28,7 @@ export function Eval_gcd(p1: U, $: ExtensionEnv): void {
 }
 
 export function gcd(p1: U, p2: U, $: ExtensionEnv): U {
-    return doexpand2(gcd_main, p1, p2, $);
+    return use_expanding_with_binary_function(gcd_main, p1, p2, $);
 }
 
 function gcd_main(p1: U, p2: U, $: ExtensionEnv): U {

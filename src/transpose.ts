@@ -1,4 +1,4 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { ExtensionEnv, PHASE_FACTORING_FLAG } from './env/ExtensionEnv';
 import { is_num_and_eq_two } from './is';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
@@ -8,9 +8,9 @@ import { halt } from './runtime/defs';
 import { is_add, is_identity_matrix, is_inner_or_dot, is_multiply, is_transpose } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { cadddr, caddr, cadr, cddr } from './tree/helpers';
+import { one, two, zero } from './tree/rat/Rat';
 import { is_tensor } from './tree/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
-import { one, two, zero } from './tree/rat/Rat';
 import { car, cdr, is_cons, NIL, U } from './tree/tree';
 
 
@@ -197,13 +197,13 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
     return new Tensor(dims, elems);
 }
 
-export function transpose_noexpand(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
-    const expanding = $.isExpanding();
-    $.setExpanding(false);
+export function transpose_factoring(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
+    const phase = $.getPhase();
+    $.setPhase(PHASE_FACTORING_FLAG);
     try {
         return transpose(p1, p2, p3, $);
     }
     finally {
-        $.setExpanding(expanding);
+        $.setPhase(phase);
     }
 }

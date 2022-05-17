@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { PHASE_EXPANDING_FLAG, PHASE_FACTORING_FLAG } from "../src/env/ExtensionEnv";
+import { PHASE_EXPANDING, PHASE_FACTORING } from "../src/env/ExtensionEnv";
 import { print_expr } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 
@@ -34,9 +34,9 @@ describe("breakdown", function () {
         engine.transformTree(scan.trees[2]);
         engine.transformTree(scan.trees[3]);
         const data0 = scan.trees[4];
-        $.setPhase(PHASE_EXPANDING_FLAG);
+        $.setPhase(PHASE_EXPANDING);
         const data1 = engine.transformTree(data0);
-        $.setPhase(PHASE_FACTORING_FLAG);
+        $.setPhase(PHASE_FACTORING);
         const data2 = engine.transformTree(data1.value);
         assert.strictEqual(print_expr(data2.value, $), 'L1+L2');
         engine.release();

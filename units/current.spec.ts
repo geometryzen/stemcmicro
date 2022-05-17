@@ -6,13 +6,17 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("current", function () {
     it("(c+a)*b", function () {
         const lines: string[] = [
-            `(c+a)*b`
+            `i+5.0`
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = createSymEngine({
+            dependencies: ['Flt', 'Imu'],
+            treatAsVectors: ['a', 'b'],
+            useDefinitions: true
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "(+ (* a b) (* b c))");
-        assert.strictEqual(print_expr(actual, $), "a*b+b*c");
+        assert.strictEqual(print_list(actual, $), "(+ 5.0 i)");
+        assert.strictEqual(print_expr(actual, $), "5.0+i");
 
         engine.release();
     });

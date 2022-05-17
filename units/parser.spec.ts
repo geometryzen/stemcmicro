@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { ts_parse } from "../src/parser/ts_parse";
-import { print_list } from "../src/print";
+import { print_expr, print_list } from "../src/print";
 import { transform_tree } from "../src/runtime/execute";
 import { createSymEngine } from "../src/runtime/symengine";
 import { is_str } from "../src/tree/str/is_str";
@@ -46,7 +46,10 @@ describe("parser", function () {
         const lines: string[] = [
             `12345.0`
         ];
-        const engine = createSymEngine({ version: 2 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 2
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), "12345.0", "A");
@@ -120,7 +123,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(+ a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toInfixString(value), "a+b");
+        assert.strictEqual(print_expr(value, $), "a+b");
         engine.release();
     });
     xit("should be able to parse an additive (-) expression", function () {
@@ -135,7 +138,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(- a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "a-b");
+        // assert.strictEqual(print_expr(value,$), "a-b");
         engine.release();
     });
     it("should be able to parse an multiplicative (*) expression", function () {
@@ -150,7 +153,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(* a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toInfixString(value), "a*b");
+        assert.strictEqual(print_expr(value, $), "a*b");
         engine.release();
     });
     xit("should be able to parse an multiplicative (/) expression", function () {
@@ -165,7 +168,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(/ a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "a*b");
+        // assert.strictEqual(print_expr(value,$), "a*b");
         engine.release();
     });
     it("should be able to parse an inner product (|) expression", function () {
@@ -180,7 +183,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(| a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toInfixString(value), "a|b");
+        assert.strictEqual(print_expr(value, $), "a|b");
         engine.release();
     });
     it("should be able to parse an outer product (^) expression", function () {
@@ -195,7 +198,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(^ a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toInfixString(value), "a^b");
+        assert.strictEqual(print_expr(value, $), "a^b");
         engine.release();
     });
     it("should be able to parse a left contraction(<<) expression", function () {
@@ -210,7 +213,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(<< a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "a<<b");
+        // assert.strictEqual(print_expr(value,$), "a<<b");
         engine.release();
     });
     it("should be able to parse a right contraction(>>) expression", function () {
@@ -225,7 +228,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(>> a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "a<<b");
+        // assert.strictEqual(print_expr(value,$), "a<<b");
         engine.release();
     });
     it("should be able to parse an exponentiation (**) expression", function () {
@@ -240,7 +243,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(power a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual($.toInfixString(value), "a**b");
+        assert.strictEqual(print_expr(value, $), "a**b");
         engine.release();
     });
     it("should be able to parse an assignment expression", function () {
@@ -255,7 +258,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(= x 3)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "x=3");
+        // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
     xit("should be able to parse a let expression", function () {
@@ -270,7 +273,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(: a A)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "x=3");
+        // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
     xit("should be able to parse a let expression with assignment", function () {
@@ -285,7 +288,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(= (: a Real) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "x=3");
+        // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
     xit("should be able to parse a let expression with assignment", function () {
@@ -300,7 +303,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(= (: a Complex) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "x=3");
+        // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
     xit("should be able to parse a let expression with assignment", function () {
@@ -315,7 +318,7 @@ describe("parser", function () {
         assert.isDefined(tree);
         assert.strictEqual(print_list(tree, $), "(= (: a Vec) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
-        // assert.strictEqual($.toInfixString(value), "x=3");
+        // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
 });

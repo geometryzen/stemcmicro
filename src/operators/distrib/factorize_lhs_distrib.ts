@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -41,6 +41,7 @@ function cross($: ExtensionEnv) {
 
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
+    readonly phases = PHASE_FACTORING;
     constructor(public readonly name: string, mul: Sym, add: Sym, $: ExtensionEnv) {
         super(name, add, and(is_cons, is_opr_2_any_any(mul)), and(is_cons, is_opr_2_any_any(mul)), cross($), $);
         this.hash = `(${add.key()} (${mul.key()}) (${mul.key()}))`;

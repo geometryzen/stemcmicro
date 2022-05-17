@@ -4,7 +4,29 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cross", function () {
-    it("A", function () {
+    xit("cross(A,cross(B,C))", function () {
+        // The vector-valued triple product with two cross products.
+        const lines: string[] = [
+            `G = algebra([1,1,1],["i","j","k"])`,
+            `e1=G[1]`,
+            `e2=G[2]`,
+            `e3=G[3]`,
+            `A = e1 * Ax + e2 * Ay + e3 * Az`,
+            `B = e1 * Bx + e2 * By + e3 * Bz`,
+            `C = e1 * Cx + e2 * Cy + e3 * Cz`,
+            `cross(A,cross(B,C))`
+        ];
+        const engine = createSymEngine({ dependencies: ['Blade'] });
+        const $ = engine.$;
+        // const startTime = new Date().getTime();
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        // const elapsedTime = new Date().getTime() - startTime;
+        // console.log(`double cross elapsedTime = ${elapsedTime} ms`);
+        // assert.strictEqual($.toListString(value), "");
+        assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        engine.release();
+    });
+    xit("A", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `i=G[1]`,

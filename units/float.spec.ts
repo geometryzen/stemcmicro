@@ -8,7 +8,9 @@ describe("float", function () {
         const lines: string[] = [
             `float(tau(1/2))`
         ];
-        const engine = createSymEngine({});
+        const engine = createSymEngine({
+            dependencies: ['Flt']
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), "3.141593...");

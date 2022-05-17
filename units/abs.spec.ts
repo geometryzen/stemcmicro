@@ -89,13 +89,15 @@ describe("abs", function () {
         assert.strictEqual(print_expr(value, $), "x**2+y**2");
         engine.release();
     });
-    it("abs", function () {
+    it("abs(1+2.0*i)", function () {
         const lines: string[] = [
             `implicate=0`,
             `i=sqrt(-1)`,
             `abs(1+2.0*i)`,
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Flt']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "2.236068...");

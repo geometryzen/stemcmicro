@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { changedFlag, ExtensionEnv, TFLAGS, NOFLAGS, CHANGED } from "../../env/ExtensionEnv";
+import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
@@ -22,39 +22,44 @@ export abstract class Function2<L extends U, R extends U> extends FunctionOperat
         return !!m;
     }
     match(expr: U): BCons<Sym, L, R> | undefined {
-        if (is_cons(expr) && expr.length === 3) {
-            const opr = expr.opr;
-            const lhs = expr.item(1);
-            const rhs = expr.item(2);
-            if (is_sym(opr)) {
-                if (this.opr.equalsSym(opr)) {
-                    if (this.guardL(lhs)) {
-                        if (this.guardR(rhs)) {
-                            return expr as BCons<Sym, L, R>;
+        try {
+            if (is_cons(expr) && expr.length === 3) {
+                const opr = expr.opr;
+                const lhs = expr.item(1);
+                const rhs = expr.item(2);
+                if (is_sym(opr)) {
+                    if (this.opr.equalsSym(opr)) {
+                        if (this.guardL(lhs)) {
+                            if (this.guardR(rhs)) {
+                                return expr as BCons<Sym, L, R>;
+                            }
+                            else {
+                                // console.lg('guardR mismatch');
+                                return void 0;
+                            }
                         }
                         else {
-                            // console.lg('guardR mismatch');
+                            // console.lg('guardL mismatch');
                             return void 0;
                         }
                     }
                     else {
-                        // console.lg('guardL mismatch');
+                        // console.lg('equalSym mismatch');
                         return void 0;
                     }
                 }
                 else {
-                    // console.lg('equalSym mismatch');
+                    // console.lg('is_sym mismatch');
                     return void 0;
                 }
             }
             else {
-                // console.lg('is_sym mismatch');
+                // console.lg('is_cons or length mismatch');
                 return void 0;
             }
         }
-        else {
-            // console.lg('is_cons or length mismatch');
-            return void 0;
+        catch (e) {
+            throw new Error(`${this.name} + ${e}`);
         }
     }
     transform(expr: U): [TFLAGS, U] {

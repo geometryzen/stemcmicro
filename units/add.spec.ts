@@ -8,7 +8,10 @@ describe("add", function () {
         const lines: string[] = [
             `2.0+3`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual($.toInfixString(actual), '5.0');
@@ -20,7 +23,10 @@ describe("add", function () {
         const lines: string[] = [
             `2+3.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual($.toInfixString(actual), '5.0');

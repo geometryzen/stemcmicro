@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { U } from "../../tree/tree";
 
 /**
@@ -43,6 +43,9 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     }
     get phases(): number | undefined {
         return this.extension.phases;
+    }
+    get dependencies(): FEATURE[] | undefined {
+        return this.extension.dependencies;
     }
     isImag(expr: T): boolean {
         return this.extension.isImag(expr, this.$);

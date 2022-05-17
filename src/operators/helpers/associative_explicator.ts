@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_EXPLICATE_FLAG, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_EXPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -29,7 +29,7 @@ export function is_opr(sym: Sym, expr: Cons): expr is Cons {
  * (op t1 t2 t3 t4 ...) => (op (op (op t1 t2) t3) t4) ...
  */
 class Explicator extends FunctionOperator implements Operator<Cons> {
-    readonly phases = PHASE_EXPLICATE_FLAG;
+    readonly phases = PHASE_EXPLICATE;
     constructor(name: string, opr: Sym, $: ExtensionEnv) {
         super(name, opr, $);
     }

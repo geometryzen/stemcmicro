@@ -20,7 +20,7 @@ export type DEPENDENCY = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
 
 export interface SymEngineOptions {
     assocs?: Assoc[];
-    dependencies?: string[];
+    dependencies?: DEPENDENCY[];
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -106,6 +106,7 @@ function env_options_from_engine_options(options: SymEngineOptions | undefined):
     if (options) {
         const config: EnvOptions = {
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
+            includes: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions,
@@ -116,6 +117,7 @@ function env_options_from_engine_options(options: SymEngineOptions | undefined):
     else {
         const config: EnvOptions = {
             assocs: [],
+            includes: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false,

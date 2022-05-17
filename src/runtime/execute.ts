@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, PHASE_COSMETICS_FLAG, PHASE_EXPANDING_FLAG, PHASE_EXPLICATE_FLAG, PHASE_FACTORING_FLAG, PHASE_IMPLICATE_FLAG } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../predicates/is_imu';
 import { create_source_trees } from '../scanner/create_source_tree';
@@ -136,13 +136,13 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
     // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!
     if (isNotDisabled(AUTOEXPAND, $)) {
-        $.setPhase(PHASE_EXPANDING_FLAG);
+        $.setPhase(PHASE_EXPANDING);
         // console.lg("Expanding...");
         stack.push(transform(stack.pop() as U, $));
     }
 
     if (isNotDisabled(AUTOFACTOR, $)) {
-        $.setPhase(PHASE_FACTORING_FLAG);
+        $.setPhase(PHASE_FACTORING);
         // console.lg("Factoring...");
         stack.push(transform(stack.pop() as U, $));
         // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
@@ -300,7 +300,7 @@ function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void
 
 function explicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_EXPLICATE_FLAG);
+    $.setPhase(PHASE_EXPLICATE);
     try {
         return transform(input, $);
     }
@@ -311,7 +311,7 @@ function explicate(input: U, $: ExtensionEnv): U {
 
 function implicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_IMPLICATE_FLAG);
+    $.setPhase(PHASE_IMPLICATE);
     try {
         return transform(input, $);
     }
@@ -322,7 +322,7 @@ function implicate(input: U, $: ExtensionEnv): U {
 
 function prettyfmt(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_COSMETICS_FLAG);
+    $.setPhase(PHASE_COSMETICS);
     try {
         return transform(input, $);
     }

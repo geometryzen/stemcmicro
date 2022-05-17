@@ -52,7 +52,10 @@ describe("kernel", function () {
         const lines: string[] = [
             `0.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '0.0');
@@ -63,7 +66,10 @@ describe("kernel", function () {
         const lines: string[] = [
             `1.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '1.0');
@@ -74,7 +80,10 @@ describe("kernel", function () {
         const lines: string[] = [
             `2.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '2.0');
@@ -85,7 +94,10 @@ describe("kernel", function () {
         const lines: string[] = [
             `2.0+3.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '5.0');
@@ -96,7 +108,10 @@ describe("kernel", function () {
         const lines: string[] = [
             `2+3.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '5.0');
@@ -109,7 +124,10 @@ describe("kernel", function () {
         const lines: string[] = [
             `2.0*3.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '6.0');
@@ -142,7 +160,10 @@ describe("kernel", function () {
         const lines: string[] = [
             `2.0+3.0`
         ];
-        const engine = createSymEngine({ version: 3 });
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            version: 3
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), '5.0');

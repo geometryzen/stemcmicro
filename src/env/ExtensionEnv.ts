@@ -37,6 +37,8 @@ export function stableFlag(flags: TFLAGS): boolean {
     return (flags & STABLE) === STABLE;
 }
 
+export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
+
 export interface ExtensionEnv {
     addCost(pattern: Pattern, value: number): void;
     setCost(sym: Sym, cost: number): void;
@@ -144,17 +146,17 @@ export interface OperatorBuilder<T extends U> {
     create($: ExtensionEnv): Operator<T>;
 }
 
-export const PHASE_EXPLICATE_FLAG = 1;
-export const PHASE_EXPANDING_FLAG = 2;
-export const PHASE_FACTORING_FLAG = 4;
-export const PHASE_COSMETICS_FLAG = 8;
-export const PHASE_IMPLICATE_FLAG = 16;
+export const PHASE_EXPLICATE = 1;
+export const PHASE_EXPANDING = 2;
+export const PHASE_FACTORING = 4;
+export const PHASE_COSMETICS = 8;
+export const PHASE_IMPLICATE = 16;
 
-export const phases = [PHASE_EXPLICATE_FLAG, PHASE_EXPANDING_FLAG, PHASE_FACTORING_FLAG, PHASE_COSMETICS_FLAG, PHASE_IMPLICATE_FLAG];
+export const phases = [PHASE_EXPLICATE, PHASE_EXPANDING, PHASE_FACTORING, PHASE_COSMETICS, PHASE_IMPLICATE];
 
 export const PHASE_FLAGS_NONE = 0;
-export const PHASE_FLAGS_ALL = PHASE_EXPLICATE_FLAG | PHASE_EXPANDING_FLAG | PHASE_FACTORING_FLAG | PHASE_COSMETICS_FLAG | PHASE_IMPLICATE_FLAG;
-export const PHASE_FLAGS_TRANSFORM = PHASE_EXPANDING_FLAG | PHASE_FACTORING_FLAG;
+export const PHASE_FLAGS_ALL = PHASE_EXPLICATE | PHASE_EXPANDING | PHASE_FACTORING | PHASE_COSMETICS | PHASE_IMPLICATE;
+export const PHASE_FLAGS_TRANSFORM = PHASE_EXPANDING | PHASE_FACTORING;
 
 export interface Operator<T extends U> {
     readonly key?: string;
@@ -162,6 +164,7 @@ export interface Operator<T extends U> {
     readonly breaker?: boolean;
     readonly hash?: string;
     readonly phases?: number;
+    readonly dependencies?: FEATURE[];
     cost(expr: T, costs: CostTable, depth: number): number;
     isImag(expr: T): boolean;
     isKind(expr: U): boolean;
@@ -187,6 +190,7 @@ export interface Extension<T extends U> {
     readonly breaker?: boolean;
     readonly hash?: string;
     readonly phases?: number;
+    readonly dependencies?: FEATURE[];
     cost(expr: T, costs: CostTable, depth: number, $: ExtensionEnv): number;
     isImag(expr: T, $: ExtensionEnv): boolean;
     isKind(expr: U, $: ExtensionEnv): boolean;

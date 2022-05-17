@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_TRANSFORM, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_TRANSFORM, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -30,6 +30,8 @@ function cross($: ExtensionEnv) {
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     readonly phases = PHASE_FLAGS_TRANSFORM;
+    // Because we make use of generic term comparison, we require a bunch of features.
+    readonly dependencies: FEATURE[] = ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'];
     constructor($: ExtensionEnv) {
         super('add_2_canonical_ordering', MATH_ADD, is_any, is_any, cross($), $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);

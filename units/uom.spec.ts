@@ -22,7 +22,9 @@ describe("SI units", function () {
             `kg = uom("kilogram")`,
             `kg / 5.0`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Flt']
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), "(* 0.2 kg)");
@@ -143,7 +145,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg * 5.0`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Flt']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "5.0*kg");
@@ -232,7 +236,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg / 5.0`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Flt']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_list(actual, $), "(* 0.2 kg)");
@@ -282,7 +288,7 @@ describe("uom", function () {
             const engine = createSymEngine({ version: 2 });
             const $ = engine.$;
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual($.toInfixString(values[0]), "operator + (Flt, Uom) is not supported.");
+            assert.strictEqual(print_expr(values[0], $), "operator + (Flt, Uom) is not supported.");
             engine.release();
         });
         it("(Uom, Flt)", function () {
@@ -290,10 +296,12 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg + 5.0`
             ];
-            const engine = createSymEngine({ version: 2 });
+            const engine = createSymEngine({
+                dependencies: ['Flt']
+            });
             const { values } = engine.executeScript(lines.join('\n'));
             const $ = engine.$;
-            assert.strictEqual($.toInfixString(values[0]), "operator + (Uom, Flt) is not supported.");
+            assert.strictEqual(print_expr(values[0], $), "operator + (Uom, Flt) is not supported.");
             engine.release();
         });
         it("(Rat, Uom)", function () {
@@ -303,7 +311,7 @@ describe("uom", function () {
             ];
             const engine = createSymEngine({ version: 2 });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.$.toInfixString(values[0]), "operator + (Rat, Uom) is not supported.");
+            assert.strictEqual(print_expr(values[0], engine.$), "operator + (Rat, Uom) is not supported.");
             engine.release();
         });
         it("(Uom, Rat)", function () {
@@ -313,7 +321,7 @@ describe("uom", function () {
             ];
             const engine = createSymEngine({ version: 2 });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.$.toInfixString(values[0]), "operator + (Uom, Rat) is not supported.");
+            assert.strictEqual(print_expr(values[0], engine.$), "operator + (Uom, Rat) is not supported.");
             engine.release();
         });
     });

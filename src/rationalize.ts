@@ -1,5 +1,5 @@
 import { condense } from './condense';
-import { ExtensionEnv, PHASE_FACTORING_FLAG } from './env/ExtensionEnv';
+import { ExtensionEnv, PHASE_FACTORING } from './env/ExtensionEnv';
 import { gcd } from './gcd';
 import { is_negative_number } from './is';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
@@ -17,7 +17,7 @@ export function Eval_rationalize(expr: U, $: ExtensionEnv): void {
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
     // This is a slight departure from the 1.x code, which makes no sense.
-    $.setPhase(PHASE_FACTORING_FLAG);
+    $.setPhase(PHASE_FACTORING);
     try {
         const result = yyrationalize(argList, $);
         return result;

@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE_FLAG, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
@@ -40,7 +40,7 @@ function is_opr(sym: Sym) {
  */
 class Implicator extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_IMPLICATE_FLAG;
+    readonly phases = PHASE_IMPLICATE;
     constructor(name: string, opr: Sym, $: ExtensionEnv) {
         // Ensure that the operator in the lhs operand is the same as the dominant operator symbol...
         super(name, opr, and(is_cons, is_opr(opr)), is_any, $);

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE_FLAG, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -25,7 +25,7 @@ type EXP = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_IMPLICATE_FLAG;
+    readonly phases = PHASE_IMPLICATE;
     constructor($: ExtensionEnv) {
         super('implicate_mul_2_mul_2_any_any_any', MATH_MUL, and(is_cons, is_mul_2_any_any), is_any, $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_ANY);

@@ -35,10 +35,11 @@ import { is_tensor } from "../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { is_uom } from "../tree/uom/is_uom";
 import { CostTable } from "./CostTable";
-import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS_FLAG, PHASE_EXPANDING_FLAG, PHASE_EXPLICATE_FLAG, PHASE_FACTORING_FLAG, PHASE_FLAGS_ALL, PHASE_IMPLICATE_FLAG, Sign, stableFlag, TFLAGS } from "./ExtensionEnv";
+import { CHANGED, changedFlag, ExtensionEnv, FEATURE, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, stableFlag, TFLAGS } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
+    includes?: FEATURE[]
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -47,6 +48,7 @@ export interface EnvOptions {
 
 interface EnvConfig {
     assocs: { sym: Sym, dir: 'L' | 'R' }[];
+    includes: FEATURE[];
     treatAsVectors: string[]
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
@@ -57,6 +59,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
     if (options) {
         const config: EnvConfig = {
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
+            includes: Array.isArray(options.includes) ? options.includes : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
@@ -67,6 +70,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
     else {
         const config: EnvConfig = {
             assocs: [],
+            includes: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false,
@@ -85,6 +89,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
 
     const config = config_from_options(options);
 
+    // console.log(`config: ${JSON.stringify(config, null, 2)}`);
+
     const symTab: SymTab = createSymTab();
 
     const costTable = new CostTable();
@@ -99,7 +105,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
     }
     const assocs: { [key: string]: Assoc } = {};
 
-    let current_phase: number = PHASE_EXPANDING_FLAG;
+    let current_phase: number = PHASE_EXPANDING;
 
     let fieldKind: 'R' | undefined = 'R';
 
@@ -162,6 +168,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
         },
         treatAsScalar(sym: Sym): boolean {
+            // console.log(`treatAsScalar ${sym}`);
             return !$.treatAsVector(sym);
         },
         treatAsVector(sym: Sym): boolean {
@@ -296,8 +303,17 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return current_phase;
         },
         initialize(): void {
+            // This tells us which features to allow.
+            config.includes;
             for (const builder of builders) {
                 const op = builder.create($);
+                if (dependencies_satisfied(op.dependencies, config.includes)) {
+                    // No problem.
+                }
+                else {
+                    // console.log(`Ignoring ${op.name} which depends on ${JSON.stringify(op.dependencies)}`);
+                    continue;
+                }
                 // If an operator does not restrict the phases to which it applies then it applies to all phases.
                 const phaseFlags = typeof op.phases === 'number' ? op.phases : PHASE_FLAGS_ALL;
                 for (const phase of phases) {
@@ -369,19 +385,19 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
         },
         isExpanding(): boolean {
-            return current_phase == PHASE_EXPANDING_FLAG;
+            return current_phase == PHASE_EXPANDING;
         },
         isFactoring(): boolean {
-            return current_phase === PHASE_FACTORING_FLAG;
+            return current_phase === PHASE_FACTORING;
         },
         get explicateMode(): boolean {
-            return current_phase === PHASE_EXPLICATE_FLAG;
+            return current_phase === PHASE_EXPLICATE;
         },
         get prettyfmtMode(): boolean {
-            return current_phase === PHASE_COSMETICS_FLAG;
+            return current_phase === PHASE_COSMETICS;
         },
         get implicateMode(): boolean {
-            return current_phase === PHASE_IMPLICATE_FLAG;
+            return current_phase === PHASE_IMPLICATE;
         },
         isImag(expr: U): boolean {
             return $.operatorFor(expr).isImag(expr);
@@ -396,9 +412,11 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return $.operatorFor(expr).isReal(expr);
         },
         isScalar(expr: U): boolean {
+            // console.log(`isScalar ${expr}`);
             return $.operatorFor(expr).isScalar(expr);
         },
         isVector(expr: U): boolean {
+            // console.log(`isVector ${expr}`);
             return $.operatorFor(expr).isVector(expr);
         },
         isZero(expr: U): boolean {
@@ -642,4 +660,18 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         }
     };
     return $;
+}
+
+function dependencies_satisfied(deps: FEATURE[] | undefined, includes: FEATURE[]): boolean {
+    if (Array.isArray(deps)) {
+        for (const dep of deps) {
+            if (includes.indexOf(dep) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    else {
+        return true;
+    }
 }

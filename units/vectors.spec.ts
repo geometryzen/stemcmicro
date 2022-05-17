@@ -17,7 +17,9 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))-B*A|C-C*A|B`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
@@ -37,7 +39,9 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
@@ -55,7 +59,9 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)-B|cross(C,A)`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
@@ -74,7 +80,9 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
@@ -92,7 +100,9 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
@@ -365,7 +375,9 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A<<B`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
@@ -382,7 +394,9 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A>>B`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");

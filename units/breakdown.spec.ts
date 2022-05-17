@@ -25,7 +25,9 @@ describe("breakdown", function () {
             `X = b1 + b2`,
             `X`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const scan = engine.scanSourceText(lines.join('\n'));
         assert.strictEqual(scan.trees.length, 5);

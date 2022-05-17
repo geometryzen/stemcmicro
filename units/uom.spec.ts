@@ -209,7 +209,7 @@ describe("uom", function () {
                 `e1 * kg`
             ];
             const engine = createSymEngine({
-                dependencies: ['Uom']
+                dependencies: ['Blade', 'Uom']
             });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -224,7 +224,7 @@ describe("uom", function () {
                 `kg * e1`
             ];
             const engine = createSymEngine({
-                dependencies: ['Uom']
+                dependencies: ['Blade', 'Uom']
             });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);

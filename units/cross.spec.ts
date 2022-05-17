@@ -71,7 +71,9 @@ describe("cross", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `A`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), "Ax*i+Ay*j+Az*k");

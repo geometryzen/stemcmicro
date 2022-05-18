@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { PHASE_EXPLICATE } from "../src/env/ExtensionEnv";
 import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";

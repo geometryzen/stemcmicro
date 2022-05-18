@@ -1,6 +1,7 @@
 import { is_blade } from "../operators/blade/BladeExtension";
 import { is_err } from "../operators/err/is_err";
 import { is_sym } from "../operators/sym/is_sym";
+import { is_boo } from "../tree/boo/is_boo";
 import { is_flt } from "../tree/flt/is_flt";
 import { is_rat } from "../tree/rat/is_rat";
 import { is_str } from "../tree/str/is_str";
@@ -16,6 +17,7 @@ type KIND = typeof NIL | typeof CONS | typeof ATOM;
 type INFO = { kind: KIND, parts: string[] };
 
 export const HASH_BLADE = 'Blade';
+export const HASH_BOO = 'Boo';
 export const HASH_ERR = 'Err';
 export const HASH_FLT = 'Flt';
 export const HASH_RAT = 'Rat';
@@ -44,6 +46,10 @@ export function hash_binop_cons_cons(opr: Sym, lhs: Sym, rhs: Sym): string {
 
 export function hash_unaop_atom(opr: Sym, arg: string): string {
     return `(${opr.key()} ${arg})`;
+}
+
+export function hash_unaop_cons(opr: Sym, arg: Sym): string {
+    return `(${opr.key()} (${arg.key()}))`;
 }
 
 export function hash_info(expr: U): string[] {
@@ -128,6 +134,9 @@ function hash_info_at_level(expr: U, level: number): INFO {
     }
     if (is_str(expr)) {
         return { kind: ATOM, parts: [HASH_STR] };
+    }
+    if (is_boo(expr)) {
+        return { kind: ATOM, parts: [HASH_BOO] };
     }
     if (is_err(expr)) {
         return { kind: ATOM, parts: [HASH_ERR] };

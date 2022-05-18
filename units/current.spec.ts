@@ -5,7 +5,7 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("current", function () {
-    it("A x (B x C)", function () {
+    xit("A x (B x C)", function () {
         //
         // Looping?
         const lines: string[] = [
@@ -31,6 +31,8 @@ describe("current", function () {
         tree.reset(NOFLAGS);
         engine.$.setPhase(PHASE_EXPLICATE);
         tree = $.valueOf(tree);
+
+        // TODO: How to guide the transformations?
 
         tree.reset(NOFLAGS);
         engine.$.setPhase(PHASE_EXPANDING);

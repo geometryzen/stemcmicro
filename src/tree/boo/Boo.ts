@@ -28,10 +28,9 @@ export class Boo extends Atom {
     toString(): string {
         return this.b ? `${this.name}(true)` : `${this.name}(false)`;
     }
-}
-
-export function create_boolean(b: boolean): Boo {
-    return b ? True : False;
+    static valueOf(b: boolean): Boo {
+        return b ? True : False;
+    }
 }
 
 export const True = new Boo(true);

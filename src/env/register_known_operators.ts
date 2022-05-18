@@ -209,6 +209,9 @@ import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { script_last_0 } from '../operators/script_last/script_last';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
+import { sin_any } from '../operators/sin/sin_any';
+import { sin_mul_2_rat_any } from '../operators/sin/sin_mul_2_rat_any';
+import { sin_sym } from '../operators/sin/sin_sym';
 import { MATH_SQRT } from '../operators/sqrt/MATH_SQRT';
 import { sqrt_1_any } from '../operators/sqrt/sqrt_1_any';
 import { sqrt_1_rat } from '../operators/sqrt/sqrt_1_rat';
@@ -223,6 +226,13 @@ import { sym_math_pi } from '../operators/sym/sym_math_pi';
 import { sym_math_pow } from '../operators/sym/sym_math_pow';
 import { tau } from '../operators/tau/tau';
 import { mat } from '../operators/tensor/TensorExtension';
+import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
+import { testgt_mul_2_any_any_rat } from '../operators/testgt/testgt_mul_2_any_any_rat';
+import { testgt_rat_rat } from '../operators/testgt/testgt_rat_rat';
+import { testgt_sym_rat } from '../operators/testgt/testgt_sym_rat';
+import { testlt_mul_2_any_any_rat } from '../operators/testlt/testlt_mul_2_any_any_rat';
+import { testlt_rat_rat } from '../operators/testlt/testlt_rat_rat';
+import { testlt_sym_rat } from '../operators/testlt/testlt_sym_rat';
 import { typeof_any } from '../operators/typeof/typeof_any';
 import { typeof_mat } from '../operators/typeof/typeof_mat';
 import { typeof_blade } from '../operators/typeof/typeof_vec';
@@ -533,6 +543,10 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(succ_rat);
     $.defineOperator(succ_any);
 
+    $.defineOperator(sin_sym);
+    $.defineOperator(sin_mul_2_rat_any);
+    $.defineOperator(sin_any);
+
     $.defineOperator(sqrt_1_rat);
     $.defineOperator(sqrt_1_any);
     $.setCost(MATH_SQRT, 2);
@@ -543,6 +557,16 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(tau);
     $.setCost(MATH_TAU, 3);
+
+    $.defineOperator(testeq_sym_rat);
+
+    $.defineOperator(testlt_rat_rat);
+    $.defineOperator(testlt_sym_rat);
+    $.defineOperator(testlt_mul_2_any_any_rat);
+
+    $.defineOperator(testgt_rat_rat);
+    $.defineOperator(testgt_sym_rat);
+    $.defineOperator(testgt_mul_2_any_any_rat);
 
     $.defineOperator(sym_math_add);
     $.defineOperator(sym_math_mul);

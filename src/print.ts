@@ -1642,7 +1642,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     }
 
     if (is_boo(expr)) {
-        return expr.equals(True) ? '#t' : '#f';
+        return expr.equals(True) ? 'True' : 'False';
     }
 
     if (is_str(expr)) {

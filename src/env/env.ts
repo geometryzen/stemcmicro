@@ -28,6 +28,7 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { VERSION_LATEST } from "../runtime/version";
 import { d_scalar_tensor, d_tensor_scalar, d_tensor_tensor } from "../tensor";
+import { is_boo } from "../tree/boo/is_boo";
 import { is_flt } from "../tree/flt/is_flt";
 import { is_rat } from "../tree/rat/is_rat";
 import { negOne, Rat, zero } from "../tree/rat/Rat";
@@ -519,6 +520,9 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             else if (is_str(expr)) {
                 return selectOperator(expr.name, expr);
             }
+            else if (is_boo(expr)) {
+                return selectOperator(expr.name, expr);
+            }
             else if (is_err(expr)) {
                 return selectOperator(expr.name, expr);
             }
@@ -677,6 +681,10 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return [NOFLAGS, expr];
             }
             else if (is_str(expr)) {
+                expr.meta |= STABLE;
+                return [NOFLAGS, expr];
+            }
+            else if (is_boo(expr)) {
                 expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }

@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
 import { Extension, ExtensionEnv, NOFLAGS, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_BOO } from "../../hashing/hash_info";
 import { Boo, True } from "../../tree/boo/Boo";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -11,6 +12,9 @@ export class BooExtension implements Extension<Boo> {
     }
     get key(): string {
         return True.name;
+    }
+    get hash(): string {
+        return HASH_BOO;
     }
     get name(): string {
         return 'BooExtension';
@@ -36,7 +40,7 @@ export class BooExtension implements Extension<Boo> {
         throw new Error("Boo Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isKind(arg: unknown): arg is Boo {
+    isKind(arg: U): arg is Boo {
         return arg instanceof Boo;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

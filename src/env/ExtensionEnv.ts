@@ -1,4 +1,5 @@
 import { Pattern } from "../patterns/Pattern";
+import { Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { CostTable } from "./CostTable";
@@ -75,7 +76,7 @@ export interface ExtensionEnv {
     cos(expr: U): U;
     cost(expr: U, depth: number): number;
     defineOperator(builder: OperatorBuilder<U>): void;
-    defineAssociative(opr: Sym): void;
+    defineAssociative(opr: Sym, id: Rat): void;
     defineKey(sym: Sym): Sym;
     derivative(expr: U, wrt: U): U;
     divide(lhs: U, rhs: U): U;

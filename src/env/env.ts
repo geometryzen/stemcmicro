@@ -30,7 +30,7 @@ import { VERSION_LATEST } from "../runtime/version";
 import { d_scalar_tensor, d_tensor_scalar, d_tensor_tensor } from "../tensor";
 import { is_flt } from "../tree/flt/is_flt";
 import { is_rat } from "../tree/rat/is_rat";
-import { negOne, zero } from "../tree/rat/Rat";
+import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { is_str } from "../tree/str/is_str";
 import { Sym } from "../tree/sym/Sym";
 import { is_tensor } from "../tree/tensor/is_tensor";
@@ -222,13 +222,13 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             builders.push(builder);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        defineAssociative(opr: Sym): void {
+        defineAssociative(opr: Sym, id: Rat): void {
             // These operators should only be needed for the initial phase to
             // get expressions into either Left- or Right-Associated form.
             // The expressions from the scanner should be in the associated
             // form. However, we implicate expressions prior to pretty.
             // With a smarter serializer this would not be needed.
-            $.defineOperator(associative_explicator(opr));
+            $.defineOperator(associative_explicator(opr, id));
             $.defineOperator(associative_implicator(opr));
         },
         clearBindings(): void {

@@ -1,10 +1,11 @@
 import { assert } from "chai";
+import { PHASE_EXPLICATE } from "../src/env/ExtensionEnv";
 import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("vectors", function () {
-    xit("cross(A,cross(B,C))-B*A|C-C*A|B", function () {
+    it("A x (B x C)", function () {
         //
         // Looping?
         const lines: string[] = [
@@ -15,7 +16,7 @@ describe("vectors", function () {
             `A = e1 * Ax + e2 * Ay + e3 * Az`,
             `B = e1 * Bx + e2 * By + e3 * Bz`,
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
-            `cross(A,cross(B,C))-B*A|C-C*A|B`
+            `cross(A,cross(B,C))`
         ];
         const engine = createSymEngine({
             dependencies: ['Blade']
@@ -23,7 +24,30 @@ describe("vectors", function () {
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+
+        engine.release();
+    });
+    it("B * (A|C) - C * (A|B)", function () {
+        //
+        // Looping?
+        const lines: string[] = [
+            `G = algebra([1,1,1],["i","j","k"])`,
+            `e1=G[1]`,
+            `e2=G[2]`,
+            `e3=G[3]`,
+            `A = e1 * Ax + e2 * Ay + e3 * Az`,
+            `B = e1 * Bx + e2 * By + e3 * Bz`,
+            `C = e1 * Cx + e2 * Cy + e3 * Cz`,
+            `B*(A|C)-C*(A|B)`
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        // assert.strictEqual(print_list(value,$), "");
+        assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
     });
     xit("cross(A,cross(B,C))", function () {
@@ -250,7 +274,7 @@ describe("vectors", function () {
 });
 
 describe("vectors", function () {
-    it("", function () {
+    it("x*y", function () {
         const lines: string[] = [
             `x*y`,
         ];
@@ -260,7 +284,7 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "x*y");
         engine.release();
     });
-    it("", function () {
+    it("x|y", function () {
         const lines: string[] = [
             `x|y`,
         ];
@@ -270,7 +294,7 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "x|y");
         engine.release();
     });
-    it("", function () {
+    it("y|x", function () {
         const lines: string[] = [
             `y|x`,
         ];
@@ -280,7 +304,7 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "x|y");
         engine.release();
     });
-    it("", function () {
+    it("x^y", function () {
         const lines: string[] = [
             `x^y`,
         ];
@@ -290,11 +314,14 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "x^y");
         engine.release();
     });
-    it("", function () {
+    it("y^x", function () {
         const lines: string[] = [
             `y^x`,
         ];
-        const engine = createSymEngine({ treatAsVectors: ['x', 'y'] });
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['x', 'y']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), "-x^y");
@@ -401,6 +428,26 @@ describe("vectors", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
         assert.strictEqual(print_expr(value, $), "Ax*Bx+Ay*By+Az*Bz");
+        engine.release();
+    });
+    it("A x (B x C) = B * (A|C) - C * (A|B)", function () {
+        const lines: string[] = [
+            `G = algebra([1,1,1],["i","j","k"])`,
+            `e1=G[1]`,
+            `e2=G[2]`,
+            `e3=G[3]`,
+            `A = e1 * Ax + e2 * Ay + e3 * Az`,
+            `B = e1 * Bx + e2 * By + e3 * Bz`,
+            `C = e1 * Cx + e2 * Cy + e3 * Cz`,
+            `cross(A,cross(B,C))-B*A|C+C*A|B`
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        // assert.strictEqual(print_list(value,$), "");
+        assert.strictEqual(print_expr(value, $), "0");
         engine.release();
     });
 });

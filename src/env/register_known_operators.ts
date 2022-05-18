@@ -182,7 +182,7 @@ import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
 import { nil } from '../operators/nil/NilExtension';
 import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
-import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_amy';
+import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_any';
 import { outer_2_blade_blade } from '../operators/outer/outer_2_blade_blade';
 import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_scalar_any_any';
 import { outer_2_sym_outer_2_sym_sym } from '../operators/outer/outer_2_sym_outer_2_sym_sym';
@@ -230,6 +230,7 @@ import { is_uom, uom } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_TAU } from '../runtime/ns_math';
 import { SymEngineOptions } from '../runtime/symengine';
+import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 
 
@@ -329,7 +330,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_any_any_factorize_rhs);
     $.defineOperator(add_2_any_any);
 
-    $.defineAssociative(MATH_ADD);
+    $.defineAssociative(MATH_ADD, zero);
+    $.defineAssociative(MATH_MUL, one);
 
     $.defineOperator(pow_2_pow_2_any_any_any);
     $.defineOperator(pow_2_e_any);
@@ -426,7 +428,6 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_scalar_blade);
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
-    $.defineAssociative(MATH_MUL);
 
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);

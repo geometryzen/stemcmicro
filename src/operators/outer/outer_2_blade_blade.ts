@@ -1,5 +1,6 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -14,9 +15,11 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Blade, Blade> implements Operator<Cons> {
-    readonly breaker = true;
+    readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('outer_2_blade_blade', MATH_OUTER, is_blade, is_blade, $);
+        this.hash = hash_binop_atom_atom(MATH_OUTER, HASH_BLADE, HASH_BLADE);
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
         return [CHANGED, lhs.__wedge__(rhs)];

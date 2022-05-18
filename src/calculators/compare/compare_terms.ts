@@ -3,6 +3,7 @@ import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
+import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_blade_rat } from "../../operators/mul/is_mul_2_blade_rat";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
@@ -88,6 +89,13 @@ export function compare_terms(lhs: U, rhs: U): Sign {
                 return SIGN_GT;
             }
             else if (is_sym(rhs)) {
+                // TODO: Must be a conflict somewhere because it loops with SIGN_GT.
+                return SIGN_LT;
+            }
+            else if (is_blade(rhs)) {
+                if (is_blade(lhs.rhs)) {
+                    return compare_blade_blade(lhs.rhs, rhs);
+                }
                 // TODO: Must be a conflict somewhere because it loops with SIGN_GT.
                 return SIGN_LT;
             }
@@ -188,6 +196,9 @@ export function compare_terms(lhs: U, rhs: U): Sign {
         }
         if (is_cons(rhs) && is_mul_2_blade_rat(rhs)) {
             return compare_blade_blade(lhs, rhs.lhs);
+        }
+        if (is_cons(rhs) && is_mul_2_any_blade(rhs)) {
+            return compare_blade_blade(lhs, rhs.rhs);
         }
         throw new Error(`lhs: Blade = ${lhs}, rhs = ${rhs}`);
     }

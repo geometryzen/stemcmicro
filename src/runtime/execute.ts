@@ -66,7 +66,6 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
     defs.prints.length = 0;
 
     const value = top_level_transform(tree, $);
-    // const value = top_level_basic_transform(tree, $);
 
     prints.push(...defs.prints);
 
@@ -163,7 +162,7 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
             // console.lg("Baking...");
             let expr = bake(stack.pop() as U, $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.
-            expr = transform(expr, $, 'bakebeans');
+            expr = transform(expr, $, 'bake     ');
             // console.lg(`baked     : ${print_list(expr, $)}`);
             stack.push(expr);
         }
@@ -204,7 +203,7 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  * @returns 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bakebeans' | 'cosmetics'): U {
+function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
     // console.log(`${reason} ${input}`);
     const MAX_LOOPS = 10;
     const seens: U[] = [];

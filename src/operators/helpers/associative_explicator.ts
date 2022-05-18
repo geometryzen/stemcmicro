@@ -1,17 +1,17 @@
 import { CostTable } from "../../env/CostTable";
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_EXPLICATE, TFLAGS } from "../../env/ExtensionEnv";
-import { one } from "../../tree/rat/Rat";
+import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 import { FunctionOperator } from "./FunctionOperator";
 
 class Builder implements OperatorBuilder<Cons> {
-    constructor(private readonly name: string, private readonly opr: Sym) {
+    constructor(private readonly name: string, private readonly opr: Sym, private readonly id: Rat) {
 
     }
     create($: ExtensionEnv): Operator<Cons> {
-        return new Explicator(this.name, this.opr, $);
+        return new Explicator(this.name, this.opr, this.id, $);
     }
 }
 
@@ -30,7 +30,14 @@ export function is_opr(sym: Sym, expr: Cons): expr is Cons {
  */
 class Explicator extends FunctionOperator implements Operator<Cons> {
     readonly phases = PHASE_EXPLICATE;
-    constructor(name: string, opr: Sym, $: ExtensionEnv) {
+    /**
+     * 
+     * @param name 
+     * @param opr 
+     * @param id The identity element for the operator. e.g + is 0, * is 1.
+     * @param $ 
+     */
+    constructor(name: string, opr: Sym, private readonly id: Rat, $: ExtensionEnv) {
         super(name, opr, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,20 +56,18 @@ class Explicator extends FunctionOperator implements Operator<Cons> {
     transform(expr: U): [TFLAGS, U] {
         if (is_cons(expr) && is_opr(this.opr, expr) && expr.length > 3) {
             const $ = this.$;
-            if ($.explicateMode) {
-                let argList = expr.argList;
-                let retval: U = one;
-                while (is_cons(argList)) {
-                    retval = makeList(this.opr, retval, argList.car);
-                    argList = argList.argList;
-                }
-                return [CHANGED, $.valueOf(retval)];
+            let argList = expr.argList;
+            let retval: U = this.id;
+            while (is_cons(argList)) {
+                retval = makeList(this.opr, retval, argList.car);
+                argList = argList.argList;
             }
+            return [CHANGED, $.valueOf(retval)];
         }
         return [NOFLAGS, expr];
     }
 }
 
-export function associative_explicator(opr: Sym) {
-    return new Builder(`Associative explicator for ${opr.key()}`, opr);
+export function associative_explicator(opr: Sym, id: Rat) {
+    return new Builder(`Associative explicator for ${opr.key()}`, opr, id);
 }

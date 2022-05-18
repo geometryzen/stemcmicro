@@ -1,6 +1,7 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_OUTER } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -10,20 +11,6 @@ import { Function2 } from "../helpers/Function2";
 import { value_of } from "../helpers/valueOf";
 import { is_sym } from "../sym/is_sym";
 
-function canoncal_reorder_outer_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
-    switch (compare_sym_sym(lhs, rhs)) {
-        case SIGN_GT: {
-            const A = makeList(opr, rhs, lhs);
-            const C = $.negate(A);
-            const D = value_of(C, $);
-            return [CHANGED, D];
-        }
-        default: {
-            return [NOFLAGS, orig];
-        }
-    }
-}
-
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
         return new Op($);
@@ -31,8 +18,11 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
+    readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Vector'];
     constructor($: ExtensionEnv) {
         super('outer_2_sym_sym', MATH_OUTER, is_sym, is_sym, $);
+        this.hash = hash_binop_atom_atom(MATH_OUTER, HASH_SYM, HASH_SYM);
     }
     transform2(opr: Sym, lhs: Sym, rhs: Sym, expr: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         const $ = this.$;
@@ -71,7 +61,17 @@ class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
                 const retval = makeList(MATH_MUL, half, abba);
                 return [true, retval];
                 */
-                return canoncal_reorder_outer_factors_sym_sym(opr, lhs, rhs, expr, $);
+                switch (compare_sym_sym(lhs, rhs)) {
+                    case SIGN_GT: {
+                        const A = makeList(opr, rhs, lhs);
+                        const C = $.negate(A);
+                        const D = value_of(C, $);
+                        return [CHANGED, D];
+                    }
+                    default: {
+                        return [STABLE, expr];
+                    }
+                }
             }
             else {
                 // vector ^ other

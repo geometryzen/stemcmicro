@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../predicates/is_imu';
 import { create_source_trees } from '../scanner/create_source_tree';
@@ -138,13 +138,13 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
     if (isNotDisabled(AUTOEXPAND, $)) {
         $.setPhase(PHASE_EXPANDING);
         // console.lg("Expanding...");
-        stack.push(transform(stack.pop() as U, $));
+        stack.push(transform(stack.pop() as U, $, 'expanding'));
     }
 
     if (isNotDisabled(AUTOFACTOR, $)) {
         $.setPhase(PHASE_FACTORING);
         // console.lg("Factoring...");
-        stack.push(transform(stack.pop() as U, $));
+        stack.push(transform(stack.pop() as U, $, 'factoring'));
         // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
     }
 
@@ -163,14 +163,14 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
             // console.lg("Baking...");
             let expr = bake(stack.pop() as U, $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.
-            expr = transform(expr, $);
+            expr = transform(expr, $, 'bakebeans');
             // console.lg(`baked     : ${print_list(expr, $)}`);
             stack.push(expr);
         }
 
         if (isNotDisabled(PRETTYFMT, $)) {
             // console.lg("Prettying...");
-            const expr = prettyfmt(stack.pop() as U, $);
+            const expr = cosmetics(stack.pop() as U, $);
             // console.lg(`prettyfmt : ${print_expr(expr, $)}`);
             stack.push(expr);
         }
@@ -191,12 +191,6 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
     return stack.pop() as U;
 }
 
-export function top_level_basic_transform(input: U, $: ExtensionEnv): U {
-    const output = transform(input, $);
-    store_in_script_last(output, $);
-    return output;
-}
-
 function store_in_script_last(expr: U, $: ExtensionEnv): void {
     // console.lg(`store_in_script_last ${expr}`);
     $.setBinding(NAME_SCRIPT_LAST, expr);
@@ -209,17 +203,23 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  * @param $ 
  * @returns 
  */
-function transform(input: U, $: ExtensionEnv): U {
-    // console.lg(`transform ${input}`);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bakebeans' | 'cosmetics'): U {
+    // console.log(`${reason} ${input}`);
     const MAX_LOOPS = 10;
     const seens: U[] = [];
     let inExpr: U = input;
     let done = false;
     let loops = 0;
     while (!done) {
-        const outExpr = $.valueOf(inExpr);
+        inExpr.reset(NOFLAGS);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [changed, outExpr] = $.transform(inExpr);
         loops++;
         const is_stable = $.equals(outExpr, inExpr);
+        // console.log(`changed: ${changed}`);
+        // console.log(`meta:    ${outExpr.meta}`);
+        // console.log(`is_stable: ${is_stable}`);
         if (is_stable) {
             done = true;
         }
@@ -302,7 +302,7 @@ function explicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
     $.setPhase(PHASE_EXPLICATE);
     try {
-        return transform(input, $);
+        return transform(input, $, 'explicate');
     }
     finally {
         $.setPhase(phase);
@@ -313,18 +313,18 @@ function implicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
     $.setPhase(PHASE_IMPLICATE);
     try {
-        return transform(input, $);
+        return transform(input, $, 'implicate');
     }
     finally {
         $.setPhase(phase);
     }
 }
 
-function prettyfmt(input: U, $: ExtensionEnv): U {
+function cosmetics(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
     $.setPhase(PHASE_COSMETICS);
     try {
-        return transform(input, $);
+        return transform(input, $, 'cosmetics');
     }
     finally {
         $.setPhase(phase);

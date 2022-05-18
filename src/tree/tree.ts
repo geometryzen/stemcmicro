@@ -12,10 +12,12 @@
  */
 export interface U {
     readonly name: string;
+    meta: number;
     contains(needle: U): boolean;
     equals(other: U): boolean;
     isCons(): boolean;
     isNil(): boolean;
+    reset(meta: number): void;
     readonly pos?: number;
     readonly end?: number;
 }
@@ -65,7 +67,7 @@ export function is_singleton(expr: Cons): boolean {
  * 
  */
 export class Cons implements U {
-    constructor(private readonly $car: U | undefined, private readonly $cdr: U | undefined, readonly pos?: number, readonly end?: number) {
+    constructor(public meta: number, private readonly $car: U | undefined, private readonly $cdr: U | undefined, readonly pos?: number, readonly end?: number) {
         // Nothing to see here.
     }
     get name(): 'Cons' | 'Nil' {
@@ -140,6 +142,15 @@ export class Cons implements U {
             return true;
         }
     }
+    reset(meta: number): void {
+        this.meta = meta;
+        if (this.$car) {
+            this.$car.reset(meta);
+        }
+        if (this.$cdr) {
+            this.$cdr.reset(meta);
+        }
+    }
     public toString(): string {
         // If you call car or cdr you get an infinite loop because NIL is a Cons.
         const head = this.$car;
@@ -192,7 +203,7 @@ export class Cons implements U {
         if (this !== NIL) {
             const a = this.car;
             const b = this.cdr;
-            return new Cons(f(a), is_cons(b) ? b.map(f) : b);
+            return new Cons(0, f(a), is_cons(b) ? b.map(f) : b);
         }
         else {
             return NIL;
@@ -247,14 +258,14 @@ export class Cons implements U {
 }
 
 export function cons(car: U, cdr: U): Cons {
-    return new Cons(car, cdr);
+    return new Cons(0, car, cdr);
 }
 
 export function makeList(...items: U[]): Cons {
     let node: Cons = NIL;
     // Iterate in reverse order so that we build up a NIL-terminated list from the right (NIL).
     for (let i = items.length - 1; i >= 0; i--) {
-        node = new Cons(items[i], node);
+        node = new Cons(0, items[i], node);
     }
     return node;
 }
@@ -262,7 +273,7 @@ export function makeList(...items: U[]): Cons {
 /**
  * The empty list.
  */
-export const NIL = new Cons(void 0, void 0);
+export const NIL = new Cons(0, void 0, void 0);
 
 /**
  * Returns true if arg is a Cons and is not NIL.

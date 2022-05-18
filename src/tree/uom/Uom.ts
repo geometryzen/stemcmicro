@@ -1,3 +1,4 @@
+import { Atom } from '../atom/Atom';
 import { U } from '../tree';
 import { Dimensions } from './Dimensions';
 import { notImplemented } from './notImplemented';
@@ -155,11 +156,9 @@ function div(lhs: Uom, rhs: Uom): Uom {
 }
 
 /**
- * <p>
- * The Unit class represents the units for a measure.
- * </p>
+ * The Uom class represents the units for a measure.
  */
-export class Uom implements U {
+export class Uom extends Atom {
 
     /**
      *
@@ -216,23 +215,10 @@ export class Uom implements U {
      * @param labels The label strings to use for each dimension.
      */
     constructor(public dimensions: Dimensions, public labels: string[]) {
+        super('Uom', 0, 0);
         if (labels.length !== 7) {
             throw new Error("Expecting 7 elements in the labels array.");
         }
-    }
-    pos?: number | undefined;
-    end?: number | undefined;
-
-    isCons(): boolean {
-        return false;
-    }
-
-    isNil(): boolean {
-        return false;
-    }
-
-    get name(): string {
-        return 'Uom';
     }
 
     /**
@@ -247,9 +233,6 @@ export class Uom implements U {
         else {
             throw new Error("Illegal Argument for Unit.compatible: " + rhs);
         }
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
     }
 
     equals(other: U): boolean {

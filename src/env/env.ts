@@ -28,6 +28,8 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { VERSION_LATEST } from "../runtime/version";
 import { d_scalar_tensor, d_tensor_scalar, d_tensor_tensor } from "../tensor";
+import { is_flt } from "../tree/flt/is_flt";
+import { is_rat } from "../tree/rat/is_rat";
 import { negOne, zero } from "../tree/rat/Rat";
 import { is_str } from "../tree/str/is_str";
 import { Sym } from "../tree/sym/Sym";
@@ -35,7 +37,7 @@ import { is_tensor } from "../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { is_uom } from "../tree/uom/is_uom";
 import { CostTable } from "./CostTable";
-import { CHANGED, changedFlag, ExtensionEnv, FEATURE, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, stableFlag, TFLAGS } from "./ExtensionEnv";
+import { CHANGED, changedFlag, ExtensionEnv, FEATURE, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, STABLE, stableFlag, TFLAGS } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -577,8 +579,23 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return op.toListString(expr);
         },
         transform(expr: U): [TFLAGS, U] {
+            if (typeof expr.meta === 'number') {
+                if ((expr.meta & STABLE) > 0) {
+                    return [STABLE, expr];
+                }
+                if (expr.meta === NOFLAGS) {
+                    // Do nothing yet.
+                }
+                else {
+                    throw new Error(`${expr} meta must be NOFLAGS`);
+                }
+            }
+            else {
+                throw new Error(`${expr} meta must be a number.`);
+            }
             // We short-circuit some expressions in order to improve performance.
             if (is_imu(expr)) {
+                expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }
             else if (is_cons(expr)) {
@@ -607,12 +624,14 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     // }
                                     doneWithExpr = false;
                                     doneWithKey = true;
+                                    newExpr.meta |= STABLE;
                                     break;
                                 }
                                 else if (stableFlag(flags)) {
                                     // console.log(`STABLE ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
                                     // TODO: We also need to break out of the loop on keys
                                     doneWithKey = true;
+                                    newExpr.meta |= STABLE;
                                     break;
                                 }
                                 else {
@@ -627,28 +646,42 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 }
                 return [changedExpr ? CHANGED : NOFLAGS, curExpr];
             }
-            else if (is_num(expr)) {
+            else if (is_rat(expr)) {
+                expr.meta |= STABLE;
+                return [NOFLAGS, expr];
+            }
+            else if (is_flt(expr)) {
+                expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }
             else if (is_sym(expr)) {
-                return $.operatorFor(expr).transform(expr);
+                const retval = $.operatorFor(expr).transform(expr);
+                retval[1].meta |= STABLE;
+                return retval;
             }
             else if (is_blade(expr)) {
+                expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }
             else if (is_tensor(expr)) {
-                return $.operatorFor(expr).transform(expr);
+                const retval = $.operatorFor(expr).transform(expr);
+                retval[1].meta |= STABLE;
+                return retval;
             }
             else if (is_uom(expr)) {
+                expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }
             else if (is_nil(expr)) {
+                expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }
             else if (is_str(expr)) {
+                expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }
             else if (is_err(expr)) {
+                expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }
             else {

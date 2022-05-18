@@ -1,5 +1,6 @@
 import bigInt from "big-integer";
 import { RBTree } from 'generic-rbtree';
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
 //
@@ -105,18 +106,16 @@ function abs(a: bigInt.BigInteger): bigInt.BigInteger {
 /**
  * "God gave us the integers, all else is the work of man" - Kronecker.
  */
-export class Rat implements U {
+export class Rat extends Atom {
     /**
      * @param a The numerator.
      * @param b The denominator.
      */
-    constructor(public a: bigInt.BigInteger, public b: bigInt.BigInteger, public readonly pos?: number, public readonly end?: number) {
+    constructor(public a: bigInt.BigInteger, public b: bigInt.BigInteger, pos?: number, end?: number) {
+        super('Rat', pos, end);
         // TODO: Encapsulate by making a,b private.
         // Nothing to see here (yet), but gcd processing would be nice.
         // Maybe we need a valueOf(...) static or module level function?
-    }
-    get name(): string {
-        return 'Rat';
     }
     abs(): Rat {
         return MSIGN(this.a) >= 0 ? this : this.neg();
@@ -149,9 +148,6 @@ export class Rat implements U {
         const ab = mmul(this.a, rhs.b);
         const ba = mmul(this.b, rhs.a);
         return mcmp(ab, ba);
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
     }
     denom(): Rat {
         return new Rat(bigInt(this.b), bigInt.one);
@@ -193,9 +189,6 @@ export class Rat implements U {
         const denom = setSignTo(a, 1);
         return new Rat(numer, denom, this.pos, this.end);
     }
-    isCons(): boolean {
-        return false;
-    }
     isDenom(n: number): boolean {
         return this.b.equals(n);
     }
@@ -219,9 +212,6 @@ export class Rat implements U {
     }
     isNegative(): boolean {
         return this.a.isNegative();
-    }
-    isNil(): boolean {
-        return false;
     }
     isNumer(n: number): boolean {
         return this.a.equals(n);

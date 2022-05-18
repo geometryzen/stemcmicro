@@ -1,3 +1,4 @@
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
 function strcmp(str1: string, str2: string): 0 | 1 | -1 {
@@ -12,23 +13,14 @@ function strcmp(str1: string, str2: string): 0 | 1 | -1 {
     }
 }
 
-export class Sym implements U {
+export class Sym extends Atom {
     /**
      * 
      * @param ln The local part of the qualified name.
      * @param ns The namespace part of the qualified name.
      */
-    constructor(public readonly ln: string, public readonly ns?: Sym, public readonly pos?: number, readonly end?: number) {
-        // Nothing to see here.
-    }
-    isCons(): boolean {
-        return false;
-    }
-    isNil(): boolean {
-        return false;
-    }
-    get name(): 'Sym' {
-        return 'Sym';
+    constructor(public readonly ln: string, public readonly ns?: Sym, pos?: number, end?: number) {
+        super('Sym', pos, end);
     }
     compare(other: Sym): 1 | -1 | 0 {
         // TODO: Incorporate the namespace.

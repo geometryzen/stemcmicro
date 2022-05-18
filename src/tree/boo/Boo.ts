@@ -1,15 +1,12 @@
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
 /**
  * The implementation of a Logical Boolean value.
  */
-export class Boo implements U {
-    public readonly name = 'Boo';
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    constructor(private readonly b: boolean, public readonly pos?: number, public readonly end?: number) {
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
+export class Boo extends Atom {
+    constructor(private readonly b: boolean, pos?: number, end?: number) {
+        super('Boo', pos, end);
     }
     equals(other: U): boolean {
         if (this === other) {
@@ -24,12 +21,6 @@ export class Boo implements U {
     }
     equalsBoo(other: Boo): boolean {
         return this.b === other.b;
-    }
-    isCons(): boolean {
-        return false;
-    }
-    isNil(): boolean {
-        return false;
     }
     isTrue(): boolean {
         return this.b;

@@ -1,3 +1,4 @@
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
 /**
@@ -5,20 +6,14 @@ import { U } from "../tree";
  * By escaping here, this class gets written into expression correctly.
  * As it works now, if we escape here then tests break because of double-duty escaping.
  */
-export class Str implements U {
+export class Str extends Atom {
     /**
      * @param str The parsed representation of the string. i.e. Delimiters and escaping have been removed.
      * @param pos The zero-based start position of the original text.
      * @param end The zero-based end position of the original text.
      */
-    constructor(public readonly str: string, public readonly pos?: number, public readonly end?: number) {
-        // Nothing to see here.
-    }
-    get name(): string {
-        return 'Str';
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
+    constructor(public readonly str: string, pos?: number, end?: number) {
+        super('Str', pos, end);
     }
     equals(other: U): boolean {
         if (other instanceof Str) {
@@ -31,12 +26,6 @@ export class Str implements U {
             return true;
         }
         return this.str === other.str;
-    }
-    isCons(): boolean {
-        return false;
-    }
-    isNil(): boolean {
-        return false;
     }
     toCtorString(): string {
         return `${this.name}(${this.str})`;

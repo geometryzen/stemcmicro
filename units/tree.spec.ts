@@ -1,18 +1,13 @@
 import { assert } from 'chai';
+import { Atom } from '../src/tree/atom/Atom';
 import { car, cdr, Cons, is_cons, is_nil, is_singleton, makeList, NIL, U } from '../src/tree/tree';
 
 /**
  * A simple atom for testing purposes.
  */
-class Int implements U {
-    constructor(public readonly value: number, public readonly pos?: number, public readonly end?: number) {
-        // Nothing to see here.
-    }
-    get name(): string {
-        return 'Int';
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
+class Int extends Atom {
+    constructor(public readonly value: number, pos?: number, end?: number) {
+        super('Int', pos, end);
     }
     equals(other: U): boolean {
         if (this === other) {
@@ -27,12 +22,6 @@ class Int implements U {
     }
     equalsInt(other: Int): boolean {
         return this.value === other.value;
-    }
-    isCons(): boolean {
-        return false;
-    }
-    isNil(): boolean {
-        return false;
     }
     toString(): string {
         return `${this.value}`;

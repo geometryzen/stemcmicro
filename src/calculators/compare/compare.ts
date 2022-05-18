@@ -1,4 +1,5 @@
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { is_blade } from "../../operators/blade/BladeExtension";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
@@ -154,6 +155,9 @@ export function compare(lhs: U, rhs: U): Sign {
         }
         else if (is_sym(rhs)) {
             return compare_sym_sym(lhs, rhs);
+        }
+        else if (is_blade(rhs)) {
+            return SIGN_LT;
         }
         else if (is_cons(rhs)) {
             if (is_mul_2_any_any(rhs)) {

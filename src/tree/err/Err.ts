@@ -1,17 +1,12 @@
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
 /**
  * An error that may be used as a return value. This will not be thrown. 
  */
-export class Err implements U {
-    constructor(public message: string, public readonly pos?: number, public readonly end?: number) {
-        // Nothing to see here.I
-    }
-    get name(): string {
-        return 'Err';
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
+export class Err extends Atom {
+    constructor(public message: string, pos?: number, end?: number) {
+        super('Err', pos, end);
     }
     equals(other: U): boolean {
         if (this === other) {
@@ -26,12 +21,6 @@ export class Err implements U {
     }
     equalsErr(other: Err): boolean {
         return this.message === other.message;
-    }
-    isCons(): boolean {
-        return false;
-    }
-    isNil(): boolean {
-        return false;
     }
     toCtorString(): string {
         return `${this.name}()`;

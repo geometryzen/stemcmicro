@@ -1,25 +1,16 @@
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
 export function flt(d: number, pos?: number, end?: number): Flt {
     return new Flt(d, pos, end);
 }
 
-export class Flt implements U {
+export class Flt extends Atom {
     /**
      * Use the factory method instead. This may not exist in future.
      */
-    constructor(public d: number, public readonly pos?: number, public readonly end?: number) {
-        // Nothing to see here.
-        // Maybe do a sanity check on typeof d === 'number'? 
-    }
-    isCons(): boolean {
-        return false;
-    }
-    isNil(): boolean {
-        return false;
-    }
-    get name(): string {
-        return 'Flt';
+    constructor(public readonly d: number, pos?: number, end?: number) {
+        super('Flt', pos, end);
     }
     abs(): Flt {
         return this.d >= 0 ? this : this.neg();
@@ -35,9 +26,6 @@ export class Flt implements U {
             return -1;
         }
         return 0;
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
     }
     equals(other: U): boolean {
         if (this === other) {
@@ -93,12 +81,6 @@ export class Flt implements U {
         // TODO: Serialize in floating point notation, be done with Flt(...) wrapper.
         return `Flt(${this.d})`;
     }
-
-    // These flags are not actually set, they're only used for typechecking.
-    // Don't use them directly.
-    __ts_sign?: -1 | 0 | 1;
-    __ts_integer?: boolean;
-    __ts_special?: number;
 }
 
 export const zeroAsDouble = flt(0.0);

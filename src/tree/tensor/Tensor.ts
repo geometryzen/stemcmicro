@@ -1,3 +1,4 @@
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
 function equals_number_arrays(arrL: number[], arrR: number[]): boolean {
@@ -31,16 +32,13 @@ function equals_U_arrays(arrL: U[], arrR: U[]): boolean {
 /**
  * A matrix. This may be used to represent a tensor.
  */
-export class Tensor<T extends U = U> implements U {
+export class Tensor<T extends U = U> extends Atom {
     /**
      * @param dims The lengths of each dimension.
      * @param elems The elements containing all the data.
      */
-    constructor(private readonly dims: number[], private readonly elems: T[], public readonly pos?: number, public readonly end?: number) {
-        // Nothing to see here yet.
-    }
-    get name(): string {
-        return 'Tensor';
+    constructor(private readonly dims: number[], private readonly elems: T[], pos?: number, end?: number) {
+        super('Tensor', pos, end);
     }
     public get ndim() {
         return this.dims.length;

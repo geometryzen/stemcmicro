@@ -144,6 +144,7 @@ import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_an
 import { mul_2_flt_rat } from '../operators/mul/mul_2_flt_rat';
 import { mul_2_flt_uom } from '../operators/mul/mul_2_flt_uom';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
+import { mul_2_mul_2_any_blade_blade } from '../operators/mul/mul_2_mul_2_any_blade_blade';
 import { mul_2_mul_2_any_imu_imu } from '../operators/mul/mul_2_mul_2_any_imu_imu';
 import { mul_2_mul_2_any_sym_imu } from '../operators/mul/mul_2_mul_2_any_sym_imu';
 import { mul_2_mul_2_any_sym_mul_2_imu_sym } from '../operators/mul/mul_2_mul_2_any_sym_mul_2_imu_sym';
@@ -367,9 +368,13 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_mul_2_aaa_bbb_bbb);
     $.defineOperator(canonicalize_mul_2_mul_2_sym_sym_sym);
     $.defineOperator(implicate_mul_2_mul_2_sym_sym_sym);
+
+    // The following is only used for right-associating.
     $.defineOperator(mul_2_mul_2_rat_sym_sym);
+
     $.defineOperator(mul_2_mul_2_num_any_rat);
     $.defineOperator(mul_2_mul_2_any_imu_imu);
+    $.defineOperator(mul_2_mul_2_any_blade_blade);
     $.defineOperator(mul_2_mul_2_any_sym_imu);
     $.defineOperator(mul_2_mul_2_any_sym_sym);
     $.defineOperator(mul_2_mul_2_any_sym_mul_2_imu_sym);

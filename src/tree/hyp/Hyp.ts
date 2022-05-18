@@ -1,12 +1,9 @@
+import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
-export class Hyp implements U {
-    readonly name = 'Hyp';
-    constructor(public printname: string, public readonly pos?: number, public readonly end?: number) {
-        // Nothing to see here.I
-    }
-    contains(needle: U): boolean {
-        return this.equals(needle);
+export class Hyp extends Atom {
+    constructor(public readonly printname: string, pos?: number, end?: number) {
+        super('Hyp', pos, end);
     }
     equals(other: U): boolean {
         if (other instanceof Hyp) {
@@ -19,12 +16,6 @@ export class Hyp implements U {
             return true;
         }
         return this.printname === other.printname;
-    }
-    isCons(): boolean {
-        return false;
-    }
-    isNil(): boolean {
-        return false;
     }
     toCtorString(): string {
         return `${this.name}()`;

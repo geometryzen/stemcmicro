@@ -26,9 +26,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         this.hash = hash_unaop_atom(MATH_SIN, HASH_ANY);
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        // We want to know if the argument is negative.
         const $ = this.$;
-        // WARNING: Embedding a tree for different evaluation could be problematic because it messes with the meta data.
         const arg_LT_0 = $.valueOf(makeList(MATH_LT, arg, zero));
         if (is_boo(arg_LT_0)) {
             if (arg_LT_0.isTrue()) {

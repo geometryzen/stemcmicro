@@ -67,6 +67,7 @@ import { conj_inner } from '../operators/conj/conj_inner';
 import { conj_rat } from '../operators/conj/conj_rat';
 import { conj_sym } from '../operators/conj/conj_sym';
 import { cons } from '../operators/cons/ConsExtension';
+import { cos_add_2_any_any } from '../operators/cos/cos_add_2_any_any';
 import { cos_any } from '../operators/cos/cos_any';
 import { cross_add_2_any_any_any } from '../operators/cross/cross_add_2_any_any_any';
 import { cross_any_add_2_any_any } from '../operators/cross/cross_any_add_2_any_any';
@@ -209,6 +210,7 @@ import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { script_last_0 } from '../operators/script_last/script_last';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
+import { sin_add_2_any_any } from '../operators/sin/sin_add_2_any_any';
 import { sin_any } from '../operators/sin/sin_any';
 import { sin_mul_2_rat_any } from '../operators/sin/sin_mul_2_rat_any';
 import { sin_sym } from '../operators/sin/sin_sym';
@@ -503,6 +505,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(ceiling_rat);
     $.defineOperator(ceiling_any);
 
+    $.defineOperator(cos_add_2_any_any);
     $.defineOperator(cos_any);
 
     $.defineOperator(cross_blade_blade);
@@ -543,6 +546,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(succ_rat);
     $.defineOperator(succ_any);
 
+    $.defineOperator(sin_add_2_any_any);
     $.defineOperator(sin_sym);
     $.defineOperator(sin_mul_2_rat_any);
     $.defineOperator(sin_any);

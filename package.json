@@ -25,6 +25,7 @@
         "unit-combo": "mocha 'units/combinators.spec.ts'",
         "unit-complex": "mocha 'units/complex.spec.ts'",
         "unit-conj": "mocha 'units/conj.spec.ts'",
+        "unit-cos": "mocha 'units/cos.spec.ts'",
         "unit-cross": "mocha 'units/cross.spec.ts'",
         "unit-current": "mocha 'units/current.spec.ts'",
         "unit-env": "mocha 'units/env.spec.ts'",

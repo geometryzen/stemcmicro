@@ -4,41 +4,16 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sin", function () {
-    it("sin(a+b)", function () {
+    xit("sin(b-a)", function () {
+        // TODO: We must either match the expression as given or canonicalize it
+        // so that it can be recognized by the existing transformer.
+        // Ideas for canonicalization:
+        // 1. Ordering of trig functions.
+        // 2. Affinity of Trig functions.
+        // 3. Canonical association may not be left- or right-association.
         const lines: string[] = [
-            `sin(a+b)`
-        ];
-        const engine = createSymEngine({
-            dependencies: []
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), 'sin(a)*cos(b)+cos(a)*sin(b)');
-    });
-    it("sin(a-b)", function () {
-        const lines: string[] = [
-            `sin(a-b)`
-        ];
-        const engine = createSymEngine({
-            dependencies: []
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), 'sin(a)*cos(b)-cos(a)*sin(b)');
-    });
-    it("sin(b+a)", function () {
-        const lines: string[] = [
-            `sin(b+a)`
-        ];
-        const engine = createSymEngine({
-            dependencies: []
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), 'sin(a)*cos(b)+cos(a)*sin(b)');
-    });
-    it("sin(b-a)", function () {
-        const lines: string[] = [
+            `autoexpand=1`,
+            `autofactor=1`,
             `sin(b-a)`
         ];
         const engine = createSymEngine({
@@ -46,11 +21,11 @@ describe("sin", function () {
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), '-sin(a)*cos(b)+cos(a)*sin(b)');
+        assert.strictEqual(print_expr(value, $), 'sin(-a+b)');
     });
 });
 
-xdescribe("sin", function () {
+describe("sin", function () {
     it("sin(x)", function () {
         const lines: string[] = [
             `sin(x)`
@@ -101,6 +76,7 @@ xdescribe("sin", function () {
     });
     it("sin(a+b)", function () {
         const lines: string[] = [
+            `autofactor=0`,
             `sin(a+b)`
         ];
         const engine = createSymEngine({
@@ -108,12 +84,75 @@ xdescribe("sin", function () {
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // WRONG, but this is what we have.
-        // assert.strictEqual(print_list(value, $), '(+ (* -1 (sin a) (cos b)) (* (cos (* -1 a)) (sin b)))');
         assert.strictEqual(print_expr(value, $), 'sin(a)*cos(b)+cos(a)*sin(b)');
-        // assert.strictEqual(print_expr(value, $), 'sin(a+b)');
+    });
+    it("sin(a+b)", function () {
+        const lines: string[] = [
+            `autofactor=1`,
+            `sin(a+b)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'sin(a+b)');
+    });
+    it("sin(a-b)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `sin(a-b)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'sin(a)*cos(b)-cos(a)*sin(b)');
+    });
+    it("sin(a-b)", function () {
+        const lines: string[] = [
+            `autofactor=1`,
+            `sin(a-b)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'sin(a-b)');
+    });
+    it("sin(b+a)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `sin(b+a)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'sin(a)*cos(b)+cos(a)*sin(b)');
+    });
+    it("sin(b+a)", function () {
+        const lines: string[] = [
+            `autofactor=1`,
+            `sin(b+a)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'sin(a+b)');
     });
     it("sin(b-a)", function () {
+        // TODO: We must either match the expression as given or canonicalize it
+        // so that it can be recognized by the existing transformer.
+        // Ideas for canonicalization:
+        // 1. Ordering of trig functions.
+        // 2. Affinity of Trig functions.
+        // 3. Canonical association may not be left- or right-association.
         const lines: string[] = [
             `sin(b-a)`
         ];
@@ -122,7 +161,19 @@ xdescribe("sin", function () {
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), '(* -1 (sin (* x y z)))');
-        assert.strictEqual(print_expr(value, $), '-sin(a-b)');
+        assert.strictEqual(print_expr(value, $), '-sin(a)*cos(b)+cos(a)*sin(b)');
+    });
+    it("sin(b)*cos(a)-cos(b)*sin(a)", function () {
+        // This test demonstrates that a canonical ordering of the sin, cos, and -1
+        // parts of the previous expanded expression would lead to factorization.
+        const lines: string[] = [
+            `sin(b)*cos(a)-cos(b)*sin(a)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'sin(-a+b)');
     });
 });

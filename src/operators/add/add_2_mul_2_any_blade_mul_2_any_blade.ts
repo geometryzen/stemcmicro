@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -40,6 +40,7 @@ const guardR: GUARD<U, LHS> = and(is_cons, is_opr_2_any_rhs(MATH_MUL, is_blade))
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_any_blade_mul_2_any_blade', MATH_ADD, guardL, guardR, cross, $);
         this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);

@@ -639,7 +639,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else {
-                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${curExpr}`);
+                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${print_expr(curExpr, $)}`);
                                 }
                             }
                         }

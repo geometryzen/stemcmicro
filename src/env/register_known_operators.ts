@@ -37,6 +37,9 @@ import { add_2_mul_2_rat_anX_anX } from '../operators/add/add_2_mul_2_rat_anX_an
 import { add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym';
 import { add_2_mul_2_rat_X_mul_2_rat_X } from '../operators/add/add_2_mul_2_rat_X_mul_2_rat_X';
 import { add_2_mul_2_rat_zzz_aaa } from '../operators/add/add_2_mul_2_rat_zzz_aaa';
+import { add_2_mul_2_sin_cos_mul_2_cos_sin } from '../operators/add/add_2_mul_2_sin_cos_mul_2_cos_sin';
+import { add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin } from '../operators/add/add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin';
+import { add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin } from '../operators/add/add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin';
 import { add_2_pow_2_any_any_mul_2_any_any } from '../operators/add/add_2_pow_2_any_any_mul_2_any_any';
 import { add_2_rat_blade } from '../operators/add/add_2_rat_blade';
 import { add_2_rat_cons } from '../operators/add/add_2_rat_cons';
@@ -326,6 +329,9 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_mul_2_rat_anX_anX);
     $.defineOperator(add_2_mul_2_rat_zzz_aaa);
     $.defineOperator(add_2_mul_2_imu_sym_sym);
+    $.defineOperator(add_2_mul_2_sin_cos_mul_2_cos_sin);
+    $.defineOperator(add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin);
+    $.defineOperator(add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin);
     $.defineOperator(add_2_mul_2_any_blade_mul_2_any_blade);
     $.defineOperator(add_2_mul_2_any_vector_mul_2_any_vector);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);

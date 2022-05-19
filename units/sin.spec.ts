@@ -4,6 +4,41 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sin", function () {
+    xit("sin(x)*cos(x)", function () {
+        // TODO: This shows the importance of canonicalization.
+        // The current output is...
+        // cos(b)*sin(a)-sin(a)*cos(b)
+        // 
+        const lines: string[] = [
+            `autofactor=0`,
+            `sin(x)*cos(x)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'cos(x)*sin(x)');
+    });
+    it("cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)", function () {
+        // TODO: This shows the importance of canonicalization.
+        // The current output is...
+        // cos(b)*sin(a)-sin(a)*cos(b)
+        // And now it is...
+        // cos(b)*sin(a)+cos(a)*sin(b)-cos(b)*sin(a)-cos(a)*sin(b)
+        // add_2_any_any should be able to handle this.
+        // 
+        const lines: string[] = [
+            `autofactor=0`,
+            `cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), '0');
+    });
     xit("sin(b-a)", function () {
         // TODO: We must either match the expression as given or canonicalize it
         // so that it can be recognized by the existing transformer.
@@ -25,7 +60,7 @@ describe("sin", function () {
     });
 });
 
-describe("sin", function () {
+xdescribe("sin", function () {
     it("sin(x)", function () {
         const lines: string[] = [
             `sin(x)`
@@ -175,5 +210,44 @@ describe("sin", function () {
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), 'sin(-a+b)');
+    });
+    it("sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), '0');
+    });
+    it("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), '0');
+    });
+    xit("cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)", function () {
+        // TODO: This shows the importance of canonicalization.
+        // The current output is...
+        // cos(b)*sin(a)-sin(a)*cos(b)
+        const lines: string[] = [
+            `autofactor=0`,
+            `cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), '0');
     });
 });

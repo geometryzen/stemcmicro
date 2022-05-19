@@ -614,13 +614,13 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithKey = false;
                         const ops = pops[key];
-                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
                                 if (changedFlag(flags)) {
-                                    // console.log(`CHANGED: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    console.log(`CHANGED: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     curExpr = newExpr;
                                     changedExpr = true;
                                     // if (typeof op.hash !== 'string') {
@@ -639,7 +639,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else {
-                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${print_expr(curExpr, $)}`);
+                                    console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${print_expr(curExpr, $)}`);
                                 }
                             }
                         }

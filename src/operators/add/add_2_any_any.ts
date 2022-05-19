@@ -1,5 +1,6 @@
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -33,7 +34,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_any_any', MATH_ADD, is_any, is_any, $);
-        this.hash = '(+ U U)';
+        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
     }
     isZero(expr: EXP): boolean {
         // The answer will almost certainly be false if the transformer to remove such cancellations is installed.

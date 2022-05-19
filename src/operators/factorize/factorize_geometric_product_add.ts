@@ -1,11 +1,13 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
+import { MATH_ADD, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_inner_2_sym_sym } from "../inner/is_inner_2_sym_sym";
+import { MATH_INNER } from "../inner/MATH_INNER";
 import { is_outer_2_sym_sym } from "../outer/is_outer_2_sym_sym";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -45,9 +47,10 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = ['Vector'];
     constructor($: ExtensionEnv) {
         super('factorize_geometric_product_add', MATH_ADD, and(is_cons, is_inner_2_sym_sym), and(is_cons, is_outer_2_sym_sym), cross($), $);
-        this.hash = '(+ (|) (^))';
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_INNER, MATH_OUTER);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {

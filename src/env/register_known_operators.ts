@@ -72,6 +72,7 @@ import { conj_sym } from '../operators/conj/conj_sym';
 import { cons } from '../operators/cons/ConsExtension';
 import { cos_add_2_any_any } from '../operators/cos/cos_add_2_any_any';
 import { cos_any } from '../operators/cos/cos_any';
+import { cos_sym } from '../operators/cos/cos_sym';
 import { cross_add_2_any_any_any } from '../operators/cross/cross_add_2_any_any_any';
 import { cross_any_add_2_any_any } from '../operators/cross/cross_any_add_2_any_any';
 import { cross_any_any } from '../operators/cross/cross_any_any';
@@ -142,6 +143,7 @@ import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
 import { mul_2_blade_sym } from '../operators/mul/mul_2_blade_sym';
 import { mul_2_cons_rat } from '../operators/mul/mul_2_cons_rat';
+import { mul_2_cos_sin } from '../operators/mul/mul_2_cos_sin';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
 import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
 import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_any';
@@ -169,6 +171,7 @@ import { mul_2_rat_rat } from '../operators/mul/mul_2_rat_rat';
 import { mul_2_rat_sym } from '../operators/mul/mul_2_rat_sym';
 import { mul_2_scalar_blade } from '../operators/mul/mul_2_scalar_blade';
 import { mul_2_scalar_mul_2_scalar_any } from '../operators/mul/mul_2_scalar_mul_2_scalar_any';
+import { mul_2_sin_cos } from '../operators/mul/mul_2_sin_cos';
 import { mul_2_sym_add_2_sym_sym } from '../operators/mul/mul_2_sym_add_2_sym_sym';
 import { mul_2_sym_blade } from '../operators/mul/mul_2_sym_blade';
 import { mul_2_sym_flt } from '../operators/mul/mul_2_sym_flt';
@@ -447,6 +450,9 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
 
+    $.defineOperator(mul_2_sin_cos);
+    $.defineOperator(mul_2_cos_sin);
+
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);
     $.defineOperator(conj_rat);
@@ -512,6 +518,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(ceiling_any);
 
     $.defineOperator(cos_add_2_any_any);
+    $.defineOperator(cos_sym);
     $.defineOperator(cos_any);
 
     $.defineOperator(cross_blade_blade);

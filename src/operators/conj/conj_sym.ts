@@ -4,7 +4,7 @@ import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
 import { is_sym } from "../sym/is_sym";
-import { MATH_CONJUGATE } from "./MATH_CONJUGATE";
+import { MATH_CONJ } from "./MATH_CONJ";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -14,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
 
 class ConjSym extends Function1<Sym> implements Operator<U> {
     constructor($: ExtensionEnv) {
-        super('conj_sym', MATH_CONJUGATE, is_sym, $);
+        super('conj_sym', MATH_CONJ, is_sym, $);
     }
     transform1(opr: Sym, arg: Sym, expr: UCons<Sym, Sym>): [TFLAGS, U] {
         const $ = this.$;

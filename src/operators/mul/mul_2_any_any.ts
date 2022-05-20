@@ -1,5 +1,6 @@
 
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { compare_factors } from "../../calculators/compare/compare_factors";
+import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -43,10 +44,27 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
         const $ = this.$;
-        if (lhs.equals(rhs)) {
-            return [CHANGED, $.valueOf(makeList(MATH_POW, lhs, two))];
+        switch (compare_factors(lhs, rhs, $)) {
+            case SIGN_GT: {
+                // This flipping of e.g. (a*b)*c to c*(a*b) is way to coarse and conflist with e.g. mul_2_sym_mul_2_sym_sym.
+                // const A = makeList(opr, rhs, lhs);
+                // console.log(`${this.name} ${print_expr(orig, $)} A = ${print_expr(A, $)}`);
+                // const B = $.valueOf(A);
+                // console.log(`${this.name} ${print_expr(orig, $)} B = ${print_expr(B, $)}`);
+                // return [CHANGED, B];
+                return [NOFLAGS, orig];
+            }
+            case SIGN_EQ: {
+                if (lhs.equals(rhs)) {
+                    return [CHANGED, $.valueOf(makeList(MATH_POW, lhs, two))];
+                }
+                return [NOFLAGS, orig];
+                break;
+            }
+            default: {
+                return [NOFLAGS, orig];
+            }
         }
-        return [NOFLAGS, orig];
     }
 }
 

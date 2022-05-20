@@ -20,6 +20,7 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
+        // console.log(`compareTerms lhs=${print_expr(lhs, $)}, rhs=${print_expr(rhs, $)}`);
         return $.compareTerms(lhs, rhs) > 0;
     };
 }

@@ -1,14 +1,13 @@
-
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
-import { is_imu } from "../../predicates/is_imu";
-import { MATH_INNER, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
+import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
+import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, makeList, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
+import { is_sym } from "../sym/is_sym";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -16,23 +15,22 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = BCons<Sym, Rat,Rat>;
-type RHS = Rat;
+type LHS = Rat;
+type RHS = Sym;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
- * i | Rat => conj(i) * Rat => -i * Rat
+ * Rat | x => Rat * x
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('inner_2_imu_rat', MATH_INNER, is_imu, is_rat, $);
-        this.hash = hash_binop_cons_atom(MATH_INNER, MATH_POW, HASH_RAT);
+        super('inner_2_rat_sym', MATH_INNER, is_rat, is_sym, $);
+        this.hash = hash_binop_atom_atom(MATH_INNER, HASH_RAT, HASH_SYM);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        const $ = this.$;
-        return [CHANGED, $.negate(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs))];
+        return [CHANGED, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs)];
     }
 }
 
-export const inner_2_imu_rat = new Builder();
+export const inner_2_rat_sym = new Builder();

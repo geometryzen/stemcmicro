@@ -30,8 +30,9 @@ import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
 import { add_2_imag_real } from '../operators/add/add_2_imag_real';
 import { add_2_imu_flt } from '../operators/add/add_2_imu_flt';
 import { add_2_mul_2_any_blade_mul_2_any_blade } from '../operators/add/add_2_mul_2_any_blade_mul_2_any_blade';
+import { add_2_mul_2_any_imu_sym } from '../operators/add/add_2_mul_2_any_imu_sym';
 import { add_2_mul_2_any_vector_mul_2_any_vector } from '../operators/add/add_2_mul_2_any_vector_mul_2_any_vector';
-import { add_2_mul_2_imu_sym_sym } from '../operators/add/add_2_mul_2_imu_sym_sym';
+import { add_2_mul_2_cos_sin_mul_2_mul_2_rat_sin_cos } from '../operators/add/add_2_mul_2_cos_sin_mul_2_mul_2_rat_sin_cos';
 import { add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_inner_sym_sym_sym_mul_2_sym_outer_2_sym_sym';
 import { add_2_mul_2_rat_anX_anX } from '../operators/add/add_2_mul_2_rat_anX_anX';
 import { add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym';
@@ -114,11 +115,14 @@ import { index_2_any_any } from '../operators/index/index_2_any_any';
 import { index_2_mat_rat } from '../operators/index/index_2_mat_rat';
 import { inner } from '../operators/inner/inner';
 import { inner_2_any_any } from '../operators/inner/inner_2_any_any';
+import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
+import { inner_2_imu_any } from '../operators/inner/inner_2_imu_any';
 import { inner_2_imu_imu } from '../operators/inner/inner_2_imu_imu';
 import { inner_2_imu_rat } from '../operators/inner/inner_2_imu_rat';
 import { inner_2_mul_2_scalar_vector_vector } from '../operators/inner/inner_2_mul_2_scalar_vector_vector';
 import { inner_2_num_num } from '../operators/inner/inner_2_num_num';
 import { inner_2_rat_imu } from '../operators/inner/inner_2_rat_imu';
+import { inner_2_rat_sym } from '../operators/inner/inner_2_rat_sym';
 import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
 import { inner_2_vector_mul_2_scalar_vector } from '../operators/inner/inner_2_vector_mul_2_scalar_vector';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
@@ -143,21 +147,23 @@ import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
 import { mul_2_blade_sym } from '../operators/mul/mul_2_blade_sym';
 import { mul_2_cons_rat } from '../operators/mul/mul_2_cons_rat';
-import { mul_2_cos_sin } from '../operators/mul/mul_2_cos_sin';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
 import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
 import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_any';
 import { mul_2_flt_rat } from '../operators/mul/mul_2_flt_rat';
 import { mul_2_flt_uom } from '../operators/mul/mul_2_flt_uom';
+import { mul_2_imu_any } from '../operators/mul/mul_2_imu_any';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_blade_blade } from '../operators/mul/mul_2_mul_2_any_blade_blade';
 import { mul_2_mul_2_any_imu_imu } from '../operators/mul/mul_2_mul_2_any_imu_imu';
+import { mul_2_mul_2_any_imu_sym } from '../operators/mul/mul_2_mul_2_any_imu_sym';
 import { mul_2_mul_2_any_sym_imu } from '../operators/mul/mul_2_mul_2_any_sym_imu';
 import { mul_2_mul_2_any_sym_mul_2_imu_sym } from '../operators/mul/mul_2_mul_2_any_sym_mul_2_imu_sym';
 import { mul_2_mul_2_any_sym_sym } from '../operators/mul/mul_2_mul_2_any_sym_sym';
 import { mul_2_mul_2_num_any_rat } from '../operators/mul/mul_2_mul_2_num_any_rat';
 import { mul_2_mul_2_rat_any_mul_2_rat_any } from '../operators/mul/mul_2_mul_2_rat_any_mul_2_rat_any';
 import { mul_2_mul_2_rat_sym_sym } from '../operators/mul/mul_2_mul_2_rat_sym_sym';
+import { mul_2_mul_2_sym_imu_sym } from '../operators/mul/mul_2_mul_2_sym_imu_sym';
 import { mul_2_one_any } from '../operators/mul/mul_2_one_any';
 import { mul_2_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_pow_2_xxx_rat_xxx } from '../operators/mul/mul_2_pow_2_xxx_rat_xxx';
@@ -171,7 +177,6 @@ import { mul_2_rat_rat } from '../operators/mul/mul_2_rat_rat';
 import { mul_2_rat_sym } from '../operators/mul/mul_2_rat_sym';
 import { mul_2_scalar_blade } from '../operators/mul/mul_2_scalar_blade';
 import { mul_2_scalar_mul_2_scalar_any } from '../operators/mul/mul_2_scalar_mul_2_scalar_any';
-import { mul_2_sin_cos } from '../operators/mul/mul_2_sin_cos';
 import { mul_2_sym_add_2_sym_sym } from '../operators/mul/mul_2_sym_add_2_sym_sym';
 import { mul_2_sym_blade } from '../operators/mul/mul_2_sym_blade';
 import { mul_2_sym_flt } from '../operators/mul/mul_2_sym_flt';
@@ -331,10 +336,11 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_mul_2_rat_X_mul_2_rat_X);
     $.defineOperator(add_2_mul_2_rat_anX_anX);
     $.defineOperator(add_2_mul_2_rat_zzz_aaa);
-    $.defineOperator(add_2_mul_2_imu_sym_sym);
+    $.defineOperator(add_2_mul_2_any_imu_sym);
     $.defineOperator(add_2_mul_2_sin_cos_mul_2_cos_sin);
     $.defineOperator(add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin);
     $.defineOperator(add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin);
+    $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_sin_cos);
     $.defineOperator(add_2_mul_2_any_blade_mul_2_any_blade);
     $.defineOperator(add_2_mul_2_any_vector_mul_2_any_vector);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
@@ -375,6 +381,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_flt_imu);
     $.defineOperator(mul_2_flt_uom);
     $.defineOperator(mul_2_flt_mul_2_flt_any);
+    $.defineOperator(mul_2_imu_any);
 
     $.defineOperator(mul_2_rat_blade);
     $.defineOperator(mul_2_rat_flt);
@@ -394,6 +401,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     // The following is only used for right-associating.
     $.defineOperator(mul_2_mul_2_rat_sym_sym);
+    $.defineOperator(mul_2_mul_2_sym_imu_sym);
+    $.defineOperator(mul_2_mul_2_any_imu_sym);
 
     $.defineOperator(mul_2_mul_2_num_any_rat);
     $.defineOperator(mul_2_mul_2_any_imu_imu);
@@ -450,9 +459,6 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
 
-    $.defineOperator(mul_2_sin_cos);
-    $.defineOperator(mul_2_cos_sin);
-
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);
     $.defineOperator(conj_rat);
@@ -463,13 +469,16 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(inner_2_num_num);
     $.defineOperator(inner_2_rat_imu);
+    $.defineOperator(inner_2_rat_sym);
     $.defineOperator(inner_2_imu_rat);
     $.defineOperator(inner_2_imu_imu);
+    $.defineOperator(inner_2_imu_any);
     $.defineOperator(inner_2_sym_sym);
     $.defineOperator(inner_2_vec_scalar);
     $.defineOperator(inner_2_vec_vec);
     $.defineOperator(inner_2_mul_2_scalar_vector_vector);
     $.defineOperator(inner_2_vector_mul_2_scalar_vector);
+    $.defineOperator(inner_2_any_imu);
     $.defineOperator(inner_2_any_any);
     $.defineOperator(inner);
 

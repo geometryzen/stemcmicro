@@ -5,7 +5,7 @@ import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { makeList, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { MATH_CONJUGATE } from "./MATH_CONJUGATE";
+import { MATH_CONJ } from "./MATH_CONJ";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<U> {
 
 class ConjImaginaryUnit extends Function1<U> implements Operator<U> {
     constructor($: ExtensionEnv) {
-        super('conj_imu', MATH_CONJUGATE, is_imu, $);
+        super('conj_imu', MATH_CONJ, is_imu, $);
     }
     transform1(opr: Sym, arg: U): [TFLAGS, U] {
         return [CHANGED, makeList(MATH_MUL, negOne, arg)];

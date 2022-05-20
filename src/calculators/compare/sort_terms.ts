@@ -8,14 +8,13 @@ import { compare_terms } from "./compare_terms";
  * @param $ 
  * @returns A new array containing the sorted factors.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function sort_terms(terms: U[], $: ExtensionEnv): U[] {
     // We don't use the index yet but it could be used to make the sort stable (see corresponding factors code).I
     const sortable = terms.map(function (value, index) {
         return { value, index };
     });
     sortable.sort(function (x, y) {
-        return compare_terms(x.value, y.value);
+        return compare_terms(x.value, y.value, $);
     });
     const sorted = sortable.map(function (elem) {
         return elem.value;

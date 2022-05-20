@@ -1,4 +1,3 @@
-
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";

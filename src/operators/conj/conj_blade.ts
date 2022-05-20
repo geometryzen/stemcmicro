@@ -4,7 +4,7 @@ import { U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
 import { is_blade } from "../blade/BladeExtension";
 import { Function1 } from "../helpers/Function1";
-import { MATH_CONJUGATE } from "./MATH_CONJUGATE";
+import { MATH_CONJ } from "./MATH_CONJ";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -14,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
 
 class ConjBlade extends Function1<Blade> implements Operator<U> {
     constructor($: ExtensionEnv) {
-        super('conj_blade', MATH_CONJUGATE, is_blade, $);
+        super('conj_blade', MATH_CONJ, is_blade, $);
     }
     transform1(opr: Sym, arg: Blade): [TFLAGS, U] {
         return [CHANGED, arg.rev()];

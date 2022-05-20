@@ -1,4 +1,4 @@
-import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
@@ -19,20 +19,20 @@ import { compare_opr_opr } from "./compare_opr_opr";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { has_imu_factor } from "./has_imu_factor";
 
-export function compare_terms(lhs: U, rhs: U): Sign {
+export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // console.log(`compare_terms ${lhs} ${rhs}`);
     // Numeric factors in lhs term have no effect on ordering.
     if (is_cons(lhs) && is_mul_2_any_any(lhs)) {
         const [a, b] = factorizeL(lhs);
         if (is_rat(a)) {
-            return compare_terms(b, rhs);
+            return compare_terms(b, rhs, $);
         }
     }
     // Numeric factors in rhs term have no effect on ordering.
     if (is_cons(rhs) && is_mul_2_any_any(rhs)) {
         const [a, b] = factorizeL(rhs);
         if (is_rat(a)) {
-            return compare_terms(lhs, b);
+            return compare_terms(lhs, b, $);
         }
     }
 
@@ -54,6 +54,9 @@ export function compare_terms(lhs: U, rhs: U): Sign {
             }
             if (is_flt(rhs)) {
                 return SIGN_EQ;
+            }
+            if (is_rat(rhs)) {
+                return SIGN_GT;
             }
             if (is_sym(rhs)) {
                 return SIGN_EQ;

@@ -3,7 +3,7 @@ import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
-import { MATH_CONJUGATE } from "../conj/MATH_CONJUGATE";
+import { MATH_CONJ } from "../conj/MATH_CONJ";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -48,7 +48,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const x = lhs.rhs;
         const y = rhs;
         const xy = $.valueOf(makeList(opr, x, y));
-        const ca = $.valueOf(makeList(MATH_CONJUGATE, a));
+        const ca = $.valueOf(makeList(MATH_CONJ, a));
         const retval = $.valueOf(makeList(lhs.opr, ca, xy));
         return [CHANGED, retval];
     }

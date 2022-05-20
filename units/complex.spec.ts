@@ -4,16 +4,17 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("complex", function () {
-    it("I", function () {
+    it("C", function () {
         const lines: string[] = [
-            `bake=0`,
-            `implicate=1`,
-            `y*x*i*2`,
+            `i*y+x`,
         ];
-        const engine = createSymEngine({});
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "2*i*x*y");
+        assert.strictEqual(print_expr(value, $), "x+y*i");
         engine.release();
     });
 });
@@ -43,10 +44,13 @@ describe("complex", function () {
         const lines: string[] = [
             `i*y+x`,
         ];
-        const engine = createSymEngine({ useDefinitions: true });
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "x+i*y");
+        assert.strictEqual(print_expr(value, $), "x+y*i");
         engine.release();
     });
     it("D", function () {
@@ -56,7 +60,7 @@ describe("complex", function () {
         const engine = createSymEngine({ useDefinitions: true });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "x+i*y");
+        assert.strictEqual(print_expr(value, $), "x+y*i");
         engine.release();
     });
     it("E", function () {
@@ -106,10 +110,11 @@ describe("complex", function () {
         const engine = createSymEngine({ useDefinitions: true });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "2*i*a*x*y");
+        assert.strictEqual(print_expr(value, $), "2*a*x*y*i");
         engine.release();
     });
     it("J", function () {
+        // We're not using definitions in this test and so i is just any ordinaty symbol.
         const lines: string[] = [
             `y*x*i*2*a`,
         ];

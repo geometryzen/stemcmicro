@@ -4,7 +4,20 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("vectors", function () {
-    it("A x (B x C)", function () {
+    it("x|y+x^y", function () {
+        const lines: string[] = [
+            `x|y+x^y`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['x', 'y']
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "x*y");
+        engine.release();
+    });
+    xit("A x (B x C)", function () {
         //
         // Looping?
         const lines: string[] = [
@@ -27,7 +40,7 @@ describe("vectors", function () {
 
         engine.release();
     });
-    it("B * (A|C) - C * (A|B)", function () {
+    xit("B * (A|C) - C * (A|B)", function () {
         //
         // Looping?
         const lines: string[] = [
@@ -134,7 +147,7 @@ describe("vectors", function () {
     });
 });
 
-describe("vectors", function () {
+xdescribe("vectors", function () {
     it("abs(A)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -272,7 +285,7 @@ describe("vectors", function () {
     });
 });
 
-describe("vectors", function () {
+xdescribe("vectors", function () {
     it("x*y", function () {
         const lines: string[] = [
             `x*y`,
@@ -326,7 +339,7 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "-x^y");
         engine.release();
     });
-    it("", function () {
+    it("x|y+x^y", function () {
         const lines: string[] = [
             `x|y+x^y`,
         ];

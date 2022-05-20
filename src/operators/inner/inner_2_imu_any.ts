@@ -1,14 +1,13 @@
-
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
+import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_INNER, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
-import { is_rat } from "../../tree/rat/is_rat";
-import { Rat } from "../../tree/rat/Rat";
+import { one, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, makeList, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
+import { is_any } from "../helpers/is_any";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -16,23 +15,28 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = BCons<Sym, Rat,Rat>;
-type RHS = Rat;
+type LHS = BCons<Sym, Rat, Rat>;
+type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
- * i | Rat => conj(i) * Rat => -i * Rat
+ * i | X => conj(i) * (1 | X) => -i * (1|X)
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('inner_2_imu_rat', MATH_INNER, is_imu, is_rat, $);
-        this.hash = hash_binop_cons_atom(MATH_INNER, MATH_POW, HASH_RAT);
+        super('inner_2_imu_any', MATH_INNER, is_imu, is_any, $);
+        this.hash = hash_binop_cons_atom(MATH_INNER, MATH_POW, HASH_ANY);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
-        return [CHANGED, $.negate(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs))];
+        const i = lhs;
+        const X = rhs;
+        const negI = $.negate(i);
+        const inrP = $.valueOf(makeList(opr, one, X));
+        const retval = $.valueOf(makeList(MATH_MUL, negI, inrP));
+        return [CHANGED, retval];
     }
 }
 
-export const inner_2_imu_rat = new Builder();
+export const inner_2_imu_any = new Builder();

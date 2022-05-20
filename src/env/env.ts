@@ -245,9 +245,11 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return compare_factors(lhs, rhs, $);
         },
         compareTerms(lhs: U, rhs: U): Sign {
-            return compare_terms(lhs, rhs);
+            return compare_terms(lhs, rhs, $);
         },
         cos(x: U): U {
+            // TODO: This should just build then evaluate.
+            // In which case it need not be here.
             if (is_cons(x) && is_add(x)) {
                 return cosine_of_angle_sum(x, $);
             }
@@ -614,13 +616,13 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithKey = false;
                         const ops = pops[key];
-                        console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
                                 if (changedFlag(flags)) {
-                                    console.log(`CHANGED: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    // console.log(`CHANGED: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     curExpr = newExpr;
                                     changedExpr = true;
                                     // if (typeof op.hash !== 'string') {
@@ -639,7 +641,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else {
-                                    console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${print_expr(curExpr, $)}`);
+                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${print_expr(curExpr, $)}`);
                                 }
                             }
                         }

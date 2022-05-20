@@ -24,7 +24,7 @@ class Op extends Function2<Sym, BCons<Sym, Sym, Sym>> implements Operator<Cons> 
     readonly hash: string;
     readonly phases = PHASE_IMPLICATE;
     constructor($: ExtensionEnv) {
-        super('mul_2_sym_mul_2_sym_sym', MATH_MUL, is_sym, and(is_cons, is_mul_2_sym_sym), $);
+        super('implicate_mul_2_sym_mul_2_sym_sym', MATH_MUL, is_sym, and(is_cons, is_mul_2_sym_sym), $);
         this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_MUL);
     }
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Sym, Sym>): [TFLAGS, U] {

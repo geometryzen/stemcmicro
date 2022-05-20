@@ -1,15 +1,17 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_binop_cons_cons } from "../../hashing/hash_info";
+import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
-import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
+import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
-import { is_mul_2_any_sym } from "./is_mul_2_any_sym";
+import { is_any } from "../helpers/is_any";
+import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
+import { is_sym } from "../sym/is_sym";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -18,31 +20,34 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 type LL = U;
-type LR = Sym;
+type LR = BCons<Sym, Rat, Rat>;
 type LHS = BCons<Sym, LL, LR>;
-type RHS = BCons<Sym, Rat, Rat>;
+type RHS = Sym;
 type EXP = BCons<Sym, LHS, RHS>;
 
+const guardL = and(is_cons, is_opr_2_lhs_rhs(MATH_MUL, is_any, is_imu));
+const guardR = is_sym;
+
 /**
- * (X * a) * i => (X * i) * a or (X * a) * i, consistent with compare_factors
+ * (X * i) * a => (X * a) * i
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('mul_2_mul_2_any_sym_imu', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_imu, $);
-        this.hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_POW);
+        super('mul_2_mul_2_any_imu_sym', MATH_MUL, guardL, guardR, $);
+        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
         const X = lhs.lhs;
-        const a = lhs.rhs;
-        const i = rhs;
-        switch (compare_factors(a, i, $)) {
+        const i = lhs.rhs;
+        const a = rhs;
+        switch (compare_factors(i, a, $)) {
             case SIGN_GT: {
-                const Xi = $.valueOf(makeList(MATH_MUL, X, i));
-                const Xia = $.valueOf(makeList(MATH_MUL, Xi, a));
+                const Xa = $.valueOf(makeList(opr, X, a));
+                const Xai = $.valueOf(makeList(MATH_MUL, Xa, i));
                 // console.log(`${this.name} ${print_expr(orig, $)} ==> ${print_expr(Xia, $)}`);
-                return [CHANGED, Xia];
+                return [CHANGED, Xai];
             }
             default: {
                 return [NOFLAGS, orig];
@@ -51,4 +56,4 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const mul_2_mul_2_any_sym_imu = new Builder();
+export const mul_2_mul_2_any_imu_sym = new Builder();

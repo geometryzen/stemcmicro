@@ -2,6 +2,12 @@ import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_num } from "../../predicates/is_num";
 import { is_cons, U } from "../../tree/tree";
 
+/**
+ * Determines whether two expressions have a common factor on the right.
+ * @param lhs 
+ * @param rhs 
+ * @returns 
+ */
 export function is_factorize_rhs(lhs: U, rhs: U): boolean {
     if (lhs.equals(rhs)) {
         return true;

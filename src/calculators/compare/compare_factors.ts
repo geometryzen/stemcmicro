@@ -1,56 +1,12 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { is_blade } from "../../operators/blade/BladeExtension";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
-import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_imu } from "../../predicates/is_imu";
-import { is_flt } from "../../tree/flt/is_flt";
 import { is_rat } from "../../tree/rat/is_rat";
 import { is_cons, U } from "../../tree/tree";
-import { is_uom } from "../../tree/uom/is_uom";
 import { factorizeL } from "../factorizeL";
 import { compare } from "./compare";
 import { compare_sym_sym } from "./compare_sym_sym";
-
-const GROUP_NUM = 0;
-const GROUP_SYM = 2;
-const GROUP_CONS = 3;
-const GROUP_IMU = 4;
-const GROUP_BLADE = 5;
-const GROUP_UOM = 6;
-type GROUP = typeof GROUP_NUM | typeof GROUP_SYM | typeof GROUP_CONS | typeof GROUP_BLADE | typeof GROUP_IMU | typeof GROUP_UOM;
-
-function group(expr: U): GROUP {
-    if (is_rat(expr)) {
-        return GROUP_NUM;
-    }
-    if (is_flt(expr)) {
-        return GROUP_NUM;
-    }
-    if (is_sym(expr)) {
-        return GROUP_SYM;
-    }
-    if (is_cons(expr)) {
-        // Note that we have to check for the imaginary unit before declaring general Cons because i = (power -1 1/2)
-        // We don't wany the group to be determined by Numeric factors.
-        // But we will have to navigate through possible associations on the LHS.
-        // This solution is probably naive.
-        if (is_mul_2_num_any(expr)) {
-            return group(expr.rhs);
-        }
-        if (is_imu(expr)) {
-            return GROUP_IMU;
-        }
-        return GROUP_CONS;
-    }
-    if (is_blade(expr)) {
-        return GROUP_BLADE;
-    }
-    if (is_uom(expr)) {
-        return GROUP_UOM;
-    }
-    throw new Error(`group() of ${expr}`);
-}
+import { group } from "./group";
 
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // Numeric factors in lhs term have no effect on ordering.

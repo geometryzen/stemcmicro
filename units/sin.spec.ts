@@ -18,7 +18,7 @@ describe("sin", function () {
     });
 });
 
-xdescribe("sin", function () {
+describe("sin", function () {
     it("sin(x)", function () {
         const lines: string[] = [
             `sin(x)`
@@ -187,7 +187,7 @@ xdescribe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), '0');
     });
-    it("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
+    xit("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
         const lines: string[] = [
             `autofactor=0`,
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`

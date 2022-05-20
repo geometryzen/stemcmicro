@@ -1,4 +1,5 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { compare_terms } from "../../calculators/compare/compare_terms";
+import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -41,12 +42,25 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             const abc = $.valueOf(makeList(MATH_ADD, a, bc));
             return [CHANGED, abc];
         }
+        const X = lhs.lhs;
+        const Z = lhs.rhs;
+        const A = rhs;
+        switch (compare_terms(Z, A, $)) {
+            case SIGN_GT: {
+                // (X + Z) + A => (X + A) + Z
+                const XA = $.valueOf(makeList(lhs.opr, X, A));
+                const retval = $.valueOf(makeList(opr, XA, Z));
+                return [NOFLAGS, retval];
+            }
+            default: {
+                return [NOFLAGS, orig];
+            }
+        }
         /*
         if ($.implicateMode) {
             return [CHANGED, $.valueOf(makeList(opr, lhs.lhs, lhs.rhs, rhs))];
         }
         */
-        return [NOFLAGS, orig];
     }
 }
 

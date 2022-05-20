@@ -4,8 +4,7 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("trig", function () {
-    // TODO: The problem with the rule based upon arguments is that it makes factoring harder.
-    xdescribe("function ordering in factors is based upon their names and then arguments", function () {
+    describe("function ordering of trig functions in factors", function () {
         // TODO: So far this is only done for sin and cos.
         // However, also appies to tan, sec, cot
         it("sin(a)*cos(b)", function () {

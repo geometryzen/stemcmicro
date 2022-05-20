@@ -1,7 +1,5 @@
-import { compare } from "../../calculators/compare/compare";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "./and";
@@ -10,13 +8,7 @@ import { Function2 } from "./Function2";
 import { is_opr_1_any } from "./is_opr_1_any";
 import { UCons } from "./UCons";
 
-/**
- * The ordering is based upon the names of the functions and then upon their arguments.
- * But this should be possible with a standard comparitor.
- * DEAD CODE?
- * Code does not work as advertized anyway.
- */
-export class Opr2Lhs1Rhs1OrderingBuilder implements OperatorBuilder<Cons> {
+export class Opr2Lhs1Rhs1StableBuilder implements OperatorBuilder<Cons> {
     constructor(public readonly opr: Sym, public readonly lhs: Sym, public readonly rhs: Sym) {
         // Nothing to see here.
     }
@@ -30,7 +22,7 @@ type RHS = UCons<Sym, U>;
 type EXPR = BCons<Sym, LHS, RHS>;
 
 /**
- * (opr (lhs) (rhs)) => (opr (rhs) (lhs))
+ * (opr (lhs) (rhs)) is not changed
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
@@ -39,14 +31,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         this.hash = hash_binop_cons_cons(opr, lhs, rhs);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
-        const $ = this.$;
-        const argL = lhs.arg;
-        const argR = rhs.arg;
-        switch (compare(argL, argR)) {
-            case SIGN_GT: {
-                return [CHANGED, $.valueOf(makeList(opr, orig.rhs, orig.lhs))];
-            }
-        }
         return [STABLE, orig];
     }
 }

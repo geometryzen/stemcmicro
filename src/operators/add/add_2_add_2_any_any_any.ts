@@ -1,5 +1,5 @@
-import { compare_terms } from "../../calculators/compare/compare_terms";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { compare_terms_redux } from "../../calculators/compare/compare_terms";
+import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -27,6 +27,7 @@ type EXPR = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_any_any', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, $);
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
@@ -45,7 +46,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const X = lhs.lhs;
         const Z = lhs.rhs;
         const A = rhs;
-        switch (compare_terms(Z, A, $)) {
+        switch (compare_terms_redux(Z, A, $)) {
             case SIGN_GT: {
                 // (X + Z) + A => (X + A) + Z
                 const XA = $.valueOf(makeList(lhs.opr, X, A));

@@ -1,10 +1,12 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
+import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_blade_rat } from "../../operators/mul/is_mul_2_blade_rat";
+import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/RatExtension";
@@ -18,6 +20,89 @@ import { compare_factorizable } from "./compare_factorizable";
 import { compare_opr_opr } from "./compare_opr_opr";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { has_imu_factor } from "./has_imu_factor";
+
+export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    if (is_sym(lhs)) {
+        if (is_sym(rhs)) {
+            return compare_sym_sym(lhs, rhs);
+        }
+    }
+    if (is_blade(lhs)) {
+        if (is_blade(rhs)) {
+            return compare_blade_blade(lhs, rhs);
+        }
+    }
+    if (is_cons(lhs)) {
+        if (is_mul_2_num_any(lhs)) {
+            // A factor of a number on the lhs has no effect.
+            // Note that this only catches the case when lhs = (* Num X).
+            return compare_terms_redux(lhs.rhs, rhs, $);
+        }
+        if (is_mul_2_any_any(lhs)) {
+            const [a, b] = factorizeL(lhs);
+            if (is_rat(a)) {
+                return compare_terms_redux(b, rhs, $);
+            }
+        }
+    }
+    if (is_cons(rhs)) {
+        if (is_mul_2_num_any(rhs)) {
+            // A factor of a number on the rhs has no effect.
+            // Note that this only catches the case when rhs = (* Num X).
+            return compare_terms_redux(lhs, rhs.rhs, $);
+        }
+        if (is_mul_2_any_any(rhs)) {
+            const [a, b] = factorizeL(rhs);
+            // console.lg(`factorizeL ${print_expr(rhs, $)} => a = ${print_expr(a, $)}, b = ${print_expr(b, $)}`);
+            if (is_rat(a)) {
+                return compare_terms_redux(lhs, b, $);
+            }
+        }
+    }
+    if (is_cons(lhs) && is_cons(rhs)) {
+        if (is_mul_2_any_blade(lhs) && is_mul_2_any_blade(rhs)) {
+            switch (compare_blade_blade(lhs.rhs, rhs.rhs)) {
+                case SIGN_GT: {
+                    return SIGN_GT;
+                }
+                case SIGN_LT: {
+                    return SIGN_LT;
+                }
+                default: {
+                    return compare_terms_redux(lhs.lhs, rhs.lhs, $);
+                }
+            }
+        }
+        if (is_mul_2_any_any(lhs) && is_mul_2_any_any(rhs)) {
+            switch (compare_terms_redux(lhs.lhs, rhs.lhs, $)) {
+                case SIGN_GT: {
+                    return SIGN_GT;
+                }
+                case SIGN_LT: {
+                    return SIGN_LT;
+                }
+                default: {
+                    return compare_terms_redux(lhs.rhs, rhs.rhs, $);
+                }
+            }
+        }
+        if (is_unaop(lhs) && is_unaop(rhs)) {
+            switch (compare_terms_redux(lhs.opr, rhs.opr, $)) {
+                case SIGN_GT: {
+                    return SIGN_GT;
+                }
+                case SIGN_LT: {
+                    return SIGN_LT;
+                }
+                default: {
+                    return compare_terms_redux(lhs.arg, rhs.arg, $);
+                }
+            }
+        }
+    }
+    // console.log(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+    return SIGN_EQ;
+}
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // console.log(`compare_terms ${lhs} ${rhs}`);

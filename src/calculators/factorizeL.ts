@@ -16,6 +16,7 @@ function is_pow_2_any_positive_integer(expr: Cons): expr is BCons<Sym, U, Rat> {
 }
 
 export function factorizeL(expr: U): [lhs: U, rhs: U, split: boolean] {
+
     let s = expr;
     const parts: U[] = [];
     while (is_cons(s)) {

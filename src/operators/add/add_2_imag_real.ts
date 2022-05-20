@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_TRANSFORM, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -28,7 +28,7 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FLAGS_TRANSFORM;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     readonly dependencies: FEATURE[] = ['Imu'];
     constructor($: ExtensionEnv) {
         super('add_2_imag_real', MATH_ADD, is_any, is_any, cross($), $);

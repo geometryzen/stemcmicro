@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_TRANSFORM, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -31,7 +31,7 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FLAGS_TRANSFORM;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_imag_real', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross($), $);
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_TRANSFORM, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_FLT } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_ADD, MATH_POW } from "../../runtime/ns_math";
@@ -25,7 +25,7 @@ type EXP = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FLAGS_TRANSFORM;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     readonly dependencies: FEATURE[] = ['Flt', 'Imu'];
     constructor($: ExtensionEnv) {
         super('add_2_imu_flt', MATH_ADD, is_imu, is_flt, $);

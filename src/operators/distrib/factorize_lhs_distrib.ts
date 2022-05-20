@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -42,22 +43,23 @@ function cross($: ExtensionEnv) {
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
     readonly phases = PHASE_FACTORING;
-    constructor(public readonly name: string, mul: Sym, add: Sym, $: ExtensionEnv) {
-        super(name, add, and(is_cons, is_opr_2_any_any(mul)), and(is_cons, is_opr_2_any_any(mul)), cross($), $);
-        this.hash = `(${add.key()} (${mul.key()}) (${mul.key()}))`;
+    constructor(public readonly name: string, op1: Sym, op2: Sym, $: ExtensionEnv) {
+        super(name, op2, and(is_cons, is_opr_2_any_any(op1)), and(is_cons, is_opr_2_any_any(op1)), cross($), $);
+        this.hash = hash_binop_cons_cons(op2, op1, op1);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+    transform2(op2: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
+        const op1 = lhs.opr;
         const A = lhs.rhs;
         const B = rhs.rhs;
         const X = lhs.lhs;
-        const AB = $.valueOf(makeList(opr, A, B));
-        return [CHANGED, $.valueOf(makeList(lhs.opr, X, AB))];
+        const A_op2_B = $.valueOf(makeList(op2, A, B));
+        return [CHANGED, $.valueOf(makeList(op1, X, A_op2_B))];
     }
 }
 
 /**
- * (X * A) + (X * B) => X * (A + B)
+ * (X op1 A) op2 (X op1 B) => X op1 (A op2 B)
  * 
  * @param name The name used for the operator in debugging.
  * @param op1 The operator symbol that plays the role of multiplication.

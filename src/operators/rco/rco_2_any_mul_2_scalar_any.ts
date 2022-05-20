@@ -1,5 +1,6 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { MATH_RCO } from "../../runtime/ns_math";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
+import { MATH_MUL, MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, makeList, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
@@ -20,7 +21,7 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('rco_2_any_mul_2_scalar_any', MATH_RCO, is_any, is_mul_2_scalar_any($), $);
-        this.hash = `(>> U (*))`;
+        this.hash = hash_binop_atom_cons(MATH_RCO, HASH_ANY, MATH_MUL);
     }
     transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>): [TFLAGS, U] {
         const $ = this.$;

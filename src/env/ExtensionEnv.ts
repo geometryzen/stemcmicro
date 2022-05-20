@@ -71,8 +71,6 @@ export interface ExtensionEnv {
     clearBindings(): void;
     clearRenamed(): void;
     compare(lhs: U, rhs: U): Sign;
-    compareFactors(lhs: U, rhs: U): Sign;
-    compareTerms(lhs: U, rhs: U): Sign;
     cos(expr: U): U;
     cost(expr: U, depth: number): number;
     defineOperator(builder: OperatorBuilder<U>): void;
@@ -158,7 +156,7 @@ export const phases = [PHASE_EXPLICATE, PHASE_EXPANDING, PHASE_FACTORING, PHASE_
 
 export const PHASE_FLAGS_NONE = 0;
 export const PHASE_FLAGS_ALL = PHASE_EXPLICATE | PHASE_EXPANDING | PHASE_FACTORING | PHASE_COSMETICS | PHASE_IMPLICATE;
-export const PHASE_FLAGS_TRANSFORM = PHASE_EXPANDING | PHASE_FACTORING;
+export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = PHASE_EXPANDING | PHASE_FACTORING;
 
 export interface Operator<T extends U> {
     readonly key?: string;

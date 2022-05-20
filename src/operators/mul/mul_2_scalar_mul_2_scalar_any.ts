@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -22,7 +23,7 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_scalar_mul_2_scalar_any', MATH_MUL, is_scalar($), and(is_cons, is_mul_2_scalar_any($)), $);
-        this.hash = `(* U (*))`;
+        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_ANY, MATH_MUL);
     }
     isScalar(expr: U): boolean {
         const m = this.match(expr);

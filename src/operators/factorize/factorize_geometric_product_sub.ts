@@ -1,5 +1,6 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
+import { MATH_ADD, MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -40,7 +41,8 @@ class Op extends Function2X<BCons<Sym, Sym, Sym>, BCons<Sym, Rat, BCons<Sym, Sym
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('factorize_geometric_product_sub', MATH_ADD, and(is_cons, is_inner_2_sym_sym), and(is_cons, is_mul_2_rat_outer_2_sym_sym), cross($), $);
-        this.hash = `(+ (|) (*))`;
+        // The rhs is a multiplication because of the factor of -1.
+        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_INNER, MATH_MUL);
     }
     transform2(opr: Sym, lhs: BCons<Sym, U, U>, rhs: BCons<Sym, U, U>, orig: BCons<Sym, BCons<Sym, U, U>, BCons<Sym, U, U>>): [TFLAGS, U] {
         const $ = this.$;

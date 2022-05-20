@@ -1,4 +1,5 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { compare } from "../../calculators/compare/compare";
+import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -34,27 +35,25 @@ function cross(lhs: LHS, rhs: RHS): boolean {
     const b1 = lhs.lhs.arg;
     const a2 = rhs.lhs.arg;
     const b2 = rhs.rhs.arg;
-    return a1.equals(a2) && b1.equals(b2);
+    return a1.equals(a2) && b1.equals(b2) && compare(b1, a1) > 0;
 }
 
 /**
- * cos(b)*sin(a)+cos(a)*sin(b) => sin(a+b)
+ * cos(b)*sin(a)+cos(a)*sin(b) => cos(a)*sin(b)+cos(b)*sin(a)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FACTORING;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
-        super('add_2_mul_2_cos_sin_mul_2_cos_sin', MATH_ADD, guardL, guardR, cross, $);
+        super('add_2_mul_2_cos_sin_mul_2_cos_sin_ordering', MATH_ADD, guardL, guardR, cross, $);
         this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const a = orig.lhs.lhs.arg;
-        const b = orig.lhs.rhs.arg;
-        const ab = $.valueOf(makeList(MATH_ADD, a, b));
-        const sin = $.valueOf(makeList(MATH_SIN, ab));
-        return [CHANGED, sin];
+        const swapped = makeList(opr, orig.rhs, orig.lhs);
+        const retval = $.valueOf(swapped);
+        return [CHANGED, retval];
     }
 }
 
-export const add_2_mul_2_cos_sin_mul_2_cos_sin = new Builder();
+export const add_2_mul_2_cos_sin_mul_2_cos_sin_ordering = new Builder();

@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { ASSIGN } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
 import { NIL, U } from "../../tree/tree";
@@ -17,7 +18,7 @@ class Op extends Function2<Sym, U> implements Operator<U> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('assign_sym_any', ASSIGN, is_sym, is_any, $);
-        this.hash = `(= Sym U)`;
+        this.hash = hash_binop_atom_atom(ASSIGN, HASH_SYM, HASH_ANY);
     }
     transform2(opr: Sym, lhs: Sym, rhs: U): [TFLAGS, U] {
         const $ = this.$;

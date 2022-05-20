@@ -1,4 +1,5 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -27,7 +28,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_any_any', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, $);
-        this.hash = `(+ (+) U)`;
+        this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
         const $ = this.$;

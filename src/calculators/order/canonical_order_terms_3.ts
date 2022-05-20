@@ -2,6 +2,7 @@ import { CHANGED, ExtensionEnv, NOFLAGS, SIGN_GT, TFLAGS } from "../../env/Exten
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { compare_terms } from "../compare/compare_terms";
 
 /**
  * (X+Y)+Z transformation for canonical ordering.
@@ -27,10 +28,10 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
     }
     else {
         // Cycling through here comparing pairs (s1,s2) then (s2,s3), then (s3,s1).
-        switch ($.compareTerms(t1, t2)) {
+        switch (compare_terms(t1, t2, $)) {
             case SIGN_GT: {
                 // t2, t1
-                switch ($.compareTerms(t2, t3)) {
+                switch (compare_terms(t2, t3, $)) {
                     case SIGN_GT: {
                         // t3, t1, t1
                         const t3t2 = makeList(MATH_ADD, t3, t2);
@@ -38,7 +39,7 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
                     }
                     default: {
                         // t2, (t1,t3)
-                        switch ($.compareTerms(t3, t1)) {
+                        switch (compare_terms(t3, t1, $)) {
                             case SIGN_GT: {
                                 // t2, t1, t3
                                 const t2t1 = makeList(MATH_ADD, t2, t1);
@@ -55,10 +56,10 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
             }
             default: {
                 // t1, t2
-                switch ($.compareTerms(t2, t3)) {
+                switch (compare_terms(t2, t3, $)) {
                     case SIGN_GT: {
                         // (t1,t3), t2
-                        switch ($.compareTerms(t3, t1)) {
+                        switch (compare_terms(t3, t1, $)) {
                             case SIGN_GT: {
                                 const t1t3 = makeList(MATH_ADD, t1, t3);
                                 return [CHANGED, hook(makeList(MATH_ADD, t1t3, t2), "D")];
@@ -87,7 +88,7 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
 }
 
 function branch(X: Cons, Y: U, Z: U, orig: U, $: ExtensionEnv): [TFLAGS, U] {
-    switch ($.compareTerms(Y, Z)) {
+    switch (compare_terms(Y, Z, $)) {
         case SIGN_GT: {
             const addXZ = makeList(MATH_ADD, X, Z);
             return [CHANGED, makeList(MATH_ADD, addXZ, Y)];

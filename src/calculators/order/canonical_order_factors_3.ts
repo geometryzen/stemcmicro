@@ -1,6 +1,7 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Cons, makeList, U } from "../../tree/tree";
+import { compare_factors } from "../compare/compare_factors";
 
 /**
  * TODO: Doing this for accuracy, but it is slow.
@@ -19,16 +20,16 @@ export function canonical_order_factors_3(s1: U, s2: U, s3: U, oldExpr: Cons, $:
         return retval;
     };
     // Cycling through here comparing s1,s2 then s2,s3, then s3, s1
-    switch ($.compareFactors(s1, s2)) {
+    switch (compare_factors(s1, s2, $)) {
         case SIGN_GT: {
-            switch ($.compareFactors(s2, s3)) {
+            switch (compare_factors(s2, s3, $)) {
                 case SIGN_GT: {
                     const s3s2 = makeList(MATH_MUL, s3, s2);
                     const newExpr = makeList(MATH_MUL, s3s2, s1);
                     return [compute_changed(newExpr, oldExpr), hook(newExpr, "A")];
                 }
                 default: {
-                    switch ($.compareFactors(s3, s1)) {
+                    switch (compare_factors(s3, s1, $)) {
                         case SIGN_GT: {
                             const s2s1 = makeList(MATH_MUL, s2, s1);
                             const newExpr = makeList(MATH_MUL, s2s1, s3);
@@ -44,9 +45,9 @@ export function canonical_order_factors_3(s1: U, s2: U, s3: U, oldExpr: Cons, $:
             }
         }
         default: {
-            switch ($.compareFactors(s2, s3)) {
+            switch (compare_factors(s2, s3, $)) {
                 case SIGN_GT: {
-                    switch ($.compareFactors(s3, s1)) {
+                    switch (compare_factors(s3, s1, $)) {
                         case SIGN_GT: {
                             const s1s3 = makeList(MATH_MUL, s1, s3);
                             const newExpr = makeList(MATH_MUL, s1s3, s2);

@@ -1,8 +1,6 @@
 import { yyarg } from "../arg";
 import { divide_numbers, invert_number } from "../bignum";
 import { binop } from "../calculators/binop";
-import { compare_factors } from "../calculators/compare/compare_factors";
-import { compare_terms } from "../calculators/compare/compare_terms";
 import { denominator } from "../denominator";
 import { d_scalar_scalar } from "../derivative";
 import { yyfactorpoly } from "../factorpoly";
@@ -239,13 +237,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             symTab.clearRenamed();
         },
         compare(lhs: U, rhs: U): Sign {
+            // TODO: What is this?
             return this.compare(lhs, rhs);
-        },
-        compareFactors(lhs: U, rhs: U): Sign {
-            return compare_factors(lhs, rhs, $);
-        },
-        compareTerms(lhs: U, rhs: U): Sign {
-            return compare_terms(lhs, rhs, $);
         },
         cos(x: U): U {
             // TODO: This should just build then evaluate.

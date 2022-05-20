@@ -1,5 +1,6 @@
 
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -23,7 +24,8 @@ class Op extends Function2<Cons, Rat> implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_cons_rat', MATH_ADD, is_cons, is_rat, $);
-        this.hash = `(+ U Rat)`;
+        // IMPROVE: Not a very precise hash...
+        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_RAT);
     }
     transform2(opr: Sym, lhs: Cons, rhs: Rat): [TFLAGS, U] {
         if (rhs.isZero()) {

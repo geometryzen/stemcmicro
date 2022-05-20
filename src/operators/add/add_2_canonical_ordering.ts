@@ -1,4 +1,5 @@
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_TRANSFORM, TFLAGS } from "../../env/ExtensionEnv";
+import { compare_terms } from "../../calculators/compare/compare_terms";
+import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -21,7 +22,7 @@ type EXP = BCons<Sym, LHS, RHS>;
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
         // console.log(`compareTerms lhs=${print_expr(lhs, $)}, rhs=${print_expr(rhs, $)}`);
-        return $.compareTerms(lhs, rhs) > 0;
+        return compare_terms(lhs, rhs, $) > 0;
     };
 }
 
@@ -30,7 +31,7 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FLAGS_TRANSFORM;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     // Because we make use of generic term comparison, we require a bunch of features.
     readonly dependencies: FEATURE[] = ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'];
     constructor($: ExtensionEnv) {

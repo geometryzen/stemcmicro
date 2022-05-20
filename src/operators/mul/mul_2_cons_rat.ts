@@ -1,5 +1,6 @@
 
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -20,7 +21,7 @@ class Op extends Function2<Cons, Rat> implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_cons_rat', MATH_MUL, is_cons, is_rat, $);
-        this.hash = `(* U Rat)`;
+        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_ANY, HASH_RAT);
     }
     transform2(opr: Sym, lhs: Cons, rhs: Rat): [TFLAGS, U] {
         const $ = this.$;
@@ -37,3 +38,4 @@ class Op extends Function2<Cons, Rat> implements Operator<Cons> {
 }
 
 export const mul_2_cons_rat = new Builder();
+

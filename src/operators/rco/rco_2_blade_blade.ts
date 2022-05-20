@@ -1,5 +1,6 @@
 
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -17,7 +18,7 @@ class Op extends Function2<Blade, Blade> implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('rco_2_blade_blade', MATH_RCO, is_blade, is_blade, $);
-        this.hash = `(>> Blade Blade)`;
+        this.hash = hash_binop_atom_atom(MATH_RCO, HASH_BLADE, HASH_BLADE);
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
         return [CHANGED, lhs.__rshift__(rhs)];

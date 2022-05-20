@@ -46,12 +46,14 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const X = lhs.lhs;
         const Z = lhs.rhs;
         const A = rhs;
-        switch (compare_terms_redux(Z, A, $)) {
+        const signum = compare_terms_redux(Z, A, $);
+        // console.log(`${this.name} ${signum} lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+        switch (signum) {
             case SIGN_GT: {
                 // (X + Z) + A => (X + A) + Z
                 const XA = $.valueOf(makeList(lhs.opr, X, A));
                 const retval = $.valueOf(makeList(opr, XA, Z));
-                return [NOFLAGS, retval];
+                return [CHANGED, retval];
             }
             default: {
                 return [NOFLAGS, orig];

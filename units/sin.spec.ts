@@ -4,9 +4,10 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sin", function () {
-    xit("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
+    it("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
         const lines: string[] = [
             `autofactor=0`,
+            `implicate=0`,
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
         ];
         const engine = createSymEngine({

@@ -148,7 +148,6 @@ export function define_keywords($: ExtensionEnv): void {
     // $.defineSym(DEGREE);
     // $.defineSym(DENOMINATOR);
     // $.defineSym(DET);
-    // $.defineSym(DERIVATIVE);
     // $.defineSym(DIM);
     // $.defineSym(DIRAC);
     // $.defineSym(DIVIDE);

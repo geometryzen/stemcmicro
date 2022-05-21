@@ -1,5 +1,6 @@
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_blade } from "../../operators/blade/BladeExtension";
+import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
@@ -12,6 +13,7 @@ import { is_cons, U } from "../../tree/tree";
 import { compare_factorizable } from "./compare_factorizable";
 import { compare_opr_opr } from "./compare_opr_opr";
 import { compare_sym_sym } from "./compare_sym_sym";
+import { group } from "./group";
 import { has_imu_factor } from "./has_imu_factor";
 
 /**
@@ -56,7 +58,8 @@ export function compare(lhs: U, rhs: U): Sign {
                     return SIGN_GT;
                 }
                 else {
-                    throw new Error(`lhs: Power = ${lhs}, rhs: Cons = ${rhs}`);
+                    return SIGN_EQ;
+                    // throw new Error(`lhs: Power = ${lhs}, rhs: Cons = ${rhs}`);
                 }
             }
             if (is_sym(rhs)) {
@@ -156,6 +159,9 @@ export function compare(lhs: U, rhs: U): Sign {
         else if (is_sym(rhs)) {
             return compare_sym_sym(lhs, rhs);
         }
+        else if (is_hyp(rhs)) {
+            return SIGN_LT;
+        }
         else if (is_blade(rhs)) {
             return SIGN_LT;
         }
@@ -180,6 +186,14 @@ export function compare(lhs: U, rhs: U): Sign {
         }
         else {
             throw new Error(`lhs: Sym = ${lhs}, rhs = ${rhs}`);
+        }
+    }
+    else if (is_hyp(lhs)) {
+        if (is_sym(rhs)) {
+            return SIGN_GT;
+        }
+        else {
+            throw new Error(`lhs: Hyp = ${lhs}, rhs = ${rhs} group(rhs)=${group(rhs)}`);
         }
     }
     else {

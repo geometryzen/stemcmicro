@@ -16,6 +16,7 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<U, Rat> implements Operator<Cons> {
+    // readonly hash;
     constructor($: ExtensionEnv) {
         super('pow_2_any_rat', MATH_POW, is_any, is_rat, $);
     }

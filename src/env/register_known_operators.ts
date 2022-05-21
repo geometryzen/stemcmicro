@@ -69,6 +69,7 @@ import { conj_sym } from '../operators/conj/conj_sym';
 import { cons } from '../operators/cons/ConsExtension';
 import { cos_add_2_any_any } from '../operators/cos/cos_add_2_any_any';
 import { cos_any } from '../operators/cos/cos_any';
+import { cos_hyp } from '../operators/cos/cos_hyp';
 import { cos_sym } from '../operators/cos/cos_sym';
 import { cross_add_2_any_any_any } from '../operators/cross/cross_add_2_any_any_any';
 import { cross_any_add_2_any_any } from '../operators/cross/cross_any_add_2_any_any';
@@ -76,6 +77,10 @@ import { cross_any_any } from '../operators/cross/cross_any_any';
 import { cross_any_mul_2_scalar_any } from '../operators/cross/cross_any_mul_2_scalar_any';
 import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
 import { cross_mul_2_scalar_any_any } from '../operators/cross/cross_mul_2_scalar_any_any';
+import { derivative_2_any_any } from '../operators/derivative/derivative_2_any_any';
+import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
+import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
+import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { factorize_lhs_distrib } from '../operators/distrib/factorize_lhs_distrib';
 import { inner_lhs_distrib_over_add_expand } from '../operators/distrib/inner_lhs_distrib_over_add_expand';
 import { inner_rhs_distrib_over_add_expand } from '../operators/distrib/inner_rhs_distrib_over_add_expand';
@@ -148,14 +153,19 @@ import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
 import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_any';
 import { mul_2_flt_rat } from '../operators/mul/mul_2_flt_rat';
 import { mul_2_flt_uom } from '../operators/mul/mul_2_flt_uom';
+import { mul_2_hyp_rat } from '../operators/mul/mul_2_hyp_rat';
+import { mul_2_hyp_sym } from '../operators/mul/mul_2_hyp_sym';
 import { mul_2_imu_any } from '../operators/mul/mul_2_imu_any';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_blade_blade } from '../operators/mul/mul_2_mul_2_any_blade_blade';
 import { mul_2_mul_2_any_imu_imu } from '../operators/mul/mul_2_mul_2_any_imu_imu';
 import { mul_2_mul_2_any_imu_sym } from '../operators/mul/mul_2_mul_2_any_imu_sym';
+import { mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_mul_2_any_sym_imu } from '../operators/mul/mul_2_mul_2_any_sym_imu';
 import { mul_2_mul_2_any_sym_mul_2_imu_sym } from '../operators/mul/mul_2_mul_2_any_sym_mul_2_imu_sym';
 import { mul_2_mul_2_any_sym_sym } from '../operators/mul/mul_2_mul_2_any_sym_sym';
+import { mul_2_mul_2_any_X_pow_2_X_rat } from '../operators/mul/mul_2_mul_2_any_X_pow_2_X_rat';
+import { mul_2_mul_2_any_Z_pow_2_A_any } from '../operators/mul/mul_2_mul_2_any_Z_pow_2_A_any';
 import { mul_2_mul_2_num_any_rat } from '../operators/mul/mul_2_mul_2_num_any_rat';
 import { mul_2_mul_2_rat_any_mul_2_rat_any } from '../operators/mul/mul_2_mul_2_rat_any_mul_2_rat_any';
 import { mul_2_mul_2_rat_sym_sym } from '../operators/mul/mul_2_mul_2_rat_sym_sym';
@@ -187,6 +197,7 @@ import { mul_2_sym_sym_general } from '../operators/mul/mul_2_sym_sym_general';
 import { mul_2_uom_flt } from '../operators/mul/mul_2_uom_flt';
 import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
+import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
 import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
 import { nil } from '../operators/nil/NilExtension';
 import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
@@ -219,11 +230,17 @@ import { script_last_0 } from '../operators/script_last/script_last';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
 import { sin_add_2_any_any } from '../operators/sin/sin_add_2_any_any';
 import { sin_any } from '../operators/sin/sin_any';
+import { sin_hyp } from '../operators/sin/sin_hyp';
 import { sin_mul_2_rat_any } from '../operators/sin/sin_mul_2_rat_any';
 import { sin_sym } from '../operators/sin/sin_sym';
 import { MATH_SQRT } from '../operators/sqrt/MATH_SQRT';
 import { sqrt_1_any } from '../operators/sqrt/sqrt_1_any';
 import { sqrt_1_rat } from '../operators/sqrt/sqrt_1_rat';
+import { st_add_2_any_hyp } from '../operators/st/st_add_2_any_hyp';
+import { st_any } from '../operators/st/st_any';
+import { st_mul_2_rat_any } from '../operators/st/st_mul_2_rat_any';
+import { st_rat } from '../operators/st/st_rat';
+import { st_sym } from '../operators/st/st_sym';
 import { str } from '../operators/str/StrExtension';
 import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
@@ -433,6 +450,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_pow_2_xxx_rat_xxx);
     // $.defineOperator(mul_2_outer_2_sym_sym_sym);
     $.defineOperator(mul_2_zzz_pow_2_aaa_rat);
+    $.defineOperator(mul_2_X_pow_2_X_rat);
     $.defineOperator(mul_2_sym_add_2_sym_sym);
     $.defineOperator(mul_2_sym_inner_2_sym_sym);
     // Disable because it is a very strong canonicalizer.
@@ -442,15 +460,25 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_sym_mul_2_rat_any);
     $.defineOperator(mul_2_sym_pow_2_sym_two);
     $.defineOperator(mul_2_sym_flt);
+    $.defineOperator(mul_2_hyp_rat);
     $.defineOperator(mul_2_sym_rat);
     $.defineOperator(mul_2_sym_num);
     $.defineOperator(mul_2_sym_sym_general);
     $.defineOperator(mul_2_sym_sym);
     $.defineOperator(mul_2_sym_imu);
     $.defineOperator(mul_2_pow_2_zzz_rat_aaa);
+    $.defineOperator(mul_2_mul_2_any_X_pow_2_X_rat);
+    $.defineOperator(mul_2_mul_2_any_Z_pow_2_A_any);
+
+    // Distribution Laws in Factoring direction for symmetric and left-associated.
+    // This concept should have an abstraction. 
     $.defineOperator(mul_2_pow_2_xxx_any_pow_2_xxx_any);
+    $.defineOperator(mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any);
+
     $.defineOperator(mul_2_any_mul_2_any_any);
     $.defineOperator(mul_2_any_mul);
+
+    $.defineOperator(mul_2_hyp_sym);
 
     // TODO: Notice that this transformer is not being found because Num is not recognized in hashing...
     $.defineOperator(heterogenous_canonical_order('HCO: Flt * Uom', '(* Uom Flt)', MATH_MUL, is_flt, is_uom));
@@ -540,6 +568,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(cos_add_2_any_any);
     $.defineOperator(cos_sym);
+    $.defineOperator(cos_hyp);
     $.defineOperator(cos_any);
 
     $.defineOperator(cross_blade_blade);
@@ -550,6 +579,11 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(cross_add_2_any_any_any);
     $.defineOperator(cross_any_add_2_any_any);
     $.defineOperator(cross_any_any);
+
+    $.defineOperator(d_to_derivative);
+    $.defineOperator(derivative_2_mul_any);
+    $.defineOperator(derivative_2_pow_any);
+    $.defineOperator(derivative_2_any_any);
 
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
@@ -582,12 +616,19 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(sin_add_2_any_any);
     $.defineOperator(sin_sym);
+    $.defineOperator(sin_hyp);
     $.defineOperator(sin_mul_2_rat_any);
     $.defineOperator(sin_any);
 
     $.defineOperator(sqrt_1_rat);
     $.defineOperator(sqrt_1_any);
     $.setCost(MATH_SQRT, 2);
+
+    $.defineOperator(st_add_2_any_hyp);
+    $.defineOperator(st_mul_2_rat_any);
+    $.defineOperator(st_rat);
+    $.defineOperator(st_sym);
+    $.defineOperator(st_any);
 
     $.defineOperator(typeof_mat);
     $.defineOperator(typeof_blade);

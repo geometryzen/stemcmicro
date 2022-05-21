@@ -13,19 +13,22 @@ type LHS = BCons<Sym, LL, LR>;
 type RL = U;
 type RR = U;
 type RHS = BCons<Sym, RL, RR>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
-class OpBuilder implements OperatorBuilder<EXPR> {
+class OpBuilder implements OperatorBuilder<EXP> {
     constructor(private readonly name: string, private readonly mul: Sym, private readonly add: Sym) {
         // Nothing to see here.
     }
-    create($: ExtensionEnv): Operator<EXPR> {
+    create($: ExtensionEnv): Operator<EXP> {
         return new Op(this.name, this.mul, this.add, $);
     }
 }
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
+        // Using this method and the PHASE_FACTORING restriction is redundant.
+        // We don't want the execution of this transform to conflict with
+        // expanding and yet when (A op3 B) increases entropy, we would want the simplification.
         if ($.isFactoring()) {
             const x1 = lhs.lhs;
             const x2 = rhs.lhs;
@@ -40,7 +43,7 @@ function cross($: ExtensionEnv) {
     };
 }
 
-class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     readonly phases = PHASE_FACTORING;
     constructor(public readonly name: string, op1: Sym, op2: Sym, $: ExtensionEnv) {
@@ -65,6 +68,6 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
  * @param op1 The operator symbol that plays the role of multiplication.
  * @param op2 The operator symbol that plays the role of addition.
  */
-export function factorize_lhs_distrib(name: string, op1: Sym, op2: Sym): OperatorBuilder<EXPR> {
+export function factorize_lhs_distrib(name: string, op1: Sym, op2: Sym): OperatorBuilder<EXP> {
     return new OpBuilder(name, op1, op2);
 }

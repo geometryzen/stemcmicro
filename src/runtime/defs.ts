@@ -134,6 +134,11 @@ export class Defs {
      */
     public mulListStringToken: '*' | 'multiply' = '*';
 
+    /**
+     * Ordinarily, we set this to true.
+     */
+    public convert_X_times_X_to_power_X_2 = true;
+
     public eulerNumberToken: 'e' | 'exp(1)' = 'exp(1)';
     public piToken: 'π' | 'pi' = 'π';
     public nilToken: 'nil' | '()' = '()';

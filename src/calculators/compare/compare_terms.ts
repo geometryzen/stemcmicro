@@ -2,6 +2,7 @@ import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/Extensi
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
 import { is_unaop } from "../../operators/helpers/is_unaop";
+import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
@@ -12,6 +13,7 @@ import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_num } from "../../predicates/is_num";
+import { print_expr } from "../../print";
 import { is_flt } from "../../tree/flt/is_flt";
 import { is_cons, U } from "../../tree/tree";
 import { is_uom } from "../../tree/uom/is_uom";
@@ -180,6 +182,10 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                 // TODO: Must be a conflict somewhere because it loops with SIGN_GT.
                 return SIGN_LT;
             }
+            else if (is_hyp(rhs)) {
+                // TODO: Must be a conflict somewhere because it loops with SIGN_GT.
+                return SIGN_EQ;
+            }
             else if (is_blade(rhs)) {
                 if (is_blade(lhs.rhs)) {
                     return compare_blade_blade(lhs.rhs, rhs);
@@ -188,7 +194,7 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                 return SIGN_LT;
             }
             else {
-                throw new Error(`lhs: Multiply = ${lhs}, rhs = ${rhs}`);
+                throw new Error(`lhs: Multiply = ${lhs}, rhs = ${print_expr(rhs, $)}`);
             }
         }
         else if (is_pow_2_any_any(lhs)) {
@@ -271,6 +277,9 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         else if (is_sym(rhs)) {
             return compare_sym_sym(lhs, rhs);
         }
+        else if (is_hyp(rhs)) {
+            return SIGN_LT;
+        }
         else if (is_flt(rhs)) {
             return SIGN_GT;
         }
@@ -308,10 +317,16 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
         return SIGN_EQ;
     }
+    if (is_hyp(lhs)) {
+        if (is_sym(rhs)) {
+            return SIGN_GT;
+        }
+        throw new Error(`lhs: Hyp = ${print_expr(lhs, $)}, rhs = ${rhs}`);
+    }
     if (is_uom(lhs)) {
         if (is_uom(rhs)) {
             return SIGN_EQ;
         }
     }
-    throw new Error(`lhs = ${lhs}, rhs = ${rhs}`);
+    throw new Error(`lhs = ${print_expr(lhs, $)}, rhs = ${rhs}`);
 }

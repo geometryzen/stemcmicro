@@ -2,24 +2,25 @@ import { mp_denominator, mp_numerator } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { isfraction, is_negative_number, is_num_and_eq_minus_one } from './is';
 import { abs } from './operators/abs/abs';
+import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
 import { is_sym } from './operators/sym/is_sym';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
 import { is_num } from './predicates/is_num';
 import { print_expr } from './print';
-import { ADD, ASSIGN, DERIVATIVE, FACTORIAL, MULTIPLY, POWER, SYM_MATH_COMPONENT } from './runtime/constants';
+import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER, SYM_MATH_COMPONENT } from './runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from './runtime/helpers';
 import { number_to_floating_point_string } from './runtime/number_to_floating_point_string';
 import { Flt } from './tree/flt/Flt';
 import { is_flt } from './tree/flt/is_flt';
 import { caar, caddr, cadr } from './tree/helpers';
-import { is_tensor } from './tree/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
 import { Num } from './tree/num/Num';
 import { is_rat } from './tree/rat/is_rat';
 import { one, Rat } from './tree/rat/Rat';
 import { is_str } from './tree/str/is_str';
 import { Str } from './tree/str/Str';
 import { Sym } from './tree/sym/Sym';
+import { is_tensor } from './tree/tensor/is_tensor';
+import { Tensor } from './tree/tensor/Tensor';
 import { car, cdr, is_cons, U } from './tree/tree';
 
 /*
@@ -718,7 +719,7 @@ function emit_function(p: U, $: ExtensionEnv) {
         return;
     }
 
-    if (car(p) === DERIVATIVE) {
+    if (car(p) === MATH_DERIVATIVE) {
         __emit_char('d');
     }
     else {

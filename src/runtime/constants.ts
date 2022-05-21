@@ -47,7 +47,6 @@ export const DECOMP = new Sym('decomp');
 export const DEFINT = new Sym('defint');
 export const DEGREE = new Sym('degree');
 export const DENOMINATOR = new Sym('denominator');
-export const DERIVATIVE = new Sym('derivative');
 export const DET = new Sym('det');
 export const DIM = new Sym('dim');
 export const DIRAC = new Sym('dirac');

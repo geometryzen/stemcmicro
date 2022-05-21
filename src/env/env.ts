@@ -2,7 +2,6 @@ import { yyarg } from "../arg";
 import { divide_numbers, invert_number } from "../bignum";
 import { binop } from "../calculators/binop";
 import { denominator } from "../denominator";
-import { d_scalar_scalar } from "../derivative";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
@@ -11,9 +10,11 @@ import { numerator } from "../numerator";
 import { is_blade } from "../operators/blade/BladeExtension";
 import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
 import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
+import { derivative_wrt } from "../operators/derivative/derivative_wrt";
 import { is_err } from "../operators/err/is_err";
 import { associative_explicator } from "../operators/helpers/associative_explicator";
 import { associative_implicator } from "../operators/helpers/associative_implicator";
+import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_sym } from "../operators/sym/is_sym";
 import { SymPattern } from "../operators/sym/SymPattern";
 import { Pattern } from "../patterns/Pattern";
@@ -25,7 +26,6 @@ import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER, MATH_POW } from "../runtime
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { VERSION_LATEST } from "../runtime/version";
-import { d_scalar_tensor, d_tensor_scalar, d_tensor_tensor } from "../tensor";
 import { is_boo } from "../tree/boo/is_boo";
 import { is_flt } from "../tree/flt/is_flt";
 import { is_rat } from "../tree/rat/is_rat";
@@ -257,25 +257,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return symTab.defineKey(sym);
         },
         derivative(expr: U, wrt: U): U {
-            if (is_num(wrt)) {
-                throw new SystemError('undefined function');
-            }
-            if (is_tensor(expr)) {
-                if (is_tensor(wrt)) {
-                    return d_tensor_tensor(expr, wrt, $);
-                }
-                else {
-                    return d_tensor_scalar(expr, wrt, $);
-                }
-            }
-            else {
-                if (is_tensor(wrt)) {
-                    return d_scalar_tensor(expr, wrt, $);
-                }
-                else {
-                    return d_scalar_scalar(expr, wrt, $);
-                }
-            }
+            return derivative_wrt(expr, wrt, $);
         },
         divide(lhs: U, rhs: U): U {
             if (is_num(lhs) && is_num(rhs)) {
@@ -518,6 +500,9 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             else if (is_boo(expr)) {
                 return selectOperator(expr.name, expr);
             }
+            else if (is_hyp(expr)) {
+                return selectOperator(expr.name, expr);
+            }
             else if (is_err(expr)) {
                 return selectOperator(expr.name, expr);
             }
@@ -680,6 +665,10 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return [NOFLAGS, expr];
             }
             else if (is_boo(expr)) {
+                expr.meta |= STABLE;
+                return [NOFLAGS, expr];
+            }
+            else if (is_hyp(expr)) {
                 expr.meta |= STABLE;
                 return [NOFLAGS, expr];
             }

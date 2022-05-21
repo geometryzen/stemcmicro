@@ -37,6 +37,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         return false;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+        // const $ = this.$;
+        // console.log(`${this.name}  ${print_expr(expr, $)}`);
         const retval = pow_rat_rat(lhs, rhs, this.$);
         return [!retval.equals(expr) ? CHANGED : STABLE, retval];
     }

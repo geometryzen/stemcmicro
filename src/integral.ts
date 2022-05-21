@@ -4,6 +4,7 @@ import { guess } from './guess';
 import { equalq, isminusoneovertwo, is_num_and_eq_minus_one, is_one_over_two } from './is';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
+import { derivative_wrt } from './operators/derivative/derivative_wrt';
 import { is_sym } from './operators/sym/is_sym';
 import { partition } from './partition';
 import { is_num } from './predicates/is_num';
@@ -430,7 +431,7 @@ export function Eval_integral(p1: U, $: ExtensionEnv): void {
         else {
             n = -n;
             for (let i = 0; i < n; i++) {
-                temp = $.derivative(temp, X);
+                temp = derivative_wrt(temp, X, $);
             }
         }
 

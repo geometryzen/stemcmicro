@@ -1,6 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
+import { derivative_wrt } from './operators/derivative/derivative_wrt';
 import { is_sym } from './operators/sym/is_sym';
 import { COS, LEGENDRE, SECRETX, SIN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
@@ -101,7 +102,7 @@ function __legendre2(n: number, m: number, X: U, $: ExtensionEnv): U {
     }
 
     for (let i = 0; i < m; i++) {
-        Y1 = $.derivative(Y1, X);
+        Y1 = derivative_wrt(Y1, X, $);
     }
 
     return Y1;

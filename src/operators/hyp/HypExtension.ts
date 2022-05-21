@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
 import { Extension, ExtensionEnv, NOFLAGS, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_HYP } from "../../hashing/hash_info";
 import { epsilon, Hyp } from "../../tree/hyp/Hyp";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -11,6 +12,9 @@ class HypExtension implements Extension<Hyp> {
     }
     get key() {
         return epsilon.name;
+    }
+    get hash() {
+        return HASH_HYP;
     }
     get name() {
         return 'HypExtension';
@@ -30,7 +34,7 @@ class HypExtension implements Extension<Hyp> {
     isImag(expr: Hyp): boolean {
         return false;
     }
-    isKind(arg: unknown): arg is Hyp {
+    isKind(arg: U): arg is Hyp {
         return arg instanceof Hyp;
     }
     isMinusOne(): boolean {
@@ -72,9 +76,8 @@ class HypExtension implements Extension<Hyp> {
     toInfixString(hyp: Hyp, $: ExtensionEnv): string {
         throw new Error("Hyp Method not implemented.");
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toListString(hyp: Hyp, $: ExtensionEnv): string {
-        throw new Error("Hyp Method not implemented.");
+    toListString(hyp: Hyp): string {
+        return hyp.printname;
     }
 }
 

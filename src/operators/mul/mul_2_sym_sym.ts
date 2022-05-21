@@ -2,6 +2,7 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
 import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
+import { defs } from "../../runtime/defs";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -13,7 +14,7 @@ import { is_sym } from "../sym/is_sym";
 
 function canoncal_reorder_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
     // We have to handle the case of equality if we want to use the STABLE flag.
-    if (lhs.equalsSym(rhs)) {
+    if (defs.convert_X_times_X_to_power_X_2 && lhs.equalsSym(rhs)) {
         return [CHANGED, $.valueOf(makeList(MATH_POW, lhs, two))];
     }
     switch (compare_sym_sym(lhs, rhs)) {
@@ -68,7 +69,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         // console.log(`${this.name} lhs: ${type(lhs, $)} = ${lhs} rhs: ${type(rhs, $)} = ${rhs}`);
         // Short Circuit, but only when factoring.
-        if (lhs.equals(rhs)) {
+        if (defs.convert_X_times_X_to_power_X_2 && lhs.equals(rhs)) {
             if ($.isFactoring()) {
                 return [CHANGED, value_of(makeList(MATH_POW, lhs, two), $)];
             }

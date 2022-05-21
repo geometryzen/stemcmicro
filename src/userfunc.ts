@@ -1,16 +1,16 @@
-import { Eval_derivative } from './derivative';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
+import { Eval_derivative } from './operators/derivative/Eval_derivative';
 import { is_sym } from './operators/sym/is_sym';
 import { is_num } from './predicates/is_num';
 import { EVAL, FUNCTION, SYMBOL_D } from './runtime/constants';
 import { DEBUG, defs, halt } from './runtime/defs';
 import { stack_list, stack_pop, stack_push } from './runtime/stack';
 import { cadr, cddr } from './tree/helpers';
+import { is_str } from './tree/str/is_str';
 import { is_tensor } from './tree/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
-import { is_str } from './tree/str/is_str';
-import { car, cdr, is_cons, U } from './tree/tree';
+import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 // Evaluate a user defined function
 
@@ -41,15 +41,15 @@ General description
 Returns the partial derivative of f with respect to x. x can be a vector e.g. [x,y].
 
 */
-export function Eval_user_function(p1: U, $: ExtensionEnv): void {
+export function Eval_user_function(expr: Cons, $: ExtensionEnv): void {
     // Use "derivative" instead of "d" if there is no user function "d"
-
     if (DEBUG) {
         // eslint-disable-next-line no-console
-        console.log(`Eval_user_function evaluating: ${car(p1)}`);
+        console.log(`Eval_user_function evaluating: ${car(expr)}`);
     }
-    if (car(p1) === SYMBOL_D && $.getBinding(SYMBOL_D) === SYMBOL_D) {
-        Eval_derivative(p1, $);
+    if (car(expr) === SYMBOL_D && $.getBinding(SYMBOL_D) === SYMBOL_D) {
+        const retval = Eval_derivative(expr, $);
+        stack_push(retval);
         return;
     }
 
@@ -64,7 +64,7 @@ export function Eval_user_function(p1: U, $: ExtensionEnv): void {
     // has not been defined yet, then the
     // function will just contain its own name, as
     // all undefined variables do.
-    const bodyAndFormalArguments = $.valueOf(car(p1));
+    const bodyAndFormalArguments = $.valueOf(car(expr));
 
     if (is_num(bodyAndFormalArguments)) {
         halt(
@@ -85,7 +85,7 @@ export function Eval_user_function(p1: U, $: ExtensionEnv): void {
     // that is also contained here in the FUNCTION node
     const A = car(cdr(cdr(bodyAndFormalArguments)));
 
-    const B = cdr(p1);
+    const B = cdr(expr);
 
     // example:
     //  f(x) = x+2
@@ -98,12 +98,12 @@ export function Eval_user_function(p1: U, $: ExtensionEnv): void {
     if (
         car(bodyAndFormalArguments) !== FUNCTION ||
         // next check is whether evaluation did nothing, so the function is undefined
-        bodyAndFormalArguments === car(p1)
+        bodyAndFormalArguments === car(expr)
     ) {
         // leave everything as it was and return
         const h = defs.tos;
         stack_push(bodyAndFormalArguments);
-        p1 = B;
+        let p1 = B;
         while (is_cons(p1)) {
             stack_push($.valueOf(car(p1)));
             p1 = cdr(p1);
@@ -113,7 +113,7 @@ export function Eval_user_function(p1: U, $: ExtensionEnv): void {
     }
 
     // Create the argument substitution list S
-    p1 = A;
+    let p1 = A;
     let p2 = B;
     const h = defs.tos;
     while (is_cons(p1) && is_cons(p2)) {

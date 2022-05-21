@@ -1,6 +1,8 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
+import { print_expr } from "../../print";
 import { is_rat } from "../../tree/rat/is_rat";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
@@ -31,7 +33,7 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (gLHS < gRHS) {
         return SIGN_LT;
     }
-    // We are led to believe that lhs and rhs have the same group, byt we must be careful
+    // We are led to believe that lhs and rhs have the same group, but we must be careful
     // console.log(`compare_factors lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
     if (is_sym(lhs)) {
         if (is_sym(rhs)) {
@@ -41,7 +43,15 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             return compare_sym_sym(lhs, rhs);
         }
         else {
-            throw new Error(`lhs: Sym = ${lhs}, rhs = ${rhs}`);
+            throw new Error(`lhs: Sym = ${lhs}, rhs = ${print_expr(rhs, $)} ${group(rhs)}`);
+        }
+    }
+    else if (is_hyp(lhs)) {
+        if (is_hyp(rhs)) {
+            return SIGN_EQ;
+        }
+        else {
+            throw new Error(`lhs: Hyp = ${lhs}, rhs = ${rhs}`);
         }
     }
     else if (is_cons(lhs)) {
@@ -70,6 +80,6 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
     }
     else {
-        throw new Error(`lhs = ${lhs}, rhs = ${rhs}`);
+        throw new Error(`lhs = ${print_expr(lhs, $)}, rhs = ${print_expr(rhs, $)}`);
     }
 }

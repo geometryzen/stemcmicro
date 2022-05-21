@@ -5,7 +5,9 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, isfraction, isNumberOneOverSomething, is_negative_number, is_negative_term, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from './is';
 import { numerator } from './numerator';
 import { abs } from './operators/abs/abs';
+import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
 import { is_err } from './operators/err/is_err';
+import { is_hyp } from './operators/hyp/is_hyp';
 import { is_sym } from './operators/sym/is_sym';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
 import { is_num } from './predicates/is_num';
@@ -21,7 +23,6 @@ import {
     CEILING,
     COS,
     DEFINT,
-    DERIVATIVE,
     DO,
     FACTORIAL,
     FLOOR,
@@ -2089,7 +2090,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         return str;
     }
 
-    if (DERIVATIVE.equals(expr)) {
+    if (MATH_DERIVATIVE.equals(expr)) {
         return print_char('d');
     }
     else if (is_base_of_natural_logarithm(expr)) {
@@ -2111,6 +2112,9 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     else {
         if (is_sym(expr)) {
             return expr.ln;
+        }
+        if (is_hyp(expr)) {
+            return expr.printname;
         }
         if (is_nil(expr)) {
             return '()';

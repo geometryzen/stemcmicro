@@ -2,7 +2,7 @@ import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
-import { Rat } from "../../tree/rat/Rat";
+import { one, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
@@ -38,10 +38,14 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     isVector(expr: EXPR): boolean {
         return false;
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, base: LHS, expo: RHS, expr: EXPR): [TFLAGS, U] {
         // No change in arguments
-        if (rhs.isOne()) {
-            return [CHANGED, lhs];
+        if (expo.isOne()) {
+            return [CHANGED, base];
+        }
+        else if (expo.isZero()) {
+            // TODO: Some debate here about how (power 0 0) should be handled.
+            return [CHANGED, one];
         }
         else {
             return [STABLE, expr];

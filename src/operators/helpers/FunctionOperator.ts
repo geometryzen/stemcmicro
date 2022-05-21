@@ -1,3 +1,4 @@
+import { CostTable } from "../../env/CostTable";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons } from "../../tree/tree";
@@ -8,6 +9,10 @@ export abstract class FunctionOperator extends AbstractOperator {
     constructor(name: string, public readonly opr: Sym, $: ExtensionEnv) {
         super(name, $);
         this.key = `(${opr.key()})`;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cost(expr: Cons, costs: CostTable, depth: number): number {
+        throw new Error("FunctionOperator.cost method not implemented.");
     }
     isKind(expr: Cons): boolean {
         return expr.opr.equals(this.opr);

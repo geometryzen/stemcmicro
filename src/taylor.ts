@@ -3,6 +3,7 @@ import { factorial } from './factorial';
 import { guess } from './guess';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
+import { derivative_wrt } from './operators/derivative/derivative_wrt';
 import { TAYLOR } from './runtime/constants';
 import { stack_peek, stack_push } from './runtime/stack';
 import { subst } from './subst';
@@ -50,7 +51,7 @@ function taylor(F: U, X: U, N: U, A: U, $: ExtensionEnv): U {
     let p5: U = one;
     let temp = $.valueOf(subst(F, X, A, $)); // F: f(a)
     for (let i = 1; i <= k; i++) {
-        F = $.derivative(F, X); // F: f = f'
+        F = derivative_wrt(F, X, $); // F: f = f'
 
         if ($.isZero(F)) {
             break;

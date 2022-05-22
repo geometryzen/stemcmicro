@@ -17,14 +17,14 @@ export class Hyp extends Atom {
         }
         return this.printname === other.printname;
     }
-    toCtorString(): string {
-        return `${this.name}()`;
-    }
     toInfixString(): string {
         throw new Error("Hyp Method not implemented.");
     }
     toListString(): string {
         throw new Error("Hyp Method not implemented.");
+    }
+    toString(): string {
+        return `${this.name}()`;
     }
 }
 

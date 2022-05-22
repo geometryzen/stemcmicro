@@ -1,6 +1,7 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
+import { is_binop } from "../../operators/helpers/is_binop";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
@@ -12,6 +13,7 @@ import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
+import { is_imu } from "../../predicates/is_imu";
 import { is_num } from "../../predicates/is_num";
 import { print_expr } from "../../print";
 import { is_flt } from "../../tree/flt/is_flt";
@@ -101,6 +103,20 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                 }
             }
         }
+        if (is_imu(lhs)) {
+            throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+        }
+        if (is_imu(rhs)) {
+            throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+        }
+        if (is_unaop(lhs) && is_binop(rhs)) {
+            return SIGN_LT;
+        }
+        if (is_binop(lhs) && is_unaop(rhs)) {
+            return SIGN_GT;
+        }
+        // throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+        //        return compare_terms_redux(lhs.opr, rhs.opr, $);
     }
     // console.log(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
     return SIGN_EQ;

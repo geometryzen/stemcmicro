@@ -4,17 +4,17 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("derivative-sandbox", function () {
-    xit("d(sin(x),x)", function () {
+    it("d(cos(x),x)", function () {
         const lines: string[] = [
             `autofactor=0`,
             `implicate=0`,
-            `d(sin(x),x)`
+            `d(cos(x),x)`
         ];
         const engine = createSymEngine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "(* 2 x)");
-        assert.strictEqual(print_expr(actual, $), "cos(x)");
+        assert.strictEqual(print_list(actual, $), "(* -1 (sin x))");
+        assert.strictEqual(print_expr(actual, $), "-sin(x)");
         engine.release();
     });
 });
@@ -82,6 +82,32 @@ describe("derivative", function () {
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual, $), "(* 2 x)");
         assert.strictEqual(print_expr(actual, $), "2*x");
+        engine.release();
+    });
+    it("d(sin(x),x)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `implicate=0`,
+            `d(sin(x),x)`
+        ];
+        const engine = createSymEngine();
+        const $ = engine.$;
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "(cos x)");
+        assert.strictEqual(print_expr(actual, $), "cos(x)");
+        engine.release();
+    });
+    it("d(cos(x),x)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `implicate=0`,
+            `d(cos(x),x)`
+        ];
+        const engine = createSymEngine();
+        const $ = engine.$;
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "(* -1 (sin x))");
+        assert.strictEqual(print_expr(actual, $), "-sin(x)");
         engine.release();
     });
 });

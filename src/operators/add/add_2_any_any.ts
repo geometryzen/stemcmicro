@@ -1,5 +1,6 @@
+import { compare_terms_redux } from "../../calculators/compare/compare_terms";
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -19,8 +20,20 @@ type LHS = U;
 type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
-function cross(lhs: LHS, rhs: RHS): boolean {
-    return lhs.equals(rhs);
+function cross($: ExtensionEnv) {
+    return function (lhs: LHS, rhs: RHS): boolean {
+        switch (compare_terms_redux(lhs, rhs, $)) {
+            case SIGN_GT: {
+                return true;
+            }
+            case SIGN_EQ: {
+                return lhs.equals(rhs);
+            }
+            default: {
+                return false;
+            }
+        }
+    };
 }
 
 /**
@@ -41,16 +54,24 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         return is_zero_sum(expr.lhs, expr.rhs, this.$);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        if (cross(lhs, rhs)) {
-            // X + X => 2 * X
-            // This is probably dead code now due to the factorize RHS version.
-            return [CHANGED, this.$.valueOf(makeList(MATH_MUL, two, lhs))];
-        }
-        else {
-            // transform(X + Y) => transform(X) + transform(Y) (from base class).
-            return [NOFLAGS, expr];
+        const $ = this.$;
+        // console.log(`lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)}`);
+        switch (compare_terms_redux(lhs, rhs, $)) {
+            case SIGN_GT: {
+                return [CHANGED, $.valueOf(makeList(opr, rhs, lhs))];
+            }
+            case SIGN_EQ: {
+                if (lhs.equals(rhs)) {
+                    return [CHANGED, $.valueOf(makeList(MATH_MUL, two, lhs))];
+                }
+                else {
+                    return [NOFLAGS, expr];
+                }
+            }
+            default: {
+                return [NOFLAGS, expr];
+            }
         }
     }
 }
-
 export const add_2_any_any = new Builder();

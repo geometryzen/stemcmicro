@@ -1,4 +1,4 @@
-import { compare_terms } from "../../calculators/compare/compare_terms";
+import { compare_terms_redux } from "../../calculators/compare/compare_terms";
 import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
@@ -30,7 +30,7 @@ function cross($: ExtensionEnv) {
             return false;
         }
         */
-        return compare_terms(lhs, rhs.lhs, $) > 0;
+        return compare_terms_redux(lhs, rhs.lhs, $) > 0;
     };
 }
 
@@ -48,9 +48,11 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const a = rhs.lhs;
         const X = rhs.rhs;
         const z = lhs;
-        const zX = $.valueOf(makeList(MATH_ADD, z, X));
-        const retval = $.valueOf(makeList(MATH_ADD, a, zX));
-        return [CHANGED, retval];
+        const p1 = makeList(MATH_ADD, z, X);
+        const p2 = $.valueOf(p1);
+        const p3 = makeList(MATH_ADD, a, p2);
+        const p4 = $.valueOf(p3);
+        return [CHANGED, p4];
     }
 }
 

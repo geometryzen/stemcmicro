@@ -146,14 +146,9 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), 'sin(a+b)');
     });
-    it("sin(b-a)", function () {
-        // TODO: We must either match the expression as given or canonicalize it
-        // so that it can be recognized by the existing transformer.
-        // Ideas for canonicalization:
-        // 1. Ordering of trig functions.
-        // 2. Affinity of Trig functions.
-        // 3. Canonical association may not be left- or right-association.
+    xit("sin(b-a) without factoring", function () {
         const lines: string[] = [
+            `autofactor=0`,
             `sin(b-a)`
         ];
         const engine = createSymEngine({
@@ -161,7 +156,20 @@ describe("sin", function () {
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), '-sin(a)*cos(b)+cos(a)*sin(b)');
+        assert.strictEqual(print_expr(value, $), 'cos(a)*sin(b)-cos(b)*sin(a)');
+        // assert.strictEqual(print_expr(value, $), 'cos(a)*sin(b)-sin(a)*cos(b)');
+    });
+    it("sin(b-a) with factoring", function () {
+        const lines: string[] = [
+            `autofactor=1`,
+            `sin(b-a)`
+        ];
+        const engine = createSymEngine({
+            dependencies: []
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), 'sin(-a+b)');
     });
     it("sin(b)*cos(a)-cos(b)*sin(a)", function () {
         // This test demonstrates that a canonical ordering of the sin, cos, and -1

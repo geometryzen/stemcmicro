@@ -1,20 +1,20 @@
 import { yyarg } from "../arg";
 import { divide_numbers, invert_number } from "../bignum";
 import { binop } from "../calculators/binop";
-import { denominator } from "../operators/denominator/denominator";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { makeList } from "../makeList";
-import { numerator } from "../operators/numerator/numerator";
 import { is_blade } from "../operators/blade/BladeExtension";
 import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
 import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
+import { denominator } from "../operators/denominator/denominator";
 import { derivative_wrt } from "../operators/derivative/derivative_wrt";
 import { is_err } from "../operators/err/is_err";
 import { associative_explicator } from "../operators/helpers/associative_explicator";
 import { associative_implicator } from "../operators/helpers/associative_implicator";
 import { is_hyp } from "../operators/hyp/is_hyp";
+import { numerator } from "../operators/numerator/numerator";
 import { is_sym } from "../operators/sym/is_sym";
 import { SymPattern } from "../operators/sym/SymPattern";
 import { Pattern } from "../patterns/Pattern";
@@ -474,7 +474,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
-                throw new SystemError(`${expr}, current_phase = ${current_phase}`);
+                throw new SystemError(`${expr}, current_phase = ${current_phase} ${JSON.stringify(keys)}`);
             }
             else if (is_num(expr)) {
                 return selectOperator(expr.name, expr);

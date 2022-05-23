@@ -3,7 +3,7 @@ import { ExtensionEnv } from '../env/ExtensionEnv';
 import { to_latex_string } from '../latex/to_latex_string';
 import { is_sym } from '../operators/sym/is_sym';
 import { scan } from '../scanner/scan';
-import { simplifyForCodeGeneration } from '../scripting/eval_simplify';
+import { simplifyForCodeGeneration } from '../operators/simplify/eval_simplify';
 import { subst } from '../subst';
 import { Sym } from '../tree/sym/Sym';
 import { car, cdr, NIL, U } from '../tree/tree';

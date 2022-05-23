@@ -10,7 +10,7 @@ import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from '../../runtime/
 import { halt } from '../../runtime/defs';
 import { is_add, is_multiply } from '../../runtime/helpers';
 import { scan_meta } from '../../scanner/scan';
-import { simplify } from '../../simplify';
+import { simplify } from '../simplify/simplify';
 import { transform } from '../../transform';
 import { flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';

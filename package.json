@@ -52,6 +52,7 @@
         "unit-scalars": "mocha 'units/scalars.spec.ts'",
         "unit-scan": "mocha 'units/scan.spec.ts'",
         "unit-scriptlast": "mocha 'units/scriptlast.spec.ts'",
+        "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",
         "unit-sqrt": "mocha 'units/sqrt.spec.ts'",
         "unit-tree": "mocha 'units/tree.spec.ts'",

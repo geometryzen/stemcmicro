@@ -11,7 +11,7 @@ import { defs, halt } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
 import { stack_push_items } from './runtime/stack';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
-import { simplify } from './simplify';
+import { simplify } from './operators/simplify/simplify';
 import { caddr, cadr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
 import { eight, four, half, integer, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';

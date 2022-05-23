@@ -144,6 +144,7 @@ import { canonicalize_mul_2_sym_mul_2_sym_sym } from '../operators/mul/canonical
 import { implicate_mul_2_mul_2_any_any_any } from '../operators/mul/implicate_mul_2_mul_2_any_any_any';
 import { implicate_mul_2_mul_2_sym_sym_sym } from '../operators/mul/implicate_mul_2_mul_2_sym_sym_sym';
 import { implicate_mul_2_sym_mul_2_sym_sym } from '../operators/mul/implicate_mul_2_sym_mul_2_sym_sym';
+import { mul_varargs } from '../operators/mul/mul';
 import { mul_2_any_any } from '../operators/mul/mul_2_any_any';
 import { mul_2_any_mul } from '../operators/mul/mul_2_any_mul';
 import { mul_2_any_mul_2_any_any } from '../operators/mul/mul_2_any_mul_2_any_any';
@@ -237,6 +238,7 @@ import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_sca
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { script_last_0 } from '../operators/script_last/script_last';
+import { simplify_fn } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
 import { sin_add_2_any_any } from '../operators/sin/sin_add_2_any_any';
 import { sin_any } from '../operators/sin/sin_any';
@@ -509,6 +511,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_sin_cos);
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
+    $.defineOperator(mul_varargs);
 
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);
@@ -634,6 +637,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(rationalize_fn);
 
     $.defineOperator(script_last_0);
+    $.defineOperator(simplify_fn);
 
     $.defineOperator(succ_rat);
     $.defineOperator(succ_any);

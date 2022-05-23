@@ -3,7 +3,7 @@ import { yyfloat } from './operators/float/float';
 import { MSIGN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
-import { simplify } from './simplify';
+import { simplify } from './operators/simplify/simplify';
 import { is_flt } from './tree/flt/is_flt';
 import { caddr, cadr, cddr } from './tree/helpers';
 import { is_rat } from './tree/rat/is_rat';

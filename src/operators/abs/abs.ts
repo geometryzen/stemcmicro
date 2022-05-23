@@ -12,7 +12,7 @@ import { PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
-import { simplify, simplify_trig } from '../../simplify';
+import { simplify, simplify_trig } from '../simplify/simplify';
 import { caddr, cadr } from '../../tree/helpers';
 import { is_tensor } from '../../tree/tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';

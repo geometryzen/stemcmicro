@@ -1,19 +1,18 @@
-import { ExtensionEnv } from '../env/ExtensionEnv';
-import { INTEGRAL, MAX_CONSECUTIVE_APPLICATIONS_OF_ALL_RULES, MAX_CONSECUTIVE_APPLICATIONS_OF_SINGLE_RULE } from '../runtime/constants';
-import { defs, halt, use_factoring_with_unary_function } from '../runtime/defs';
-import { stack_push } from '../runtime/stack';
-import { simplify } from '../simplify';
-import { transform } from '../transform';
-import { cadr } from '../tree/helpers';
-import { Cons, NIL, U } from '../tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { INTEGRAL, MAX_CONSECUTIVE_APPLICATIONS_OF_ALL_RULES, MAX_CONSECUTIVE_APPLICATIONS_OF_SINGLE_RULE } from '../../runtime/constants';
+import { defs, halt, use_factoring_with_unary_function } from '../../runtime/defs';
+import { simplify } from './simplify';
+import { transform } from '../../transform';
+import { cadr } from '../../tree/helpers';
+import { Cons, NIL, U } from '../../tree/tree';
 
-export function Eval_simplify(expr: Cons, $: ExtensionEnv): void {
+export function Eval_simplify(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`Eval_simplify expr = ${$.toInfixString(expr)}`);
     const arg = run_user_defined_simplifications(cadr(expr), $);
     // console.lg(`Eval_simplify ${$.toInfixString(expr)} arg = ${$.toInfixString(arg)}`);
     const result = simplify($.valueOf(arg), $);
     // console.lg(`Eval_simplify result = ${$.toInfixString(result)}`);
-    stack_push(result);
+    return result;
 }
 
 function run_user_defined_simplifications(p: U, $: ExtensionEnv): U {

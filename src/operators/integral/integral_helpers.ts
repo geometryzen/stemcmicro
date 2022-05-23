@@ -582,22 +582,23 @@ function italu_hashcode(u: U, x: U, $: ExtensionEnv): number {
         }
     }
     else if (is_cons(u)) {
-        switch (u.car) {
-            // TODO: What if the constants were already symbols?
-            case ADD:
-                return hash_addition(cdr(u), x, $);
-            case MULTIPLY:
-                return hash_multiplication(cdr(u), x, $);
-            case POWER:
-                return hash_power(cadr(u), caddr(u), x, $);
-            case EXP:
-                return hash_power(exp(one, $), cadr(u), x, $);
-            case SQRT: {
-                return hash_power(cadr(u), flt(0.5), x, $);
-            }
-            default:
-                return hash_function(u, x, $);
+        const opr = u.car;
+        if (opr.equals(ADD)) {
+            return hash_addition(cdr(u), x, $);
         }
+        if (opr.equals(MULTIPLY)) {
+            return hash_multiplication(cdr(u), x, $);
+        }
+        if (opr.equals(POWER)) {
+            return hash_power(cadr(u), caddr(u), x, $);
+        }
+        if (opr.equals(EXP)) {
+            return hash_power(exp(one, $), cadr(u), x, $);
+        }
+        if (opr.equals(SQRT)) {
+            return hash_power(cadr(u), flt(0.5), x, $);
+        }
+        return hash_function(u, x, $);
     }
 
     return hashcode_values.constant;

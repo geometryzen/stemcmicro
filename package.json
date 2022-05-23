@@ -28,6 +28,7 @@
         "unit-cos": "mocha 'units/cos.spec.ts'",
         "unit-cross": "mocha 'units/cross.spec.ts'",
         "unit-current": "mocha 'units/current.spec.ts'",
+        "unit-defint": "mocha 'units/defint.spec.ts'",
         "unit-derivative": "mocha 'units/derivative.spec.ts'",
         "unit-env": "mocha 'units/env.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",

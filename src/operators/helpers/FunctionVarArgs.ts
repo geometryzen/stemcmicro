@@ -7,9 +7,9 @@ import { AbstractOperator } from "./AbstractOperator";
 /**
  * An operator that matches (opr ...), with a variable number of arguments.
  */
-export abstract class FunctionOperator extends AbstractOperator {
-    public readonly key: string;
-    constructor(name: string, public readonly opr: Sym, $: ExtensionEnv) {
+export abstract class FunctionVarArgs extends AbstractOperator {
+    readonly key: string;
+    constructor(name: string, readonly opr: Sym, $: ExtensionEnv) {
         super(name, $);
         this.key = `(${opr.key()})`;
     }

@@ -20,7 +20,6 @@ import { Eval_contract } from "../../contract";
 import { Eval_cosh } from "../../cosh";
 import { Eval_decomp } from "../../decomp";
 import { define_user_function, Eval_function_reference } from "../../define";
-import { Eval_defint } from "../../defint";
 import { Eval_degree } from "../../degree";
 import { Eval_denominator } from "../../denominator";
 import { det } from "../../det";
@@ -70,13 +69,12 @@ import { Eval_real } from "../../real";
 import { Eval_rect } from "../../rect";
 import { Eval_roots } from "../../roots";
 import { Eval_round } from "../../round";
-import { ADJ, AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSIN, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEFINT, DEGREE, DENOMINATOR, DET, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NOT, NROOTS, NUMBER, NUMERATOR, OPERATOR, OR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, RATIONALIZE, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SIMPLIFY, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
+import { ADJ, AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DENOMINATOR, DET, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, NUMERATOR, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, RATIONALIZE, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SIMPLIFY, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
 import { MATH_ADD, MATH_INNER, MATH_INV, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { Eval_arccos } from "../../scripting/eval_arccos";
-import { Eval_arcsin } from "../../scripting/eval_arcsin";
 import { Eval_clockform } from "../../scripting/eval_clockform";
 import { Eval_conjugate } from "../../scripting/eval_conjugate";
 import { Eval_if } from "../../scripting/eval_if";
@@ -94,7 +92,7 @@ import { Eval_sum } from "../../sum";
 import { Eval_tan } from "../../tan";
 import { Eval_tanh } from "../../tanh";
 import { Eval_taylor } from "../../taylor";
-import { Eval_and, Eval_not, Eval_or, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
+import { Eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
 import { Eval_transpose } from "../../transpose";
 import { Err } from "../../tree/err/Err";
 import { is_flt } from "../../tree/flt/is_flt";
@@ -281,9 +279,6 @@ class ConsExtension implements Extension<Cons> {
             case ARCCOSH:
                 Eval_arccosh(expr, $);
                 return stack_pop();
-            case ARCSIN:
-                Eval_arcsin(expr, $);
-                return stack_pop();
             case ARCSINH:
                 Eval_arcsinh(expr, $);
                 return stack_pop();
@@ -355,9 +350,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case DEGREE:
                 Eval_degree(expr, $);
-                return stack_pop();
-            case DEFINT:
-                Eval_defint(expr, $);
                 return stack_pop();
             case DENOMINATOR:
                 Eval_denominator(expr, $);
@@ -505,23 +497,14 @@ class ConsExtension implements Extension<Cons> {
                 // Eval_multiply(expr, $);
                 // return pop();
             }
-            case NOT:
-                Eval_not(expr, $);
-                return stack_pop();
             case NROOTS:
                 Eval_nroots(expr, $);
-                return stack_pop();
-            case NUMBER:
-                Eval_number(expr, $);
                 return stack_pop();
             case NUMERATOR:
                 Eval_numerator(expr, $);
                 return stack_pop();
             case OPERATOR:
                 Eval_operator(expr, $);
-                return stack_pop();
-            case OR:
-                Eval_or(expr, $);
                 return stack_pop();
             case PATTERN:
                 Eval_pattern(expr, $);
@@ -865,12 +848,6 @@ function _isinteger(p1: U): U {
         return n === p1.d ? one : zero;
     }
     return makeList(ISINTEGER), p1;
-}
-
-function Eval_number(p1: U, $: ExtensionEnv) {
-    p1 = $.valueOf(cadr(p1));
-    const result = is_rat(p1) || is_flt(p1) ? one : zero;
-    stack_push(result);
 }
 
 function Eval_operator(p1: U, $: ExtensionEnv) {

@@ -1,7 +1,7 @@
 import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, is_nil, makeList, U } from "../../tree/tree";
-import { FunctionOperator } from "../helpers/FunctionOperator";
+import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_sym } from "../sym/is_sym";
 import { MATH_DERIVATIVE } from "./MATH_DERIVATIVE";
 
@@ -27,7 +27,7 @@ export function is_opr(sym: Sym, expr: Cons): expr is Cons {
 /**
  * (d t1 t2 t3 t4 ...) => (derivative t1 t2 t3 t4 ...), provided d is not bound
  */
-class Op extends FunctionOperator implements Operator<Cons> {
+class Op extends FunctionVarArgs implements Operator<Cons> {
     constructor(name: string, oprOld: Sym, private readonly oprNew: Sym, $: ExtensionEnv) {
         super(name, oprOld, $);
     }

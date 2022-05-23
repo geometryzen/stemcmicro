@@ -8,7 +8,7 @@ import { is_flt } from './tree/flt/is_flt';
 import { caddr, cadr, cddr } from './tree/helpers';
 import { is_rat } from './tree/rat/is_rat';
 import { one, zero } from './tree/rat/Rat';
-import { car, cdr, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, Cons, is_cons, NIL, U } from './tree/tree';
 
 // If the number of args is odd then the last arg is the default result.
 // Works like a switch statement. Could also be used for piecewise
@@ -174,20 +174,20 @@ export function Eval_testlt(arg: U, $: ExtensionEnv) {
 }
 
 // not definition
-export function Eval_not(p1: U, $: ExtensionEnv) {
-    const wholeAndExpression = p1;
-    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(cadr(p1), $);
+export function Eval_not(expr: Cons, $: ExtensionEnv): U {
+    const wholeAndExpression = expr;
+    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(cadr(expr), $);
     if (checkResult == null) {
         // inconclusive test on predicate
-        stack_push(wholeAndExpression);
+        return wholeAndExpression;
     }
     else if (checkResult) {
         // true -> false
-        stack_push(zero);
+        return zero;
     }
     else {
         // false -> true
-        stack_push(one);
+        return one;
     }
 }
 
@@ -255,7 +255,7 @@ export function Eval_and(p1: U, $: ExtensionEnv) {
 }
 
 // or definition
-export function Eval_or(p1: U, $: ExtensionEnv) {
+export function Eval_or(p1: U, $: ExtensionEnv): U {
     const wholeOrExpression = p1;
     let orPredicates = cdr(wholeOrExpression);
     let somePredicateUnknown = false;
@@ -278,8 +278,7 @@ export function Eval_or(p1: U, $: ExtensionEnv) {
         }
         else if (checkResult) {
             // found a true, enough to return true
-            stack_push(one);
-            return;
+            return one;
         }
         else if (!checkResult) {
             // found a false, move on to the next predicate
@@ -294,10 +293,10 @@ export function Eval_or(p1: U, $: ExtensionEnv) {
     // If all the predicates were known, then we can conclude
     // that the test returns false.
     if (somePredicateUnknown) {
-        stack_push(wholeOrExpression);
+        return wholeOrExpression;
     }
     else {
-        stack_push(zero);
+        return zero;
     }
 }
 

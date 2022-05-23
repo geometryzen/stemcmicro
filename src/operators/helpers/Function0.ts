@@ -2,9 +2,9 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
-import { FunctionOperator } from "./FunctionOperator";
+import { FunctionVarArgs } from "./FunctionVarArgs";
 
-export abstract class Function0 extends FunctionOperator {
+export abstract class Function0 extends FunctionVarArgs {
     constructor(name: string, opr: Sym, $: ExtensionEnv) {
         super(name, opr, $);
     }

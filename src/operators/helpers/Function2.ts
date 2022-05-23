@@ -4,10 +4,10 @@ import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 import { BCons } from "./BCons";
-import { FunctionOperator } from "./FunctionOperator";
+import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 
-export abstract class Function2<L extends U, R extends U> extends FunctionOperator {
+export abstract class Function2<L extends U, R extends U> extends FunctionVarArgs {
     constructor(name: string, opr: Sym, private readonly guardL: GUARD<U, L>, private readonly guardR: GUARD<U, R>, $: ExtensionEnv) {
         super(name, opr, $);
     }

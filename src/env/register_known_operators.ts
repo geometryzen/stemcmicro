@@ -52,6 +52,7 @@ import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
 import { add_2_zzz_mul_2_rat_aaa } from '../operators/add/add_2_zzz_mul_2_rat_aaa';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
+import { op_arcsin } from '../operators/arcsin/op_arcsin';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { is_blade, vec } from '../operators/blade/BladeExtension';
@@ -77,6 +78,7 @@ import { cross_any_any } from '../operators/cross/cross_any_any';
 import { cross_any_mul_2_scalar_any } from '../operators/cross/cross_any_mul_2_scalar_any';
 import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
 import { cross_mul_2_scalar_any_any } from '../operators/cross/cross_mul_2_scalar_any_any';
+import { defint } from '../operators/defint/defint';
 import { derivative_2_any_any } from '../operators/derivative/derivative_2_any_any';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
@@ -108,7 +110,7 @@ import { float_mul_2_flt_sym } from '../operators/float/float_mul_2_flt_sym';
 import { float_rat } from '../operators/float/float_rat';
 import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
-import { flt_builder, is_flt } from '../operators/flt/FltExtension';
+import { op_flt, is_flt } from '../operators/flt/FltExtension';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hyp } from '../operators/hyp/HypExtension';
@@ -128,7 +130,7 @@ import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
 import { inner_2_vector_mul_2_scalar_vector } from '../operators/inner/inner_2_vector_mul_2_scalar_vector';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { inner_2_vec_vec } from '../operators/inner/inner_2_vec_vec';
-import { integral_varargs } from '../operators/integral/integral_varargs';
+import { integral } from '../operators/integral/integral';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -201,6 +203,9 @@ import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
 import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
 import { nil } from '../operators/nil/NilExtension';
+import { not_fn } from '../operators/not/not_fn';
+import { number_fn } from '../operators/number/number_fn';
+import { or_fn } from '../operators/or/or_fn';
 import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
 import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_any';
 import { outer_2_blade_blade } from '../operators/outer/outer_2_blade_blade';
@@ -550,7 +555,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(boo);
     $.defineOperator(rat);
-    $.defineOperator(flt_builder);
+    $.defineOperator(op_flt);
     $.defineOperator(str);
 
     $.defineOperator(abs_rat);
@@ -559,6 +564,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.setCost(MATH_ABS, 4);
 
     $.defineOperator(algebra_2_tensor_tensor);
+
+    $.defineOperator(op_arcsin);
 
     $.defineOperator(assign_sym_any);
     $.defineOperator(assign_any_any);
@@ -581,6 +588,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(cross_any_add_2_any_any);
     $.defineOperator(cross_any_any);
 
+    $.defineOperator(defint);
+
     $.defineOperator(d_to_derivative);
     $.defineOperator(derivative_2_mul_any);
     $.defineOperator(derivative_2_pow_any);
@@ -601,10 +610,14 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(index_2_mat_rat);
     $.defineOperator(index_2_any_any);
 
-    $.defineOperator(integral_varargs);
+    $.defineOperator(integral);
 
     $.defineOperator(iszero_rat);
     $.defineOperator(iszero_any);
+
+    $.defineOperator(not_fn);
+    $.defineOperator(number_fn);
+    $.defineOperator(or_fn);
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);

@@ -65,7 +65,7 @@ export class BooExtension implements Extension<Boo> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(arg: Boo, $: ExtensionEnv): boolean {
-        throw new Error("Boo Method not implemented.");
+        return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     one(zero: Boo, $: ExtensionEnv): Boo {

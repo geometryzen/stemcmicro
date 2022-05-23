@@ -1,9 +1,8 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { integral } from './operators/integral/integral_helpers';
-import { stack_push } from './runtime/stack';
-import { subst } from './subst';
-import { cadr, cddr } from './tree/helpers';
-import { car, cdr, is_cons, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { subst } from '../../subst';
+import { cadr, cddr } from '../../tree/helpers';
+import { car, cdr, Cons, is_cons, U } from '../../tree/tree';
+import { integral } from '../integral/integral_helpers';
 
 /* defint =====================================================================
 
@@ -24,22 +23,33 @@ example a volume under a surface), or a triple integral, etc. For
 example, defint(f,x,a,b,y,c,d).
 
 */
-export function Eval_defint(p1: U, $: ExtensionEnv): void {
-    let F = $.valueOf(cadr(p1));
+/**
+ * Evaluates (defint f x a b [y c d ...])
+ * @param expr 
+ * @param $ 
+ * @returns 
+ */
+export function Eval_defint(expr: Cons, $: ExtensionEnv): U {
+    let F = $.valueOf(cadr(expr));
 
-    p1 = cddr(p1);
+    // console.lg(`F=${print_expr(F, $)}`);
+
+    let p1 = cddr(expr);
 
     // defint can handle multiple
     // integrals, so we loop over the
     // multiple integrals here
     while (is_cons(p1)) {
         const X = $.valueOf(car(p1));
+        // console.lg(`X=${print_expr(X, $)}`);
         p1 = cdr(p1);
 
         const A = $.valueOf(car(p1));
+        // console.lg(`A=${print_expr(A, $)}`);
         p1 = cdr(p1);
 
         const B = $.valueOf(car(p1));
+        // console.lg(`B=${print_expr(B, $)}`);
         p1 = cdr(p1);
 
         // obtain the primitive of F against the
@@ -48,6 +58,8 @@ export function Eval_defint(p1: U, $: ExtensionEnv): void {
         // the calculation of the multiple
         // integrals.
         F = integral(F, X, $); // contains the antiderivative of F
+
+        // console.lg(`F=${print_expr(F, $)}`);
 
         // evaluate the integral in A
         const arg1 = $.valueOf(subst(F, X, B, $));
@@ -64,6 +76,5 @@ export function Eval_defint(p1: U, $: ExtensionEnv): void {
         // integral.
         F = $.subtract(arg1, arg2);
     }
-
-    stack_push(F);
+    return F;
 }

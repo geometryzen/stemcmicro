@@ -3,11 +3,11 @@ import { changedFlag, CHANGED, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/E
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
-import { FunctionOperator } from "./FunctionOperator";
+import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 import { UCons } from "./UCons";
 
-export abstract class Function1<T extends U> extends FunctionOperator {
+export abstract class Function1<T extends U> extends FunctionVarArgs {
     constructor(name: string, opr: Sym, private readonly guard: GUARD<U, T>, $: ExtensionEnv) {
         super(name, opr, $);
     }

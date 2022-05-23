@@ -2,7 +2,7 @@ import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE } from "../../
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { INTEGRAL } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
-import { FunctionOperator } from "../helpers/FunctionOperator";
+import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { Eval_integral } from "./integral_helpers";
 
 class Builder implements OperatorBuilder<U> {
@@ -11,11 +11,11 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class Op extends FunctionOperator implements Operator<Cons> {
+class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('integral_varargs', INTEGRAL, $);
-        this.hash = hash_nonop_cons(INTEGRAL);
+        super('integral', INTEGRAL, $);
+        this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
@@ -25,4 +25,4 @@ class Op extends FunctionOperator implements Operator<Cons> {
     }
 }
 
-export const integral_varargs = new Builder();
+export const integral = new Builder();

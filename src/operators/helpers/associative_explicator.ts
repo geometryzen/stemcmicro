@@ -4,7 +4,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
-import { FunctionOperator } from "./FunctionOperator";
+import { FunctionVarArgs } from "./FunctionVarArgs";
 
 class Builder implements OperatorBuilder<Cons> {
     constructor(private readonly name: string, private readonly opr: Sym, private readonly id: Rat) {
@@ -28,7 +28,7 @@ export function is_opr(sym: Sym, expr: Cons): expr is Cons {
 /**
  * (op t1 t2 t3 t4 ...) => (op (op (op t1 t2) t3) t4) ...
  */
-class Explicator extends FunctionOperator implements Operator<Cons> {
+class Explicator extends FunctionVarArgs implements Operator<Cons> {
     readonly phases = PHASE_EXPLICATE;
     /**
      * 

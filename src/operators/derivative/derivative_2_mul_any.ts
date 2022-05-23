@@ -1,16 +1,14 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { subst } from "../../subst";
-import { Hyp } from "../../tree/hyp/Hyp";
+import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
-import { MATH_STANDARD_PART } from "../st/MATH_STANDARD_PART";
 import { is_sym } from "../sym/is_sym";
+import { dproduct } from "./helpers/dproduct";
 import { MATH_DERIVATIVE } from "./MATH_DERIVATIVE";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -32,8 +30,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('derivative_2_mul_any', MATH_DERIVATIVE, and(is_cons, is_opr_2_any_any(MATH_MUL)), is_sym, $);
         this.hash = hash_binop_cons_atom(MATH_DERIVATIVE, MATH_MUL, HASH_ANY);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
+        const retval = dproduct(lhs, rhs, $);
+        const changed = !retval.equals(expr);
+        return [changed ? TFLAG_DIFF : NOFLAGS, retval];
+        /*
         // Here, we evaluate the derivative using nonstandard analyis.
         // https://en.wikipedia.org/wiki/Nonstandard_analysis 
         const X = rhs;
@@ -48,6 +50,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // const retval = dproduct(lhs, X, $);
         // const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : NOFLAGS, p5];
+        */
     }
 }
 

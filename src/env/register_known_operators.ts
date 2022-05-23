@@ -80,9 +80,9 @@ import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
 import { cross_mul_2_scalar_any_any } from '../operators/cross/cross_mul_2_scalar_any_any';
 import { defint } from '../operators/defint/defint';
 import { denominator_fn } from '../operators/denominator/denominator_fn';
-import { derivative_2_any_any } from '../operators/derivative/derivative_2_any_any';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
+import { derivative_fn } from '../operators/derivative/derivative_fn';
 import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { factorize_lhs_distrib } from '../operators/distrib/factorize_lhs_distrib';
 import { inner_lhs_distrib_over_add_expand } from '../operators/distrib/inner_lhs_distrib_over_add_expand';
@@ -602,7 +602,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(d_to_derivative);
     $.defineOperator(derivative_2_mul_any);
     $.defineOperator(derivative_2_pow_any);
-    $.defineOperator(derivative_2_any_any);
+    // $.defineOperator(derivative_2_any_any);
+    $.defineOperator(derivative_fn);
 
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);

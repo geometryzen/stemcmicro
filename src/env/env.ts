@@ -608,26 +608,23 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     if (haltFlag(flags)) {
                                         // doneWithExpr remains true.
                                         outFlags |= TFLAG_HALT;
-                                        // console.lg(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                        // console.log(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
-                                        // if (typeof op.hash !== 'string') {
-                                        // console.log(`CHANGED ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
-                                        // }
+                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
                                     break;
                                 }
                                 else if (haltFlag(flags)) {
-                                    // console.log(`STABLE ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
+                                    // console.log(`.... HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     // TODO: We also need to break out of the loop on keys
                                     doneWithCurExpr = true;
                                     newExpr.meta |= TFLAG_HALT;
                                     break;
                                 }
                                 else {
-                                    // console.log(`NOFLAGS ${op.name} key=${JSON.stringify(key)} hash=${JSON.stringify(op.hash)} expr=${print_expr(curExpr, $)}`);
+                                    // console.log(`NOFLAGS..: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                 }
                             }
                         }

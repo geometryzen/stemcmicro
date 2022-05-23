@@ -34,7 +34,6 @@ import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
 // import { stack_push } from '../../runtime/stack';
 import { sgn } from '../../../sgn';
-import { simplify } from '../../simplify/simplify';
 import { sine } from '../../../sin';
 import { ysinh } from '../../../sinh';
 import { subst } from '../../../subst';
@@ -42,6 +41,7 @@ import { caddr, cadr } from '../../../tree/helpers';
 import { integer, negOne, one, two, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
 import { car, cdr, is_cons, NIL, U } from '../../../tree/tree';
+import { simplify } from '../../simplify/simplify';
 import { is_sym } from '../../sym/is_sym';
 import { derivative_wrt } from '../derivative_wrt';
 import { MATH_DERIVATIVE } from '../MATH_DERIVATIVE';
@@ -80,55 +80,70 @@ function d_scalar_scalar_1(p1: U, p2: Sym, $: ExtensionEnv): U {
     }
     // console.log(`car(p1)=>${car(p1)}`);
     // Turning these into matching patterns...
-    switch (car(p1)) {
-        case MATH_DERIVATIVE:
-            return dd(p1, p2, $);
-        case LOG:
-            return dlog(p1, p2, $);
-        case SIN:
-            return dsin(p1, p2, $);
-        case COS:
-            return dcos(p1, p2, $);
-        case TAN:
-            return dtan(p1, p2, $);
-        case ARCSIN:
-            return darcsin(p1, p2, $);
-        case ARCCOS:
-            return darccos(p1, p2, $);
-        case ARCTAN:
-            return darctan(p1, p2, $);
-        case SINH:
-            return dsinh(p1, p2, $);
-        case COSH:
-            return dcosh(p1, p2, $);
-        case TANH:
-            return dtanh(p1, p2, $);
-        case ARCSINH:
-            return darcsinh(p1, p2, $);
-        case ARCCOSH:
-            return darccosh(p1, p2, $);
-        case ARCTANH:
-            return darctanh(p1, p2, $);
-        case SGN:
-            return dsgn(p1, p2, $);
-        case HERMITE:
-            return dhermite(p1, p2, $);
-        case ERF:
-            return derf(p1, p2, $);
-        case ERFC:
-            return derfc(p1, p2, $);
-        case BESSELJ:
-            return dbesselj(p1, p2, $);
-        case BESSELY:
-            return dbessely(p1, p2, $);
-        default:
-        // pass through
+    const opr = car(p1);
+    if (opr.equals(MATH_DERIVATIVE)) {
+        return dd(p1, p2, $);
     }
-
+    if (opr.equals(LOG)) {
+        return dlog(p1, p2, $);
+    }
+    if (opr.equals(SIN)) {
+        return dsin(p1, p2, $);
+    }
+    if (opr.equals(COS)) {
+        return dcos(p1, p2, $);
+    }
+    if (opr.equals(TAN)) {
+        return dtan(p1, p2, $);
+    }
+    if (opr.equals(ARCSIN)) {
+        return darcsin(p1, p2, $);
+    }
+    if (opr.equals(ARCCOS)) {
+        return darccos(p1, p2, $);
+    }
+    if (opr.equals(ARCTAN)) {
+        return darctan(p1, p2, $);
+    }
+    if (opr.equals(SINH)) {
+        return dsinh(p1, p2, $);
+    }
+    if (opr.equals(COSH)) {
+        return dcosh(p1, p2, $);
+    }
+    if (opr.equals(TANH)) {
+        return dtanh(p1, p2, $);
+    }
+    if (opr.equals(ARCSINH)) {
+        return darcsinh(p1, p2, $);
+    }
+    if (opr.equals(ARCCOSH)) {
+        return darccosh(p1, p2, $);
+    }
+    if (opr.equals(ARCTANH)) {
+        return darctanh(p1, p2, $);
+    }
+    if (opr.equals(SGN)) {
+        return dsgn(p1, p2, $);
+    }
+    if (opr.equals(HERMITE)) {
+        return dhermite(p1, p2, $);
+    }
+    if (opr.equals(ERF)) {
+        return derf(p1, p2, $);
+    }
+    if (opr.equals(ERFC)) {
+        return derfc(p1, p2, $);
+    }
+    if (opr.equals(BESSELJ)) {
+        return dbesselj(p1, p2, $);
+    }
+    if (opr.equals(BESSELY)) {
+        return dbessely(p1, p2, $);
+    }
     if (car(p1) === INTEGRAL && caddr(p1) === p2) {
         return derivative_of_integral(p1);
     }
-
     return dfunction(p1, p2, $);
 }
 

@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, NOFLAGS, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
@@ -79,7 +79,7 @@ export function outer_mat_mat(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): Tensor
 
 class TensorExtension implements Extension<Tensor> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+    constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
     get key(): string {
@@ -160,6 +160,21 @@ class TensorExtension implements Extension<Tensor> {
         return to_infix_string(matrix, $);
     }
     transform(expr: U): [TFLAGS, U] {
+        const $ = this.$;
+        // console.lg(`TensorExtension.transform ${print_expr(expr, $)}`);
+        if (this.isKind(expr)) {
+            const new_elements = expr.mapElements(function (element) {
+                return $.valueOf(element);
+            });
+            // TODO: We should only create a new expression if the elements have changed.
+            // To do this...
+            // 1. zip the ols and new elements together.
+            // 2. Determine if there have been changes.
+            // 3. Possibly construct a new matrix.
+            const retval = expr.withElements(new_elements);
+            const changed = !retval.equals(expr);
+            return [changed ? TFLAG_DIFF : NOFLAGS, retval];
+        }
         return [NOFLAGS, expr];
     }
     valueOf(expr: Tensor, $: ExtensionEnv): U {

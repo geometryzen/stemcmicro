@@ -3,22 +3,25 @@ import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_flt } from "../../tree/flt/is_flt";
 import { is_rat } from "../../tree/rat/is_rat";
+import { is_tensor } from "../../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../../tree/tree";
 import { is_uom } from "../../tree/uom/is_uom";
 
 const GROUP_NIL = 0;
 const GROUP_NUM = 1;
 const GROUP_SYM = 2;
-const GROUP_HYP = 3;
-const GROUP_CONS = 4;
-// const GROUP_IMU = 4;
-const GROUP_BLADE = 6;
-const GROUP_UOM = 7;
+const GROUP_TENSOR = 3;
+const GROUP_HYP = 4;
+const GROUP_CONS = 5;
+// const GROUP_IMU = 6;
+const GROUP_BLADE = 7;
+const GROUP_UOM = 8;
 
 type GROUP =
     typeof GROUP_NIL |
     typeof GROUP_NUM |
     typeof GROUP_SYM |
+    typeof GROUP_TENSOR |
     typeof GROUP_CONS |
     typeof GROUP_HYP |
     typeof GROUP_BLADE /*| typeof GROUP_IMU*/ |
@@ -42,6 +45,9 @@ export function group(expr: U): GROUP {
     }
     if (is_blade(expr)) {
         return GROUP_BLADE;
+    }
+    if (is_tensor(expr)) {
+        return GROUP_TENSOR;
     }
     if (is_uom(expr)) {
         return GROUP_UOM;

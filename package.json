@@ -34,6 +34,7 @@
         "unit-env": "mocha 'units/env.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-float": "mocha 'units/float.spec.ts'",
+        "unit-grad": "mocha 'units/grad.spec.ts'",
         "unit-inner": "mocha 'units/inner.spec.ts'",
         "unit-integral": "mocha 'units/integral.spec.ts'",
         "unit-kernel": "mocha 'units/kernel.spec.ts'",

@@ -20,7 +20,7 @@ class Op extends FunctionOperator implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         const retval = Eval_integral(expr, $);
-        const changed = ~retval.equals(expr);
+        const changed = !retval.equals(expr);
         return [changed ? CHANGED : STABLE, retval];
     }
 }

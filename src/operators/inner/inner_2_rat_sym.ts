@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -29,7 +29,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_atom_atom(MATH_INNER, HASH_RAT, HASH_SYM);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        return [CHANGED, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs)];
+        return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs)];
     }
 }
 

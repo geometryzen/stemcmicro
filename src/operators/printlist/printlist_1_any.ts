@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { print_in_mode } from "../../print";
 import { defs, PRINTMODE_LIST } from "../../runtime/defs";
 import { Sym } from "../../tree/sym/Sym";
@@ -27,7 +27,7 @@ class PrintList extends Function1<U> implements Operator<Cons> {
             const texts = print_in_mode(argList, PRINTMODE_LIST, $);
             defs.prints.push(...texts);
         }
-        return [CHANGED, NIL];
+        return [TFLAG_DIFF, NIL];
     }
 }
 

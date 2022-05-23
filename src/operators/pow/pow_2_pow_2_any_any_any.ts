@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Rat, two } from "../../tree/rat/Rat";
@@ -41,10 +41,15 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const m = lhs.rhs;
         const n = rhs;
         if (m.isPositiveInteger() && n.isPositiveInteger()) {
-            return [CHANGED, makeList(MATH_POW, b, makeList(MATH_MUL, m, n))];
+            const mn = makeList(MATH_MUL, m, n);
+            const retval = makeList(MATH_POW, b, mn);
+            return [TFLAG_DIFF, retval];
         }
         if (m.isHalf() && n.equalsRat(two)) {
-            return [CHANGED, b];
+            return [TFLAG_DIFF, b];
+        }
+        if (m.isMinusOne() && n.isMinusOne()) {
+            return [TFLAG_DIFF, b];
         }
         return [NOFLAGS, expr];
     }

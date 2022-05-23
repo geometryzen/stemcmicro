@@ -1,5 +1,5 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -39,7 +39,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        return [CHANGED, this.$.valueOf(makeList(opr, rhs, lhs))];
+        return [TFLAG_DIFF, this.$.valueOf(makeList(opr, rhs, lhs))];
     }
 }
 

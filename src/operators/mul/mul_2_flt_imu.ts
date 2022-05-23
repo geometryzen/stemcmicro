@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_FLT } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -29,12 +29,12 @@ class Op extends Function2<Flt, BCons<Sym, Rat, Rat>> implements Operator<Cons> 
     }
     transform2(opr: Sym, lhs: Flt, rhs: BCons<Sym, Rat, Rat>, expr: BCons<Sym, Flt, BCons<Sym, Rat, Rat>>): [TFLAGS, U] {
         if (lhs.isZero()) {
-            return [CHANGED, zero];
+            return [TFLAG_DIFF, zero];
         }
         if (lhs.isOne()) {
-            return [CHANGED, rhs];
+            return [TFLAG_DIFF, rhs];
         }
-        return [STABLE, expr];
+        return [TFLAG_HALT, expr];
     }
 }
 

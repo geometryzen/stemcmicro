@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, FEATURE, NOFLAGS, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, NOFLAGS, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 import { U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";
@@ -87,7 +87,7 @@ class UomExtension implements Extension<Uom> {
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_uom(expr)) {
-            return [STABLE, expr];
+            return [TFLAG_HALT, expr];
         }
         return [NOFLAGS, expr];
     }

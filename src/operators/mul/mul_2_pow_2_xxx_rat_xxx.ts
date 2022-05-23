@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -40,7 +40,7 @@ class Op extends Function2X<BCons<Sym, Sym, Rat>, Sym> implements Operator<Cons>
         const rat = lhs.rhs;
         const expo = rat.succ();
         const D = $.valueOf(makeList(MATH_POW, xxx, expo));
-        return [CHANGED, D];
+        return [TFLAG_DIFF, D];
     }
 }
 

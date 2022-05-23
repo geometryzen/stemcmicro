@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { is_tensor } from "../../tree/tensor/is_tensor";
@@ -31,7 +31,7 @@ class Op extends Function2<Tensor, Tensor> implements Operator<U> {
         const metric = convertMetricToNative(lhs);
         const labels = convertLabelsToNative(rhs);
         const newExpr = algebraAsTensor(metric, labels, $);
-        return [CHANGED, newExpr];
+        return [TFLAG_DIFF, newExpr];
     }
 }
 

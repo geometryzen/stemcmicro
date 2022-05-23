@@ -182,20 +182,22 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // sqrt(x*y) != x^(1/2) y^(1/2) (counterexample" x = -1 and y = -1)
     // BUT we can carve-out here some cases where this
     // transformation is correct
-    if (is_multiply(base) && is_rat_integer(expo)) {
-        const aList = base.cdr;
-        if (is_cons(aList)) {
-            const a1 = aList.car;
-            let result = $.power(a1, expo);
+    if ($.isExpanding()) {
+        if (is_multiply(base) && is_rat_integer(expo)) {
+            const aList = base.cdr;
             if (is_cons(aList)) {
-                const others = aList.tail();
-                result = others.reduce((prev: U, curr: U) => $.multiply(prev, $.power(curr, expo)), result);
+                const a1 = aList.car;
+                let result = $.power(a1, expo);
+                if (is_cons(aList)) {
+                    const others = aList.tail();
+                    result = others.reduce((prev: U, curr: U) => $.multiply(prev, $.power(curr, expo)), result);
+                }
+                return hook(result, "P");
             }
-            return hook(result, "P");
-        }
-        if (is_nil(aList)) {
-            // Slightly strange case of no a's means (*) => 1, and then 1 ^ m is simply 1.
-            return hook(one, "Q");
+            if (is_nil(aList)) {
+                // Slightly strange case of no a's means (*) => 1, and then 1 ^ m is simply 1.
+                return hook(one, "Q");
+            }
         }
     }
 

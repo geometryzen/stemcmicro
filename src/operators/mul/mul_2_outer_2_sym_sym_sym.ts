@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -43,7 +43,7 @@ class Op extends Function2X<BCons<Sym, Sym, Sym>, Sym> implements Operator<Cons>
 
             const retval = $.subtract(makeList(MATH_MUL, makeList(MATH_MUL, a, b), c), makeList(MATH_MUL, makeList(MATH_INNER, a, b), c));
 
-            return [CHANGED, retval];
+            return [TFLAG_DIFF, retval];
         }
         return [NOFLAGS, expr];
     }

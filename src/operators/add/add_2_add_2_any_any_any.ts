@@ -1,5 +1,5 @@
 import { compare_terms_redux } from "../../calculators/compare/compare_terms";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -41,7 +41,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             const c = rhs;
             const bc = $.valueOf(makeList(MATH_ADD, b, c));
             const abc = $.valueOf(makeList(MATH_ADD, a, bc));
-            return [CHANGED, abc];
+            return [TFLAG_DIFF, abc];
         }
         const X = lhs.lhs;
         const Z = lhs.rhs;
@@ -53,7 +53,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
                 // (X + Z) + A => (X + A) + Z
                 const XA = $.valueOf(makeList(lhs.opr, X, A));
                 const retval = $.valueOf(makeList(opr, XA, Z));
-                return [CHANGED, retval];
+                return [TFLAG_DIFF, retval];
             }
             default: {
                 return [NOFLAGS, orig];

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -35,7 +35,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         else {
             // Thi appears to do nothing but recall that the base class done its own transformation.
             const newExpr = power_v1(base, expo, oldExpr, this.$);
-            return [!newExpr.equals(oldExpr) ? CHANGED : NOFLAGS, newExpr];
+            return [!newExpr.equals(oldExpr) ? TFLAG_DIFF : NOFLAGS, newExpr];
         }
     }
 }

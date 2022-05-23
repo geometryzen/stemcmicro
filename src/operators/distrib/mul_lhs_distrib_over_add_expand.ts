@@ -1,7 +1,8 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { is_add_2_any_any } from "../add/is_add_2_any_any";
@@ -22,9 +23,10 @@ class Builder implements OperatorBuilder<Cons> {
  * A * (B + C) => (A * B) + (A * C) 
  */
 class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<BCons<Sym, U, BCons<Sym, U, U>>> {
-    readonly hash = '(* U (+))';
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_lhs_distrib_over_add_expand', MATH_MUL, is_any, and(is_cons, is_add_2_any_any), $);
+        this.hash = hash_binop_atom_cons(this.opr, HASH_ANY, MATH_ADD);
     }
     cost(expr: BCons<Sym, U, BCons<Sym, U, U>>, costs: CostTable, depth: number): number {
         // const $ = this.$;
@@ -41,7 +43,7 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<BCons<Sym, U
 
             const ab = $.valueOf(makeList(opr, a, b));
             const ac = $.valueOf(makeList(opr, a, c));
-            return [CHANGED, $.valueOf(makeList(rhs.opr, ab, ac))];
+            return [TFLAG_DIFF, $.valueOf(makeList(rhs.opr, ab, ac))];
         }
         else {
             return [NOFLAGS, expr];

@@ -1,5 +1,5 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -59,7 +59,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const p4 = $.valueOf(p3);
         const p5 = makeList(opr, p4, Z);
         const p6 = $.valueOf(p5);
-        return [CHANGED, p6];
+        return [TFLAG_DIFF, p6];
     }
 }
 

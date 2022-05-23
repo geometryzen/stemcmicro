@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { STABLE, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_HALT, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_PI } from "../../runtime/ns_math";
 import { VERSION_ONE } from "../../runtime/version";
 import { Sym } from "../../tree/sym/Sym";
@@ -31,7 +31,7 @@ class SymMathPi implements Operator<Sym> {
         return costs.getCost(MATH_PI, this.$);
     }
     transform(expr: U): [TFLAGS, U] {
-        return [this.isKind(expr) ? STABLE : NOFLAGS, expr];
+        return [this.isKind(expr) ? TFLAG_HALT : NOFLAGS, expr];
     }
     isImag(): boolean {
         return false;

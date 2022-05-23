@@ -1,5 +1,5 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -43,7 +43,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                 const ab = $.valueOf(makeList(opr, a, b));
                 const abi = $.valueOf(makeList(MATH_MUL, ab, i));
                 // console.log(`${this.name} ${print_expr(orig, $)} ==> ${print_expr(Xia, $)}`);
-                return [CHANGED, abi];
+                return [TFLAG_DIFF, abi];
             }
             default: {
                 return [NOFLAGS, orig];

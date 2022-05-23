@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { flt, Flt } from "../../tree/flt/Flt";
@@ -28,7 +28,7 @@ class Op extends Function2<Flt, Rat> implements Operator<Cons> {
         return false;
     }
     transform2(opr: Sym, lhs: Flt, rhs: Rat): [TFLAGS, U] {
-        return [CHANGED, flt(Math.pow(lhs.d, rhs.toNumber()))];
+        return [TFLAG_DIFF, flt(Math.pow(lhs.d, rhs.toNumber()))];
     }
 }
 

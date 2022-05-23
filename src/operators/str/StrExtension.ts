@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, Sign, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, NOFLAGS, Sign, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { emptyStr, Str } from "../../tree/str/Str";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -86,7 +86,7 @@ class StrExtension implements Extension<Str> {
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_str(expr)) {
-            return [STABLE, expr];
+            return [TFLAG_HALT, expr];
         }
         return [NOFLAGS, expr];
     }

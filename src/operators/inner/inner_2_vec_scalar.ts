@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -25,7 +25,7 @@ class Op extends Function2<Blade, U> implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: Blade, rhs: U, orig: BCons<Sym, Blade, U>): [TFLAGS, U] {
-        return [CHANGED, zero];
+        return [TFLAG_DIFF, zero];
     }
 }
 

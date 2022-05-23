@@ -1,5 +1,5 @@
 import { get_component } from "../../calculators/get_component";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_TENSOR } from "../../hashing/hash_info";
 import { SYM_MATH_COMPONENT } from "../../runtime/constants";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -28,7 +28,7 @@ class Op extends Function2<Tensor, Rat> implements Operator<U> {
         const M = lhs;
         const iList = rhs;
         if (is_tensor(M)) {
-            return [CHANGED, get_component(M, iList, $)];
+            return [TFLAG_DIFF, get_component(M, iList, $)];
         }
         else {
             // The thing in the tensor position may well be just a symbol and so we can't dig into it yet.

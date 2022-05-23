@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat, zero } from "../../tree/rat/Rat";
@@ -40,7 +40,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        return [CHANGED, zero];
+        return [TFLAG_DIFF, zero];
     }
 }
 

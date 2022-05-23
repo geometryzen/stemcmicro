@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_add_2_any_any } from "../add/is_add_2_any_any";
@@ -34,7 +34,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const XY = $.valueOf(makeList(opr, X, Y));
         const XZ = $.valueOf(makeList(opr, X, Z));
         const retval = $.valueOf(makeList(rhs.opr, XY, XZ));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

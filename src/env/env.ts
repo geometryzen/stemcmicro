@@ -6,7 +6,7 @@ import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { makeList } from "../makeList";
-import { numerator } from "../numerator";
+import { numerator } from "../operators/numerator/numerator";
 import { is_blade } from "../operators/blade/BladeExtension";
 import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
 import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
@@ -36,7 +36,7 @@ import { is_tensor } from "../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { is_uom } from "../tree/uom/is_uom";
 import { CostTable } from "./CostTable";
-import { CHANGED, changedFlag, ExtensionEnv, FEATURE, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, STABLE, stableFlag, TFLAGS } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, haltFlag, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -564,8 +564,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         },
         transform(expr: U): [TFLAGS, U] {
             if (typeof expr.meta === 'number') {
-                if ((expr.meta & STABLE) > 0) {
-                    return [STABLE, expr];
+                if ((expr.meta & TFLAG_HALT) > 0) {
+                    return [TFLAG_HALT, expr];
                 }
                 if (expr.meta === NOFLAGS) {
                     // Do nothing yet.
@@ -579,11 +579,12 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
             // We short-circuit some expressions in order to improve performance.
             if (is_imu(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_cons(expr)) {
-                let changedExpr = false;
+                // let changedExpr = false;
+                let outFlags = NOFLAGS;
                 let curExpr: U = expr;
                 let doneWithExpr = false;
                 const pops = currentOps();
@@ -592,30 +593,37 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     // keys are the buckets we should look in for operators from specific to generic.
                     const keys = hash_info(curExpr);
                     for (const key of keys) {
-                        let doneWithKey = false;
+                        let doneWithCurExpr = false;
                         const ops = pops[key];
                         // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
-                                if (changedFlag(flags)) {
-                                    // console.log(`CHANGED: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                if (diffFlag(flags)) {
                                     curExpr = newExpr;
-                                    changedExpr = true;
-                                    // if (typeof op.hash !== 'string') {
-                                    // console.log(`CHANGED ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
-                                    // }
-                                    doneWithExpr = false;
-                                    doneWithKey = true;
-                                    newExpr.meta |= STABLE;
+                                    outFlags |= TFLAG_DIFF;
+                                    doneWithCurExpr = true;
+                                    newExpr.meta |= TFLAG_HALT;
+                                    if (haltFlag(flags)) {
+                                        // doneWithExpr remains true.
+                                        outFlags |= TFLAG_HALT;
+                                        // console.lg(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    }
+                                    else {
+                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                        // if (typeof op.hash !== 'string') {
+                                        // console.log(`CHANGED ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
+                                        // }
+                                        doneWithExpr = false;
+                                    }
                                     break;
                                 }
-                                else if (stableFlag(flags)) {
+                                else if (haltFlag(flags)) {
                                     // console.log(`STABLE ${op.name} key=${JSON.stringify(key)} op.key=${JSON.stringify(op.key)} hash=${op.hash}`);
                                     // TODO: We also need to break out of the loop on keys
-                                    doneWithKey = true;
-                                    newExpr.meta |= STABLE;
+                                    doneWithCurExpr = true;
+                                    newExpr.meta |= TFLAG_HALT;
                                     break;
                                 }
                                 else {
@@ -623,57 +631,57 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                 }
                             }
                         }
-                        if (doneWithKey) {
+                        if (doneWithCurExpr) {
                             break;
                         }
                     }
                 }
-                return [changedExpr ? CHANGED : NOFLAGS, curExpr];
+                return [outFlags, curExpr];
             }
             else if (is_rat(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_flt(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_sym(expr)) {
                 const retval = $.operatorFor(expr).transform(expr);
-                retval[1].meta |= STABLE;
+                retval[1].meta |= TFLAG_HALT;
                 return retval;
             }
             else if (is_blade(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_tensor(expr)) {
                 const retval = $.operatorFor(expr).transform(expr);
-                retval[1].meta |= STABLE;
+                retval[1].meta |= TFLAG_HALT;
                 return retval;
             }
             else if (is_uom(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_nil(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_str(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_boo(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_hyp(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else if (is_err(expr)) {
-                expr.meta |= STABLE;
+                expr.meta |= TFLAG_HALT;
                 return [NOFLAGS, expr];
             }
             else {

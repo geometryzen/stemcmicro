@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -50,7 +50,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const xy = $.valueOf(makeList(opr, x, y));
         const ca = $.valueOf(makeList(MATH_CONJ, a));
         const retval = $.valueOf(makeList(lhs.opr, ca, xy));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

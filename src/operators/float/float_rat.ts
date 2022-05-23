@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { flt } from "../../tree/flt/Flt";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -17,7 +17,7 @@ class FloatRat extends Function1<Rat> implements Operator<U> {
         super('float_rat', new Sym('float'), is_rat, $);
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
-        return [CHANGED, flt(arg.toNumber(), arg.pos, arg.end)];
+        return [TFLAG_DIFF, flt(arg.toNumber(), arg.pos, arg.end)];
     }
 }
 

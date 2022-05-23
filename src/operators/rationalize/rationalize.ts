@@ -1,26 +1,22 @@
-import { condense } from './condense';
-import { ExtensionEnv, PHASE_FACTORING } from './env/ExtensionEnv';
-import { gcd } from './gcd';
-import { is_negative_number } from './is';
-import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { caddr, cadr } from './tree/helpers';
-import { one, zero } from './tree/rat/Rat';
-import { is_tensor } from './tree/tensor/is_tensor';
-import { is_cons, U } from './tree/tree';
+import { condense } from '../../condense';
+import { ExtensionEnv, PHASE_FACTORING } from '../../env/ExtensionEnv';
+import { gcd } from '../../gcd';
+import { is_negative_number } from '../../is';
+import { is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { caddr, cadr } from '../../tree/helpers';
+import { one, zero } from '../../tree/rat/Rat';
+import { is_tensor } from '../../tree/tensor/is_tensor';
+import { is_cons, U } from '../../tree/tree';
 
-export function Eval_rationalize(expr: U, $: ExtensionEnv): void {
-    const result = rationalize_factoring($.valueOf(cadr(expr)), $);
-    stack_push(result);
+export function Eval_rationalize(expr: U, $: ExtensionEnv): U {
+    return rationalize_factoring($.valueOf(cadr(expr)), $);
 }
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    // This is a slight departure from the 1.x code, which makes no sense.
     $.setPhase(PHASE_FACTORING);
     try {
-        const result = yyrationalize(argList, $);
-        return result;
+        return yyrationalize(argList, $);
     }
     finally {
         $.setPhase(phase);
@@ -28,11 +24,11 @@ export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
 }
 
 function yyrationalize(arg: U, $: ExtensionEnv): U {
+    // console.lg(`yyrationalize ${print_expr(arg, $)}`);
     if (is_tensor(arg)) {
         return __rationalize_tensor(arg, $);
     }
 
-    // This is a slight departure from the 1.x code, which makes no sense.
     // defs.expanding = false;
 
     if (!is_add(arg)) {
@@ -41,6 +37,8 @@ function yyrationalize(arg: U, $: ExtensionEnv): U {
 
     // get common denominator
     const commonDenominator = multiply_denominators(arg, $);
+
+    // console.lg(`commonDenominator ${print_expr(commonDenominator, $)}`);
 
     // multiply each term by common denominator
     let temp: U = zero;
@@ -54,7 +52,12 @@ function yyrationalize(arg: U, $: ExtensionEnv): U {
     }
     // collect common factors
     // divide by common denominator
-    return $.divide(condense(temp, $), commonDenominator);
+    // console.lg(`temp ${print_expr(temp, $)}`);
+    const condensed = condense(temp, $);
+    // console.lg(`condensed ${print_expr(condensed, $)}`);
+    const rationalized = $.divide(condensed, commonDenominator);
+    // console.lg(`rationalized ${print_expr(rationalized, $)}`);
+    return rationalized;
 }
 
 function multiply_denominators(p: U, $: ExtensionEnv): U {

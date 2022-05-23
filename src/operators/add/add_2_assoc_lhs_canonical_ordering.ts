@@ -1,5 +1,5 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, PHASE_FLAGS_ALL, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, PHASE_FLAGS_ALL, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -46,7 +46,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const a = rhs;
         const Xa = $.valueOf(makeList(lhs.opr, X, a));
         const retval = $.valueOf(makeList(opr, Xa, z));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

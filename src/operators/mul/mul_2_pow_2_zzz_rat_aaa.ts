@@ -1,5 +1,5 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -36,7 +36,7 @@ class Op extends Function2X<BCons<Sym, Sym, Rat>, Sym> implements Operator<Cons>
     }
     transform2(opr: Sym, lhs: BCons<Sym, Sym, Rat>, rhs: Sym): [TFLAGS, U] {
         const $ = this.$;
-        return [CHANGED, $.valueOf(makeList(opr, rhs, lhs))];
+        return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
     }
 }
 

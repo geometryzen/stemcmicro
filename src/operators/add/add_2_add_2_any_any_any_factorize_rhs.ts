@@ -1,6 +1,6 @@
 import { do_factorize_rhs } from "../../calculators/factorize/do_factorize_rhs";
 import { is_factorize_rhs } from "../../calculators/factorize/is_factorize_rhs";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
@@ -46,7 +46,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const Y = lhs.rhs;
         const Z = rhs;
         const mnA = do_factorize_rhs(Y, Z, one, orig, $)[1];
-        return [CHANGED, $.valueOf(makeList(MATH_ADD, X, mnA))];
+        return [TFLAG_DIFF, $.valueOf(makeList(MATH_ADD, X, mnA))];
     }
 }
 

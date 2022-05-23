@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_imu } from "../../predicates/is_imu";
@@ -57,13 +57,13 @@ class Op extends Function2X<Sym, U> implements Operator<BCons<Sym, Sym, U>> {
             if (is_imu(expo_lhs)) {
                 if (MATH_PI.equals(expo_rhs)) {
                     // Euler's identity.
-                    return [CHANGED, negOne];
+                    return [TFLAG_DIFF, negOne];
                 }
                 if ($.isReal(expo_rhs)) {
                     const c = makeList(MATH_COS, expo_rhs);
                     const s = makeList(MATH_SIN, expo_rhs);
                     const i_times_s = makeList(MATH_MUL, imu, s);
-                    return [CHANGED, makeList(MATH_ADD, c, i_times_s)];
+                    return [TFLAG_DIFF, makeList(MATH_ADD, c, i_times_s)];
                 }
             }
             if (is_cons(expo_lhs) && is_imu_times_pi(expo_lhs)) {
@@ -71,7 +71,7 @@ class Op extends Function2X<Sym, U> implements Operator<BCons<Sym, Sym, U>> {
                     const c = makeList(MATH_COS, expo_rhs);
                     const s = makeList(MATH_SIN, expo_rhs);
                     const i_times_s = makeList(MATH_MUL, imu, s);
-                    return [CHANGED, makeList(MATH_ADD, c, i_times_s)];
+                    return [TFLAG_DIFF, makeList(MATH_ADD, c, i_times_s)];
                 }
             }
         }

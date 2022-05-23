@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { one, Rat } from "../../tree/rat/Rat";
@@ -23,7 +23,7 @@ class Op extends Function2<BCons<Sym, Rat, Rat>, BCons<Sym, Rat, Rat>> implement
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: BCons<Sym, Rat, Rat>, rhs: BCons<Sym, Rat, Rat>): [TFLAGS, U] {
-        return [CHANGED, one];
+        return [TFLAG_DIFF, one];
     }
 }
 

@@ -3,7 +3,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { equaln, is_negative_number } from './is';
 import { makeList } from './makeList';
-import { numerator } from './numerator';
+import { numerator } from './operators/numerator/numerator';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
 import { LOG } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -22,7 +22,7 @@ class Op extends Function2<Rat, BCons<Sym, Rat, Rat>> implements Operator<Cons> 
         super('inner_2_rat_imu', MATH_INNER, is_rat, is_imu, $);
     }
     transform2(opr: Sym, lhs: Rat, rhs: BCons<Sym, Rat, Rat>): [TFLAGS, U] {
-        return [CHANGED, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs)];
+        return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs)];
     }
 }
 

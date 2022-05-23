@@ -3,7 +3,7 @@ import { denominator } from './denominator';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, equalq, is_negative } from './is';
 import { makeList } from './makeList';
-import { numerator } from './numerator';
+import { numerator } from './operators/numerator/numerator';
 import { ARCTAN, COS, POWER, SIN, TAN } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { piAsDouble } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -20,7 +20,7 @@ class FloatSymPi extends Function1<Sym> implements Operator<U> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Sym, expr: UCons<Sym, Sym>): [TFLAGS, U] {
-        return [CHANGED, piAsDouble];
+        return [TFLAG_DIFF, piAsDouble];
     }
 }
 

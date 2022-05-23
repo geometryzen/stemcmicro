@@ -1,5 +1,5 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, SIGN_LT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, SIGN_LT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -29,17 +29,17 @@ class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
     transform2(opr: Sym, lhs: Sym, rhs: Sym, orig: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         switch (compare_sym_sym(lhs, rhs)) {
             case SIGN_GT: {
-                return [CHANGED, makeList(opr, rhs, lhs)];
+                return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
             }
             case SIGN_LT: {
-                return [STABLE, orig];
+                return [TFLAG_HALT, orig];
             }
             default: {
                 if (lhs.equals(rhs)) {
-                    return [CHANGED, makeList(MATH_MUL.clone(opr.pos, opr.end), two, lhs)];
+                    return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), two, lhs)];
                 }
                 else {
-                    return [STABLE, orig];
+                    return [TFLAG_HALT, orig];
                 }
             }
         }

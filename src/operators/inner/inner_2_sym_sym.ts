@@ -1,5 +1,5 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -12,10 +12,10 @@ import { is_sym } from "../sym/is_sym";
 function canoncal_reorder_inner_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
     switch (compare_sym_sym(lhs, rhs)) {
         case SIGN_GT: {
-            return [CHANGED, value_of(makeList(opr, rhs, lhs), $)];
+            return [TFLAG_DIFF, value_of(makeList(opr, rhs, lhs), $)];
         }
         default: {
-            return [STABLE, orig];
+            return [TFLAG_HALT, orig];
         }
     }
 }
@@ -54,49 +54,49 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             if ($.treatAsScalar(rhs)) {
                 // TODO: This is incorrect because 
                 // scalar | scalar
-                return [CHANGED, value_of(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
+                return [TFLAG_DIFF, value_of(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
             }
             else if ($.treatAsVector(rhs)) {
                 // scalar | vector
-                return [CHANGED, zero];
+                return [TFLAG_DIFF, zero];
             }
             else {
                 // scalar | something
-                return [STABLE, expr];
+                return [TFLAG_HALT, expr];
             }
         }
         else if ($.treatAsVector(lhs)) {
             if ($.treatAsScalar(rhs)) {
                 // vector | scalar
-                return [CHANGED, zero];
+                return [TFLAG_DIFF, zero];
             }
             else if ($.treatAsVector(rhs)) {
                 // vector | vector
                 if ($.isFactoring()) {
                     if (lhs.equals(rhs)) {
                         // x | x = x * x - x ^ x = x * x
-                        return [CHANGED, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, lhs)];
+                        return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, lhs)];
                     }
                 }
                 return canoncal_reorder_inner_factors_sym_sym(opr, lhs, rhs, expr, $);
             }
             else {
                 // vector | something
-                return [STABLE, expr];
+                return [TFLAG_HALT, expr];
             }
         }
         else {
             if ($.treatAsScalar(rhs)) {
                 // something | scalar
-                return [CHANGED, value_of(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
+                return [TFLAG_DIFF, value_of(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
             }
             else if ($.treatAsVector(rhs)) {
                 // something | vector
-                return [STABLE, expr];
+                return [TFLAG_HALT, expr];
             }
             else {
                 // something | something
-                return [STABLE, expr];
+                return [TFLAG_HALT, expr];
             }
         }
     }

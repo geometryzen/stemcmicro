@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
@@ -36,7 +36,7 @@ class Op extends Function2X<Sym, BCons<Sym, Sym, Sym>> implements Operator<BCons
         return super.cost(expr, costs, depth) + 1;
     }
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
-        return [CHANGED, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
     }
 }
 

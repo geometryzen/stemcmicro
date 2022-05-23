@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -35,7 +35,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        return [CHANGED, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
     }
 }
 

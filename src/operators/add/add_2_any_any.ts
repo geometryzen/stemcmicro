@@ -1,6 +1,6 @@
 import { compare_terms_redux } from "../../calculators/compare/compare_terms";
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -59,17 +59,32 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // console.log(`lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)}`);
         switch (compare_terms_redux(lhs, rhs, $)) {
             case SIGN_GT: {
-                return [CHANGED, $.valueOf(makeList(opr, rhs, lhs))];
+                return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
             }
             case SIGN_EQ: {
                 if (lhs.equals(rhs)) {
-                    return [CHANGED, $.valueOf(makeList(MATH_MUL, two, lhs))];
+                    return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, two, lhs))];
                 }
                 else {
                     return [NOFLAGS, expr];
                 }
             }
             default: {
+                // The following works, but it's not what we want when trying to rationalize an expression.
+                /*
+                if ($.isFactoring()) {
+                    if ($.isAssocL(MATH_MUL)) {
+                        const l = leftmost_factor(lhs);
+                        const r = leftmost_factor(rhs);
+                        if (l.equals(r)) {
+                            console.log(`${this.name} l=${print_list(l, $)} r=${print_list(r, $)}`);
+                            const lprime = $.valueOf($.divide(lhs,l));
+                            const rprime = $.valueOf($.divide(rhs,r));
+                            console.log(`${this.name} lprime=${print_list(lprime, $)} rprime=${print_list(rprime, $)}`);
+                        }
+                    }
+                }
+                */
                 return [NOFLAGS, expr];
             }
         }

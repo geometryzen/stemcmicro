@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
@@ -17,7 +17,7 @@ class ConjBlade extends Function1<Blade> implements Operator<U> {
         super('conj_blade', MATH_CONJ, is_blade, $);
     }
     transform1(opr: Sym, arg: Blade): [TFLAGS, U] {
-        return [CHANGED, arg.rev()];
+        return [TFLAG_DIFF, arg.rev()];
     }
 }
 

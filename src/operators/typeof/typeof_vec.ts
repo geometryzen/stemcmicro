@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { is_vec } from "../../tree/vec/Algebra";
@@ -19,7 +19,7 @@ class TypeofAny extends Function1<Blade> implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Blade, expr: UCons<Sym, Blade>): [TFLAGS, U] {
-        return [CHANGED, TYPE_NAME_BLADE];
+        return [TFLAG_DIFF, TYPE_NAME_BLADE];
     }
 }
 

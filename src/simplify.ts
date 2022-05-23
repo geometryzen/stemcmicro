@@ -3,21 +3,21 @@ import { add_terms } from './calculators/add/add_terms';
 import { clockform } from './clock';
 import { condense, yycondense } from './condense';
 import { denominator } from "./denominator";
-import { CHANGED, ExtensionEnv, NOFLAGS, TFLAGS } from './env/ExtensionEnv';
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, TFLAGS } from './env/ExtensionEnv';
 import { factor } from "./factor";
 import { areunivarpolysfactoredorexpandedform, gcd } from "./gcd";
 import { equalq, is_negative_number, is_num_and_eq_minus_one, is_plus_or_minus_one } from './is';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { makeList } from './makeList';
 import { multiply_noexpand } from './multiply';
-import { numerator } from "./numerator";
+import { numerator } from "./operators/numerator/numerator";
 import { yyfloat } from './operators/float/float';
 import { BCons } from './operators/helpers/BCons';
 import { is_pow_2_any_any } from './operators/pow/is_pow_2_any_any';
 import { polar } from './polar';
 import { is_imu } from './predicates/is_imu';
 import { is_num } from './predicates/is_num';
-import { rationalize_factoring } from './rationalize';
+import { rationalize_factoring } from './operators/rationalize/rationalize';
 import { real } from './real';
 import { rect } from './rect';
 import { roots } from './roots';
@@ -588,7 +588,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         const result = simplify(
             $.add($.multiply(lowercase_b, $.power(C, half)), lowercase_a), $
         );
-        return [result, CHANGED];
+        return [result, TFLAG_DIFF];
     }
 
     if (equalq(expo, 1, 2)) {
@@ -602,7 +602,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         );
         const possibleNewExpressionValue = yyfloat(real(possibleNewExpression, $), $);
         if (!is_negative_number(possibleNewExpressionValue)) {
-            return [possibleNewExpression, CHANGED];
+            return [possibleNewExpression, TFLAG_DIFF];
         }
 
         const result = simplify(
@@ -612,10 +612,10 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
             ),
             $
         );
-        return [result, CHANGED];
+        return [result, TFLAG_DIFF];
     }
 
-    return [NIL, CHANGED]; // Do we need this?
+    return [NIL, TFLAG_DIFF]; // Do we need this?
     // return [null, true];
 }
 

@@ -1,5 +1,5 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -32,7 +32,7 @@ class Op extends Function2X<BCons<Sym, Rat, Sym>, Sym> implements Operator<Cons>
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_MUL, HASH_SYM);
     }
     transform2(opr: Sym, lhs: BCons<Sym, Rat, Sym>, rhs: Sym, orig: BCons<Sym, BCons<Sym, Rat, Sym>, Sym>): [TFLAGS, U] {
-        return [CHANGED, binswap(orig)];
+        return [TFLAG_DIFF, binswap(orig)];
     }
 }
 

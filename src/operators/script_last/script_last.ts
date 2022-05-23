@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { NAME_SCRIPT_LAST } from "../../runtime/ns_script";
 import { U } from "../../tree/tree";
 import { KeywordOperator } from "../helpers/KeywordSymbol";
@@ -22,7 +22,7 @@ class ScriptLast extends KeywordOperator {
     }
     transform(expr: U): [TFLAGS, U] {
         if (this.isKind(expr)) {
-            return [CHANGED, this.$.getBinding(NAME_SCRIPT_LAST)];
+            return [TFLAG_DIFF, this.$.getBinding(NAME_SCRIPT_LAST)];
         }
         return [NOFLAGS, expr];
     }

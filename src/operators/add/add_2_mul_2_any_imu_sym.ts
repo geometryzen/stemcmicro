@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -35,7 +35,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_MUL, HASH_SYM);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        return [CHANGED, binswap(orig)];
+        return [TFLAG_DIFF, binswap(orig)];
     }
 }
 

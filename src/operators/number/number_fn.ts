@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { NUMBER } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
@@ -32,7 +32,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         const retval = Eval_number(expr, $);
         const changed = !retval.equals(expr);
-        return [changed ? CHANGED : STABLE, retval];
+        return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 

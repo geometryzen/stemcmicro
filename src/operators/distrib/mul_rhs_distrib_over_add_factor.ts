@@ -1,4 +1,5 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -87,10 +88,11 @@ function reduceByFactoringOnRight(lhs: U, rhs: U, common: U, $: ExtensionEnv): U
  * (A * X) + (B * X) => (A + B) * X
  */
 class Op extends Function2X<BCons<Sym, U, U>, BCons<Sym, U, U>> implements Operator<Cons> {
-    readonly hash = '(+ (*) (*))';
+    readonly hash: string;
     readonly phases = PHASE_FACTORING;
     constructor($: ExtensionEnv) {
         super('mul_rhs_distrib_over_add_factor', MATH_ADD, and(is_cons, is_mul_2_any_any), and(is_cons, is_mul_2_any_any), cross($), $);
+        this.hash = hash_binop_cons_cons(this.opr, MATH_MUL, MATH_MUL);
     }
     transform2(opr: Sym, lhs: BCons<Sym, U, U>, rhs: BCons<Sym, U, U>): [TFLAGS, U] {
         const $ = this.$;
@@ -103,7 +105,7 @@ class Op extends Function2X<BCons<Sym, U, U>, BCons<Sym, U, U>> implements Opera
         const B = rhs.lhs;
         const X = lhs.rhs;
         const AB = $.valueOf(makeList(opr, A, B));
-        return [CHANGED, $.valueOf(makeList(MATH_MUL, AB, X))];
+        return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, AB, X))];
     }
 }
 

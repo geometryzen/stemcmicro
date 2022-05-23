@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_PI, MATH_TAU } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -25,7 +25,7 @@ class Op extends Function1<U> implements Operator<U> {
     transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
         const two_pi = this.$.multiply(two, MATH_PI);
         const two_pi_x = this.$.multiply(two_pi, arg);
-        return [CHANGED, two_pi_x];
+        return [TFLAG_DIFF, two_pi_x];
     }
 }
 

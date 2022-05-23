@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, NOFLAGS, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { Err, oops } from "../../tree/err/Err";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -34,7 +34,7 @@ export class ErrExtension implements Extension<Err> {
         return 1;
     }
     transform(expr: U): [TFLAGS, U] {
-        return [expr instanceof Err ? STABLE : NOFLAGS, expr];
+        return [expr instanceof Err ? TFLAG_HALT : NOFLAGS, expr];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Err, $: ExtensionEnv): U {

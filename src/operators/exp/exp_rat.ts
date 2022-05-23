@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_E } from "../../runtime/ns_math";
 import { one, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -19,12 +19,12 @@ class ExpRat extends Function1<Rat> implements Operator<U> {
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
         if (arg.isZero()) {
-            return [CHANGED, one];
+            return [TFLAG_DIFF, one];
         }
         if (arg.isOne()) {
-            return [CHANGED, MATH_E];
+            return [TFLAG_DIFF, MATH_E];
         }
-        return [CHANGED, this.$.power(MATH_E, arg)];
+        return [TFLAG_DIFF, this.$.power(MATH_E, arg)];
     }
 }
 

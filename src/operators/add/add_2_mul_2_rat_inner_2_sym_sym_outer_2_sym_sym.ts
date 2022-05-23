@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";
@@ -42,7 +42,7 @@ class Op extends Function2X<BCons<Sym, Rat, BCons<Sym, Sym, Sym>>, BCons<Sym, Sy
         if ($.isFactoring()) {
             const a = lhs.rhs.lhs;
             const b = lhs.rhs.rhs;
-            return [CHANGED, makeList(MATH_MUL, negOne, makeList(MATH_MUL, b, a))];
+            return [TFLAG_DIFF, makeList(MATH_MUL, negOne, makeList(MATH_MUL, b, a))];
         }
         return [NOFLAGS, orig];
     }

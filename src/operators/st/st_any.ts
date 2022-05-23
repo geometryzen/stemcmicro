@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -25,7 +25,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if ($.isReal(arg)) {
-            return [CHANGED, arg];
+            return [TFLAG_DIFF, arg];
         }
         else {
             return [NOFLAGS, expr];

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
@@ -27,7 +27,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         this.hash = hash_unaop_atom(MATH_SIN, HASH_HYP);
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        return [CHANGED, arg];
+        return [TFLAG_DIFF, arg];
     }
 }
 

@@ -1,5 +1,5 @@
 import { add_num_num } from "../../calculators/add/add_num_num";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -45,7 +45,7 @@ class Op extends Function2X<BCons<Sym, Num, BCons<Sym, Num, U>>, BCons<Sym, Rat,
         const m = lhs.rhs.lhs;
         const n = rhs.lhs;
         const mn = add_num_num(m, n);
-        return [CHANGED, makeList(MATH_ADD, k, makeList(MATH_MUL, mn, rhs.rhs))];
+        return [TFLAG_DIFF, makeList(MATH_ADD, k, makeList(MATH_MUL, mn, rhs.rhs))];
     }
 }
 

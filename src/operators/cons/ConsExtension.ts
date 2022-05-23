@@ -57,19 +57,17 @@ import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
 import { Eval_mod } from "../../mod";
 import { Eval_nroots } from "../../nroots";
-import { Eval_numerator } from "../../numerator";
 import { Eval_polar } from "../../polar";
 import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { Eval_rationalize } from "../../rationalize";
 import { Eval_real } from "../../real";
 import { Eval_rect } from "../../rect";
 import { Eval_roots } from "../../roots";
 import { Eval_round } from "../../round";
-import { ADJ, AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DENOMINATOR, DET, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, NUMERATOR, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, RATIONALIZE, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SIMPLIFY, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
+import { ADJ, AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DENOMINATOR, DET, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SIMPLIFY, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
 import { MATH_ADD, MATH_INNER, MATH_INV, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
@@ -500,9 +498,6 @@ class ConsExtension implements Extension<Cons> {
             case NROOTS:
                 Eval_nroots(expr, $);
                 return stack_pop();
-            case NUMERATOR:
-                Eval_numerator(expr, $);
-                return stack_pop();
             case OPERATOR:
                 Eval_operator(expr, $);
                 return stack_pop();
@@ -550,9 +545,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case RANK:
                 Eval_rank(expr, $);
-                return stack_pop();
-            case RATIONALIZE:
-                Eval_rationalize(expr, $);
                 return stack_pop();
             case REAL:
                 Eval_real(expr, $);

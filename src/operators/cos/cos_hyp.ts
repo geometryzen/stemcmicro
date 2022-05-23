@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { one } from "../../tree/rat/Rat";
@@ -29,7 +29,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        return [CHANGED, one];
+        return [TFLAG_DIFF, one];
     }
 }
 

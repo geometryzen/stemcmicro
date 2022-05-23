@@ -1,5 +1,5 @@
 import { add_num_num } from "../../calculators/add/add_num_num";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -63,7 +63,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                 const X = rhs;
                 const aX = makeList(MATH_ADD, a, X);
                 const retval = makeList(MATH_ADD, aX, Z);
-                return [CHANGED, retval];
+                return [TFLAG_DIFF, retval];
             }
             // The remaining branches aren't being covered.
             // The EQ case should be generalized anyway
@@ -72,7 +72,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                 const b = rhs.rhs;
                 const m = lhs.rhs.lhs;
                 const n = rhs.lhs;
-                return [CHANGED, makeList(MATH_ADD, a, makeList(MATH_MUL, add_num_num(m, n), b))];
+                return [TFLAG_DIFF, makeList(MATH_ADD, a, makeList(MATH_MUL, add_num_num(m, n), b))];
             }
             default: {
                 // This should be dead code.

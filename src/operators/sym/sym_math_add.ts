@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { STABLE, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_HALT, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { VERSION_ONE } from "../../runtime/version";
 import { Sym } from "../../tree/sym/Sym";
@@ -91,7 +91,7 @@ class SymMathAdd implements Operator<Sym> {
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_sym(expr) && MATH_ADD.equalsSym(expr)) {
-            return [STABLE, expr];
+            return [TFLAG_HALT, expr];
         }
         else {
             return [NOFLAGS, expr];

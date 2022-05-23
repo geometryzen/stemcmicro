@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -49,7 +49,7 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
             const s1s2 = $.valueOf(makeList(MATH_MUL, s1, s2));
             const X = rhs.rhs;
             const S = $.valueOf(makeList(MATH_MUL, s1s2, X));
-            return [CHANGED, S];
+            return [TFLAG_DIFF, S];
         }
         return [NOFLAGS, expr];
     }

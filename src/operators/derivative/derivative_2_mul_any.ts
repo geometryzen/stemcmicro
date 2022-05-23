@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { subst } from "../../subst";
@@ -47,7 +47,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // The following implementaion encodes the chain rule.
         // const retval = dproduct(lhs, X, $);
         // const changed = !retval.equals(expr);
-        return [changed ? CHANGED : NOFLAGS, p5];
+        return [changed ? TFLAG_DIFF : NOFLAGS, p5];
     }
 }
 

@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -21,7 +21,7 @@ class FlipOperator<L extends U, R extends U> extends Function2<L, R> implements 
         super(name, opr, guardL, guardR, $);
     }
     transform2(opr: Sym, lhs: L, rhs: R): [TFLAGS, U] {
-        return [CHANGED, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
     }
 }
 

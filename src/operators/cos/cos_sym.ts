@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -26,7 +26,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         return this.$.isReal(exp.arg);
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        return [STABLE, expr];
+        return [TFLAG_HALT, expr];
     }
 }
 

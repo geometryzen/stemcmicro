@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { pow_rat_rat } from "../../pow_rat_rat";
 import { MATH_POW } from "../../runtime/ns_math";
@@ -40,7 +40,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         // const $ = this.$;
         // console.log(`${this.name}  ${print_expr(expr, $)}`);
         const retval = pow_rat_rat(lhs, rhs, this.$);
-        return [!retval.equals(expr) ? CHANGED : STABLE, retval];
+        return [!retval.equals(expr) ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 

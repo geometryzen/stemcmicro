@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_BLADE } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -37,20 +37,20 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         switch (compare_blade_blade(lhs, rhs.rhs)) {
             case SIGN_GT: {
-                return [CHANGED, makeList(opr, rhs, lhs)];
+                return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
             }
             case SIGN_EQ: {
                 const sum = rhs.lhs.succ();
                 if (sum.isZero()) {
-                    return [CHANGED, zero];
+                    return [TFLAG_DIFF, zero];
                 }
                 if (sum.isOne()) {
-                    return [CHANGED, lhs];
+                    return [TFLAG_DIFF, lhs];
                 }
-                return [CHANGED, makeList(rhs.opr, sum, lhs)];
+                return [TFLAG_DIFF, makeList(rhs.opr, sum, lhs)];
             }
             default: {
-                return [STABLE, expr];
+                return [TFLAG_HALT, expr];
             }
         }
     }

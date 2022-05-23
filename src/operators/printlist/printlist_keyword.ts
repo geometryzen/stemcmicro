@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { NAME_SCRIPT_LAST } from "../../runtime/ns_script";
 import { makeList, U } from "../../tree/tree";
 import { KeywordOperator } from "../helpers/KeywordSymbol";
@@ -26,7 +26,7 @@ class PrintListKeyword extends KeywordOperator {
     transform(expr: U): [TFLAGS, U] {
         if (is_sym(expr) && expr.equalsSym(KEYWORD_PRINTLIST)) {
             const $ = this.$;
-            return [CHANGED, $.valueOf(makeList(FNAME_PRINTLIST, NAME_SCRIPT_LAST))];
+            return [TFLAG_DIFF, $.valueOf(makeList(FNAME_PRINTLIST, NAME_SCRIPT_LAST))];
         }
         return [NOFLAGS, expr];
     }

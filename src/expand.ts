@@ -9,7 +9,7 @@ import { inv } from './inv';
 import { is_plus_or_minus_one, is_poly_expanded_form } from './is';
 import { multiply, multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';
-import { numerator } from './numerator';
+import { numerator } from './operators/numerator/numerator';
 import { divpoly } from './quotient';
 import { use_expanding_with_unary_function, use_expanding_with_binary_function } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';

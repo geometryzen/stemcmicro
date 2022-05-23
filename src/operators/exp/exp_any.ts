@@ -1,5 +1,5 @@
 import { binop } from "../../calculators/binop";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_E, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -18,7 +18,7 @@ class Exp extends Function1<U> implements Operator<U> {
         super('exp_any', MATH_EXP, is_any, $);
     }
     transform1(opr: Sym, arg: U): [TFLAGS, U] {
-        return [CHANGED, binop(MATH_POW, MATH_E, arg, this.$)];
+        return [TFLAG_DIFF, binop(MATH_POW, MATH_E, arg, this.$)];
     }
 }
 

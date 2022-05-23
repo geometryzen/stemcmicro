@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -25,7 +25,7 @@ class Op extends Function1<ARG> implements Operator<EXPR> {
         const $ = this.$;
         const A = $.inner(arg, arg);
         const B = $.power(A, half);
-        return [CHANGED, B];
+        return [TFLAG_DIFF, B];
     }
 }
 

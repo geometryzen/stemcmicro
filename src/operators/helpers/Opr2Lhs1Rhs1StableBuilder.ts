@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -31,6 +31,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         this.hash = hash_binop_cons_cons(opr, lhs, rhs);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
-        return [STABLE, orig];
+        return [TFLAG_HALT, orig];
     }
 }

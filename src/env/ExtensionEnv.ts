@@ -10,32 +10,28 @@ export const SIGN_EQ = 0;
 export const SIGN_GT = 1;
 
 export type TFLAGS = number;
-// export type TFLAGS = boolean;
 /**
  * The expression was ignored by the transformer, usually because it did not match the transformer.
  */
 export const NOFLAGS = 0;
-// export const NOFLAGS = false;
 /**
  * The expression changed as a result of the transformation.
  */
-export const CHANGED = 1 << 0;
-// export const CHANGED = true;
+export const TFLAG_DIFF = 1 << 0;
 /**
  * The expression did not change as a result of the transformation because it is stable.
  */
-export const STABLE = 1 << 1;
-// export const STABLE = false;
+export const TFLAG_HALT = 1 << 1;
 
-export function changedFlag(flags: TFLAGS): boolean {
+export function diffFlag(flags: TFLAGS): boolean {
     // return flags;
-    return (flags & CHANGED) === CHANGED;
+    return (flags & TFLAG_DIFF) === TFLAG_DIFF;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function stableFlag(flags: TFLAGS): boolean {
+export function haltFlag(flags: TFLAGS): boolean {
     // return false;
-    return (flags & STABLE) === STABLE;
+    return (flags & TFLAG_HALT) === TFLAG_HALT;
 }
 
 // TODO: Need to be able to handle positive and negative cases (like Vector).

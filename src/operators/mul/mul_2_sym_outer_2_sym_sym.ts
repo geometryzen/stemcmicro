@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { negTwo, two } from "../../tree/rat/Rat";
@@ -48,7 +48,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<BCons<Sym, LHS, RHS>> 
         const abc = makeList(MATH_MUL, two, ab, c);
         const bca = makeList(MATH_MUL, bc, a);
         const cab = makeList(MATH_MUL, negTwo, ca, b);
-        return [CHANGED, makeList(MATH_ADD, abc, bca, cab)];
+        return [TFLAG_DIFF, makeList(MATH_ADD, abc, bca, cab)];
     }
 }
 

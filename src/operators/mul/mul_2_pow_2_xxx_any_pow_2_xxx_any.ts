@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -34,7 +34,8 @@ const guardR: GUARD<U, RHS> = and(is_cons, is_pow_2_sym_any);
  * This is a symmetric distributive law in the factoring direction.
  * Interestingly, this example involves three operators.
  * Note that there must be other pattern matchers for left and right-associated expressions.
- * We should also know when we allow this to run because it could cause looping if expansion is in effect. 
+ * We should also know when we allow this to run because it could cause looping if expansion is in effect.
+ * 
  * (x ** a) * (x ** b) =>  x ** (a + b) 
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
@@ -50,7 +51,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const b = rhs.rhs;
         const expo = $.valueOf(makeList(MATH_ADD, a, b));
         const D = $.valueOf(makeList(MATH_POW, sym, expo));
-        return [CHANGED, D];
+        return [TFLAG_DIFF, D];
     }
 }
 

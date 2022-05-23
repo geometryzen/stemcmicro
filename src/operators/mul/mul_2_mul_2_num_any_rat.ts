@@ -1,5 +1,5 @@
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -43,7 +43,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const num1 = lhs.lhs;
         const X = lhs.rhs;
         const num2 = rhs;
-        return [CHANGED, makeList(MATH_MUL, X, multiply_num_num(num1, num2))];
+        return [TFLAG_DIFF, makeList(MATH_MUL, X, multiply_num_num(num1, num2))];
     }
 }
 

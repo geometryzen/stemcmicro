@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, is_nil, makeList, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
@@ -36,7 +36,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             const $ = this.$;
             if (is_nil($.getBinding(this.opr))) {
                 const retval = makeList(this.oprNew, ...expr.tail());
-                return [CHANGED, $.valueOf(retval)];
+                return [TFLAG_DIFF, $.valueOf(retval)];
             }
             else {
                 return [NOFLAGS, expr];

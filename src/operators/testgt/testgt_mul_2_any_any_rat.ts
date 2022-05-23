@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_GT, MATH_LT, MATH_MUL } from "../../runtime/ns_math";
 import { False, True } from "../../tree/boo/Boo";
@@ -36,7 +36,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
         if (rhs.isNegative()) {
-            return [CHANGED, False];
+            return [TFLAG_DIFF, False];
         }
         if (rhs.isZero()) {
             const $ = this.$;
@@ -48,7 +48,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             const y_GT_0 = $.valueOf(makeList(MATH_GT, y, zero));
             if (is_boo(x_LT_0) && is_boo(x_GT_0) && is_boo(y_LT_0) && is_boo(y_GT_0)) {
                 const cond = (x_GT_0.isTrue() && y_GT_0.isTrue()) || (x_LT_0.isTrue() && y_LT_0.isTrue());
-                return [CHANGED, cond ? True : False];
+                return [TFLAG_DIFF, cond ? True : False];
             }
             else {
                 /*
@@ -61,9 +61,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
                 console.log(`DEBUG ${y} < 0 => ${y_LT_0}, ${y} > 0 => ${y_GT_0}`);
                 */
             }
-            return [CHANGED, False];
+            return [TFLAG_DIFF, False];
         }
-        return [CHANGED, False];
+        return [TFLAG_DIFF, False];
     }
 }
 

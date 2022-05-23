@@ -1,6 +1,6 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { defs } from "../../runtime/defs";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -15,14 +15,14 @@ import { is_sym } from "../sym/is_sym";
 function canoncal_reorder_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
     // We have to handle the case of equality if we want to use the STABLE flag.
     if (defs.convert_X_times_X_to_power_X_2 && lhs.equalsSym(rhs)) {
-        return [CHANGED, $.valueOf(makeList(MATH_POW, lhs, two))];
+        return [TFLAG_DIFF, $.valueOf(makeList(MATH_POW, lhs, two))];
     }
     switch (compare_sym_sym(lhs, rhs)) {
         case SIGN_GT: {
-            return [CHANGED, $.valueOf(makeList(opr, rhs, lhs))];
+            return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
         }
         default: {
-            return [STABLE, orig];
+            return [TFLAG_HALT, orig];
         }
     }
 }
@@ -71,7 +71,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // Short Circuit, but only when factoring.
         if (defs.convert_X_times_X_to_power_X_2 && lhs.equals(rhs)) {
             if ($.isFactoring()) {
-                return [CHANGED, value_of(makeList(MATH_POW, lhs, two), $)];
+                return [TFLAG_DIFF, value_of(makeList(MATH_POW, lhs, two), $)];
             }
         }
         return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);

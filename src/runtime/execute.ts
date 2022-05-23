@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, NOFLAGS, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
+import { ExtensionEnv, haltFlag, NOFLAGS, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../predicates/is_imu';
 import { create_source_trees } from '../scanner/create_source_tree';
@@ -115,7 +115,7 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
 
     // console.lg();
     // console.lg(`scanned : ${scanned}`);
-    // console.log(`scanned : ${print_expr(scanned, $)}`);
+    // // console.lg(`scanned : ${print_expr(scanned, $)}`);
     // console.lg(`scanned : ${print_list(scanned, $)}`);
 
     // $.setAssocL(MATH_ADD, true);
@@ -123,10 +123,10 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
     stack.push(scanned);
 
     if (isNotDisabled(EXPLICATE, $)) {
-        // console.log("Explicating...");
+        // // console.lg("Explicating...");
         let expr = stack.pop() as U;
         expr = explicate(expr, $);
-        // console.log(`explicated : ${print_expr(expr, $)}`);
+        // // console.lg(`explicated : ${print_expr(expr, $)}`);
         stack.push(expr);
     }
 
@@ -204,7 +204,7 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
-    // console.log(`${reason} ${input}`);
+    // console.lg(`${reason.toUpperCase()} ${print_expr(input, $)}`);
     const MAX_LOOPS = 10;
     const seens: U[] = [];
     let inExpr: U = input;
@@ -213,13 +213,14 @@ function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' 
     while (!done) {
         inExpr.reset(NOFLAGS);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [changed, outExpr] = $.transform(inExpr);
+        const [flags, outExpr] = $.transform(inExpr);
         loops++;
         const is_stable = $.equals(outExpr, inExpr);
-        // console.log(`changed: ${changed}`);
-        // console.log(`meta:    ${outExpr.meta}`);
-        // console.log(`is_stable: ${is_stable}`);
-        if (is_stable) {
+        // console.lg(`transform DIFF flag: ${diffFlag(flags)}`);
+        // console.lg(`transform HALT flag: ${haltFlag(flags)}`);
+        // console.lg(`meta:    ${outExpr.meta}`);
+        // console.lg(`is_stable: ${is_stable}`);
+        if (haltFlag(flags) || is_stable) {
             done = true;
         }
         else {

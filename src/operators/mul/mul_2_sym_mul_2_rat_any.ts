@@ -1,6 +1,6 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -47,7 +47,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             case SIGN_GT: {
                 const aX = $.valueOf(makeList(rhs.opr, a, X));
                 const naX = $.valueOf(makeList(opr, n, aX));
-                return [CHANGED, naX];
+                return [TFLAG_DIFF, naX];
             }
             default: {
                 return [NOFLAGS, expr];

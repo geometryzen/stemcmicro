@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -28,11 +28,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {
-            return [CHANGED, rhs];
+            return [TFLAG_DIFF, rhs];
         }
         else {
             // It's a multivector in canonical order.
-            return [STABLE, expr];
+            return [TFLAG_HALT, expr];
         }
     }
 }

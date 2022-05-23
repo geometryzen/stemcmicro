@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -20,7 +20,7 @@ class ConjSym extends Function1<Sym> implements Operator<U> {
         const $ = this.$;
         // TODO: Strictly speaking we need the symbol to be a real number.
         if ($.treatAsScalar(arg)) {
-            return [CHANGED, arg];
+            return [TFLAG_DIFF, arg];
         }
         else {
             return [NOFLAGS, expr];

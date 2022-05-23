@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -41,14 +41,14 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXPR): [TFLAGS, U] {
         // No change in arguments
         if (expo.isOne()) {
-            return [CHANGED, base];
+            return [TFLAG_DIFF, base];
         }
         else if (expo.isZero()) {
             // TODO: Some debate here about how (power 0 0) should be handled.
-            return [CHANGED, one];
+            return [TFLAG_DIFF, one];
         }
         else {
-            return [STABLE, expr];
+            return [TFLAG_HALT, expr];
         }
     }
 }

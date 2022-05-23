@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -35,7 +35,7 @@ class Op extends Function2<Rat, BCons<Sym, Sym, Sym>> implements Operator<Cons> 
         const c = rhs.rhs;
         const S = makeList(MATH_MUL, a, b, c);
         const vS = $.valueOf(S);
-        return [CHANGED, vS];
+        return [TFLAG_DIFF, vS];
     }
 }
 

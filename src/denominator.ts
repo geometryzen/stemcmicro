@@ -2,7 +2,7 @@ import { mp_denominator } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_negative_term } from './is';
 import { multiply_items } from './multiply';
-import { rationalize_factoring } from './rationalize';
+import { rationalize_factoring } from './operators/rationalize/rationalize';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';

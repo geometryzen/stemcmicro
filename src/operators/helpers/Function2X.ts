@@ -1,4 +1,4 @@
-import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, diffFlag, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { makeList, U } from "../../tree/tree";
 import { BCons } from "./BCons";
@@ -27,8 +27,8 @@ export abstract class Function2X<L extends U, R extends U> extends Function2<L, 
             const $ = this.$;
             const [flagsL, lhs] = $.transform(m.lhs);
             const [flagsR, rhs] = $.transform(m.rhs);
-            if (changedFlag(flagsL) || changedFlag(flagsR)) {
-                return [CHANGED, $.valueOf(makeList(m.opr, lhs, rhs))];
+            if (diffFlag(flagsL) || diffFlag(flagsR)) {
+                return [TFLAG_DIFF, $.valueOf(makeList(m.opr, lhs, rhs))];
             }
             else {
                 // Delegate to the function that must be implemented by the derived, concrete, class.

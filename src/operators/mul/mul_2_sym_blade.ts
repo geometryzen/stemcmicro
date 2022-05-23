@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -39,7 +39,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         // TODO: Be aware that this may prevent the processing of Sym * Blade more generally.
-        return [STABLE, orig];
+        return [TFLAG_HALT, orig];
     }
 }
 

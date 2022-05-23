@@ -1,6 +1,6 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -14,21 +14,21 @@ import { is_sym } from "../sym/is_sym";
 function canoncal_reorder_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
     // We have to handle the case of equality if we want to use the STABLE flag.
     if (lhs.equalsSym(rhs)) {
-        return [CHANGED, $.valueOf(makeList(MATH_POW, lhs, two))];
+        return [TFLAG_DIFF, $.valueOf(makeList(MATH_POW, lhs, two))];
     }
     if ($.treatAsScalar(lhs) || $.treatAsScalar(rhs)) {
         switch (compare_sym_sym(lhs, rhs)) {
             case SIGN_GT: {
-                return [CHANGED, $.valueOf(makeList(opr, rhs, lhs))];
+                return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
             }
             default: {
-                return [STABLE, orig];
+                return [TFLAG_HALT, orig];
             }
         }
     }
     else {
         // We can't be sure that the symbols commute under multiplication.
-        return [STABLE, orig];
+        return [TFLAG_HALT, orig];
     }
 }
 
@@ -76,7 +76,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // Short Circuit, but only when factoring.
         if (lhs.equals(rhs)) {
             if ($.isFactoring()) {
-                return [CHANGED, value_of(makeList(MATH_POW, lhs, two), $)];
+                return [TFLAG_DIFF, value_of(makeList(MATH_POW, lhs, two), $)];
             }
         }
 
@@ -108,7 +108,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                     return [CHANGED, sumIntExt];
                 }
                 */
-                return [STABLE, expr];
+                return [TFLAG_HALT, expr];
             }
             else {
                 return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { False, True } from "../../tree/boo/Boo";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -19,7 +19,7 @@ class IsZeroRat extends Function1<Rat> implements Operator<U> {
         super('iszero_rat', ISZERO, is_rat, $);
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
-        return [CHANGED, arg.isZero() ? True : False];
+        return [TFLAG_DIFF, arg.isZero() ? True : False];
     }
 }
 

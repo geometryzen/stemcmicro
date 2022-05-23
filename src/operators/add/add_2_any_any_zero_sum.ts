@@ -1,5 +1,5 @@
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
@@ -33,7 +33,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
-        return [CHANGED, zero];
+        return [TFLAG_DIFF, zero];
     }
 }
 

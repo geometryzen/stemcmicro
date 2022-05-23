@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { one, Rat } from "../../tree/rat/Rat";
@@ -22,10 +22,10 @@ class Op extends Function2<U, Rat> implements Operator<Cons> {
     }
     transform2(opr: Sym, base: U, expo: Rat, expr: BCons<Sym, U, Rat>): [TFLAGS, U] {
         if (expo.isZero()) {
-            return [CHANGED, one];
+            return [TFLAG_DIFF, one];
         }
         else if (expo.isOne()) {
-            return [CHANGED, base];
+            return [TFLAG_DIFF, base];
         }
         else {
             return [NOFLAGS, expr];

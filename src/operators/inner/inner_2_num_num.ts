@@ -1,6 +1,6 @@
 
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { is_num } from "../../predicates/is_num";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
@@ -22,7 +22,7 @@ class Op extends Function2<Num, Num> implements Operator<Cons> {
         super('inner_2_num_num', MATH_INNER, is_num, is_num, $);
     }
     transform2(opr: Sym, lhs: Num, rhs: Num): [TFLAGS, U] {
-        return [CHANGED, multiply_num_num(lhs, rhs)];
+        return [TFLAG_DIFF, multiply_num_num(lhs, rhs)];
     }
 }
 

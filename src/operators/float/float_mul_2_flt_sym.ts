@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
@@ -23,7 +23,7 @@ class Op extends Function1<BCons<Sym, Flt, Sym>> implements Operator<U> {
     transform1(opr: Sym, arg: BCons<Sym, Flt, Sym>): [TFLAGS, U] {
         const lhs = arg.lhs;
         const rhs = value_of(arg.rhs, this.$);
-        return [CHANGED, value_of(makeList(MATH_MUL, lhs, rhs), this.$)];
+        return [TFLAG_DIFF, value_of(makeList(MATH_MUL, lhs, rhs), this.$)];
     }
 }
 

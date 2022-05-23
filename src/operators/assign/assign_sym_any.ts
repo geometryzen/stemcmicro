@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { ASSIGN } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
@@ -26,7 +26,7 @@ class Op extends Function2<Sym, U> implements Operator<U> {
         // Assignments return NIL to prevent them from being printed.
         // That's a bit unfortunate for chained assignments.
         // The kernel of the problem is the printing of expressions by default in the REPL.
-        return [CHANGED, NIL];
+        return [TFLAG_DIFF, NIL];
     }
 }
 

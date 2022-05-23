@@ -1,6 +1,6 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -28,7 +28,7 @@ class Op extends Function2X<Sym, Sym> implements Operator<Cons> {
     transform2(opr: Sym, lhs: Sym, rhs: Sym, oldExpr: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         switch (compare_sym_sym(lhs, rhs)) {
             case SIGN_GT: {
-                return [CHANGED, makeList(MATH_MUL, negOne, makeList(opr, rhs, lhs))];
+                return [TFLAG_DIFF, makeList(MATH_MUL, negOne, makeList(opr, rhs, lhs))];
             }
             default: {
                 return [NOFLAGS, oldExpr];

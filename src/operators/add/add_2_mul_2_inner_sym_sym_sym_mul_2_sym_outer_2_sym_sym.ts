@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -62,7 +62,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
         const c = lhs.lhs.rhs;
         const bc = $.valueOf(makeList(MATH_MUL, b, c));
         const retval = $.valueOf(makeList(MATH_MUL, a, bc));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

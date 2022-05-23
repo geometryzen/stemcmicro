@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { MATH_POW } from "../../runtime/ns_math";
 import { half } from "../../tree/rat/Rat";
@@ -30,7 +30,7 @@ class Sqrt extends Function1<ARG> implements Operator<EXPR> {
         return super.cost(expr, costs, depth) + 1 + 1;
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        return [CHANGED, this.$.valueOf(makeList(MATH_POW, arg, half))];
+        return [TFLAG_DIFF, this.$.valueOf(makeList(MATH_POW, arg, half))];
     }
 }
 

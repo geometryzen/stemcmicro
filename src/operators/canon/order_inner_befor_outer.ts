@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -43,7 +43,7 @@ class Op extends Function2<L, R> implements Operator<EXPR> {
 
             const ab = makeList(opr, a, b);
             const ac = makeList(opr, a, c);
-            return [CHANGED, makeList(rhs.opr, ab, ac)];
+            return [TFLAG_DIFF, makeList(rhs.opr, ab, ac)];
         }
         else {
             return [NOFLAGS, expr];

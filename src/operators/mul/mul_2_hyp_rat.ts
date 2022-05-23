@@ -1,6 +1,6 @@
 
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_HYP, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -48,12 +48,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // If the base class binds the symbol to something else then none of this code below will be called.
         // Therefore, you can consider that this code only applies to unbound symbols. 
         if (rhs.isZero()) {
-            return [CHANGED, zero];
+            return [TFLAG_DIFF, zero];
         }
         if (rhs.isOne()) {
-            return [CHANGED, lhs];
+            return [TFLAG_DIFF, lhs];
         }
-        return [CHANGED, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
     }
 }
 

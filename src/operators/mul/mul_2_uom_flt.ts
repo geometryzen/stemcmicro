@@ -1,6 +1,6 @@
 
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -50,12 +50,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         if (rhs.isZero()) {
-            return [CHANGED, zero];
+            return [TFLAG_DIFF, zero];
         }
         if (rhs.isOne()) {
-            return [CHANGED, lhs];
+            return [TFLAG_DIFF, lhs];
         }
-        return [CHANGED, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
     }
 }
 

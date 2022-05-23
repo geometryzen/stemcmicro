@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { subst } from "../../subst";
@@ -41,7 +41,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // Lookup 
         // const retval = derivative_wrt(lhs, rhs, $);
         const changed = !retval.equals(expr);
-        return [changed ? CHANGED : NOFLAGS, retval];
+        return [changed ? TFLAG_DIFF : NOFLAGS, retval];
     }
 }
 

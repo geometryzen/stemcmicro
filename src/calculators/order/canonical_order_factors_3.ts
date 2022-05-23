@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, NOFLAGS, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Cons, makeList, U } from "../../tree/tree";
 import { compare_factors } from "../compare/compare_factors";
@@ -10,7 +10,7 @@ function compute_changed(newExpr: U, oldExpr: U): TFLAGS {
     if (newExpr.equals(oldExpr)) {
         return NOFLAGS;
     }
-    return CHANGED;
+    return TFLAG_DIFF;
 }
 
 export function canonical_order_factors_3(s1: U, s2: U, s3: U, oldExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {

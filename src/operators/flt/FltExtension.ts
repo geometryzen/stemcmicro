@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, FEATURE, NOFLAGS, Sign, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, NOFLAGS, Sign, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { Flt, oneAsDouble } from "../../tree/flt/Flt";
 import { U } from "../../tree/tree";
@@ -38,7 +38,7 @@ export class FltExtension implements Extension<Flt> {
         return 1;
     }
     transform(expr: U): [TFLAGS, U] {
-        return [expr instanceof Flt ? STABLE : NOFLAGS, expr];
+        return [expr instanceof Flt ? TFLAG_HALT : NOFLAGS, expr];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Flt): boolean {

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Err } from "../../tree/err/Err";
@@ -30,7 +30,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        return [CHANGED, new Err('operator + (Flt, Uom) is not supported.')];
+        return [TFLAG_DIFF, new Err('operator + (Flt, Uom) is not supported.')];
     }
 }
 

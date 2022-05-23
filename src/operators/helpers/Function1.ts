@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { changedFlag, CHANGED, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { diffFlag, TFLAG_DIFF, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
@@ -37,8 +37,8 @@ export abstract class Function1<T extends U> extends FunctionVarArgs {
         if (m) {
             const $ = this.$;
             const [flags, arg] = $.transform(m.arg);
-            if (changedFlag(flags)) {
-                return [CHANGED, $.valueOf(makeList(m.opr, arg))];
+            if (diffFlag(flags)) {
+                return [TFLAG_DIFF, $.valueOf(makeList(m.opr, arg))];
             }
             else {
                 return this.transform1(m.opr, m.arg, m);

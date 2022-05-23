@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, makeList, U } from "../../tree/tree";
@@ -26,7 +26,7 @@ class Op extends Function2<BCons<Sym, U, U>, U> implements Operator<Cons> {
         const y = rhs;
         const xy = makeList(MATH_OUTER, x, y);
         const axy = makeList(MATH_MUL, a, xy);
-        return [CHANGED, axy];
+        return [TFLAG_DIFF, axy];
     }
 }
 

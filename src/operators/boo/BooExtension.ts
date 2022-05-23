@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, NOFLAGS, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_BOO } from "../../hashing/hash_info";
 import { Boo, True } from "../../tree/boo/Boo";
 import { U } from "../../tree/tree";
@@ -25,7 +25,7 @@ export class BooExtension implements Extension<Boo> {
     }
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Boo) {
-            return [STABLE, expr];
+            return [TFLAG_HALT, expr];
         }
         else {
             return [NOFLAGS, expr];

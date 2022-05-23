@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
@@ -34,15 +34,15 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const $ = this.$;
         const wedge = lhs.__wedge__(rhs);
         if (is_blade(wedge)) {
-            return [CHANGED, $.valueOf(makeList(MATH_MUL, negOne, wedge.dual()))];
+            return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, negOne, wedge.dual()))];
         }
         if (is_rat(wedge)) {
-            return [CHANGED, wedge];
+            return [TFLAG_DIFF, wedge];
         }
         if (is_cons(wedge) && is_mul_2_blade_rat(wedge)) {
             const bld = wedge.lhs;
             const num = wedge.rhs;
-            return [CHANGED, $.valueOf(makeList(MATH_MUL, negOne.mul(num), bld.dual()))];
+            return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, negOne.mul(num), bld.dual()))];
         }
         // Other possibilities...
         // Rat * Blade

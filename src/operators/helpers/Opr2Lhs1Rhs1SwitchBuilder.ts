@@ -1,5 +1,5 @@
 import { compare } from "../../calculators/compare/compare";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
@@ -44,9 +44,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const argR = rhs.arg;
         switch (compare(argL, argR)) {
             case SIGN_GT: {
-                return [CHANGED, $.valueOf(makeList(opr, orig.rhs, orig.lhs))];
+                return [TFLAG_DIFF, $.valueOf(makeList(opr, orig.rhs, orig.lhs))];
             }
         }
-        return [STABLE, orig];
+        return [TFLAG_HALT, orig];
     }
 }

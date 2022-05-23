@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_BLADE } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -37,7 +37,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const b1b2 = b1.mul(b2);
         const X = rhs.rhs;
         const S = $.valueOf(makeList(MATH_MUL, b1b2, X));
-        return [CHANGED, S];
+        return [TFLAG_DIFF, S];
     }
 }
 

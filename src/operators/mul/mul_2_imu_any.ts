@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -32,7 +32,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
-        return [CHANGED, $.valueOf(makeList(opr, rhs, lhs))];
+        return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
     }
 }
 

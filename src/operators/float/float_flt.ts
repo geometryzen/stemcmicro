@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Flt } from "../../tree/flt/Flt";
 import { is_flt } from "../../tree/flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
@@ -16,7 +16,7 @@ class FloatFlt extends Function1<Flt> implements Operator<U> {
         super('float_flt', new Sym('float'), is_flt, $);
     }
     transform1(opr: Sym, arg: Flt): [TFLAGS, U] {
-        return [CHANGED, arg];
+        return [TFLAG_DIFF, arg];
     }
 }
 

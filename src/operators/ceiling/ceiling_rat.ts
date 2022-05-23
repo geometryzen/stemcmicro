@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -16,7 +16,7 @@ class CeilingRat extends Function1<Rat> implements Operator<U> {
         super('ceiling_rat', new Sym('ceiling'), is_rat, $);
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
-        return [CHANGED, arg.ceiling()];
+        return [TFLAG_DIFF, arg.ceiling()];
     }
 }
 

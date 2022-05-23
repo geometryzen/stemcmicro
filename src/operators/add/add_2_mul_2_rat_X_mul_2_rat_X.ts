@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -40,7 +40,7 @@ class Op extends Function2X<BCons<Sym, Rat, U>, BCons<Sym, Rat, U>> implements O
         const q = rhs.lhs;
         const pq = p.add(q);
         const retval = $.valueOf(makeList(MATH_MUL, pq, X));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

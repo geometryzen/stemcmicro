@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { is_num } from "../../predicates/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -36,7 +36,7 @@ class Op extends Function2X<Num, U> implements Operator<BCons<Sym, Num, U>> {
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_ANY);
     }
     transform2(opr: Sym, lhs: Num, rhs: U): [TFLAGS, U] {
-        return [CHANGED, rhs];
+        return [TFLAG_DIFF, rhs];
     }
 }
 

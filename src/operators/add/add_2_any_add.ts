@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -27,7 +27,7 @@ class AddAnyAdd extends Function2<U, Cons> implements Operator<Cons> {
     }
     transform2(opr: Sym, lhs: U, rhs: Cons): [TFLAGS, U] {
         const $ = this.$;
-        return [CHANGED, $.valueOf(makeList(opr, lhs, ...rhs.tail()))];
+        return [TFLAG_DIFF, $.valueOf(makeList(opr, lhs, ...rhs.tail()))];
     }
 }
 

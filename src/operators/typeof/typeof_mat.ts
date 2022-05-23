@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_tensor } from "../../tree/tensor/is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
@@ -19,7 +19,7 @@ class TypeofAny extends Function1<Tensor> implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Tensor<U>, expr: UCons<Sym, Tensor<U>>): [TFLAGS, U] {
-        return [CHANGED, TYPE_NAME_TENSOR];
+        return [TFLAG_DIFF, TYPE_NAME_TENSOR];
     }
 }
 

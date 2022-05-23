@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, FEATURE, NOFLAGS, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, NOFLAGS, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
 import { U } from "../../tree/tree";
 import { bitCount } from "../../tree/vec/bitCount";
@@ -114,7 +114,7 @@ class BladeExtension implements Extension<Blade> {
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_blade(expr)) {
-            return [STABLE, expr];
+            return [TFLAG_HALT, expr];
         }
         return [NOFLAGS, expr];
     }

@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_POW } from "../../runtime/ns_math";
@@ -26,7 +26,7 @@ class SqrtRat extends Function1<Rat> implements Operator<Cons> {
         this.hash = hash_unaop_atom(MATH_SQRT, HASH_RAT);
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
-        return [CHANGED, this.$.valueOf(makeList(MATH_POW, arg, half))];
+        return [TFLAG_DIFF, this.$.valueOf(makeList(MATH_POW, arg, half))];
     }
 }
 

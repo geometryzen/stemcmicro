@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
@@ -18,7 +18,7 @@ class ConjImaginaryUnit extends Function1<U> implements Operator<U> {
         super('conj_imu', MATH_CONJ, is_imu, $);
     }
     transform1(opr: Sym, arg: U): [TFLAGS, U] {
-        return [CHANGED, makeList(MATH_MUL, negOne, arg)];
+        return [TFLAG_DIFF, makeList(MATH_MUL, negOne, arg)];
     }
 }
 

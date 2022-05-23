@@ -1,6 +1,6 @@
 
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -32,11 +32,11 @@ class Op extends Function2<Sym, Rat> implements Operator<BCons<Sym, Sym, Rat>> {
     }
     transform2(opr: Sym, lhs: Sym, rhs: Rat): [TFLAGS, U] {
         if (rhs.isZero()) {
-            return [CHANGED, lhs];
+            return [TFLAG_DIFF, lhs];
         }
         else {
             const $ = this.$;
-            return [CHANGED, $.valueOf(makeList(opr, rhs, lhs))];
+            return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
         }
     }
 }

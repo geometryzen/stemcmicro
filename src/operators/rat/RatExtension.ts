@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, Extension, ExtensionEnv, NOFLAGS, STABLE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, Extension, ExtensionEnv, NOFLAGS, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { defs } from '../../runtime/defs';
 import { flt } from '../../tree/flt/Flt';
 import { one, Rat } from "../../tree/rat/Rat";
@@ -74,10 +74,10 @@ class RatExtension implements Extension<Rat> {
         if (expr instanceof Rat) {
             // console.lg(`RatExtension.transform ${expr}`);
             if (defs.evaluatingAsFloats) {
-                return [CHANGED, flt(expr.toNumber())];
+                return [TFLAG_DIFF, flt(expr.toNumber())];
             }
             else {
-                return [STABLE, expr];
+                return [TFLAG_HALT, expr];
             }
         }
         return [NOFLAGS, expr];

@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
@@ -52,7 +52,7 @@ class Implicator extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
-        return [CHANGED, $.valueOf(makeList(this.opr, ...lhs.tail(), rhs))];
+        return [TFLAG_DIFF, $.valueOf(makeList(this.opr, ...lhs.tail(), rhs))];
     }
 }
 

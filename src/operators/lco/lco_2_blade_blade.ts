@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_LCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -20,7 +20,7 @@ class Op extends Function2<Blade, Blade> implements Operator<Cons> {
         super('lco_2_blade_blade', MATH_LCO, is_blade, is_blade, $);
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
-        return [CHANGED, lhs.__lshift__(rhs)];
+        return [TFLAG_DIFF, lhs.__lshift__(rhs)];
     }
 }
 

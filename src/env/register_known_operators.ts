@@ -110,7 +110,7 @@ import { float_mul_2_flt_sym } from '../operators/float/float_mul_2_flt_sym';
 import { float_rat } from '../operators/float/float_rat';
 import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
-import { op_flt, is_flt } from '../operators/flt/FltExtension';
+import { is_flt, op_flt } from '../operators/flt/FltExtension';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hyp } from '../operators/hyp/HypExtension';
@@ -174,6 +174,7 @@ import { mul_2_mul_2_rat_any_mul_2_rat_any } from '../operators/mul/mul_2_mul_2_
 import { mul_2_mul_2_rat_sym_sym } from '../operators/mul/mul_2_mul_2_rat_sym_sym';
 import { mul_2_mul_2_sym_imu_sym } from '../operators/mul/mul_2_mul_2_sym_imu_sym';
 import { mul_2_one_any } from '../operators/mul/mul_2_one_any';
+import { mul_2_pow_2_sym_any_pow_2_sym_any } from '../operators/mul/mul_2_pow_2_sym_any_pow_2_sym_any';
 import { mul_2_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_pow_2_xxx_rat_xxx } from '../operators/mul/mul_2_pow_2_xxx_rat_xxx';
 import { mul_2_pow_2_zzz_rat_aaa } from '../operators/mul/mul_2_pow_2_zzz_rat_aaa';
@@ -205,6 +206,7 @@ import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_ra
 import { nil } from '../operators/nil/NilExtension';
 import { not_fn } from '../operators/not/not_fn';
 import { number_fn } from '../operators/number/number_fn';
+import { numerator_fn } from '../operators/numerator/numerator_fn';
 import { or_fn } from '../operators/or/or_fn';
 import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
 import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_any';
@@ -228,6 +230,7 @@ import { pred_rat } from '../operators/pred/pred_rat';
 import { printlist_1_any } from '../operators/printlist/printlist_1_any';
 import { printlist_keyword } from '../operators/printlist/printlist_keyword';
 import { is_rat, rat } from '../operators/rat/RatExtension';
+import { rationalize_fn } from '../operators/rationalize/rationalize_fn';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
@@ -479,6 +482,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     // Distribution Laws in Factoring direction for symmetric and left-associated.
     // This concept should have an abstraction. 
     $.defineOperator(mul_2_pow_2_xxx_any_pow_2_xxx_any);
+    $.defineOperator(mul_2_pow_2_sym_any_pow_2_sym_any);
     $.defineOperator(mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any);
 
     $.defineOperator(mul_2_any_mul_2_any_any);
@@ -617,6 +621,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(not_fn);
     $.defineOperator(number_fn);
+    $.defineOperator(numerator_fn);
     $.defineOperator(or_fn);
 
     $.defineOperator(pred_rat);
@@ -624,6 +629,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(printlist_1_any);
     $.defineOperator(printlist_keyword);
+    $.defineOperator(rationalize_fn);
 
     $.defineOperator(script_last_0);
 

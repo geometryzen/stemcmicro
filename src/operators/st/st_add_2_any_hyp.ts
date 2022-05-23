@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
@@ -41,7 +41,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         const $ = this.$;
         const a = arg.lhs;
         const retval = $.valueOf(makeList(MATH_STANDARD_PART, a));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

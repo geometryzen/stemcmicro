@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_STR, hash_unaop_atom } from "../../hashing/hash_info";
 import { Str } from "../../tree/str/Str";
 import { Sym } from "../../tree/sym/Sym";
@@ -23,7 +23,7 @@ class UomStr extends Function1<Str> implements Operator<Cons> {
         this.hash = hash_unaop_atom(new Sym('uom'), HASH_STR);
     }
     transform1(opr: Sym, arg: Str): [TFLAGS, U] {
-        return [CHANGED, uom(arg.str)];
+        return [TFLAG_DIFF, uom(arg.str)];
     }
 }
 

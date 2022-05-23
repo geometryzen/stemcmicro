@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -44,7 +44,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         const sacb = $.valueOf(makeList(MATH_MUL, sinA, cosB));
         const casb = $.valueOf(makeList(MATH_MUL, cosA, sinB));
         const retval = $.valueOf(makeList(MATH_ADD, sacb, casb));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

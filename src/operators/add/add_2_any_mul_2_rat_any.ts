@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -33,12 +33,12 @@ class Op extends Function2X<U, BCons<Sym, Rat, U>> implements Operator<Cons> {
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Rat, Sym>): [TFLAGS, U] {
         const succ = rhs.lhs.succ();
         if (succ.isZero()) {
-            return [CHANGED, zero];
+            return [TFLAG_DIFF, zero];
         }
         if (succ.isOne()) {
-            return [CHANGED, lhs];
+            return [TFLAG_DIFF, lhs];
         }
-        return [CHANGED, makeList(rhs.opr, succ, lhs)];
+        return [TFLAG_DIFF, makeList(rhs.opr, succ, lhs)];
     }
 }
 

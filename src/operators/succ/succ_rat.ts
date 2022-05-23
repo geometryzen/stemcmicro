@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -18,7 +18,7 @@ class SuccRat extends Function1<Rat> implements Operator<U> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Rat, expr: UCons<Sym, Rat>): [TFLAGS, U] {
-        return [CHANGED, arg.succ()];
+        return [TFLAG_DIFF, arg.succ()];
     }
 }
 

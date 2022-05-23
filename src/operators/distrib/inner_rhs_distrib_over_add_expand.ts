@@ -1,6 +1,6 @@
 
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_INNER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -45,7 +45,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const ac = makeList(opr, a, c);
         const bc = makeList(opr, b, c);
         const retval = makeList(lhs.opr, ac, bc);
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

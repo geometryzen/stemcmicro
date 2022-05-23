@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, changedFlag, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, diffFlag, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
@@ -76,8 +76,8 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
                 throw new Error(`changedR = ${changedR} newExpr=${rhs} oldExpr=${m.rhs}`);
             }
             */
-            if (changedFlag(flagsL) || changedFlag(flagsR)) {
-                return [CHANGED, $.valueOf(makeList(m.opr, lhs, rhs))];
+            if (diffFlag(flagsL) || diffFlag(flagsR)) {
+                return [TFLAG_DIFF, $.valueOf(makeList(m.opr, lhs, rhs))];
             }
             else {
                 return this.transform2(m.opr, m.lhs, m.rhs, m);

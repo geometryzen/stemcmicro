@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -16,7 +16,7 @@ class FloatCons extends Function1<Cons> implements Operator<U> {
         super('float_cons', new Sym('float'), is_cons, $);
     }
     transform1(opr: Sym, arg: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
-        return [CHANGED, yyfloat(expr, this.$)];
+        return [TFLAG_DIFF, yyfloat(expr, this.$)];
     }
 }
 

@@ -1,5 +1,5 @@
 
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -21,7 +21,7 @@ class Op extends Function2<Blade, Blade> implements Operator<Cons> {
         super('inner_2_vec_vec', MATH_INNER, is_blade, is_blade, $);
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
-        return [CHANGED, lhs.scp(rhs)];
+        return [TFLAG_DIFF, lhs.scp(rhs)];
     }
 }
 

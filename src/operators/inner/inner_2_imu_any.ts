@@ -1,4 +1,4 @@
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_INNER, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -35,7 +35,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const negI = $.negate(i);
         const inrP = $.valueOf(makeList(opr, one, X));
         const retval = $.valueOf(makeList(MATH_MUL, negI, inrP));
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

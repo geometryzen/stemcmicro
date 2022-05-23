@@ -1,6 +1,6 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -33,7 +33,7 @@ class Op extends Function2X<Sym, Sym> implements Operator<Cons> {
         const ba = makeList(MATH_MUL, b, a);
         const abba = $.subtract(ab, ba);
         const retval = $.multiply(half, abba);
-        return [CHANGED, retval];
+        return [TFLAG_DIFF, retval];
     }
 }
 

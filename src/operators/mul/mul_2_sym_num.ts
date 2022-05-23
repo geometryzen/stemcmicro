@@ -1,6 +1,6 @@
 
 import { CostTable } from "../../env/CostTable";
-import { CHANGED, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { is_num } from "../../predicates/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -39,12 +39,12 @@ class Op extends Function2<Sym, Num> implements Operator<BCons<Sym, Sym, Num>> {
     }
     transform2(opr: Sym, lhs: Sym, rhs: Num): [TFLAGS, U] {
         if (rhs.isZero()) {
-            return [CHANGED, zero];
+            return [TFLAG_DIFF, zero];
         }
         if (rhs.isOne()) {
-            return [CHANGED, lhs];
+            return [TFLAG_DIFF, lhs];
         }
-        return [CHANGED, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
     }
 }
 

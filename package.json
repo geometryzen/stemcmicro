@@ -33,6 +33,7 @@
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-float": "mocha 'units/float.spec.ts'",
         "unit-inner": "mocha 'units/inner.spec.ts'",
+        "unit-integral": "mocha 'units/integral.spec.ts'",
         "unit-kernel": "mocha 'units/kernel.spec.ts'",
         "unit-factorize": "mocha 'units/factorize.spec.ts'",
         "unit-mul": "mocha 'units/mul.spec.ts'",

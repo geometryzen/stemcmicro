@@ -54,6 +54,10 @@ export function hash_unaop_cons(opr: Sym, arg: Sym): string {
     return `(${opr.key()} (${arg.key()}))`;
 }
 
+export function hash_nonop_cons(opr: Sym): string {
+    return `(${opr.key()})`;
+}
+
 export function hash_info(expr: U): string[] {
     const protos: string[] = [];
     const info = hash_info_at_level(expr, 0);

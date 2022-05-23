@@ -19,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
 type LHS = U;
 type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
-
+/*
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
         switch (compare_terms_redux(lhs, rhs, $)) {
@@ -35,6 +35,7 @@ function cross($: ExtensionEnv) {
         }
     };
 }
+*/
 
 /**
  * transform(X + Y) => transform(X) + transform(Y)

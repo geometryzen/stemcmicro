@@ -1,25 +1,24 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { exp } from './exp';
-import { guess } from './guess';
-import { equalq, isminusoneovertwo, is_num_and_eq_minus_one, is_one_over_two } from './is';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { derivative_wrt } from './operators/derivative/derivative_wrt';
-import { is_sym } from './operators/sym/is_sym';
-import { partition } from './partition';
-import { is_num } from './predicates/is_num';
-import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from './runtime/constants';
-import { halt } from './runtime/defs';
-import { is_add, is_multiply } from './runtime/helpers';
-import { stack_pop, stack_push } from './runtime/stack';
-import { scan_meta } from './scanner/scan';
-import { simplify } from './simplify';
-import { transform } from './transform';
-import { flt } from './tree/flt/Flt';
-import { caddr, cadr } from './tree/helpers';
-import { one } from './tree/rat/Rat';
-import { Sym } from './tree/sym/Sym';
-import { car, cdr, Cons, is_cons, NIL, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { exp } from '../../exp';
+import { guess } from '../../guess';
+import { equalq, isminusoneovertwo, is_num_and_eq_minus_one, is_one_over_two } from '../../is';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { partition } from '../../partition';
+import { is_num } from '../../predicates/is_num';
+import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from '../../runtime/constants';
+import { halt } from '../../runtime/defs';
+import { is_add, is_multiply } from '../../runtime/helpers';
+import { scan_meta } from '../../scanner/scan';
+import { simplify } from '../../simplify';
+import { transform } from '../../transform';
+import { flt } from '../../tree/flt/Flt';
+import { caddr, cadr } from '../../tree/helpers';
+import { one } from '../../tree/rat/Rat';
+import { Sym } from '../../tree/sym/Sym';
+import { car, cdr, Cons, is_cons, NIL, U } from '../../tree/tree';
+import { derivative_wrt } from '../derivative/derivative_wrt';
+import { is_sym } from '../sym/is_sym';
 
 /*
  Table of integrals
@@ -376,12 +375,23 @@ const itab: string[] = [
     'f(x**3*exp(a*x+b),exp(a*x+b)*x**3/a-3/a*integral(x**2*exp(a*x+b),x))',
 ];
 
-export function Eval_integral(p1: U, $: ExtensionEnv): void {
+export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
     let n = 0;
 
     // evaluate 1st arg to get function F
-    p1 = cdr(p1);
+    let p1 = cdr(expr);
+    /**
+     * The function to be integrated.
+     */
     let F = $.valueOf(car(p1));
+    /**
+     * The measure variable. 
+     */
+    let X: U;
+    /**
+     * The Nth integral.
+     */
+    let N: U;
 
     // evaluate 2nd arg and then...
     // example    result of 2nd arg  what to do
@@ -394,7 +404,6 @@ export function Eval_integral(p1: U, $: ExtensionEnv): void {
     p1 = cdr(p1);
 
     const p2 = $.valueOf(car(p1));
-    let N: U, X: U;
     if (NIL === p2) {
         X = guess(F);
         N = NIL;
@@ -408,6 +417,10 @@ export function Eval_integral(p1: U, $: ExtensionEnv): void {
         p1 = cdr(p1);
         N = $.valueOf(car(p1));
     }
+
+    // console.lg(`F=${F}`);
+    // console.lg(`X=${X}`);
+    // console.lg(`N=${N}`);
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -470,11 +483,11 @@ export function Eval_integral(p1: U, $: ExtensionEnv): void {
             N = $.valueOf(car(p1));
         }
     }
-
-    stack_push(F);
+    return F;
 }
 
 export function integral(F: U, X: U, $: ExtensionEnv): U {
+    // console.lg(`integral(F=${F}, X=${X})`);
     let integ: U;
     if (is_add(F)) {
         integ = integral_of_sum(F, X, $);
@@ -510,8 +523,11 @@ function integral_of_product(F: U, X: U, $: ExtensionEnv): U {
 }
 
 function integral_of_form(F: U, X: U, $: ExtensionEnv): U {
+    // console.lg(`integral_of_form(F=${F}, X=${X})`);
     const hc = italu_hashcode(F, X, $).toFixed(6);
+    // console.lg(`hc=${hc}`);
     const tab = hashed_itab[hc];
+    // console.lg(`tab=${tab}`);
     if (!tab) {
         // breakpoint
         // italu_hashcode(p1, p2)
@@ -577,10 +593,7 @@ function italu_hashcode(u: U, x: U, $: ExtensionEnv): number {
             case EXP:
                 return hash_power(exp(one, $), cadr(u), x, $);
             case SQRT: {
-                // TODO: Why the push and pop? Isn't half just a Double?
-                stack_push(flt(0.5));
-                const half = stack_pop();
-                return hash_power(cadr(u), half, x, $);
+                return hash_power(cadr(u), flt(0.5), x, $);
             }
             default:
                 return hash_function(u, x, $);

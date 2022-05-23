@@ -1,5 +1,5 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { integral } from './integral';
+import { integral } from './operators/integral/integral_helpers';
 import { stack_push } from './runtime/stack';
 import { subst } from './subst';
 import { cadr, cddr } from './tree/helpers';

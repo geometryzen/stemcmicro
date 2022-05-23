@@ -4,6 +4,9 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons } from "../../tree/tree";
 import { AbstractOperator } from "./AbstractOperator";
 
+/**
+ * An operator that matches (opr ...), with a variable number of arguments.
+ */
 export abstract class FunctionOperator extends AbstractOperator {
     public readonly key: string;
     constructor(name: string, public readonly opr: Sym, $: ExtensionEnv) {

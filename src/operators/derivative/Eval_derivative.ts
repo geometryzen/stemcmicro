@@ -1,6 +1,6 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
-import { integral } from '../../integral';
+import { integral } from '../integral/integral_helpers';
 import { nativeInt } from '../../nativeInt';
 import { is_num } from '../../predicates/is_num';
 import { Err } from '../../tree/err/Err';

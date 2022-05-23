@@ -3,9 +3,8 @@ import { decomp } from './decomp';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { is_num } from './predicates/is_num';
-import { METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
+import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
 import { DEBUG, defs, use_factoring_with_unary_function } from './runtime/defs';
-import { NAME_SCRIPT_METAA } from './runtime/ns_script';
 import { scan_meta } from './scanner/scan';
 import { subst } from './subst';
 import { caddr, cadr, cdddr, cddr } from './tree/helpers';
@@ -50,6 +49,8 @@ true is successful, false if not.
 //define C p7
 
 export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean, $: ExtensionEnv): [U, boolean] {
+    // console.lg(`transform(F=${F}, X=${X}, s=${s}, general=${generalTransform})`);
+
     if (DEBUG) {
         // eslint-disable-next-line no-console
         console.log(`         !!!!!!!!!   transform on: ${F}`);
@@ -106,7 +107,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
             // use scan_meta because the pattern is not a string
             // that we have to parse, it's a tree already.
             // replace a_ with METAA in the passed transformation
-            let expr = subst(theTransform, SYMBOL_A_UNDERSCORE, NAME_SCRIPT_METAA, $);
+            let expr = subst(theTransform, SYMBOL_A_UNDERSCORE, METAA, $);
 
             // replace b_ with METAB in the passed transformation
             expr = subst(expr, SYMBOL_B_UNDERSCORE, METAB, $);
@@ -219,7 +220,7 @@ interface TransformState {
 
 function saveMetaBindings($: ExtensionEnv): TransformState {
     return {
-        METAA: $.getBinding(NAME_SCRIPT_METAA),
+        METAA: $.getBinding(METAA),
         METAB: $.getBinding(METAB),
         METAX: $.getBinding(METAX),
     };
@@ -228,13 +229,13 @@ function saveMetaBindings($: ExtensionEnv): TransformState {
 function restoreMetaBindings(state: TransformState, $: ExtensionEnv) {
     $.setBinding(METAX, state.METAX);
     $.setBinding(METAB, state.METAB);
-    $.setBinding(NAME_SCRIPT_METAA, state.METAA);
+    $.setBinding(METAA, state.METAA);
 }
 
 // search for a METAA and METAB such that F = A
 function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: ExtensionEnv): boolean {
     for (const fea_i of stack) {
-        $.setBinding(NAME_SCRIPT_METAA, fea_i);
+        $.setBinding(METAA, fea_i);
         for (const fea_j of stack) {
             $.setBinding(METAB, fea_j);
 

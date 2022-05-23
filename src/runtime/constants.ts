@@ -176,6 +176,7 @@ export const FORCE_FIXED_PRINTOUT = new Sym('forceFixedPrintout');
 export const MAX_FIXED_PRINTOUT_DIGITS = new Sym('maxFixedPrintoutDigits');
 
 export const DRAWX = new Sym('$DRAWX');
+export const METAA = new Sym('$METAA');
 export const METAB = new Sym('$METAB');
 export const METAX = new Sym('$METAX');
 export const SECRETX = new Sym('$SECRETX');

@@ -128,6 +128,7 @@ import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
 import { inner_2_vector_mul_2_scalar_vector } from '../operators/inner/inner_2_vector_mul_2_scalar_vector';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { inner_2_vec_vec } from '../operators/inner/inner_2_vec_vec';
+import { integral_varargs } from '../operators/integral/integral_varargs';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -599,6 +600,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(index_2_mat_rat);
     $.defineOperator(index_2_any_any);
+
+    $.defineOperator(integral_varargs);
 
     $.defineOperator(iszero_rat);
     $.defineOperator(iszero_any);

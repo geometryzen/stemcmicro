@@ -1,5 +1,5 @@
 import { rational } from './bignum';
-import { denominator } from './denominator';
+import { denominator } from './operators/denominator/denominator';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, equalq, is_negative } from './is';
 import { makeList } from './makeList';

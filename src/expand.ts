@@ -1,5 +1,5 @@
 import { degree } from './degree';
-import { denominator } from './denominator';
+import { denominator } from './operators/denominator/denominator';
 import { divide_expand } from './divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factors } from './factors';

@@ -2,7 +2,7 @@ import { nativeDouble } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
 import { clockform } from './clock';
 import { condense, yycondense } from './condense';
-import { denominator } from "./denominator";
+import { denominator } from "./operators/denominator/denominator";
 import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, TFLAGS } from './env/ExtensionEnv';
 import { factor } from "./factor";
 import { areunivarpolysfactoredorexpandedform, gcd } from "./gcd";

@@ -79,6 +79,7 @@ import { cross_any_mul_2_scalar_any } from '../operators/cross/cross_any_mul_2_s
 import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
 import { cross_mul_2_scalar_any_any } from '../operators/cross/cross_mul_2_scalar_any_any';
 import { defint } from '../operators/defint/defint';
+import { denominator_fn } from '../operators/denominator/denominator_fn';
 import { derivative_2_any_any } from '../operators/derivative/derivative_2_any_any';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
@@ -593,6 +594,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(cross_any_any);
 
     $.defineOperator(defint);
+    $.defineOperator(denominator_fn);
 
     $.defineOperator(d_to_derivative);
     $.defineOperator(derivative_2_mul_any);

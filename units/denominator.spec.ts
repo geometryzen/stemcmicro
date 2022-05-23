@@ -3,34 +3,22 @@ import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("numerator", function () {
-    it("numerator(2/3)", function () {
+describe("denominator", function () {
+    it("denominator(2/3)", function () {
         const lines: string[] = [
-            `numerator(2/3)`
+            `denominator(2/3)`
         ];
         const engine = createSymEngine({ useCaretForExponentiation: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "2");
-        assert.strictEqual(print_expr(actual, $), "2");
+        assert.strictEqual(print_list(actual, $), "3");
+        assert.strictEqual(print_expr(actual, $), "3");
 
         engine.release();
     });
-    it("numerator(x)", function () {
+    it("denominator(x)", function () {
         const lines: string[] = [
-            `numerator(x)`
-        ];
-        const engine = createSymEngine({ useCaretForExponentiation: true });
-        const $ = engine.$;
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "x");
-        assert.strictEqual(print_expr(actual, $), "x");
-
-        engine.release();
-    });
-    it("numerator(1/x)", function () {
-        const lines: string[] = [
-            `numerator(1/x)`
+            `denominator(x)`
         ];
         const engine = createSymEngine({ useCaretForExponentiation: true });
         const $ = engine.$;
@@ -40,39 +28,51 @@ describe("numerator", function () {
 
         engine.release();
     });
-    it("numerator(a+b)", function () {
+    it("denominator(1/x)", function () {
         const lines: string[] = [
-            `numerator(a+b)`
+            `denominator(1/x)`
         ];
         const engine = createSymEngine({ useCaretForExponentiation: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "(+ a b)");
-        assert.strictEqual(print_expr(actual, $), "a+b");
+        assert.strictEqual(print_list(actual, $), "x");
+        assert.strictEqual(print_expr(actual, $), "x");
 
         engine.release();
     });
-    it("numerator(1/(1/a)", function () {
+    it("denominator(a+b)", function () {
         const lines: string[] = [
-            `numerator(1/(1/a))`
+            `denominator(a+b)`
         ];
         const engine = createSymEngine({ useCaretForExponentiation: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "a");
-        assert.strictEqual(print_expr(actual, $), "a");
+        assert.strictEqual(print_list(actual, $), "1");
+        assert.strictEqual(print_expr(actual, $), "1");
 
         engine.release();
     });
-    it("numerator(1/a+1/b)", function () {
+    it("denominator(1/(1/a)", function () {
         const lines: string[] = [
-            `numerator(1/a+1/b)`
+            `denominator(1/(1/a))`
         ];
         const engine = createSymEngine({ useCaretForExponentiation: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "(+ a b)");
-        assert.strictEqual(print_expr(actual, $), "a+b");
+        assert.strictEqual(print_list(actual, $), "1");
+        assert.strictEqual(print_expr(actual, $), "1");
+
+        engine.release();
+    });
+    it("denominator(1/a+1/b)", function () {
+        const lines: string[] = [
+            `denominator(1/a+1/b)`
+        ];
+        const engine = createSymEngine({ useCaretForExponentiation: true });
+        const $ = engine.$;
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "(* a b)");
+        assert.strictEqual(print_expr(actual, $), "a*b");
 
         engine.release();
     });

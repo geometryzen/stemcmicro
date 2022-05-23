@@ -1,6 +1,6 @@
 import { mp_denominator, mp_numerator } from './bignum';
 import { lt_num_num } from './calculators/compare/lt_num_num';
-import { denominator } from './denominator';
+import { denominator } from './operators/denominator/denominator';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, isfraction, isNumberOneOverSomething, is_negative_number, is_negative_term, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from './is';
 import { numerator } from './operators/numerator/numerator';

@@ -2,7 +2,7 @@ import { rational } from './bignum';
 import { coeff } from './coeff';
 import { complex_conjugate } from './complex_conjugate';
 import { yycondense } from './condense';
-import { denominator } from './denominator';
+import { denominator } from './operators/denominator/denominator';
 import { ydivisors } from './divisors';
 import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';

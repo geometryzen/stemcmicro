@@ -1,14 +1,13 @@
-import { mp_denominator } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative_term } from './is';
-import { multiply_items } from './multiply';
-import { rationalize_factoring } from './operators/rationalize/rationalize';
-import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { caddr, cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
-import { one } from './tree/rat/Rat';
-import { car, Cons, is_cons, U } from './tree/tree';
+import { mp_denominator } from '../../bignum';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { is_negative_term } from '../../is';
+import { multiply_items } from '../../multiply';
+import { rationalize_factoring } from '../rationalize/rationalize';
+import { is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { caddr, cadr } from '../../tree/helpers';
+import { is_rat } from '../../tree/rat/is_rat';
+import { one } from '../../tree/rat/Rat';
+import { car, Cons, is_cons, U } from '../../tree/tree';
 
 /* denominator =====================================================================
 
@@ -25,9 +24,8 @@ General description
 Returns the denominator of expression x.
 
 */
-export function Eval_denominator(expr: Cons, $: ExtensionEnv): void {
-    const result = denominator($.valueOf(cadr(expr)), $);
-    stack_push(result);
+export function Eval_denominator(expr: Cons, $: ExtensionEnv): U {
+    return denominator($.valueOf(cadr(expr)), $);
 }
 
 export function denominator(expr: U, $: ExtensionEnv): U {

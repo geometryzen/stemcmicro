@@ -21,7 +21,6 @@ import { Eval_cosh } from "../../cosh";
 import { Eval_decomp } from "../../decomp";
 import { define_user_function, Eval_function_reference } from "../../define";
 import { Eval_degree } from "../../degree";
-import { Eval_denominator } from "../../denominator";
 import { det } from "../../det";
 import { Eval_dirac } from "../../dirac";
 import { divisors } from "../../divisors";
@@ -67,7 +66,7 @@ import { Eval_real } from "../../real";
 import { Eval_rect } from "../../rect";
 import { Eval_roots } from "../../roots";
 import { Eval_round } from "../../round";
-import { ADJ, AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DENOMINATOR, DET, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SIMPLIFY, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
+import { ADJ, AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DET, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SIMPLIFY, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
 import { MATH_ADD, MATH_INNER, MATH_INV, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
@@ -348,9 +347,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case DEGREE:
                 Eval_degree(expr, $);
-                return stack_pop();
-            case DENOMINATOR:
-                Eval_denominator(expr, $);
                 return stack_pop();
             case DET:
                 Eval_det(expr, $);

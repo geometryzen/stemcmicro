@@ -1,4 +1,4 @@
-import { denominator } from './denominator';
+import { denominator } from './operators/denominator/denominator';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { equaln, is_negative_number } from './is';

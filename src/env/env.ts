@@ -1,7 +1,7 @@
 import { yyarg } from "../arg";
 import { divide_numbers, invert_number } from "../bignum";
 import { binop } from "../calculators/binop";
-import { denominator } from "../denominator";
+import { denominator } from "../operators/denominator/denominator";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";

@@ -3,8 +3,8 @@ import { makeList } from './makeList';
 import { is_num } from './predicates/is_num';
 import { DET } from './runtime/constants';
 import { is_square_matrix } from './tensor';
-import { Tensor } from './tree/tensor/Tensor';
 import { integer, one, zero } from './tree/rat/Rat';
+import { Tensor } from './tree/tensor/Tensor';
 import { U } from './tree/tree';
 
 /* det =====================================================================
@@ -35,22 +35,22 @@ export function det(M: Tensor, $: ExtensionEnv): U {
     };
 
     if (!is_square_matrix(M)) {
+        // console.log(`must be square M=${print_expr(M, $)}`);
         return hook(makeList(DET, M));
     }
 
     const elems = M.copyElements();
     const is_numeric = elems.every((element) => is_num(element));
     if (is_numeric) {
-        return hook(yydetg(M, $));
+        return hook(determinant_numeric(M, $));
     }
     else {
-        return hook(determinant(elems, M.dim(0), $));
+        return hook(determinant_symbolic(elems, M.dim(0), $));
     }
 }
 
 // determinant of n * n matrix elements on the stack
-export function determinant(elements: readonly U[], n: number, $: ExtensionEnv): U {
-
+export function determinant_symbolic(elements: readonly U[], n: number, $: ExtensionEnv): U {
     if (n === 0) {
         // The remainder of this code should do this!
         return one;
@@ -72,7 +72,7 @@ export function determinant(elements: readonly U[], n: number, $: ExtensionEnv):
     while (true) {
         let temp: U = integer(sign_);
         for (let i = 0; i < n; i++) {
-            const k = n * a[i] + i;
+            const k = (n * a[i] + i);
             temp = $.multiply(temp, elements[k]); // FIXME -- problem here
         }
 
@@ -119,33 +119,14 @@ export function determinant(elements: readonly U[], n: number, $: ExtensionEnv):
     return outerTemp;
 }
 
-//-----------------------------------------------------------------------------
-//
-//  Input:    Matrix on stack
-//
-//  Output:    Determinant on stack
-//
-//  Note:
-//
-//  Uses Gaussian elimination which is faster for numerical matrices.
-//
-//  Gaussian Elimination works by walking down the diagonal and clearing
-//  out the columns below it.
-//
-//-----------------------------------------------------------------------------
-/*
-function detg() {
-  const p1 = pop() as Tensor;
-  if (!is_square_matrix(p1)) {
-    push(makeList(DET, p1));
-    return;
-  }
-
-  push(yydetg(p1));
-}
-*/
-
-function yydetg(m: Tensor, $: ExtensionEnv): U {
+/**
+ * Uses Gaussian elimination which is faster for numerical matrices.
+ * 
+ * @param m 
+ * @param $ 
+ * @returns 
+ */
+function determinant_numeric(m: Tensor, $: ExtensionEnv): U {
     const n = m.dim(0);
     const elements = m.copyElements();
     const decomp = lu_decomp(elements, n, $);

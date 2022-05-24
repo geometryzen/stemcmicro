@@ -1,4 +1,4 @@
-import { determinant } from './det';
+import { determinant_symbolic } from './det';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
@@ -61,7 +61,7 @@ export function cofactor<T extends U>(m: Tensor<T>, row: number, col: number, $:
     }
     // console.lg(`elements => ${items_to_infix(elements, $)}`)
 
-    const det = determinant(elements, n - 1, $);
+    const det = determinant_symbolic(elements, n - 1, $);
     if ((row + col) % 2) {
         return hook($.negate(det));
     }

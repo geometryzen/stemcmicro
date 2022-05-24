@@ -1,4 +1,3 @@
-import { Eval_adj } from "../../adj";
 import { Eval_approxratio } from "../../approxratio";
 import { Eval_arccosh } from "../../arccosh";
 import { Eval_arcsinh } from "../../arcsinh";
@@ -21,7 +20,6 @@ import { Eval_cosh } from "../../cosh";
 import { Eval_decomp } from "../../decomp";
 import { define_user_function, Eval_function_reference } from "../../define";
 import { Eval_degree } from "../../degree";
-import { det } from "../../det";
 import { Eval_dirac } from "../../dirac";
 import { divisors } from "../../divisors";
 import { Eval_eigen, Eval_eigenval, Eval_eigenvec } from "../../eigen";
@@ -44,7 +42,7 @@ import { hermite } from "../../hermite";
 import { hilbert } from "../../hilbert";
 import { Eval_imag } from "../../imag";
 import { Eval_inner } from "../../inner";
-import { inv, invg } from "../../inv";
+import { invg } from "../../inv";
 import { Eval_isprime } from "../../isprime";
 import { is_rat_integer } from "../../is_rat_integer";
 import { Eval_laguerre } from "../../laguerre";
@@ -66,9 +64,9 @@ import { Eval_real } from "../../real";
 import { Eval_rect } from "../../rect";
 import { Eval_roots } from "../../roots";
 import { Eval_round } from "../../round";
-import { ADJ, AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DET, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
+import { AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, REAL, ROOTS, ROUND, SGN, SHAPE, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
-import { MATH_ADD, MATH_INNER, MATH_INV, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_INNER, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { Eval_arccos } from "../../scripting/eval_arccos";
@@ -107,7 +105,7 @@ import { is_sym } from "../sym/is_sym";
 /**
  * Cons, like Sym is actually fundamental to the tree (not an Extension).
  * However, this is defined so that extensions can define operators with Cons.
- * e.g. Defining operator * (Mat, Cons) would allow Cons expressions to multiply Mat elements.
+ * e.g. Defining operator * (Tensor, Cons) would allow Cons expressions to multiply Tensor elements.
  * TODO: It may be possible to register this as an Extension, but we don't do it for now.
  * There may be some advantages in registering it as an extension. e.g. We could explicitly
  * define where Cons appears when sorting elements. Also, less special-case code for Cons. 
@@ -260,10 +258,6 @@ class ConsExtension implements Extension<Cons> {
             case MATH_ADD: {
                 throw new Error();
             }
-            case ADJ: {
-                Eval_adj(expr, $);
-                return stack_pop();
-            }
             case AND: {
                 Eval_and(expr, $);
                 return stack_pop();
@@ -346,9 +340,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case DEGREE:
                 Eval_degree(expr, $);
-                return stack_pop();
-            case DET:
-                Eval_det(expr, $);
                 return stack_pop();
             case DIM:
                 Eval_dim(expr, $);
@@ -449,9 +440,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case MATH_INNER:
                 Eval_inner(expr, $);
-                return stack_pop();
-            case MATH_INV:
-                Eval_inv(expr, $);
                 return stack_pop();
             case INVG:
                 Eval_invg(expr, $);
@@ -682,11 +670,6 @@ function Eval_check(p1: U, $: ExtensionEnv) {
     }
 }
 
-function Eval_det(expr: Cons, $: ExtensionEnv) {
-    const arg = $.valueOf(cadr(expr)) as Tensor;
-    stack_push(det(arg, $));
-}
-
 /* dim =====================================================================
  
 Tags
@@ -805,11 +788,6 @@ function Eval_hermite(p1: U, $: ExtensionEnv) {
 
 function Eval_hilbert(p1: U, $: ExtensionEnv) {
     stack_push(hilbert($.valueOf(cadr(p1)), $));
-}
-
-function Eval_inv(expr: Cons, $: ExtensionEnv): void {
-    const arg = $.valueOf(cadr(expr));
-    stack_push(inv(arg, $));
 }
 
 function Eval_invg(p1: U, $: ExtensionEnv): void {

@@ -31,6 +31,9 @@ function equals_U_arrays(arrL: U[], arrR: U[]): boolean {
 
 /**
  * A matrix. This may be used to represent a tensor.
+ * While the syntactic representation of a tensor is that of nested arrays,
+ * the elements of the tensor are stored in a flattened manner. Presumambly,
+ * this makes things easier in the case when a Tensor is used as a square matrix.
  */
 export class Tensor<T extends U = U> extends Atom {
     /**
@@ -40,6 +43,9 @@ export class Tensor<T extends U = U> extends Atom {
     constructor(private readonly dims: number[], private readonly elems: T[], pos?: number, end?: number) {
         super('Tensor', pos, end);
     }
+    /**
+     * The number of indexing steps required to get to the lowest level.
+     */
     public get ndim() {
         return this.dims.length;
     }
@@ -65,6 +71,7 @@ export class Tensor<T extends U = U> extends Atom {
     }
     /**
      * Returns the size of the specified dimension.
+     * This is the number of elements at the specified level of nesting.
      * @param n The zero-based index of the dimension.
      */
     dim(n: number): number {
@@ -107,10 +114,10 @@ export class Tensor<T extends U = U> extends Atom {
         return this.elems.map(callbackfn);
     }
     isCons(): boolean {
-        throw new Error("Mat. Method not implemented.");
+        return false;
     }
     isNil(): boolean {
-        throw new Error("Mat. Method not implemented.");
+        return false;
     }
     sameDimensions(other: Tensor): boolean {
         if (this.ndim !== other.ndim) {
@@ -125,7 +132,6 @@ export class Tensor<T extends U = U> extends Atom {
         return this.elems.some(callbackfn);
     }
     toCtorString(): string {
-        // TODO: here we have a code smell that Mat can be mutated.
         return `${this.name}(dims = ${this.dims}, elems = ${this.elems})`;
     }
     toInfixString(): string {

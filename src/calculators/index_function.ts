@@ -1,22 +1,17 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
 import { nativeInt } from "../nativeInt";
 import { Tensor } from "../tree/tensor/Tensor";
 import { U } from "../tree/tree";
 
-/**
- * TODO: This would be better if the tensor was not part of the indices.
- * @param stack 
- * @returns 
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function index_function(stack: U[], $: ExtensionEnv): U {
-    // console.lg(`index_function ${items_to_infix(stack, $)}`);
-    const s = 0;
-    const p1: Tensor = stack[s] as Tensor;
 
-    const { ndim } = p1;
+export function index_function(tensor: Tensor, indices: U[]): U {
+    // This implementation makes it clear that we expect that the elements of the tensor are stored
+    // in a "flattened" way. That is, they don't have the structure that you might expect from the
+    // syntactic (nested) representation. What is surprising is that does not seem to align with the scanning
+    // procedure.
+    // console.log(`index_function tensor=${tensor} indices=${indices}`);
+    const { ndim } = tensor;
 
-    const m = stack.length - 1;
+    const m = indices.length;
 
     if (m > ndim) {
         throw new Error('too many indices for tensor');
@@ -25,25 +20,28 @@ export function index_function(stack: U[], $: ExtensionEnv): U {
     let k = 0;
 
     for (let i = 0; i < m; i++) {
-        const t = nativeInt(stack[s + i + 1]);
-        if (t < 1 || t > p1.dim(i)) {
+        const idx = nativeInt(indices[i]);
+        if (idx < 1 || idx > tensor.dim(i)) {
             throw new Error('index out of range');
         }
-        k = k * p1.dim(i) + t - 1;
+        // 
+        k = k * tensor.dim(i) + idx - 1;
     }
 
+    // In the case where we are accessing the tensor down to the lowest level...
     if (ndim === m) {
-        return p1.elem(k);
+        return tensor.elem(k);
     }
 
-    k = p1.sliceDimensions(m).reduce((a, b) => a * b, k);
-    const nelem = p1.sliceDimensions(m).reduce((a, b) => a * b, 1);
+    // When not going down to the lowest level, we have to create a tensor wrapper.
+    k = tensor.sliceDimensions(m).reduce((a, b) => a * b, k);
+    const nelem = tensor.sliceDimensions(m).reduce((a, b) => a * b, 1);
 
-    const dims = p1.sliceDimensions(m);
+    const dims = tensor.sliceDimensions(m);
     const elems = new Array<U>(nelem);
 
     for (let i = 0; i < nelem; i++) {
-        elems[i] = p1.elem(k + i);
+        elems[i] = tensor.elem(k + i);
     }
 
     return new Tensor(dims, elems);

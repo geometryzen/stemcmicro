@@ -190,12 +190,13 @@ export function promote_tensor(p1: U): U {
     const dims = [...p1.copyDimensions(), ...p2.copyDimensions()];
     throw new Error("TODO: promote_tensor");
     // Not sure why this doesn't compile.
+    // TODO: I have since learned that the elements of the tensor are flattened.
     /*
     const elems = [].concat(
-      ...p1.mapElements((el: Mat) => el.copyElements())
+      ...p1.mapElements((el: Tensor) => el.copyElements())
     );
   
-    return new Mat(dims, elems);
+    return new Tensor(dims, elems);
     */
 }
 

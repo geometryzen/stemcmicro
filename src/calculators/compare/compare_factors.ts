@@ -4,6 +4,7 @@ import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
 import { print_expr } from "../../print";
 import { is_rat } from "../../tree/rat/is_rat";
+import { is_tensor } from "../../tree/tensor/is_tensor";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 import { compare } from "./compare";
@@ -48,6 +49,14 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
     else if (is_hyp(lhs)) {
         if (is_hyp(rhs)) {
+            return SIGN_EQ;
+        }
+        else {
+            throw new Error(`lhs: Hyp = ${lhs}, rhs = ${rhs}`);
+        }
+    }
+    else if (is_tensor(lhs)) {
+        if (is_tensor(rhs)) {
             return SIGN_EQ;
         }
         else {

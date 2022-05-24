@@ -56,6 +56,7 @@
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",
         "unit-sqrt": "mocha 'units/sqrt.spec.ts'",
+        "unit-tensor": "mocha 'units/tensor.spec.ts'",
         "unit-tree": "mocha 'units/tree.spec.ts'",
         "unit-trie": "mocha 'units/Trie.spec.ts'",
         "unit-trig": "mocha 'units/trig.spec.ts'",

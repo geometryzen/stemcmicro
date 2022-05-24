@@ -51,6 +51,7 @@ import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
 import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
 import { add_2_zzz_mul_2_rat_aaa } from '../operators/add/add_2_zzz_mul_2_rat_aaa';
+import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { op_arcsin } from '../operators/arcsin/op_arcsin';
 import { assign_any_any } from '../operators/assign/assign_any_any';
@@ -84,6 +85,7 @@ import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_a
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
 import { derivative_fn } from '../operators/derivative/derivative_fn';
 import { d_to_derivative } from '../operators/derivative/d_to_derivative';
+import { det_any } from '../operators/det/det_any';
 import { factorize_lhs_distrib } from '../operators/distrib/factorize_lhs_distrib';
 import { inner_lhs_distrib_over_add_expand } from '../operators/distrib/inner_lhs_distrib_over_add_expand';
 import { inner_rhs_distrib_over_add_expand } from '../operators/distrib/inner_rhs_distrib_over_add_expand';
@@ -115,8 +117,7 @@ import { is_flt, op_flt } from '../operators/flt/FltExtension';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hyp } from '../operators/hyp/HypExtension';
-import { index_2_any_any } from '../operators/index/index_2_any_any';
-import { index_2_mat_rat } from '../operators/index/index_2_mat_rat';
+import { index_varargs } from '../operators/index/index_varargs';
 import { inner } from '../operators/inner/inner';
 import { inner_2_any_any } from '../operators/inner/inner_2_any_any';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
@@ -132,6 +133,7 @@ import { inner_2_vector_mul_2_scalar_vector } from '../operators/inner/inner_2_v
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { inner_2_vec_vec } from '../operators/inner/inner_2_vec_vec';
 import { integral } from '../operators/integral/integral';
+import { inv_any } from '../operators/inv/inv_any';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -571,6 +573,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(abs_any);
     $.setCost(MATH_ABS, 4);
 
+    $.defineOperator(adj_any);
+
     $.defineOperator(algebra_2_tensor_tensor);
 
     $.defineOperator(op_arcsin);
@@ -605,6 +609,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     // $.defineOperator(derivative_2_any_any);
     $.defineOperator(derivative_fn);
 
+    $.defineOperator(det_any);
+
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
     $.defineOperator(exp_any);
@@ -617,10 +623,10 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(float_flt);
     $.defineOperator(float_rat);
 
-    $.defineOperator(index_2_mat_rat);
-    $.defineOperator(index_2_any_any);
+    $.defineOperator(index_varargs);
 
     $.defineOperator(integral);
+    $.defineOperator(inv_any);
 
     $.defineOperator(iszero_rat);
     $.defineOperator(iszero_any);

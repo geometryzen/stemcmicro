@@ -4,24 +4,26 @@ import { cadnr } from '../src/calculators/cadnr';
 import { makeList } from '../src/makeList';
 import { is_sym } from '../src/operators/sym/is_sym';
 import { ASSIGN, QUOTE } from '../src/runtime/constants';
-import { MATH_ADD, MATH_COMPONENT, MATH_EQ, MATH_OUTER, MATH_GE, MATH_GT, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_POW, MATH_RCO, MATH_INNER } from '../src/runtime/ns_math';
+import { MATH_ADD, MATH_COMPONENT, MATH_EQ, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
 import { create_source_trees, ScanOptions } from '../src/scanner/create_source_tree';
 import { Boo } from '../src/tree/boo/Boo';
 import { is_boo } from '../src/tree/boo/is_boo';
 import { Flt } from '../src/tree/flt/Flt';
 import { is_flt } from '../src/tree/flt/is_flt';
-import { is_tensor } from '../src/tree/tensor/is_tensor';
 import { is_rat } from '../src/tree/rat/is_rat';
 import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
 import { is_str } from '../src/tree/str/is_str';
 import { Str } from '../src/tree/str/Str';
 import { Sym } from '../src/tree/sym/Sym';
+import { is_tensor } from '../src/tree/tensor/is_tensor';
 import { Cons, is_cons, U } from '../src/tree/tree';
 
 const NAME_A = new Sym('a');
 const NAME_B = new Sym('b');
 const NAME_C = new Sym('c');
 const NAME_D = new Sym('d');
+const NAME_E = new Sym('e');
+const NAME_F = new Sym('f');
 const NAME_ABC = new Sym('abc');
 const NAME_FOO = new Sym('foo');
 
@@ -402,25 +404,19 @@ describe("scan", function () {
         expect_sym(cadnr(powExpr, 2), NAME_C, 'c', 11, 12);
     });
     it("tensor", function () {
-        const expr = expect_one_tree(" [ [ a , b ] , [ c , d ] ] ");
-        if (is_tensor(expr)) {
-            const M = expr;
-            const lhs = M.elem(0);
-            if (is_tensor(lhs)) {
-                expect_sym(lhs.elem(0), NAME_A, 'a', 5, 6);
-                expect_sym(lhs.elem(1), NAME_B, 'b', 9, 10);
-            }
-            else {
-                assert.fail();
-            }
-            const rhs = M.elem(1);
-            if (is_tensor(rhs)) {
-                expect_sym(rhs.elem(0), NAME_C, 'c', 17, 18);
-                expect_sym(rhs.elem(1), NAME_D, 'd', 21, 22);
-            }
-            else {
-                assert.fail();
-            }
+        // The elements of the tensor should be flattened, and the
+        // dimensions should be recorded correctly.  
+        const M = expect_one_tree(" [ [ a , b ] , [ c , d ], [ e, f ] ] ");
+        if (is_tensor(M)) {
+            assert.strictEqual(M.ndim, 2);
+            assert.strictEqual(M.dim(0), 3);
+            assert.strictEqual(M.dim(1), 2);
+            expect_sym(M.elem(0), NAME_A, 'a', 5, 6);
+            expect_sym(M.elem(1), NAME_B, 'b', 9, 10);
+            expect_sym(M.elem(2), NAME_C, 'c', 17, 18);
+            expect_sym(M.elem(3), NAME_D, 'd', 21, 22);
+            expect_sym(M.elem(4), NAME_E, 'e', 28, 29);
+            expect_sym(M.elem(5), NAME_F, 'f', 31, 32);
         }
         else {
             assert.fail();

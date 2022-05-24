@@ -1,8 +1,6 @@
 import { assert_sym } from '../operators/sym/assert_sym';
 import {
-    FACTORIAL,
-    ASSIGN,
-    PATTERN,
+    ASSIGN, FACTORIAL, PATTERN,
     predefinedSymbolsInGlobalScope_doNotTrackInDependencies,
     QUOTE,
     TRANSPOSE,
@@ -11,12 +9,13 @@ import {
 import { defs } from '../runtime/defs';
 import { MATH_ADD, MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Boo } from '../tree/boo/Boo';
-import { Tensor } from '../tree/tensor/Tensor';
 import { Sym } from '../tree/sym/Sym';
+import { is_tensor } from '../tree/tensor/is_tensor';
+import { Tensor } from '../tree/tensor/Tensor';
 import { makeList, NIL, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
-import { AsteriskToken, T_ASTRX_ASTRX, CaretToken, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
+import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
 import { InputState } from './InputState';
 import { inverse } from './inverse';
 import { scanner_negate } from './scanner_negate';
@@ -639,13 +638,16 @@ function scan_factor(state: InputState): U {
     return result;
 }
 
-function scan_index(lhs: U, state: InputState): U {
+function scan_index(indexable: U, state: InputState): U {
     state.expect(T_LSQB);
     state.advance();
-    const items: U[] = [MATH_COMPONENT, lhs, scan_additive_expr(state)];
-    while (state.code === T_COMMA) {
-        state.advance();
+    const items: U[] = [MATH_COMPONENT, indexable];
+    if (state.code !== T_RSQB) {
         items.push(scan_additive_expr(state));
+        while (state.code === T_COMMA) {
+            state.advance();
+            items.push(scan_additive_expr(state));
+        }
     }
     state.expect(T_RSQB);
     state.advance();
@@ -952,14 +954,16 @@ function scan_tensor(state: InputState): Tensor {
     state.expect(T_LSQB);
     state.advance();
 
-    const elements: U[] = [scan_stmt(state)];
+    const element = scan_stmt(state);
+
+    const elements: U[] = [element];
 
     while (state.code === T_COMMA) {
         state.advance();
         elements.push(scan_stmt(state));
     }
 
-    const M = build_tensor(elements);
+    const M = create_tensor(elements);
 
     state.expect(T_RSQB);
     state.advance();
@@ -967,14 +971,45 @@ function scan_tensor(state: InputState): Tensor {
     return M;
 }
 
-// There are n expressions on the stack, possibly tensors.
-//
-// This function assembles the stack expressions into a single tensor.
-//
-// For example, at the top level of the expression ((a,b),(c,d)), the vectors
-// (a,b) and (c,d) would be on the stack.
+/**
+ * Creates a Tensor from an array of elements. If the elements themselves are tensors,
+ * then that elements must be flattened, but the dimensionality recorded and incorporated
+ * into the created Tensor.
+ */
+function create_tensor(elements: U[]): Tensor {
+    if (elements.length > 0) {
+        // The dimensions of the new tensor.
+        const dims: number[] = [elements.length];
+        /**
+         * The elements of the new tensor.
+         */
+        const elems: U[] = [];
+        let seenTensor = false;
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i];
+            if (is_tensor(element)) {
+                const M = element;
+                if (seenTensor) {
+                    // Does this tensor have the same dimesions as the previous one?
+                }
+                else {
+                    for (let j = 0; j < M.ndim; j++) {
+                        dims[j + 1] = M.dim(j);
+                    }
+                    seenTensor = true;
+                }
+                for (let j = 0; j < M.nelem; j++) {
+                    elems.push(M.elem(j));
+                }
+            }
+            else {
+                elems.push(element);
+            }
 
-function build_tensor(elements: U[]): Tensor {
-    const dims = [elements.length];
-    return new Tensor(dims, elements);
+        }
+        return new Tensor(dims, elems);
+    }
+    else {
+        return new Tensor([0], []);
+    }
 }

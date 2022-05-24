@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { createSymEngine, is_mat } from '../index';
+import { createSymEngine, is_tensor } from '../index';
 import { is_vec } from '../src/tree/vec/Algebra';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
@@ -37,8 +37,8 @@ describe("algebra", function () {
             });
             const $ = engine.$;
             const G30 = assert_one_value_execute(lines.join('\n'), engine);
-            assert.isTrue(is_mat(G30));
-            if (is_mat(G30)) {
+            assert.isTrue(is_tensor(G30));
+            if (is_tensor(G30)) {
                 assert.strictEqual(G30.ndim, 1);
                 assert.strictEqual(G30.dim(0), 3);
                 const e1 = G30.elem(0);

@@ -150,7 +150,7 @@ function abs_legacy(x: U, $: ExtensionEnv): U {
         }
     }
 
-    // TODO: This can be generalized e.g. to Mat, Vec.
+    // TODO: This can be generalized e.g. to Tensor, Vec.
     // abs(x) = sqrt(x*x), so we should ask if x squares to 1.
     // If it does, return a one of the same shape.
     // const xx = square(expr,$)

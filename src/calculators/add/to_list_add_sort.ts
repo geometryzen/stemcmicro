@@ -32,7 +32,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
         const a = terms[i];
         const b = terms[i + 1];
 
-        // TODO: Generalize here after understanding the issues for Mat and Num
+        // TODO: Generalize here after understanding the issues for Tensor and Num
         if (is_tensor(a) && is_tensor(b)) {
             const sum = $.add(a, b);
             // TODO: Why don't we handle zero like we do for Num below?

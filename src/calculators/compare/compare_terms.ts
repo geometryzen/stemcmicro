@@ -59,24 +59,17 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             }
         }
     }
-    // The following lines help in some cases, create looping in others.
     if (is_sym(lhs)) {
-        // console.log(`lhs: Sym compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
         const lvars = free_vars(lhs, $);
         const rvars = free_vars(rhs, $);
         const retval = compare_vars_vars(lvars, rvars);
-        // console.log(`lhs: Sym compare_terms_redux ${JSON.stringify(lvars)} ${JSON.stringify(rvars)} ${retval}`);
         return retval;
-        // return SIGN_LT;
     }
     if (is_sym(rhs)) {
-        // console.log(`rhs: Sym compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
         const lvars = free_vars(lhs, $);
         const rvars = free_vars(rhs, $);
         const retval = compare_vars_vars(lvars, rvars);
-        // console.log(`rhs: Sym compare_terms_redux ${JSON.stringify(lvars)} ${JSON.stringify(rvars)} ${retval}`);
         return retval;
-        // return SIGN_GT;
     }
     if (is_blade(lhs)) {
         if (is_blade(rhs)) {
@@ -138,8 +131,13 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         // throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
         //        return compare_terms_redux(lhs.opr, rhs.opr, $);
     }
+    const lvars = free_vars(lhs, $);
+    const rvars = free_vars(rhs, $);
+    const retval = compare_vars_vars(lvars, rvars);
+    return retval;
+
     // console.log(`UNDECIDED compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
-    return SIGN_EQ;
+    // return SIGN_EQ;
 }
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {

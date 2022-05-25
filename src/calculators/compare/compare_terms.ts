@@ -1,4 +1,5 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { imu } from "../../env/imu";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
 import { is_binop } from "../../operators/helpers/is_binop";
@@ -120,7 +121,13 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
         }
         if (is_imu(rhs)) {
-            throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+            // This is really a bit imprecise.
+            if (lhs.contains(imu)) {
+                return SIGN_EQ;
+            }
+            else {
+                return SIGN_LT;
+            }
         }
         if (is_unaop(lhs) && is_binop(rhs)) {
             return SIGN_LT;

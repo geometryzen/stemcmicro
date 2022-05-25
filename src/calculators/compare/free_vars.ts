@@ -14,7 +14,15 @@ import { is_rat } from "../../tree/rat/is_rat";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { is_uom } from "../../tree/uom/is_uom";
 
+/**
+ * Determines the free variables in an expression.
+ * This may be used to order expressions canonically.
+ * This approach appears to improve reliability.
+ * This may be because it is more consistent with the results of matching.
+ */
 export function free_vars(expr: U, $: ExtensionEnv): string[] {
+    // A more accurate approach would be to delegate the task to the appropriate operator.
+    // This would properly handle things like derivatives and integrals. 
     if (is_sym(expr)) {
         return [expr.key()];
     }

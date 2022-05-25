@@ -107,7 +107,7 @@ describe("abs", function () {
         assert.strictEqual(print_expr(value, $), "x**2+y**2");
         engine.release();
     });
-    xit("abs(1+2.0*i)", function () {
+    it("abs(1+2.0*i)", function () {
         // FIXME
         const lines: string[] = [
             `implicate=0`,

@@ -35,6 +35,7 @@
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-float": "mocha 'units/float.spec.ts'",
         "unit-grad": "mocha 'units/grad.spec.ts'",
+        "unit-imu": "mocha 'units/imu.spec.ts'",
         "unit-inner": "mocha 'units/inner.spec.ts'",
         "unit-integral": "mocha 'units/integral.spec.ts'",
         "unit-kernel": "mocha 'units/kernel.spec.ts'",
@@ -156,6 +157,6 @@
         "rollup-plugin-terser": "^7.0.2",
         "ts-node": "^10.8.0",
         "typedoc": "^0.22.15",
-        "typescript": "^4.6.4"
+        "typescript": "^4.7.2"
     }
 }

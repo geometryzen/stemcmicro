@@ -165,6 +165,7 @@ import { mul_2_hyp_sym } from '../operators/mul/mul_2_hyp_sym';
 import { mul_2_imu_any } from '../operators/mul/mul_2_imu_any';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_blade_blade } from '../operators/mul/mul_2_mul_2_any_blade_blade';
+import { mul_2_mul_2_any_imu_any } from '../operators/mul/mul_2_mul_2_any_imu_any';
 import { mul_2_mul_2_any_imu_imu } from '../operators/mul/mul_2_mul_2_any_imu_imu';
 import { mul_2_mul_2_any_imu_sym } from '../operators/mul/mul_2_mul_2_any_imu_sym';
 import { mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any';
@@ -449,6 +450,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(mul_2_mul_2_num_any_rat);
     $.defineOperator(mul_2_mul_2_any_imu_imu);
+    $.defineOperator(mul_2_mul_2_any_imu_any);
     $.defineOperator(mul_2_mul_2_any_blade_blade);
     $.defineOperator(mul_2_mul_2_any_sym_imu);
     $.defineOperator(mul_2_mul_2_any_sym_sym);

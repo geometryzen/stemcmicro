@@ -1,4 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_SYM } from "../../hashing/hash_info";
 import { NAME_SCRIPT_LAST } from "../../runtime/ns_script";
 import { U } from "../../tree/tree";
 import { KeywordOperator } from "../helpers/KeywordSymbol";
@@ -16,6 +17,9 @@ class ScriptLast extends KeywordOperator {
     }
     get key(): string {
         return TYPE_NAME_SYM.name;
+    }
+    get hash(): string {
+        return HASH_SYM;
     }
     get name(): string {
         return 'ScriptLast';

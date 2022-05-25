@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_POW } from "../../runtime/ns_math";
 import { half } from "../../tree/rat/Rat";
@@ -23,8 +24,10 @@ type EXPR = UCons<Sym, ARG>;
  * sqrt(x) => (power x 1/2)
  */
 class Sqrt extends Function1<ARG> implements Operator<EXPR> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('sqrt_1_any', MATH_SQRT, is_any, $);
+        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     cost(expr: EXPR, costs: CostTable, depth: number): number {
         return super.cost(expr, costs, depth) + 1 + 1;

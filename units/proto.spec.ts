@@ -19,10 +19,10 @@ describe("hash_info", function () {
         const expr = makeList(MATH_ADD, lhs, rhs);
         const hashes = hash_info(expr);
         assert.strictEqual(hashes.length, 5);
-        assert.strictEqual(hashes[0], '(+ (|) (*))');
-        assert.strictEqual(hashes[1], '(+ (|) U)');
-        assert.strictEqual(hashes[2], '(+ U (*))');
-        assert.strictEqual(hashes[3], '(+ U U)');
-        assert.strictEqual(hashes[4], '(+)');
+        assert.strictEqual(hashes[0], '(add (|) (*))');
+        assert.strictEqual(hashes[1], '(add (|) U)');
+        assert.strictEqual(hashes[2], '(add U (*))');
+        assert.strictEqual(hashes[3], '(add U U)');
+        assert.strictEqual(hashes[4], '(add)');
     });
 });

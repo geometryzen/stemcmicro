@@ -196,7 +196,7 @@ describe("parser", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(^ a b)");
+        assert.strictEqual(print_list(tree, $), "(outer a b)");
         const value = assert_one_value(transform_tree(tree, $));
         assert.strictEqual(print_expr(value, $), "a^b");
         engine.release();

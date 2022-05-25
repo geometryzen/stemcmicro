@@ -37,8 +37,7 @@ describe("Exponentiation", function () {
         const engine = createSymEngine({ version: VERSION_ONE });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), '(^ a b)');
-        assert.strictEqual(print_list(actual, $), '(^ a b)');
+        assert.strictEqual(print_list(actual, $), '(outer a b)');
         assert.strictEqual(print_expr(actual, $), 'a^b');
         engine.release();
     });

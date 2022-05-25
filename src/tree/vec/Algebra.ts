@@ -33,7 +33,7 @@ type METRIC<T> = T | T[] | Metric<T>;
  * << Left shift (lhs is what is shifted, rhs is number of bits)
  * >> Right shift
  */
-export function is_vec<T, K>(arg: unknown): arg is Blade {
+export function is_blade<T, K>(arg: unknown): arg is Blade {
     if (typeof arg === 'object') {
         const duck = arg as BasisBlade<T, K>;
         return typeof duck.scalarCoordinate === 'function';
@@ -113,20 +113,20 @@ function promote_mask_and_weight_to_tree<T extends U, K extends U>(maw: MaskAndW
 
 function add<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | BasisBlade<T, K>, algebra: Algebra<T, K>, metric: METRIC<T>, labels: string[]): K | undefined {
     const field = algebra.field;
-    if (field.isField(lhs) && is_vec(rhs)) {
+    if (field.isField(lhs) && is_blade(rhs)) {
         const rez: MaskAndWeight<T>[] = [];
         rez.push(create_scalar_mask_and_weight(lhs, field));
         rez.push(create_vector_mask_and_weight(rhs.bitmap, field));
         return promote_blades_to_tree(combine_mask_and_weights(rez, field), algebra, metric, labels);
     }
-    else if (is_vec(lhs) && field.isField(rhs)) {
+    else if (is_blade(lhs) && field.isField(rhs)) {
         const rez: MaskAndWeight<T>[] = [];
         rez.push(create_scalar_mask_and_weight(rhs, field));
         rez.push(create_vector_mask_and_weight(lhs.bitmap, field));
         return promote_blades_to_tree(combine_mask_and_weights(rez, field), algebra, metric, labels);
     }
     else {
-        if (is_vec(lhs) && is_vec(rhs)) {
+        if (is_blade(lhs) && is_blade(rhs)) {
             const rez: MaskAndWeight<T>[] = [];
             rez.push(create_vector_mask_and_weight(lhs.bitmap, field));
             rez.push(create_vector_mask_and_weight(rhs.bitmap, field));
@@ -141,20 +141,20 @@ function add<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | Basis
 
 function sub<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | BasisBlade<T, K>, algebra: Algebra<T, K>, metric: METRIC<T>, labels: string[]): K | undefined {
     const field = algebra.field;
-    if (field.isField(lhs) && is_vec(rhs)) {
+    if (field.isField(lhs) && is_blade(rhs)) {
         const rez: MaskAndWeight<T>[] = [];
         rez.push(create_scalar_mask_and_weight(lhs, field));
         rez.push(create_vector_mask_and_weight(rhs.bitmap, field).__neg__());
         return promote_blades_to_tree(combine_mask_and_weights(rez, field), algebra, metric, labels);
     }
-    else if (is_vec(lhs) && field.isField(rhs)) {
+    else if (is_blade(lhs) && field.isField(rhs)) {
         const rez: MaskAndWeight<T>[] = [];
         rez.push(create_scalar_mask_and_weight(field.neg(rhs), field));
         rez.push(create_vector_mask_and_weight(lhs.bitmap, field));
         return promote_blades_to_tree(combine_mask_and_weights(rez, field), algebra, metric, labels);
     }
     else {
-        if (is_vec(lhs) && is_vec(rhs)) {
+        if (is_blade(lhs) && is_blade(rhs)) {
             const rez: MaskAndWeight<T>[] = [];
             rez.push(create_vector_mask_and_weight(lhs.bitmap, field));
             rez.push(create_vector_mask_and_weight(rhs.bitmap, field).__neg__());
@@ -169,16 +169,16 @@ function sub<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | Basis
 
 function mul<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | BasisBlade<T, K>, algebra: Algebra<T, K>, metric: METRIC<T>, labels: string[]): K | undefined {
     const field = algebra.field;
-    if (field.isField(lhs) && is_vec(rhs)) {
+    if (field.isField(lhs) && is_blade(rhs)) {
         const term: SumTerm<T, K> = { blade: rhs, weight: lhs };
         return promote_term_to_tree(term, field);
     }
-    else if (is_vec(lhs) && field.isField(rhs)) {
+    else if (is_blade(lhs) && field.isField(rhs)) {
         const term: SumTerm<T, K> = { blade: lhs, weight: rhs };
         return promote_term_to_tree(term, field);
     }
     else {
-        if (is_vec(lhs) && is_vec(rhs)) {
+        if (is_blade(lhs) && is_blade(rhs)) {
             const B1 = create_mask_and_weight(lhs.bitmap, field.one, field);
             const B2 = create_mask_and_weight(rhs.bitmap, field.one, field);
             if (Array.isArray(metric)) {
@@ -463,7 +463,7 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
                 return true;
             }
             else {
-                if (is_vec(other)) {
+                if (is_blade(other)) {
                     return this.bitmap === other.bitmap;
                 }
                 else {

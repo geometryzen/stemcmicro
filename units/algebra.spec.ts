@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { createSymEngine, is_tensor } from '../index';
-import { is_vec } from '../src/tree/vec/Algebra';
+import { is_blade } from '../src/tree/vec/Algebra';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("operator +", function () {
@@ -44,17 +44,17 @@ describe("algebra", function () {
                 const e1 = G30.elem(0);
                 const e2 = G30.elem(1);
                 const e3 = G30.elem(2);
-                assert.isTrue(is_vec(e1), "e1");
-                assert.isTrue(is_vec(e2), "e2");
-                assert.isTrue(is_vec(e3), "e3");
-                if (is_vec(e1)) {
+                assert.isTrue(is_blade(e1), "e1");
+                assert.isTrue(is_blade(e2), "e2");
+                assert.isTrue(is_blade(e3), "e3");
+                if (is_blade(e1)) {
                     assert.strictEqual(e1.toString(), "L1");
                 }
-                if (is_vec(e2)) {
+                if (is_blade(e2)) {
                     // Ensure that the toInfixString works also.
                     assert.strictEqual($.toInfixString(e2), "L2");
                 }
-                if (is_vec(e3)) {
+                if (is_blade(e3)) {
                     assert.strictEqual(e3.toString(), "L3");
                 }
             }

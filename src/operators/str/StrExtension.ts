@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, Sign, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, NOFLAGS, Sign, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { HASH_STR } from "../../hashing/hash_info";
 import { emptyStr, Str } from "../../tree/str/Str";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -28,6 +29,9 @@ class StrExtension implements Extension<Str> {
     }
     get key(): string {
         return emptyStr.name;
+    }
+    get hash(): string {
+        return HASH_STR;
     }
     get name(): string {
         return 'StrExtension';

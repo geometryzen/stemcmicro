@@ -69,6 +69,7 @@ import { conj_inner } from '../operators/conj/conj_inner';
 import { conj_rat } from '../operators/conj/conj_rat';
 import { conj_sym } from '../operators/conj/conj_sym';
 import { cons } from '../operators/cons/ConsExtension';
+import { contract_varargs } from '../operators/contract/contract_varargs';
 import { cos_add_2_any_any } from '../operators/cos/cos_add_2_any_any';
 import { cos_any } from '../operators/cos/cos_any';
 import { cos_hyp } from '../operators/cos/cos_hyp';
@@ -116,6 +117,7 @@ import { float_sym_pi } from '../operators/float/float_sym_pi';
 import { is_flt, op_flt } from '../operators/flt/FltExtension';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
+import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp } from '../operators/hyp/HypExtension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner } from '../operators/inner/inner';
@@ -219,6 +221,7 @@ import { outer_2_blade_blade } from '../operators/outer/outer_2_blade_blade';
 import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_scalar_any_any';
 import { outer_2_sym_outer_2_sym_sym } from '../operators/outer/outer_2_sym_outer_2_sym_sym';
 import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
+import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { pow } from '../operators/pow/pow';
 import { pow_2_any_any } from '../operators/pow/pow_2_any_any';
 import { pow_2_any_rat } from '../operators/pow/pow_2_any_rat';
@@ -234,6 +237,7 @@ import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
 import { printlist_1_any } from '../operators/printlist/printlist_1_any';
 import { printlist_keyword } from '../operators/printlist/printlist_keyword';
+import { quote_varargs } from '../operators/quote/quote_varargs';
 import { is_rat, rat } from '../operators/rat/RatExtension';
 import { rationalize_fn } from '../operators/rationalize/rationalize_fn';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
@@ -286,8 +290,8 @@ import { add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin } from '../operators/trig/a
 import { add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin } from '../operators/trig/add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin';
 import { mul_2_sin_cos } from '../operators/trig/mul_2_sin_cos';
 import { typeof_any } from '../operators/typeof/typeof_any';
-import { typeof_mat } from '../operators/typeof/typeof_mat';
-import { typeof_blade } from '../operators/typeof/typeof_vec';
+import { typeof_blade } from '../operators/typeof/typeof_blade';
+import { typeof_tensor } from '../operators/typeof/typeof_tensor';
 import { is_uom, uom } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_TAU } from '../runtime/ns_math';
@@ -554,6 +558,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     // $.defineOperator(outer_2_sym_sym_vector_antisymmetry);
     // $.defineOperator(outer_2_sym_sym_vector_to_geometric);
     $.defineOperator(outer_2_sym_sym);
+    $.defineOperator(outer_2_tensor_tensor);
     $.defineOperator(outer_2_sym_outer_2_sym_sym);
     $.defineOperator(outer_2_any_add_2_any_any);
     $.defineOperator(outer_2_any_mul_2_scalar_any);
@@ -588,6 +593,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(ceiling_flt);
     $.defineOperator(ceiling_rat);
     $.defineOperator(ceiling_any);
+
+    $.defineOperator(contract_varargs);
 
     $.defineOperator(cos_add_2_any_any);
     $.defineOperator(cos_sym);
@@ -626,6 +633,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(float_flt);
     $.defineOperator(float_rat);
 
+    $.defineOperator(hilbert_varargs);
+
     $.defineOperator(index_varargs);
 
     $.defineOperator(integral_varargs);
@@ -644,6 +653,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(printlist_1_any);
     $.defineOperator(printlist_keyword);
+    $.defineOperator(quote_varargs);
     $.defineOperator(rationalize_fn);
     $.defineOperator(roots_varargs);
 
@@ -669,7 +679,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(st_sym);
     $.defineOperator(st_any);
 
-    $.defineOperator(typeof_mat);
+    $.defineOperator(typeof_tensor);
     $.defineOperator(typeof_blade);
     $.defineOperator(typeof_any);
 

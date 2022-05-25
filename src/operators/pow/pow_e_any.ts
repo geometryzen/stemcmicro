@@ -1,5 +1,6 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
+import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_ADD, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
@@ -37,8 +38,10 @@ function is_imu_times_pi(expr: Cons) {
 
 class Op extends Function2X<Sym, U> implements Operator<BCons<Sym, Sym, U>> {
     readonly breaker = true;
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_e_any', MATH_POW, is_sym, is_any, cross, $);
+        this.hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: BCons<Sym, Sym, U>): boolean {

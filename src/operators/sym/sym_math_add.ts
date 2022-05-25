@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
-import { TFLAG_HALT, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { VERSION_ONE } from "../../runtime/version";
 import { Sym } from "../../tree/sym/Sym";
@@ -22,6 +23,9 @@ class SymMathAdd implements Operator<Sym> {
     }
     get key(): string {
         return TYPE_NAME_SYM.name;
+    }
+    get hash(): string {
+        return HASH_SYM;
     }
     get name(): string {
         return 'SymMathAdd';

@@ -1,4 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Rat, two } from "../../tree/rat/Rat";
@@ -29,8 +30,10 @@ const guardR = is_rat;
  * (b**m)**n => b**(m*n), for any positive integers m and n.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_pow_2_any_any_any', MATH_POW, guardL, guardR, $);
+        this.hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
     isZero(expr: EXP): boolean {
         const b = expr.lhs.lhs;

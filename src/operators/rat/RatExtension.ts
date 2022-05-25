@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, Extension, ExtensionEnv, NOFLAGS, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, NOFLAGS, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { HASH_RAT } from "../../hashing/hash_info";
 import { defs } from '../../runtime/defs';
 import { flt } from '../../tree/flt/Flt';
 import { one, Rat } from "../../tree/rat/Rat";
@@ -17,6 +18,9 @@ class RatExtension implements Extension<Rat> {
     }
     get key(): string {
         return one.name;
+    }
+    get hash(): string {
+        return HASH_RAT;
     }
     get name(): string {
         return 'RatExtension';

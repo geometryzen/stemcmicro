@@ -11,7 +11,7 @@ import { Sym } from "../tree/sym/Sym";
 /**
  * Addition
  */
-export const MATH_ADD = new Sym('+');
+export const MATH_ADD = new Sym('add');
 /**
  * Subtraction
  */
@@ -29,11 +29,12 @@ export const MATH_MUL = new Sym('*');
  */
 export const MATH_POW = new Sym('**');
 /**
- * The exterior or outer product.
+ * The exterior or outer product. Uses '^' as the infix operator.
  */
-export const MATH_OUTER = new Sym('^');
+export const MATH_OUTER = new Sym('outer');
 /**
  * The inner or scalar product, a map (binary operator) from two vectors in a vector space V to a field F.
+ * Uses '|' as the infix operator.
  */
 export const MATH_INNER = new Sym('|');
 

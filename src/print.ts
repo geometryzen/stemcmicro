@@ -73,7 +73,7 @@ import { is_tensor } from './tree/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, is_nil, NIL, U } from './tree/tree';
 import { is_uom } from './tree/uom/is_uom';
-import { is_vec } from './tree/vec/Algebra';
+import { is_blade } from './tree/vec/Algebra';
 
 export function get_script_last($: ExtensionEnv): U {
     return $.valueOf(NAME_SCRIPT_LAST);
@@ -1665,7 +1665,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         return str;
     }
 
-    if (is_vec(expr)) {
+    if (is_blade(expr)) {
         let str = '';
         if (defs.printMode === PRINTMODE_LATEX) {
             str += expr.toLatexString();
@@ -2084,7 +2084,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         return str;
     }
 
-    if (is_vec(expr)) {
+    if (is_blade(expr)) {
         let str = '';
         str += expr.toString();
         return str;

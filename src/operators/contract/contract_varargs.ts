@@ -1,9 +1,9 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { INTEGRAL } from "../../runtime/constants";
+import { CONTRACT } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { Eval_integral } from "./integral_helpers";
+import { Eval_contract } from "./contract";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -13,16 +13,17 @@ class Builder implements OperatorBuilder<U> {
 
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
+    readonly dependencies: FEATURE[] = [];
     constructor($: ExtensionEnv) {
-        super('integral_varargs', INTEGRAL, $);
+        super('contract', CONTRACT, $);
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_integral(expr, $);
+        const retval = Eval_contract(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const integral_varargs = new Builder();
+export const contract_varargs = new Builder();

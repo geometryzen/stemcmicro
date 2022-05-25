@@ -1,5 +1,5 @@
 import { U } from "./tree/tree";
-import { is_vec } from "./tree/vec/Algebra";
+import { is_blade } from "./tree/vec/Algebra";
 
 /**
  * Left Contraction (<<)
@@ -9,8 +9,8 @@ import { is_vec } from "./tree/vec/Algebra";
  * @returns lhs << rhs
  */
 export function lco(lhs: U, rhs: U): U {
-    if (is_vec(lhs)) {
-        if (is_vec(rhs)) {
+    if (is_blade(lhs)) {
+        if (is_blade(rhs)) {
             return lhs.__lshift__(rhs);
         }
         else {

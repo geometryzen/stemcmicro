@@ -4,17 +4,16 @@ import { makeList } from '../../makeList';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
 import { flt } from '../../tree/flt/Flt';
 import { is_flt } from '../../tree/flt/is_flt';
-import { is_tensor } from '../../tree/tensor/is_tensor';
-import { Tensor } from '../../tree/tensor/Tensor';
 import { is_rat } from '../../tree/rat/is_rat';
 import { one, Rat, two, zero } from '../../tree/rat/Rat';
 import { is_str } from '../../tree/str/is_str';
+import { is_tensor } from '../../tree/tensor/is_tensor';
+import { Tensor } from '../../tree/tensor/Tensor';
 import { cons, Cons, U } from '../../tree/tree';
 import { is_uom } from '../../tree/uom/is_uom';
 import { Adapter, SumTerm } from '../../tree/vec/Adapter';
-import { algebra, is_vec } from '../../tree/vec/Algebra';
+import { algebra, is_blade } from '../../tree/vec/Algebra';
 import { Blade } from '../../tree/vec/Blade';
-import { is_blade } from '../blade/BladeExtension';
 import { extract_grade } from './extract_grade';
 
 function blade_times_weight(blade: Blade, weight: U, $: ExtensionEnv): Cons | Blade {
@@ -124,7 +123,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         else if (is_flt(arg)) {
             return true;
         }
-        else if (is_vec(arg)) {
+        else if (is_blade(arg)) {
             return false;
         }
         else {

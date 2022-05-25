@@ -15,7 +15,6 @@ import { Eval_clear, Eval_clearall } from "../../clear";
 import { Eval_coeff } from "../../coeff";
 import { Eval_cofactor } from "../../cofactor";
 import { Eval_condense } from "../../condense";
-import { Eval_contract } from "../../contract";
 import { Eval_cosh } from "../../cosh";
 import { Eval_decomp } from "../../decomp";
 import { define_user_function, Eval_function_reference } from "../../define";
@@ -39,7 +38,6 @@ import { Eval_for } from "../../for";
 import { Eval_gamma } from "../../gamma";
 import { Eval_gcd } from "../../gcd";
 import { hermite } from "../../hermite";
-import { hilbert } from "../../hilbert";
 import { Eval_imag } from "../../imag";
 import { Eval_inner } from "../../inner";
 import { invg } from "../../inv";
@@ -63,7 +61,7 @@ import { Eval_quotient } from "../../quotient";
 import { Eval_real } from "../../real";
 import { Eval_rect } from "../../rect";
 import { Eval_round } from "../../round";
-import { AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, CONTRACT, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, HILBERT, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTE, QUOTIENT, RANK, REAL, ROUND, SGN, SHAPE, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
+import { AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SHAPE, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
 import { MATH_ADD, MATH_INNER, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
@@ -115,6 +113,9 @@ class ConsExtension implements Extension<Cons> {
         // Nothing to see here.
     }
     get key(): string {
+        return 'Cons';
+    }
+    get hash(): string {
         return 'Cons';
     }
     get name(): string {
@@ -328,9 +329,6 @@ class ConsExtension implements Extension<Cons> {
             case CONJ:
                 Eval_conjugate(expr, $);
                 return stack_pop();
-            case CONTRACT:
-                Eval_contract(expr, $);
-                return stack_pop();
             case COSH:
                 Eval_cosh(expr, $);
                 return stack_pop();
@@ -428,9 +426,6 @@ class ConsExtension implements Extension<Cons> {
             case HERMITE:
                 Eval_hermite(expr, $);
                 return stack_pop();
-            case HILBERT:
-                Eval_hilbert(expr, $);
-                return stack_pop();
             case IF:
                 Eval_if(expr, $);
                 return stack_pop();
@@ -518,9 +513,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case PRODUCT:
                 Eval_product(expr, $);
-                return stack_pop();
-            case QUOTE:
-                Eval_quote(expr);
                 return stack_pop();
             case QUOTIENT:
                 Eval_quotient(expr, $);
@@ -782,10 +774,6 @@ function Eval_hermite(p1: U, $: ExtensionEnv) {
     stack_push(hermite(arg1, arg2, $));
 }
 
-function Eval_hilbert(p1: U, $: ExtensionEnv) {
-    stack_push(hilbert($.valueOf(cadr(p1)), $));
-}
-
 function Eval_invg(p1: U, $: ExtensionEnv): void {
     const arg = $.valueOf(cadr(p1));
     stack_push(invg(arg, $));
@@ -812,11 +800,6 @@ function Eval_operator(p1: U, $: ExtensionEnv) {
     const mapped = is_cons(p1) ? p1.tail().map($.valueOf) : [];
     const result = makeList(OPERATOR, ...mapped);
     stack_push(result);
-}
-
-// quote definition
-function Eval_quote(p1: U) {
-    stack_push(cadr(p1));
 }
 
 // rank definition

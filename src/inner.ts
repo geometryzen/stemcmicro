@@ -13,7 +13,7 @@ import { is_tensor } from './tree/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { zero } from './tree/rat/Rat';
 import { car, cdr, is_cons, NIL, U } from './tree/tree';
-import { is_vec } from './tree/vec/Algebra';
+import { is_blade } from './tree/vec/Algebra';
 
 /* dot =====================================================================
 
@@ -257,7 +257,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
         if (is_tensor(p2)) {
             return hook(inner_product_of_tensors(p1, p2, $), "C");
         }
-        else if (is_vec(p2)) {
+        else if (is_blade(p2)) {
             // TODO: We really would like to have this raise an error rather than be an acceptable expresssion
             return hook(makeList(INNER, p1, p2), "D");
         }
@@ -293,12 +293,12 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
             }
         }
     }
-    else if (is_vec(p1)) {
+    else if (is_blade(p1)) {
         if (is_tensor(p2)) {
             // TODO: We really would like to have this raise an error rather than be an acceptable expresssion
             return hook(makeList(INNER, p1, p2), "K");
         }
-        else if (is_vec(p2)) {
+        else if (is_blade(p2)) {
             return hook(p1.scp(p2), "L");
         }
         else {

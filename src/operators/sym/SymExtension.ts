@@ -1,5 +1,6 @@
 import { CostTable } from "../../env/CostTable";
 import { Extension, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { HASH_SYM } from "../../hashing/hash_info";
 import { PI } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
 import { piAsDouble } from "../../tree/flt/Flt";
@@ -17,6 +18,9 @@ class SymExtension implements Extension<Sym> {
     }
     get key(): string {
         return TYPE_NAME_SYM.name;
+    }
+    get hash(): string {
+        return HASH_SYM;
     }
     get name(): string {
         return 'SymExtension';

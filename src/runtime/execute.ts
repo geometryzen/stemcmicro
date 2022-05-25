@@ -309,7 +309,7 @@ function explicate(input: U, $: ExtensionEnv): U {
     }
 }
 
-function implicate(input: U, $: ExtensionEnv): U {
+export function implicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
     $.setPhase(PHASE_IMPLICATE);
     try {

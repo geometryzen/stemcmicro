@@ -1,5 +1,4 @@
 import { degree } from './degree';
-import { denominator } from './operators/denominator/denominator';
 import { divide_expand } from './divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factors } from './factors';
@@ -9,15 +8,16 @@ import { inv } from './inv';
 import { is_plus_or_minus_one, is_poly_expanded_form } from './is';
 import { multiply, multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';
+import { denominator } from './operators/denominator/denominator';
 import { numerator } from './operators/numerator/numerator';
 import { divpoly } from './quotient';
-import { use_expanding_with_unary_function, use_expanding_with_binary_function } from './runtime/defs';
+import { use_expanding_with_binary_function, use_expanding_with_unary_function } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
+import { integer, one, zero } from './tree/rat/Rat';
 import { is_tensor } from './tree/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
-import { integer, one, zero } from './tree/rat/Rat';
 import { NIL, U } from './tree/tree';
 
 // Partial fraction expansion
@@ -69,7 +69,7 @@ function expand(F: U, X: U, $: ExtensionEnv): U {
     // also bail out if the denominator is not one but
     // it's not anything recognizable as a polynomial.
     if (is_plus_or_minus_one(B, $) || is_plus_or_minus_one(A, $)) {
-        if (!is_poly_expanded_form(A, X) || is_plus_or_minus_one(A, $)) {
+        if (!is_poly_expanded_form(A, X, $) || is_plus_or_minus_one(A, $)) {
             return F;
         }
     }

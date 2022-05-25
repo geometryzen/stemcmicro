@@ -528,8 +528,8 @@ describe("C bootstrap", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(actual, $), "(+ (* b c) a)");
-            assert.strictEqual(print_expr(actual, $), "b*c+a");
+            assert.strictEqual(print_list(actual, $), "(+ a (* b c))");
+            assert.strictEqual(print_expr(actual, $), "a+b*c");
 
             engine.release();
         });
@@ -540,8 +540,8 @@ describe("C bootstrap", function () {
             const engine = createSymEngine({});
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(actual, $), "(+ (* b c) a)");
-            assert.strictEqual(print_expr(actual, $), "b*c+a");
+            assert.strictEqual(print_list(actual, $), "(+ a (* b c))");
+            assert.strictEqual(print_expr(actual, $), "a+b*c");
 
             engine.release();
         });
@@ -696,8 +696,8 @@ describe("C bootstrap", function () {
             const engine = createSymEngine({});
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(actual, $), "(+ c (* a b))");
-            assert.strictEqual(print_expr(actual, $), "c+a*b");
+            assert.strictEqual(print_list(actual, $), "(+ (* a b) c)");
+            assert.strictEqual(print_expr(actual, $), "a*b+c");
 
             engine.release();
         });
@@ -708,8 +708,8 @@ describe("C bootstrap", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(actual, $), "(+ c (* a b))");
-            assert.strictEqual(print_expr(actual, $), "c+a*b");
+            assert.strictEqual(print_list(actual, $), "(+ (* a b) c)");
+            assert.strictEqual(print_expr(actual, $), "a*b+c");
 
             engine.release();
         });
@@ -721,8 +721,8 @@ describe("C bootstrap", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(actual, $), "(+ c (* a b))");
-            assert.strictEqual(print_expr(actual, $), "c+a*b");
+            assert.strictEqual(print_list(actual, $), "(+ (* a b) c)");
+            assert.strictEqual(print_expr(actual, $), "a*b+c");
 
             engine.release();
         });
@@ -769,8 +769,8 @@ describe("C bootstrap", function () {
             const engine = createSymEngine({});
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(actual, $), "(+ c (* a b))");
-            assert.strictEqual(print_expr(actual, $), "c+a*b");
+            assert.strictEqual(print_list(actual, $), "(+ (* a b) c)");
+            assert.strictEqual(print_expr(actual, $), "a*b+c");
 
             engine.release();
         });
@@ -781,8 +781,8 @@ describe("C bootstrap", function () {
             const engine = createSymEngine();
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(actual, $), "(+ c (* a b))");
-            assert.strictEqual(print_expr(actual, $), "c+a*b");
+            assert.strictEqual(print_list(actual, $), "(+ (* a b) c)");
+            assert.strictEqual(print_expr(actual, $), "a*b+c");
 
             engine.release();
         });

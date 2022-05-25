@@ -14,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('integral', INTEGRAL, $);
+        super('integral_varargs', INTEGRAL, $);
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
@@ -25,4 +25,4 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export const integral = new Builder();
+export const integral_varargs = new Builder();

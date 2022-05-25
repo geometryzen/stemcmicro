@@ -1,5 +1,5 @@
-import { compare_terms } from "../../calculators/compare/compare_terms";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, PHASE_FLAGS_ALL, TFLAGS } from "../../env/ExtensionEnv";
+import { compare_terms_redux } from "../../calculators/compare/compare_terms";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, PHASE_FLAGS_ALL, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -25,7 +25,8 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
-        return compare_terms(lhs.rhs, rhs, $) > 0;
+        return compare_terms_redux(lhs.rhs, rhs, $) > 0;
+        // return compare_terms(lhs.rhs, rhs, $) > 0;
     };
 }
 
@@ -34,7 +35,7 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FLAGS_ALL & (~PHASE_EXPLICATE);
+    readonly phases = PHASE_FLAGS_ALL & (~PHASE_EXPLICATE) & (~PHASE_IMPLICATE);
     constructor($: ExtensionEnv) {
         super('add_2_assoc_lhs_canonical_ordering', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross($), $);
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);

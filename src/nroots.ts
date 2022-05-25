@@ -57,7 +57,7 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): void {
 
     p2 = NIL === p2 ? guess(p1) : p2;
 
-    if (!is_poly_expanded_form(p1, p2)) {
+    if (!is_poly_expanded_form(p1, p2, $)) {
         halt('nroots: polynomial?');
     }
 

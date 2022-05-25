@@ -26,11 +26,11 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
         return retval;
     };
     // Determine which variable the polynomial contains.
-    const s = is_poly_expanded_form(expr, SYMBOL_S);
-    const t = is_poly_expanded_form(expr, SYMBOL_T);
-    const x = is_poly_expanded_form(expr, SYMBOL_X);
-    const y = is_poly_expanded_form(expr, SYMBOL_Y);
-    const z = is_poly_expanded_form(expr, SYMBOL_Z);
+    const s = is_poly_expanded_form(expr, SYMBOL_S, $);
+    const t = is_poly_expanded_form(expr, SYMBOL_T, $);
+    const x = is_poly_expanded_form(expr, SYMBOL_X, $);
+    const y = is_poly_expanded_form(expr, SYMBOL_Y, $);
+    const z = is_poly_expanded_form(expr, SYMBOL_Z, $);
 
     if (s && !t && !x && !y && !z) {
         return hook(bake_poly(expr, SYMBOL_S, $), "S");
@@ -65,7 +65,7 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
 }
 
 export function polyform(p1: U, p2: U, $: ExtensionEnv): U {
-    if (is_poly_expanded_form(p1, p2)) {
+    if (is_poly_expanded_form(p1, p2, $)) {
         return bake_poly(p1, p2, $);
     }
     if (is_cons(p1)) {

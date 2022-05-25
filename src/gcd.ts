@@ -39,7 +39,7 @@ function gcd_main(p1: U, p2: U, $: ExtensionEnv): U {
     if (is_rat(p1) && is_rat(p2)) {
         return p1.gcd(p2);
     }
-    const polyVar = areunivarpolysfactoredorexpandedform(p1, p2);
+    const polyVar = areunivarpolysfactoredorexpandedform(p1, p2, $);
     if (polyVar) {
         return gcd_polys(p1, p2, polyVar, $);
     }
@@ -72,10 +72,10 @@ function gcd_main(p1: U, p2: U, $: ExtensionEnv): U {
 }
 
 // TODO this should probably be in "is"?
-export function areunivarpolysfactoredorexpandedform(p1: U, p2: U): U | undefined {
-    const polyVar = isunivarpolyfactoredorexpandedform(p1);
+export function areunivarpolysfactoredorexpandedform(p1: U, p2: U, $: ExtensionEnv): U | undefined {
+    const polyVar = isunivarpolyfactoredorexpandedform(p1, null, $);
     if (polyVar) {
-        if (isunivarpolyfactoredorexpandedform(p2, polyVar)) {
+        if (isunivarpolyfactoredorexpandedform(p2, polyVar, $)) {
             return polyVar;
         }
     }

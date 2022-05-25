@@ -132,7 +132,7 @@ import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
 import { inner_2_vector_mul_2_scalar_vector } from '../operators/inner/inner_2_vector_mul_2_scalar_vector';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { inner_2_vec_vec } from '../operators/inner/inner_2_vec_vec';
-import { integral } from '../operators/integral/integral';
+import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
@@ -239,6 +239,7 @@ import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
+import { roots_varargs } from '../operators/roots/roots_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
 import { simplify_fn } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
@@ -625,7 +626,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(index_varargs);
 
-    $.defineOperator(integral);
+    $.defineOperator(integral_varargs);
     $.defineOperator(inv_any);
 
     $.defineOperator(iszero_rat);
@@ -642,6 +643,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(printlist_1_any);
     $.defineOperator(printlist_keyword);
     $.defineOperator(rationalize_fn);
+    $.defineOperator(roots_varargs);
 
     $.defineOperator(script_last_0);
     $.defineOperator(simplify_fn);

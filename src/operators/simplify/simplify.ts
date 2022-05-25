@@ -2,22 +2,16 @@ import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { clockform } from '../../clock';
 import { condense, yycondense } from '../../condense';
-import { denominator } from "../denominator/denominator";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, TFLAGS } from '../../env/ExtensionEnv';
+import { ExtensionEnv, NOFLAGS, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
 import { factor } from "../../factor";
 import { areunivarpolysfactoredorexpandedform, gcd } from "../../gcd";
 import { equalq, is_negative_number, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { makeList } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
-import { numerator } from "../numerator/numerator";
-import { yyfloat } from '../float/float';
-import { BCons } from '../helpers/BCons';
-import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
 import { polar } from '../../polar';
 import { is_imu } from '../../predicates/is_imu';
 import { is_num } from '../../predicates/is_num';
-import { rationalize_factoring } from '../rationalize/rationalize';
 import { real } from '../../real';
 import { rect } from '../../rect';
 import { roots } from '../../roots';
@@ -35,6 +29,12 @@ import { Sym } from '../../tree/sym/Sym';
 import { is_tensor } from '../../tree/tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, NIL, U } from '../../tree/tree';
+import { denominator } from "../denominator/denominator";
+import { yyfloat } from '../float/float';
+import { BCons } from '../helpers/BCons';
+import { numerator } from "../numerator/numerator";
+import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
+import { rationalize_factoring } from '../rationalize/rationalize';
 
 function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
     // when we do code generation, we proceed to
@@ -291,7 +291,7 @@ function simplify_rational_expressions(p1: U, $: ExtensionEnv): U {
         return p1;
     }
     let polyVar: U | undefined;
-    if (!(polyVar = areunivarpolysfactoredorexpandedform(num, denom))) {
+    if (!(polyVar = areunivarpolysfactoredorexpandedform(num, denom, $))) {
         return p1;
     }
 
@@ -537,7 +537,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     defs.recursionLevelNestedRadicalsRemoval++;
     const r = roots(temp, SECRETX, $);
     defs.recursionLevelNestedRadicalsRemoval--;
-    if ($.equals(r[r.length - 1], NIL)) {
+    if (r.ndim === 0) {
         if (DEBUG) {
             // eslint-disable-next-line no-console
             console.log('roots bailed out because of too much recursion');
@@ -546,7 +546,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     }
 
     // exclude the solutions with radicals
-    const possibleSolutions: U[] = (r[r.length - 1] as Tensor).filterElements(
+    const possibleSolutions: U[] = r.filterElements(
         (sol) => !sol.contains(POWER)
     );
 

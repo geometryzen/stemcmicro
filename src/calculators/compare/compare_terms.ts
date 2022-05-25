@@ -23,18 +23,14 @@ import { factorizeL } from "../factorizeL";
 import { compare_factorizable } from "./compare_factorizable";
 import { compare_opr_opr } from "./compare_opr_opr";
 import { compare_sym_sym } from "./compare_sym_sym";
+import { compare_vars_vars } from "./compare_vars_vars";
+import { free_vars } from "./free_vars";
 import { has_imu_factor } from "./has_imu_factor";
 
 export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    if (is_sym(lhs)) {
-        if (is_sym(rhs)) {
-            return compare_sym_sym(lhs, rhs);
-        }
-    }
-    if (is_blade(lhs)) {
-        if (is_blade(rhs)) {
-            return compare_blade_blade(lhs, rhs);
-        }
+    // console.log(`compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
+    if (is_sym(lhs) && is_sym(rhs)) {
+        return compare_sym_sym(lhs, rhs);
     }
     if (is_cons(lhs)) {
         if (is_mul_2_num_any(lhs)) {
@@ -61,6 +57,30 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             if (is_rat(a)) {
                 return compare_terms_redux(lhs, b, $);
             }
+        }
+    }
+    // The following lines help in some cases, create looping in others.
+    if (is_sym(lhs)) {
+        // console.log(`lhs: Sym compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
+        const lvars = free_vars(lhs, $);
+        const rvars = free_vars(rhs, $);
+        const retval = compare_vars_vars(lvars, rvars);
+        // console.log(`lhs: Sym compare_terms_redux ${JSON.stringify(lvars)} ${JSON.stringify(rvars)} ${retval}`);
+        return retval;
+        // return SIGN_LT;
+    }
+    if (is_sym(rhs)) {
+        // console.log(`rhs: Sym compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
+        const lvars = free_vars(lhs, $);
+        const rvars = free_vars(rhs, $);
+        const retval = compare_vars_vars(lvars, rvars);
+        // console.log(`rhs: Sym compare_terms_redux ${JSON.stringify(lvars)} ${JSON.stringify(rvars)} ${retval}`);
+        return retval;
+        // return SIGN_GT;
+    }
+    if (is_blade(lhs)) {
+        if (is_blade(rhs)) {
+            return compare_blade_blade(lhs, rhs);
         }
     }
     if (is_cons(lhs) && is_cons(rhs)) {
@@ -118,7 +138,7 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         // throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
         //        return compare_terms_redux(lhs.opr, rhs.opr, $);
     }
-    // console.log(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+    // console.log(`UNDECIDED compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
     return SIGN_EQ;
 }
 

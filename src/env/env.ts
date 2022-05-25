@@ -21,6 +21,7 @@ import { Pattern } from "../patterns/Pattern";
 import { is_imu } from "../predicates/is_imu";
 import { is_num } from "../predicates/is_num";
 import { print_expr } from "../print";
+import { implicate } from "../runtime/execute";
 import { is_add } from "../runtime/helpers";
 import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER, MATH_POW } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
@@ -409,11 +410,13 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return lhs.equals(rhs);
         },
         factorize(p: U, x: U): U {
+            // console.log(`factorize p=${print_expr(p, $)} in variable ${print_expr(x, $)}`);
             if (!p.contains(x)) {
                 return p;
             }
 
-            if (!is_poly_expanded_form(p, x)) {
+            if (!is_poly_expanded_form(implicate(p,$), x, $)) {
+                // console.log(`Giving up b/c the polynomial is not in expanded form.`);
                 return p;
             }
 

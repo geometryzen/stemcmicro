@@ -6,15 +6,15 @@ import { imu } from './env/imu';
 import { guess } from './guess';
 import { is_complex_number, is_poly_expanded_form, is_positive_integer } from './is';
 import { sort } from './misc';
+import { simplify } from './operators/simplify/simplify';
 import { ASSIGN, SECRETX, TESTEQ } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
+import { implicate } from './runtime/execute';
 import { is_multiply, is_power } from './runtime/helpers';
-import { stack_push_items } from './runtime/stack';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
-import { simplify } from './operators/simplify/simplify';
 import { caddr, cadr } from './tree/helpers';
-import { Tensor } from './tree/tensor/Tensor';
 import { eight, four, half, integer, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';
+import { Tensor } from './tree/tensor/Tensor';
 import { car, Cons, NIL, U } from './tree/tree';
 
 // define POLY p1
@@ -24,58 +24,75 @@ import { car, Cons, NIL, U } from './tree/tree';
 // define C p5
 // define Y p6
 
-export function Eval_roots(expr: Cons, $: ExtensionEnv): void {
+export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
+    // console.log(`Eval_roots expr=${print_expr(expr, $)}`);
     // A == B -> A - B
-    let X = cadr(expr);
+    const arg1 = cadr(expr);
     let poly: U;
-    if (car(X).equals(ASSIGN) || car(X).equals(TESTEQ)) {
-        poly = $.subtract($.valueOf(cadr(X)), $.valueOf(caddr(X)));
+    if (car(arg1).equals(ASSIGN) || car(arg1).equals(TESTEQ)) {
+        poly = $.subtract($.valueOf(cadr(arg1)), $.valueOf(caddr(arg1)));
     }
     else {
-        X = $.valueOf(X);
-        if (car(X).equals(ASSIGN) || car(X).equals(TESTEQ)) {
-            poly = $.subtract($.valueOf(cadr(X)), $.valueOf(caddr(X)));
+        const vArg1 = $.valueOf(arg1);
+        if (car(vArg1).equals(ASSIGN) || car(vArg1).equals(TESTEQ)) {
+            poly = $.subtract($.valueOf(cadr(vArg1)), $.valueOf(caddr(vArg1)));
         }
         else {
-            poly = X;
+            poly = vArg1;
         }
     }
 
     // 2nd arg, x
-    X = $.valueOf(caddr(expr));
+    const arg2 = $.valueOf(caddr(expr));
 
-    const X1 = NIL === X ? guess(poly) : X;
+    const x = NIL === arg2 ? guess(poly) : arg2;
 
-    if (!is_poly_expanded_form(poly, X1)) {
-        halt('roots: 1st argument is not a polynomial in the variable ' + $.toInfixString(X1));
+    // console.log(`poly=${print_expr(poly, $)}`);
+    // console.log(`var =${print_expr(x, $)}`);
+
+    const p = implicate(poly, $);
+
+    if (is_poly_expanded_form(p, x, $)) {
+        return roots(poly, x, $);
     }
-
-    const theRoots = roots(poly, X1, $);
-
-    stack_push_items(theRoots);
+    else {
+        halt('roots: 1st argument is not a polynomial in the variable ' + $.toInfixString(x));
+    }
 }
 
 function hasImaginaryCoeff(k: U[]): boolean {
     return k.some((c) => is_complex_number(c));
 }
 
-// polycoeff = tos
-// k[0]      Coefficient of x^0
-// k[n-1]    Coefficient of x^(n-1)
-function isSimpleRoot(k: U[], $: ExtensionEnv): boolean {
-    if (k.length <= 2) {
+/**
+ * If the normalized coefficients are sufficiently simple then the polynomial is considered simple.
+ * k[0]      Coefficient of x^0
+ * k[n-1]    Coefficient of x^(n-1)
+ * @param ks 
+ * @param $ 
+ * @returns 
+ */
+function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
+    if (ks.length <= 2) {
         return false;
     }
-    if ($.isZero(k[0])) {
+    if ($.isZero(ks[0])) {
         return false;
     }
-    return k.slice(1, k.length - 1).every((el) => $.isZero(el));
+    return ks.slice(1, ks.length - 1).every((el) => $.isZero(el));
 }
 
+/**
+ * Computes the coefficients of the polynomial then divides each by the highest power coefficient.
+ * The coefficients are returned in the order [c0, c1, c2, ..., 1] where c0 is the constant coefficient.
+ */
 function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
-    const miniStack = coeff(poly, x, $);
-    const divideBy = miniStack[miniStack.length - 1];
-    return miniStack.map((item) => $.divide(item, divideBy));
+    // console.log(`normalized_coeff ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
+
+    const coes = coeff(poly, x, $);
+    // console.log(`coes=${coes}`);
+    const divideBy = coes[coes.length - 1];
+    return coes.map((coe) => $.divide(coe, divideBy));
 }
 
 /**
@@ -84,30 +101,34 @@ function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
  * @param x 
  * @returns 
  */
-export function roots(poly: U, x: U, $: ExtensionEnv): (U | Tensor)[] {
+export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
+    // console.log(`roots ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
     // the simplification of nested radicals uses "roots", which in turn uses
     // simplification of nested radicals. Usually there is no problem, one level
     // of recursion does the job. Beyond that, we probably got stuck in a
     // strange case of infinite recursion, so bail out and return NIL.
     if (defs.recursionLevelNestedRadicalsRemoval > 1) {
         // console.lg(`recursionLevelNestedRadicalsRemoval => ${defs.recursionLevelNestedRadicalsRemoval}`)
-        return [NIL];
+        return new Tensor([], []);
     }
 
     // log.dbg(`checking if ${top()} is a case of simple roots`);
 
-    const k = normalized_coeff(poly, x, $);
+    const ks = normalized_coeff(poly, x, $);
+
+    // console.log(`ks=${ks}`);
 
     const results = [];
-    if (isSimpleRoot(k, $)) {
-        const kn = k.length;
-        const lastCoeff = k[0];
-        const leadingCoeff: U = k.pop() as U;
+    if (is_simple_root(ks, $)) {
+        const kn = ks.length;
+        const lastCoeff = ks[0];
+        const leadingCoeff: U = ks.pop() as U;
         const simpleRoots = getSimpleRoots(kn, leadingCoeff, lastCoeff, $);
         results.push(...simpleRoots);
     }
     else {
         const roots = roots2(poly, x, $);
+        // console.log(`roots2 => ${roots}`);
         results.push(...roots);
     }
 
@@ -116,11 +137,11 @@ export function roots(poly: U, x: U, $: ExtensionEnv): (U | Tensor)[] {
         halt('roots: the polynomial is not factorable, try nroots');
     }
     if (n === 1) {
-        return results;
+        return new Tensor([1], results);
     }
     sort(results, $);
     const dims = [n];
-    return [new Tensor(dims, results)];
+    return new Tensor(dims, results);
 }
 
 // ok to generate these roots take a look at their form
@@ -162,10 +183,12 @@ function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEn
 }
 
 function roots2(poly: U, X: U, $: ExtensionEnv): U[] {
-    const k = normalized_coeff(poly, X, $);
-    if (!hasImaginaryCoeff(k)) {
+    // console.log(`roots2 ${print_expr(poly, $)} in variable ${print_expr(X, $)}`);
+    const ks = normalized_coeff(poly, X, $);
+    if (!hasImaginaryCoeff(ks)) {
         poly = $.factorize(poly, X);
     }
+    // TODO; This won't work unless the ploynomial is in implicated form.
     if (is_multiply(poly)) {
         // scan through all the factors and find the roots of each of them
         const mapped = poly.tail().map((p) => roots3(p, X, $));
@@ -177,13 +200,13 @@ function roots2(poly: U, X: U, $: ExtensionEnv): U[] {
 function roots3(POLY: U, X: U, $: ExtensionEnv): U[] {
     if (
         is_power(POLY) &&
-        is_poly_expanded_form(cadr(POLY), X) &&
+        is_poly_expanded_form(cadr(POLY), X, $) &&
         is_positive_integer(caddr(POLY))
     ) {
         const n = normalized_coeff(cadr(POLY), X, $);
         return mini_solve(n, $);
     }
-    if (is_poly_expanded_form(POLY, X)) {
+    if (is_poly_expanded_form(POLY, X, $)) {
         const n = normalized_coeff(POLY, X, $);
         return mini_solve(n, $);
     }
@@ -445,7 +468,7 @@ function _solveDegree4Biquadratic(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv)
         ),
         SECRETX,
         $
-    )[0] as Tensor;
+    );
 
     const results = [];
     for (const sol of biquadraticSolutions.copyElements()) {
@@ -484,7 +507,7 @@ function _solveDegree4ZeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] 
 
     // log.dbg(`resolventCubic: ${top()}`);
 
-    const resolventCubicSolutions = roots(arg1, SECRETX, $)[0] as Tensor;
+    const resolventCubicSolutions = roots(arg1, SECRETX, $);
     // log.dbg(`resolventCubicSolutions: ${toInfixString(resolventCubicSolutions)}`);
 
     let R_m: U = NIL;
@@ -567,7 +590,7 @@ function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U
     const r_q_x_2 = $.multiply(R_p, $.power(SECRETX, two));
     const r_q_x = $.multiply(R_q, SECRETX);
     const simplified = simplify(add_terms([four_x_4, r_q_x_2, r_q_x, R_r], $), $);
-    const depressedSolutions = roots(simplified, SECRETX, $)[0] as Tensor;
+    const depressedSolutions = roots(simplified, SECRETX, $);
 
     // log.dbg(`p for depressed quartic: ${toInfixString(R_p)}`);
     // log.dbg(`q for depressed quartic: ${toInfixString(R_q)}`);

@@ -3,31 +3,27 @@ import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("current", function () {
-    it("(c/x+b)+(-c)/x", function () {
+describe("roots", function () {
+    xit("roots(a*x**2+b*x+c)", function () {
         const lines: string[] = [
-            `implicate=0`,
-            `(c/x+b)+(-c)/x`
+            `roots(a*x**2+b*x+c)`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({ useCaretForExponentiation: false });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "b");
-        assert.strictEqual(print_expr(actual, $), "b");
-
+        assert.strictEqual(print_list(actual, $), "(+ a b)");
+        assert.strictEqual(print_expr(actual, $), "a+b");
         engine.release();
     });
-    it("(b+c/x)+(-c)/x", function () {
+    xit("roots(a*x^2+b*x+c)", function () {
         const lines: string[] = [
-            `implicate=0`,
-            `(b+c/x)+(-c)/x`
+            `roots(a*x^2+b*x+c)`
         ];
-        const engine = createSymEngine();
+        const engine = createSymEngine({ useCaretForExponentiation: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "b");
-        assert.strictEqual(print_expr(actual, $), "b");
-
+        assert.strictEqual(print_list(actual, $), "(+ a b)");
+        assert.strictEqual(print_expr(actual, $), "a+b");
         engine.release();
     });
 });

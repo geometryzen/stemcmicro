@@ -209,7 +209,7 @@ describe("", function () {
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(print_expr(actual, $), 'X+5*A*B');
+        assert.strictEqual(print_expr(actual, $), '5*A*B+X');
         engine.release();
     });
     it("(X + 2 * A * B) + A * B", function () {
@@ -221,7 +221,7 @@ describe("", function () {
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(print_expr(actual, $), 'X+3*A*B');
+        assert.strictEqual(print_expr(actual, $), '3*A*B+X');
         engine.release();
     });
     it("(X + A * B) + 2 * A * B", function () {
@@ -233,7 +233,7 @@ describe("", function () {
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(print_expr(actual, $), 'X+3*A*B');
+        assert.strictEqual(print_expr(actual, $), '3*A*B+X');
         engine.release();
     });
 });

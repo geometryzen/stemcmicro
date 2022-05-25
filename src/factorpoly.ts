@@ -2,16 +2,16 @@ import { rational } from './bignum';
 import { coeff } from './coeff';
 import { complex_conjugate } from './complex_conjugate';
 import { yycondense } from './condense';
-import { denominator } from './operators/denominator/denominator';
 import { ydivisors } from './divisors';
-import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { imu } from './env/imu';
 import { contains_floating_values_or_floatf, is_negative_term } from './is';
 import { lcm } from './lcm';
 import { multiply_noexpand, negate_noexpand } from './multiply';
+import { denominator } from './operators/denominator/denominator';
 import { divpoly } from './quotient';
 import { rect } from './rect';
-import { defs, moveTos, use_factoring_with_unary_function, halt } from './runtime/defs';
+import { defs, halt, moveTos, use_factoring_with_unary_function } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
 import { integer, negOne, one, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -35,6 +35,7 @@ import { U } from './tree/tree';
  * @returns factored polynomial
  */
 export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
+    // console.lg(`yyfactorpoly ${print_expr(p1, $)} in variable ${print_expr(p2, $)}`);
     let p4: U | undefined;
     let p5: U | undefined;
     let p8: U | undefined;
@@ -43,30 +44,37 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
         halt('floating point numbers in polynomial');
     }
 
-    const polycoeff = coeff(p1, p2, $);
+    const coes = coeff(p1, p2, $);
 
-    let factpoly_expo = polycoeff.length - 1;
+    // console.lg(`coes ${coes}`);
 
-    let p7 = rationalize_coefficients(polycoeff, $);
+    let factpoly_expo = coes.length - 1;
+
+    let p7 = rationalize_coefficients(coes, $);
+
+    // console.lg(`rationalized coes ${coes}, with k = ${p7}`);
 
     // for univariate polynomials we could do factpoly_expo > 1
-    let whichRootsAreWeFinding = 'real';
+    let whichRootsAreWeFinding: 'real' | 'complex' = 'real';
     let remainingPoly: U | null = null;
     while (factpoly_expo > 0) {
+        // console.lg(`factpoly_expo ${factpoly_expo}`);
         let foundComplexRoot = false;
         let foundRealRoot = false;
-        if ($.isZero(polycoeff[0])) {
+        if ($.isZero(coes[0])) {
             p4 = one;
             p5 = zero;
         }
         else {
             if (whichRootsAreWeFinding === 'real') {
-                [foundRealRoot, p4, p5] = get_factor_from_real_root(polycoeff, factpoly_expo, p2, p4 as U, p5 as U, $);
+                [foundRealRoot, p4, p5] = get_factor_from_real_root(coes, factpoly_expo, p2, p4 as U, p5 as U, $);
             }
             else if (whichRootsAreWeFinding === 'complex') {
-                [foundComplexRoot, p4] = get_factor_from_complex_root(remainingPoly as U, polycoeff, factpoly_expo, $);
+                [foundComplexRoot, p4] = get_factor_from_complex_root(remainingPoly as U, coes, factpoly_expo, $);
             }
         }
+        // console.lg(`whichRootsAreWeFinding ${whichRootsAreWeFinding}`);
+        // console.lg(`foundRealRoot ${foundRealRoot}`);
 
         if (whichRootsAreWeFinding === 'real') {
             if (foundRealRoot === false) {
@@ -100,16 +108,16 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
                 // Divide it by the newly-found factor so that
                 // the stack then contains the coefficients of the
                 // polynomial part still left to factor.
-                yydivpoly(p4 as U, p5 as U, polycoeff, factpoly_expo, $);
+                yydivpoly(p4 as U, p5 as U, coes, factpoly_expo, $);
 
-                while (factpoly_expo && $.isZero(polycoeff[factpoly_expo])) {
+                while (factpoly_expo && $.isZero(coes[factpoly_expo])) {
                     factpoly_expo--;
                 }
 
                 let temp: U = zero;
                 for (let i = 0; i <= factpoly_expo; i++) {
                     // p2: the free variable
-                    temp = $.add(temp, $.multiply(polycoeff[i], $.power(p2, integer(i))));
+                    temp = $.add(temp, $.multiply(coes[i], $.power(p2, integer(i))));
                 }
                 remainingPoly = temp;
             }
@@ -156,7 +164,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
                     let temp: U = zero;
                     for (let i = 0; i <= factpoly_expo; i++) {
                         // p2: the free variable
-                        temp = $.add(temp, $.multiply(polycoeff[i], $.power(p2, integer(i))));
+                        temp = $.add(temp, $.multiply(coes[i], $.power(p2, integer(i))));
                     }
                     remainingPoly = temp;
                 }
@@ -195,10 +203,10 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
                   * BUT 
                 */
                 for (let i = 0; i <= factpoly_expo; i++) {
-                    polycoeff.pop();
+                    coes.pop();
                 }
 
-                polycoeff.push(...coeff(remainingPoly, p2, $));
+                coes.push(...coeff(remainingPoly, p2, $));
 
                 factpoly_expo -= 2;
             }
@@ -210,7 +218,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
     let temp: U = zero;
     for (let i = 0; i <= factpoly_expo; i++) {
         // p2: the free variable
-        temp = $.add(temp, $.multiply(polycoeff[i], $.power(p2, integer(i))));
+        temp = $.add(temp, $.multiply(coes[i], $.power(p2, integer(i))));
     }
     p1 = temp;
 
@@ -218,7 +226,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
 
     // factor out negative sign
 
-    if (factpoly_expo > 0 && is_negative_term(polycoeff[factpoly_expo])) {
+    if (factpoly_expo > 0 && is_negative_term(coes[factpoly_expo])) {
         //prev_expanding = expanding
         //expanding = 1
         //expanding = prev_expanding
@@ -231,20 +239,26 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
     return p7;
 }
 
+/**
+ * e.g. [c,b,a]
+ * @param coefficients This array is mutated as an intended side-effect and we return a value, k, such that
+ * multiplication of the mutated coefficient by k recreates the original coefficients.
+ */
 function rationalize_coefficients(coefficients: U[], $: ExtensionEnv): U {
+    // console.lg(`rationalize_coefficients ${coefficients}`);
     // LCM of all polynomial coefficients
-    let p7: U = one;
+    let one_over_k: U = one;
     for (const coeff of coefficients) {
-        p7 = lcm(denominator(coeff, $), p7, $);
+        one_over_k = lcm(denominator(coeff, $), one_over_k, $);
     }
 
     // multiply each coefficient by RESULT
     for (let i = 0; i < coefficients.length; i++) {
-        coefficients[i] = $.multiply(p7, coefficients[i]);
+        coefficients[i] = $.multiply(one_over_k, coefficients[i]);
     }
 
-    p7 = $.inverse(p7);
-    return p7;
+    const k = $.inverse(one_over_k);
+    return k;
 }
 
 /**

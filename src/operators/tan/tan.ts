@@ -1,21 +1,20 @@
-import { rational } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative } from './is';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { ARCTAN, TAN } from './runtime/constants';
-import { DynamicConstants } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
-import { cadr } from './tree/helpers';
-import { half, integer, negOne, one, third, three, zero } from './tree/rat/Rat';
-import { car, U } from './tree/tree';
+import { rational } from '../../bignum';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { is_negative } from '../../is';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { ARCTAN, TAN } from '../../runtime/constants';
+import { DynamicConstants } from '../../runtime/defs';
+import { flt } from '../../tree/flt/Flt';
+import { is_flt } from '../../tree/flt/is_flt';
+import { cadr } from '../../tree/helpers';
+import { half, integer, negOne, one, third, three, zero } from '../../tree/rat/Rat';
+import { car, Cons, U } from '../../tree/tree';
 
 // Tangent function of numerical and symbolic arguments
-export function Eval_tan(p1: U, $: ExtensionEnv): void {
+export function Eval_tan(p1: Cons, $: ExtensionEnv): U {
     const result = tangent($.valueOf(cadr(p1)), $);
-    stack_push(result);
+    return result;
 }
 
 function tangent(p1: U, $: ExtensionEnv): U {

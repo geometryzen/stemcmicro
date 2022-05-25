@@ -3,7 +3,6 @@ import { gcd } from './gcd';
 import { multiply_noexpand } from './multiply';
 import { use_factoring_with_unary_function } from './runtime/defs';
 import { is_add } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
 import { doexpand_eval } from './scripting/doexpand_eval';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';
@@ -11,9 +10,9 @@ import { U } from './tree/tree';
 
 // Condense an expression by factoring common terms.
 
-export function Eval_condense(p1: U, $: ExtensionEnv): void {
+export function Eval_condense(p1: U, $: ExtensionEnv): U {
     const result = condense($.valueOf(cadr(p1)), $);
-    stack_push(result);
+    return result;
 }
 
 export function condense(p1: U, $: ExtensionEnv): U {

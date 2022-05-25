@@ -271,6 +271,7 @@ import { sym_math_add } from '../operators/sym/sym_math_add';
 import { sym_math_mul } from '../operators/sym/sym_math_mul';
 import { sym_math_pi } from '../operators/sym/sym_math_pi';
 import { sym_math_pow } from '../operators/sym/sym_math_pow';
+import { tan_varargs } from '../operators/tan/tan_varargs';
 import { tau } from '../operators/tau/tau';
 import { mat } from '../operators/tensor/TensorExtension';
 import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
@@ -680,6 +681,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(st_rat);
     $.defineOperator(st_sym);
     $.defineOperator(st_any);
+
+    $.defineOperator(tan_varargs);
 
     $.defineOperator(typeof_tensor);
     $.defineOperator(typeof_blade);

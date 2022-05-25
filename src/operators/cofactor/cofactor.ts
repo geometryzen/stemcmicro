@@ -1,12 +1,11 @@
-import { determinant_symbolic } from './det';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { evaluate_integer } from './scripting/evaluate_integer';
-import { is_square_matrix } from './tensor';
-import { cadddr, caddr, cadr } from './tree/helpers';
-import { Tensor } from './tree/tensor/Tensor';
-import { Cons, U } from './tree/tree';
+import { determinant_symbolic } from '../../det';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { halt } from '../../runtime/defs';
+import { evaluate_integer } from '../../scripting/evaluate_integer';
+import { is_square_matrix } from '../../tensor';
+import { cadddr, caddr, cadr } from '../../tree/helpers';
+import { Tensor } from '../../tree/tensor/Tensor';
+import { Cons, U } from '../../tree/tree';
 
 /* cofactor =====================================================================
 
@@ -25,7 +24,7 @@ Let c be the cofactor matrix of matrix m, i.e. tranpose(c) = adj(m).
 This function returns c[i,j].
 
 */
-export function Eval_cofactor(expr: Cons, $: ExtensionEnv): void {
+export function Eval_cofactor(expr: Cons, $: ExtensionEnv): U {
     const m = $.valueOf(cadr(expr));
     if (!is_square_matrix(m)) {
         halt('cofactor: 1st arg: square matrix expected');
@@ -40,17 +39,15 @@ export function Eval_cofactor(expr: Cons, $: ExtensionEnv): void {
     if (j < 1 || j > n) {
         halt('cofactor: 3rd arg: column index expected');
     }
-    stack_push(cofactor(m, i - 1, j - 1, $));
+    return cofactor(m, i - 1, j - 1, $);
 }
 
 export function cofactor<T extends U>(m: Tensor<T>, row: number, col: number, $: ExtensionEnv): U {
-    // console.lg(`ENTERING cofactor(${$.toInfixString(m)}, row = ${row}, col = ${col})`)
     const hook = function (retval: U): U {
-        // console.lg(`cofactor(${$.toInfixString(m)}, ${row},${col}) => ${$.toInfixString(retval)}`)
         return retval;
     };
     const n = m.dim(0);
-    // console.lg(`n => ${n}`)
+
     const elements: U[] = [];
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
@@ -59,7 +56,6 @@ export function cofactor<T extends U>(m: Tensor<T>, row: number, col: number, $:
             }
         }
     }
-    // console.lg(`elements => ${items_to_infix(elements, $)}`)
 
     const det = determinant_symbolic(elements, n - 1, $);
     if ((row + col) % 2) {

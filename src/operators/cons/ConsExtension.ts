@@ -13,7 +13,6 @@ import { Eval_choose } from "../../choose";
 import { Eval_circexp } from "../../circexp";
 import { Eval_clear, Eval_clearall } from "../../clear";
 import { Eval_coeff } from "../../coeff";
-import { Eval_cofactor } from "../../cofactor";
 import { Eval_condense } from "../../condense";
 import { Eval_cosh } from "../../cosh";
 import { Eval_decomp } from "../../decomp";
@@ -61,7 +60,7 @@ import { Eval_quotient } from "../../quotient";
 import { Eval_real } from "../../real";
 import { Eval_rect } from "../../rect";
 import { Eval_round } from "../../round";
-import { AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, COFACTOR, CONDENSE, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SHAPE, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
+import { AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONDENSE, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SHAPE, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TAN, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
 import { MATH_ADD, MATH_INNER, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
@@ -319,9 +318,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case COEFF:
                 Eval_coeff(expr, $);
-                return stack_pop();
-            case COFACTOR:
-                Eval_cofactor(expr, $);
                 return stack_pop();
             case CONDENSE:
                 Eval_condense(expr, $);

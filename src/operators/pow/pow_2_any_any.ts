@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -27,15 +27,15 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     isZero(expr: EXP): boolean {
         return this.$.isZero(expr.lhs);
     }
-    transform2(opr: Sym, base: LHS, expo: RHS, oldExpr: EXP): [TFLAGS, U] {
+    transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if ($.isFactoring()) {
-            return [NOFLAGS, oldExpr];
+            return [NOFLAGS, expr];
         }
         else {
             // Thi appears to do nothing but recall that the base class done its own transformation.
-            const newExpr = power_v1(base, expo, oldExpr, this.$);
-            return [!newExpr.equals(oldExpr) ? TFLAG_DIFF : NOFLAGS, newExpr];
+            const newExpr = power_v1(base, expo, expr, this.$);
+            return [!newExpr.equals(expr) ? TFLAG_DIFF : NOFLAGS, newExpr];
         }
     }
 }

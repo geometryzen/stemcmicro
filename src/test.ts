@@ -1,9 +1,9 @@
 import { ExtensionEnv, Sign, SIGN_EQ } from './env/ExtensionEnv';
 import { yyfloat } from './operators/float/float';
+import { simplify } from './operators/simplify/simplify';
 import { MSIGN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
-import { simplify } from './operators/simplify/simplify';
 import { is_flt } from './tree/flt/is_flt';
 import { caddr, cadr, cddr } from './tree/helpers';
 import { is_rat } from './tree/rat/is_rat';
@@ -16,6 +16,7 @@ import { car, cdr, Cons, is_cons, NIL, U } from './tree/tree';
 export function Eval_test(p1: U, $: ExtensionEnv): void {
     stack_push(_test(p1, $));
 }
+
 function _test(p1: U, $: ExtensionEnv): U {
     const orig = p1;
     p1 = cdr(p1);
@@ -208,7 +209,7 @@ Logical-and of predicate expressions.
 */
 
 // and definition
-export function Eval_and(p1: U, $: ExtensionEnv) {
+export function Eval_and(p1: U, $: ExtensionEnv): U {
     const wholeAndExpression = p1;
     let andPredicates = cdr(wholeAndExpression);
     let somePredicateUnknown = false;
@@ -235,8 +236,7 @@ export function Eval_and(p1: U, $: ExtensionEnv) {
         }
         else if (!checkResult) {
             // found a false, enough to falsify everything and return
-            stack_push(zero);
-            return;
+            return zero;
         }
     }
 
@@ -247,10 +247,10 @@ export function Eval_and(p1: U, $: ExtensionEnv) {
     // If all the predicates were known, then we can conclude
     // that the test returns true.
     if (somePredicateUnknown) {
-        stack_push(wholeAndExpression);
+        return wholeAndExpression;
     }
     else {
-        stack_push(one);
+        return one;
     }
 }
 

@@ -1,7 +1,7 @@
-import { arcsin } from '../arcsin';
-import { ExtensionEnv } from '../env/ExtensionEnv';
-import { cadr } from '../tree/helpers';
-import { U } from '../tree/tree';
+import { arcsin } from './arcsin';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { cadr } from '../../tree/helpers';
+import { U } from '../../tree/tree';
 
 /* arcsin =====================================================================
  

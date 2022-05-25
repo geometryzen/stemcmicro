@@ -53,7 +53,9 @@ import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xx
 import { add_2_zzz_mul_2_rat_aaa } from '../operators/add/add_2_zzz_mul_2_rat_aaa';
 import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
-import { op_arcsin } from '../operators/arcsin/op_arcsin';
+import { and_varargs } from '../operators/and/and_varargs';
+import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
+import { arg_varargs } from '../operators/arg/arg_varargs';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { is_blade, vec } from '../operators/blade/BladeExtension';
@@ -215,7 +217,7 @@ import { nil } from '../operators/nil/NilExtension';
 import { not_fn } from '../operators/not/not_fn';
 import { number_fn } from '../operators/number/number_fn';
 import { numerator_fn } from '../operators/numerator/numerator_fn';
-import { or_fn } from '../operators/or/or_fn';
+import { or_varargs } from '../operators/or/or_varargs';
 import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
 import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_any';
 import { outer_2_blade_blade } from '../operators/outer/outer_2_blade_blade';
@@ -247,6 +249,7 @@ import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
+import { shape_varargs } from '../operators/shape/shape_varargs';
 import { simplify_fn } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
 import { sin_add_2_any_any } from '../operators/sin/sin_add_2_any_any';
@@ -586,8 +589,9 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(adj_any);
 
     $.defineOperator(algebra_2_tensor_tensor);
-
-    $.defineOperator(op_arcsin);
+    $.defineOperator(and_varargs);
+    $.defineOperator(arcsin_varargs);
+    $.defineOperator(arg_varargs);
 
     $.defineOperator(assign_sym_any);
     $.defineOperator(assign_any_any);
@@ -649,7 +653,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(not_fn);
     $.defineOperator(number_fn);
     $.defineOperator(numerator_fn);
-    $.defineOperator(or_fn);
+    $.defineOperator(or_varargs);
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
@@ -661,6 +665,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(roots_varargs);
 
     $.defineOperator(script_last_0);
+    $.defineOperator(shape_varargs);
     $.defineOperator(simplify_fn);
 
     $.defineOperator(succ_rat);

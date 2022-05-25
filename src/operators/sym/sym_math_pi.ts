@@ -62,7 +62,7 @@ class SymMathPi implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Sym): boolean {
-        throw new Error("SymMathPi.isZero Method not implemented.");
+        return false;
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {

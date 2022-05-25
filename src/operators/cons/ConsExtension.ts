@@ -3,7 +3,6 @@ import { Eval_arccosh } from "../../arccosh";
 import { Eval_arcsinh } from "../../arcsinh";
 import { Eval_arctan } from "../../arctan";
 import { Eval_arctanh } from "../../arctanh";
-import { Eval_arg } from "../../arg";
 import { Eval_besselj } from "../../besselj";
 import { Eval_bessely } from "../../bessely";
 import { Eval_binomial } from "../../binomial";
@@ -59,9 +58,9 @@ import { Eval_quotient } from "../../quotient";
 import { Eval_real } from "../../real";
 import { Eval_rect } from "../../rect";
 import { Eval_round } from "../../round";
-import { AND, APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ARG, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SHAPE, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
+import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTAN, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, POLAR, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, YYRECT, ZERO } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
-import { MATH_ADD, MATH_INNER, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
+import { MATH_INNER, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { Eval_arccos } from "../../scripting/eval_arccos";
@@ -74,13 +73,12 @@ import { Eval_sin } from "../../scripting/eval_sin";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
 import { Eval_sgn } from "../../sgn";
-import { Eval_shape } from "../../shape";
 import { Eval_sinh } from "../../sinh";
 import { subst } from "../../subst";
 import { Eval_sum } from "../../sum";
 import { Eval_tanh } from "../../tanh";
 import { Eval_taylor } from "../../taylor";
-import { Eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
+import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
 import { Eval_transpose } from "../../transpose";
 import { Err } from "../../tree/err/Err";
 import { is_flt } from "../../tree/flt/is_flt";
@@ -252,13 +250,6 @@ class ConsExtension implements Extension<Cons> {
 
         // TODO: This switch will fail because Sym is no longer interred.
         switch (op) {
-            case MATH_ADD: {
-                throw new Error();
-            }
-            case AND: {
-                Eval_and(expr, $);
-                return stack_pop();
-            }
             case ARCCOS: {
                 Eval_arccos(expr, $);
                 return stack_pop();
@@ -274,9 +265,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case ARCTANH:
                 Eval_arctanh(expr, $);
-                return stack_pop();
-            case ARG:
-                Eval_arg(expr, $);
                 return stack_pop();
                 // case ATOMIZE: Eval_atomize();
                 return stack_pop();
@@ -534,9 +522,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case SINH:
                 Eval_sinh(expr, $);
-                return stack_pop();
-            case SHAPE:
-                Eval_shape(expr, $);
                 return stack_pop();
             case STOP:
                 Eval_stop();

@@ -1,22 +1,21 @@
-import { arctan } from './arctan';
-import { subtract } from './calculators/sub/subtract';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { imag } from './imag';
-import { equaln, is_negative, is_negative_number, is_num_and_gt_zero, is_one_over_two } from './is';
-import { makeList } from './makeList';
-import { is_sym } from './operators/sym/is_sym';
-import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
-import { real } from './real';
-import { rect } from './rect';
-import { ARG, ASSUME_REAL_VARIABLES, PI } from './runtime/constants';
-import { defs, DynamicConstants } from './runtime/defs';
-import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { piAsDouble, zeroAsDouble } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
-import { caddr, cadr } from './tree/helpers';
-import { zero } from './tree/rat/Rat';
-import { Cons, is_cons, U } from './tree/tree';
+import { arctan } from '../../arctan';
+import { subtract } from '../../calculators/sub/subtract';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { imag } from '../../imag';
+import { equaln, is_negative, is_negative_number, is_num_and_gt_zero, is_one_over_two } from '../../is';
+import { makeList } from '../../makeList';
+import { is_sym } from '../sym/is_sym';
+import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
+import { real } from '../../real';
+import { rect } from '../../rect';
+import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
+import { defs, DynamicConstants } from '../../runtime/defs';
+import { is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { piAsDouble, zeroAsDouble } from '../../tree/flt/Flt';
+import { is_flt } from '../../tree/flt/is_flt';
+import { caddr, cadr } from '../../tree/helpers';
+import { zero } from '../../tree/rat/Rat';
+import { Cons, is_cons, U } from '../../tree/tree';
 
 /* arg =====================================================================
 
@@ -83,7 +82,7 @@ Notes
      automatic.
 */
 
-export function Eval_arg(expr: Cons, $: ExtensionEnv): void {
+export function Eval_arg(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`expr => ${expr}`);
     const z = cadr(expr);
     // console.lg(`z => ${z}`);
@@ -91,7 +90,7 @@ export function Eval_arg(expr: Cons, $: ExtensionEnv): void {
     // console.lg(`value_of_z => ${value_of_z}`);
     const arg_z = $.arg(value_of_z);
     // console.lg(`arg_z => ${arg_z}`);
-    stack_push(arg_z);
+    return arg_z;
 }
 
 export function yyarg(expr: U, $: ExtensionEnv): U {

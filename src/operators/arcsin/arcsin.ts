@@ -1,5 +1,5 @@
-import { rational } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { rational } from '../../bignum';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
 import {
     equaln,
     equalq,
@@ -7,17 +7,17 @@ import {
     isMinusSqrtThreeOverTwo,
     isoneoversqrttwo,
     isSqrtThreeOverTwo
-} from './is';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { ARCSIN, PI, POWER } from './runtime/constants';
-import { defs, DynamicConstants } from './runtime/defs';
-import { is_multiply, is_sin } from './runtime/helpers';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
-import { is_rat } from './tree/rat/is_rat';
-import { half, third, two } from './tree/rat/Rat';
-import { car, cdr, is_cons, U } from './tree/tree';
+} from '../../is';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { ARCSIN, PI, POWER } from '../../runtime/constants';
+import { defs, DynamicConstants } from '../../runtime/defs';
+import { is_multiply, is_sin } from '../../runtime/helpers';
+import { flt } from '../../tree/flt/Flt';
+import { is_flt } from '../../tree/flt/is_flt';
+import { is_rat } from '../../tree/rat/is_rat';
+import { half, third, two } from '../../tree/rat/Rat';
+import { car, cdr, is_cons, U } from '../../tree/tree';
 
 /* arcsin =====================================================================
 

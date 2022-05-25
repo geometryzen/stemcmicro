@@ -1,10 +1,10 @@
-import { yyarg } from "../arg";
 import { divide_numbers, invert_number } from "../bignum";
 import { binop } from "../calculators/binop";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { makeList } from "../makeList";
+import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/BladeExtension";
 import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
 import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
@@ -415,7 +415,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return p;
             }
 
-            if (!is_poly_expanded_form(implicate(p,$), x, $)) {
+            if (!is_poly_expanded_form(implicate(p, $), x, $)) {
                 // console.log(`Giving up b/c the polynomial is not in expanded form.`);
                 return p;
             }
@@ -427,6 +427,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return yyfactorpoly(p, x, $);
         },
         inner(lhs: U, rhs: U): U {
+            // console.log(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
             const value_lhs = $.valueOf(lhs);
             const value_rhs = $.valueOf(rhs);
             const inner_lhs_rhs = makeList(MATH_INNER, value_lhs, value_rhs);

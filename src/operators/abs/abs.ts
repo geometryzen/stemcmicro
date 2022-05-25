@@ -12,12 +12,12 @@ import { PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
-import { simplify, simplify_trig } from '../simplify/simplify';
 import { caddr, cadr } from '../../tree/helpers';
+import { half, one, two, zero } from '../../tree/rat/Rat';
 import { is_tensor } from '../../tree/tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { half, one, two, zero } from '../../tree/rat/Rat';
 import { car, is_cons, U } from '../../tree/tree';
+import { simplify, simplify_trig } from '../simplify/simplify';
 import { MATH_ABS } from './MATH_ABS';
 
 //(docs are generated from top-level comments, keep an eye on the formatting!)
@@ -84,15 +84,19 @@ Notes
  * For complex numbers, inner(x,y) = x * conj(y) 
  * 
  */
+/*
 export function abs(x: U, $: ExtensionEnv): U {
+    console.log(`abs x=${print_list(x, $)}`);
     const A = $.inner(x, x);
+    console.log(`A=${print_list(A, $)}`);
     const B = $.power(A, half);
     return B;
 }
+*/
 
 // Keep the following function for reference.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function abs_legacy(x: U, $: ExtensionEnv): U {
+export function abs(x: U, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         return retval;

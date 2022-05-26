@@ -1,17 +1,17 @@
-import { rational } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { equaln, equalq, is_negative } from './is';
-import { makeList } from './makeList';
-import { denominator } from './operators/denominator/denominator';
-import { numerator } from './operators/numerator/numerator';
-import { ARCTAN, COS, POWER, SIN, TAN } from './runtime/constants';
-import { DynamicConstants } from './runtime/defs';
-import { is_multiply, is_power } from './runtime/helpers';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
-import { caddr, cadr } from './tree/helpers';
-import { third, zero } from './tree/rat/Rat';
-import { car, cdr, U } from './tree/tree';
+import { rational } from '../../bignum';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { equaln, equalq, is_negative } from '../../is';
+import { makeList } from '../../makeList';
+import { denominator } from '../denominator/denominator';
+import { numerator } from '../numerator/numerator';
+import { ARCTAN, COS, POWER, SIN, TAN } from '../../runtime/constants';
+import { DynamicConstants } from '../../runtime/defs';
+import { is_multiply, is_power } from '../../runtime/helpers';
+import { flt } from '../../tree/flt/Flt';
+import { is_flt } from '../../tree/flt/is_flt';
+import { caddr, cadr } from '../../tree/helpers';
+import { third, zero } from '../../tree/rat/Rat';
+import { car, cdr, U } from '../../tree/tree';
 
 /* arctan =====================================================================
 

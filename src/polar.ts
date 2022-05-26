@@ -1,9 +1,8 @@
-import { abs } from './operators/abs/abs';
-import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { imu } from './env/imu';
 import { exp } from './exp';
+import { abs } from './operators/abs/abs';
 import { evalPolar } from './runtime/defs';
-import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
 import { U } from './tree/tree';
 
@@ -15,9 +14,9 @@ Convert complex z to polar form
 
   polar(z) = abs(z) * exp(i * arg(z))
 */
-export function Eval_polar(p1: U, $: ExtensionEnv): void {
+export function Eval_polar(p1: U, $: ExtensionEnv): U {
     const result = polar($.valueOf(cadr(p1)), $);
-    stack_push(result);
+    return result;
 }
 
 export function polar(p1: U, $: ExtensionEnv): U {

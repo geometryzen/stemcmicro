@@ -1,4 +1,4 @@
-import { arctan } from '../../arctan';
+import { arctan } from '../arctan/arctan';
 import { subtract } from '../../calculators/sub/subtract';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imag } from '../../imag';

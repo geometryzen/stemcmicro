@@ -121,7 +121,13 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             }
         }
         if (is_imu(lhs)) {
-            throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+            // This is really a bit imprecise.
+            if (rhs.contains(imu)) {
+                return SIGN_EQ;
+            }
+            else {
+                return SIGN_GT;
+            }
         }
         if (is_imu(rhs)) {
             // This is really a bit imprecise.

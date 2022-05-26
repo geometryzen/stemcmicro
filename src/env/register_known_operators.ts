@@ -226,6 +226,7 @@ import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_s
 import { outer_2_sym_outer_2_sym_sym } from '../operators/outer/outer_2_sym_outer_2_sym_sym';
 import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
+import { polar_varargs } from '../operators/polar/polar_varargs';
 import { pow } from '../operators/pow/pow';
 import { pow_2_any_any } from '../operators/pow/pow_2_any_any';
 import { pow_2_any_rat } from '../operators/pow/pow_2_any_rat';
@@ -660,6 +661,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
+    $.defineOperator(polar_varargs);
 
     $.defineOperator(printlist_1_any);
     $.defineOperator(printlist_keyword);

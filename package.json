@@ -48,6 +48,7 @@
         "unit-parser": "mocha 'units/parser.spec.ts'",
         "unit-physics": "mocha 'units/physics.spec.ts'",
         "unit-pierce": "mocha 'units/pierce.spec.ts'",
+        "unit-polar": "mocha 'units/polar.spec.ts'",
         "unit-power": "mocha 'units/power.spec.ts'",
         "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-print": "mocha 'units/print.spec.ts'",

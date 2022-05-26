@@ -5,7 +5,7 @@ import { derivative_wrt } from './operators/derivative/derivative_wrt';
 import { is_sym } from './operators/sym/is_sym';
 import { COS, LEGENDRE, SECRETX, SIN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { sine } from './sin';
+import { sine } from './operators/sin/sin';
 import { square } from './square';
 import { subst } from './subst';
 import { cadddr, caddr, cadr } from './tree/helpers';

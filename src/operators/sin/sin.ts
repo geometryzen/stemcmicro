@@ -1,17 +1,17 @@
-import { rational } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative } from './is';
-import { is_multiple_of_pi } from './is_multiple_of_pi';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { ARCSIN, ARCTAN, SIN } from './runtime/constants';
-import { DynamicConstants } from './runtime/defs';
-import { is_add } from './runtime/helpers';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
-import { cadr } from './tree/helpers';
-import { half, integer, negOne, one, three, two, zero } from './tree/rat/Rat';
-import { car, cdr, is_cons, U } from './tree/tree';
+import { rational } from '../../bignum';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { is_negative } from '../../is';
+import { is_multiple_of_pi } from '../../is_multiple_of_pi';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { ARCSIN, ARCTAN, SIN } from '../../runtime/constants';
+import { DynamicConstants } from '../../runtime/defs';
+import { is_add } from '../../runtime/helpers';
+import { flt } from '../../tree/flt/Flt';
+import { is_flt } from '../../tree/flt/is_flt';
+import { cadr } from '../../tree/helpers';
+import { half, integer, negOne, one, three, two, zero } from '../../tree/rat/Rat';
+import { car, cdr, is_cons, U } from '../../tree/tree';
 
 export function sine(p1: U, $: ExtensionEnv): U {
     if (is_add(p1)) {

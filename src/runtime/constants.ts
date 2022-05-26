@@ -126,7 +126,7 @@ export const RATIONALIZE = new Sym('rationalize');
 export const RCO = new Sym('rco');
 export const REAL = new Sym('real');
 export const ROUND = new Sym('round');
-export const YYRECT = new Sym('rect');
+export const RECT = new Sym('rect');
 export const ROOTS = new Sym('roots');
 export const ASSIGN = new Sym('=');
 export const SGN = new Sym('sgn');

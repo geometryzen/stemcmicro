@@ -13,7 +13,7 @@ import { polar } from '../../polar';
 import { is_imu } from '../../predicates/is_imu';
 import { is_num } from '../../predicates/is_num';
 import { real } from '../../real';
-import { rect } from '../../rect';
+import { rect } from '../rect/rect';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';

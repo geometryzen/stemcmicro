@@ -10,7 +10,7 @@ import { lcm } from './lcm';
 import { multiply_noexpand, negate_noexpand } from './multiply';
 import { denominator } from './operators/denominator/denominator';
 import { divpoly } from './quotient';
-import { rect } from './rect';
+import { rect } from './operators/rect/rect';
 import { defs, halt, moveTos, use_factoring_with_unary_function } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
 import { integer, negOne, one, zero } from './tree/rat/Rat';

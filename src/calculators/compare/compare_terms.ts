@@ -29,6 +29,9 @@ import { free_vars } from "./free_vars";
 import { has_imu_factor } from "./has_imu_factor";
 
 export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    if (lhs.equals(rhs)) {
+        return SIGN_EQ;
+    }
     // console.log(`compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
     if (is_sym(lhs) && is_sym(rhs)) {
         return compare_sym_sym(lhs, rhs);

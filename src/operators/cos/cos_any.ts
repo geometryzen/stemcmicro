@@ -1,5 +1,6 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
+import { print_expr } from "../../print";
 import { MATH_LT } from "../../runtime/ns_math";
 import { is_boo } from "../../tree/boo/is_boo";
 import { zero } from "../../tree/rat/Rat";
@@ -8,6 +9,7 @@ import { makeList, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
+import { cosine } from "./cosine";
 import { MATH_COS } from "./MATH_COS";
 
 class Builder implements OperatorBuilder<U> {
@@ -26,6 +28,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         this.hash = hash_unaop_atom(MATH_COS, HASH_ANY);
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
+        // console.log(`${this.name} arg=${print_expr(arg, this.$)}`);
         const $ = this.$;
         const arg_LT_0 = $.valueOf(makeList(MATH_LT, arg, zero));
         if (is_boo(arg_LT_0)) {
@@ -35,7 +38,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
                 return [TFLAG_DIFF, B];
             }
             else {
-                return [TFLAG_HALT, expr];
+                return [TFLAG_HALT, cosine(arg, $)];
             }
         }
         return [TFLAG_HALT, expr];

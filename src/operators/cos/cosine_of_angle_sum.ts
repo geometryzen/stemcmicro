@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_multiple_of_pi } from "../../is_multiple_of_pi";
-import { sine } from "../../sin";
+import { sine } from "../sin/sin";
 import { is_cons, U } from "../../tree/tree";
 import { cosine_of_angle } from "./cosine_of_angle";
 

@@ -5,7 +5,7 @@ import { nativeInt } from './nativeInt';
 import { BESSELJ, MEQUAL, MSIGN, PI } from './runtime/constants';
 import { defs } from './runtime/defs';
 import { stack_push } from './runtime/stack';
-import { sine } from './sin';
+import { sine } from './operators/sin/sin';
 import { flt } from './tree/flt/Flt';
 import { is_flt } from './tree/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';

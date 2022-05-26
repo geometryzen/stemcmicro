@@ -7,7 +7,7 @@ import { makeList } from '../../makeList';
 import { is_sym } from '../sym/is_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { real } from '../../real';
-import { rect } from '../../rect';
+import { rect } from '../rect/rect';
 import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { defs, DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';

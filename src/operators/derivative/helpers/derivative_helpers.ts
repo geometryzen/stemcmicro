@@ -34,7 +34,7 @@ import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
 // import { stack_push } from '../../runtime/stack';
 import { sgn } from '../../../sgn';
-import { sine } from '../../../sin';
+import { sine } from '../../sin/sin';
 import { ysinh } from '../../../sinh';
 import { subst } from '../../../subst';
 import { caddr, cadr } from '../../../tree/helpers';

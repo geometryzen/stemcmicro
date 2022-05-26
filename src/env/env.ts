@@ -605,7 +605,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
                                 if (diffFlag(flags)) {
-                                    curExpr = newExpr;
                                     outFlags |= TFLAG_DIFF;
                                     doneWithCurExpr = true;
                                     newExpr.meta |= TFLAG_HALT;
@@ -618,6 +617,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                         // console.log(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
+                                    curExpr = newExpr;
                                     break;
                                 }
                                 else if (haltFlag(flags)) {

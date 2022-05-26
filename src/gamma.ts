@@ -5,7 +5,7 @@ import { GAMMA, MEQUAL } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_add } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
-import { sine } from './sin';
+import { sine } from './operators/sin/sin';
 import { cadr } from './tree/helpers';
 import { is_rat } from './tree/rat/is_rat';
 import { half, negOne, Rat } from './tree/rat/Rat';

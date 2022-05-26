@@ -55,6 +55,7 @@ import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { and_varargs } from '../operators/and/and_varargs';
 import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
+import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arg_varargs } from '../operators/arg/arg_varargs';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
@@ -247,6 +248,7 @@ import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
+import { rect_varargs } from '../operators/rect/rect_varargs';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
 import { shape_varargs } from '../operators/shape/shape_varargs';
@@ -591,6 +593,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(algebra_2_tensor_tensor);
     $.defineOperator(and_varargs);
     $.defineOperator(arcsin_varargs);
+    $.defineOperator(arctan_varargs);
     $.defineOperator(arg_varargs);
 
     $.defineOperator(assign_sym_any);
@@ -662,6 +665,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(printlist_keyword);
     $.defineOperator(quote_varargs);
     $.defineOperator(rationalize_fn);
+    $.defineOperator(rect_varargs);
     $.defineOperator(roots_varargs);
 
     $.defineOperator(script_last_0);

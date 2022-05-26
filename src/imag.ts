@@ -1,7 +1,7 @@
 import { complex_conjugate } from './complex_conjugate';
 import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { rect } from './rect';
+import { rect } from './operators/rect/rect';
 import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
 import { two } from './tree/rat/Rat';

@@ -1,13 +1,12 @@
 import { rational } from './bignum';
-import { denominator } from './operators/denominator/denominator';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, equalq, is_negative } from './is';
 import { makeList } from './makeList';
+import { denominator } from './operators/denominator/denominator';
 import { numerator } from './operators/numerator/numerator';
 import { ARCTAN, COS, POWER, SIN, TAN } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
 import { flt } from './tree/flt/Flt';
 import { is_flt } from './tree/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
@@ -29,8 +28,8 @@ General description
 Returns the inverse tangent of x.
 
 */
-export function Eval_arctan(x: U, $: ExtensionEnv): void {
-    stack_push(arctan($.valueOf(cadr(x)), $));
+export function Eval_arctan(x: U, $: ExtensionEnv): U {
+    return arctan($.valueOf(cadr(x)), $);
 }
 
 export function arctan(x: U, $: ExtensionEnv): U {

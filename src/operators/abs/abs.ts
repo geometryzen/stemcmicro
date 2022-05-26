@@ -7,7 +7,7 @@ import { equaln, is_negative_number, is_negative_term, is_num_and_gt_zero } from
 import { makeList } from '../../makeList';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { real } from '../../real';
-import { rect } from '../../rect';
+import { rect } from '../rect/rect';
 import { PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { has_clock_form, has_exp_form } from '../../runtime/find';

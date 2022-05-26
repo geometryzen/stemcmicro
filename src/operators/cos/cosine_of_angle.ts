@@ -4,6 +4,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_negative } from '../../is';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
+import { print_expr } from '../../print';
 import { ARCCOS, ARCTAN, COS } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { flt } from '../../tree/flt/Flt';
@@ -14,6 +15,8 @@ import { car, U } from '../../tree/tree';
 
 
 export function cosine_of_angle(x: U, $: ExtensionEnv): U {
+    // console.log(`cosine_of_angle x=${print_expr(x, $)}`);
+
     if (car(x).equals(ARCCOS)) {
         return cadr(x);
     }
@@ -53,6 +56,8 @@ export function cosine_of_angle(x: U, $: ExtensionEnv): U {
     // denominator.
 
     const n = nativeInt($.divide($.multiply(x, integer(180)), DynamicConstants.Pi()));
+
+    // console.log(`n=${n}`);
 
     // most "good" (i.e. compact) trigonometric results
     // happen for a round number of degrees. There are some exceptions

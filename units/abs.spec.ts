@@ -4,7 +4,21 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("abs-sandbox", function () {
-    it("exp(i*pi/3)", function () {
+    it("abs(a+b+i*c)", function () {
+        const lines: string[] = [
+            `implicate=1`,
+            `abs(a+b+i*c)`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "(a**2+2*a*b+b**2+c**2)**(1/2)");
+        engine.release();
+    });
+    xit("exp(i*pi/3)", function () {
         const lines: string[] = [
             `implicate=0`,
             `exp(i*pi/3)`,
@@ -57,7 +71,7 @@ describe("abs", function () {
         assert.strictEqual(print_expr(value, $), "(y**2)**(1/2)");
         engine.release();
     });
-    it("abs(x+iy)", function () {
+    it("abs(x+i*y)", function () {
         const lines: string[] = [
             `abs(x+i*y)`,
         ];
@@ -69,6 +83,20 @@ describe("abs", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
         assert.strictEqual(print_expr(value, $), "(x**2+y**2)**(1/2)");
+        engine.release();
+    });
+    it("abs(a+i*b)", function () {
+        const lines: string[] = [
+            `abs(a+i*b)`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(value, $), "(power (+ (power a 2) (power b 2)) 1/2)");
+        assert.strictEqual(print_expr(value, $), "(a**2+b**2)**(1/2)");
         engine.release();
     });
     it("x * i", function () {

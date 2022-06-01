@@ -239,7 +239,10 @@ export function run_shardable_test(s: string[], prefix = '') {
     }
 }
 
+type DEPENDENCY = 'Imu';
+
 export interface TestOptions {
+    dependencies?: DEPENDENCY[];
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -249,6 +252,7 @@ export interface TestOptions {
 }
 
 interface TestConfig {
+    dependencies: DEPENDENCY[];
     treatAsVectors: string[];
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
@@ -291,6 +295,7 @@ function useDefinitions(version: 1 | 2 | 3 | undefined): boolean {
 function test_config_from_options(options: TestOptions | undefined): TestConfig {
     if (options) {
         const config: TestConfig = {
+            dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : useCaretForExponentiation(options.version),
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : useDefinitions(options.version),
@@ -301,6 +306,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     }
     else {
         const config: TestConfig = {
+            dependencies: [],
             treatAsVectors: [],
             useCaretForExponentiation: useCaretForExponentiation(VERSION_LATEST),
             useDefinitions: useDefinitions(VERSION_LATEST),
@@ -314,6 +320,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
 function harness_options_to_engine_options(options: TestOptions | undefined): SymEngineOptions {
     if (options) {
         return {
+            dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : useCaretForExponentiation(VERSION_LATEST),
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : useDefinitions(VERSION_LATEST),
@@ -322,6 +329,7 @@ function harness_options_to_engine_options(options: TestOptions | undefined): Sy
     }
     else {
         return {
+            dependencies: [],
             treatAsVectors: [],
             useCaretForExponentiation: useCaretForExponentiation(VERSION_LATEST),
             useDefinitions: useDefinitions(VERSION_LATEST),

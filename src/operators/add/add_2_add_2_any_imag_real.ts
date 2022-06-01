@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";

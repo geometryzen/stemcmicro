@@ -381,7 +381,10 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return current_phase === PHASE_IMPLICATE;
         },
         isImag(expr: U): boolean {
-            return $.operatorFor(expr).isImag(expr);
+            const op = $.operatorFor(expr);
+            const retval = op.isImag(expr);
+            // console.log(`${op.name} isImag ${expr} => ${retval}`);
+            return retval;
         },
         isMinusOne(expr: U): boolean {
             return $.operatorFor(expr).isMinusOne(expr);

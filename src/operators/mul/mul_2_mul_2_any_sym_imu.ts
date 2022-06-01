@@ -1,5 +1,5 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -32,6 +32,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_mul_2_any_sym_imu', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_imu, $);
         this.hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_POW);
     }
+    isImag(expr: EXP): boolean {
+        const $ = this.$;
+        const X = expr.lhs.lhs;
+        return $.isReal(X);
+    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
         const X = lhs.lhs;
@@ -41,7 +46,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             case SIGN_GT: {
                 const Xi = $.valueOf(makeList(MATH_MUL, X, i));
                 const Xia = $.valueOf(makeList(MATH_MUL, Xi, a));
-                // console.log(`${this.name} ${print_expr(orig, $)} ==> ${print_expr(Xia, $)}`);
                 return [TFLAG_DIFF, Xia];
             }
             default: {

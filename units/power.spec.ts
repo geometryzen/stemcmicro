@@ -5,15 +5,15 @@ import { VERSION_LATEST, VERSION_ONE } from "../src/runtime/version";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("operator should be right-associative", function () {
+    it("test D", function () {
         const lines: string[] = [
-            `a**b**c`
+            `(-2)**(3/2)`
         ];
-        const engine = createSymEngine({ version: VERSION_LATEST });
+        const engine = createSymEngine({ useDefinitions: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), '(power a (power b c))');
-        assert.strictEqual(print_expr(actual, $), 'a**(b**c)');
+        // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
+        assert.strictEqual(print_expr(actual, $), '-2*2**(1/2)*i');
         engine.release();
     });
 });
@@ -118,15 +118,15 @@ describe("Exponentiation", function () {
         assert.strictEqual(print_expr(actual, $), '2*2**(1/2)');
         engine.release();
     });
-    xit("test D", function () {
+    it("test D", function () {
         const lines: string[] = [
             `(-2)**(3/2)`
         ];
-        const engine = createSymEngine({ version: VERSION_LATEST });
+        const engine = createSymEngine({ useDefinitions: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
-        assert.strictEqual(print_expr(actual, $), 'i*2**(1/2)');
+        assert.strictEqual(print_expr(actual, $), '-2*2**(1/2)*i');
         engine.release();
     });
 });

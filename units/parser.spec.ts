@@ -126,7 +126,7 @@ describe("parser", function () {
         assert.strictEqual(print_expr(value, $), "a+b");
         engine.release();
     });
-    xit("should be able to parse an additive (-) expression", function () {
+    it("should be able to parse an additive (-) expression", function () {
         const lines: string[] = [
             `a-b`
         ];
@@ -156,7 +156,7 @@ describe("parser", function () {
         assert.strictEqual(print_expr(value, $), "a*b");
         engine.release();
     });
-    xit("should be able to parse an multiplicative (/) expression", function () {
+    it("should be able to parse an multiplicative (/) expression", function () {
         const lines: string[] = [
             `a/b`
         ];
@@ -261,7 +261,7 @@ describe("parser", function () {
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
-    xit("should be able to parse a let expression", function () {
+    it("should be able to parse a let expression", function () {
         const lines: string[] = [
             `let a: A`
         ];
@@ -276,7 +276,7 @@ describe("parser", function () {
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
-    xit("should be able to parse a let expression with assignment", function () {
+    it("should be able to parse a let expression with assignment", function () {
         const lines: string[] = [
             `let a: Real = b`
         ];
@@ -291,7 +291,7 @@ describe("parser", function () {
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
-    xit("should be able to parse a let expression with assignment", function () {
+    it("should be able to parse a let expression with assignment", function () {
         const lines: string[] = [
             `let a: Complex = b`
         ];
@@ -306,7 +306,7 @@ describe("parser", function () {
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
     });
-    xit("should be able to parse a let expression with assignment", function () {
+    it("should be able to parse a let expression with assignment", function () {
         const lines: string[] = [
             `let a: Vec = b`
         ];

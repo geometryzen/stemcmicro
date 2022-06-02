@@ -69,6 +69,7 @@
         "unit-trie": "mocha 'units/Trie.spec.ts'",
         "unit-trig": "mocha 'units/trig.spec.ts'",
         "unit-uom": "mocha 'units/uom.spec.ts'",
+        "unit-user": "mocha 'units/user.spec.ts'",
         "unit-vectors": "mocha 'units/vectors.spec.ts'",
         "test": "mocha 'tests/**/*.ts'",
         "test-abs": "mocha 'tests/abs.ts'",

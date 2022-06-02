@@ -1,6 +1,6 @@
 import { compare_terms_redux } from "../../calculators/compare/compare_terms";
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -56,15 +56,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(`${this.name} lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)}`);
         switch (compare_terms_redux(lhs, rhs, $)) {
             case SIGN_GT: {
-                // console.lg(`E=${print_list(expr, $)}`);
                 // // console.lg('SIGN_GT');
                 const A = makeList(opr, rhs, lhs);
-                // console.lg(`A=${print_list(A, $)}`);
                 const B = $.valueOf(A);
-                // console.lg(`B=${print_list(B, $)}`);
                 return [TFLAG_DIFF, B];
             }
             case SIGN_EQ: {

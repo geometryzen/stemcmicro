@@ -1,8 +1,8 @@
-import { diffFlag, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { ASSIGN, SYM_MATH_COMPONENT } from "../../runtime/constants";
 import { caadr } from "../../tree/helpers";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, NIL, U } from "../../tree/tree";
+import { is_cons, NIL, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -40,6 +40,7 @@ type EXP = BCons<Sym, LHS, RHS>;
  * @param expr (set! var expr)
  */
 function Eval_setq(expr: EXP, $: ExtensionEnv): U {
+    // console.lg(`Eval_setq ${expr}`);
     const lhs = expr.lhs;
 
     // case of tensor
@@ -79,15 +80,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     transform(expr: U): [TFLAGS, U] {
         const m = this.match(expr);
         if (m) {
-            const $ = this.$;
-            // Unlike the base class, we do not evaluate the left hand side (var) of the assignment.
-            const [flagsR, rhs] = $.transform(m.rhs);
-            if (diffFlag(flagsR)) {
-                return [TFLAG_DIFF, $.valueOf(makeList(m.opr, m.lhs, rhs))];
-            }
-            else {
-                return this.transform2(m.opr, m.lhs, m.rhs, m);
-            }
+            return this.transform2(m.opr, m.lhs, m.rhs, m);
         }
         return [TFLAG_NONE, expr];
     }

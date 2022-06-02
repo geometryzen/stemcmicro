@@ -41,7 +41,7 @@ General description
 Returns the partial derivative of f with respect to x. x can be a vector e.g. [x,y].
 
 */
-export function Eval_user_function(expr: Cons, $: ExtensionEnv): void {
+export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
     // Use "derivative" instead of "d" if there is no user function "d"
     if (DEBUG) {
         // eslint-disable-next-line no-console
@@ -49,8 +49,7 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): void {
     }
     if (car(expr) === SYMBOL_D && $.getBinding(SYMBOL_D) === SYMBOL_D) {
         const retval = Eval_derivative(expr, $);
-        stack_push(retval);
-        return;
+        return retval;
     }
 
     // normally car(p1) is a symbol with the function name
@@ -109,7 +108,7 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): void {
             p1 = cdr(p1);
         }
         stack_list(defs.tos - h);
-        return;
+        return stack_pop();
     }
 
     // Create the argument substitution list S
@@ -137,7 +136,7 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): void {
         rewrite_args($);
     }
     // console.lg "rewritten body: " + stack[tos-1]
-    stack_push($.valueOf(stack_pop()));
+    return $.valueOf(stack_pop());
 }
 
 // Rewrite by expanding symbols that contain args

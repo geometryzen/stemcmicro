@@ -2,9 +2,10 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { EVAL, FUNCTION } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
-import { stack_push } from '../../runtime/stack';
 import { caadr, caddr, cadr, cdadr } from '../../tree/helpers';
+import { Sym } from '../../tree/sym/Sym';
 import { car, NIL, U } from '../../tree/tree';
+import { BCons } from '../helpers/BCons';
 import { is_sym } from '../sym/is_sym';
 
 // Store a function definition
@@ -40,10 +41,29 @@ import { is_sym } from '../sym/is_sym';
 // F function name
 // A argument list
 // B function body
-export function define_user_function(p1: U, $: ExtensionEnv): U {
+/**
+ * The assignment is converted info a binding of f to (function body argList).
+ * 
+ * @param p1 (= (f argList) body)
+ */
+export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
+    // console.lg(`define_user_function ${print_list(p1, $)}`);
+    /**
+     * The function name.
+     */
     const F = caadr(p1);
+    /**
+     * The argument list.
+     */
     const A = cdadr(p1);
+    /**
+     * The function body.
+     */
     let B = caddr(p1);
+
+    // console.lg(`F => ${F}`);
+    // console.lg(`A => ${A}`);
+    // console.lg(`B => ${B}`);
 
     if (!is_sym(F)) {
         halt('function name?');
@@ -72,8 +92,4 @@ export function define_user_function(p1: U, $: ExtensionEnv): U {
     $.setBinding(F, B);
 
     return NIL;
-}
-
-export function Eval_function_reference(p1: U) {
-    stack_push(p1);
 }

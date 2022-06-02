@@ -50,7 +50,7 @@ import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
 import { Eval_real } from "../../real";
 import { Eval_round } from "../../round";
-import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
+import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
@@ -79,9 +79,7 @@ import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor
 import { is_tensor } from "../../tree/tensor/is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { car, cdr, Cons, is_cons, is_nil, NIL, U } from "../../tree/tree";
-import { Eval_user_function } from "../../userfunc";
 import { Eval_zero } from "../../zero";
-import { Eval_function_reference } from "../assign/define";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_sym } from "../sym/is_sym";
 
@@ -187,6 +185,7 @@ class ConsExtension implements Extension<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
+        // console.log(`ConsExtension.transform ${expr}`);
         return [TFLAG_NONE, expr];
     }
     valueOf(expr: Cons, $: ExtensionEnv): U {
@@ -199,22 +198,6 @@ class ConsExtension implements Extension<Cons> {
          * The car of the expression is the symbol for the operator.
          */
         const op = expr.car;
-
-        // normally the cons_head is a symbol,
-        // but sometimes in the case of
-        // functions we don't have a symbol,
-        // we have to evaluate something to get to the
-        // symbol. For example if a function is inside
-        // a tensor, then we need to evaluate an index
-        // access first to get to the function.
-        // In those cases, we find an EVAL here,
-        // so we proceed to EVAL
-        if (car(op) === EVAL) {
-            Eval_user_function(expr, $);
-            // I'm guessing we should return pop() rather than undefined.
-            // Or should it be NIL?
-            return hook(stack_pop(), "A");
-        }
 
         // If we didn't fall in the EVAL case above
         // then at this point we must have a symbol, or maybe a list containing stuff that does not have a symbol
@@ -370,13 +353,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case FOR:
                 Eval_for(expr, $);
-                return stack_pop();
-            // this is invoked only when we
-            // evaluate a function that is NOT being called
-            // e.g. when f is a function as we do
-            //  g = f
-            case FUNCTION:
-                Eval_function_reference(expr);
                 return stack_pop();
             case GAMMA:
                 Eval_gamma(expr, $);
@@ -536,8 +512,7 @@ class ConsExtension implements Extension<Cons> {
                 Eval_zero(expr, $);
                 return stack_pop();
             default:
-                Eval_user_function(expr, $);
-                return stack_pop();
+                throw new Error();
         }
 
         throw new Error(`ConsExtension.valueOf ${$.toInfixString(expr)} method not implemented.`);

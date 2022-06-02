@@ -2,12 +2,14 @@ import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/Extensi
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
+import { is_num } from "../../predicates/is_num";
 import { print_expr } from "../../print";
 import { is_rat } from "../../tree/rat/is_rat";
 import { is_tensor } from "../../tree/tensor/is_tensor";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 import { compare } from "./compare";
+import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { group } from "./group";
 
@@ -87,6 +89,9 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         else {
             throw new Error(`lhs = ${lhs}, rhs = ${rhs}`);
         }
+    }
+    else if (is_num(lhs) && is_num(rhs)) {
+        return compare_num_num(lhs, rhs);
     }
     else {
         throw new Error(`lhs = ${print_expr(lhs, $)}, rhs = ${print_expr(rhs, $)}`);

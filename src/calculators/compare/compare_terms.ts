@@ -2,7 +2,6 @@ import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/Extensi
 import { imu } from "../../env/imu";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
-import { is_binop } from "../../operators/helpers/is_binop";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
@@ -146,12 +145,16 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                 return SIGN_LT;
             }
         }
+        // Exchanging unary and binary operators can cause looping problems.
+        // e.g. when changing associativity.
+        /*
         if (is_unaop(lhs) && is_binop(rhs)) {
             return SIGN_LT;
         }
         if (is_binop(lhs) && is_unaop(rhs)) {
             return SIGN_GT;
         }
+        */
         // throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
         //        return compare_terms_redux(lhs.opr, rhs.opr, $);
     }

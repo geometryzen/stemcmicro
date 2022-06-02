@@ -21,6 +21,7 @@ import { Pattern } from "../patterns/Pattern";
 import { is_imu } from "../predicates/is_imu";
 import { is_num } from "../predicates/is_num";
 import { print_expr } from "../print";
+import { FUNCTION } from "../runtime/constants";
 import { implicate } from "../runtime/execute";
 import { is_add } from "../runtime/helpers";
 import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER, MATH_POW } from "../runtime/ns_math";
@@ -36,6 +37,7 @@ import { Sym } from "../tree/sym/Sym";
 import { is_tensor } from "../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { is_uom } from "../tree/uom/is_uom";
+import { Eval_user_function } from "../userfunc";
 import { CostTable } from "./CostTable";
 import { diffFlag, ExtensionEnv, FEATURE, haltFlag, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
@@ -605,7 +607,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
-                        // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
@@ -635,6 +637,22 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                 }
                                 else {
                                     // console.lg(`NOFLAGS..: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                }
+                            }
+                        }
+                        else {
+                            // If there were no operators registered for the given key, look for a user-defined function.
+                            if (is_cons(curExpr)) {
+                                const opr = curExpr.opr;
+                                if (is_sym(opr)) {
+                                    const binding = $.getBinding(opr);
+                                    if (!is_nil(binding)) {
+                                        if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
+                                            const newExpr = Eval_user_function(curExpr, $);
+                                            // console.log(`USER FUNC oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                            return [TFLAG_DIFF, newExpr];
+                                        }
+                                    }
                                 }
                             }
                         }

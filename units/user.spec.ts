@@ -4,7 +4,7 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("user", function () {
-    xit("f(x)=x", function () {
+    it("f(x)=x", function () {
         const lines: string[] = [
             `autofactor=0`,
             `implicate=0`,

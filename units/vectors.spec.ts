@@ -413,21 +413,5 @@ describe("vectors", function () {
             assert.strictEqual(print_expr(value, $), "-n*a");
             engine.release();
         });
-        xit("a dot (b^c) => (a|b)*c - (a|c)*b", function () {
-            const lines: string[] = [
-                `autoexpand=1`,
-                `autofactor=1`,
-                `1/2*(a*(b^c)-(b^c)*a)`,
-            ];
-            const engine = createSymEngine({
-                dependencies: ['Vector'],
-                treatAsVectors: ['a', 'b', 'c']
-            });
-            const $ = engine.$;
-            const value = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(value,$), "(* (| n n) a)");
-            assert.strictEqual(print_expr(value, $), "a|b*c-a|c*b");
-            engine.release();
-        });
     });
 });

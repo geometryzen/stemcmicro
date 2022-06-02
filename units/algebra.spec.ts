@@ -442,35 +442,6 @@ describe("algebra", function () {
         assert.strictEqual($.toInfixString(value), "0.0");
         engine.release();
     });
-    // Even works for strings!
-    xit('"foo" + (-1 * "foo")', function () {
-        const lines: string[] = [
-            `a = "foo"`,
-            `a + (-1 * a)`
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Blade']
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(value), "0");
-        engine.release();
-    });
-});
-describe("algebra", function () {
-    xit('"foo" + (-1 * "foo")', function () {
-        const lines: string[] = [
-            `a = "foo"`,
-            `a + (-1 * a)`
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Blade']
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(value), "0");
-        engine.release();
-    });
 });
 describe("algebra", function () {
     it("(e1, e2)", function () {

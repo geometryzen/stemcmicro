@@ -16,4 +16,16 @@ describe("rationalize", function () {
 
         engine.release();
     });
+    it("rationalize(a/b+b/a)", function () {
+        const lines: string[] = [
+            `rationalize(a/b+b/a)`
+        ];
+        const engine = createSymEngine({ useCaretForExponentiation: true });
+        const $ = engine.$;
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "(* (+ (power a 2) (power b 2)) (power (* a b) -1))");
+        assert.strictEqual(print_expr(actual, $), "(a^2+b^2)/(a*b)");
+
+        engine.release();
+    });
 });

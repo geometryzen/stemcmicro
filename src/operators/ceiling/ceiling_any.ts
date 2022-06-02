@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -16,7 +16,7 @@ class Ceiling extends Function1<U> implements Operator<U> {
         super('ceiling_any', new Sym('ceiling'), is_any, $);
     }
     transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

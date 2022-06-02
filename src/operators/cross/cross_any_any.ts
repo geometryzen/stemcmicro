@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
@@ -21,7 +21,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         super('cross_any_any', MATH_VECTOR_CROSS_PRODUCT, is_any, is_any, $);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

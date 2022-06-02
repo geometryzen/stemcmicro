@@ -1,4 +1,4 @@
-import { run_test, xrun_test } from '../test-harness';
+import { run_test } from '../test-harness';
 
 run_test([
     'abs(a+i*b)',
@@ -7,15 +7,15 @@ run_test([
 
 run_test([
     'abs(a+b+i*c)',
-    '(2*a*b+a^2+b^2+c^2)^(1/2)',
+    '(a^2+2*a*b+b^2+c^2)^(1/2)',
 ], { dependencies: ['Imu'], useCaretForExponentiation: true, useDefinitions: true });
 
-xrun_test([
+run_test([
     'abs(a+i*b)',
     '(a^2+b^2)^(1/2)',
 
     'abs(a+b+i*c)',
-    '(2*a*b+a^2+b^2+c^2)^(1/2)',
+    '(a^2+2*a*b+b^2+c^2)^(1/2)',
 
     'abs(exp(a+i*b))',
     'exp(a)',
@@ -181,4 +181,9 @@ xrun_test([
 
     'abs((-1.0)^(9/3))',
     '1.0',
-], { verbose: true, useCaretForExponentiation: true, useDefinitions: true });
+], {
+    verbose: true,
+    dependencies: ['Imu'],
+    useCaretForExponentiation: true,
+    useDefinitions: true
+});

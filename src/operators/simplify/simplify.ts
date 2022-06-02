@@ -2,7 +2,7 @@ import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { clockform } from '../../clock';
 import { condense, yycondense } from '../../condense';
-import { ExtensionEnv, NOFLAGS, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
+import { ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
 import { factor } from "../../factor";
 import { areunivarpolysfactoredorexpandedform, gcd } from "../../gcd";
 import { equalq, is_negative_number, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
@@ -393,7 +393,7 @@ function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
             // eslint-disable-next-line no-console
             console.log('denesting bailing out because of too much recursion');
         }
-        return [NOFLAGS, p1];
+        return [TFLAG_NONE, p1];
     }
 
     const [
@@ -432,7 +432,7 @@ function take_care_of_nested_radicals(p1: U, $: ExtensionEnv): [U, TFLAGS] {
             // eslint-disable-next-line no-console
             console.log('denesting bailing out because of too much recursion');
         }
-        return [p1, NOFLAGS];
+        return [p1, TFLAG_NONE];
     }
 
     if (is_cons(p1)) {
@@ -444,7 +444,7 @@ function take_care_of_nested_radicals(p1: U, $: ExtensionEnv): [U, TFLAGS] {
         }
     }
 
-    return [p1, NOFLAGS];
+    return [p1, TFLAG_NONE];
 }
 
 function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] {
@@ -455,7 +455,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     // console.lg("possible double radical exponent: " + exponent)
 
     if ((is_num(expo) && expo.isMinusOne()) || car(base) !== ADD || !(is_rat(expo) && expo.isFraction()) || (!equalq(expo, 1, 3) && !equalq(expo, 1, 2))) {
-        return [p1, NOFLAGS];
+        return [p1, TFLAG_NONE];
     }
 
     // console.lg("ok there is a radix with a term inside")
@@ -471,14 +471,14 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         countingTerms = cdr(countingTerms);
     }
     if (numberOfTerms > 2) {
-        return [p1, NOFLAGS];
+        return [p1, TFLAG_NONE];
     }
 
     // list here all the factors
     const { commonBases, termsThatAreNotPowers } = _listAll(secondTerm, $);
 
     if (commonBases.length === 0) {
-        return [p1, NOFLAGS];
+        return [p1, TFLAG_NONE];
     }
 
     const A = firstTerm;
@@ -490,20 +490,20 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         const checkSize1 = $.divide($.multiply($.negate(A), C), B); // 4th coeff
         const result1 = nativeDouble(yyfloat(real(checkSize1, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
-            return [p1, NOFLAGS];
+            return [p1, TFLAG_NONE];
         }
 
         const checkSize2 = $.multiply(three, C); // 3rd coeff
         const result2 = nativeDouble(yyfloat(real(checkSize2, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
-            return [p1, NOFLAGS];
+            return [p1, TFLAG_NONE];
         }
         const arg1b = $.multiply(checkSize2, SECRETX);
 
         const checkSize3 = $.divide($.multiply(integer(-3), A), B); // 2nd coeff
         const result3 = nativeDouble(yyfloat(real(checkSize3, $), $));
         if (Math.abs(result3) > Math.pow(2, 32)) {
-            return [p1, NOFLAGS];
+            return [p1, TFLAG_NONE];
         }
 
         const result = add_terms([
@@ -517,13 +517,13 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     else if (equalq(expo, 1, 2)) {
         const result1 = nativeDouble(yyfloat(real(C, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
-            return [p1, NOFLAGS];
+            return [p1, TFLAG_NONE];
         }
 
         const checkSize = $.divide($.multiply(integer(-2), A), B);
         const result2 = nativeDouble(yyfloat(real(checkSize, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
-            return [p1, NOFLAGS];
+            return [p1, TFLAG_NONE];
         }
         temp = $.add(
             C,
@@ -542,7 +542,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
             // eslint-disable-next-line no-console
             console.log('roots bailed out because of too much recursion');
         }
-        return [p1, NOFLAGS];
+        return [p1, TFLAG_NONE];
     }
 
     // exclude the solutions with radicals
@@ -551,7 +551,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     );
 
     if (possibleSolutions.length === 0) {
-        return [p1, NOFLAGS];
+        return [p1, TFLAG_NONE];
     }
 
     const possibleRationalSolutions: U[] = [];
@@ -570,7 +570,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     const SOLUTION = possibleRationalSolutions[whichRationalSolution];
 
     if (!equalq(expo, 1, 3) && !equalq(expo, 1, 2)) {
-        return [p1, NOFLAGS];
+        return [p1, TFLAG_NONE];
     }
 
     if (equalq(expo, 1, 3)) {
@@ -661,7 +661,7 @@ function _listAll(secondTerm: U, $: ExtensionEnv): { commonBases: U[]; termsThat
 }
 
 function _nestedCons(p1: U, $: ExtensionEnv): [U, TFLAGS] {
-    let anyRadicalSimplificationWorked = NOFLAGS;
+    let anyRadicalSimplificationWorked = TFLAG_NONE;
     const arr = [];
     if (is_cons(p1)) {
         const items = Array.from(p1).map((p) => {

@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -24,7 +24,7 @@ class Op extends Function2<U, U> implements Operator<Cons> {
     }
     transform2(opr: Sym, lhs: U, rhs: U, expr: BCons<Sym, U, U>): [TFLAGS, U] {
         // console.log(`${this.name}`);
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

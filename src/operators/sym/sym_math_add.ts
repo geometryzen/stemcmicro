@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { VERSION_ONE } from "../../runtime/version";
@@ -98,7 +98,7 @@ class SymMathAdd implements Operator<Sym> {
             return [TFLAG_HALT, expr];
         }
         else {
-            return [NOFLAGS, expr];
+            return [TFLAG_NONE, expr];
         }
     }
     valueOf(expr: Sym): Sym {

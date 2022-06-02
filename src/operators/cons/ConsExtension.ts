@@ -5,24 +5,20 @@ import { Eval_arctanh } from "../../arctanh";
 import { Eval_besselj } from "../../besselj";
 import { Eval_bessely } from "../../bessely";
 import { Eval_binomial } from "../../binomial";
-import { cadnr } from "../../calculators/cadnr";
-import { set_component } from "../../calculators/set_component";
 import { Eval_choose } from "../../choose";
 import { Eval_circexp } from "../../circexp";
 import { Eval_clear, Eval_clearall } from "../../clear";
 import { Eval_coeff } from "../../coeff";
 import { Eval_cosh } from "../../cosh";
 import { Eval_decomp } from "../../decomp";
-import { define_user_function, Eval_function_reference } from "../../define";
 import { Eval_degree } from "../../degree";
 import { Eval_dirac } from "../../dirac";
 import { divisors } from "../../divisors";
 import { Eval_eigen, Eval_eigenval, Eval_eigenvec } from "../../eigen";
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, Sign, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAG_NONE, Sign, TFLAGS } from "../../env/ExtensionEnv";
 import { Eval_erf } from "../../erf";
 import { Eval_erfc } from "../../erfc";
-import { exp } from "../../exp";
 import { Eval_expand } from "../../expand";
 import { Eval_expcos } from "../../expcos";
 import { Eval_expsin } from "../../expsin";
@@ -55,10 +51,9 @@ import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
 import { Eval_real } from "../../real";
 import { Eval_round } from "../../round";
-import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXP, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, SYM_MATH_COMPONENT, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
-import { defs } from "../../runtime/defs";
+import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
 import { MATH_INNER, MATH_POW } from "../../runtime/ns_math";
-import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
+import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { Eval_arccos } from "../../scripting/eval_arccos";
 import { Eval_clockform } from "../../scripting/eval_clockform";
@@ -78,7 +73,7 @@ import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_tes
 import { Eval_transpose } from "../../transpose";
 import { Err } from "../../tree/err/Err";
 import { is_flt } from "../../tree/flt/is_flt";
-import { caadr, cadadr, cadddr, caddr, cadr, cdadr, cddr } from "../../tree/helpers";
+import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
 import { is_rat } from "../../tree/rat/is_rat";
 import { integer, one, zero } from "../../tree/rat/Rat";
 import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor_elements";
@@ -87,6 +82,7 @@ import { Tensor } from "../../tree/tensor/Tensor";
 import { car, cdr, Cons, is_cons, is_nil, NIL, U } from "../../tree/tree";
 import { Eval_user_function } from "../../userfunc";
 import { Eval_zero } from "../../zero";
+import { Eval_function_reference } from "../assign/define";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_sym } from "../sym/is_sym";
 
@@ -192,7 +188,7 @@ class ConsExtension implements Extension<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
     valueOf(expr: Cons, $: ExtensionEnv): U {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -349,9 +345,6 @@ class ConsExtension implements Extension<Cons> {
             case EVAL:
                 Eval_Eval(expr, $);
                 return stack_pop();
-            case EXP:
-                Eval_exp(expr, $);
-                return stack_pop();
             case EXPAND:
                 Eval_expand(expr, $);
                 return stack_pop();
@@ -494,9 +487,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case ROUND:
                 Eval_round(expr, $);
-                return stack_pop();
-            case ASSIGN:
-                Eval_setq(expr, $);
                 return stack_pop();
             case SGN:
                 Eval_sgn(expr, $);
@@ -697,18 +687,6 @@ function Eval_Eval(p1: U, $: ExtensionEnv) {
     stack_push($.valueOf(tmp));
 }
 
-/**
- * exp(arg) evaluation: it replaces itself with a (power e arg) node and evals that one
- * @param expr 
- * @param $ 
- */
-function Eval_exp(expr: Cons, $: ExtensionEnv) {
-    const A = cadnr(expr, 1);
-    const B = $.valueOf(A);
-    const C = exp(B, $);
-    stack_push(C);
-}
-
 function Eval_factorial(p1: U, $: ExtensionEnv) {
     stack_push(factorial($.valueOf(cadr(p1))));
 }
@@ -766,108 +744,6 @@ function Eval_rank(p1: U, $: ExtensionEnv) {
     stack_push(rank);
 }
 
-// Evaluates the right side and assigns the
-// result of the evaluation to the left side.
-// It's called setq because it stands for "set quoted" from Lisp,
-// see:
-//   http://stackoverflow.com/questions/869529/difference-between-set-setq-and-setf-in-common-lisp
-// Note that this also takes case of assigning to a tensor
-// element, which is something that setq wouldn't do
-// in list, see comments further down below.
-
-// Example:
-//   f = x
-//   // f evaluates to x, so x is assigned to g really
-//   // rather than actually f being assigned to g
-//   g = f
-//   f = y
-//   g
-//   > x
-/**
- * @param expr (set! var expr)
- */
-function Eval_setq(expr: Cons, $: ExtensionEnv): void {
-    const cadr_expr = car(expr.cdr);
-
-    // case of tensor
-    if (caadr(expr) === SYM_MATH_COMPONENT) {
-        setq_indexed(expr, $);
-        return;
-    }
-
-    // case of function definition
-    if (is_cons(cadr_expr)) {
-        define_user_function(expr, $);
-        return;
-    }
-
-    if (!is_sym(cadr_expr)) {
-        throw new Error('symbol assignment: error in symbol');
-    }
-
-    const binding = $.valueOf(caddr(expr));
-    $.setBinding(cadr_expr, binding);
-
-    // An assignment returns nothing.
-    // This is unlike most programming languages
-    // where an assignment does return the
-    // assigned value.
-    // TODO Could be changed.
-    stack_push(NIL);
-}
-
-// Here "setq" is a misnomer because
-// setq wouldn't work in Lisp to set array elements
-// since setq stands for "set quoted" and you wouldn't
-// quote an array element access.
-// You'd rather use setf, which is a macro that can
-// assign a value to anything.
-//   (setf (aref YourArray 2) "blue")
-// see
-//   http://stackoverflow.com/questions/18062016/common-lisp-how-to-set-an-element-in-a-2d-array
-//-----------------------------------------------------------------------------
-//
-//  Example: a[1] = b
-//
-//  p1  *-------*-----------------------*
-//    |  |      |
-//    setq  *-------*-------*  b
-//      |  |  |
-//      index  a  1
-//
-//  cadadr(p1) -> a
-//
-//-----------------------------------------------------------------------------
-function setq_indexed(p1: U, $: ExtensionEnv) {
-    const p4 = cadadr(p1);
-    // console.lg(`p4: ${toInfixString(p4)}`);
-    if (!is_sym(p4)) {
-        // this is likely to happen when one tries to
-        // do assignments like these
-        //   1[2] = 3
-        // or
-        //   f(x)[1] = 2
-        // or
-        //   [[1,2],[3,4]][5] = 6
-        //
-        // In other words, one can only do
-        // a straight assignment like
-        //   existingMatrix[index] = something
-        throw new Error('indexed assignment: expected a symbol name');
-    }
-    const h = defs.tos;
-    stack_push($.valueOf(caddr(p1)));
-    const p2 = cdadr(p1);
-    if (is_cons(p2)) {
-        stack_push_items([...p2].map(function (x) {
-            return $.valueOf(x);
-        }));
-    }
-    set_component(defs.tos - h);
-    const p3 = stack_pop();
-    $.setBinding(p4, p3);
-    stack_push(NIL);
-}
 
 function Eval_stop() {
     throw new Error('user stop');

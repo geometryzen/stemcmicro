@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, is_nil, makeList, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
@@ -39,10 +39,10 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                 return [TFLAG_DIFF, $.valueOf(retval)];
             }
             else {
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

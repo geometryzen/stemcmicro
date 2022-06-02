@@ -1,7 +1,6 @@
-import { ExtensionEnv } from '../env/ExtensionEnv';
-import { abs } from '../operators/abs/abs';
-import { stack_push } from '../runtime/stack';
-import { car, Cons } from '../tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { car, Cons, U } from '../../tree/tree';
+import { abs } from './abs';
 
 //(docs are generated from top-level comments, keep an eye on the formatting!)
 
@@ -51,11 +50,11 @@ Notes
      automatic.
 */
 
-export function Eval_abs(expr: Cons, $: ExtensionEnv): void {
+export function Eval_abs(expr: Cons, $: ExtensionEnv): U {
 
     const argList = expr.cdr;
     const arg = car(argList);
     const x = $.valueOf(arg);
     const result = abs(x, $);
-    stack_push(result);
+    return result;
 }

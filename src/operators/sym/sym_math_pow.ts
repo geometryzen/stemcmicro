@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { VERSION_ONE } from "../../runtime/version";
@@ -35,7 +35,7 @@ class SymMathPow implements Operator<Sym> {
         return costs.getCost(MATH_POW, this.$);
     }
     transform(expr: U): [TFLAGS, U] {
-        return [this.isKind(expr) ? TFLAG_HALT : NOFLAGS, expr];
+        return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Sym): boolean {

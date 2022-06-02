@@ -1,6 +1,6 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -31,7 +31,7 @@ class Op extends Function2X<Sym, Sym> implements Operator<Cons> {
                 return [TFLAG_DIFF, makeList(MATH_MUL, negOne, makeList(opr, rhs, lhs))];
             }
             default: {
-                return [NOFLAGS, oldExpr];
+                return [TFLAG_NONE, oldExpr];
             }
         }
     }

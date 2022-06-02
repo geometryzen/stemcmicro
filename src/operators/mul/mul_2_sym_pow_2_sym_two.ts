@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -50,7 +50,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<Cons> {
             const ab = makeList(MATH_MUL, a, b);
             return [TFLAG_DIFF, makeList(MATH_MUL, ab, b)];
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

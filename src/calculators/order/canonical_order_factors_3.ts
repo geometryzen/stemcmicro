@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Cons, makeList, U } from "../../tree/tree";
 import { compare_factors } from "../compare/compare_factors";
@@ -8,7 +8,7 @@ import { compare_factors } from "../compare/compare_factors";
  */
 function compute_changed(newExpr: U, oldExpr: U): TFLAGS {
     if (newExpr.equals(oldExpr)) {
-        return NOFLAGS;
+        return TFLAG_NONE;
     }
     return TFLAG_DIFF;
 }
@@ -69,14 +69,14 @@ export function canonical_order_factors_3(s1: U, s2: U, s3: U, oldExpr: Cons, $:
                 }
                 default: {
                     if ($.isAssocL(MATH_MUL)) {
-                        return [NOFLAGS, hook(oldExpr, "G")];
+                        return [TFLAG_NONE, hook(oldExpr, "G")];
                     }
                     if ($.isAssocR(MATH_MUL)) {
                         const s2s3 = makeList(MATH_MUL, s2, s3);
                         const newExpr = makeList(MATH_MUL, s1, s2s3);
                         return [compute_changed(newExpr, oldExpr), hook(newExpr, "H")];
                     }
-                    return [NOFLAGS, hook(oldExpr, "I")];
+                    return [TFLAG_NONE, hook(oldExpr, "I")];
                 }
             }
         }

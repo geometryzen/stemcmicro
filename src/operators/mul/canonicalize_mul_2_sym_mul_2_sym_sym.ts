@@ -1,5 +1,5 @@
 import { canonical_order_factors_3 } from "../../calculators/order/canonical_order_factors_3";
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -50,7 +50,7 @@ class Op extends Function2<Sym, BCons<Sym, Sym, Sym>> implements Operator<Cons> 
             return [CHANGED, makeList(MATH_MUL, a, b, c)];
         }
         */
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

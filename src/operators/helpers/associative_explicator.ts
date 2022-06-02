@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, PHASE_EXPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, PHASE_EXPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -64,7 +64,7 @@ class Explicator extends FunctionVarArgs implements Operator<Cons> {
             }
             return [TFLAG_DIFF, $.valueOf(retval)];
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

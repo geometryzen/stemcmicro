@@ -1,11 +1,11 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { is_sym } from './operators/sym/is_sym';
-import { EVAL, FUNCTION } from './runtime/constants';
-import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { caadr, caddr, cadr, cdadr } from './tree/helpers';
-import { car, NIL, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { EVAL, FUNCTION } from '../../runtime/constants';
+import { halt } from '../../runtime/defs';
+import { stack_push } from '../../runtime/stack';
+import { caadr, caddr, cadr, cdadr } from '../../tree/helpers';
+import { car, NIL, U } from '../../tree/tree';
+import { is_sym } from '../sym/is_sym';
 
 // Store a function definition
 //
@@ -40,7 +40,7 @@ import { car, NIL, U } from './tree/tree';
 // F function name
 // A argument list
 // B function body
-export function define_user_function(p1: U, $: ExtensionEnv): void {
+export function define_user_function(p1: U, $: ExtensionEnv): U {
     const F = caadr(p1);
     const A = cdadr(p1);
     let B = caddr(p1);
@@ -71,7 +71,7 @@ export function define_user_function(p1: U, $: ExtensionEnv): void {
 
     $.setBinding(F, B);
 
-    stack_push(NIL);
+    return NIL;
 }
 
 export function Eval_function_reference(p1: U) {

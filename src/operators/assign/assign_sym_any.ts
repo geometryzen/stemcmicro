@@ -1,8 +1,9 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { diffFlag, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { ASSIGN } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
-import { NIL, U } from "../../tree/tree";
+import { makeList, NIL, U } from "../../tree/tree";
+import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_sym } from "../sym/is_sym";
@@ -13,14 +14,34 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class Op extends Function2<Sym, U> implements Operator<U> {
+type LHS = Sym;
+type RHS = U;
+type EXP = BCons<Sym, LHS, RHS>;
+
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('assign_sym_any', ASSIGN, is_sym, is_any, $);
         this.hash = hash_binop_atom_atom(ASSIGN, HASH_SYM, HASH_ANY);
     }
-    transform2(opr: Sym, lhs: Sym, rhs: U): [TFLAGS, U] {
+    transform(expr: U): [TFLAGS, U] {
+        const m = this.match(expr);
+        if (m) {
+            const $ = this.$;
+            // Unlike the base class, we do not evaluate the left hand side (var) of the assignment.
+            const [flagsR, rhs] = $.transform(m.rhs);
+            if (diffFlag(flagsR)) {
+                return [TFLAG_DIFF, $.valueOf(makeList(m.opr, m.lhs, rhs))];
+            }
+            else {
+                return this.transform2(m.opr, m.lhs, m.rhs, m);
+            }
+        }
+        return [TFLAG_NONE, expr];
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform2(opr: Sym, lhs: Sym, rhs: U, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         $.setBinding(lhs, rhs);
         // Assignments return NIL to prevent them from being printed.

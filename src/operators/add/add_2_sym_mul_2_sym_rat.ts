@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -41,7 +41,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             const retval = makeList(opr, lhs, binswap(rhs));
             return [TFLAG_DIFF, retval];
         }
-        return [NOFLAGS, orig];
+        return [TFLAG_NONE, orig];
     }
 }
 

@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -51,7 +51,7 @@ class Op extends Function2X<BCons<Sym, Sym, Sym>, BCons<Sym, Rat, BCons<Sym, Sym
             const b = lhs.rhs;
             return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), b, a)];
         }
-        return [NOFLAGS, orig];
+        return [TFLAG_NONE, orig];
     }
 }
 

@@ -1,5 +1,5 @@
 
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { one, Rat } from "../../tree/rat/Rat";
@@ -28,7 +28,7 @@ class Op extends Function2<U, Rat> implements Operator<Cons> {
             return [TFLAG_DIFF, base];
         }
         else {
-            return [NOFLAGS, expr];
+            return [TFLAG_NONE, expr];
         }
     }
 }

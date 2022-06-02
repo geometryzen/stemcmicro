@@ -1,5 +1,5 @@
 import { Eval_adj } from "../../adj";
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { ADJ } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
@@ -28,7 +28,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         const $ = this.$;
         const retval = Eval_adj(expr, $);
         const changed = !retval.equals(expr);
-        return [changed ? TFLAG_DIFF : NOFLAGS, retval];
+        return [changed ? TFLAG_DIFF : TFLAG_NONE, retval];
     }
 }
 

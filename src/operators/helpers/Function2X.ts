@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, diffFlag, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, diffFlag, ExtensionEnv, TFLAG_NONE, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { makeList, U } from "../../tree/tree";
 import { BCons } from "./BCons";
@@ -35,6 +35,6 @@ export abstract class Function2X<L extends U, R extends U> extends Function2<L, 
                 return this.transform2(m.opr, m.lhs, m.rhs, m);
             }
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }

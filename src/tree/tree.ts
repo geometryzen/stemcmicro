@@ -226,20 +226,38 @@ export class Cons implements U {
             return 0;
         }
     }
+    /**
+     * A convenience property for the method item(0).
+     * A useful shortcut when working with operators.
+     */
     get opr(): U {
         return this.item(0);
     }
+    /**
+     * A convenience property for the method item(1).
+     * A useful shortcut when working with unary operators.
+     */
     get arg(): U {
         return this.item(1);
     }
+    /**
+     * A convenience property for the method item(1).
+     * A useful shortcut when working with binary operators.
+     */
     get lhs(): U {
         return this.item(1);
     }
+    /**
+     * A convenience property for the method item(2).
+     * A useful shortcut when working with binary operators.
+     */
     get rhs(): U {
         return this.item(2);
     }
     /**
-     * Returns the item at the specified index.
+     * Returns the item at the specified (zero-based) index.
+     * 
+     * (item0 item1 item2 ...)
      */
     item(index: number): U {
         if (index >= 0 && this !== NIL) {

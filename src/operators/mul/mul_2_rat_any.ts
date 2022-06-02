@@ -1,5 +1,5 @@
 
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -32,7 +32,7 @@ function multiply_rat_any(lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
     }
     // TODO: It's important for this to be NOFLAGS rather than STABLE.
     // e.g. Rat*(Blade*Uom) will not be processed further.
-    return [NOFLAGS, expr];
+    return [TFLAG_NONE, expr];
 }
 
 /**

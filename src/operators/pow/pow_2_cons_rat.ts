@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -21,7 +21,7 @@ class PowerConsRat extends Function2<Cons, Rat> implements Operator<Cons> {
         this.hash = hash_binop_atom_atom(this.opr, HASH_ANY, HASH_RAT);
     }
     transform2(opr: Sym, lhs: Cons, rhs: Rat, expr: BCons<Sym, Cons, Rat>): [TFLAGS, U] {
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

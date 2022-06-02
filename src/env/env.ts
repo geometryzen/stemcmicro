@@ -37,7 +37,7 @@ import { is_tensor } from "../tree/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { is_uom } from "../tree/uom/is_uom";
 import { CostTable } from "./CostTable";
-import { diffFlag, ExtensionEnv, FEATURE, haltFlag, NOFLAGS, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, haltFlag, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -91,7 +91,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
 
     const config = config_from_options(options);
 
-    // console.log(`config: ${JSON.stringify(config, null, 2)}`);
+    // console.lg(`config: ${JSON.stringify(config, null, 2)}`);
 
     const symTab: SymTab = createSymTab();
 
@@ -170,7 +170,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
         },
         treatAsScalar(sym: Sym): boolean {
-            // console.log(`treatAsScalar ${sym}`);
+            // console.lg(`treatAsScalar ${sym}`);
             return !$.treatAsVector(sym);
         },
         treatAsVector(sym: Sym): boolean {
@@ -292,7 +292,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     // No problem.
                 }
                 else {
-                    // console.log(`Ignoring ${op.name} which depends on ${JSON.stringify(op.dependencies)}`);
+                    // console.lg(`Ignoring ${op.name} which depends on ${JSON.stringify(op.dependencies)}`);
                     continue;
                 }
                 // If an operator does not restrict the phases to which it applies then it applies to all phases.
@@ -329,10 +329,10 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             /*
             for (const key in keydOps) {
                 const ops = keydOps[key];
-                console.log(`${key} ${ops.length}`);
+                console.lg(`${key} ${ops.length}`);
                 if (ops.length > 5) {
                     for (const op of ops) {
-                        console.log(`${key} ${op.name}  <<<<<<<`);
+                        console.lg(`${key} ${op.name}  <<<<<<<`);
                     }
                 }
             }
@@ -383,7 +383,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isImag(expr);
-            // console.log(`${op.name} isImag ${expr} => ${retval}`);
+            // console.lg(`${op.name} isImag ${expr} => ${retval}`);
             return retval;
         },
         isMinusOne(expr: U): boolean {
@@ -393,33 +393,36 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return $.operatorFor(expr).isOne(expr);
         },
         isReal(expr: U): boolean {
-            return $.operatorFor(expr).isReal(expr);
+            const op = $.operatorFor(expr);
+            const retval = op.isReal(expr);
+            // console.lg(`${op.name} isReal ${expr} => ${retval}`);
+            return retval;
         },
         isScalar(expr: U): boolean {
-            // console.log(`isScalar ${expr}`);
+            // console.lg(`isScalar ${expr}`);
             return $.operatorFor(expr).isScalar(expr);
         },
         isVector(expr: U): boolean {
-            // console.log(`isVector ${expr}`);
+            // console.lg(`isVector ${expr}`);
             return $.operatorFor(expr).isVector(expr);
         },
         isZero(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isZero(expr);
-            // console.log(`${op.name} isZero ${expr} => ${retval}`);
+            // console.lg(`${op.name} isZero ${expr} => ${retval}`);
             return retval;
         },
         equals(lhs: U, rhs: U): boolean {
             return lhs.equals(rhs);
         },
         factorize(p: U, x: U): U {
-            // console.log(`factorize p=${print_expr(p, $)} in variable ${print_expr(x, $)}`);
+            // console.lg(`factorize p=${print_expr(p, $)} in variable ${print_expr(x, $)}`);
             if (!p.contains(x)) {
                 return p;
             }
 
             if (!is_poly_expanded_form(implicate(p, $), x, $)) {
-                // console.log(`Giving up b/c the polynomial is not in expanded form.`);
+                // console.lg(`Giving up b/c the polynomial is not in expanded form.`);
                 return p;
             }
 
@@ -430,7 +433,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return yyfactorpoly(p, x, $);
         },
         inner(lhs: U, rhs: U): U {
-            // console.log(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
+            // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
             const value_lhs = $.valueOf(lhs);
             const value_rhs = $.valueOf(rhs);
             const inner_lhs_rhs = makeList(MATH_INNER, value_lhs, value_rhs);
@@ -574,7 +577,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 if ((expr.meta & TFLAG_HALT) > 0) {
                     return [TFLAG_HALT, expr];
                 }
-                if (expr.meta === NOFLAGS) {
+                if (expr.meta === TFLAG_NONE) {
                     // Do nothing yet.
                 }
                 else {
@@ -587,11 +590,11 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             // We short-circuit some expressions in order to improve performance.
             if (is_imu(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_cons(expr)) {
                 // let changedExpr = false;
-                let outFlags = NOFLAGS;
+                let outFlags = TFLAG_NONE;
                 let curExpr: U = expr;
                 let doneWithExpr = false;
                 const pops = currentOps();
@@ -602,7 +605,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
-                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
@@ -624,14 +627,14 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else if (haltFlag(flags)) {
-                                    // console.log(`.... HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    // console.lg(`.... HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     // TODO: We also need to break out of the loop on keys
                                     doneWithCurExpr = true;
                                     newExpr.meta |= TFLAG_HALT;
                                     break;
                                 }
                                 else {
-                                    // console.log(`NOFLAGS..: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    // console.lg(`NOFLAGS..: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                 }
                             }
                         }
@@ -644,11 +647,11 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
             else if (is_rat(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_flt(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_sym(expr)) {
                 const retval = $.operatorFor(expr).transform(expr);
@@ -657,7 +660,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
             else if (is_blade(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_tensor(expr)) {
                 const retval = $.operatorFor(expr).transform(expr);
@@ -666,27 +669,27 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
             else if (is_uom(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_nil(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_str(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_boo(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_hyp(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else if (is_err(expr)) {
                 expr.meta |= TFLAG_HALT;
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
             else {
                 throw new SystemError(`transform ${print_expr(expr, $)}`);

@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -32,7 +32,7 @@ class Op extends Function2<BCons<Sym, U, U>, BCons<Sym, U, U>> implements Operat
             return [true, reverse_binop(orig)];
         }
         */
-        return [NOFLAGS, orig];
+        return [TFLAG_NONE, orig];
     }
 }
 

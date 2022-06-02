@@ -1,8 +1,7 @@
 import { compare_terms_redux } from "../../calculators/compare/compare_terms";
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
-import { print_list } from "../../print";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -57,26 +56,28 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        // console.log(`${this.name} lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)}`);
+        // console.lg(`${this.name} lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)}`);
         switch (compare_terms_redux(lhs, rhs, $)) {
             case SIGN_GT: {
-                // console.log('SIGN_GT');
+                // console.lg(`E=${print_list(expr, $)}`);
+                // // console.lg('SIGN_GT');
                 const A = makeList(opr, rhs, lhs);
-                // console.log(`A=${print_list(A, $)}`);
+                // console.lg(`A=${print_list(A, $)}`);
                 const B = $.valueOf(A);
+                // console.lg(`B=${print_list(B, $)}`);
                 return [TFLAG_DIFF, B];
             }
             case SIGN_EQ: {
-                // console.log('SIGN_EQ');
+                // console.lg('SIGN_EQ');
                 if (lhs.equals(rhs)) {
                     return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, two, lhs))];
                 }
                 else {
-                    return [NOFLAGS, expr];
+                    return [TFLAG_NONE, expr];
                 }
             }
             default: {
-                // console.log('SIGN_LT');
+                // console.lg('SIGN_LT');
                 // The following works, but it's not what we want when trying to rationalize an expression.
                 /*
                 if ($.isFactoring()) {
@@ -84,15 +85,15 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                         const l = leftmost_factor(lhs);
                         const r = leftmost_factor(rhs);
                         if (l.equals(r)) {
-                            console.log(`${this.name} l=${print_list(l, $)} r=${print_list(r, $)}`);
+                            console.lg(`${this.name} l=${print_list(l, $)} r=${print_list(r, $)}`);
                             const lprime = $.valueOf($.divide(lhs,l));
                             const rprime = $.valueOf($.divide(rhs,r));
-                            console.log(`${this.name} lprime=${print_list(lprime, $)} rprime=${print_list(rprime, $)}`);
+                            console.lg(`${this.name} lprime=${print_list(lprime, $)} rprime=${print_list(rprime, $)}`);
                         }
                     }
                 }
                 */
-                return [NOFLAGS, expr];
+                return [TFLAG_NONE, expr];
             }
         }
     }

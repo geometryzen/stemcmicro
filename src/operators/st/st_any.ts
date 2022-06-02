@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -28,7 +28,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
             return [TFLAG_DIFF, arg];
         }
         else {
-            return [NOFLAGS, expr];
+            return [TFLAG_NONE, expr];
         }
     }
 }

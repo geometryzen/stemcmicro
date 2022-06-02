@@ -1,5 +1,5 @@
 import { add_num_num } from "../../calculators/add/add_num_num";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -76,7 +76,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
             }
             default: {
                 // This should be dead code.
-                return [NOFLAGS, orig];
+                return [TFLAG_NONE, orig];
             }
         }
     }

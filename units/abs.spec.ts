@@ -4,10 +4,11 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("abs-sandbox", function () {
-    it("abs(a+b+i*c)", function () {
+    it("complex numbers", function () {
         const lines: string[] = [
-            `implicate=1`,
-            `abs(a+b+i*c)`,
+            `implicate=0`,
+            `autofactor=1`,
+            `i*a+i*c`,
         ];
         const engine = createSymEngine({
             dependencies: ['Imu'],
@@ -15,7 +16,35 @@ describe("abs-sandbox", function () {
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "(a**2+2*a*b+b**2+c**2)**(1/2)");
+        assert.strictEqual(print_expr(value, $), "(a+c)*i");
+        engine.release();
+    });
+    it("complex numbers", function () {
+        const lines: string[] = [
+            `implicate=0`,
+            `i*a+b+i*c`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "b+(a+c)*i");
+        engine.release();
+    });
+    xit("abs of exp of complex", function () {
+        const lines: string[] = [
+            `implicate=0`,
+            `abs(exp(i*a+b+i*c))`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "exp(a)");
         engine.release();
     });
     xit("exp(i*pi/3)", function () {
@@ -99,6 +128,20 @@ describe("abs", function () {
         assert.strictEqual(print_expr(value, $), "(a**2+b**2)**(1/2)");
         engine.release();
     });
+    it("abs(a+b+i*c)", function () {
+        const lines: string[] = [
+            `implicate=1`,
+            `abs(a+b+i*c)`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "(a**2+2*a*b+b**2+c**2)**(1/2)");
+        engine.release();
+    });
     it("x * i", function () {
         const lines: string[] = [
             `autofactor=0`,
@@ -180,6 +223,36 @@ describe("abs", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
         assert.strictEqual(print_expr(value, $), "1/2+(1/2*3**(1/2))*i");
+        engine.release();
+    });
+    it("imaginary numbers with autofactor=1", function () {
+        const lines: string[] = [
+            `implicate=0`,
+            `autofactor=1`,
+            `i*a+i*c`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "(a+c)*i");
+        engine.release();
+    });
+    it("imaginary numbers with autofactor=0", function () {
+        const lines: string[] = [
+            `implicate=0`,
+            `autofactor=0`,
+            `i*a+i*c`,
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_expr(value, $), "a*i+c*i");
         engine.release();
     });
 });

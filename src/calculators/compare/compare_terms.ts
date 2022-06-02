@@ -32,7 +32,7 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }
-    // console.log(`compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
+    // // console.lg(`compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
     if (is_sym(lhs) && is_sym(rhs)) {
         return compare_sym_sym(lhs, rhs);
     }
@@ -64,14 +64,22 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
     }
     if (is_sym(lhs)) {
+        if ($.isImag(rhs)) {
+            return SIGN_LT;
+        }
         const lvars = free_vars(lhs, $);
         const rvars = free_vars(rhs, $);
+        // console.lg(`A. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
         const retval = compare_vars_vars(lvars, rvars);
         return retval;
     }
     if (is_sym(rhs)) {
+        if ($.isImag(lhs)) {
+            return SIGN_GT;
+        }
         const lvars = free_vars(lhs, $);
         const rvars = free_vars(rhs, $);
+        // console.lg(`B. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
         const retval = compare_vars_vars(lvars, rvars);
         return retval;
     }
@@ -147,17 +155,24 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         // throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
         //        return compare_terms_redux(lhs.opr, rhs.opr, $);
     }
+    if ($.isImag(lhs) && $.isReal(rhs)) {
+        return SIGN_GT;
+    }
+    if ($.isReal(lhs) && $.isImag(rhs)) {
+        return SIGN_LT;
+    }
     const lvars = free_vars(lhs, $);
     const rvars = free_vars(rhs, $);
+    // console.lg(`C. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
     const retval = compare_vars_vars(lvars, rvars);
     return retval;
 
-    // console.log(`UNDECIDED compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+    // // console.lg(`UNDECIDED compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
     // return SIGN_EQ;
 }
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.log(`compare_terms ${lhs} ${rhs}`);
+    // // console.lg(`compare_terms ${lhs} ${rhs}`);
     // Numeric factors in lhs term have no effect on ordering.
     if (is_cons(lhs) && is_mul_2_any_any(lhs)) {
         const [a, b] = factorizeL(lhs);

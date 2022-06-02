@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
@@ -73,13 +73,13 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
                     default: {
                         // t1, t2, t3
                         if ($.isAssocL(MATH_ADD)) {
-                            return [NOFLAGS, hook(orig, "F")];
+                            return [TFLAG_NONE, hook(orig, "F")];
                         }
                         if ($.isAssocR(MATH_ADD)) {
                             const t2t3 = makeList(MATH_ADD, t2, t3);
                             return [TFLAG_DIFF, hook(makeList(MATH_ADD, t1, t2t3), "G")];
                         }
-                        return [NOFLAGS, hook(orig, "H")];
+                        return [TFLAG_NONE, hook(orig, "H")];
                     }
                 }
             }
@@ -95,7 +95,7 @@ function branch(X: Cons, Y: U, Z: U, orig: U, $: ExtensionEnv): [TFLAGS, U] {
         }
         default: {
             // t1, t2, t3
-            return [NOFLAGS, orig];
+            return [TFLAG_NONE, orig];
         }
     }
 }

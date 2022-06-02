@@ -1,6 +1,6 @@
 
 import { CostTable } from "../../env/CostTable";
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
 import { Cons, NIL, U } from "../../tree/tree";
 
@@ -84,7 +84,7 @@ class NilExtension implements Operator<Cons> {
             return [TFLAG_HALT, NIL];
         }
         else {
-            return [NOFLAGS, expr];
+            return [TFLAG_NONE, expr];
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

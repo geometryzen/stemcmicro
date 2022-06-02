@@ -1,8 +1,7 @@
 import { bake } from "../bake";
-import { ExtensionEnv, haltFlag, NOFLAGS, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
+import { ExtensionEnv, haltFlag, TFLAG_NONE, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../predicates/is_imu';
-import { print_expr } from "../print";
 import { create_source_trees } from '../scanner/create_source_tree';
 import { ScanOptions } from '../scanner/scan';
 import { subst } from '../subst';
@@ -212,7 +211,7 @@ function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' 
     let done = false;
     let loops = 0;
     while (!done) {
-        inExpr.reset(NOFLAGS);
+        inExpr.reset(TFLAG_NONE);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [flags, outExpr] = $.transform(inExpr);
         loops++;

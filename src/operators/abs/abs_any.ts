@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -14,15 +14,17 @@ class Builder implements OperatorBuilder<U> {
 }
 
 type ARG = U;
-type EXPR = UCons<Sym, ARG>;
+type EXP = UCons<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXPR> {
+class Op extends Function1<ARG> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('abs_any', MATH_ABS, is_any, $);
     }
-    transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        // TODO: Perhaps we should qualify that we are unpacking functions.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
+        // TODO: Perhaps we should qualify that we are unpacking functions.
+        // console.lg(`expr=${print_expr(expr, $)}`);
         const A = $.inner(arg, arg);
         const B = $.power(A, half);
         return [TFLAG_DIFF, B];

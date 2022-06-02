@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
@@ -78,7 +78,7 @@ class Op extends Function2X<Sym, U> implements Operator<BCons<Sym, Sym, U>> {
                 }
             }
         }
-        return [NOFLAGS, oldExpr];
+        return [TFLAG_NONE, oldExpr];
     }
 }
 

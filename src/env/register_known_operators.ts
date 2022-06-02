@@ -5,6 +5,7 @@ import { abs_sym_real } from '../operators/abs/abs_sym_real';
 import { MATH_ABS } from '../operators/abs/MATH_ABS';
 import { add_2_add_2_any_any_any } from '../operators/add/add_2_add_2_any_any_any';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
+import { add_2_add_2_any_imag_imag } from '../operators/add/add_2_add_2_any_imag_imag';
 import { add_2_add_2_any_imag_real } from '../operators/add/add_2_add_2_any_imag_real';
 import { add_2_add_2_rat_mul_2_rat_any_add_2_rat_any } from '../operators/add/add_2_add_2_any_mul_2_rat_any_add_2_rat_any';
 import { add_2_add_2_any_mul_2_rat_sym_mul_2_rat_sym } from '../operators/add/add_2_add_2_any_mul_2_rat_sym_mul_2_rat_sym';
@@ -377,6 +378,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(add_2_add_2_sym_xxx_xxx);
     $.defineOperator(add_2_add_2_sym_sym_sym);
     $.defineOperator(add_2_add_2_any_imag_real);
+    $.defineOperator(add_2_add_2_any_imag_imag);
     $.defineOperator(add_2_canonical_ordering);
     $.defineOperator(add_2_add_2_any_any_any_factorize_rhs);
     $.defineOperator(add_2_assoc_lhs_canonical_ordering);

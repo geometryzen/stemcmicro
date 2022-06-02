@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -46,7 +46,7 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<BCons<Sym, U
             return [TFLAG_DIFF, $.valueOf(makeList(rhs.opr, ab, ac))];
         }
         else {
-            return [NOFLAGS, expr];
+            return [TFLAG_NONE, expr];
         }
     }
 }

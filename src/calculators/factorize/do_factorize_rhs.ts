@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, TFLAGS } from "../../env/ExtensionEnv";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_num } from "../../predicates/is_num";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -41,5 +41,5 @@ export function do_factorize_rhs(lhs: U, rhs: U, prod: U, orig: U, $: ExtensionE
             return [TFLAG_DIFF, B];
         }
     }
-    return [NOFLAGS, orig];
+    return [TFLAG_NONE, orig];
 }

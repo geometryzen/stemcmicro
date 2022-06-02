@@ -1,5 +1,5 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { is_imu } from "../../predicates/is_imu";
@@ -30,6 +30,14 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_sym_imu', MATH_MUL, is_sym, is_imu, $);
         this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_POW);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isImag(expr: EXP): boolean {
+        return true;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isReal(expr: EXP): boolean {
+        return false;
+    }
     isScalar(expr: EXP): boolean {
         const $ = this.$;
         return $.isScalar(expr.lhs);
@@ -45,7 +53,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                 return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
             }
             default: {
-                return [NOFLAGS, orig];
+                return [TFLAG_NONE, orig];
             }
         }
     }

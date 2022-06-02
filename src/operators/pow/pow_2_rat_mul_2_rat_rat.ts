@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -20,7 +20,7 @@ class Op extends Function2<Rat, BCons<Sym, Rat, Rat>> implements Operator<Cons> 
         super('pow_2_rat_mul_2_rat_rat', MATH_POW, is_rat, and(is_cons, is_mul_2_rat_rat), $);
     }
     transform2(opr: Sym, lhs: Rat, rhs: Cons, expr: BCons<Sym, Rat, Cons>): [TFLAGS, U] {
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

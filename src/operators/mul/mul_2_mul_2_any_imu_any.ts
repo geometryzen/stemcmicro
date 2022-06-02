@@ -1,5 +1,5 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { ExtensionEnv, FEATURE, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, TFLAG_NONE, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_imu } from "../../predicates/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -49,7 +49,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                 return [TFLAG_DIFF, XYi];
             }
             default: {
-                return [NOFLAGS, orig];
+                return [TFLAG_NONE, orig];
             }
         }
     }

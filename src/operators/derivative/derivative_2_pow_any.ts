@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -34,7 +34,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         const retval = dpower(lhs, rhs, $);
         const changed = !retval.equals(expr);
-        return [changed ? TFLAG_DIFF : NOFLAGS, retval];
+        return [changed ? TFLAG_DIFF : TFLAG_NONE, retval];
     }
 }
 

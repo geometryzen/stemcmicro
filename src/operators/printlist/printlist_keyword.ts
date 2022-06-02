@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { NAME_SCRIPT_LAST } from "../../runtime/ns_script";
 import { makeList, U } from "../../tree/tree";
@@ -32,7 +32,7 @@ class PrintListKeyword extends KeywordOperator {
             const $ = this.$;
             return [TFLAG_DIFF, $.valueOf(makeList(FNAME_PRINTLIST, NAME_SCRIPT_LAST))];
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

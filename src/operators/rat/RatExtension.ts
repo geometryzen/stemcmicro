@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_RAT } from "../../hashing/hash_info";
 import { defs } from '../../runtime/defs';
 import { flt } from '../../tree/flt/Flt';
@@ -84,7 +84,7 @@ class RatExtension implements Extension<Rat> {
                 return [TFLAG_HALT, expr];
             }
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
     valueOf(expr: Rat): U {
         return this.transform(expr)[1];

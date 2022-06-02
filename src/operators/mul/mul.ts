@@ -1,4 +1,4 @@
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { MULTIPLY } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
@@ -17,7 +17,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

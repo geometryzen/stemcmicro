@@ -4,7 +4,6 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_negative } from '../../is';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
-import { print_expr } from '../../print';
 import { ARCCOS, ARCTAN, COS } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { flt } from '../../tree/flt/Flt';

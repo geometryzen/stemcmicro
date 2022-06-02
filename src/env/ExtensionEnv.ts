@@ -13,7 +13,7 @@ export type TFLAGS = number;
 /**
  * The expression was ignored by the transformer, usually because it did not match the transformer.
  */
-export const NOFLAGS = 0;
+export const TFLAG_NONE = 0;
 /**
  * The expression changed as a result of the transformation.
  */

@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -21,7 +21,7 @@ class Op extends Function2<U, U> implements Operator<Cons> {
         this.hash = hash_binop_atom_atom(MATH_RCO, HASH_ANY, HASH_ANY);
     }
     transform2(opr: Sym, lhs: U, rhs: U, expr: BCons<Sym, U, U>): [TFLAGS, U] {
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
 }
 

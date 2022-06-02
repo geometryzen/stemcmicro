@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -74,13 +74,13 @@ export function canonical_order_terms_3(t1: Sym, t2: Sym, t3: Sym, orig: EXPR, $
                     default: {
                         // t1, t2, t3
                         if ($.isAssocL(MATH_ADD)) {
-                            return [NOFLAGS, hook(orig, "F")];
+                            return [TFLAG_NONE, hook(orig, "F")];
                         }
                         if ($.isAssocR(MATH_ADD)) {
                             const t2t3 = makeList(MATH_ADD, t2, t3);
                             return [TFLAG_DIFF, hook(makeList(MATH_ADD, t1, t2t3), "G")];
                         }
-                        return [NOFLAGS, hook(orig, "H")];
+                        return [TFLAG_NONE, hook(orig, "H")];
                     }
                 }
             }
@@ -114,7 +114,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             return [CHANGED, makeList(opr, lhs.lhs, lhs.rhs, rhs)];
         }
         */
-        return [NOFLAGS, orig];
+        return [TFLAG_NONE, orig];
     }
 }
 

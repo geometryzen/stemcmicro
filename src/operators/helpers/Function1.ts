@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { diffFlag, TFLAG_DIFF, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { diffFlag, TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
@@ -44,7 +44,7 @@ export abstract class Function1<T extends U> extends FunctionVarArgs {
                 return this.transform1(m.opr, m.arg, m);
             }
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
     abstract transform1(opr: Sym, arg: T, expr: UCons<Sym, T>): [TFLAGS, U];
 }

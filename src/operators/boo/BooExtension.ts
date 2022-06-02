@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAG_NONE, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_BOO } from "../../hashing/hash_info";
 import { Boo, True } from "../../tree/boo/Boo";
 import { U } from "../../tree/tree";
@@ -28,7 +28,7 @@ export class BooExtension implements Extension<Boo> {
             return [TFLAG_HALT, expr];
         }
         else {
-            return [NOFLAGS, expr];
+            return [TFLAG_NONE, expr];
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

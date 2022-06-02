@@ -1,6 +1,6 @@
 
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { defs } from "../../runtime/defs";
@@ -53,17 +53,17 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
                 // const B = $.valueOf(A);
                 // console.log(`${this.name} ${print_expr(orig, $)} B = ${print_expr(B, $)}`);
                 // return [CHANGED, B];
-                return [NOFLAGS, orig];
+                return [TFLAG_NONE, orig];
             }
             case SIGN_EQ: {
                 if (defs.convert_X_times_X_to_power_X_2 && lhs.equals(rhs)) {
                     return [TFLAG_DIFF, $.valueOf(makeList(MATH_POW, lhs, two))];
                 }
-                return [NOFLAGS, orig];
+                return [TFLAG_NONE, orig];
                 break;
             }
             default: {
-                return [NOFLAGS, orig];
+                return [TFLAG_NONE, orig];
             }
         }
     }

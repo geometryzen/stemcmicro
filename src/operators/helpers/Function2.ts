@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, diffFlag, ExtensionEnv, NOFLAGS, TFLAGS } from "../../env/ExtensionEnv";
+import { diffFlag, ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, makeList, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
@@ -34,27 +34,22 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
                                 return expr as BCons<Sym, L, R>;
                             }
                             else {
-                                // console.lg('guardR mismatch');
                                 return void 0;
                             }
                         }
                         else {
-                            // console.lg('guardL mismatch');
                             return void 0;
                         }
                     }
                     else {
-                        // console.lg('equalSym mismatch');
                         return void 0;
                     }
                 }
                 else {
-                    // console.lg('is_sym mismatch');
                     return void 0;
                 }
             }
             else {
-                // console.lg('is_cons or length mismatch');
                 return void 0;
             }
         }
@@ -83,7 +78,7 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
                 return this.transform2(m.opr, m.lhs, m.rhs, m);
             }
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
     /**
      * 

@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, NOFLAGS, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
@@ -173,9 +173,9 @@ class TensorExtension implements Extension<Tensor> {
             // 3. Possibly construct a new matrix.
             const retval = expr.withElements(new_elements);
             const changed = !retval.equals(expr);
-            return [changed ? TFLAG_DIFF : NOFLAGS, retval];
+            return [changed ? TFLAG_DIFF : TFLAG_NONE, retval];
         }
-        return [NOFLAGS, expr];
+        return [TFLAG_NONE, expr];
     }
     valueOf(expr: Tensor, $: ExtensionEnv): U {
         // const old_elements = expr.copyElements();

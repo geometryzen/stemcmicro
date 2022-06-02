@@ -1,6 +1,7 @@
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 
 export function compare_vars_vars(lhs: string[], rhs: string[]): Sign {
+    // console.lg(`compare_vars_vars lhs=${lhs} rhs=${rhs}`);
     let gtCount = 0;
     let eqCount = 0;
     let ltCount = 0;

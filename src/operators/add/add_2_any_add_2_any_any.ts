@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -40,8 +40,8 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<BCons<Sym, U
             return [TFLAG_DIFF, $.valueOf(makeList(MATH_ADD, addXY, Z))];
         }
         if ($.isAssocR(MATH_ADD)) {
-            return [NOFLAGS, orig];
+            return [TFLAG_NONE, orig];
         }
-        return [NOFLAGS, orig];
+        return [TFLAG_NONE, orig];
     }
 }

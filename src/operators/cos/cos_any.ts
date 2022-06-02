@@ -1,6 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { print_expr } from "../../print";
 import { MATH_LT } from "../../runtime/ns_math";
 import { is_boo } from "../../tree/boo/is_boo";
 import { zero } from "../../tree/rat/Rat";

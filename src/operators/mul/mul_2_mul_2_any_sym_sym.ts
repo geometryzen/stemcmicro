@@ -1,6 +1,6 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
 import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, NOFLAGS, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -56,7 +56,7 @@ class Op extends Function2X<BCons<Sym, U, Sym>, Sym> implements Operator<BCons<S
             const Xaz = $.valueOf(makeList(lhs.opr, Xa, z));
             return [TFLAG_DIFF, Xaz];
         }
-        return [NOFLAGS, orig];
+        return [TFLAG_NONE, orig];
     }
 }
 

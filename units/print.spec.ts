@@ -38,9 +38,12 @@ describe("print", function () {
         const lines: string[] = [
             `(a*b)|c`,
         ];
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b', 'c'] });
+        const engine = createSymEngine({
+            treatAsVectors: ['a', 'b', 'c']
+        });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(value, $), "(a*b)|c");
         assert.strictEqual(print_expr(value, $), "(a*b)|c");
         engine.release();
     });
@@ -54,7 +57,7 @@ describe("print", function () {
         assert.strictEqual(print_expr(value, $), "b|c*a");
         engine.release();
     });
-    xit("F", function () {
+    it("F", function () {
         // This used to be correct, but canonicalization transforms it.
         const lines: string[] = [
             `a*b^c`,

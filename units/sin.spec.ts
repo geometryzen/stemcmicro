@@ -146,7 +146,7 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), 'sin(a+b)');
     });
-    xit("sin(b-a) without factoring", function () {
+    it("sin(b-a) without factoring", function () {
         const lines: string[] = [
             `autofactor=0`,
             `sin(b-a)`
@@ -156,8 +156,7 @@ describe("sin", function () {
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), 'cos(a)*sin(b)-cos(b)*sin(a)');
-        // assert.strictEqual(print_expr(value, $), 'cos(a)*sin(b)-sin(a)*cos(b)');
+        assert.strictEqual(print_expr(value, $), 'cos(a)*sin(b)-sin(a)*cos(b)');
     });
     it("sin(b-a) with factoring", function () {
         const lines: string[] = [
@@ -184,7 +183,7 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), 'sin(-a+b)');
     });
-    xit("sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))", function () {
+    it("sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))", function () {
         const lines: string[] = [
             `autofactor=0`,
             `sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))`
@@ -196,7 +195,7 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), '0');
     });
-    xit("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
+    it("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
         const lines: string[] = [
             `autofactor=0`,
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
@@ -208,10 +207,7 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_expr(value, $), '0');
     });
-    xit("cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)", function () {
-        // TODO: This shows the importance of canonicalization.
-        // The current output is...
-        // cos(b)*sin(a)-sin(a)*cos(b)
+    it("cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)", function () {
         const lines: string[] = [
             `autofactor=0`,
             `cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)`

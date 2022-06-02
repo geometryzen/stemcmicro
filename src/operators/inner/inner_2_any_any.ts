@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -18,6 +18,7 @@ class Op extends Function2<U, U> implements Operator<Cons> {
         super('inner_2_any_any', MATH_INNER, is_any, is_any, $);
     }
     transform2(opr: Sym, lhs: U, rhs: U, expr: BCons<Sym, U, U>): [TFLAGS, U] {
+        // console.log(`${this.name} lhs=${lhs} rhs=${rhs}`);
         return [TFLAG_NONE, expr];
     }
 }

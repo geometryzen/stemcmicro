@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { PI } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
@@ -79,7 +79,7 @@ class SymExtension implements Extension<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isOne(arg: Sym, $: ExtensionEnv): boolean {
-        throw new Error("Sym Method not implemented.");
+        return false;
     }
     isReal(sym: Sym, $: ExtensionEnv): boolean {
         return $.treatAsReal(sym);

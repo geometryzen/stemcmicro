@@ -1,4 +1,4 @@
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
@@ -36,7 +36,14 @@ function is_imu_times_pi(expr: Cons) {
     }
 }
 
-class Op extends Function2X<Sym, U> implements Operator<BCons<Sym, Sym, U>> {
+type LHS = Sym;
+type RHS = U;
+type EXP = BCons<Sym, LHS, RHS>;
+
+/**
+ * (power e X) is equivalent to exp(X)
+ */
+class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
@@ -44,15 +51,23 @@ class Op extends Function2X<Sym, U> implements Operator<BCons<Sym, Sym, U>> {
         this.hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: BCons<Sym, Sym, U>): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: BCons<Sym, Sym, U>): boolean {
+    isImag(expr: EXP): boolean {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, base: Sym, expo: U, oldExpr: BCons<Sym, Sym, U>): [TFLAGS, U] {
+    isReal(expr: EXP): boolean {
+        return true;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isScalar(expr: EXP): boolean {
+        return true;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isVector(expr: EXP): boolean {
+        return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if (is_cons(expo) && is_mul_2_any_any(expo)) {
             const expo_lhs = expo.lhs;
@@ -78,7 +93,7 @@ class Op extends Function2X<Sym, U> implements Operator<BCons<Sym, Sym, U>> {
                 }
             }
         }
-        return [TFLAG_NONE, oldExpr];
+        return [TFLAG_NONE, expr];
     }
 }
 

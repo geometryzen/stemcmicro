@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, haltFlag, TFLAG_NONE, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
+import { ExtensionEnv, haltFlag, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../predicates/is_imu';
 import { create_source_trees } from '../scanner/create_source_tree';
@@ -204,7 +204,7 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
-    // console.log(`${reason.toUpperCase()} ${print_expr(input, $)}`);
+    // console.log(`${reason.toUpperCase()} ${print_expr(input, $)} ${print_list(input, $)}`);
     const MAX_LOOPS = 10;
     const seens: U[] = [];
     let inExpr: U = input;

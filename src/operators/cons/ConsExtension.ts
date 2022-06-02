@@ -16,7 +16,7 @@ import { Eval_dirac } from "../../dirac";
 import { divisors } from "../../divisors";
 import { Eval_eigen, Eval_eigenval, Eval_eigenvec } from "../../eigen";
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, Sign, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Eval_erf } from "../../erf";
 import { Eval_erfc } from "../../erfc";
 import { Eval_expand } from "../../expand";
@@ -31,7 +31,6 @@ import { Eval_gamma } from "../../gamma";
 import { Eval_gcd } from "../../gcd";
 import { hermite } from "../../hermite";
 import { Eval_imag } from "../../imag";
-import { Eval_inner } from "../../inner";
 import { invg } from "../../inv";
 import { Eval_isprime } from "../../isprime";
 import { is_rat_integer } from "../../is_rat_integer";
@@ -51,8 +50,8 @@ import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
 import { Eval_real } from "../../real";
 import { Eval_round } from "../../round";
-import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, DOT, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
-import { MATH_INNER, MATH_POW } from "../../runtime/ns_math";
+import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, FUNCTION, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
+import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { Eval_arccos } from "../../scripting/eval_arccos";
@@ -318,9 +317,6 @@ class ConsExtension implements Extension<Cons> {
             case DO:
                 Eval_do(expr, $);
                 return stack_pop();
-            case DOT:
-                Eval_inner(expr, $);
-                return stack_pop();
                 // case DRAW: Eval_draw();
                 return stack_pop();
                 // case DSOLVE: Eval_dsolve();
@@ -396,9 +392,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case IMAG:
                 Eval_imag(expr, $);
-                return stack_pop();
-            case MATH_INNER:
-                Eval_inner(expr, $);
                 return stack_pop();
             case INVG:
                 Eval_invg(expr, $);

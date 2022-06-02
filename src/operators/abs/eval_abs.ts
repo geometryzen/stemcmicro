@@ -51,7 +51,6 @@ Notes
 */
 
 export function Eval_abs(expr: Cons, $: ExtensionEnv): U {
-
     const argList = expr.cdr;
     const arg = car(argList);
     const x = $.valueOf(arg);

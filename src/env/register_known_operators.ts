@@ -128,6 +128,7 @@ import { index_varargs } from '../operators/index/index_varargs';
 import { inner } from '../operators/inner/inner';
 import { inner_2_any_any } from '../operators/inner/inner_2_any_any';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
+import { inner_2_any_real } from '../operators/inner/inner_2_any_real';
 import { inner_2_imu_any } from '../operators/inner/inner_2_imu_any';
 import { inner_2_imu_imu } from '../operators/inner/inner_2_imu_imu';
 import { inner_2_imu_rat } from '../operators/inner/inner_2_imu_rat';
@@ -135,6 +136,7 @@ import { inner_2_mul_2_scalar_vector_vector } from '../operators/inner/inner_2_m
 import { inner_2_num_num } from '../operators/inner/inner_2_num_num';
 import { inner_2_rat_imu } from '../operators/inner/inner_2_rat_imu';
 import { inner_2_rat_sym } from '../operators/inner/inner_2_rat_sym';
+import { inner_2_real_any } from '../operators/inner/inner_2_real_any';
 import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
 import { inner_2_vector_mul_2_scalar_vector } from '../operators/inner/inner_2_vector_mul_2_scalar_vector';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
@@ -233,7 +235,8 @@ import { pow_2_any_any } from '../operators/pow/pow_2_any_any';
 import { pow_2_any_rat } from '../operators/pow/pow_2_any_rat';
 import { pow_2_cons_rat } from '../operators/pow/pow_2_cons_rat';
 import { pow_2_flt_rat } from '../operators/pow/pow_2_flt_rat';
-import { pow_2_pow_2_any_any_any } from '../operators/pow/pow_2_pow_2_any_any_any';
+import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_any_any_rat';
+import { pow_2_pow_2_any_rat_rat } from '../operators/pow/pow_2_pow_2_any_rat_rat';
 import { pow_2_rat_mul_2_rat_rat } from '../operators/pow/pow_2_rat_mul_2_rat_rat';
 import { pow_2_rat_rat } from '../operators/pow/pow_2_rat_rat';
 import { pow_2_sym_rat } from '../operators/pow/pow_2_sym_rat';
@@ -418,7 +421,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineAssociative(MATH_ADD, zero);
     $.defineAssociative(MATH_MUL, one);
 
-    $.defineOperator(pow_2_pow_2_any_any_any);
+    $.defineOperator(pow_2_pow_2_e_any_rat);
+    $.defineOperator(pow_2_pow_2_any_rat_rat);
     $.defineOperator(pow_2_e_any);
     $.defineOperator(pow_2_sym_rat);
     $.defineOperator(pow_2_rat_rat);
@@ -551,6 +555,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(inner_2_vec_vec);
     $.defineOperator(inner_2_mul_2_scalar_vector_vector);
     $.defineOperator(inner_2_vector_mul_2_scalar_vector);
+    $.defineOperator(inner_2_real_any);
+    $.defineOperator(inner_2_any_real);
     $.defineOperator(inner_2_any_imu);
     $.defineOperator(inner_2_any_any);
     $.defineOperator(inner);

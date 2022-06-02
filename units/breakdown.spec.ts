@@ -4,7 +4,7 @@ import { print_expr } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
 
 describe("breakdown", function () {
-    xit("(e1, e1)", function () {
+    it("e1 + e1", function () {
         const lines: string[] = [
             `G11 = algebra([1, 1], ["L1", "L2"])`,
             `b1 = G11[1]`,
@@ -12,7 +12,9 @@ describe("breakdown", function () {
             `X = b1 + b1`,
             `X`
         ];
-        const engine = createSymEngine({ version: 2 });
+        const engine = createSymEngine({
+            dependencies: ['Blade']
+        });
         const actual = engine.run(lines.join('\n'));
         assert.strictEqual(actual, "2*L1");
         engine.release();

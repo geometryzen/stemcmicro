@@ -395,7 +395,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         isReal(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isReal(expr);
-            // console.lg(`${op.name} isReal ${expr} => ${retval}`);
+            // console.log(`${op.name} isReal ${expr} => ${retval}`);
             return retval;
         },
         isScalar(expr: U): boolean {
@@ -620,7 +620,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                         // console.log(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${print_list(curExpr, $)} newExpr: ${print_list(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
                                     curExpr = newExpr;

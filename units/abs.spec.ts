@@ -4,11 +4,11 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("abs-sandbox", function () {
-    it("complex numbers", function () {
+    it("", function () {
         const lines: string[] = [
             `implicate=0`,
             `autofactor=1`,
-            `i*a+i*c`,
+            `abs(exp(x))`,
         ];
         const engine = createSymEngine({
             dependencies: ['Imu'],
@@ -16,65 +16,7 @@ describe("abs-sandbox", function () {
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "(a+c)*i");
-        engine.release();
-    });
-    it("complex numbers", function () {
-        const lines: string[] = [
-            `implicate=0`,
-            `i*a+b+i*c`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "b+(a+c)*i");
-        engine.release();
-    });
-    xit("abs of exp of complex", function () {
-        const lines: string[] = [
-            `implicate=0`,
-            `abs(exp(i*a+b+i*c))`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "exp(a)");
-        engine.release();
-    });
-    xit("exp(i*pi/3)", function () {
-        const lines: string[] = [
-            `implicate=0`,
-            `exp(i*pi/3)`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(print_expr(value, $), "1/2+(1/2*3**(1/2))*i");
-        engine.release();
-    });
-    xit("abs(1+exp(i*pi/3))", function () {
-        const lines: string[] = [
-            `implicate=0`,
-            `abs(1+exp(i*pi/3))`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(print_expr(value, $), "3**(1/2)");
+        assert.strictEqual(print_expr(value, $), "exp(x)");
         engine.release();
     });
 });

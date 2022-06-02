@@ -4,19 +4,17 @@ import { createSymEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cos", function () {
-    xit("sin(b-a)", function () {
+    // TODO: This should factorize back to cos(a+b)
+    it("cos(a+b)", function () {
         const lines: string[] = [
-            `sin(b-a)`
+            `cos(a+b)`
         ];
         const engine = createSymEngine({
             dependencies: []
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // WRONG, but this is what we have.
-        assert.strictEqual(print_list(value, $), '(+ (* -1 (sin a) (cos b)) (* (cos (* -1 a)) (sin b)))');
-        assert.strictEqual(print_expr(value, $), '-sin(a)*cos(b)+cos(-a)*sin(b)');
-        // assert.strictEqual(print_expr(value, $), '-sin(a-b)');
+        assert.strictEqual(print_expr(value, $), 'cos(a)*cos(b)-sin(a)*sin(b)');
     });
 });
 

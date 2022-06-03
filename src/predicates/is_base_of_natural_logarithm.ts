@@ -7,7 +7,7 @@ import { U } from "../tree/tree";
 /**
  * @param base The base found in e.g. (power base exponent).
  */
-export function is_base_of_natural_logarithm(base: U): base is Sym {
+export function is_base_of_natural_logarithm(base: U): base is Sym & { __key: 'MATH_E' } {
     if (is_sym(base)) {
         return MATH_E.equals(base);
     }

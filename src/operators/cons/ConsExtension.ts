@@ -50,13 +50,11 @@ import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
 import { Eval_real } from "../../real";
 import { Eval_round } from "../../round";
-import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, CLOCK, COEFF, CONJ, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
+import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FLOOR, FOR, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, ROUND, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { Eval_arccos } from "../../scripting/eval_arccos";
-import { Eval_clockform } from "../../scripting/eval_clockform";
-import { Eval_conjugate } from "../../scripting/eval_conjugate";
 import { Eval_if } from "../../scripting/eval_if";
 import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern } from "../../scripting/eval_pattern";
 import { Eval_power } from "../../scripting/eval_power";
@@ -270,14 +268,8 @@ class ConsExtension implements Extension<Cons> {
             case CLEARPATTERNS:
                 Eval_clearpatterns();
                 return stack_pop();
-            case CLOCK:
-                Eval_clockform(expr, $);
-                return stack_pop();
             case COEFF:
                 Eval_coeff(expr, $);
-                return stack_pop();
-            case CONJ:
-                Eval_conjugate(expr, $);
                 return stack_pop();
             case COSH:
                 Eval_cosh(expr, $);

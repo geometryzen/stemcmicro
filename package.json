@@ -23,6 +23,7 @@
         "unit-bootstrap": "mocha 'units/bootstrap.spec.ts'",
         "unit-breakdown": "mocha 'units/breakdown.spec.ts'",
         "unit-canon": "mocha 'units/canon.spec.ts'",
+        "unit-clock": "mocha 'units/clock.spec.ts'",
         "unit-cofactor": "mocha 'units/cofactor.spec.ts'",
         "unit-combo": "mocha 'units/combinators.spec.ts'",
         "unit-complex": "mocha 'units/complex.spec.ts'",

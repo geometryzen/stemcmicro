@@ -1,10 +1,10 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { INTEGRAL, MAX_CONSECUTIVE_APPLICATIONS_OF_ALL_RULES, MAX_CONSECUTIVE_APPLICATIONS_OF_SINGLE_RULE } from '../../runtime/constants';
 import { defs, halt, use_factoring_with_unary_function } from '../../runtime/defs';
-import { simplify } from './simplify';
 import { transform } from '../../transform';
 import { cadr } from '../../tree/helpers';
 import { Cons, NIL, U } from '../../tree/tree';
+import { simplify } from './simplify';
 
 export function Eval_simplify(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`Eval_simplify expr = ${$.toInfixString(expr)}`);

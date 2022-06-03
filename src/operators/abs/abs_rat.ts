@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -7,11 +7,11 @@ import { Function1 } from "../helpers/Function1";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new AbsRat($);
+        return new Op($);
     }
 }
 
-class AbsRat extends Function1<Rat> implements Operator<U> {
+class Op extends Function1<Rat> implements Operator<U> {
     constructor($: ExtensionEnv) {
         super('abs_rat', new Sym('abs'), is_rat, $);
     }

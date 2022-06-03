@@ -312,7 +312,9 @@ describe("uom", function () {
                 `m = uom("meter")`,
                 `m + m`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Uom']
+            });
             const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(actual, $), "2*m");

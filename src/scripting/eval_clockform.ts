@@ -1,6 +1,5 @@
-import { clockform } from '../clock';
+import { clockform } from '../operators/clock/clock';
 import { ExtensionEnv } from '../env/ExtensionEnv';
-import { stack_push } from '../runtime/stack';
 import { cadr } from '../tree/helpers';
 import { U } from '../tree/tree';
 
@@ -26,7 +25,7 @@ import { U } from '../tree/tree';
 //   2) it's very compact
 //   3) it's a straighforward notation for roots of 1 and -1
 
-export function Eval_clockform(p1: U, $: ExtensionEnv): void {
-  const result = clockform($.valueOf(cadr(p1)), $);
-  stack_push(result);
+export function Eval_clockform(p1: U, $: ExtensionEnv): U {
+    const result = clockform($.valueOf(cadr(p1)), $);
+    return result;
 }

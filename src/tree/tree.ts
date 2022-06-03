@@ -12,12 +12,12 @@
  */
 export interface U {
     readonly name: string;
-    meta: number;
+    // meta: number;
     contains(needle: U): boolean;
     equals(other: U): boolean;
     isCons(): boolean;
     isNil(): boolean;
-    reset(meta: number): void;
+    // reset(meta: number): void;
     readonly pos?: number;
     readonly end?: number;
 }
@@ -142,6 +142,7 @@ export class Cons implements U {
             return true;
         }
     }
+    /*
     reset(meta: number): void {
         this.meta = meta;
         if (this.$car) {
@@ -151,6 +152,7 @@ export class Cons implements U {
             this.$cdr.reset(meta);
         }
     }
+    */
     public toString(): string {
         // If you call car or cdr you get an infinite loop because NIL is a Cons.
         const head = this.$car;

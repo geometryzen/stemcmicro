@@ -1,5 +1,5 @@
 import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Err, oops } from "../../tree/err/Err";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -38,25 +38,25 @@ export class ErrExtension implements Extension<Err> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Err, $: ExtensionEnv): U {
-        throw new Err("Err Method not implemented.");
+        throw new Err("ErrExtension.valueOf Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Err): boolean {
-        throw new Err("Err Method not implemented.");
+        throw new Err("ErrExtension.isImag Method not implemented.");
     }
     isKind(arg: unknown): arg is Err {
         return arg instanceof Err;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isMinusOne(arg: Err, $: ExtensionEnv): boolean {
-        throw new Err("Err Method not implemented.");
+        throw new Err("ErrExtension.isMinusOne Method not implemented.");
     }
     isOne(): boolean {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Err): boolean {
-        throw new Err("Err Method not implemented.");
+        throw new Err("ErrExtension.isReal Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Err): boolean {
@@ -88,7 +88,7 @@ export class ErrExtension implements Extension<Err> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Err, $: ExtensionEnv): string {
-        throw new Err("Err Method not implemented.");
+        return expr.message;
     }
 }
 

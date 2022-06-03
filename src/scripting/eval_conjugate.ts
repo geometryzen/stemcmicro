@@ -1,4 +1,4 @@
-import { clockform } from '../clock';
+import { clockform } from '../operators/clock/clock';
 import { complex_conjugate } from '../complex_conjugate';
 import { ExtensionEnv } from '../env/ExtensionEnv';
 import { imu } from '../env/imu';

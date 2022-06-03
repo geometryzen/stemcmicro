@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, haltFlag, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../predicates/is_imu';
 import { create_source_trees } from '../scanner/create_source_tree';
@@ -198,73 +198,15 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
 /**
  * Runs in a loop until the output becomes stable.
  * This behavior allows top-level expressions to be transformed.
- * @param input 
+ * @param inExpr 
  * @param $ 
  * @returns 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function transform(input: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
-    // console.log(`${reason.toUpperCase()} ${print_expr(input, $)} ${print_list(input, $)}`);
-    const MAX_LOOPS = 10;
-    const seens: U[] = [];
-    let inExpr: U = input;
-    let done = false;
-    let loops = 0;
-    while (!done) {
-        inExpr.reset(TFLAG_NONE);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [flags, outExpr] = $.transform(inExpr);
-        loops++;
-        const is_stable = $.equals(outExpr, inExpr);
-        // console.lg(`transform DIFF flag: ${diffFlag(flags)}`);
-        // console.lg(`transform HALT flag: ${haltFlag(flags)}`);
-        // console.lg(`meta:    ${outExpr.meta}`);
-        // console.lg(`is_stable: ${is_stable}`);
-        if (haltFlag(flags) || is_stable) {
-            done = true;
-        }
-        else {
-            const seenIndex = seens.findIndex(function (seen) {
-                return equals_tree_tree(outExpr, seen, $);
-            });
-            if (seenIndex >= 0) {
-                throw new Error(`looping back to expression at index ${seenIndex}`);
-            }
-            else {
-                if (loops > MAX_LOOPS) {
-                    throw new Error(`Exceeded MAX_LOOPS ${MAX_LOOPS}`);
-                }
-            }
-        }
-        inExpr = outExpr;
-        seens.push(inExpr);
-    }
-    const output = inExpr;
-    return output;
-}
-
-/**
- * Determines whether two trees are the same.
- * Also detects when two trees are reported
- * @param lhs 
- * @param rhs 
- * @param $ 
- * @returns 
- */
-function equals_tree_tree(lhs: U, rhs: U, $: ExtensionEnv): boolean {
-    if ($.equals(lhs, rhs)) {
-        return true;
-    }
-    else {
-        // return false;
-        // pow_sym_rat(e, 5) and exp_rat(5) are printed the same, exp(5).
-        const str_lhs = `${lhs}`;
-        const str_rhs = `${rhs}`;
-        if (str_lhs === str_rhs) {
-            throw new Error(`toString(lhs) = ${str_lhs} and toString(rhs) = ${str_rhs} are the same but $.equals(lhs, rhs) reports false. lhs = ${lhs} rhs = ${rhs}`);
-        }
-    }
-    return false;
+function transform(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
+    // console.lg(`Entering ${reason.toUpperCase()} ${print_expr(inExpr, $)} ${print_list(inExpr, $)}`);
+    const [, outExpr] = $.transform(inExpr);
+    return outExpr;
 }
 
 /**

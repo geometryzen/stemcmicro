@@ -396,7 +396,8 @@ describe("cross", function () {
         assert.strictEqual(print_expr(value, $), "0");
         engine.release();
     });
-    it("cross(A,cross(B,C))", function () {
+    // SLOW
+    xit("cross(A,cross(B,C))", function () {
         // The vector-valued triple product with two cross products.
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -417,7 +418,8 @@ describe("cross", function () {
         assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
     });
-    it("cross(A,cross(B,C))-B*(A|C)+C*(A|B)", function () {
+    // SLOW
+    xit("cross(A,cross(B,C))-B*(A|C)+C*(A|B)", function () {
         // The vector-valued triple product with two cross products.
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -484,7 +486,8 @@ describe("cross", function () {
         assert.strictEqual(print_expr(value, $), "0");
         engine.release();
     });
-    it("cross(A,cross(B,C))-A|(B^C)", function () {
+    // SLOW
+    xit("cross(A,cross(B,C))-A|(B^C)", function () {
         // FIXME:
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -505,7 +508,8 @@ describe("cross", function () {
         assert.strictEqual(print_expr(value, $), "0");
         engine.release();
     });
-    it("cross(A,cross(B,C))", function () {
+    // SLOW
+    xit("cross(A,cross(B,C))", function () {
         // The vector-valued triple product with two cross products.
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,

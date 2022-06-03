@@ -1,8 +1,8 @@
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
-import { clockform } from '../../clock';
+import { clockform } from '../clock/clock';
 import { condense, yycondense } from '../../condense';
-import { ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
+import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
 import { factor } from "../../factor";
 import { areunivarpolysfactoredorexpandedform, gcd } from "../../gcd";
 import { equalq, is_negative_number, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
@@ -13,7 +13,6 @@ import { polar } from '../../polar';
 import { is_imu } from '../../predicates/is_imu';
 import { is_num } from '../../predicates/is_num';
 import { real } from '../../real';
-import { rect } from '../rect/rect';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';
@@ -35,6 +34,7 @@ import { BCons } from '../helpers/BCons';
 import { numerator } from "../numerator/numerator";
 import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
 import { rationalize_factoring } from '../rationalize/rationalize';
+import { rect } from '../rect/rect';
 
 function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
     // when we do code generation, we proceed to
@@ -85,17 +85,36 @@ export function simplify(expr: U, $: ExtensionEnv): U {
 
     const sfact = simplify_if_contains_factorial(expr, $);
 
+    // console.lg(`0 ${$.toInfixString(sfact)}`);
+
     let p1 = simplify_by_i_dunno_what(sfact, $);
+    // console.lg(`A ${$.toInfixString(p1)}`);
+
     p1 = simplify_by_rationalizing(p1, $);
+    // console.lg(`B ${$.toInfixString(p1)}`);
+
     p1 = simplify_by_condensing(p1, $);
+    // console.lg(`C ${$.toInfixString(p1)}`);
+
     p1 = simplify_a_minus_b_divided_by_b_minus_a(p1, $);
+    // console.lg(`D ${$.toInfixString(p1)}`);
+
     p1 = simplify_by_expanding_denominators(p1, $);
+    // console.lg(`E ${$.toInfixString(p1)}`);
+
     p1 = simplify_trig(p1, $);
+    // console.lg(`F ${$.toInfixString(p1)}`);
+
     p1 = simplify_terms(p1, $);
-    [p1] = simplify_polarRect(p1, $);
+    // console.lg(`G ${$.toInfixString(p1)}`);
+
+    p1 = simplify_polarRect(p1, $);
+    // console.lg(`H ${$.toInfixString(p1)}`);
+
     if (do_simplify_nested_radicals) {
         let simplify_nested_radicalsResult: TFLAGS;
         [simplify_nested_radicalsResult, p1] = simplify_nested_radicals(p1, $);
+        // console.lg(`I ${$.toInfixString(p1)}`);
         // if there is some de-nesting then
         // re-run a simplification because
         // the shape of the expression might
@@ -107,8 +126,11 @@ export function simplify(expr: U, $: ExtensionEnv): U {
         }
     }
 
-    [p1] = simplify_rectToClock(p1, $);
+    p1 = simplify_rect_to_clock(p1, $);
+    // console.lg(`J ${$.toInfixString(p1)}`);
+
     p1 = simplify_rational_expressions(p1, $);
+    // console.lg(`K ${$.toInfixString(p1)}`);
 
     return hook(p1);
 }
@@ -137,6 +159,8 @@ function simplify_tensor(M: Tensor, $: ExtensionEnv) {
 
 // try rationalizing
 function simplify_by_rationalizing(p1: U, $: ExtensionEnv): U {
+    // console.lg(`simplify_by_rationalizing`);
+
     if (!(is_cons(p1) && is_add(p1))) {
         return p1;
     }
@@ -169,6 +193,7 @@ function simplify_a_minus_b_divided_by_b_minus_a(p1: U, $: ExtensionEnv): U {
 }
 
 function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
+    // console.lg(`simplify_by_i_dunno_what`);
     const carp1 = car(p1);
     if (carp1.equals(MULTIPLY) || is_inner_or_dot(p1)) {
         // both operands a transpose?
@@ -224,6 +249,7 @@ function simplify_by_expanding_denominators(p1: U, $: ExtensionEnv): U {
  * This function won't go recursive, so it's quite safe to call anytime.
  */
 export function simplify_trig(expr: U, $: ExtensionEnv): U {
+    // console.lg(`simplify_trig expr=${print_expr(expr, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`simplify_trig expr = ${$.toInfixString(expr)} => ${$.toInfixString(retval)} (${description})`);
@@ -321,30 +347,31 @@ function simplify_rational_expressions(p1: U, $: ExtensionEnv): U {
     }
 }
 
-// things like 6*(cos(2/9*pi)+i*sin(2/9*pi))
+// things like 6*(cos(2/9*pi)+i*sin(2/9*pi)) = 6*exp(2/9*i*pi)
 // where we have sin and cos, those might start to
 // look better in clock form i.e.  6*(-1)^(2/9)
-function simplify_rectToClock(p1: U, $: ExtensionEnv): [U] {
+function simplify_rect_to_clock(expr: U, $: ExtensionEnv): U {
+    const oldExpr = expr;
+    // console.lg(`simplify_rect_to_clock ${print_expr(oldExpr, $)}`);
     //breakpoint
 
-    if (!p1.contains(SIN) && !p1.contains(COS)) {
-        return [p1];
+    if (!oldExpr.contains(SIN) && !oldExpr.contains(COS)) {
+        return oldExpr;
     }
 
-    const p2 = clockform($.valueOf(p1), $); // put new (hopefully simplified expr) in p2
+    const newExpr = clockform($.valueOf(oldExpr), $);
 
-    if (DEBUG) {
-        // eslint-disable-next-line no-console
-        // console.lg(`before simplification clockform: ${p1} after: ${p2}`);
-    }
+    // console.lg(`before simplification clockform: ${oldExpr} after: ${newExpr}`);
 
-    if (count(p2) < count(p1)) {
-        p1 = p2;
+    if (count(newExpr) < count(oldExpr)) {
+        return newExpr;
     }
-    return [p1];
+    else {
+        return oldExpr;
+    }
 }
 
-function simplify_polarRect(p1: U, $: ExtensionEnv): [U] {
+function simplify_polarRect(p1: U, $: ExtensionEnv): U {
     const tmp = polarRectAMinusOneBase(p1, $);
 
     const p2 = $.valueOf(tmp); // put new (hopefully simplified expr) in p2
@@ -352,7 +379,7 @@ function simplify_polarRect(p1: U, $: ExtensionEnv): [U] {
     if (count(p2) < count(p1)) {
         p1 = p2;
     }
-    return [p1];
+    return p1;
 }
 
 function polarRectAMinusOneBase(p1: U, $: ExtensionEnv): U {
@@ -391,7 +418,7 @@ function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
     if (defs.recursionLevelNestedRadicalsRemoval > 0) {
         if (DEBUG) {
             // eslint-disable-next-line no-console
-            console.log('denesting bailing out because of too much recursion');
+            // console.lg('denesting bailing out because of too much recursion');
         }
         return [TFLAG_NONE, p1];
     }
@@ -430,7 +457,7 @@ function take_care_of_nested_radicals(p1: U, $: ExtensionEnv): [U, TFLAGS] {
     if (defs.recursionLevelNestedRadicalsRemoval > 0) {
         if (DEBUG) {
             // eslint-disable-next-line no-console
-            console.log('denesting bailing out because of too much recursion');
+            // console.lg('denesting bailing out because of too much recursion');
         }
         return [p1, TFLAG_NONE];
     }
@@ -540,7 +567,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     if (r.ndim === 0) {
         if (DEBUG) {
             // eslint-disable-next-line no-console
-            console.log('roots bailed out because of too much recursion');
+            // console.lg('roots bailed out because of too much recursion');
         }
         return [p1, TFLAG_NONE];
     }

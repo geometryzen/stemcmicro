@@ -7,7 +7,6 @@ import { equaln, is_negative_number, is_negative_term, is_num_and_gt_zero } from
 import { makeList } from '../../makeList';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { real } from '../../real';
-import { rect } from '../rect/rect';
 import { PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
@@ -17,6 +16,7 @@ import { half, one, two, zero } from '../../tree/rat/Rat';
 import { is_tensor } from '../../tree/tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, U } from '../../tree/tree';
+import { rect } from '../rect/rect';
 import { simplify, simplify_trig } from '../simplify/simplify';
 import { MATH_ABS } from './MATH_ABS';
 
@@ -99,6 +99,7 @@ export function abs(x: U, $: ExtensionEnv): U {
 export function abs(x: U, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
+        // console.lg(`abs ${print_expr(x, $)} => ${print_expr(retval, $)} @ ${description}`);
         return retval;
     };
 
@@ -150,7 +151,8 @@ export function abs(x: U, $: ExtensionEnv): U {
             const abs_z = $.power(zz, half);
             // console.lg(`x => ${$.toInfixString(x)}`)
             // console.lg(`y => ${$.toInfixString(y)}`)
-            return hook(simplify_trig(abs_z, $), "F");
+            const retval = simplify_trig(abs_z, $);
+            return hook(retval, "F");
         }
     }
 

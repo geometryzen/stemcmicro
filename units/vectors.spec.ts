@@ -167,7 +167,8 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "Ax*Bx+Ay*By+Az*Bz");
         engine.release();
     });
-    it("B*(A|C)-C*(A|B)", function () {
+    // SLOW
+    xit("B*(A|C)-C*(A|B)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `e1=G[1]`,
@@ -187,7 +188,8 @@ describe("vectors", function () {
         assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
     });
-    it("Ax(BxC)", function () {
+    // SLOW
+    xit("Ax(BxC)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `e1=G[1]`,
@@ -208,7 +210,8 @@ describe("vectors", function () {
 
         engine.release();
     });
-    it("Ax(BxC) = B*(A|C)-C*(A|B)", function () {
+    // SLOW
+    xit("Ax(BxC) = B*(A|C)-C*(A|B)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `e1=G[1]`,

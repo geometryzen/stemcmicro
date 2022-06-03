@@ -52,6 +52,7 @@ Returns the angle of complex z.
   a + i b    arctan(b/a)
 
 Result by quadrant
+    return p1;
 
   z    arg(z)
   -    ------

@@ -264,23 +264,27 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
             return field.treeZero();
         }
     };
-    let $meta = 0;
+    // let $meta = 0;
     const theBlade: BasisBlade<T, K> = {
         get bitmap(): number {
             return bitmap;
         },
+        /*
         get meta(): number {
             return $meta;
         },
         set meta(meta: number) {
             $meta = meta;
         },
+        */
         get name(): string {
             return 'Blade';
         },
+        /*
         reset(meta: number): void {
             $meta = meta;
         },
+        */
         __abs__(): K {
             const lhs = field.bladeToTree(theBlade);
             const rhs = theBlade.rev();

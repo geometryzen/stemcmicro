@@ -65,6 +65,7 @@ import { boo } from '../operators/boo/BooExtension';
 import { ceiling_any } from '../operators/ceiling/ceiling_any';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
+import { clock_any } from '../operators/clock/clock_any';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { conj_any } from '../operators/conj/conj_any';
 import { conj_blade } from '../operators/conj/conj_blade';
@@ -611,6 +612,8 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(ceiling_flt);
     $.defineOperator(ceiling_rat);
     $.defineOperator(ceiling_any);
+
+    $.defineOperator(clock_any);
 
     $.defineOperator(cofactor_varargs);
     $.defineOperator(contract_varargs);

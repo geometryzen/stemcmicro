@@ -460,7 +460,9 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * kg * a`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Blade', 'Uom']
+            });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(value, $), "5*a*kg");
@@ -473,7 +475,9 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * a * kg`
             ];
-            const engine = createSymEngine();
+            const engine = createSymEngine({
+                dependencies: ['Blade', 'Uom']
+            });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(print_expr(value, $), "5*a*kg");

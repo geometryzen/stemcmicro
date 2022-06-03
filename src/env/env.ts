@@ -575,20 +575,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return op.toListString(expr);
         },
         transform(expr: U): [TFLAGS, U] {
-            if (typeof expr.meta === 'number') {
-                if ((expr.meta & TFLAG_HALT) > 0) {
-                    return [TFLAG_HALT, expr];
-                }
-                if (expr.meta === TFLAG_NONE) {
-                    // Do nothing yet.
-                }
-                else {
-                    throw new Error(`${expr} meta must be NOFLAGS`);
-                }
-            }
-            else {
-                throw new Error(`${expr} meta must be a number.`);
-            }
             // We short-circuit some expressions in order to improve performance.
             if (is_imu(expr)) {
                 expr.meta |= TFLAG_HALT;
@@ -615,14 +601,13 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                 if (diffFlag(flags)) {
                                     outFlags |= TFLAG_DIFF;
                                     doneWithCurExpr = true;
-                                    newExpr.meta |= TFLAG_HALT;
                                     if (haltFlag(flags)) {
                                         // doneWithExpr remains true.
                                         outFlags |= TFLAG_HALT;
                                         // console.log(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${print_list(curExpr, $)} newExpr: ${print_list(newExpr, $)}`);
+                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
                                     curExpr = newExpr;
@@ -632,7 +617,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     // console.lg(`.... HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     // TODO: We also need to break out of the loop on keys
                                     doneWithCurExpr = true;
-                                    newExpr.meta |= TFLAG_HALT;
                                     break;
                                 }
                                 else {
@@ -664,49 +648,38 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return [outFlags, curExpr];
             }
             else if (is_rat(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_flt(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_sym(expr)) {
                 const retval = $.operatorFor(expr).transform(expr);
-                retval[1].meta |= TFLAG_HALT;
                 return retval;
             }
             else if (is_blade(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_tensor(expr)) {
                 const retval = $.operatorFor(expr).transform(expr);
-                retval[1].meta |= TFLAG_HALT;
                 return retval;
             }
             else if (is_uom(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_nil(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_str(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_boo(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_hyp(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_err(expr)) {
-                expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else {

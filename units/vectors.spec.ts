@@ -168,7 +168,7 @@ describe("vectors", function () {
         engine.release();
     });
     // SLOW
-    xit("B*(A|C)-C*(A|B)", function () {
+    it("B*(A|C)-C*(A|B)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `e1=G[1]`,
@@ -189,7 +189,7 @@ describe("vectors", function () {
         engine.release();
     });
     // SLOW
-    xit("Ax(BxC)", function () {
+    it("Ax(BxC)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `e1=G[1]`,
@@ -211,7 +211,7 @@ describe("vectors", function () {
         engine.release();
     });
     // SLOW
-    xit("Ax(BxC) = B*(A|C)-C*(A|B)", function () {
+    it("Ax(BxC) = B*(A|C)-C*(A|B)", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `e1=G[1]`,

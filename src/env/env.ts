@@ -581,6 +581,9 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return [TFLAG_NONE, expr];
             }
             else if (is_cons(expr)) {
+                if (expr.meta === TFLAG_HALT) {
+                    return [TFLAG_HALT, expr];
+                }
                 // let changedExpr = false;
                 let outFlags = TFLAG_NONE;
                 let curExpr: U = expr;
@@ -593,7 +596,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
-                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_expr(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_list(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
@@ -620,7 +623,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else {
-                                    // console.lg(`NOFLAGS..: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    // console.log(`NOFLAGS..: op.name=${op.name} op.hash=${op.hash} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                 }
                             }
                         }
@@ -645,6 +648,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
+                // Once an expression has been transformed into a stable condition, it should not be transformed until a different phase.
+                curExpr.meta = TFLAG_HALT;
                 return [outFlags, curExpr];
             }
             else if (is_rat(expr)) {

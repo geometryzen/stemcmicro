@@ -60,7 +60,7 @@ import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arg_varargs } from '../operators/arg/arg_varargs';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
-import { is_blade, vec } from '../operators/blade/BladeExtension';
+import { bladeExtensionBuilder, is_blade } from '../operators/blade/BladeExtension';
 import { boo } from '../operators/boo/BooExtension';
 import { ceiling_any } from '../operators/ceiling/ceiling_any';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
@@ -105,7 +105,7 @@ import { outer_2_add_2_any_any_any } from '../operators/distrib/outer_2_add_2_an
 import { outer_2_any_add_2_any_any } from '../operators/distrib/outer_2_any_add_2_any_any';
 import { rco_2_add_2_any_any_any } from '../operators/distrib/rco_2_add_2_any_any_any';
 import { rco_2_any_add_2_any_any } from '../operators/distrib/rco_2_any_add_2_any_any';
-import { error } from '../operators/err/ErrExtension';
+import { errExtensionBuilder } from '../operators/err/ErrExtension';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_rat } from '../operators/exp/exp_rat';
@@ -116,6 +116,7 @@ import { factorize_geometric_product_lhs_assoc } from '../operators/factorize/fa
 import { factorize_geometric_product_sub } from '../operators/factorize/factorize_geometric_product_sub';
 import { float_cons } from '../operators/float/float_cons';
 import { float_flt } from '../operators/float/float_flt';
+import { float_imu } from '../operators/float/float_imu';
 import { float_mul_2_flt_sym } from '../operators/float/float_mul_2_flt_sym';
 import { float_rat } from '../operators/float/float_rat';
 import { float_sym } from '../operators/float/float_sym';
@@ -125,7 +126,8 @@ import { is_flt, op_flt } from '../operators/flt/FltExtension';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
-import { hyp } from '../operators/hyp/HypExtension';
+import { hypExtensionBuilder } from '../operators/hyp/HypExtension';
+import { imuExtensionBuilder } from '../operators/imu/ImuExtension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner } from '../operators/inner/inner';
 import { inner_2_any_any } from '../operators/inner/inner_2_any_any';
@@ -174,6 +176,7 @@ import { mul_2_flt_uom } from '../operators/mul/mul_2_flt_uom';
 import { mul_2_hyp_rat } from '../operators/mul/mul_2_hyp_rat';
 import { mul_2_hyp_sym } from '../operators/mul/mul_2_hyp_sym';
 import { mul_2_imu_any } from '../operators/mul/mul_2_imu_any';
+import { mul_2_imu_imu } from '../operators/mul/mul_2_imu_imu';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_blade_blade } from '../operators/mul/mul_2_mul_2_any_blade_blade';
 import { mul_2_mul_2_any_imu_any } from '../operators/mul/mul_2_mul_2_any_imu_any';
@@ -219,7 +222,7 @@ import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
 import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
-import { nil } from '../operators/nil/NilExtension';
+import { nilExtensionBuilder } from '../operators/nil/NilExtension';
 import { not_fn } from '../operators/not/not_fn';
 import { number_fn } from '../operators/number/number_fn';
 import { numerator_fn } from '../operators/numerator/numerator_fn';
@@ -237,6 +240,7 @@ import { pow_2_any_any } from '../operators/pow/pow_2_any_any';
 import { pow_2_any_rat } from '../operators/pow/pow_2_any_rat';
 import { pow_2_cons_rat } from '../operators/pow/pow_2_cons_rat';
 import { pow_2_flt_rat } from '../operators/pow/pow_2_flt_rat';
+import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_any_any_rat';
 import { pow_2_pow_2_any_rat_rat } from '../operators/pow/pow_2_pow_2_any_rat_rat';
 import { pow_2_rat_mul_2_rat_rat } from '../operators/pow/pow_2_rat_mul_2_rat_rat';
@@ -279,14 +283,14 @@ import { str } from '../operators/str/StrExtension';
 import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
 import { is_sym } from '../operators/sym/is_sym';
-import { sym } from '../operators/sym/SymExtension';
+import { symExtensionBuilder } from '../operators/sym/SymExtension';
 import { sym_math_add } from '../operators/sym/sym_math_add';
 import { sym_math_mul } from '../operators/sym/sym_math_mul';
 import { sym_math_pi } from '../operators/sym/sym_math_pi';
 import { sym_math_pow } from '../operators/sym/sym_math_pow';
 import { tan_varargs } from '../operators/tan/tan_varargs';
 import { tau } from '../operators/tau/tau';
-import { mat } from '../operators/tensor/TensorExtension';
+import { tensorExtensionBuilder } from '../operators/tensor/TensorExtension';
 import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
 import { testgt_mul_2_any_any_rat } from '../operators/testgt/testgt_mul_2_any_any_rat';
 import { testgt_rat_rat } from '../operators/testgt/testgt_rat_rat';
@@ -307,7 +311,7 @@ import { mul_2_sin_cos } from '../operators/trig/mul_2_sin_cos';
 import { typeof_any } from '../operators/typeof/typeof_any';
 import { typeof_blade } from '../operators/typeof/typeof_blade';
 import { typeof_tensor } from '../operators/typeof/typeof_tensor';
-import { is_uom, uom } from '../operators/uom/UomExtension';
+import { is_uom, uomExtensionBuilder } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_TAU } from '../runtime/ns_math';
 import { SymEngineOptions } from '../runtime/symengine';
@@ -431,6 +435,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(pow_2_rat_rat);
     $.defineOperator(pow_2_rat_mul_2_rat_rat);
     $.defineOperator(pow_2_flt_rat);
+    $.defineOperator(pow_2_imu_rat);
     $.defineOperator(pow_2_uom_rat);
     $.defineOperator(pow_2_cons_rat);
     $.defineOperator(pow_2_any_rat);
@@ -446,6 +451,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(mul_2_flt_imu);
     $.defineOperator(mul_2_flt_uom);
     $.defineOperator(mul_2_flt_mul_2_flt_any);
+    $.defineOperator(mul_2_imu_imu);
     $.defineOperator(mul_2_imu_any);
 
     $.defineOperator(mul_2_rat_blade);
@@ -656,6 +662,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(float_sym);
     $.defineOperator(float_flt);
     $.defineOperator(float_rat);
+    $.defineOperator(float_imu);
     $.defineOperator(floor_varargs);
 
     $.defineOperator(hilbert_varargs);
@@ -732,17 +739,18 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(sym_math_pow);
     $.defineOperator(sym_math_pi);
 
-    $.defineOperator(sym);
-    $.defineOperator(mat);
-    $.defineOperator(vec);
-    $.defineOperator(uom);
-    $.defineOperator(hyp);
-    $.defineOperator(error);
+    $.defineOperator(symExtensionBuilder);
+    $.defineOperator(tensorExtensionBuilder);
+    $.defineOperator(bladeExtensionBuilder);
+    $.defineOperator(uomExtensionBuilder);
+    $.defineOperator(hypExtensionBuilder);
+    $.defineOperator(errExtensionBuilder);
+    $.defineOperator(imuExtensionBuilder);
 
     $.defineOperator(uom_1_str);
 
     // NIL is implemented as an empty Cons, so it has to be defined before the generic Cons operator.
-    $.defineOperator(nil);
+    $.defineOperator(nilExtensionBuilder);
 
     // There is no fallback. We migrate everything.
     $.defineOperator(cons);

@@ -239,7 +239,7 @@ export function run_shardable_test(s: string[], prefix = '') {
     }
 }
 
-type DEPENDENCY = 'Imu';
+type DEPENDENCY = 'Flt' | 'Imu';
 
 export interface TestOptions {
     dependencies?: DEPENDENCY[];

@@ -2,6 +2,7 @@ import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/Extensi
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
+import { is_imu } from "../../predicates/is_imu";
 import { is_num } from "../../predicates/is_num";
 import { print_expr } from "../../print";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -55,6 +56,14 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
         else {
             throw new Error(`lhs: Hyp = ${lhs}, rhs = ${rhs}`);
+        }
+    }
+    else if (is_imu(lhs)) {
+        if (is_imu(rhs)) {
+            return SIGN_EQ;
+        }
+        else {
+            throw new Error(`lhs: Imu = ${lhs}, rhs = ${rhs}`);
         }
     }
     else if (is_tensor(lhs)) {

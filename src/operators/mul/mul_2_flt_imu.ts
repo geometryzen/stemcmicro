@@ -1,10 +1,10 @@
 
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
-import { hash_binop_atom_cons, HASH_FLT } from "../../hashing/hash_info";
-import { is_imu } from "../../predicates/is_imu";
-import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_FLT, HASH_IMU } from "../../hashing/hash_info";
+import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
-import { Rat, zero } from "../../tree/rat/Rat";
+import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { is_flt } from "../flt/FltExtension";
@@ -17,17 +17,21 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
+type LHS = Flt;
+type RHS = IMU_TYPE;
+type EXP = BCons<Sym, LHS, RHS>;
+
 /**
- * Flt * i
+ * Flt * Imu
  */
-class Op extends Function2<Flt, BCons<Sym, Rat, Rat>> implements Operator<Cons> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['Flt', 'Imu'];
     constructor($: ExtensionEnv) {
         super('mul_2_flt_imu', MATH_MUL, is_flt, is_imu, $);
-        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_FLT, MATH_POW);
+        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_FLT, HASH_IMU);
     }
-    transform2(opr: Sym, lhs: Flt, rhs: BCons<Sym, Rat, Rat>, expr: BCons<Sym, Flt, BCons<Sym, Rat, Rat>>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {
             return [TFLAG_DIFF, zero];
         }

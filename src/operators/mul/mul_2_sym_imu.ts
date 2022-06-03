@@ -1,10 +1,9 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
@@ -18,7 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 type LHS = Sym;
-type RHS = BCons<Sym, Rat, Rat>;
+type RHS = IMU_TYPE;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**

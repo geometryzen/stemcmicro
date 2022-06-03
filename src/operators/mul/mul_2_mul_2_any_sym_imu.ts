@@ -1,9 +1,8 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { hash_binop_cons_cons } from "../../hashing/hash_info";
-import { is_imu } from "../../predicates/is_imu";
-import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
-import { Rat } from "../../tree/rat/Rat";
+import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { hash_binop_cons_atom, HASH_IMU } from "../../hashing/hash_info";
+import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, makeList, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -20,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
 type LL = U;
 type LR = Sym;
 type LHS = BCons<Sym, LL, LR>;
-type RHS = BCons<Sym, Rat, Rat>;
+type RHS = IMU_TYPE;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
@@ -30,7 +29,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_sym_imu', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_imu, $);
-        this.hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_POW);
+        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_IMU);
     }
     isImag(expr: EXP): boolean {
         const $ = this.$;

@@ -8,6 +8,7 @@ import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
+import { is_imu } from "../../predicates/is_imu";
 import { print_expr } from "../../print";
 import { is_flt } from "../../tree/flt/is_flt";
 import { is_rat } from "../../tree/rat/is_rat";
@@ -63,6 +64,9 @@ export function free_vars(expr: U, $: ExtensionEnv): string[] {
             // TODO: We can do better than this.
             return free_vars((<Cons>expr).arg, $);
         }
+    }
+    if (is_imu(expr)) {
+        return [];
     }
     if (is_blade(expr)) {
         return [];

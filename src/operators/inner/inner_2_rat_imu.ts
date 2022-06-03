@@ -1,5 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { is_imu } from "../../predicates/is_imu";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -14,14 +14,18 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
+type LHS = Rat;
+type RHS = IMU_TYPE;
+type EXP = BCons<Sym, LHS, RHS>;
+
 /**
  * Rat | i => Rat * i
  */
-class Op extends Function2<Rat, BCons<Sym, Rat, Rat>> implements Operator<Cons> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('inner_2_rat_imu', MATH_INNER, is_rat, is_imu, $);
     }
-    transform2(opr: Sym, lhs: Rat, rhs: BCons<Sym, Rat, Rat>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs)];
     }
 }

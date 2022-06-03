@@ -96,6 +96,6 @@ class UomExtension implements Extension<Uom> {
 /**
  * The Extension for Unit of Measure.
  */
-export const uom = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const uomExtensionBuilder = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new UomExtension($);
 });

@@ -2,6 +2,7 @@ import { is_blade } from "../operators/blade/BladeExtension";
 import { is_err } from "../operators/err/is_err";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_sym } from "../operators/sym/is_sym";
+import { is_imu } from "../predicates/is_imu";
 import { is_boo } from "../tree/boo/is_boo";
 import { is_flt } from "../tree/flt/is_flt";
 import { is_rat } from "../tree/rat/is_rat";
@@ -22,6 +23,7 @@ export const HASH_BOO = 'Boo';
 export const HASH_ERR = 'Err';
 export const HASH_FLT = 'Flt';
 export const HASH_HYP = 'Hyp';
+export const HASH_IMU = 'Imu';
 export const HASH_RAT = 'Rat';
 export const HASH_STR = 'Str';
 export const HASH_SYM = 'Sym';
@@ -125,6 +127,9 @@ function hash_info_at_level(expr: U, level: number): INFO {
     }
     if (is_blade(expr)) {
         return { kind: ATOM, parts: [HASH_BLADE] };
+    }
+    if (is_imu(expr)) {
+        return { kind: ATOM, parts: [HASH_IMU] };
     }
     if (is_tensor(expr)) {
         return { kind: ATOM, parts: [HASH_TENSOR] };

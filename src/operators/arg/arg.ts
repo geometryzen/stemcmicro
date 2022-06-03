@@ -1,21 +1,22 @@
-import { arctan } from '../arctan/arctan';
 import { subtract } from '../../calculators/sub/subtract';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imag } from '../../imag';
 import { equaln, is_negative, is_negative_number, is_num_and_gt_zero, is_one_over_two } from '../../is';
 import { makeList } from '../../makeList';
-import { is_sym } from '../sym/is_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
+import { is_imu } from '../../predicates/is_imu';
 import { real } from '../../real';
-import { rect } from '../rect/rect';
 import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { defs, DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { piAsDouble, zeroAsDouble } from '../../tree/flt/Flt';
 import { is_flt } from '../../tree/flt/is_flt';
 import { caddr, cadr } from '../../tree/helpers';
-import { zero } from '../../tree/rat/Rat';
+import { half, zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, U } from '../../tree/tree';
+import { arctan } from '../arctan/arctan';
+import { rect } from '../rect/rect';
+import { is_sym } from '../sym/is_sym';
 
 /* arg =====================================================================
 
@@ -117,8 +118,14 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
         return makeList(ARG, p1);
     }
 
+    // Implementation in which the imaginary unit is it's own object.
+    if (is_imu(p1)) {
+        return $.multiply(DynamicConstants.Pi(), half);
+    }
+
     const base = cadr(p1);
 
+    // Implementation in which imaginary unit is (power -1 1/2).
     if (is_power(p1) && equaln(base, -1)) {
         // -1 to a power
         return $.multiply(DynamicConstants.Pi(), caddr(p1));

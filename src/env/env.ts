@@ -200,9 +200,13 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         },
         arg(expr: U): U {
             const A = numerator(expr, $);
+            // console.lg(`numer=${print_expr(A, $)}`);
             const B = denominator(expr, $);
+            // console.lg(`denom=${print_expr(B, $)}`);
             const C = yyarg(A, $);
+            // console.lg(`arg_numer=${print_expr(C, $)}`);
             const D = yyarg(B, $);
+            // console.lg(`arg_denom=${print_expr(D, $)}`);
             return $.subtract(C, D);
         },
         beginSpecial(): void {
@@ -497,6 +501,9 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             else if (is_blade(expr)) {
                 return selectOperator(expr.name, expr);
             }
+            else if (is_imu(expr)) {
+                return selectOperator(expr.name, expr);
+            }
             else if (is_tensor(expr)) {
                 return selectOperator(expr.name, expr);
             }
@@ -607,10 +614,10 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                     if (haltFlag(flags)) {
                                         // doneWithExpr remains true.
                                         outFlags |= TFLAG_HALT;
-                                        // console.log(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                        // console.lg(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
                                     curExpr = newExpr;

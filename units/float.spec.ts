@@ -17,7 +17,7 @@ describe("float", function () {
         assert.strictEqual(print_expr(actual, $), "3.141593...");
         engine.release();
     });
-    it("A", function () {
+    it("B", function () {
         const lines: string[] = [
             `1+i`
         ];
@@ -28,7 +28,7 @@ describe("float", function () {
         assert.strictEqual(print_expr(actual, $), "1+i");
         engine.release();
     });
-    it("B", function () {
+    it("C", function () {
         const lines: string[] = [
             `1+2*i`
         ];
@@ -39,7 +39,7 @@ describe("float", function () {
         assert.strictEqual(print_expr(actual, $), "1+2*i");
         engine.release();
     });
-    it("C", function () {
+    it("D", function () {
         const lines: string[] = [
             `(1+2*i)^(1/2)`
         ];
@@ -50,7 +50,7 @@ describe("float", function () {
         assert.strictEqual(print_expr(actual, $), "(1+2*i)^(1/2)");
         engine.release();
     });
-    xit("D", function () {
+    xit("E", function () {
         const lines: string[] = [
             `float((1+2*i)^(1/2))`
         ];
@@ -62,6 +62,34 @@ describe("float", function () {
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(print_list(actual, $), "(power (add 1.0 (multiply 2.0 i)) 0.5)");
         assert.strictEqual(print_expr(actual, $), "1.272020...+0.786151...*i");
+        engine.release();
+    });
+    it("F", function () {
+        const lines: string[] = [
+            `float(x)`
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "x");
+        assert.strictEqual(print_expr(actual, $), "x");
+        engine.release();
+    });
+    it("G", function () {
+        const lines: string[] = [
+            `float(pi)`
+        ];
+        const engine = createSymEngine({
+            dependencies: ['Flt'],
+            useDefinitions: true
+        });
+        const $ = engine.$;
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "3.141593...");
+        assert.strictEqual(print_expr(actual, $), "3.141593...");
         engine.release();
     });
 });

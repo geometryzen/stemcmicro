@@ -1,5 +1,6 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
+import { print_expr } from '../../print';
 import { POWER } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { negOne } from '../../tree/rat/Rat';

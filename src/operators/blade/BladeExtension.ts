@@ -123,6 +123,6 @@ class BladeExtension implements Extension<Blade> {
     }
 }
 
-export const vec = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const bladeExtensionBuilder = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new BladeExtension($);
 });

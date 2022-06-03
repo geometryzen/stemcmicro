@@ -1,27 +1,28 @@
 
 import { CostTable } from "../../env/CostTable";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_NIL } from "../../hashing/hash_info";
-import { Cons, NIL, U } from "../../tree/tree";
+import { imu } from "../../env/imu";
+import { HASH_IMU } from "../../hashing/hash_info";
+import { Cons, U } from "../../tree/tree";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
-        return new NilExtension($);
+        return new ImuExtension($);
     }
 }
 
-class NilExtension implements Operator<Cons> {
+class ImuExtension implements Operator<Cons> {
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
     get key(): string {
-        return NIL.name;
+        return imu.name;
     }
     get hash(): string {
-        return HASH_NIL;
+        return HASH_IMU;
     }
     get name(): string {
-        return 'NilExtension';
+        return 'ImuExtension';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cost(expr: U, costs: CostTable): number {
@@ -29,15 +30,15 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(expr: U): boolean {
-        return NIL.equals(expr);
+        return imu.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isMinusOne(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isOne(expr: Cons): boolean {
@@ -45,19 +46,19 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNil(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isVector(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Cons): boolean {
@@ -73,15 +74,15 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Cons): string {
-        return 'nil';
+        return 'i';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Cons): string {
-        return '()';
+        return 'i';
     }
     transform(expr: U): [TFLAGS, U] {
-        if (NIL.equals(expr)) {
-            return [TFLAG_HALT, NIL];
+        if (imu.equals(expr)) {
+            return [TFLAG_HALT, imu];
         }
         else {
             return [TFLAG_NONE, expr];
@@ -89,8 +90,8 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Cons): U {
-        return NIL;
+        return imu;
     }
 }
 
-export const nilExtensionBuilder = new Builder();
+export const imuExtensionBuilder = new Builder();

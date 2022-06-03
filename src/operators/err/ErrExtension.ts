@@ -92,6 +92,6 @@ export class ErrExtension implements Extension<Err> {
     }
 }
 
-export const error = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const errExtensionBuilder = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new ErrExtension($);
 });

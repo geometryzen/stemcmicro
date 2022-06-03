@@ -1,111 +1,37 @@
 import { assert } from "chai";
-import { print_expr } from "../src/print";
+import { print_expr, print_list } from "../src/print";
 import { createSymEngine } from "../src/runtime/symengine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("current", function () {
-    xit("magnitude", function () {
+    it("", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
-            `(1/4+((-1/2*((1/2+(1/2*3**(1/2))*(-1)**(1/2))-(1/2+(-1/2*3**(1/2))*(-1)**(1/2))))*(-1)**(1/2))**2)**(1/2)`,
+            `float(i)`
         ];
         const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
+            dependencies: ['Flt', 'Imu'],
+            useCaretForExponentiation: true,    // ^
+            useDefinitions: true                 // i
         });
         const $ = engine.$;
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "1");
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "i");
+        assert.strictEqual(print_expr(actual, $), "i");
         engine.release();
     });
-    xit("direction", function () {
+    xit("E", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=1`,
-            `arctan((-1/2*((1+3**(1/2)*(-1)**(1/2))-(1+(-3**(1/2))*(-1)**(1/2))))*(-1)**(1/2))`,
+            `float((1+2*i)^(1/2))`
         ];
         const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
+            dependencies: ['Flt'],
+            useCaretForExponentiation: true,    // ^
+            useDefinitions: true                 // i
         });
         const $ = engine.$;
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "arctan(1/2*3**(1/2)-1/2*3**(1/2)*i)");
-        engine.release();
-    });
-    xit("direction II", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `implicate=1`,
-            `arctan(1/2*3**(1/2)-1/2*3**(1/2)*i)`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "arctan(1/2*3**(1/2)-1/2*3**(1/2)*i)");
-        engine.release();
-    });
-    xit("product", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `implicate=1`,
-            `((1/4+((-1/2*((1/2+(1/2*3**(1/2))*(-1)**(1/2))-(1/2+(-1/2*3**(1/2))*(-1)**(1/2))))*(-1)**(1/2))**2)**(1/2))*arctan(1/2*3**(1/2)-1/2*3**(1/2)*i)`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "arctan(1/2*3**(1/2)-1/2*3**(1/2)*i)");
-        engine.release();
-    });
-    xit("exp(i*pi/3)", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
-            `exp(i*pi/3)`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "1/2+(1/2*3**(1/2))*i");
-        engine.release();
-    });
-    it("clock(1/2+(1/2*3**(1/2))*i)", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
-            `clock(1/2+(1/2*3**(1/2))*i)`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "(-1)**(1/3)");
-        engine.release();
-    });
-    it("clock(exp(i*pi/3))", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
-            `clock(exp(i*pi/3))`,
-        ];
-        const engine = createSymEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const $ = engine.$;
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "(-1)**(1/3)");
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(print_list(actual, $), "(power (add 1.0 (multiply 2.0 i)) 0.5)");
+        assert.strictEqual(print_expr(actual, $), "1.272020...+0.786151...*i");
         engine.release();
     });
 });

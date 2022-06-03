@@ -1,15 +1,16 @@
 import { mp_denominator, mp_numerator } from './bignum';
 import { lt_num_num } from './calculators/compare/lt_num_num';
-import { denominator } from './operators/denominator/denominator';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, isfraction, isNumberOneOverSomething, is_negative_number, is_negative_term, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from './is';
-import { numerator } from './operators/numerator/numerator';
 import { abs } from './operators/abs/abs';
+import { denominator } from './operators/denominator/denominator';
 import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
 import { is_err } from './operators/err/is_err';
 import { is_hyp } from './operators/hyp/is_hyp';
+import { numerator } from './operators/numerator/numerator';
 import { is_sym } from './operators/sym/is_sym';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
+import { is_imu } from './predicates/is_imu';
 import { is_num } from './predicates/is_num';
 import { print2dascii } from './print2d';
 import { print_number } from './print_number';
@@ -2121,6 +2122,9 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         }
         if (is_err(expr)) {
             return expr.message;
+        }
+        if (is_imu(expr)) {
+            return 'i';
         }
         throw new Error(`${expr} ???`);
     }

@@ -1,10 +1,9 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_FLT } from "../../hashing/hash_info";
-import { is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
 import { MATH_ADD, MATH_POW } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { is_flt } from "../../tree/flt/is_flt";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, makeList, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
@@ -16,7 +15,7 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = BCons<Sym, Rat, Rat>;
+type LHS = IMU_TYPE;
 type RHS = Flt;
 type EXP = BCons<Sym, LHS, RHS>;
 

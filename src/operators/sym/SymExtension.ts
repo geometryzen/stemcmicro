@@ -120,6 +120,6 @@ class SymExtension implements Extension<Sym> {
     }
 }
 
-export const sym = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const symExtensionBuilder = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new SymExtension($);
 });

@@ -28,14 +28,18 @@ describe("exp", function () {
         engine.release();
     });
     // TODO: We could do better at factoring out the rationals.
-    it("-3/4*i*pi", function () {
+    it("exp(-3/4*i*pi)", function () {
         const lines: string[] = [
             `exp(-3/4*i*pi)`
         ];
-        const engine = createSymEngine({ useDefinitions: true });
+        const engine = createSymEngine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(actual, $), "(-1/2-1/2*i)*2**(1/2)");
+        assert.strictEqual(print_expr(actual, $), "-1/2*2**(1/2)-1/2*2**(1/2)*i");
+        // assert.strictEqual(print_expr(actual, $), "(-1/2-1/2*i)*2**(1/2)");
         engine.release();
     });
 });

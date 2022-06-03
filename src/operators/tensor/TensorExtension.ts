@@ -191,6 +191,6 @@ class TensorExtension implements Extension<Tensor> {
     }
 }
 
-export const mat = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const tensorExtensionBuilder = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new TensorExtension($);
 });

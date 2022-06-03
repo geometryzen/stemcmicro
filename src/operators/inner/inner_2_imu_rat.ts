@@ -1,7 +1,7 @@
 
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
-import { is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
 import { MATH_INNER, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { is_rat } from "../../tree/rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -16,7 +16,7 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = BCons<Sym, Rat,Rat>;
+type LHS = IMU_TYPE;
 type RHS = Rat;
 type EXP = BCons<Sym, LHS, RHS>;
 

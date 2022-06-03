@@ -575,15 +575,15 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return op.toListString(expr);
         },
         transform(expr: U): [TFLAGS, U] {
+            if (expr.meta === TFLAG_HALT) {
+                return [TFLAG_HALT, expr];
+            }
             // We short-circuit some expressions in order to improve performance.
             if (is_imu(expr)) {
                 expr.meta |= TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_cons(expr)) {
-                if (expr.meta === TFLAG_HALT) {
-                    return [TFLAG_HALT, expr];
-                }
                 // let changedExpr = false;
                 let outFlags = TFLAG_NONE;
                 let curExpr: U = expr;

@@ -6,16 +6,15 @@ import { makeList } from './makeList';
 import { mdiv } from './mmul';
 import { is_num } from './predicates/is_num';
 import { FLOOR } from './runtime/constants';
-import { stack_push } from './runtime/stack';
 import { flt } from './tree/flt/Flt';
 import { is_flt } from './tree/flt/is_flt';
 import { cadr } from './tree/helpers';
 import { negOne, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
-export function Eval_floor(p1: U, $: ExtensionEnv): void {
+export function Eval_floor(p1: U, $: ExtensionEnv): U {
     const result = yfloor($.valueOf(cadr(p1)), $);
-    stack_push(result);
+    return result;
 }
 
 function yfloor(p1: U, $: ExtensionEnv): U {

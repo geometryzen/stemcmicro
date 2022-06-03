@@ -327,7 +327,7 @@ export function evalPolar<T extends unknown[], V>(func: (...args: T) => V, ...ar
 /**
  * Call a function temporarily setting "evaluatingAsFloats" to true.
  */
-export function evalFloats<T extends unknown[], V>(func: (...args: T) => V, ...args: T): V {
+export function evaluateAsFloats<T extends unknown[], V>(func: (...args: T) => V, ...args: T): V {
     const prev_evaluatingAsFloats = defs.evaluatingAsFloats;
     defs.evaluatingAsFloats = true;
     try {

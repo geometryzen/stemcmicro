@@ -120,6 +120,7 @@ import { float_mul_2_flt_sym } from '../operators/float/float_mul_2_flt_sym';
 import { float_rat } from '../operators/float/float_rat';
 import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
+import { floor_varargs } from '../operators/floor/floor_varargs';
 import { is_flt, op_flt } from '../operators/flt/FltExtension';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
@@ -256,9 +257,10 @@ import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { rect_varargs } from '../operators/rect/rect_varargs';
 import { roots_varargs } from '../operators/roots/roots_varargs';
+import { round_varargs } from '../operators/round/round_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
 import { shape_varargs } from '../operators/shape/shape_varargs';
-import { simplify_fn } from '../operators/simplify/simplify_fn';
+import { simplify_varargs } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
 import { sin_add_2_any_any } from '../operators/sin/sin_add_2_any_any';
 import { sin_any } from '../operators/sin/sin_any';
@@ -654,6 +656,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(float_sym);
     $.defineOperator(float_flt);
     $.defineOperator(float_rat);
+    $.defineOperator(floor_varargs);
 
     $.defineOperator(hilbert_varargs);
 
@@ -680,10 +683,11 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(rationalize_fn);
     $.defineOperator(rect_varargs);
     $.defineOperator(roots_varargs);
+    $.defineOperator(round_varargs);
 
     $.defineOperator(script_last_0);
     $.defineOperator(shape_varargs);
-    $.defineOperator(simplify_fn);
+    $.defineOperator(simplify_varargs);
 
     $.defineOperator(succ_rat);
     $.defineOperator(succ_any);

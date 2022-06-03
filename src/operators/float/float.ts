@@ -3,17 +3,18 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { PI } from '../../runtime/constants';
-import { evalFloats } from '../../runtime/defs';
+import { evaluateAsFloats } from '../../runtime/defs';
 import { stack_push } from '../../runtime/stack';
-import { eAsDouble, piAsDouble } from '../../tree/flt/Flt';
+import { eAsDouble, Flt, piAsDouble } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { is_tensor } from '../../tree/tensor/is_tensor';
 import { is_rat } from '../../tree/rat/is_rat';
+import { is_tensor } from '../../tree/tensor/is_tensor';
+import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, is_cons, U } from '../../tree/tree';
 
 export function Eval_float(expr: Cons, $: ExtensionEnv): void {
     // console.lg(`Eval_floats ${$.toListString(expr)}`);
-    evalFloats(() => {
+    evaluateAsFloats(() => {
         const A = cadr(expr);
         // console.lg(`Eval_floats A => ${$.toListString(A)}`);
         const B = $.valueOf(A);
@@ -44,7 +45,7 @@ function checkFloatHasWorkedOutCompletely(nodeToCheck: U, $: ExtensionEnv) {
 */
 
 export function zzfloat(p1: U, $: ExtensionEnv): U {
-    return evalFloats(function () {
+    return evaluateAsFloats(function () {
         return $.valueOf(yyfloat($.valueOf(p1), $));
     });
 }
@@ -56,10 +57,10 @@ export function zzfloat(p1: U, $: ExtensionEnv): U {
 // checkFloatHasWorkedOutCompletely(defs.stack[defs.tos-1],$)
 
 export function yyfloat(p1: U, $: ExtensionEnv): U {
-    return evalFloats(yyfloat_, p1, $);
+    return evaluateAsFloats(yyfloat_, p1, $);
 }
 
-function yyfloat_(expr: U, $: ExtensionEnv): U {
+function yyfloat_(expr: U, $: ExtensionEnv): Flt | Cons | Tensor | U {
     if (is_cons(expr)) {
         return makeList(...expr.map(function (x) {
             return yyfloat_(x, $);

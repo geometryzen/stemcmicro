@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, FEATURE, TFLAG_NONE, Sign, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { Flt, oneAsDouble } from "../../tree/flt/Flt";
 import { U } from "../../tree/tree";
@@ -32,10 +31,6 @@ export class FltExtension implements Extension<Flt> {
     }
     get dependencies(): FEATURE[] {
         return ['Flt'];
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: Flt, costs: CostTable, depth: number, $: ExtensionEnv): number {
-        return 1;
     }
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Flt ? TFLAG_HALT : TFLAG_NONE, expr];

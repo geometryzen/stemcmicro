@@ -4,7 +4,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { Function2X } from "../helpers/Function2X";
 import { is_sym } from "../sym/is_sym";
 
@@ -29,8 +29,8 @@ class Op extends Function2X<Sym, Sym> implements Operator<Cons> {
     }
     transform2(opr: Sym, a: Sym, b: Sym): [TFLAGS, U] {
         const $ = this.$;
-        const ab = makeList(MATH_MUL, a, b);
-        const ba = makeList(MATH_MUL, b, a);
+        const ab = items_to_cons(MATH_MUL, a, b);
+        const ba = items_to_cons(MATH_MUL, b, a);
         const abba = $.subtract(ab, ba);
         const retval = $.multiply(half, abba);
         return [TFLAG_DIFF, retval];

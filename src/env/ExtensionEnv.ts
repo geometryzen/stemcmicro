@@ -1,8 +1,6 @@
-import { Pattern } from "../patterns/Pattern";
 import { Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { CostTable } from "./CostTable";
 
 export type Sign = -1 | 0 | 1;
 export const SIGN_LT = -1;
@@ -35,11 +33,12 @@ export function haltFlag(flags: TFLAGS): boolean {
 }
 
 // TODO: Need to be able to handle positive and negative cases (like Vector).
+/**
+ * @hidden
+ */
 export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector' | '~Vector';
 
 export interface ExtensionEnv {
-    addCost(pattern: Pattern, value: number): void;
-    setCost(sym: Sym, cost: number): void;
     setField(kind: 'R' | undefined): void;
     treatAsReal(sym: Sym): boolean;
     treatAsScalar(sym: Sym): boolean;
@@ -68,7 +67,6 @@ export interface ExtensionEnv {
     clearRenamed(): void;
     compare(lhs: U, rhs: U): Sign;
     cos(expr: U): U;
-    cost(expr: U, depth: number): number;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     defineKey(sym: Sym): Sym;
@@ -161,7 +159,6 @@ export interface Operator<T extends U> {
     readonly hash?: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
-    cost(expr: T, costs: CostTable, depth: number): number;
     isImag(expr: T): boolean;
     isKind(expr: U): boolean;
     isMinusOne(expr: T): boolean;
@@ -187,7 +184,6 @@ export interface Extension<T extends U> {
     readonly hash?: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
-    cost(expr: T, costs: CostTable, depth: number, $: ExtensionEnv): number;
     isImag(expr: T, $: ExtensionEnv): boolean;
     isKind(expr: U, $: ExtensionEnv): boolean;
     isMinusOne(expr: T, $: ExtensionEnv): boolean;

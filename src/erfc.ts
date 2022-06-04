@@ -2,8 +2,8 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { ERFC } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
 import { one } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -25,7 +25,7 @@ export function Eval_erfc(p1: U, $: ExtensionEnv): void {
 function yerfc(p1: U, $: ExtensionEnv): U {
     if (is_flt(p1)) {
         const d = erfc(p1.d);
-        return flt(d);
+        return wrap_as_flt(d);
     }
 
     if ($.isZero(p1)) {

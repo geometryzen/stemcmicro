@@ -2,8 +2,8 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { ARCCOSH, COSH } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
 import { one } from './tree/rat/Rat';
 import { car, U } from './tree/tree';
@@ -43,7 +43,7 @@ export function ycosh(p1: U, $: ExtensionEnv): U {
         if (Math.abs(d) < 1e-10) {
             d = 0.0;
         }
-        return flt(d);
+        return wrap_as_flt(d);
     }
     if ($.isZero(p1)) {
         return one;

@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { is_sym } from "../operators/sym/is_sym";
-import { is_imu } from "../predicates/is_imu";
+import { is_imu } from "../operators/imu/is_imu";
 import { MULTIPLY } from "../runtime/constants";
 import { Sym } from "../tree/sym/Sym";
 import { Cons } from "../tree/tree";

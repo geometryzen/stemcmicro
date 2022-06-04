@@ -6,11 +6,11 @@ import { BESSELJ, MEQUAL, MSIGN, PI } from './runtime/constants';
 import { defs } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { sine } from './operators/sin/sin';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
-import { half, integer, negOne, one, two, zero } from './tree/rat/Rat';
+import { is_rat } from './operators/rat/is_rat';
+import { half, wrap_as_int, negOne, one, two, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 /* besselj =====================================================================
@@ -66,7 +66,7 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     // numerical result
     if (is_flt(X) && !isNaN(n)) {
         const d = jn(n, X.d);
-        return flt(d);
+        return wrap_as_flt(d);
     }
 
     // bessej(0,0) = 1
@@ -83,18 +83,18 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     if (is_rat(N) && MEQUAL(N.b, 2)) {
         // n = 1/2
         if (MEQUAL(N.a, 1)) {
-            const twoOverPi = defs.evaluatingAsFloats ? flt(2.0 / Math.PI) : $.divide(two, PI);
+            const twoOverPi = defs.evaluatingAsFloats ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
             return $.multiply($.power($.divide(twoOverPi, X), half), sine(X, $));
         }
 
         // n = -1/2
         if (MEQUAL(N.a, -1)) {
-            const twoOverPi = defs.evaluatingAsFloats ? flt(2.0 / Math.PI) : $.divide(two, PI);
+            const twoOverPi = defs.evaluatingAsFloats ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
             return $.multiply($.power($.divide(twoOverPi, X), half), $.cos(X));
         }
 
         // besselj(x,n) = (2/x) (n-sgn(n)) besselj(x,n-sgn(n)) - besselj(x,n-2*sgn(n))
-        const SGN = integer(MSIGN(N.a));
+        const SGN = wrap_as_int(MSIGN(N.a));
 
         return $.subtract(
             $.multiply(

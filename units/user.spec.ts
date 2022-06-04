@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { print_expr, print_list } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_infix, render_as_sexpr } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("user", function () {
@@ -11,12 +11,12 @@ describe("user", function () {
             `f(x,y)=2*x+y`,
             `f(1,2)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(value, $), "4");
-        assert.strictEqual(print_expr(value, $), "4");
+        assert.strictEqual(render_as_sexpr(value, $), "4");
+        assert.strictEqual(render_as_infix(value, $), "4");
         engine.release();
     });
     it("f(0,0)", function () {
@@ -26,14 +26,14 @@ describe("user", function () {
             `f(a,x)=1+sin(float(a/360*2*pi))-float(x)+sin(a/360*2*pi)-x`,
             `f(0,0)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(value, $), "(+ (+ (+ 1 (sin 0.0)) 0.0) (sin 0))");
-        assert.strictEqual(print_expr(value, $), "((1+sin(0.0))+0.0)+sin(0)");
+        assert.strictEqual(render_as_sexpr(value, $), "(+ (+ (+ 1 (sin 0.0)) 0.0) (sin 0))");
+        assert.strictEqual(render_as_infix(value, $), "((1+sin(0.0))+0.0)+sin(0)");
         engine.release();
     });
 });

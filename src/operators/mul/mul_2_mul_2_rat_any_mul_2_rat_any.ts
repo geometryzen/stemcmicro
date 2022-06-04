@@ -3,7 +3,7 @@ import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -36,8 +36,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const X = lhs.rhs;
         const m = rhs.lhs;
         const Y = rhs.rhs;
-        const XY = $.valueOf(makeList(rhs.opr, X, Y));
-        const retval = $.valueOf(makeList(opr, n.mul(m), XY));
+        const XY = $.valueOf(items_to_cons(rhs.opr, X, Y));
+        const retval = $.valueOf(items_to_cons(opr, n.mul(m), XY));
         return [TFLAG_DIFF, retval];
     }
 }

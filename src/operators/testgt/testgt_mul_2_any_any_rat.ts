@@ -1,12 +1,12 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_GT, MATH_LT, MATH_MUL } from "../../runtime/ns_math";
-import { False, True } from "../../tree/boo/Boo";
-import { is_boo } from "../../tree/boo/is_boo";
-import { is_rat } from "../../tree/rat/is_rat";
+import { booF, booT } from "../../tree/boo/Boo";
+import { is_boo } from "../boo/is_boo";
+import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -36,19 +36,19 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
         if (rhs.isNegative()) {
-            return [TFLAG_DIFF, False];
+            return [TFLAG_DIFF, booF];
         }
         if (rhs.isZero()) {
             const $ = this.$;
             const x = lhs.lhs;
             const y = lhs.rhs;
-            const x_LT_0 = $.valueOf(makeList(MATH_LT, x, zero));
-            const y_LT_0 = $.valueOf(makeList(MATH_LT, y, zero));
-            const x_GT_0 = $.valueOf(makeList(MATH_GT, x, zero));
-            const y_GT_0 = $.valueOf(makeList(MATH_GT, y, zero));
+            const x_LT_0 = $.valueOf(items_to_cons(MATH_LT, x, zero));
+            const y_LT_0 = $.valueOf(items_to_cons(MATH_LT, y, zero));
+            const x_GT_0 = $.valueOf(items_to_cons(MATH_GT, x, zero));
+            const y_GT_0 = $.valueOf(items_to_cons(MATH_GT, y, zero));
             if (is_boo(x_LT_0) && is_boo(x_GT_0) && is_boo(y_LT_0) && is_boo(y_GT_0)) {
                 const cond = (x_GT_0.isTrue() && y_GT_0.isTrue()) || (x_LT_0.isTrue() && y_LT_0.isTrue());
-                return [TFLAG_DIFF, cond ? True : False];
+                return [TFLAG_DIFF, cond ? booT : booF];
             }
             else {
                 /*
@@ -61,9 +61,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
                 console.log(`DEBUG ${y} < 0 => ${y_LT_0}, ${y} > 0 => ${y_GT_0}`);
                 */
             }
-            return [TFLAG_DIFF, False];
+            return [TFLAG_DIFF, booF];
         }
-        return [TFLAG_DIFF, False];
+        return [TFLAG_DIFF, booF];
     }
 }
 

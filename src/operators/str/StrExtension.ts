@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, Sign, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
 import { emptyStr, Str } from "../../tree/str/Str";
 import { U } from "../../tree/tree";
@@ -35,10 +34,6 @@ class StrExtension implements Extension<Str> {
     }
     get name(): string {
         return 'StrExtension';
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: Str, costs: CostTable, depth: number, $: ExtensionEnv): number {
-        return 1;
     }
     valueOf(str: Str): U {
         return str;

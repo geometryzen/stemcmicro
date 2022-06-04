@@ -1,11 +1,10 @@
 
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_HYP, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -33,10 +32,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('mul_2_hyp_rat', MATH_MUL, is_hyp, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_HYP, HASH_RAT);
-    }
-    cost(expr: EXP, costs: CostTable, depth: number): number {
-        const baseCost = super.cost(expr, costs, depth);
-        return baseCost + 1;
     }
     isScalar(expr: EXP): boolean {
         return this.$.isScalar(expr.lhs);

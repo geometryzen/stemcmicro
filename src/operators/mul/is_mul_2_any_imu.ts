@@ -1,4 +1,4 @@
-import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";

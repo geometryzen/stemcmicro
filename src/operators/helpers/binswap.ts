@@ -1,5 +1,5 @@
 import { Sym } from "../../tree/sym/Sym";
-import { makeList, U } from "../../tree/tree";
+import { items_to_cons, U } from "../../tree/tree";
 import { BCons } from "./BCons";
 
 /**
@@ -7,5 +7,5 @@ import { BCons } from "./BCons";
  * The value of the operands are not computed.
  */
 export function binswap(expr: BCons<Sym, U, U>): U {
-    return makeList(expr.opr, expr.rhs, expr.lhs);
+    return items_to_cons(expr.opr, expr.rhs, expr.lhs);
 }

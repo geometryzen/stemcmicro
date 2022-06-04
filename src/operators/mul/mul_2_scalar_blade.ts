@@ -1,12 +1,12 @@
 
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { bitCount } from "../../tree/vec/bitCount";
 import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/BladeExtension";
+import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_scalar } from "../helpers/is_scalar";

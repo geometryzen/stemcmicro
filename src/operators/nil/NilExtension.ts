@@ -1,8 +1,7 @@
 
-import { CostTable } from "../../env/CostTable";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
-import { Cons, NIL, U } from "../../tree/tree";
+import { Cons, nil, U } from "../../tree/tree";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -15,7 +14,7 @@ class NilExtension implements Operator<Cons> {
         // Nothing to see here.
     }
     get key(): string {
-        return NIL.name;
+        return nil.name;
     }
     get hash(): string {
         return HASH_NIL;
@@ -24,16 +23,12 @@ class NilExtension implements Operator<Cons> {
         return 'NilExtension';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: U, costs: CostTable): number {
-        return 1;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Cons): boolean {
         throw new Error("Nil Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(expr: U): boolean {
-        return NIL.equals(expr);
+        return nil.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isMinusOne(expr: Cons): boolean {
@@ -80,8 +75,8 @@ class NilExtension implements Operator<Cons> {
         return '()';
     }
     transform(expr: U): [TFLAGS, U] {
-        if (NIL.equals(expr)) {
-            return [TFLAG_HALT, NIL];
+        if (nil.equals(expr)) {
+            return [TFLAG_HALT, nil];
         }
         else {
             return [TFLAG_NONE, expr];
@@ -89,7 +84,7 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Cons): U {
-        return NIL;
+        return nil;
     }
 }
 

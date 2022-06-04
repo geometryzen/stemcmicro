@@ -1,7 +1,8 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
-import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
+import { compare_blade_blade } from "../../operators/blade/BladeExtension";
+import { is_blade } from "../../operators/blade/is_blade";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
@@ -13,12 +14,11 @@ import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_imu } from "../../predicates/is_imu";
-import { is_num } from "../../predicates/is_num";
-import { print_expr } from "../../print";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_imu } from "../../operators/imu/is_imu";
+import { is_num } from "../../operators/num/is_num";
+import { is_flt } from "../../operators/flt/is_flt";
 import { is_cons, U } from "../../tree/tree";
-import { is_uom } from "../../tree/uom/is_uom";
+import { is_uom } from "../../operators/uom/is_uom";
 import { factorizeL } from "../factorizeL";
 import { compare_factorizable } from "./compare_factorizable";
 import { compare_opr_opr } from "./compare_opr_opr";
@@ -31,7 +31,6 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }
-    // // console.lg(`compare_terms_redux ${print_expr(lhs, $)} ${print_expr(rhs, $)}`);
     if (is_sym(lhs) && is_sym(rhs)) {
         return compare_sym_sym(lhs, rhs);
     }
@@ -262,7 +261,7 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                 return SIGN_LT;
             }
             else {
-                throw new Error(`lhs: Multiply = ${lhs}, rhs = ${print_expr(rhs, $)}`);
+                throw new Error(`lhs: Multiply = ${lhs}, rhs = ${rhs}`);
             }
         }
         else if (is_pow_2_any_any(lhs)) {
@@ -389,12 +388,12 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         if (is_sym(rhs)) {
             return SIGN_GT;
         }
-        throw new Error(`lhs: Hyp = ${print_expr(lhs, $)}, rhs = ${rhs}`);
+        throw new Error(`lhs: Hyp = ${lhs}, rhs = ${rhs}`);
     }
     if (is_uom(lhs)) {
         if (is_uom(rhs)) {
             return SIGN_EQ;
         }
     }
-    throw new Error(`lhs = ${print_expr(lhs, $)}, rhs = ${rhs}`);
+    throw new Error(`lhs = ${lhs}, rhs = ${rhs}`);
 }

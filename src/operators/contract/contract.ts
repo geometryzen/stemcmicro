@@ -3,9 +3,9 @@ import { nativeInt } from '../../nativeInt';
 import { halt } from '../../runtime/defs';
 import { cadddr, caddr, cadr, cddr } from '../../tree/helpers';
 import { one, two, zero } from '../../tree/rat/Rat';
-import { is_tensor } from '../../tree/tensor/is_tensor';
+import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { Cons, NIL, U } from '../../tree/tree';
+import { Cons, nil, U } from '../../tree/tree';
 
 /* contract =====================================================================
 
@@ -27,7 +27,7 @@ contract(m) is equivalent to the trace of matrix m.
 export function Eval_contract(p1: Cons, $: ExtensionEnv): U {
     const p1_prime = $.valueOf(cadr(p1));
     let p2: U, p3: U;
-    if (NIL.equals(cddr(p1))) {
+    if (nil.equals(cddr(p1))) {
         p2 = one;
         p3 = two;
     }

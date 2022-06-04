@@ -1,10 +1,10 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
@@ -62,8 +62,8 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         const a = orig.lhs.lhs.arg;
         const b = orig.lhs.rhs.arg;
-        const b_minus_a = $.valueOf(makeList(MATH_ADD, b, $.negate(a)));
-        const sin = $.valueOf(makeList(MATH_SIN, b_minus_a));
+        const b_minus_a = $.valueOf(items_to_cons(MATH_ADD, b, $.negate(a)));
+        const sin = $.valueOf(items_to_cons(MATH_SIN, b_minus_a));
         return [TFLAG_DIFF, sin];
     }
 }

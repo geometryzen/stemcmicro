@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { print_expr, print_list } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_infix, render_as_sexpr } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("predicate", function () {
@@ -8,65 +8,65 @@ describe("predicate", function () {
         const lines: string[] = [
             `x==0`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: []
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(print_list(value, $), "false");
-        assert.strictEqual(print_expr(value, $), 'False');
+        assert.strictEqual(render_as_sexpr(value, $), "false");
+        assert.strictEqual(render_as_infix(value, $), 'False');
     });
     it("x>0", function () {
         const lines: string[] = [
             `x>0`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: []
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(print_list(value, $), "true");
-        assert.strictEqual(print_expr(value, $), 'True');
+        assert.strictEqual(render_as_sexpr(value, $), "true");
+        assert.strictEqual(render_as_infix(value, $), 'True');
     });
     it("x<0", function () {
         const lines: string[] = [
             `x<0`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: []
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(print_list(value, $), "false");
-        assert.strictEqual(print_expr(value, $), 'False');
+        assert.strictEqual(render_as_sexpr(value, $), "false");
+        assert.strictEqual(render_as_infix(value, $), 'False');
     });
     it("x * y < 0", function () {
         const lines: string[] = [
             `x * y < 0`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: []
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(print_list(value, $), "false");
-        assert.strictEqual(print_expr(value, $), 'False');
+        assert.strictEqual(render_as_sexpr(value, $), "false");
+        assert.strictEqual(render_as_infix(value, $), 'False');
     });
     it("x * y > 0", function () {
         const lines: string[] = [
             `x * y > 0`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: []
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(print_list(value, $), "true");
-        assert.strictEqual(print_expr(value, $), 'True');
+        assert.strictEqual(render_as_sexpr(value, $), "true");
+        assert.strictEqual(render_as_infix(value, $), 'True');
     });
 });

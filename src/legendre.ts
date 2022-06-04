@@ -9,8 +9,8 @@ import { sine } from './operators/sin/sin';
 import { square } from './square';
 import { subst } from './subst';
 import { cadddr, caddr, cadr } from './tree/helpers';
-import { half, integer, one, zero } from './tree/rat/Rat';
-import { car, NIL, U } from './tree/tree';
+import { half, wrap_as_int, one, zero } from './tree/rat/Rat';
+import { car, nil, U } from './tree/tree';
 
 /*
  Legendre function
@@ -45,7 +45,7 @@ export function Eval_legendre(p1: U, $: ExtensionEnv): void {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
-    const M = NIL === p2 ? zero : p2;
+    const M = nil === p2 ? zero : p2;
 
     stack_push(legendre(X, N, M, $));
 }
@@ -92,10 +92,10 @@ function __legendre2(n: number, m: number, X: U, $: ExtensionEnv): U {
     for (let i = 0; i < n; i++) {
         const divided = $.divide(
             $.subtract(
-                $.multiply($.multiply(integer(2 * i + 1), X), Y1),
-                $.multiply(integer(i), Y0)
+                $.multiply($.multiply(wrap_as_int(2 * i + 1), X), Y1),
+                $.multiply(wrap_as_int(i), Y0)
             ),
-            integer(i + 1)
+            wrap_as_int(i + 1)
         );
         Y0 = Y1;
         Y1 = divided;
@@ -122,7 +122,7 @@ function __legendre3(p1: U, m: number, X: U, $: ExtensionEnv): U | undefined {
         base = square($.cos(cadr(X)), $);
     }
 
-    let result = $.multiply(p1, $.power(base, $.multiply(integer(m), half)));
+    let result = $.multiply(p1, $.power(base, $.multiply(wrap_as_int(m), half)));
 
     if (m % 2) {
         result = $.negate(result);

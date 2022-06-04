@@ -1,6 +1,5 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -33,10 +32,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('mul_2_sym_mul_2_rat_any', MATH_MUL, is_sym, and(is_cons, is_mul_2_rat_any), $);
         this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_MUL);
-    }
-    cost(expr: BCons<Sym, Sym, BCons<Sym, Rat, U>>, costs: CostTable, depth: number): number {
-        // The extra cost is because the expression that is matched is not canonical.
-        return super.cost(expr, costs, depth) + 1;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

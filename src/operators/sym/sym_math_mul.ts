@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { VERSION_ONE } from "../../runtime/version";
@@ -30,9 +29,6 @@ class SymMathMul implements Operator<Sym> {
     }
     get name(): string {
         return 'SymMathMul';
-    }
-    cost(expr: U, costs: CostTable): number {
-        return costs.getCost(MATH_MUL, this.$);
     }
     transform(expr: U): [TFLAGS, U] {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];

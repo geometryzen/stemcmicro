@@ -3,11 +3,11 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { factor_small_number } from './factor';
 import { gcd } from './gcd';
 import { nativeInt } from './nativeInt';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
-import { integer, one, zero } from './tree/rat/Rat';
+import { wrap_as_int, one, zero } from './tree/rat/Rat';
 import { car, cdr, is_cons, U } from './tree/tree';
 
 function signum(n: number): 1 | -1 | 0 {
@@ -117,7 +117,7 @@ function gen(stack: U[], h: number, k: number, $: ExtensionEnv): void {
     const expo = nativeInt(EXPO);
     if (!isNaN(expo)) {
         for (let i = 0; i <= Math.abs(expo); i++) {
-            stack.push($.multiply(ACCUM, $.power(BASE, integer(signum(expo) * i))));
+            stack.push($.multiply(ACCUM, $.power(BASE, wrap_as_int(signum(expo) * i))));
             gen(stack, h + 2, k, $);
         }
     }

@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_HYP } from "../../hashing/hash_info";
 import { epsilon, Hyp } from "../../tree/hyp/Hyp";
 import { U } from "../../tree/tree";
@@ -18,10 +17,6 @@ class HypExtension implements Extension<Hyp> {
     }
     get name() {
         return 'HypExtension';
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: Hyp, costs: CostTable, depth: number, $: ExtensionEnv): number {
-        return 1;
     }
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Hyp ? TFLAG_HALT : TFLAG_NONE, expr];

@@ -1,4 +1,4 @@
-import { is_num } from "../../predicates/is_num";
+import { is_num } from "../num/is_num";
 import { Num } from "../../tree/num/Num";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";

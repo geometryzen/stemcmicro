@@ -3,9 +3,9 @@ import { imu } from '../env/imu';
 import { equaln } from '../is';
 import { is_rat_integer } from '../is_rat_integer';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
-import { is_imu } from '../predicates/is_imu';
+import { is_imu } from '../operators/imu/is_imu';
 import { caddr, cadr } from '../tree/helpers';
-import { is_tensor } from '../tree/tensor/is_tensor';
+import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_cons, U } from '../tree/tree';
 import { is_power } from './helpers';
 

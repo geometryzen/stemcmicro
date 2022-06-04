@@ -28,7 +28,7 @@ function config_from_options(options: ScanOptions | undefined): ScanConfig {
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the scanning behaves.
  */
-export function create_source_trees(sourceText: string, options?: ScanOptions): { trees: U[], errors: Error[] } {
+export function scan_source_text(sourceText: string, options?: ScanOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config = config_from_options(options);

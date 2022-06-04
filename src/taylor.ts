@@ -7,8 +7,8 @@ import { derivative_wrt } from './operators/derivative/derivative_wrt';
 import { TAYLOR } from './runtime/constants';
 import { stack_peek, stack_push } from './runtime/stack';
 import { subst } from './subst';
-import { integer, one, zero } from './tree/rat/Rat';
-import { car, cdr, NIL, U } from './tree/tree';
+import { wrap_as_int, one, zero } from './tree/rat/Rat';
+import { car, cdr, nil, U } from './tree/tree';
 
 /*
 Taylor expansion of a function
@@ -27,17 +27,17 @@ export function Eval_taylor(p1: U, $: ExtensionEnv): void {
     // 2nd arg
     p1 = cdr(p1);
     let p2 = $.valueOf(car(p1));
-    const X = NIL === p2 ? guess(stack_peek()) : p2; // TODO: should this be `top()`?
+    const X = nil === p2 ? guess(stack_peek()) : p2; // TODO: should this be `top()`?
 
     // 3rd arg
     p1 = cdr(p1);
     p2 = $.valueOf(car(p1));
-    const N = NIL === p2 ? integer(24) : p2; // 24: default number of terms
+    const N = nil === p2 ? wrap_as_int(24) : p2; // 24: default number of terms
 
     // 4th arg
     p1 = cdr(p1);
     p2 = $.valueOf(car(p1));
-    const A = NIL === p2 ? zero : p2; // 0: default expansion point
+    const A = nil === p2 ? zero : p2; // 0: default expansion point
 
     stack_push(taylor(F, X, N, A, $));
 }
@@ -61,7 +61,7 @@ function taylor(F: U, X: U, N: U, A: U, $: ExtensionEnv): U {
         p5 = $.multiply(p5, $.subtract(X, A));
 
         const arg1a = $.valueOf(subst(F, X, A, $)); // F: f(a)
-        temp = $.add(temp, $.divide($.multiply(arg1a, p5), factorial(integer(i))));
+        temp = $.add(temp, $.divide($.multiply(arg1a, p5), factorial(wrap_as_int(i))));
     }
     return temp;
 }

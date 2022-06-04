@@ -8,7 +8,7 @@ import { stack_push } from './runtime/stack';
 import { subst } from './subst';
 import { cadddr, caddr, cadr } from './tree/helpers';
 import { one, zero } from './tree/rat/Rat';
-import { Cons, is_cons, NIL, U } from './tree/tree';
+import { Cons, is_cons, nil, U } from './tree/tree';
 
 /* coeff =====================================================================
 
@@ -30,7 +30,7 @@ export function Eval_coeff(p1: U, $: ExtensionEnv): void {
     let x = $.valueOf(caddr(p1));
     let n = $.valueOf(cadddr(p1));
 
-    if (NIL.equals(n)) {
+    if (nil.equals(n)) {
         // only 2 args?
         n = x;
         x = SYMBOL_X;

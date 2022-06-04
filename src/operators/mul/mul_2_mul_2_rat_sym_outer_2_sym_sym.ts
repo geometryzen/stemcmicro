@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -43,8 +43,8 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: BCons<Sym, LHS, RHS>): [TFLAGS, U] {
         const k = lhs.lhs;
         const a = lhs.rhs;
-        const abc = makeList(MATH_MUL, a, rhs);
-        return [TFLAG_DIFF, makeList(MATH_MUL, k, abc)];
+        const abc = items_to_cons(MATH_MUL, a, rhs);
+        return [TFLAG_DIFF, items_to_cons(MATH_MUL, k, abc)];
     }
 }
 

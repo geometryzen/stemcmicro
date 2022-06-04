@@ -1,6 +1,5 @@
 import { assert } from 'chai';
-import { createSymEngine, is_tensor } from '../index';
-import { is_blade } from '../src/tree/vec/Algebra';
+import { create_engine, is_blade, is_tensor, render_as_infix } from '../index';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("operator +", function () {
@@ -12,11 +11,11 @@ describe("operator +", function () {
             `X = b1 + b1`,
             `X`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
-        const actual = engine.run(lines.join('\n'));
-        assert.strictEqual(actual, "2*L1");
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
         engine.release();
     });
 });
@@ -32,7 +31,7 @@ describe("algebra", function () {
             const lines: string[] = [
                 `algebra([1, 1, 1], ["L1", "L2", "L3"])`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
             const $ = engine.$;
@@ -72,11 +71,11 @@ describe("algebra", function () {
                 `X = b1 + b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "L1+L2");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "L1+L2");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -87,11 +86,11 @@ describe("algebra", function () {
                 `X = b1 + b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "L1+L2");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "L1+L2");
             engine.release();
         });
         it("(e1, e1)", function () {
@@ -102,11 +101,11 @@ describe("algebra", function () {
                 `X = b1 + b1`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "2*L1");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
             engine.release();
         });
     });
@@ -119,7 +118,7 @@ describe("algebra", function () {
                 `X = b1 - b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
             const $ = engine.$;
@@ -138,11 +137,11 @@ describe("algebra", function () {
                 `X = b1 - b1`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "0");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
             engine.release();
         });
     });
@@ -155,12 +154,12 @@ describe("algebra", function () {
                 `X = b1 * b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
+            const { values } = engine.executeScript(lines.join('\n'));
             // Interestingly, this seems to have simplified because e1 * e2 = e1 | e2 + e1 ^ e2 = e1 ^ e2 (orthogonal basis vectors).
-            assert.strictEqual(actual, "L1 ^ L2");
+            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2");
             engine.release();
         });
         it("(2, e1)", function () {
@@ -171,11 +170,11 @@ describe("algebra", function () {
                 `X = 2 * b1`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "2*L1");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
             engine.release();
         });
     });
@@ -189,11 +188,11 @@ describe("algebra", function () {
                 `X = b1 * b2 * b3`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "L1 ^ L2 ^ L3");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2 ^ L3");
             engine.release();
         });
     });
@@ -207,11 +206,11 @@ describe("algebra", function () {
                 `X = b1 | b1`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "1");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "1");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -223,11 +222,11 @@ describe("algebra", function () {
                 `X = b1 | b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "0");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
             engine.release();
         });
     });
@@ -241,11 +240,11 @@ describe("algebra", function () {
                 `X = b1 << b1`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "1");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "1");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -257,11 +256,11 @@ describe("algebra", function () {
                 `X = b1 << b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "0");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
             engine.release();
         });
     });
@@ -275,11 +274,11 @@ describe("algebra", function () {
                 `X = b1 >> b1`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "1");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "1");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -291,11 +290,11 @@ describe("algebra", function () {
                 `X = b1 >> b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "0");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
             engine.release();
         });
     });
@@ -309,11 +308,11 @@ describe("algebra", function () {
                 `X = b1 ^ b1`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "0");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -325,11 +324,11 @@ describe("algebra", function () {
                 `X = b1 ^ b2`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "L1 ^ L2");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2");
             engine.release();
         });
         it("(e1, e2, e3)", function () {
@@ -341,11 +340,11 @@ describe("algebra", function () {
                 `X = b1 ^ b2 ^ b3`,
                 `X`
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 dependencies: ['Blade']
             });
-            const actual = engine.run(lines.join('\n'));
-            assert.strictEqual(actual, "L1 ^ L2 ^ L3");
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2 ^ L3");
             engine.release();
         });
     });
@@ -362,7 +361,7 @@ describe("algebra", function () {
                 `X`
             ]
             const actual = run(lines.join('\n'));
-            assert.strictEqual(actual, "Multivector(L3)");
+            assert.strictEqual(render_as_infix(values[0],engine.$), "Multivector(L3)");
         });
     });
     */
@@ -376,7 +375,7 @@ describe("algebra", function () {
             `X = b1 - b1`,
             `X`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -392,7 +391,7 @@ describe("algebra", function () {
             `X = b1 - b2`,
             `X`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -405,7 +404,7 @@ describe("algebra", function () {
         const lines: string[] = [
             `a + (-1 * a)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -419,7 +418,7 @@ describe("algebra", function () {
             `a = 5`,
             `a + (-1 * a)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -433,7 +432,7 @@ describe("algebra", function () {
             `a = 5.0`,
             `a + (-1 * a)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Flt'],
             version: 2
         });
@@ -452,7 +451,7 @@ describe("algebra", function () {
             `X = b1 + b2`,
             `X`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -468,11 +467,11 @@ describe("algebra", function () {
             `X = b1 + b2`,
             `X`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
-        const actual = engine.run(lines.join('\n'));
-        assert.strictEqual(actual, "L1+L2");
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(render_as_infix(values[0], engine.$), "L1+L2");
         engine.release();
     });
     it("(e1, e1)", function () {
@@ -483,11 +482,11 @@ describe("algebra", function () {
             `X = b1 + b1`,
             `X`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
-        const actual = engine.run(lines.join('\n'));
-        assert.strictEqual(actual, "2*L1");
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
         engine.release();
     });
 });

@@ -5,7 +5,7 @@ import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_OUTER } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { value_of } from "../helpers/valueOf";
@@ -63,7 +63,7 @@ class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
                 */
                 switch (compare_sym_sym(lhs, rhs)) {
                     case SIGN_GT: {
-                        const A = makeList(opr, rhs, lhs);
+                        const A = items_to_cons(opr, rhs, lhs);
                         const C = $.negate(A);
                         const D = value_of(C, $);
                         return [TFLAG_DIFF, D];

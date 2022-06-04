@@ -5,18 +5,18 @@ import { equalq, isminusoneovertwo, is_num_and_eq_minus_one, is_one_over_two } f
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { partition } from '../../partition';
-import { is_num } from '../../predicates/is_num';
+import { is_num } from '../num/is_num';
 import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_add, is_multiply } from '../../runtime/helpers';
 import { scan_meta } from '../../scanner/scan';
 import { simplify } from '../simplify/simplify';
 import { transform } from '../../transform';
-import { flt } from '../../tree/flt/Flt';
+import { wrap_as_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
-import { car, cdr, Cons, is_cons, NIL, U } from '../../tree/tree';
+import { car, cdr, Cons, is_cons, nil, U } from '../../tree/tree';
 import { derivative_wrt } from '../derivative/derivative_wrt';
 import { is_sym } from '../sym/is_sym';
 
@@ -404,9 +404,9 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
     p1 = cdr(p1);
 
     const p2 = $.valueOf(car(p1));
-    if (NIL === p2) {
+    if (nil === p2) {
         X = guess(F);
-        N = NIL;
+        N = nil;
     }
     else if (is_num(p2)) {
         X = guess(F);
@@ -451,7 +451,7 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         F = temp;
 
         // if N is NIL then arglist is exhausted
-        if (NIL === N) {
+        if (nil === N) {
             break;
         }
 
@@ -468,7 +468,7 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         if (is_num(N)) {
             p1 = cdr(p1);
             N = $.valueOf(car(p1));
-            if (NIL === N) {
+            if (nil === N) {
                 break; // arglist exhausted
             }
             if (!is_num(N)) {
@@ -535,7 +535,7 @@ function integral_of_form(F: U, X: U, $: ExtensionEnv): U {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [p3, _] = transform(F, X, tab, false, $);
-    if (NIL === p3) {
+    if (nil === p3) {
         return makeList(INTEGRAL, F, X);
     }
     return p3;
@@ -596,7 +596,7 @@ function italu_hashcode(u: U, x: U, $: ExtensionEnv): number {
             return hash_power(exp(one, $), cadr(u), x, $);
         }
         if (opr.equals(SQRT)) {
-            return hash_power(cadr(u), flt(0.5), x, $);
+            return hash_power(cadr(u), wrap_as_flt(0.5), x, $);
         }
         return hash_function(u, x, $);
     }

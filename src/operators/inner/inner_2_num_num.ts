@@ -1,7 +1,7 @@
 
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { is_num } from "../../predicates/is_num";
+import { is_num } from "../num/is_num";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
 import { Sym } from "../../tree/sym/Sym";

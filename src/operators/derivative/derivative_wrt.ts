@@ -1,8 +1,8 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { is_num } from "../../predicates/is_num";
+import { is_num } from "../num/is_num";
 import { SystemError } from "../../runtime/SystemError";
 import { d_scalar_tensor, d_tensor_scalar, d_tensor_tensor } from "../../tensor";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_tensor } from "../tensor/is_tensor";
 import { U } from "../../tree/tree";
 import { d_scalar_scalar } from "./helpers/derivative_helpers";
 

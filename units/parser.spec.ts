@@ -1,10 +1,10 @@
 
 import { assert } from "chai";
 import { ts_parse } from "../src/parser/ts_parse";
-import { print_expr, print_list } from "../src/print";
+import { render_as_infix, render_as_sexpr } from "../src/print";
 import { transform_tree } from "../src/runtime/execute";
-import { createSymEngine } from "../src/runtime/symengine";
-import { is_str } from "../src/tree/str/is_str";
+import { create_engine } from "../src/runtime/symengine";
+import { is_str } from "../src/operators/str/is_str";
 import { assert_one_value } from "./assert_one_value";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -14,62 +14,62 @@ describe("parser", function () {
             `x`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "x");
+        assert.strictEqual(render_as_sexpr(actual, $), "x");
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "x");
+        assert.strictEqual(render_as_sexpr(tree, $), "x");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_list(value, $), "x");
+        assert.strictEqual(render_as_sexpr(value, $), "x");
         engine.release();
     });
     it("should be able to parse a Rat", function () {
         const lines: string[] = [
             `12345`
         ];
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "12345");
+        assert.strictEqual(render_as_sexpr(actual, $), "12345");
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "12345");
+        assert.strictEqual(render_as_sexpr(tree, $), "12345");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_list(value, $), "12345");
+        assert.strictEqual(render_as_sexpr(value, $), "12345");
         engine.release();
     });
     it("should be able to parse a Flt", function () {
         const lines: string[] = [
             `12345.0`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Flt'],
             version: 2
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "12345.0", "A");
+        assert.strictEqual(render_as_sexpr(actual, $), "12345.0", "A");
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "12345.0", "B");
+        assert.strictEqual(render_as_sexpr(tree, $), "12345.0", "B");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_list(value, $), "12345.0", "C");
+        assert.strictEqual(render_as_sexpr(value, $), "12345.0", "C");
         engine.release();
     });
     it("should be able to parse a Str", function () {
         const lines: string[] = [
             `"Hello"`
         ];
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
-        assert.strictEqual(print_list(actual, $), '"Hello"');
+        assert.strictEqual(render_as_sexpr(actual, $), '"Hello"');
         assert.isTrue(is_str(actual));
         if (is_str(actual)) {
             assert.strictEqual(actual.str, 'Hello');
@@ -81,20 +81,20 @@ describe("parser", function () {
         if (is_str(tree)) {
             assert.strictEqual(tree.str, 'Hello');
         }
-        assert.strictEqual(print_list(tree, $), '"Hello"');
+        assert.strictEqual(render_as_sexpr(tree, $), '"Hello"');
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_list(value, $), '"Hello"');
+        assert.strictEqual(render_as_sexpr(value, $), '"Hello"');
         engine.release();
     });
     it("should be able to parse a Str", function () {
         const lines: string[] = [
             `"Hello"`
         ];
-        const engine = createSymEngine({ version: 1 });
+        const engine = create_engine({ version: 1 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
-        assert.strictEqual(print_list(actual, $), '"Hello"');
+        assert.strictEqual(render_as_sexpr(actual, $), '"Hello"');
         assert.isTrue(is_str(actual));
         if (is_str(actual)) {
             assert.strictEqual(actual.str, 'Hello');
@@ -106,9 +106,9 @@ describe("parser", function () {
         if (is_str(tree)) {
             assert.strictEqual(tree.str, 'Hello');
         }
-        assert.strictEqual(print_list(tree, $), '"Hello"');
+        assert.strictEqual(render_as_sexpr(tree, $), '"Hello"');
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_list(value, $), '"Hello"');
+        assert.strictEqual(render_as_sexpr(value, $), '"Hello"');
         engine.release();
     });
     it("should be able to parse an additive (+) expression", function () {
@@ -116,14 +116,14 @@ describe("parser", function () {
             `a+b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(+ a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(+ a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_expr(value, $), "a+b");
+        assert.strictEqual(render_as_infix(value, $), "a+b");
         engine.release();
     });
     it("should be able to parse an additive (-) expression", function () {
@@ -131,12 +131,12 @@ describe("parser", function () {
             `a-b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(- a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(- a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "a-b");
         engine.release();
@@ -146,14 +146,14 @@ describe("parser", function () {
             `a*b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(* a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(* a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_expr(value, $), "a*b");
+        assert.strictEqual(render_as_infix(value, $), "a*b");
         engine.release();
     });
     it("should be able to parse an multiplicative (/) expression", function () {
@@ -161,12 +161,12 @@ describe("parser", function () {
             `a/b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(/ a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(/ a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "a*b");
         engine.release();
@@ -176,14 +176,14 @@ describe("parser", function () {
             `a|b`
         ];
 
-        const engine = createSymEngine({ treatAsVectors: ['a', 'b'] });
+        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(| a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(| a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_expr(value, $), "a|b");
+        assert.strictEqual(render_as_infix(value, $), "a|b");
         engine.release();
     });
     it("should be able to parse an outer product (^) expression", function () {
@@ -191,14 +191,14 @@ describe("parser", function () {
             `a^b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(outer a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(outer a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_expr(value, $), "a^b");
+        assert.strictEqual(render_as_infix(value, $), "a^b");
         engine.release();
     });
     it("should be able to parse a left contraction(<<) expression", function () {
@@ -206,12 +206,12 @@ describe("parser", function () {
             `a<<b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(<< a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(<< a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "a<<b");
         engine.release();
@@ -221,12 +221,12 @@ describe("parser", function () {
             `a>>b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(>> a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(>> a b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "a<<b");
         engine.release();
@@ -236,14 +236,14 @@ describe("parser", function () {
             `a**b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(power a b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(power a b)");
         const value = assert_one_value(transform_tree(tree, $));
-        assert.strictEqual(print_expr(value, $), "a**b");
+        assert.strictEqual(render_as_infix(value, $), "a**b");
         engine.release();
     });
     it("should be able to parse an assignment expression", function () {
@@ -251,12 +251,12 @@ describe("parser", function () {
             `x = 3`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(= x 3)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(= x 3)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
@@ -266,12 +266,12 @@ describe("parser", function () {
             `let a: A`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(: a A)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(: a A)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
@@ -281,12 +281,12 @@ describe("parser", function () {
             `let a: Real = b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(= (: a Real) b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(= (: a Real) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
@@ -296,12 +296,12 @@ describe("parser", function () {
             `let a: Complex = b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(= (: a Complex) b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(= (: a Complex) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();
@@ -311,12 +311,12 @@ describe("parser", function () {
             `let a: Vec = b`
         ];
 
-        const engine = createSymEngine({ version: 2 });
+        const engine = create_engine({ version: 2 });
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(print_list(tree, $), "(= (: a Vec) b)");
+        assert.strictEqual(render_as_sexpr(tree, $), "(= (: a Vec) b)");
         // const value = assert_one_value(evaluate_tree(tree, $));
         // assert.strictEqual(print_expr(value,$), "x=3");
         engine.release();

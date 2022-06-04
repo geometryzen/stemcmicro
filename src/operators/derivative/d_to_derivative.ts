@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, is_nil, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_sym } from "../sym/is_sym";
 import { MATH_DERIVATIVE } from "./MATH_DERIVATIVE";
@@ -35,7 +35,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         if (is_cons(expr) && is_opr(this.opr, expr)) {
             const $ = this.$;
             if (is_nil($.getBinding(this.opr))) {
-                const retval = makeList(this.oprNew, ...expr.tail());
+                const retval = items_to_cons(this.oprNew, ...expr.tail());
                 return [TFLAG_DIFF, $.valueOf(retval)];
             }
             else {

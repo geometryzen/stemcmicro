@@ -1,5 +1,5 @@
 import { Sym } from "../tree/sym/Sym";
-import { NIL, U } from "../tree/tree";
+import { nil, U } from "../tree/tree";
 
 /**
  * Size of the symbol table.
@@ -106,7 +106,7 @@ export function createSymTab(): SymTab {
                 if (typeof syms[idx] === 'undefined') {
                     const sym = key;
                     syms[idx] = sym;
-                    bnds[idx] = NIL;
+                    bnds[idx] = nil;
                     recs[idx] = false;
                     idxs[sym.key()] = idx;
                     return sym;
@@ -131,11 +131,11 @@ export function createSymTab(): SymTab {
                     return binding;
                 }
                 else {
-                    return NIL;
+                    return nil;
                 }
             }
             else {
-                return NIL;
+                return nil;
             }
         },
         setBinding(sym: Sym, binding: U): void {

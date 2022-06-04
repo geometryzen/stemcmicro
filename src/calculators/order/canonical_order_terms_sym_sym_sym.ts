@@ -1,7 +1,7 @@
 import { SIGN_GT } from "../../env/ExtensionEnv";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { compare_sym_sym } from "../compare/compare_sym_sym";
 
 /**
@@ -26,18 +26,18 @@ export function canonical_order_terms_sym_sym_sym(s1: Sym, s2: Sym, s3: Sym, ori
             // s2 < s1
             switch (compare_sym_sym(s2, s3)) {
                 case SIGN_GT: {
-                    const add32 = makeList(MATH_ADD, s3, s2);
-                    return hook(makeList(MATH_ADD, add32, s1), "A");
+                    const add32 = items_to_cons(MATH_ADD, s3, s2);
+                    return hook(items_to_cons(MATH_ADD, add32, s1), "A");
                 }
                 default: {
                     switch (compare_sym_sym(s3, s1)) {
                         case SIGN_GT: {
-                            const add21 = makeList(MATH_ADD, s2, s1);
-                            return hook(makeList(MATH_ADD, add21, s3), "B");
+                            const add21 = items_to_cons(MATH_ADD, s2, s1);
+                            return hook(items_to_cons(MATH_ADD, add21, s3), "B");
                         }
                         default: {
-                            const add23 = makeList(MATH_ADD, s2, s3);
-                            return hook(makeList(MATH_ADD, add23, s1), "C");
+                            const add23 = items_to_cons(MATH_ADD, s2, s3);
+                            return hook(items_to_cons(MATH_ADD, add23, s1), "C");
                         }
                     }
                 }
@@ -48,12 +48,12 @@ export function canonical_order_terms_sym_sym_sym(s1: Sym, s2: Sym, s3: Sym, ori
                 case SIGN_GT: {
                     switch (compare_sym_sym(s3, s1)) {
                         case SIGN_GT: {
-                            const add13 = makeList(MATH_ADD, s1, s3);
-                            return hook(makeList(MATH_ADD, add13, s2), "D");
+                            const add13 = items_to_cons(MATH_ADD, s1, s3);
+                            return hook(items_to_cons(MATH_ADD, add13, s2), "D");
                         }
                         default: {
-                            const add31 = makeList(MATH_ADD, s3, s1);
-                            return hook(makeList(MATH_ADD, add31, s2), "E");
+                            const add31 = items_to_cons(MATH_ADD, s3, s1);
+                            return hook(items_to_cons(MATH_ADD, add31, s2), "E");
                         }
                     }
                 }

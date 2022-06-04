@@ -1,13 +1,13 @@
 import { bake } from "../bake";
 import { ExtensionEnv, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
-import { is_imu } from '../predicates/is_imu';
-import { create_source_trees } from '../scanner/create_source_tree';
+import { is_imu } from '../operators/imu/is_imu';
+import { scan_source_text } from '../scanner/scan_source_text';
 import { ScanOptions } from '../scanner/scan';
 import { subst } from '../subst';
-import { is_rat } from "../tree/rat/is_rat";
+import { is_rat } from "../operators/rat/is_rat";
 import { Sym } from "../tree/sym/Sym";
-import { is_nil, NIL, U } from '../tree/tree';
+import { is_nil, nil, U } from '../tree/tree';
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, PRETTYFMT, SYMBOL_I, SYMBOL_J } from './constants';
 import { defs, halt, TOS } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
@@ -25,7 +25,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  * @returns The return values, print outputs, and errors.
  */
 export function execute_script(sourceText: string, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = create_source_trees(sourceText, scan_options($));
+    const { trees, errors } = scan_source_text(sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }
@@ -154,7 +154,7 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
 
     // TODO: Does it make sense to remove this condition?
     // We should not have to treat NIL as something special.
-    if (NIL !== transformed) {
+    if (nil !== transformed) {
         // console.lg(`tranned   : ${print_expr(transformed, $)}`);
         // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
         stack.push(transformed);
@@ -184,7 +184,7 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
         post_processing(scanned, stack[0], stack, $);
     }
     else {
-        stack.push(NIL);
+        stack.push(nil);
     }
     store_in_script_last(stack[0], $);
     return stack.pop() as U;
@@ -209,6 +209,8 @@ function transform(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring'
     inExpr.reset(TFLAG_NONE);
 
     const [, outExpr] = $.transform(inExpr);
+
+    // console.lg(`Leaving ${reason.toUpperCase()} ${print_expr(outExpr, $)} ${print_list(outExpr, $)}`);
 
     return outExpr;
 }

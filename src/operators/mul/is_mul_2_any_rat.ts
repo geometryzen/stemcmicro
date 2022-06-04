@@ -1,4 +1,4 @@
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Cons } from "../../tree/tree";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 

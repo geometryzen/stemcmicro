@@ -1,4 +1,4 @@
-import { is_imu } from "../../predicates/is_imu";
+import { is_imu } from "../../operators/imu/is_imu";
 import { U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 

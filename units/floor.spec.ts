@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { print_expr } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_infix } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 
 describe("floor", function () {
     it("3/2", function () {
@@ -9,13 +9,13 @@ describe("floor", function () {
             `implicate=0`,
             `floor(3/2)`,
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });
         const $ = engine.$;
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(print_expr(values[0], $), "1");
+        assert.strictEqual(render_as_infix(values[0], $), "1");
         engine.release();
     });
 });

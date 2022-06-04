@@ -9,7 +9,7 @@ import { Err } from './tree/err/Err';
 import { one, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { create_tensor_elements_diagonal } from './tree/tensor/create_tensor_elements';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { Cons, U } from './tree/tree';
 
@@ -62,7 +62,7 @@ export function assert_square_matrix_tensor(tensor: Tensor, $: ExtensionEnv): nu
         return tensor.dim(0);
     }
     else {
-        throw new Error(`tensor => ${$.toInfixString(tensor)} MUST be a square matrix. ${tensor.toCtorString()} ndim=${tensor.ndim}`);
+        throw new Error(`tensor => ${$.toInfixString(tensor)} MUST be a square matrix. ${tensor} ndim=${tensor.ndim}`);
     }
 }
 

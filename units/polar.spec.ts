@@ -1,9 +1,11 @@
 import { assert } from "chai";
-import { print_expr } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_infix, render_as_sexpr } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("polar", function () {
+    // TODO: polar should return the parts [r,theta] rather than being a formatting function.
+    // We could rebuild z using a complex_from_polar function.
     xit("1+i", function () {
         const lines: string[] = [
             `autofactor=0`,
@@ -12,14 +14,14 @@ describe("polar", function () {
             `pi=tau(1/2)`,
             `polar(1+i)`,
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Imu'],
             useDefinitions: false
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(print_expr(value, $), "2^(1/2)*exp(1/4*i*pi)");
+        assert.strictEqual(render_as_sexpr(value, $), "???");
+        assert.strictEqual(render_as_infix(value, $), "2^(1/2)*exp(1/4*i*pi)");
         engine.release();
     });
 });

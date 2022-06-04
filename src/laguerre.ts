@@ -6,8 +6,8 @@ import { LAGUERRE, SECRETX } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { subst } from './subst';
 import { cadddr, caddr, cadr } from './tree/helpers';
-import { integer, one, zero } from './tree/rat/Rat';
-import { NIL, U } from './tree/tree';
+import { wrap_as_int, one, zero } from './tree/rat/Rat';
+import { nil, U } from './tree/tree';
 
 /*
  Laguerre function
@@ -38,7 +38,7 @@ export function Eval_laguerre(p1: U, $: ExtensionEnv): void {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
-    const K = NIL === p2 ? zero : p2;
+    const K = nil === p2 ? zero : p2;
 
     stack_push(laguerre(X, N, K, $));
 }
@@ -63,10 +63,10 @@ function laguerre2(n: number, p1: U, p3: U, $: ExtensionEnv): U {
     for (let i = 0; i < n; i++) {
         const result = $.divide(
             $.subtract(
-                $.multiply($.add($.subtract(integer(2 * i + 1), p1), p3), Y1),
-                $.multiply($.add(integer(i), p3), Y0)
+                $.multiply($.add($.subtract(wrap_as_int(2 * i + 1), p1), p3), Y1),
+                $.multiply($.add(wrap_as_int(i), p3), Y0)
             ),
-            integer(i + 1)
+            wrap_as_int(i + 1)
         );
         Y0 = Y1;
         Y1 = result;

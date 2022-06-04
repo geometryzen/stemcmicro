@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { VERSION_ONE } from "../../runtime/version";
@@ -29,9 +28,6 @@ class SymMathAdd implements Operator<Sym> {
     }
     get name(): string {
         return 'SymMathAdd';
-    }
-    cost(expr: U, costs: CostTable): number {
-        return costs.getCost(MATH_ADD, this.$);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Sym): boolean {

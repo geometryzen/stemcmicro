@@ -5,7 +5,7 @@ import { is_negative_number } from '../../is';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { one, zero } from '../../tree/rat/Rat';
-import { is_tensor } from '../../tree/tensor/is_tensor';
+import { is_tensor } from '../tensor/is_tensor';
 import { is_cons, U } from '../../tree/tree';
 
 export function Eval_rationalize(expr: U, $: ExtensionEnv): U {

@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -30,9 +30,9 @@ class Op extends Function2<BCons<Sym, U, U>, U> implements Operator<Cons> {
         const a = lhs.lhs;
         const b = lhs.rhs;
         const c = rhs;
-        const ac = $.valueOf(makeList(opr, a, c));
-        const bc = $.valueOf(makeList(opr, b, c));
-        const retval = $.valueOf(makeList(lhs.opr, ac, bc));
+        const ac = $.valueOf(items_to_cons(opr, a, c));
+        const bc = $.valueOf(items_to_cons(opr, b, c));
+        const retval = $.valueOf(items_to_cons(lhs.opr, ac, bc));
         return [TFLAG_DIFF, retval];
     }
 }

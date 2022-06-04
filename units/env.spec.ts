@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { createEnv } from "../src/env/env";
-import { print_list } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_sexpr } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 import { Sym } from "../src/tree/sym/Sym";
 
 describe("env", function () {
@@ -13,20 +13,20 @@ describe("env", function () {
     });
     describe("negate", function () {
         it("should multiply by minus one.", function () {
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const x = new Sym('x');
-            assert.strictEqual(print_list(x, $), 'x');
+            assert.strictEqual(render_as_sexpr(x, $), 'x');
             const negX = $.negate(x);
-            assert.strictEqual(print_list(negX, $), '(* -1 x)');
+            assert.strictEqual(render_as_sexpr(negX, $), '(* -1 x)');
         });
         it("should be an involution.", function () {
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const x = new Sym('x');
-            assert.strictEqual(print_list(x, $), 'x');
+            assert.strictEqual(render_as_sexpr(x, $), 'x');
             const origX = $.negate($.negate(x));
-            assert.strictEqual(print_list(origX, $), 'x');
+            assert.strictEqual(render_as_sexpr(origX, $), 'x');
         });
     });
 });

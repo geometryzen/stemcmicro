@@ -1,8 +1,7 @@
 
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
-import { is_num } from "../../predicates/is_num";
+import { is_num } from "../num/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
 import { zero } from "../../tree/rat/Rat";
@@ -26,10 +25,6 @@ class Op extends Function2<Sym, Num> implements Operator<BCons<Sym, Sym, Num>> {
     constructor($: ExtensionEnv) {
         super('mul_2_sym_num', MATH_MUL, is_sym, is_num, $);
         this.hash = `(* Sym Num)`;
-    }
-    cost(expr: BCons<Sym, Sym, Num>, costs: CostTable, depth: number): number {
-        const baseCost = super.cost(expr, costs, depth);
-        return baseCost + 1;
     }
     isScalar(expr: BCons<Sym, Sym, Num>): boolean {
         return this.$.isScalar(expr.lhs);

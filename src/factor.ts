@@ -8,14 +8,14 @@ import { halt } from './runtime/defs';
 import { is_multiply } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr, cdddr } from './tree/helpers';
-import { integer, one, Rat } from './tree/rat/Rat';
-import { is_cons, NIL, U } from './tree/tree';
+import { wrap_as_int, one, Rat } from './tree/rat/Rat';
+import { is_cons, nil, U } from './tree/tree';
 
 // factor a polynomial or integer
 export function Eval_factor(p1: U, $: ExtensionEnv): void {
     const top = $.valueOf(cadr(p1));
     const p2 = $.valueOf(caddr(p1));
-    const variable = NIL === p2 ? guess(top) : p2;
+    const variable = nil === p2 ? guess(top) : p2;
     let temp = factor(top, variable, $);
 
     // more factoring?
@@ -81,13 +81,13 @@ export function factor_small_number(n: number): Rat[] {
         }
 
         if (expo) {
-            arr.push(integer(d));
-            arr.push(integer(expo));
+            arr.push(wrap_as_int(d));
+            arr.push(wrap_as_int(expo));
         }
     }
 
     if (n > 1) {
-        arr.push(integer(n));
+        arr.push(wrap_as_int(n));
         arr.push(one);
     }
     return arr;

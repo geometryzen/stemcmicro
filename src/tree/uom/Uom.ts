@@ -379,10 +379,6 @@ export class Uom extends Atom {
         return unitString(Number(1).toFixed(fractionDigits), this.dimensions, this.labels, compact);
     }
 
-    toCtorString(): string {
-        return `${this.name}(${this.dimensions}, ${this.labels})`;
-    }
-
     toInfixString(): string {
         const radix = 10;
         const compact = true;

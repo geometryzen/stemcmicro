@@ -1,8 +1,8 @@
 import { MATH_POW } from "../runtime/ns_math";
-import { is_flt } from "../tree/flt/is_flt";
-import { is_rat } from "../tree/rat/is_rat";
+import { is_flt } from "../operators/flt/is_flt";
+import { is_rat } from "../operators/rat/is_rat";
 import { negOne } from "../tree/rat/Rat";
-import { makeList, U } from "../tree/tree";
+import { items_to_cons, U } from "../tree/tree";
 
 export function inverse(expr: U): U {
     if (is_rat(expr)) {
@@ -12,6 +12,6 @@ export function inverse(expr: U): U {
         return expr.inv();
     }
     else {
-        return makeList(MATH_POW.clone(expr.pos, expr.end), expr, negOne);
+        return items_to_cons(MATH_POW.clone(expr.pos, expr.end), expr, negOne);
     }
 }

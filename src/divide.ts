@@ -2,7 +2,7 @@
 import { divide_numbers } from "./bignum";
 import { binop } from "./calculators/binop";
 import { ExtensionEnv, PHASE_EXPANDING } from "./env/ExtensionEnv";
-import { is_num } from "./predicates/is_num";
+import { is_num } from "./operators/num/is_num";
 import { MATH_MUL } from "./runtime/ns_math";
 import { U } from "./tree/tree";
 

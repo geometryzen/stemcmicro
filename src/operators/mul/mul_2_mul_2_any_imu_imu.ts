@@ -1,10 +1,10 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_IMU } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -35,7 +35,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const X = lhs.lhs;
-        return [TFLAG_DIFF, makeList(MATH_MUL, negOne, X)];
+        return [TFLAG_DIFF, items_to_cons(MATH_MUL, negOne, X)];
     }
 }
 

@@ -4,7 +4,7 @@ import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";

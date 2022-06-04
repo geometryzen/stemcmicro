@@ -13,9 +13,9 @@ import { implicate } from './runtime/execute';
 import { is_multiply, is_power } from './runtime/helpers';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
-import { eight, four, half, integer, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';
+import { eight, four, half, wrap_as_int, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
-import { car, Cons, NIL, U } from './tree/tree';
+import { car, Cons, nil, U } from './tree/tree';
 
 // define POLY p1
 // define X p2
@@ -45,7 +45,7 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     // 2nd arg, x
     const arg2 = $.valueOf(caddr(expr));
 
-    const x = NIL === arg2 ? guess(poly) : arg2;
+    const x = nil === arg2 ? guess(poly) : arg2;
 
     // console.log(`poly=${print_expr(poly, $)}`);
     // console.log(`var =${print_expr(x, $)}`);
@@ -291,9 +291,9 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
 
     const R_a2_d = $.multiply($.multiply(A, A), D);
 
-    const R_27_a2_d = $.multiply(R_a2_d, integer(27));
+    const R_27_a2_d = $.multiply(R_a2_d, wrap_as_int(27));
 
-    const R_m27_a2_d2 = $.multiply($.multiply(R_a2_d, D), integer(-27));
+    const R_m27_a2_d2 = $.multiply($.multiply(R_a2_d, D), wrap_as_int(-27));
 
     // mixed calculations
     const R_a_b_c = $.multiply($.multiply(A, C), B);
@@ -304,7 +304,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
 
     const R_m9_a_b_c = $.negate($.multiply(R_a_b_c, nine));
 
-    const R_18_a_b_c_d = $.multiply($.multiply(R_a_b_c, D), integer(18));
+    const R_18_a_b_c_d = $.multiply($.multiply(R_a_b_c, D), wrap_as_int(18));
 
     const R_DELTA0 = $.subtract(R_b2, R_3_a_c);
 
@@ -340,7 +340,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
     let C_CHECKED_AS_NOT_ZERO = false;
     let flipSignOFQSoCIsNotZero = false;
 
-    let R_C: U = NIL;
+    let R_C: U = nil;
     // C will go as denominator, we have to check that is not zero
     while (!C_CHECKED_AS_NOT_ZERO) {
         const arg1 = flipSignOFQSoCIsNotZero ? $.negate(R_Q) : R_Q;
@@ -510,7 +510,7 @@ function _solveDegree4ZeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] 
     const resolventCubicSolutions = roots(arg1, SECRETX, $);
     // log.dbg(`resolventCubicSolutions: ${toInfixString(resolventCubicSolutions)}`);
 
-    let R_m: U = NIL;
+    let R_m: U = nil;
     //R_m = resolventCubicSolutions.elem[1]
     for (const sol of resolventCubicSolutions.copyElements()) {
         // log.dbg(`examining solution: ${toInfixString(sol)}`);
@@ -554,7 +554,7 @@ function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U
     const R_p = $.divide(
         $.add(
             $.multiply(eight, $.multiply(C, A)),
-            $.multiply(integer(-3), $.power(B, two))
+            $.multiply(wrap_as_int(-3), $.power(B, two))
         ),
         $.multiply(eight, $.power(A, two))
     );
@@ -575,16 +575,16 @@ function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U
     // convert to depressed quartic
     const R_r = $.divide(
         $.add(
-            $.multiply($.power(B, four), integer(-3)),
+            $.multiply($.power(B, four), wrap_as_int(-3)),
             $.add(
-                $.multiply(integer(256), $.multiply(R_a3, E)),
+                $.multiply(wrap_as_int(256), $.multiply(R_a3, E)),
                 $.add(
-                    $.multiply(integer(-64), $.multiply(R_a2_d, B)),
-                    $.multiply(integer(16), $.multiply(R_b2, $.multiply(A, C)))
+                    $.multiply(wrap_as_int(-64), $.multiply(R_a2_d, B)),
+                    $.multiply(wrap_as_int(16), $.multiply(R_b2, $.multiply(A, C)))
                 )
             )
         ),
-        $.multiply(integer(256), $.power(A, four))
+        $.multiply(wrap_as_int(256), $.power(A, four))
     );
     const four_x_4 = $.power(SECRETX, four);
     const r_q_x_2 = $.multiply(R_p, $.power(SECRETX, two));

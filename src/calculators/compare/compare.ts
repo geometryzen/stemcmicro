@@ -1,14 +1,14 @@
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { is_blade } from "../../operators/blade/BladeExtension";
+import { is_blade } from "../../operators/blade/is_blade";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_imu } from "../../predicates/is_imu";
-import { is_flt } from "../../tree/flt/is_flt";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_imu } from "../../operators/imu/is_imu";
+import { is_flt } from "../../operators/flt/is_flt";
+import { is_rat } from "../../operators/rat/is_rat";
 import { is_cons, U } from "../../tree/tree";
 import { compare_factorizable } from "./compare_factorizable";
 import { compare_opr_opr } from "./compare_opr_opr";

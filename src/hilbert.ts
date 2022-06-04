@@ -3,7 +3,7 @@ import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
 import { HILBERT } from './runtime/constants';
 import { Tensor } from './tree/tensor/Tensor';
-import { integer } from './tree/rat/Rat';
+import { wrap_as_int } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Cons, U } from './tree/tree';
 
@@ -31,7 +31,7 @@ export function hilbert(N: U, $: ExtensionEnv): Cons | Sym | Tensor {
     const elems = new Array<U>(n * n);
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            elems[i * n + j] = $.inverse(integer(i + j + 1));
+            elems[i * n + j] = $.inverse(wrap_as_int(i + j + 1));
         }
     }
     return new Tensor(dims, elems);

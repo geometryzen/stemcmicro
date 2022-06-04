@@ -1,7 +1,7 @@
 import { assert } from "chai";
-import { print_expr, print_list } from "../src/print";
+import { render_as_infix, render_as_sexpr } from "../src/print";
 import { MATH_ADD, MATH_MUL } from "../src/runtime/ns_math";
-import { createSymEngine } from "../src/runtime/symengine";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("assoc", function () {
@@ -12,14 +12,14 @@ describe("assoc", function () {
             `implicate=0`,
             `a+b+c+d`,
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             assocs: [{ sym: MATH_ADD, dir: 'R' }],
             useCaretForExponentiation: true
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(value, $), '(+ a (+ b (+ c d)))');
-        assert.strictEqual(print_expr(value, $), 'a+(b+(c+d))');
+        assert.strictEqual(render_as_sexpr(value, $), '(+ a (+ b (+ c d)))');
+        assert.strictEqual(render_as_infix(value, $), 'a+(b+(c+d))');
         engine.release();
     });
 });
@@ -32,14 +32,14 @@ describe("assoc", function () {
                 `implicate=0`,
                 `a+b+c+d`,
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 assocs: [{ sym: MATH_ADD, dir: 'R' }],
                 useCaretForExponentiation: true
             });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(+ a (+ b (+ c d)))');
-            assert.strictEqual(print_expr(value, $), 'a+(b+(c+d))');
+            assert.strictEqual(render_as_sexpr(value, $), '(+ a (+ b (+ c d)))');
+            assert.strictEqual(render_as_infix(value, $), 'a+(b+(c+d))');
             engine.release();
         });
         it("B", function () {
@@ -47,11 +47,11 @@ describe("assoc", function () {
                 `implicate=0`,
                 `a+b+c+d`,
             ];
-            const engine = createSymEngine({ useCaretForExponentiation: true });
+            const engine = create_engine({ useCaretForExponentiation: true });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(+ (+ (+ a b) c) d)');
-            assert.strictEqual(print_expr(value, $), '((a+b)+c)+d');
+            assert.strictEqual(render_as_sexpr(value, $), '(+ (+ (+ a b) c) d)');
+            assert.strictEqual(render_as_infix(value, $), '((a+b)+c)+d');
             engine.release();
         });
         it("C", function () {
@@ -59,11 +59,11 @@ describe("assoc", function () {
                 `implicate=1`,
                 `a+b+c+d`,
             ];
-            const engine = createSymEngine({ useCaretForExponentiation: true });
+            const engine = create_engine({ useCaretForExponentiation: true });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(+ a b c d)');
-            assert.strictEqual(print_expr(value, $), 'a+b+c+d');
+            assert.strictEqual(render_as_sexpr(value, $), '(+ a b c d)');
+            assert.strictEqual(render_as_infix(value, $), 'a+b+c+d');
             engine.release();
         });
         it("D", function () {
@@ -71,14 +71,14 @@ describe("assoc", function () {
                 `implicate=1`,
                 `a+b+c+d`,
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 assocs: [{ sym: MATH_ADD, dir: 'R' }],
                 useCaretForExponentiation: true
             });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(+ a b c d)');
-            assert.strictEqual(print_expr(value, $), 'a+b+c+d');
+            assert.strictEqual(render_as_sexpr(value, $), '(+ a b c d)');
+            assert.strictEqual(render_as_infix(value, $), 'a+b+c+d');
             engine.release();
         });
     });
@@ -88,14 +88,14 @@ describe("assoc", function () {
                 `implicate=0`,
                 `a*b*c*d`,
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 assocs: [{ sym: MATH_MUL, dir: 'R' }],
                 useCaretForExponentiation: true
             });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(* a (* b (* c d)))');
-            assert.strictEqual(print_expr(value, $), 'a*(b*(c*d))');
+            assert.strictEqual(render_as_sexpr(value, $), '(* a (* b (* c d)))');
+            assert.strictEqual(render_as_infix(value, $), 'a*(b*(c*d))');
             engine.release();
         });
         it("B", function () {
@@ -103,11 +103,11 @@ describe("assoc", function () {
                 `implicate=0`,
                 `a*b*c*d`,
             ];
-            const engine = createSymEngine({ useCaretForExponentiation: true });
+            const engine = create_engine({ useCaretForExponentiation: true });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(* (* (* a b) c) d)');
-            assert.strictEqual(print_expr(value, $), '((a*b)*c)*d');
+            assert.strictEqual(render_as_sexpr(value, $), '(* (* (* a b) c) d)');
+            assert.strictEqual(render_as_infix(value, $), '((a*b)*c)*d');
             engine.release();
         });
         it("C", function () {
@@ -115,11 +115,11 @@ describe("assoc", function () {
                 `implicate=1`,
                 `a*b*c*d`,
             ];
-            const engine = createSymEngine({ useCaretForExponentiation: true });
+            const engine = create_engine({ useCaretForExponentiation: true });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(* a b c d)');
-            assert.strictEqual(print_expr(value, $), 'a*b*c*d');
+            assert.strictEqual(render_as_sexpr(value, $), '(* a b c d)');
+            assert.strictEqual(render_as_infix(value, $), 'a*b*c*d');
             engine.release();
         });
         it("D", function () {
@@ -127,14 +127,14 @@ describe("assoc", function () {
                 `implicate=1`,
                 `a*b*c*d`,
             ];
-            const engine = createSymEngine({
+            const engine = create_engine({
                 assocs: [{ sym: MATH_MUL, dir: 'R' }],
                 useCaretForExponentiation: true
             });
             const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(print_list(value, $), '(* a b c d)');
-            assert.strictEqual(print_expr(value, $), 'a*b*c*d');
+            assert.strictEqual(render_as_sexpr(value, $), '(* a b c d)');
+            assert.strictEqual(render_as_infix(value, $), 'a*b*c*d');
             engine.release();
         });
     });

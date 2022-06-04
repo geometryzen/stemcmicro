@@ -5,6 +5,8 @@ import { readOnly } from './readOnly';
 const magicCode = Math.random();
 
 /**
+ * @hidden
+ * 
  * The QQ class represents a rational number, ℚ.
  *
  * The QQ implementation is that of an <em>immutable</em> (value) type.

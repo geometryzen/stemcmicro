@@ -15,10 +15,10 @@ import { use_expanding_with_binary_function, use_expanding_with_unary_function }
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
-import { integer, one, zero } from './tree/rat/Rat';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { wrap_as_int, one, zero } from './tree/rat/Rat';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
-import { NIL, U } from './tree/tree';
+import { nil, U } from './tree/tree';
 
 // Partial fraction expansion
 //
@@ -33,7 +33,7 @@ import { NIL, U } from './tree/tree';
 export function Eval_expand(p1: U, $: ExtensionEnv): void {
     const top = $.valueOf(cadr(p1));
     const p2 = $.valueOf(caddr(p1));
-    const X = NIL === p2 ? guess(top) : p2;
+    const X = nil === p2 ? guess(top) : p2;
     const F = top;
     stack_push(expand(F, X, $));
 }
@@ -136,10 +136,10 @@ function remove_negative_exponents(p2: U, p3: U, p9: U, $: ExtensionEnv): [U, U]
     }
 
     // A = A / X^j
-    p2 = $.multiply(p2, $.power(p9, integer(-j)));
+    p2 = $.multiply(p2, $.power(p9, wrap_as_int(-j)));
 
     // B = B / X^j
-    p3 = $.multiply(p3, $.power(p9, integer(-j)));
+    p3 = $.multiply(p3, $.power(p9, wrap_as_int(-j)));
 
     return [p2, p3];
 }
@@ -215,7 +215,7 @@ function expand_get_C(p2: U, p9: U, $: ExtensionEnv): U {
     const elems = new Array<U>(n * n);
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            const arg2 = $.power(p9, integer(i));
+            const arg2 = $.power(p9, wrap_as_int(i));
             const divided = divide_expand(stack[j], arg2, $);
             elems[n * i + j] = filter(divided, p9, $);
         }
@@ -317,9 +317,9 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     const d = nativeInt(degree(p6, p9, $));
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < d; j++) {
-            const arg6 = $.power(p6, integer(i));
+            const arg6 = $.power(p6, wrap_as_int(i));
             const arg8 = use_expanding_with_binary_function(multiply, p8, arg6, $);
-            const arg9 = $.power(p9, integer(j));
+            const arg9 = $.power(p9, wrap_as_int(j));
             const multiplied = use_expanding_with_binary_function(multiply, arg8, arg9, $);
             stack.push(multiplied);
         }
@@ -353,7 +353,7 @@ function expand_get_B(p3: U, p4: U, p9: U, $: ExtensionEnv): U {
     const dims = [n];
     const elems = new Array<U>(n);
     for (let i = 0; i < n; i++) {
-        const arg2 = $.power(p9, integer(i));
+        const arg2 = $.power(p9, wrap_as_int(i));
         const divided = divide_expand(p3, arg2, $);
         elems[i] = filter(divided, p9, $);
     }
@@ -392,7 +392,7 @@ function expand_get_AF(p5: U, p9: U, $: ExtensionEnv): U[] {
     const d = nativeInt(degree(p5, p9, $));
     for (let i = n; i > 0; i--) {
         for (let j = 0; j < d; j++) {
-            results.push($.multiply($.inverse($.power(p5, integer(i))), $.power(p9, integer(j))));
+            results.push($.multiply($.inverse($.power(p5, wrap_as_int(i))), $.power(p9, wrap_as_int(j))));
         }
     }
     return results;

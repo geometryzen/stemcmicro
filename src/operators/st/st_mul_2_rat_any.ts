@@ -1,10 +1,10 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function1 } from "../helpers/Function1";
@@ -41,8 +41,8 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         const $ = this.$;
         const k = arg.lhs;
         const X = arg.rhs;
-        const p1 = $.valueOf(makeList(opr, X));
-        const p2 = $.valueOf(makeList(arg.opr, k, p1));
+        const p1 = $.valueOf(items_to_cons(opr, X));
+        const p2 = $.valueOf(items_to_cons(arg.opr, k, p1));
         return [TFLAG_DIFF, p2];
     }
 }

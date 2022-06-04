@@ -4,7 +4,7 @@ import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_G
 import { MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_sym } from "../sym/is_sym";
@@ -28,7 +28,7 @@ class Op extends Function2X<Sym, Sym> implements Operator<Cons> {
     transform2(opr: Sym, lhs: Sym, rhs: Sym, oldExpr: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         switch (compare_sym_sym(lhs, rhs)) {
             case SIGN_GT: {
-                return [TFLAG_DIFF, makeList(MATH_MUL, negOne, makeList(opr, rhs, lhs))];
+                return [TFLAG_DIFF, items_to_cons(MATH_MUL, negOne, items_to_cons(opr, rhs, lhs))];
             }
             default: {
                 return [TFLAG_NONE, oldExpr];

@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { nativeInt } from "../nativeInt";
-import { is_rat } from "../tree/rat/is_rat";
+import { is_rat } from "../operators/rat/is_rat";
 import { six } from "../tree/rat/Rat";
 import { is_nil } from "../tree/tree";
 import { FORCE_FIXED_PRINTOUT, MAX_FIXED_PRINTOUT_DIGITS } from "./constants";

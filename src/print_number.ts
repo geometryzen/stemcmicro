@@ -7,9 +7,9 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { defs, PRINTMODE_LATEX } from "./runtime/defs";
 import { number_to_floating_point_string } from "./runtime/number_to_floating_point_string";
-import { is_flt } from "./tree/flt/is_flt";
+import { is_flt } from "./operators/flt/is_flt";
 import { Num } from "./tree/num/Num";
-import { is_rat } from "./tree/rat/is_rat";
+import { is_rat } from "./operators/rat/is_rat";
 
 // exponent.
 export function print_number(p: Num, signed: boolean, $: ExtensionEnv): string {

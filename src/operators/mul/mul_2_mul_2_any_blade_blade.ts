@@ -1,10 +1,10 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/BladeExtension";
+import { is_blade } from "../blade/is_blade";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -37,7 +37,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const X = lhs.lhs;
         const b1 = lhs.rhs;
         const b2 = rhs;
-        return [TFLAG_DIFF, makeList(MATH_MUL, X, b1.mul(b2))];
+        return [TFLAG_DIFF, items_to_cons(MATH_MUL, X, b1.mul(b2))];
     }
 }
 

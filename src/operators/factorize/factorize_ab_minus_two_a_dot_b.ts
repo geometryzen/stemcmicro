@@ -3,7 +3,7 @@ import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -60,8 +60,8 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
         const $ = this.$;
         const a = lhs.lhs;
         const b = lhs.rhs;
-        const ba = $.valueOf(makeList(MATH_MUL, b, a));
-        return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, negOne, ba))];
+        const ba = $.valueOf(items_to_cons(MATH_MUL, b, a));
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_MUL, negOne, ba))];
     }
 }
 

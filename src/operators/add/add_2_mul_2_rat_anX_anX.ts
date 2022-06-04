@@ -3,7 +3,7 @@ import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -35,7 +35,7 @@ class Op extends Function2X<BCons<Sym, Rat, U>, U> implements Operator<Cons> {
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_MUL, HASH_ANY);
     }
     transform2(opr: Sym, lhs: BCons<Sym, Rat, U>, rhs: U): [TFLAGS, U] {
-        return [TFLAG_DIFF, makeList(MATH_MUL, lhs.lhs.succ(), rhs)];
+        return [TFLAG_DIFF, items_to_cons(MATH_MUL, lhs.lhs.succ(), rhs)];
     }
 }
 

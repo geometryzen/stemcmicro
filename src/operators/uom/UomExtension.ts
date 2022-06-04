@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, FEATURE, TFLAG_NONE, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 import { U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";
@@ -25,10 +24,6 @@ class UomExtension implements Extension<Uom> {
     }
     get dependencies(): FEATURE[] {
         return ['Uom'];
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: U, costs: CostTable, depth: number, $: ExtensionEnv): number {
-        return 1;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Uom, $: ExtensionEnv): U {

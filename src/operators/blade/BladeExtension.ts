@@ -1,10 +1,10 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, FEATURE, TFLAG_NONE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
 import { U } from "../../tree/tree";
 import { bitCount } from "../../tree/vec/bitCount";
 import { Blade } from "../../tree/vec/Blade";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { is_blade } from "./is_blade";
 
 /**
  * Compares blades according to the canonical representation.
@@ -31,17 +31,6 @@ export function compare_blade_blade(lhs: Blade, rhs: Blade): Sign {
     return SIGN_EQ;
 }
 
-export function is_blade(arg: unknown): arg is Blade {
-    // We have to use duck-typing because Vec is an interface, not a class.
-    if (typeof arg === 'object') {
-        const duck = arg as Blade;
-        return duck.name === 'Blade';
-    }
-    else {
-        return false;
-    }
-}
-
 class BladeExtension implements Extension<Blade> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor($: ExtensionEnv) {
@@ -58,10 +47,6 @@ class BladeExtension implements Extension<Blade> {
     }
     get dependencies(): FEATURE[] {
         return ['Blade'];
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: U, costs: CostTable): number {
-        return 1;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Blade): boolean {

@@ -3,8 +3,8 @@ import { makeList } from './makeList';
 import { ARCCOSH, COSH } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';
 import { car, U } from './tree/tree';
@@ -39,7 +39,7 @@ function arccosh(x: U, $: ExtensionEnv): U {
             halt('arccosh function argument is less than 1.0');
         }
         d = Math.log(d + Math.sqrt(d * d - 1.0));
-        return flt(d);
+        return wrap_as_flt(d);
     }
 
     if ($.isOne(x)) {

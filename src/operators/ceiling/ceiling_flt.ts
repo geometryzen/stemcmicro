@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { flt, Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { wrap_as_flt, Flt } from "../../tree/flt/Flt";
+import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -16,7 +16,7 @@ class CeilingFlt extends Function1<Flt> implements Operator<U> {
         super('ceiling_flt', new Sym('ceiling'), is_flt, $);
     }
     transform1(opr: Sym, arg: Flt): [TFLAGS, U] {
-        return [TFLAG_DIFF, flt(Math.ceil(arg.d))];
+        return [TFLAG_DIFF, wrap_as_flt(Math.ceil(arg.d))];
     }
 }
 

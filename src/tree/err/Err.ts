@@ -22,7 +22,7 @@ export class Err extends Atom {
     equalsErr(other: Err): boolean {
         return this.message === other.message;
     }
-    toCtorString(): string {
+    toString(): string {
         return `${this.name}()`;
     }
     toInfixString(): string {

@@ -2,14 +2,14 @@ import { polyform } from './bake';
 import { decomp } from './decomp';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
 import { DEBUG, defs, use_factoring_with_unary_function } from './runtime/defs';
 import { scan_meta } from './scanner/scan';
 import { subst } from './subst';
 import { caddr, cadr, cdddr, cddr } from './tree/helpers';
 import { one } from './tree/rat/Rat';
-import { car, cdr, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 /*
 Transform an expression using a pattern. The
@@ -73,7 +73,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
     }
 
     let transformationSuccessful = false;
-    let B: U = NIL;
+    let B: U = nil;
     if (generalTransform) {
         // "general tranform" mode is supposed to be more generic than
         // "integrals" mode.
@@ -150,7 +150,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                     }
                     const [t, success] = transform(
                         secondTerm,
-                        NIL,
+                        nil,
                         s,
                         generalTransform,
                         $
@@ -205,7 +205,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
         }
     }
 
-    const temp = transformationSuccessful ? $.valueOf(B) : generalTransform ? F : NIL;
+    const temp = transformationSuccessful ? $.valueOf(B) : generalTransform ? F : nil;
 
     restoreMetaBindings(state, $);
 

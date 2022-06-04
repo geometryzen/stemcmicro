@@ -5,13 +5,13 @@ import { print_str } from './print';
 import { EIGEN, EIGENVAL, EIGENVEC } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
-import { flt, Flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt, Flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { Sym } from './tree/sym/Sym';
-import { NIL, U } from './tree/tree';
+import { nil, U } from './tree/tree';
 
 /* eigen =====================================================================
 
@@ -115,7 +115,7 @@ export function Eval_eigen(expr: U, $: ExtensionEnv): void {
     const symQ = $.defineKey(new Sym('Q'));
     $.setBinding(symQ, Q);
 
-    stack_push(NIL);
+    stack_push(nil);
 }
 
 /* eigenval =====================================================================
@@ -285,7 +285,7 @@ function eigen(op: Sym, p1: Tensor<Flt>): [D: Tensor, Q: Tensor] {
     if (op === EIGEN || op === EIGENVAL) {
         for (let i = 0; i < EIG_N; i++) {
             for (let j = 0; j < EIG_N; j++) {
-                Delems[EIG_N * i + j] = flt(EIG_yydd[EIG_N * i + j]);
+                Delems[EIG_N * i + j] = wrap_as_flt(EIG_yydd[EIG_N * i + j]);
             }
         }
     }
@@ -295,7 +295,7 @@ function eigen(op: Sym, p1: Tensor<Flt>): [D: Tensor, Q: Tensor] {
     if (op === EIGEN || op === EIGENVEC) {
         for (let i = 0; i < EIG_N; i++) {
             for (let j = 0; j < EIG_N; j++) {
-                Qelems[EIG_N * i + j] = flt(EIG_yyqq[EIG_N * i + j]);
+                Qelems[EIG_N * i + j] = wrap_as_flt(EIG_yyqq[EIG_N * i + j]);
             }
         }
     }

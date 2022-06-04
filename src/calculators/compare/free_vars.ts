@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
-import { is_blade } from "../../operators/blade/BladeExtension";
+import { is_blade } from "../../operators/blade/is_blade";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul } from "../../operators/mul/is_mul";
@@ -8,12 +8,11 @@ import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_imu } from "../../predicates/is_imu";
-import { print_expr } from "../../print";
-import { is_flt } from "../../tree/flt/is_flt";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_imu } from "../../operators/imu/is_imu";
+import { is_flt } from "../../operators/flt/is_flt";
+import { is_rat } from "../../operators/rat/is_rat";
 import { Cons, is_cons, U } from "../../tree/tree";
-import { is_uom } from "../../tree/uom/is_uom";
+import { is_uom } from "../../operators/uom/is_uom";
 
 /**
  * Determines the free variables in an expression.
@@ -77,7 +76,7 @@ export function free_vars(expr: U, $: ExtensionEnv): string[] {
     if (is_flt(expr)) {
         return [];
     }
-    throw new Error(`free_vars ${print_expr(expr, $)}`);
+    throw new Error(`free_vars ${expr}`);
     // return [];
 }
 

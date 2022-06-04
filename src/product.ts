@@ -4,7 +4,7 @@ import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { evaluate_integer } from './scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from './tree/helpers';
-import { integer, one } from './tree/rat/Rat';
+import { wrap_as_int, one } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 // 'product' function
@@ -46,7 +46,7 @@ export function Eval_product(p1: U, $: ExtensionEnv): void {
     let temp: U = one;
 
     for (let i = j; i <= k; i++) {
-        $.setBinding(indexVariable, integer(i));
+        $.setBinding(indexVariable, wrap_as_int(i));
         const arg2 = $.valueOf(body);
         temp = $.multiply(temp, arg2);
     }

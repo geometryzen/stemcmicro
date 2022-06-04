@@ -1,8 +1,8 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_EQ } from "../../runtime/ns_math";
-import { False } from "../../tree/boo/Boo";
-import { is_rat } from "../../tree/rat/is_rat";
+import { booF } from "../../tree/boo/Boo";
+import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -28,7 +28,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
-        return [TFLAG_DIFF, False];
+        return [TFLAG_DIFF, booF];
     }
 }
 

@@ -10,8 +10,8 @@ import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { makeList } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
 import { polar } from '../../polar';
-import { is_imu } from '../../predicates/is_imu';
-import { is_num } from '../../predicates/is_num';
+import { is_imu } from '../imu/is_imu';
+import { is_num } from '../num/is_num';
 import { real } from '../../real';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
@@ -22,12 +22,12 @@ import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
 import { transpose_factoring } from '../../transpose';
 import { caddr, cadr } from '../../tree/helpers';
-import { is_rat } from '../../tree/rat/is_rat';
-import { half, integer, one, third, three, two, zero } from '../../tree/rat/Rat';
+import { is_rat } from '../rat/is_rat';
+import { half, wrap_as_int, one, third, three, two, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
-import { is_tensor } from '../../tree/tensor/is_tensor';
+import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { car, cdr, is_cons, NIL, U } from '../../tree/tree';
+import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 import { denominator } from "../denominator/denominator";
 import { yyfloat } from '../float/float';
 import { BCons } from '../helpers/BCons';
@@ -493,7 +493,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
 
     let numberOfTerms = 0;
     let countingTerms = base;
-    while (NIL !== cdr(countingTerms)) {
+    while (nil !== cdr(countingTerms)) {
         numberOfTerms++;
         countingTerms = cdr(countingTerms);
     }
@@ -512,7 +512,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     const C = commonBases.reduce($.multiply, one);
     const B = termsThatAreNotPowers.reduce($.multiply, one);
 
-    let temp: U = NIL;
+    let temp: U = nil;
     if (equalq(expo, 1, 3)) {
         const checkSize1 = $.divide($.multiply($.negate(A), C), B); // 4th coeff
         const result1 = nativeDouble(yyfloat(real(checkSize1, $), $));
@@ -527,7 +527,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         }
         const arg1b = $.multiply(checkSize2, SECRETX);
 
-        const checkSize3 = $.divide($.multiply(integer(-3), A), B); // 2nd coeff
+        const checkSize3 = $.divide($.multiply(wrap_as_int(-3), A), B); // 2nd coeff
         const result3 = nativeDouble(yyfloat(real(checkSize3, $), $));
         if (Math.abs(result3) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -547,7 +547,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
             return [p1, TFLAG_NONE];
         }
 
-        const checkSize = $.divide($.multiply(integer(-2), A), B);
+        const checkSize = $.divide($.multiply(wrap_as_int(-2), A), B);
         const result2 = nativeDouble(yyfloat(real(checkSize, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -642,7 +642,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         return [result, TFLAG_DIFF];
     }
 
-    return [NIL, TFLAG_DIFF]; // Do we need this?
+    return [nil, TFLAG_DIFF]; // Do we need this?
     // return [null, true];
 }
 

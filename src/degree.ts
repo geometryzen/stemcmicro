@@ -1,13 +1,13 @@
 import { compare_num_num } from './calculators/compare/compare_num_num';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { guess } from './guess';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
 import { Num } from './tree/num/Num';
 import { one, zero } from './tree/rat/Rat';
-import { is_cons, NIL, U } from './tree/tree';
+import { is_cons, nil, U } from './tree/tree';
 
 /* deg =====================================================================
 
@@ -27,7 +27,7 @@ Returns the degree of polynomial p(x).
 export function Eval_degree(p1: U, $: ExtensionEnv): void {
     p1 = $.valueOf(caddr(p1));
     const top = $.valueOf(cadr(p1));
-    const variable = NIL.equals(p1) ? guess(top) : p1;
+    const variable = nil.equals(p1) ? guess(top) : p1;
     stack_push(degree(top, variable, $));
 }
 

@@ -1,4 +1,4 @@
-import { is_rat } from "../tree/rat/is_rat";
+import { is_rat } from "../operators/rat/is_rat";
 import { Rat } from "../tree/rat/Rat";
 import { U } from "../tree/tree";
 

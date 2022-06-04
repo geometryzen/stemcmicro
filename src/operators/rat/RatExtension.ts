@@ -1,8 +1,7 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_RAT } from "../../hashing/hash_info";
 import { defs } from '../../runtime/defs';
-import { flt } from '../../tree/flt/Flt';
+import { wrap_as_flt } from '../../tree/flt/Flt';
 import { one, Rat } from "../../tree/rat/Rat";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from '../helpers/ExtensionOperatorBuilder';
@@ -24,10 +23,6 @@ class RatExtension implements Extension<Rat> {
     }
     get name(): string {
         return 'RatExtension';
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: Rat, costs: CostTable, depth: number): number {
-        return 1;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Rat): boolean {
@@ -78,7 +73,7 @@ class RatExtension implements Extension<Rat> {
         if (expr instanceof Rat) {
             // console.lg(`RatExtension.transform ${expr}`);
             if (defs.evaluatingAsFloats) {
-                return [TFLAG_DIFF, flt(expr.toNumber())];
+                return [TFLAG_DIFF, wrap_as_flt(expr.toNumber())];
             }
             else {
                 return [TFLAG_HALT, expr];

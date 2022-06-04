@@ -9,10 +9,10 @@ import { LOG } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { one, zero } from './tree/rat/Rat';
 import { Cons, U } from './tree/tree';
 
@@ -43,7 +43,7 @@ export function logarithm(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(expr)) {
-        return flt(Math.log(expr.d));
+        return wrap_as_flt(Math.log(expr.d));
     }
 
     // rational number and not an integer?

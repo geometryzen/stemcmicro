@@ -1,7 +1,7 @@
 import { ExtensionEnv, TFLAG_NONE, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { compare_terms_redux } from "../compare/compare_terms";
 
 /**
@@ -34,21 +34,21 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
                 switch (compare_terms_redux(t2, t3, $)) {
                     case SIGN_GT: {
                         // t3, t1, t1
-                        const t3t2 = makeList(MATH_ADD, t3, t2);
-                        return [TFLAG_DIFF, hook(makeList(MATH_ADD, t3t2, t1), "A")];
+                        const t3t2 = items_to_cons(MATH_ADD, t3, t2);
+                        return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t3t2, t1), "A")];
                     }
                     default: {
                         // t2, (t1,t3)
                         switch (compare_terms_redux(t3, t1, $)) {
                             case SIGN_GT: {
                                 // t2, t1, t3
-                                const t2t1 = makeList(MATH_ADD, t2, t1);
-                                return [TFLAG_DIFF, hook(makeList(MATH_ADD, t2t1, t3), "B")];
+                                const t2t1 = items_to_cons(MATH_ADD, t2, t1);
+                                return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t2t1, t3), "B")];
                             }
                             default: {
                                 // t2, t3, t1
-                                const t2t3 = makeList(MATH_ADD, t2, t3);
-                                return [TFLAG_DIFF, hook($.valueOf(makeList(MATH_ADD, t2t3, t1)), "C")];
+                                const t2t3 = items_to_cons(MATH_ADD, t2, t3);
+                                return [TFLAG_DIFF, hook($.valueOf(items_to_cons(MATH_ADD, t2t3, t1)), "C")];
                             }
                         }
                     }
@@ -61,12 +61,12 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
                         // (t1,t3), t2
                         switch (compare_terms_redux(t3, t1, $)) {
                             case SIGN_GT: {
-                                const t1t3 = makeList(MATH_ADD, t1, t3);
-                                return [TFLAG_DIFF, hook(makeList(MATH_ADD, t1t3, t2), "D")];
+                                const t1t3 = items_to_cons(MATH_ADD, t1, t3);
+                                return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t1t3, t2), "D")];
                             }
                             default: {
-                                const t3t1 = makeList(MATH_ADD, t3, t1);
-                                return [TFLAG_DIFF, hook(makeList(MATH_ADD, t3t1, t2), "E")];
+                                const t3t1 = items_to_cons(MATH_ADD, t3, t1);
+                                return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t3t1, t2), "E")];
                             }
                         }
                     }
@@ -76,8 +76,8 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
                             return [TFLAG_NONE, hook(orig, "F")];
                         }
                         if ($.isAssocR(MATH_ADD)) {
-                            const t2t3 = makeList(MATH_ADD, t2, t3);
-                            return [TFLAG_DIFF, hook(makeList(MATH_ADD, t1, t2t3), "G")];
+                            const t2t3 = items_to_cons(MATH_ADD, t2, t3);
+                            return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t1, t2t3), "G")];
                         }
                         return [TFLAG_NONE, hook(orig, "H")];
                     }
@@ -90,8 +90,8 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
 function branch(X: Cons, Y: U, Z: U, orig: U, $: ExtensionEnv): [TFLAGS, U] {
     switch (compare_terms_redux(Y, Z, $)) {
         case SIGN_GT: {
-            const addXZ = makeList(MATH_ADD, X, Z);
-            return [TFLAG_DIFF, makeList(MATH_ADD, addXZ, Y)];
+            const addXZ = items_to_cons(MATH_ADD, X, Z);
+            return [TFLAG_DIFF, items_to_cons(MATH_ADD, addXZ, Y)];
         }
         default: {
             // t1, t2, t3

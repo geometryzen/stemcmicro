@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { Atom } from '../src/tree/atom/Atom';
-import { car, cdr, Cons, is_cons, is_nil, is_singleton, makeList, NIL, U } from '../src/tree/tree';
+import { car, cdr, Cons, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from '../src/tree/tree';
 
 /**
  * A simple atom for testing purposes.
@@ -34,30 +34,30 @@ const six = new Int(6);
 describe('tree', function () {
     describe('NIL', function () {
         it('should be defined', function () {
-            assert.isDefined(NIL);
+            assert.isDefined(nil);
         });
         it('toString()', function () {
-            assert.strictEqual(NIL.toString(), '()');
+            assert.strictEqual(nil.toString(), '()');
         });
         it('car should be NIL', function () {
-            assert.strictEqual(NIL.car, NIL);
+            assert.strictEqual(nil.car, nil);
         });
         it('cdr should be NIL', function () {
-            assert.strictEqual(NIL.cdr, NIL);
+            assert.strictEqual(nil.cdr, nil);
         });
         it('argList should be NIL', function () {
-            assert.strictEqual(NIL.argList, NIL);
+            assert.strictEqual(nil.argList, nil);
         });
         it('iterator should produce an empty list', function () {
-            const elements = [...NIL];
+            const elements = [...nil];
             assert.strictEqual(elements.length, 0);
         });
         it('head should be NIL', function () {
-            assert.strictEqual(NIL.head, NIL);
+            assert.strictEqual(nil.head, nil);
         });
         it('tail should raise an error', function () {
             try {
-                NIL.tail();
+                nil.tail();
                 assert.fail();
             }
             catch (e) {
@@ -70,27 +70,27 @@ describe('tree', function () {
             }
         });
         it('map should return the empty list', function () {
-            assert.strictEqual(NIL.map(function (x) {
+            assert.strictEqual(nil.map(function (x) {
                 return x;
-            }), NIL);
+            }), nil);
         });
     });
     describe('is_nil', function () {
         it('(NIL) should be true', function () {
-            assert.isTrue(is_nil(NIL));
+            assert.isTrue(is_nil(nil));
         });
     });
     describe('is_cons', function () {
         it('(NIL) should be false', function () {
-            assert.isFalse(is_cons(NIL));
+            assert.isFalse(is_cons(nil));
         });
         it('(make_list(2,6)) should be true', function () {
-            assert.isTrue(is_cons(makeList(two, six)));
+            assert.isTrue(is_cons(items_to_cons(two, six)));
         });
     });
     describe('make_list', function () {
         it('(2,3)', function () {
-            const x = makeList(two, six);
+            const x = items_to_cons(two, six);
             assert.strictEqual(x.car, two);
             const cdr = assert_cons(x.cdr);
             assert.strictEqual(cdr.car, six);
@@ -102,9 +102,9 @@ describe('tree', function () {
             assert.isFalse(is_singleton(x));
         });
         it('(2)', function () {
-            const x = makeList(two);
+            const x = items_to_cons(two);
             assert.strictEqual(x.car, two);
-            assert.strictEqual(x.cdr, NIL);
+            assert.strictEqual(x.cdr, nil);
             assert.strictEqual(x.toString(), '(2 ())');
             const elements = [...x];
             assert.strictEqual(elements.length, 1);
@@ -112,30 +112,30 @@ describe('tree', function () {
             assert.isTrue(is_singleton(x));
         });
         it('()', function () {
-            const x = makeList();
-            assert.strictEqual(x.cdr, NIL);
-            assert.strictEqual(x.cdr, NIL);
+            const x = items_to_cons();
+            assert.strictEqual(x.cdr, nil);
+            assert.strictEqual(x.cdr, nil);
             assert.strictEqual(x.toString(), '()');
             const elements = [...x];
             assert.strictEqual(elements.length, 0);
             assert.isFalse(is_singleton(x));
-            assert.strictEqual(x, NIL);
+            assert.strictEqual(x, nil);
         });
     });
     describe('tail', function () {
         it('(2,3)', function () {
-            const x = makeList(two, six);
+            const x = items_to_cons(two, six);
             const t = x.tail();
             assert.strictEqual(t.length, 1);
             assert.strictEqual(t[0], six);
         });
         it('(2)', function () {
-            const x = makeList(two);
+            const x = items_to_cons(two);
             const t = x.tail();
             assert.strictEqual(t.length, 0);
         });
         it('()', function () {
-            const x = makeList();
+            const x = items_to_cons();
             try {
                 x.tail();
                 assert.fail();
@@ -152,49 +152,49 @@ describe('tree', function () {
     });
     describe('car', function () {
         it('(2,3)', function () {
-            const x = makeList(two, six);
+            const x = items_to_cons(two, six);
             assert.strictEqual(x.car, car(x));
         });
         it('(2)', function () {
-            const x = makeList(two);
+            const x = items_to_cons(two);
             assert.strictEqual(x.car, car(x));
         });
         it('()', function () {
-            const x = makeList();
+            const x = items_to_cons();
             assert.strictEqual(x.car, car(x));
         });
     });
     describe('cdr', function () {
         it('(2,3)', function () {
-            const x = makeList(two, six);
+            const x = items_to_cons(two, six);
             assert.strictEqual(x.cdr, cdr(x));
         });
         it('(2)', function () {
-            const x = makeList(two);
+            const x = items_to_cons(two);
             assert.strictEqual(x.cdr, cdr(x));
         });
         it('()', function () {
-            const x = makeList();
+            const x = items_to_cons();
             assert.strictEqual(x.cdr, cdr(x));
         });
     });
     describe('length', function () {
         it('(2,3)', function () {
-            const x = makeList(two, six);
+            const x = items_to_cons(two, six);
             assert.strictEqual(x.length, 2);
         });
         it('(2)', function () {
-            const x = makeList(two);
+            const x = items_to_cons(two);
             assert.strictEqual(x.length, 1);
         });
         it('()', function () {
-            const x = makeList();
+            const x = items_to_cons();
             assert.strictEqual(x.length, 0);
         });
     });
     describe('item', function () {
         it('(2,3)', function () {
-            const x = makeList(two, six);
+            const x = items_to_cons(two, six);
             assert.strictEqual(x.item(0), two);
             assert.strictEqual(x.item(1), six);
             try {
@@ -211,11 +211,11 @@ describe('tree', function () {
             }
         });
         it('(2)', function () {
-            const x = makeList(two);
+            const x = items_to_cons(two);
             assert.strictEqual(x.length, 1);
         });
         it('()', function () {
-            const x = makeList();
+            const x = items_to_cons();
             try {
                 x.item(0);
                 assert.fail();

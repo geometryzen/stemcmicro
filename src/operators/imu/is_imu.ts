@@ -1,10 +1,13 @@
 // import { BCons } from "../operators/helpers/BCons";
 // import { is_pow_2_rat_rat } from "../operators/pow/is_pow_2_rat_rat";
-import { Imu } from "../tree/imu/ImaginaryUnit";
+import { Imu } from "../../tree/imu/ImaginaryUnit";
 // import { Rat } from "../tree/rat/Rat";
 // import { Sym } from "../tree/sym/Sym";
-import { U } from "../tree/tree";
+import { U } from "../../tree/tree";
 
+/**
+ * @hidden
+ */
 export type IMU_TYPE = Imu;
 // export type IMU_TYPE = BCons<Sym, Rat, Rat>;
 

@@ -3,7 +3,7 @@
 // The imports below are for types only and will not create a dependency.
 //
 import { ExtensionEnv, PHASE_EXPANDING, PHASE_FACTORING } from "../env/ExtensionEnv";
-import { Flt, flt, piAsDouble, zeroAsDouble } from "../tree/flt/Flt";
+import { Flt, wrap_as_flt, piAsDouble, zeroAsDouble } from "../tree/flt/Flt";
 import { Num } from "../tree/num/Num";
 import { negOne, one, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
@@ -340,8 +340,8 @@ export function evaluateAsFloats<T extends unknown[], V>(func: (...args: T) => V
 
 export class DynamicConstants {
     // Maybe the oracle should own these, or initialize with i.
-    private static oneAsDouble = flt(1.0);
-    private static negOneAsDouble = flt(-1.0);
+    private static oneAsDouble = wrap_as_flt(1.0);
+    private static negOneAsDouble = wrap_as_flt(-1.0);
 
     // i is the square root of -1 i.e. -1 ^ 1/2
     public static imaginaryunit: U;

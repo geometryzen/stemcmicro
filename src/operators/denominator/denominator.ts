@@ -5,7 +5,7 @@ import { multiply_items } from '../../multiply';
 import { rationalize_factoring } from '../rationalize/rationalize';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
-import { is_rat } from '../../tree/rat/is_rat';
+import { is_rat } from '../rat/is_rat';
 import { one } from '../../tree/rat/Rat';
 import { car, Cons, is_cons, U } from '../../tree/tree';
 

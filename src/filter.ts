@@ -1,7 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_add } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { zero } from './tree/rat/Rat';
 import { car, cdr, is_cons, U } from './tree/tree';

@@ -1,7 +1,7 @@
 import { isSmall } from "./isSmall";
 import { is_rat_integer } from "./is_rat_integer";
-import { is_flt } from "./tree/flt/is_flt";
-import { is_rat } from "./tree/rat/is_rat";
+import { is_flt } from "./operators/flt/is_flt";
+import { is_rat } from "./operators/rat/is_rat";
 import { U } from "./tree/tree";
 
 export function nativeInt(p1: U): number {

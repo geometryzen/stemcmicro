@@ -1,11 +1,11 @@
 import { assert } from "chai";
 import { get_component } from "../src/calculators/get_component";
-import { print_expr, print_list } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
-import { integer } from "../src/tree/rat/Rat";
+import { render_as_infix, render_as_sexpr } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
+import { wrap_as_int } from "../src/tree/rat/Rat";
 import { Sym } from "../src/tree/sym/Sym";
 import { Tensor } from "../src/tree/tensor/Tensor";
-import { makeList } from "../src/tree/tree";
+import { items_to_cons } from "../src/tree/tree";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("tensor-sandbox", function () {
@@ -15,17 +15,17 @@ describe("tensor-sandbox", function () {
             `det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(print_expr(actual, $), "a*d-b*c");
+        assert.strictEqual(render_as_infix(actual, $), "a*d-b*c");
         engine.release();
     });
 });
 
 describe("tensor", function () {
     it("sanity-check", function () {
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const a = new Sym('a');
         const b = new Sym('b');
@@ -40,22 +40,22 @@ describe("tensor", function () {
         assert.strictEqual(M.ndim, 2);
         assert.strictEqual(M.dim(0), 3);
         assert.strictEqual(M.dim(1), 2);
-        assert.isTrue(get_component(ab, makeList(integer(1)), $).equals(a));
-        assert.isTrue(get_component(ab, makeList(integer(2)), $).equals(b));
-        assert.isTrue(get_component(cd, makeList(integer(1)), $).equals(c));
-        assert.isTrue(get_component(cd, makeList(integer(2)), $).equals(d));
-        assert.isTrue(get_component(ef, makeList(integer(1)), $).equals(e));
-        assert.isTrue(get_component(ef, makeList(integer(2)), $).equals(f));
-        assert.isTrue(get_component(M, makeList(), $).equals(M));
-        assert.isTrue(get_component(M, makeList(integer(1)), $).equals(ab));
-        assert.isTrue(get_component(M, makeList(integer(2)), $).equals(cd));
-        assert.isTrue(get_component(M, makeList(integer(3)), $).equals(ef));
-        assert.isTrue(get_component(M, makeList(integer(1), integer(1)), $).equals(a));
-        assert.isTrue(get_component(M, makeList(integer(1), integer(2)), $).equals(b));
-        assert.isTrue(get_component(M, makeList(integer(2), integer(1)), $).equals(c));
-        assert.isTrue(get_component(M, makeList(integer(2), integer(2)), $).equals(d));
-        assert.isTrue(get_component(M, makeList(integer(3), integer(1)), $).equals(e));
-        assert.isTrue(get_component(M, makeList(integer(3), integer(2)), $).equals(f));
+        assert.isTrue(get_component(ab, items_to_cons(wrap_as_int(1)), $).equals(a));
+        assert.isTrue(get_component(ab, items_to_cons(wrap_as_int(2)), $).equals(b));
+        assert.isTrue(get_component(cd, items_to_cons(wrap_as_int(1)), $).equals(c));
+        assert.isTrue(get_component(cd, items_to_cons(wrap_as_int(2)), $).equals(d));
+        assert.isTrue(get_component(ef, items_to_cons(wrap_as_int(1)), $).equals(e));
+        assert.isTrue(get_component(ef, items_to_cons(wrap_as_int(2)), $).equals(f));
+        assert.isTrue(get_component(M, items_to_cons(), $).equals(M));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1)), $).equals(ab));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2)), $).equals(cd));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3)), $).equals(ef));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1), wrap_as_int(1)), $).equals(a));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1), wrap_as_int(2)), $).equals(b));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2), wrap_as_int(1)), $).equals(c));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2), wrap_as_int(2)), $).equals(d));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3), wrap_as_int(1)), $).equals(e));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3), wrap_as_int(2)), $).equals(f));
     });
     it("printing", function () {
         const lines: string[] = [
@@ -63,11 +63,11 @@ describe("tensor", function () {
             `A`
         ];
         const sourceText = lines.join('\n');
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(print_list(actual, $), "[[a,b],[c,d]]");
-        assert.strictEqual(print_expr(actual, $), "[[a,b],[c,d]]");
+        assert.strictEqual(render_as_sexpr(actual, $), "[[a,b],[c,d]]");
+        assert.strictEqual(render_as_infix(actual, $), "[[a,b],[c,d]]");
 
         engine.release();
     });
@@ -79,11 +79,11 @@ describe("tensor", function () {
                 `A[]`
             ];
             const sourceText = lines.join('\n');
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(print_list(actual, $), "[[a,b],[c,d]]");
-            assert.strictEqual(print_expr(actual, $), "[[a,b],[c,d]]");
+            assert.strictEqual(render_as_sexpr(actual, $), "[[a,b],[c,d]]");
+            assert.strictEqual(render_as_infix(actual, $), "[[a,b],[c,d]]");
             engine.release();
         });
         it("A[1]", function () {
@@ -92,10 +92,10 @@ describe("tensor", function () {
                 `A[1]`
             ];
             const sourceText = lines.join('\n');
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(print_expr(actual, $), "[a,b]");
+            assert.strictEqual(render_as_infix(actual, $), "[a,b]");
             engine.release();
         });
         it("A[2]", function () {
@@ -104,10 +104,10 @@ describe("tensor", function () {
                 `A[2]`
             ];
             const sourceText = lines.join('\n');
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(print_expr(actual, $), "[c,d]");
+            assert.strictEqual(render_as_infix(actual, $), "[c,d]");
             engine.release();
         });
         it("A[1,1]", function () {
@@ -116,10 +116,10 @@ describe("tensor", function () {
                 `A[1,1]`
             ];
             const sourceText = lines.join('\n');
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(print_expr(actual, $), "a");
+            assert.strictEqual(render_as_infix(actual, $), "a");
             engine.release();
         });
         it("A[1,2]", function () {
@@ -128,10 +128,10 @@ describe("tensor", function () {
                 `A[1,2]`
             ];
             const sourceText = lines.join('\n');
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(print_expr(actual, $), "b");
+            assert.strictEqual(render_as_infix(actual, $), "b");
             engine.release();
         });
         it("A[2,1]", function () {
@@ -140,10 +140,10 @@ describe("tensor", function () {
                 `A[2,1]`
             ];
             const sourceText = lines.join('\n');
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(print_expr(actual, $), "c");
+            assert.strictEqual(render_as_infix(actual, $), "c");
             engine.release();
         });
         it("A[2,2]", function () {
@@ -152,10 +152,10 @@ describe("tensor", function () {
                 `A[2,2]`
             ];
             const sourceText = lines.join('\n');
-            const engine = createSymEngine();
+            const engine = create_engine();
             const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(print_expr(actual, $), "d");
+            assert.strictEqual(render_as_infix(actual, $), "d");
             engine.release();
         });
     });
@@ -165,10 +165,10 @@ describe("tensor", function () {
             `adj(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(print_expr(actual, $), "[[d,-b],[-c,a]]");
+        assert.strictEqual(render_as_infix(actual, $), "[[d,-b],[-c,a]]");
         engine.release();
     });
     it("det", function () {
@@ -177,10 +177,10 @@ describe("tensor", function () {
             `det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(print_expr(actual, $), "a*d-b*c");
+        assert.strictEqual(render_as_infix(actual, $), "a*d-b*c");
         engine.release();
     });
     it("inv", function () {
@@ -189,10 +189,10 @@ describe("tensor", function () {
             `inv(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(print_expr(actual, $), "[[d,-b],[-c,a]]/(a*d-b*c)");
+        assert.strictEqual(render_as_infix(actual, $), "[[d,-b],[-c,a]]/(a*d-b*c)");
         engine.release();
     });
     it("inv-adj/det", function () {
@@ -201,10 +201,10 @@ describe("tensor", function () {
             `inv(A)-adj(A)/det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(print_expr(actual, $), "0");
+        assert.strictEqual(render_as_infix(actual, $), "0");
         engine.release();
     });
 });

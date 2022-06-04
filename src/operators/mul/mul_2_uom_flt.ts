@@ -1,15 +1,14 @@
 
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_flt } from "../flt/is_flt";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { is_uom } from "../../tree/uom/is_uom";
+import { is_uom } from "../uom/is_uom";
 import { Uom } from "../../tree/uom/Uom";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -35,10 +34,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('mul_2_uom_flt', MATH_MUL, is_uom, is_flt, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_UOM, HASH_FLT);
-    }
-    cost(expr: EXP, costs: CostTable, depth: number): number {
-        const baseCost = super.cost(expr, costs, depth);
-        return baseCost + 1;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: EXP): boolean {

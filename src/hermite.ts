@@ -4,7 +4,7 @@ import { nativeInt } from './nativeInt';
 import { is_sym } from './operators/sym/is_sym';
 import { HERMITE, SECRETX } from './runtime/constants';
 import { subst } from './subst';
-import { integer, one, two, zero } from './tree/rat/Rat';
+import { wrap_as_int, one, two, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ function yyhermite2(n: number, p1: U, $: ExtensionEnv) {
     for (let i = 0; i < n; i++) {
         const Y0: U = Y1;
         Y1 = temp;
-        temp = $.multiply($.subtract($.multiply(p1, Y1), $.multiply(integer(i), Y0)), two);
+        temp = $.multiply($.subtract($.multiply(p1, Y1), $.multiply(wrap_as_int(i), Y0)), two);
     }
     return temp;
 }

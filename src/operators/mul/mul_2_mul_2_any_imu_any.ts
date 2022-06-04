@@ -1,10 +1,10 @@
 import { compare_factors } from "../../calculators/compare/compare_factors";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -43,8 +43,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const Y = rhs;
         switch (compare_factors(i, Y, $)) {
             case SIGN_GT: {
-                const XY = $.valueOf(makeList(opr, X, Y));
-                const XYi = $.valueOf(makeList(MATH_MUL, XY, i));
+                const XY = $.valueOf(items_to_cons(opr, X, Y));
+                const XYi = $.valueOf(items_to_cons(MATH_MUL, XY, i));
                 return [TFLAG_DIFF, XYi];
             }
             default: {

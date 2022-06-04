@@ -1,7 +1,7 @@
 import { scan } from "../scanner/scan";
 import { Err } from "../tree/err/Err";
-import { flt } from "../tree/flt/Flt";
-import { integer } from "../tree/rat/Rat";
+import { wrap_as_flt } from "../tree/flt/Flt";
+import { wrap_as_int } from "../tree/rat/Rat";
 import { U } from "../tree/tree";
 import { stack_push } from "./stack";
 
@@ -21,10 +21,10 @@ export function zombo_parse(input: string | number | U): void {
     }
     else if (typeof input === 'number') {
         if (input % 1 === 0) {
-            stack_push(integer(input));
+            stack_push(wrap_as_int(input));
         }
         else {
-            stack_push(flt(input));
+            stack_push(wrap_as_flt(input));
         }
     }
     else {

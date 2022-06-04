@@ -12,11 +12,6 @@ import { U } from "../tree";
 // generic-rbtree provides support for a cache of integers to take the load off the Garbage Collector.
 //
 
-export type Sign = -1 | 0 | 1;
-export const SIGN_LT = -1;
-export const SIGN_EQ = 0;
-export const SIGN_GT = 1;
-
 function mmul(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
     return a.multiply(b);
 }
@@ -25,8 +20,8 @@ function mdiv(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
     return a.divide(b);
 }
 
-function mcmp(a: bigInt.BigInteger, b: bigInt.BigInteger): Sign {
-    return a.compare(b) as Sign;
+function mcmp(a: bigInt.BigInteger, b: bigInt.BigInteger): -1 | 0 | 1 {
+    return a.compare(b) as -1 | 0 | 1;
 }
 
 function madd(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
@@ -37,15 +32,15 @@ function mgcd(u: bigInt.BigNumber, v: bigInt.BigNumber): bigInt.BigInteger {
     return bigInt.gcd(u, v);
 }
 
-function MSIGN(biggles: bigInt.BigInteger): Sign {
+function MSIGN(biggles: bigInt.BigInteger): -1 | 0 | 1 {
     if (biggles.isPositive()) {
-        return SIGN_GT;
+        return +1;
     }
     else if (biggles.isZero()) {
-        return SIGN_EQ;
+        return 0;
     }
     else {
-        return SIGN_LT;
+        return -1;
     }
 }
 /*
@@ -79,7 +74,7 @@ function makeSignSameAs(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigI
     return a;
 }
 
-function setSignTo(a: bigInt.BigInteger, b: Sign): bigInt.BigInteger {
+function setSignTo(a: bigInt.BigInteger, b: -1 | 0 | 1): bigInt.BigInteger {
     if (a.isPositive()) {
         if (b < 0) {
             return a.multiply(bigInt(-1));
@@ -144,7 +139,7 @@ export class Rat extends Atom {
         return result;
 
     }
-    compare(rhs: Rat): Sign {
+    compare(rhs: Rat): -1 | 0 | 1 {
         const ab = mmul(this.a, rhs.b);
         const ba = mmul(this.b, rhs.a);
         return mcmp(ab, ba);
@@ -175,7 +170,7 @@ export class Rat extends Atom {
         if (this === other) {
             return true;
         }
-        return this.compare(other) === SIGN_EQ;
+        return this.compare(other) === 0;
     }
     gcd(other: Rat): Rat {
         const a = mgcd(this.a, other.a);
@@ -265,9 +260,6 @@ export class Rat extends Atom {
     toInfixString(): string {
         return this.isFraction() ? `${this.a.toString()}/${this.b.toString()}` : this.a.toString();
     }
-    toCtorString(): string {
-        return `${this.name}(${this.a.toString()}, ${this.b.toString()})`;
-    }
     toListString(): string {
         return this.toInfixString();
     }
@@ -279,20 +271,15 @@ export class Rat extends Atom {
         const numerString = this.a.toString();
         if (this.isFraction()) {
             const denomString = this.b.toString();
-            return `Rat(${numerString},${denomString})`;
+            return `${this.name}(${numerString},${denomString})`;
         }
         else {
-            return `Rat(${numerString})`;
+            return `${this.name}(${numerString})`;
         }
     }
-    // These flags are not actually set, they're only used for typechecking.
-    // Don't use them directly.
-    __ts_sign?: -1 | 0 | 1;
-    __ts_integer?: boolean;
-    __ts_special?: number;
 }
 
-export interface Comparator<K> {
+interface Comparator<K> {
     (a: K, b: K): (-1 | 1 | 0);
 }
 
@@ -318,7 +305,7 @@ for (let n = lBound + 1; n < uBound; n++) {
 /**
  * Constructor function for Num from integer which is a primitive number.
  */
-export function integer(n: number): Rat {
+export function wrap_as_int(n: number): Rat {
     if (n < uBound && n > lBound) {
         return cache.search(n);
     }

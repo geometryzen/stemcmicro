@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS
 import { MATH_POW } from "../../runtime/ns_math";
 import { half, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { makeList, U } from "../../tree/tree";
+import { items_to_cons, U } from "../../tree/tree";
 import { Function1X } from "../helpers/Function1X";
 import { UCons } from "../helpers/UCons";
 import { is_sym } from "../sym/is_sym";
@@ -31,7 +31,7 @@ class Op extends Function1X<Sym> implements Operator<UCons<Sym, Sym>> {
     transform1(opr: Sym, x: Sym, origExpr: UCons<Sym, Sym>): [TFLAGS, U] {
         const $ = this.$;
         if ($.isExpanding()) {
-            return [TFLAG_DIFF, makeList(MATH_POW, makeList(MATH_POW, x, two), half)];
+            return [TFLAG_DIFF, items_to_cons(MATH_POW, items_to_cons(MATH_POW, x, two), half)];
         }
         return [TFLAG_NONE, origExpr];
     }

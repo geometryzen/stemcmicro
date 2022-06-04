@@ -4,7 +4,7 @@ import { filter } from './filter';
 import { guess } from './guess';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
-import { NIL, U } from './tree/tree';
+import { nil, U } from './tree/tree';
 
 /*
  Return the leading coefficient of a polynomial.
@@ -22,7 +22,7 @@ The result is undefined if P is not a polynomial.
 export function Eval_leading(p1: U, $: ExtensionEnv): void {
     const P = $.valueOf(cadr(p1));
     p1 = $.valueOf(caddr(p1));
-    const X = NIL === p1 ? guess(P) : p1;
+    const X = nil === p1 ? guess(P) : p1;
     stack_push(leading(P, X, $));
 }
 

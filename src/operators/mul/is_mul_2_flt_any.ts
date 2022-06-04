@@ -1,5 +1,5 @@
 import { Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";

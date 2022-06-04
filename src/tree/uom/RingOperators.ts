@@ -1,5 +1,7 @@
 import { AbelianOperators } from './AbelianOperators';
 /**
+ * @hidden
+ * 
  * A ring is an abelian group with a second binary operation that is associative,
  * is distributive over the abelian group operation and has an identity element.
  */

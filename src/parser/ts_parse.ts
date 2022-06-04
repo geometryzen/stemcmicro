@@ -23,7 +23,7 @@ import { stack_pop, stack_push } from '../runtime/stack';
 import { Flt } from '../tree/flt/Flt';
 import { Str } from '../tree/str/Str';
 import { Sym } from '../tree/sym/Sym';
-import { makeList, U } from '../tree/tree';
+import { items_to_cons, U } from '../tree/tree';
 
 /**
  * Constructs a source tree using the TypeScript parser.
@@ -66,7 +66,7 @@ export function ts_parse(fileName: string, sourceText: string): U {
                 const rhs = stack_pop();
                 const lhs = stack_pop();
                 const opr = stack_pop();
-                stack_push(makeList(opr, lhs, rhs));
+                stack_push(items_to_cons(opr, lhs, rhs));
                 break;
             }
             case SyntaxKind.EndOfFileToken: {
@@ -174,13 +174,13 @@ export function ts_parse(fileName: string, sourceText: string): U {
                     const init = stack_pop();
                     const type = stack_pop();
                     const name = stack_pop();
-                    const X = makeList(MATH_HAS_TYPE, name, type);
-                    stack_push(makeList(ASSIGN, X, init));
+                    const X = items_to_cons(MATH_HAS_TYPE, name, type);
+                    stack_push(items_to_cons(ASSIGN, X, init));
                 }
                 else {
                     const type = stack_pop();
                     const name = stack_pop();
-                    stack_push(makeList(MATH_HAS_TYPE, name, type));
+                    stack_push(items_to_cons(MATH_HAS_TYPE, name, type));
                 }
                 break;
             }

@@ -3,7 +3,7 @@ import { INTEGRAL, MAX_CONSECUTIVE_APPLICATIONS_OF_ALL_RULES, MAX_CONSECUTIVE_AP
 import { defs, halt, use_factoring_with_unary_function } from '../../runtime/defs';
 import { transform } from '../../transform';
 import { cadr } from '../../tree/helpers';
-import { Cons, NIL, U } from '../../tree/tree';
+import { Cons, nil, U } from '../../tree/tree';
 import { simplify } from './simplify';
 
 export function Eval_simplify(expr: Cons, $: ExtensionEnv): U {
@@ -43,7 +43,7 @@ function run_user_defined_simplifications(p: U, $: ExtensionEnv): U {
             let eachConsecutiveRuleApplication = 0;
             while (success && eachConsecutiveRuleApplication < MAX_CONSECUTIVE_APPLICATIONS_OF_SINGLE_RULE) {
                 eachConsecutiveRuleApplication++;
-                [F1, success] = transform(F1, NIL, eachSimplification, true, $);
+                [F1, success] = transform(F1, nil, eachSimplification, true, $);
                 if (success) {
                     atLeastOneSuccessInRouldOfRulesApplications = true;
                 }

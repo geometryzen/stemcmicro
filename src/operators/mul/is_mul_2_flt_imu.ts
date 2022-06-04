@@ -1,6 +1,6 @@
-import { is_imu } from "../../predicates/is_imu";
+import { is_imu } from "../imu/is_imu";
 import { Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_flt } from "../flt/is_flt";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons } from "../../tree/tree";

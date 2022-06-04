@@ -1,7 +1,7 @@
-import { is_flt } from "../tree/flt/is_flt";
-import { Num } from "../tree/num/Num";
-import { is_rat } from "../tree/rat/is_rat";
-import { U } from "../tree/tree";
+import { is_flt } from "../flt/is_flt";
+import { Num } from "../../tree/num/Num";
+import { is_rat } from "../rat/is_rat";
+import { U } from "../../tree/tree";
 
 /**
  * Determines whether an atom belongs to the class of numbers.

@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { value_of } from "../operators/helpers/valueOf";
-import { makeList, U } from "../tree/tree";
+import { items_to_cons, U } from "../tree/tree";
 
 /**
  * A convenience function for creating binary expressions.
@@ -14,7 +14,7 @@ import { makeList, U } from "../tree/tree";
 export function binop(opr: U, lhs: U, rhs: U, $: ExtensionEnv): U {
     const A = value_of(lhs, $);
     const B = value_of(rhs, $);
-    const C = makeList(opr, A, B);
+    const C = items_to_cons(opr, A, B);
     const D = value_of(C, $);
     return D;
 }

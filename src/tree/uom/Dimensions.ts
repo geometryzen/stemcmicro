@@ -16,6 +16,8 @@ function assertArgRational(name: string, arg: QQ): QQ {
 }
 
 /**
+ * @hidden
+ * 
  * Keeps track of the dimensions of a physical quantity using seven rational exponents.
  * Each of the exponents corresponds to a dimension in the S.I. system of units.
  */

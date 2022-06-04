@@ -1,9 +1,9 @@
 import { ExtensionEnv, Sign } from './env/ExtensionEnv';
 import { makeList } from './makeList';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { DET } from './runtime/constants';
 import { is_square_matrix } from './tensor';
-import { integer, one, zero } from './tree/rat/Rat';
+import { wrap_as_int, one, zero } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { U } from './tree/tree';
 
@@ -70,7 +70,7 @@ export function determinant_symbolic(elements: readonly U[], n: number, $: Exten
     let outerTemp: U = zero;
     // eslint-disable-next-line no-constant-condition
     while (true) {
-        let temp: U = integer(sign_);
+        let temp: U = wrap_as_int(sign_);
         for (let i = 0; i < n; i++) {
             const k = (n * a[i] + i);
             temp = $.multiply(temp, elements[k]); // FIXME -- problem here

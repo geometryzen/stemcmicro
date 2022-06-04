@@ -1,4 +1,4 @@
-import { is_imu } from "../../predicates/is_imu";
+import { is_imu } from "../imu/is_imu";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";

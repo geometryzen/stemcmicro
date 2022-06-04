@@ -3,7 +3,7 @@ import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function1 } from "../helpers/Function1";
@@ -40,7 +40,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         const $ = this.$;
         const a = arg.lhs;
-        const retval = $.valueOf(makeList(MATH_STANDARD_PART, a));
+        const retval = $.valueOf(items_to_cons(MATH_STANDARD_PART, a));
         return [TFLAG_DIFF, retval];
     }
 }

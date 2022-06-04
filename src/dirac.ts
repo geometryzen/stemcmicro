@@ -4,9 +4,9 @@ import { makeList } from './makeList';
 import { DIRAC } from './runtime/constants';
 import { is_add, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
-import { is_flt } from './tree/flt/is_flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { one, zero } from './tree/rat/Rat';
 import { is_cons, U } from './tree/tree';
 

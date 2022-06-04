@@ -5,7 +5,7 @@ import { MAXDIM } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_tensor } from "../tensor/is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";

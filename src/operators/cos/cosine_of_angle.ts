@@ -6,10 +6,10 @@ import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { ARCCOS, ARCTAN, COS } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
-import { flt } from '../../tree/flt/Flt';
-import { is_flt } from '../../tree/flt/is_flt';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { is_flt } from '../flt/is_flt';
 import { cadr } from '../../tree/helpers';
-import { half, integer, negOne, one, three, two, zero } from '../../tree/rat/Rat';
+import { half, wrap_as_int, negOne, one, three, two, zero } from '../../tree/rat/Rat';
 import { car, U } from '../../tree/tree';
 
 
@@ -25,7 +25,7 @@ export function cosine_of_angle(x: U, $: ExtensionEnv): U {
         if (Math.abs(d) < 1e-10) {
             d = 0.0;
         }
-        return flt(d);
+        return wrap_as_flt(d);
     }
 
     // cosine function is symmetric, cos(-x) = cos(x)
@@ -54,7 +54,7 @@ export function cosine_of_angle(x: U, $: ExtensionEnv): U {
     // convoluted as we'd need to look at both numerator and
     // denominator.
 
-    const n = nativeInt($.divide($.multiply(x, integer(180)), DynamicConstants.Pi()));
+    const n = nativeInt($.divide($.multiply(x, wrap_as_int(180)), DynamicConstants.Pi()));
 
     // console.log(`n=${n}`);
 

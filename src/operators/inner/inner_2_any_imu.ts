@@ -1,10 +1,10 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_IMU } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -32,8 +32,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         const X = lhs;
         const i = rhs;
-        const inrP = $.valueOf(makeList(opr, one, X));
-        const retval = $.valueOf(makeList(MATH_MUL, inrP, i));
+        const inrP = $.valueOf(items_to_cons(opr, one, X));
+        const retval = $.valueOf(items_to_cons(MATH_MUL, inrP, i));
         return [TFLAG_DIFF, retval];
     }
 }

@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, T
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
@@ -37,13 +37,13 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         const $ = this.$;
         const a = arg.lhs;
         const b = arg.rhs;
-        const sinA = $.valueOf(makeList(MATH_SIN, a));
-        const cosB = $.valueOf(makeList(MATH_COS, b));
-        const cosA = $.valueOf(makeList(MATH_COS, a));
-        const sinB = $.valueOf(makeList(MATH_SIN, b));
-        const sacb = $.valueOf(makeList(MATH_MUL, sinA, cosB));
-        const casb = $.valueOf(makeList(MATH_MUL, cosA, sinB));
-        const retval = $.valueOf(makeList(MATH_ADD, sacb, casb));
+        const sinA = $.valueOf(items_to_cons(MATH_SIN, a));
+        const cosB = $.valueOf(items_to_cons(MATH_COS, b));
+        const cosA = $.valueOf(items_to_cons(MATH_COS, a));
+        const sinB = $.valueOf(items_to_cons(MATH_SIN, b));
+        const sacb = $.valueOf(items_to_cons(MATH_MUL, sinA, cosB));
+        const casb = $.valueOf(items_to_cons(MATH_MUL, cosA, sinB));
+        const retval = $.valueOf(items_to_cons(MATH_ADD, sacb, casb));
         return [TFLAG_DIFF, retval];
     }
 }

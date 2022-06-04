@@ -1,7 +1,7 @@
 
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
-import { is_num } from "../../predicates/is_num";
+import { is_num } from "../num/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
 import { Sym } from "../../tree/sym/Sym";

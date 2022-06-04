@@ -1,7 +1,7 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_ADD, MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_add_2_any_any } from "../add/is_add_2_any_any";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
@@ -25,9 +25,9 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
         const a = lhs;
         const b = rhs.lhs;
         const c = rhs.rhs;
-        const ab = makeList(MATH_OUTER, a, b);
-        const ac = makeList(MATH_OUTER, a, c);
-        const retval = makeList(MATH_ADD, ab, ac);
+        const ab = items_to_cons(MATH_OUTER, a, b);
+        const ac = items_to_cons(MATH_OUTER, a, c);
+        const retval = items_to_cons(MATH_ADD, ab, ac);
         return [TFLAG_DIFF, retval];
     }
 }

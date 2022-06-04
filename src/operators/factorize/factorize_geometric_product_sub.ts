@@ -3,7 +3,7 @@ import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -49,7 +49,7 @@ class Op extends Function2X<BCons<Sym, Sym, Sym>, BCons<Sym, Rat, BCons<Sym, Sym
         if ($.isFactoring()) {
             const a = lhs.lhs;
             const b = lhs.rhs;
-            return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), b, a)];
+            return [TFLAG_DIFF, items_to_cons(MATH_MUL.clone(opr.pos, opr.end), b, a)];
         }
         return [TFLAG_NONE, orig];
     }

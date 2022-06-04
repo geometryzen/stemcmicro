@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { print_expr } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_infix } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("conj", function () {
@@ -8,30 +8,30 @@ describe("conj", function () {
         const lines: string[] = [
             `conj(1)`
         ];
-        const engine = createSymEngine({});
+        const engine = create_engine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(actual, $), '1');
+        assert.strictEqual(render_as_infix(actual, $), '1');
         engine.release();
     });
     it("(x) should be x when symbols are treated as real numbers", function () {
         const lines: string[] = [
             `conj(x)`
         ];
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(actual, $), 'x');
+        assert.strictEqual(render_as_infix(actual, $), 'x');
         engine.release();
     });
     it("", function () {
         const lines: string[] = [
             `conj(y|x)`,
         ];
-        const engine = createSymEngine({ treatAsVectors: ['x', 'y'] });
+        const engine = create_engine({ treatAsVectors: ['x', 'y'] });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "x|y");
+        assert.strictEqual(render_as_infix(value, $), "x|y");
         engine.release();
     });
 });

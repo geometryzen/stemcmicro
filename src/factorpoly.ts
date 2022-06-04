@@ -13,7 +13,7 @@ import { divpoly } from './quotient';
 import { rect } from './operators/rect/rect';
 import { defs, halt, moveTos, use_factoring_with_unary_function } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
-import { integer, negOne, one, zero } from './tree/rat/Rat';
+import { wrap_as_int, negOne, one, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 // Factor a polynomial
@@ -117,7 +117,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
                 let temp: U = zero;
                 for (let i = 0; i <= factpoly_expo; i++) {
                     // p2: the free variable
-                    temp = $.add(temp, $.multiply(coes[i], $.power(p2, integer(i))));
+                    temp = $.add(temp, $.multiply(coes[i], $.power(p2, wrap_as_int(i))));
                 }
                 remainingPoly = temp;
             }
@@ -164,7 +164,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
                     let temp: U = zero;
                     for (let i = 0; i <= factpoly_expo; i++) {
                         // p2: the free variable
-                        temp = $.add(temp, $.multiply(coes[i], $.power(p2, integer(i))));
+                        temp = $.add(temp, $.multiply(coes[i], $.power(p2, wrap_as_int(i))));
                     }
                     remainingPoly = temp;
                 }
@@ -218,7 +218,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
     let temp: U = zero;
     for (let i = 0; i <= factpoly_expo; i++) {
         // p2: the free variable
-        temp = $.add(temp, $.multiply(coes[i], $.power(p2, integer(i))));
+        temp = $.add(temp, $.multiply(coes[i], $.power(p2, wrap_as_int(i))));
     }
     p1 = temp;
 
@@ -358,8 +358,8 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
         for (let rootsTries_j = 1; rootsTries_j <= 5; rootsTries_j++) {
             p4 = rect(
                 $.add(
-                    integer(rootsTries_i),
-                    $.multiply(integer(rootsTries_j), imu)
+                    wrap_as_int(rootsTries_i),
+                    $.multiply(wrap_as_int(rootsTries_j), imu)
                 ),
                 $
             );

@@ -6,7 +6,7 @@ import { scan } from '../scanner/scan';
 import { simplifyForCodeGeneration } from '../operators/simplify/eval_simplify';
 import { subst } from '../subst';
 import { Sym } from '../tree/sym/Sym';
-import { car, cdr, NIL, U } from '../tree/tree';
+import { car, cdr, nil, U } from '../tree/tree';
 import { MIDDLE_DOT_REGEX_GLOBAL, predefinedSymbolsInGlobalScope_doNotTrackInDependencies, TRANSPOSE_REGEX_GLOBAL } from './constants';
 import { defs, hard_reset } from './defs';
 import { check_stack, top_level_transform } from './execute';
@@ -509,7 +509,7 @@ export function run(stringToBeRun: string, $: ExtensionEnv, generateLatex = fals
 
             // if the return value is NIL there isn't much point
             // in adding "NIL" to the printout
-            if (NIL === p2) {
+            if (nil === p2) {
                 //collectedPlainResult = stringsEmittedByUserPrintouts
                 collectedPlainResult = defs.prints.join('');
                 if (generateLatex) {

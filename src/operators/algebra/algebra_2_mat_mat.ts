@@ -1,7 +1,7 @@
 import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_tensor } from "../tensor/is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";

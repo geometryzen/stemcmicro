@@ -2,8 +2,7 @@ import { ExtensionEnv, PHASE_EXPANDING } from "../env/ExtensionEnv";
 import { clear_patterns } from '../pattern';
 import { scan } from '../scanner/scan';
 import { defs } from './defs';
-import { SymEngineOptions } from "./symengine";
-import { version } from './version';
+import { EngineOptions } from "./symengine";
 
 /**
  * #deprecated
@@ -60,7 +59,6 @@ Returns the curl of vector u.
  * 
  */
 const defn_strings = [
-    `version="${version}"`,
     'e=exp(1)',
     'i=sqrt(-1)',
     'autoexpand=1',
@@ -320,7 +318,7 @@ export function define_special_symbols($: ExtensionEnv): void {
     // $.defineSym(C6);
 }
 
-export function execute_definitions(options: SymEngineOptions | undefined, $: ExtensionEnv): void {
+export function execute_definitions(options: EngineOptions | undefined, $: ExtensionEnv): void {
     // console.lg('execute_definitions()');
     if (options && options.useDefinitions) {
         const originalCodeGen = defs.codeGen;

@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_add_2_any_any } from "../add/is_add_2_any_any";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
@@ -31,9 +31,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const X = lhs.lhs;
         const Y = lhs.rhs;
         const Z = rhs;
-        const XZ = $.valueOf(makeList(opr, X, Z));
-        const YZ = $.valueOf(makeList(opr, Y, Z));
-        const retval = $.valueOf(makeList(lhs.opr, XZ, YZ));
+        const XZ = $.valueOf(items_to_cons(opr, X, Z));
+        const YZ = $.valueOf(items_to_cons(opr, Y, Z));
+        const retval = $.valueOf(items_to_cons(lhs.opr, XZ, YZ));
         return [TFLAG_DIFF, retval];
     }
 }

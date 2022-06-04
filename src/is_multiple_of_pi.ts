@@ -6,7 +6,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { nativeInt } from "./nativeInt";
-import { is_num } from "./predicates/is_num";
+import { is_num } from "./operators/num/is_num";
 import { PI } from "./runtime/constants";
 import { is_multiply } from "./runtime/helpers";
 import { caddr, cadr } from "./tree/helpers";

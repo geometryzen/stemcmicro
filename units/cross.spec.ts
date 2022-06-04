@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { print_expr } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_infix } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cross", function () {
@@ -16,7 +16,7 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = createSymEngine({ dependencies: ['Blade'] });
+        const engine = create_engine({ dependencies: ['Blade'] });
         const $ = engine.$;
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -24,7 +24,7 @@ describe("cross", function () {
         // eslint-disable-next-line no-console
         // console.log(`double cross elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(render_as_infix(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
     });
 });
@@ -39,12 +39,12 @@ describe("cross", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `A`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "Ax*i+Ay*j+Az*k");
+        assert.strictEqual(render_as_infix(value, $), "Ax*i+Ay*j+Az*k");
         engine.release();
     });
     it("cross(i,i) = 0", function () {
@@ -55,12 +55,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,i)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     it("cross(j,j) = 0", function () {
@@ -71,12 +71,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(j,j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     it("cross(k,k) = 0", function () {
@@ -87,12 +87,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,k)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     it("cross(i,j) = k", function () {
@@ -103,12 +103,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "k");
+        assert.strictEqual(render_as_infix(value, $), "k");
         engine.release();
     });
     it("cross(j,k) = i", function () {
@@ -119,12 +119,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(j,k)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "i");
+        assert.strictEqual(render_as_infix(value, $), "i");
         engine.release();
     });
     it("cross(k,i) = j", function () {
@@ -135,12 +135,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,i)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "j");
+        assert.strictEqual(render_as_infix(value, $), "j");
         engine.release();
     });
     it("cross(j,i) = -k", function () {
@@ -151,12 +151,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(j,i)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "-k");
+        assert.strictEqual(render_as_infix(value, $), "-k");
         engine.release();
     });
     it("cross(k,j) = -i", function () {
@@ -167,12 +167,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "-i");
+        assert.strictEqual(render_as_infix(value, $), "-i");
         engine.release();
     });
     it("cross(i,k) = -j", function () {
@@ -183,12 +183,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,k)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "-j");
+        assert.strictEqual(render_as_infix(value, $), "-j");
         engine.release();
     });
     it("cross(a*i,j) = a*k", function () {
@@ -199,12 +199,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(a*i,j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "a*k");
+        assert.strictEqual(render_as_infix(value, $), "a*k");
         engine.release();
     });
     it("cross(i*a,j) = a*k", function () {
@@ -215,12 +215,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i*a,j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "a*k");
+        assert.strictEqual(render_as_infix(value, $), "a*k");
         engine.release();
     });
     it("cross(i,a*j) = a*k", function () {
@@ -231,12 +231,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,a*j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "a*k");
+        assert.strictEqual(render_as_infix(value, $), "a*k");
         engine.release();
     });
     it("cross(i+k,j) = 0", function () {
@@ -247,12 +247,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i+k,j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "-i+k");
+        assert.strictEqual(render_as_infix(value, $), "-i+k");
         engine.release();
     });
     it("cross(k, i+j) = 0", function () {
@@ -263,12 +263,12 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,i+j)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "-i+j");
+        assert.strictEqual(render_as_infix(value, $), "-i+j");
         engine.release();
     });
     it("k+j+i+k+j+i => 2*(i+j+k)", function () {
@@ -280,14 +280,14 @@ describe("cross", function () {
             `k=G[3]`,
             `k+j+i+k+j+i`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Factorization should group the terms based upon the blade.
         // TODO: Canonical ordering should order the terms by the vector.
-        assert.strictEqual(print_expr(value, $), "2*(i+j+k)");
+        assert.strictEqual(render_as_infix(value, $), "2*(i+j+k)");
         engine.release();
     });
     it("cross(A,B)", function () {
@@ -300,7 +300,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `cross(A,B)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -309,7 +309,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.log(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(print_expr(value, $), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
+        assert.strictEqual(render_as_infix(value, $), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
         engine.release();
     });
     it("cross(A,B)+cross(B,A)", function () {
@@ -324,7 +324,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `cross(A,B)+cross(B,A)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -333,7 +333,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.log(`cross(A,B)+cross(B,A) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     it("A^B", function () {
@@ -346,7 +346,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A^B`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -355,7 +355,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.log(`A^B elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(print_expr(value, $), "(Ax*By-Ay*Bx)*i ^ j+(Ax*Bz-Az*Bx)*i ^ k+(Ay*Bz-Az*By)*j ^ k");
+        assert.strictEqual(render_as_infix(value, $), "(Ax*By-Ay*Bx)*i ^ j+(Ax*Bz-Az*Bx)*i ^ k+(Ay*Bz-Az*By)*j ^ k");
         engine.release();
     });
     it("A^B+B^A", function () {
@@ -368,7 +368,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A^B+B^A`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -377,7 +377,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.log(`A^B+B^A elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     it("A|B-B|A", function () {
@@ -390,12 +390,12 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A|B-B|A`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     // SLOW
@@ -411,13 +411,13 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(render_as_infix(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
     });
     // SLOW
@@ -433,13 +433,13 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))-B*(A|C)+C*(A|B)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     it("I * (e1 ^ e2)", function () {
@@ -454,13 +454,13 @@ describe("cross", function () {
             `I = e1 * e2 * e3`,
             `I * (e1 ^ e2)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(print_expr(value, $), "-k");
+        assert.strictEqual(render_as_infix(value, $), "-k");
         engine.release();
     });
     it("cross(A,B) = -I * (A^B)", function () {
@@ -475,7 +475,7 @@ describe("cross", function () {
             `I = e1 * e2 * e3`,
             `cross(A,B)+I*(A^B)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -485,7 +485,7 @@ describe("cross", function () {
         // eslint-disable-next-line no-console
         // console.log(`cross(A,B)-I*(A^B) elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     // SLOW
@@ -501,13 +501,13 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))+(A*(B^C)-(B^C)*A)/2`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(print_expr(value, $), "0");
+        assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
     });
     // SLOW
@@ -523,7 +523,7 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = createSymEngine({ dependencies: ['Blade'] });
+        const engine = create_engine({ dependencies: ['Blade'] });
         const $ = engine.$;
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -531,7 +531,7 @@ describe("cross", function () {
         // eslint-disable-next-line no-console
         // console.log(`double cross elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(print_expr(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(render_as_infix(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
     });
     it("A", function () {
@@ -541,12 +541,12 @@ describe("cross", function () {
             `A = i * Ax`,
             `A`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_expr(value, $), "Ax*i");
+        assert.strictEqual(render_as_infix(value, $), "Ax*i");
         engine.release();
     });
     it("cross(A,B)", function () {
@@ -559,7 +559,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `cross(A,B)`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Blade']
         });
         const $ = engine.$;
@@ -568,7 +568,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.log(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(print_expr(value, $), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
+        assert.strictEqual(render_as_infix(value, $), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
         engine.release();
     });
 });

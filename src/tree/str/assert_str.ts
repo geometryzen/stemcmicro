@@ -1,6 +1,6 @@
 import { SystemError } from "../../runtime/SystemError";
 import { U } from "../tree";
-import { is_str } from "./is_str";
+import { is_str } from "../../operators/str/is_str";
 import { Str } from "./Str";
 
 export function assert_str(expr: U): Str {

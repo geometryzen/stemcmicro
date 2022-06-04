@@ -1,5 +1,4 @@
 
-import { CostTable } from "../../env/CostTable";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_IMU } from "../../hashing/hash_info";
@@ -23,10 +22,6 @@ class ImuExtension implements Operator<Cons> {
     }
     get name(): string {
         return 'ImuExtension';
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: U, costs: CostTable): number {
-        return 1;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Cons): boolean {

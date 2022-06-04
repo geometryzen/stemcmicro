@@ -13,10 +13,10 @@ import { nativeInt } from './nativeInt';
 import { ARCCOS, COS, PI, POWER } from './runtime/constants';
 import { defs, DynamicConstants } from './runtime/defs';
 import { is_multiply } from './runtime/helpers';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { half, third, two } from './tree/rat/Rat';
 import { car, cdr, U } from './tree/tree';
 
@@ -41,7 +41,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(x)) {
-        return flt(Math.acos(x.d));
+        return wrap_as_flt(Math.acos(x.d));
     }
 
     // if x == 1/sqrt(2) then return 1/4*pi (45 degrees)
@@ -55,7 +55,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
         return defs.evaluatingAsFloats
-            ? flt(Math.PI / 4.0)
+            ? wrap_as_flt(Math.PI / 4.0)
             : $.multiply(rational(1, 4), PI);
     }
 
@@ -70,21 +70,21 @@ export function arccos(x: U, $: ExtensionEnv): U {
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
         return defs.evaluatingAsFloats
-            ? flt((Math.PI * 3.0) / 4.0)
+            ? wrap_as_flt((Math.PI * 3.0) / 4.0)
             : $.multiply(rational(3, 4), PI);
     }
 
     // if x == sqrt(3)/2 then return 1/6*pi (30 degrees)
     if (isSqrtThreeOverTwo(x)) {
         return defs.evaluatingAsFloats
-            ? flt(Math.PI / 6.0)
+            ? wrap_as_flt(Math.PI / 6.0)
             : $.multiply(rational(1, 6), PI);
     }
 
     // if x == -sqrt(3)/2 then return 5/6*pi (150 degrees)
     if (isMinusSqrtThreeOverTwo(x)) {
         return defs.evaluatingAsFloats
-            ? flt((5.0 * Math.PI) / 6.0)
+            ? wrap_as_flt((5.0 * Math.PI) / 6.0)
             : $.multiply(rational(5, 6), PI);
     }
 
@@ -97,11 +97,11 @@ export function arccos(x: U, $: ExtensionEnv): U {
         case -2:
             return DynamicConstants.Pi();
         case -1:
-            return defs.evaluatingAsFloats ? flt((Math.PI * 2.0) / 3.0) : $.multiply(rational(2, 3), PI);
+            return defs.evaluatingAsFloats ? wrap_as_flt((Math.PI * 2.0) / 3.0) : $.multiply(rational(2, 3), PI);
         case 0:
-            return defs.evaluatingAsFloats ? flt(Math.PI / 2.0) : $.multiply(half, PI);
+            return defs.evaluatingAsFloats ? wrap_as_flt(Math.PI / 2.0) : $.multiply(half, PI);
         case 1:
-            return defs.evaluatingAsFloats ? flt(Math.PI / 3.0) : $.multiply(third, PI);
+            return defs.evaluatingAsFloats ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
         case 2:
             return DynamicConstants.Zero();
         default:

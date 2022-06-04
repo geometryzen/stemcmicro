@@ -1,11 +1,11 @@
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_FLT } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_ADD, MATH_POW } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 
@@ -31,7 +31,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_POW, HASH_FLT);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];
     }
 }
 

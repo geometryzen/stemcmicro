@@ -2,7 +2,7 @@ import { cadnr } from '../../calculators/cadnr';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { makeList } from '../../makeList';
-import { is_imu } from '../../predicates/is_imu';
+import { is_imu } from '../imu/is_imu';
 import { ASSUME_REAL_VARIABLES, COS, RECT } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_add, is_multiply } from '../../runtime/helpers';

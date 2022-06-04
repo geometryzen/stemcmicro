@@ -15,7 +15,6 @@ import { Eval_degree } from "../../degree";
 import { Eval_dirac } from "../../dirac";
 import { divisors } from "../../divisors";
 import { Eval_eigen, Eval_eigenval, Eval_eigenvec } from "../../eigen";
-import { CostTable } from "../../env/CostTable";
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Eval_erf } from "../../erf";
 import { Eval_erfc } from "../../erfc";
@@ -67,14 +66,14 @@ import { Eval_taylor } from "../../taylor";
 import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
 import { Eval_transpose } from "../../transpose";
 import { Err } from "../../tree/err/Err";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_flt } from "../flt/is_flt";
 import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
-import { is_rat } from "../../tree/rat/is_rat";
-import { integer, one, zero } from "../../tree/rat/Rat";
+import { is_rat } from "../rat/is_rat";
+import { wrap_as_int, one, zero } from "../../tree/rat/Rat";
 import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor_elements";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_tensor } from "../tensor/is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
-import { car, cdr, Cons, is_cons, is_nil, NIL, U } from "../../tree/tree";
+import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { Eval_zero } from "../../zero";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_sym } from "../sym/is_sym";
@@ -100,13 +99,6 @@ class ConsExtension implements Extension<Cons> {
     }
     get name(): string {
         return 'ConsExtension';
-    }
-    cost(expr: Cons, costs: CostTable, depth: number, $: ExtensionEnv): number {
-        let cost = $.cost(expr.head, depth + 1);
-        for (const arg of expr.tail()) {
-            cost += $.cost(arg, depth + 1);
-        }
-        return cost;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     compareFactors(lhs: Cons, rhs: Cons, $: ExtensionEnv): Sign {
@@ -172,7 +164,7 @@ class ConsExtension implements Extension<Cons> {
             str += $.toListString(expr.car);
             expr = expr.cdr;
         }
-        if (expr !== NIL) {
+        if (expr !== nil) {
             str += ' . ';
             str += $.toListString(expr);
         }
@@ -553,7 +545,7 @@ function Eval_check(p1: U, $: ExtensionEnv) {
     }
     else {
         // returned true or false -> 1 or 0
-        stack_push(integer(Number(checkResult)));
+        stack_push(wrap_as_int(Number(checkResult)));
     }
 }
 
@@ -583,7 +575,7 @@ function Eval_dim(p1: U, $: ExtensionEnv) {
         stack_push(p1);
     }
     else {
-        stack_push(integer(p2.dim(n - 1)));
+        stack_push(wrap_as_int(p2.dim(n - 1)));
     }
 }
 
@@ -692,7 +684,7 @@ function Eval_operator(p1: U, $: ExtensionEnv) {
 // rank definition
 function Eval_rank(p1: U, $: ExtensionEnv) {
     p1 = $.valueOf(cadr(p1));
-    const rank = is_tensor(p1) ? integer(p1.ndim) : zero;
+    const rank = is_tensor(p1) ? wrap_as_int(p1.ndim) : zero;
     stack_push(rank);
 }
 

@@ -3,7 +3,7 @@ import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_inf
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Err } from "../../tree/err/Err";
 import { Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";

@@ -4,10 +4,10 @@ import { makeList } from './makeList';
 import { zzfloat } from './operators/float/float';
 import { APPROXRATIO } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { is_flt } from './tree/flt/is_flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
-import { is_tensor } from './tree/tensor/is_tensor';
-import { integer } from './tree/rat/Rat';
+import { is_tensor } from './operators/tensor/is_tensor';
+import { wrap_as_int } from './tree/rat/Rat';
 import { car, cdr, cons, is_cons, U } from './tree/tree';
 
 /*
@@ -43,7 +43,7 @@ function approxOneRatioOnly(p1: U, $: ExtensionEnv): U {
             const theRatio = floatToRatioRoutine(theFloat, precision);
             return rational(theRatio[0], theRatio[1]);
         }
-        return integer(theFloat);
+        return wrap_as_int(theFloat);
     }
 
     // we didn't manage, just leave unexpressed

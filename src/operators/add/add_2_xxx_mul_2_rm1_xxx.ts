@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat, zero } from "../../tree/rat/Rat";
@@ -34,9 +33,6 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('add_2_xxx_mul_2_rm1_xxx', MATH_ADD, is_sym, and(is_cons, is_mul_2_rat_sym), cross, $);
         this.hash = hash_binop_atom_cons(MATH_ADD, HASH_SYM, MATH_MUL);
-    }
-    cost(expr: EXP, costTable: CostTable, depth: number): number {
-        return super.cost(expr, costTable, depth) + 1;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {

@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, T
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -104,8 +104,8 @@ class Op extends Function2X<BCons<Sym, U, U>, BCons<Sym, U, U>> implements Opera
         const A = lhs.lhs;
         const B = rhs.lhs;
         const X = lhs.rhs;
-        const AB = $.valueOf(makeList(opr, A, B));
-        return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, AB, X))];
+        const AB = $.valueOf(items_to_cons(opr, A, B));
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_MUL, AB, X))];
     }
 }
 

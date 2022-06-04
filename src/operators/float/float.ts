@@ -7,8 +7,8 @@ import { evaluateAsFloats } from '../../runtime/defs';
 import { stack_push } from '../../runtime/stack';
 import { eAsDouble, Flt, piAsDouble } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { is_rat } from '../../tree/rat/is_rat';
-import { is_tensor } from '../../tree/tensor/is_tensor';
+import { is_rat } from '../rat/is_rat';
+import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, is_cons, U } from '../../tree/tree';
 

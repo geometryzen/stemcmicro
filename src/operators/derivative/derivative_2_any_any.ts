@@ -4,7 +4,7 @@ import { MATH_ADD } from "../../runtime/ns_math";
 import { subst } from "../../subst";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -32,11 +32,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const X = rhs;
         // Nonstandard analysis...
         const p0 = new Hyp(`d${X}`, X.pos, X.end);
-        const p1 = subst(lhs, X, makeList(MATH_ADD, X, p0), $);
+        const p1 = subst(lhs, X, items_to_cons(MATH_ADD, X, p0), $);
         const p2 = $.negate(lhs);
-        const p3 = makeList(MATH_ADD, p1, p2);
+        const p3 = items_to_cons(MATH_ADD, p1, p2);
         const p4 = $.divide(p3, p0);
-        const retval = $.valueOf(makeList(MATH_STANDARD_PART, p4));
+        const retval = $.valueOf(items_to_cons(MATH_STANDARD_PART, p4));
 
         // Lookup 
         // const retval = derivative_wrt(lhs, rhs, $);

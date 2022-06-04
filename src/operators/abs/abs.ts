@@ -13,7 +13,7 @@ import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, one, two, zero } from '../../tree/rat/Rat';
-import { is_tensor } from '../../tree/tensor/is_tensor';
+import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, U } from '../../tree/tree';
 import { rect } from '../rect/rect';

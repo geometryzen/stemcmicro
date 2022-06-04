@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { Flt, flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { Flt, wrap_as_flt } from "../../tree/flt/Flt";
+import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -17,7 +17,7 @@ class ExpFlt extends Function1<Flt> implements Operator<U> {
         super('exp_flt', MATH_EXP, is_flt, $);
     }
     transform1(opr: Sym, arg: Flt): [TFLAGS, U] {
-        return [TFLAG_DIFF, flt(Math.exp(arg.toNumber()))];
+        return [TFLAG_DIFF, wrap_as_flt(Math.exp(arg.toNumber()))];
     }
 }
 

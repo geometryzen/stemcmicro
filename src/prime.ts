@@ -4,7 +4,7 @@ import { MAXPRIMETAB, primetab } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
-import { integer, Rat } from './tree/rat/Rat';
+import { wrap_as_int, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
@@ -27,5 +27,5 @@ export function prime(p1: U): Rat {
         halt('prime: Argument out of range.');
     }
     n = primetab[n - 1];
-    return integer(n);
+    return wrap_as_int(n);
 }

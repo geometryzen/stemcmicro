@@ -4,7 +4,7 @@ import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -50,9 +50,9 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         if (is_cons(imag1) && is_mul_2_any_imu(imag1) && is_cons(imag2) && is_mul_2_any_imu(imag2)) {
             const Y = imag1.lhs;
             const Z = imag2.lhs;
-            const YZ = $.valueOf(makeList(MATH_ADD, Y, Z));
-            const YZi = $.valueOf(makeList(MATH_MUL, YZ, imu));
-            const retval = $.valueOf(makeList(MATH_ADD, X, YZi));
+            const YZ = $.valueOf(items_to_cons(MATH_ADD, Y, Z));
+            const YZi = $.valueOf(items_to_cons(MATH_MUL, YZ, imu));
+            const retval = $.valueOf(items_to_cons(MATH_ADD, X, YZi));
             return [TFLAG_DIFF, retval];
         }
         return [TFLAG_NONE, expr];

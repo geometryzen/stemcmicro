@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
@@ -45,10 +44,6 @@ class Implicator extends Function2<LHS, RHS> implements Operator<EXP> {
         // Ensure that the operator in the lhs operand is the same as the dominant operator symbol...
         super(name, opr, and(is_cons, is_opr(opr)), is_any, $);
         this.hash = hash_binop_cons_atom(opr, opr, HASH_ANY);
-    }
-    cost(expr: EXP, costTable: CostTable, depth: number): number {
-        // The extra cost for '+' proportional to depth is to encourage distribution law over addition expansion.
-        return super.cost(expr, costTable, depth) + costTable.getCost(this.opr, this.$) * depth;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

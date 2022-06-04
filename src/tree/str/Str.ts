@@ -27,9 +27,6 @@ export class Str extends Atom {
         }
         return this.str === other.str;
     }
-    toCtorString(): string {
-        return `${this.name}(${this.str})`;
-    }
     toInfixString(): string {
         return JSON.stringify(this.str);
     }
@@ -37,7 +34,7 @@ export class Str extends Atom {
         return JSON.stringify(this.str);
     }
     toString(): string {
-        return JSON.stringify(this.str);
+        return `${this.name}(${this.str})`;
     }
 }
 

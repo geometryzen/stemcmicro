@@ -29,9 +29,9 @@ export class Boo extends Atom {
         return this.b ? `${this.name}(true)` : `${this.name}(false)`;
     }
     static valueOf(b: boolean): Boo {
-        return b ? True : False;
+        return b ? booT : booF;
     }
 }
 
-export const True = new Boo(true);
-export const False = new Boo(false);
+export const booT = new Boo(true);
+export const booF = new Boo(false);

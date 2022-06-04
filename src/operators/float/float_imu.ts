@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
-import { is_imu } from "../../predicates/is_imu";
+import { is_imu } from "../imu/is_imu";
 import { FLOAT } from "../../runtime/constants";
 import { Flt } from "../../tree/flt/Flt";
 import { Imu } from "../../tree/imu/ImaginaryUnit";

@@ -5,7 +5,7 @@ import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { value_of } from "../helpers/valueOf";
@@ -14,12 +14,12 @@ import { is_sym } from "../sym/is_sym";
 function canoncal_reorder_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
     // We have to handle the case of equality if we want to use the STABLE flag.
     if (lhs.equalsSym(rhs)) {
-        return [TFLAG_DIFF, $.valueOf(makeList(MATH_POW, lhs, two))];
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_POW, lhs, two))];
     }
     if ($.treatAsScalar(lhs) || $.treatAsScalar(rhs)) {
         switch (compare_sym_sym(lhs, rhs)) {
             case SIGN_GT: {
-                return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
+                return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
             }
             default: {
                 return [TFLAG_HALT, orig];
@@ -76,7 +76,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // Short Circuit, but only when factoring.
         if (lhs.equals(rhs)) {
             if ($.isFactoring()) {
-                return [TFLAG_DIFF, value_of(makeList(MATH_POW, lhs, two), $)];
+                return [TFLAG_DIFF, value_of(items_to_cons(MATH_POW, lhs, two), $)];
             }
         }
 

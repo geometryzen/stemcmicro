@@ -1,6 +1,6 @@
 import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { flt } from './tree/flt/Flt';
+import { wrap_as_flt } from './tree/flt/Flt';
 
 // power function for double precision floating point
 export function dpow(base: number, expo: number, $: ExtensionEnv) {
@@ -11,7 +11,7 @@ export function dpow(base: number, expo: number, $: ExtensionEnv) {
 
     // nonnegative base or integer power?
     if (base >= 0.0 || expo % 1.0 === 0.0) {
-        return flt(Math.pow(base, expo));
+        return wrap_as_flt(Math.pow(base, expo));
     }
 
     const result = Math.pow(Math.abs(base), expo);
@@ -30,5 +30,5 @@ export function dpow(base: number, expo: number, $: ExtensionEnv) {
         b = Math.sin(theta);
     }
 
-    return $.add(flt(a * result), $.multiply(flt(b * result), imu));
+    return $.add(wrap_as_flt(a * result), $.multiply(wrap_as_flt(b * result), imu));
 }

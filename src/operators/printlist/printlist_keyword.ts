@@ -1,7 +1,7 @@
 import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { NAME_SCRIPT_LAST } from "../../runtime/ns_script";
-import { makeList, U } from "../../tree/tree";
+import { items_to_cons, U } from "../../tree/tree";
 import { KeywordOperator } from "../helpers/KeywordSymbol";
 import { is_sym } from "../sym/is_sym";
 import { TYPE_NAME_SYM } from "../sym/TYPE_NAME_SYM";
@@ -30,7 +30,7 @@ class PrintListKeyword extends KeywordOperator {
     transform(expr: U): [TFLAGS, U] {
         if (is_sym(expr) && expr.equalsSym(KEYWORD_PRINTLIST)) {
             const $ = this.$;
-            return [TFLAG_DIFF, $.valueOf(makeList(FNAME_PRINTLIST, NAME_SCRIPT_LAST))];
+            return [TFLAG_DIFF, $.valueOf(items_to_cons(FNAME_PRINTLIST, NAME_SCRIPT_LAST))];
         }
         return [TFLAG_NONE, expr];
     }

@@ -1,5 +1,4 @@
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -27,12 +26,6 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<BCons<Sym, U
     constructor($: ExtensionEnv) {
         super('mul_lhs_distrib_over_add_expand', MATH_MUL, is_any, and(is_cons, is_add_2_any_any), $);
         this.hash = hash_binop_atom_cons(this.opr, HASH_ANY, MATH_ADD);
-    }
-    cost(expr: BCons<Sym, U, BCons<Sym, U, U>>, costs: CostTable, depth: number): number {
-        // const $ = this.$;
-        // Extra costs added because we have added a '*' and an 'A'.
-        // But these are only added to equalize the lhs and rhs.
-        return super.cost(expr, costs, depth);// + costs.getCost(MATH_MUL) + $.cost(expr.lhs);
     }
     transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>, expr: BCons<Sym, U, BCons<Sym, U, U>>): [TFLAGS, U] {
         const $ = this.$;

@@ -2,7 +2,6 @@ import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_rat } from '../operators/abs/abs_rat';
 import { abs_sym_real } from '../operators/abs/abs_sym_real';
-import { MATH_ABS } from '../operators/abs/MATH_ABS';
 import { add_2_add_2_any_any_any } from '../operators/add/add_2_add_2_any_any_any';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
 import { add_2_add_2_any_imag_imag } from '../operators/add/add_2_add_2_any_imag_imag';
@@ -60,7 +59,8 @@ import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arg_varargs } from '../operators/arg/arg_varargs';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
-import { bladeExtensionBuilder, is_blade } from '../operators/blade/BladeExtension';
+import { bladeExtensionBuilder } from '../operators/blade/BladeExtension';
+import { is_blade } from '../operators/blade/is_blade';
 import { boo } from '../operators/boo/BooExtension';
 import { ceiling_any } from '../operators/ceiling/ceiling_any';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
@@ -109,7 +109,6 @@ import { errExtensionBuilder } from '../operators/err/ErrExtension';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_rat } from '../operators/exp/exp_rat';
-import { MATH_EXP } from '../operators/exp/MATH_EXP';
 import { factorize_ab_minus_two_a_dot_b } from '../operators/factorize/factorize_ab_minus_two_a_dot_b';
 import { factorize_geometric_product_add } from '../operators/factorize/factorize_geometric_product_add';
 import { factorize_geometric_product_lhs_assoc } from '../operators/factorize/factorize_geometric_product_lhs_assoc';
@@ -271,7 +270,6 @@ import { sin_any } from '../operators/sin/sin_any';
 import { sin_hyp } from '../operators/sin/sin_hyp';
 import { sin_mul_2_rat_any } from '../operators/sin/sin_mul_2_rat_any';
 import { sin_sym } from '../operators/sin/sin_sym';
-import { MATH_SQRT } from '../operators/sqrt/MATH_SQRT';
 import { sqrt_1_any } from '../operators/sqrt/sqrt_1_any';
 import { sqrt_1_rat } from '../operators/sqrt/sqrt_1_rat';
 import { st_add_2_any_hyp } from '../operators/st/st_add_2_any_hyp';
@@ -313,8 +311,8 @@ import { typeof_blade } from '../operators/typeof/typeof_blade';
 import { typeof_tensor } from '../operators/typeof/typeof_tensor';
 import { is_uom, uomExtensionBuilder } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
-import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_TAU } from '../runtime/ns_math';
-import { SymEngineOptions } from '../runtime/symengine';
+import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
+import { EngineOptions } from '../runtime/symengine';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 
@@ -322,7 +320,7 @@ import { ExtensionEnv } from "./ExtensionEnv";
 /**
  * Registers the Operator extension(s) with the environment.
  */
-export function register_known_operators(version: 1 | 2 | 3, options: SymEngineOptions | undefined, $: ExtensionEnv) {
+export function register_known_operators(version: 1 | 2 | 3, options: EngineOptions | undefined, $: ExtensionEnv) {
 
     $.setAssocL(MATH_ADD, true);
     $.setAssocL(MATH_MUL, true);
@@ -604,7 +602,6 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(abs_rat);
     $.defineOperator(abs_sym_real);
     $.defineOperator(abs_any);
-    $.setCost(MATH_ABS, 4);
 
     $.defineOperator(adj_any);
 
@@ -654,7 +651,6 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
     $.defineOperator(exp_any);
-    $.setCost(MATH_EXP, 2);
 
     $.defineOperator(float_mul_2_flt_sym);
     $.defineOperator(float_cons);
@@ -707,7 +703,6 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
 
     $.defineOperator(sqrt_1_rat);
     $.defineOperator(sqrt_1_any);
-    $.setCost(MATH_SQRT, 2);
 
     $.defineOperator(st_add_2_any_hyp);
     $.defineOperator(st_mul_2_rat_any);
@@ -722,7 +717,6 @@ export function register_known_operators(version: 1 | 2 | 3, options: SymEngineO
     $.defineOperator(typeof_any);
 
     $.defineOperator(tau);
-    $.setCost(MATH_TAU, 3);
 
     $.defineOperator(testeq_sym_rat);
 

@@ -4,8 +4,8 @@ import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { evaluate_integer } from './scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from './tree/helpers';
-import { integer } from './tree/rat/Rat';
-import { NIL, U } from './tree/tree';
+import { wrap_as_int } from './tree/rat/Rat';
+import { nil, U } from './tree/tree';
 
 // 'for' function
 
@@ -51,7 +51,7 @@ export function Eval_for(p1: U, $: ExtensionEnv): void {
     const p4: U = $.getBinding(loopingVariable);
     try {
         for (let i = j; i <= k; i++) {
-            $.setBinding(loopingVariable, integer(i));
+            $.setBinding(loopingVariable, wrap_as_int(i));
             $.valueOf(cadr(p1));
         }
     }
@@ -61,5 +61,5 @@ export function Eval_for(p1: U, $: ExtensionEnv): void {
     }
 
     // return value
-    stack_push(NIL);
+    stack_push(nil);
 }

@@ -2,11 +2,11 @@ import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/Extensi
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_imu } from "../../predicates/is_imu";
-import { is_num } from "../../predicates/is_num";
-import { print_expr } from "../../print";
-import { is_rat } from "../../tree/rat/is_rat";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_imu } from "../../operators/imu/is_imu";
+import { is_num } from "../../operators/num/is_num";
+import { render_as_infix } from "../../print";
+import { is_rat } from "../../operators/rat/is_rat";
+import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 import { compare } from "./compare";
@@ -47,7 +47,7 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             return compare_sym_sym(lhs, rhs);
         }
         else {
-            throw new Error(`lhs: Sym = ${lhs}, rhs = ${print_expr(rhs, $)} ${group(rhs)}`);
+            throw new Error(`lhs: Sym = ${lhs}, rhs = ${render_as_infix(rhs, $)} ${group(rhs)}`);
         }
     }
     else if (is_hyp(lhs)) {
@@ -103,6 +103,6 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         return compare_num_num(lhs, rhs);
     }
     else {
-        throw new Error(`lhs = ${print_expr(lhs, $)}, rhs = ${print_expr(rhs, $)}`);
+        throw new Error(`lhs = ${render_as_infix(lhs, $)}, rhs = ${render_as_infix(rhs, $)}`);
     }
 }

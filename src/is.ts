@@ -4,15 +4,15 @@ import { guess } from './guess';
 import { is_rat_integer } from './is_rat_integer';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { is_sym } from './operators/sym/is_sym';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { is_flt } from './tree/flt/is_flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
 import { Num } from './tree/num/Num';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { Rat } from './tree/rat/Rat';
-import { car, cdr, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 //
 // TODO: In order not to torture our future selves, these should be documented and have coverage unit testing.
@@ -123,7 +123,7 @@ export function isunivarpolyfactoredorexpandedform(p: U, x: U | null, $: Extensi
         return x;
     }
     else {
-        return NIL;
+        return nil;
     }
 }
 

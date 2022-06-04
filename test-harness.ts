@@ -3,10 +3,10 @@ import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
 import { clear_patterns } from './src/pattern';
-import { print_expr } from './src/print';
+import { render_as_infix } from './src/print';
 import { defs } from './src/runtime/defs';
 import { define_special_symbols, execute_definitions } from './src/runtime/init';
-import { createSymEngine, SymEngine, SymEngineOptions } from './src/runtime/symengine';
+import { create_engine, Engine, EngineOptions } from './src/runtime/symengine';
 import { VERSION_LATEST } from './src/runtime/version';
 import { U } from './src/tree/tree';
 
@@ -182,7 +182,7 @@ test.failing = function failing<T extends unknown[]>(name: string, f: (t: Assert
 
 export { test };
 
-function setup_test(f: () => void, engine: SymEngine, options: SymEngineOptions) {
+function setup_test(f: () => void, engine: Engine, options: EngineOptions) {
     // TODO: Some global issues to be addressed...
     // Inlining 'clearall' is illuminating.
     // Reveals some objects that are still global.
@@ -221,15 +221,15 @@ function setup_test(f: () => void, engine: SymEngine, options: SymEngineOptions)
  * @param prefix 
  */
 export function run_shardable_test(s: string[], prefix = '') {
-    const options: SymEngineOptions = { version: 1 };
-    const engine = createSymEngine(options);
+    const options: EngineOptions = { version: 1 };
+    const engine = create_engine(options);
     try {
         setup_test(() => {
             for (let i = 0; i < s.length; i += 2) {
                 test((prefix || `${testIndex}: `) + s[i], t => {
                     defs.out_count = 0;
                     const $ = engine.$;
-                    t.is(s[i + 1], print_expr(engine.executeScript(s[i]).values[0], $));
+                    t.is(s[i + 1], render_as_infix(engine.executeScript(s[i]).values[0], $));
                 });
             }
         }, engine, options);
@@ -317,7 +317,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     }
 }
 
-function harness_options_to_engine_options(options: TestOptions | undefined): SymEngineOptions {
+function harness_options_to_engine_options(options: TestOptions | undefined): EngineOptions {
     if (options) {
         return {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
@@ -358,7 +358,7 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
 export function run_test(s: string[], options?: TestOptions): void {
     const config = test_config_from_options(options);
     const engcfg = harness_options_to_engine_options(options);
-    const engine = createSymEngine(engcfg);
+    const engine = create_engine(engcfg);
     try {
         setup_test(() => {
             test(name_from_harness_options(options) || `${testIndex}`, t => {
@@ -388,7 +388,7 @@ export function run_test(s: string[], options?: TestOptions): void {
                                 if (A.values.length > 0) {
                                     const B = A.values[0];
                                     const $ = engine.$;
-                                    const C = print_expr(B, $);
+                                    const C = render_as_infix(B, $);
                                     t.is(s[i + 1], C, `${i}: ${sourceText}`);
                                 }
                             }
@@ -432,11 +432,11 @@ export function run_test(s: string[], engine: SymEngine, name?: string) {
  * This appears to be dead code.
  */
 export function ava_run(t: Asserts, input: string, expected: string) {
-    const engcfg: SymEngineOptions = { version: 1 };
-    const engine = createSymEngine(engcfg);
+    const engcfg: EngineOptions = { version: 1 };
+    const engine = create_engine(engcfg);
     try {
         const $ = engine.$;
-        setup_test(() => t.is(expected, print_expr(engine.executeScript(input).values[0], $)), engine, engcfg);
+        setup_test(() => t.is(expected, render_as_infix(engine.executeScript(input).values[0], $)), engine, engcfg);
     }
     finally {
         engine.release();

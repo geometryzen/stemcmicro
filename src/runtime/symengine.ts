@@ -1,14 +1,11 @@
 import { createEnv, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { register_known_operators } from "../env/register_known_operators";
-import { create_source_trees } from "../scanner/create_source_tree";
-import { ScanOptions } from "../scanner/scan";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { defs, hard_reset, set_behaviors_to_version } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { define_std_symbols, execute_definitions } from "./init";
-import { run } from "./run";
 import { VERSION_LATEST } from "./version";
 
 export interface Assoc {
@@ -18,7 +15,7 @@ export interface Assoc {
 
 export type DEPENDENCY = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
 
-export interface SymEngineOptions {
+export interface EngineOptions {
     assocs?: Assoc[];
     dependencies?: DEPENDENCY[];
     treatAsVectors?: string[];
@@ -27,7 +24,7 @@ export interface SymEngineOptions {
     version?: 1 | 2 | 3;
 }
 
-function version_from_options(options: SymEngineOptions | undefined): 1 | 2 | 3 {
+function version_from_options(options: EngineOptions | undefined): 1 | 2 | 3 {
     if (typeof options === 'undefined') {
         return 2;
     }
@@ -42,7 +39,7 @@ function version_from_options(options: SymEngineOptions | undefined): 1 | 2 | 3 
     }
 }
 
-function init($: ExtensionEnv, options?: SymEngineOptions) {
+function init($: ExtensionEnv, options?: EngineOptions) {
 
     const version = version_from_options(options);
 
@@ -72,32 +69,19 @@ function term($: ExtensionEnv) {
     $.resetSymTab();
 }
 
-export interface SymEngine {
+export interface Engine {
     /**
      * Provides access to the extension environment.
      * The returned environment is reference counted; the return value should be released when no longer needed.
      */
     readonly $: ExtensionEnv;
-    /**
-     * Parse the sourceText to create an array of trees that may be transformed.
-     * @param sourceText 
-     * @param options 
-     */
-    scanSourceText(sourceText: string, options?: ScanOptions): { trees: U[], errors: Error[] };
     transformTree(tree: U): { value: U, prints: string[], errors: Error[] };
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
-    /**
-     * Provided to assist in migration from 1.x to 2.x
-     * This will be deprecated in future. Please use exceuteScript.
-     * @param sourceText The source text.
-     * @param generateLaTeX Determines whether LaTeX will be generated.
-     */
-    run(sourceText: string, generateLaTeX?: boolean): string | string[];
     addRef(): void;
     release(): void;
 }
 
-function env_options_from_engine_options(options: SymEngineOptions | undefined): EnvOptions {
+function env_options_from_engine_options(options: EngineOptions | undefined): EnvOptions {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: EnvOptions, description: string): EnvOptions {
         // console.lg(`env_options_from_engine_options(${JSON.stringify(options)}) => ${JSON.stringify(retval)} @ ${description}`);
@@ -131,27 +115,21 @@ function env_options_from_engine_options(options: SymEngineOptions | undefined):
  * Creates an engine for executing scripts.
  * The returned engine is reference counted and should be released when no longer needed.
  */
-export function createSymEngine(options?: SymEngineOptions): SymEngine {
+export function create_engine(options?: EngineOptions): Engine {
     let ref_count = 1;
     // TODO: At some point we stop using the global ExtensionEnv and create our own...
     const envOptions: EnvOptions = env_options_from_engine_options(options);
     const $ = createEnv(envOptions);
     init($, options);
-    const theEngine: SymEngine = {
+    const theEngine: Engine = {
         get $(): ExtensionEnv {
             return $;
-        },
-        scanSourceText(sourceText: string, options?: ScanOptions): { trees: U[], errors: Error[] } {
-            return create_source_trees(sourceText, options);
         },
         transformTree(tree: U): { value: U, prints: string[], errors: Error[] } {
             return transform_tree(tree, $);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);
-        },
-        run(sourceText: string, generateLaTeX?: boolean): string | string[] {
-            return run(sourceText, $, generateLaTeX);
         },
         addRef(): void {
             ref_count++;

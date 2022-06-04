@@ -2,15 +2,15 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_integer } from '../../is_rat_integer';
 import { makeList } from '../../makeList';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
-import { flt } from '../../tree/flt/Flt';
-import { is_flt } from '../../tree/flt/is_flt';
-import { is_rat } from '../../tree/rat/is_rat';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { is_flt } from '../flt/is_flt';
+import { is_rat } from '../rat/is_rat';
 import { one, Rat, two, zero } from '../../tree/rat/Rat';
-import { is_str } from '../../tree/str/is_str';
-import { is_tensor } from '../../tree/tensor/is_tensor';
+import { is_str } from '../str/is_str';
+import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { cons, Cons, U } from '../../tree/tree';
-import { is_uom } from '../../tree/uom/is_uom';
+import { is_uom } from '../uom/is_uom';
 import { Adapter, SumTerm } from '../../tree/vec/Adapter';
 import { algebra, is_blade } from '../../tree/vec/Algebra';
 import { Blade } from '../../tree/vec/Blade';
@@ -29,7 +29,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
     constructor(private readonly dimensions: number, private readonly $: ExtensionEnv) {
     }
     get ε(): U {
-        return flt(1e-6);
+        return wrap_as_flt(1e-6);
     }
     get one(): U {
         return one;

@@ -1,12 +1,11 @@
 
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";
@@ -26,17 +25,13 @@ class Op extends Function2<Sym, Rat> implements Operator<BCons<Sym, Sym, Rat>> {
         super('add_2_sym_rat', MATH_ADD, is_sym, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_SYM, HASH_RAT);
     }
-    cost(expr: BCons<Sym, Sym, Rat>, costs: CostTable, depth: number): number {
-        const baseCost = super.cost(expr, costs, depth);
-        return baseCost + 1;
-    }
     transform2(opr: Sym, lhs: Sym, rhs: Rat): [TFLAGS, U] {
         if (rhs.isZero()) {
             return [TFLAG_DIFF, lhs];
         }
         else {
             const $ = this.$;
-            return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
+            return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
         }
     }
 }

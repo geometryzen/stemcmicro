@@ -1,7 +1,6 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BOO } from "../../hashing/hash_info";
-import { Boo, True } from "../../tree/boo/Boo";
+import { Boo, booT } from "../../tree/boo/Boo";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
@@ -11,17 +10,13 @@ export class BooExtension implements Extension<Boo> {
         // Nothing to see here.
     }
     get key(): string {
-        return True.name;
+        return booT.name;
     }
     get hash(): string {
         return HASH_BOO;
     }
     get name(): string {
         return 'BooExtension';
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: Boo, costs: CostTable): number {
-        return 1;
     }
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Boo) {
@@ -77,10 +72,10 @@ export class BooExtension implements Extension<Boo> {
         throw new Error("Boo Method not implemented.");
     }
     toInfixString(expr: Boo): string {
-        return expr.equals(True) ? 'true' : 'false';
+        return expr.equals(booT) ? 'true' : 'false';
     }
     toListString(expr: Boo): string {
-        return expr.equals(True) ? 'true' : 'false';
+        return expr.equals(booT) ? 'true' : 'false';
     }
 }
 

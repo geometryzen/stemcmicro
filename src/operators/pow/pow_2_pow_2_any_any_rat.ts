@@ -4,7 +4,7 @@ import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natura
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -47,7 +47,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         const x = lhs.rhs.rhs;
         const e = lhs.lhs;
-        const retval = $.valueOf(makeList(MATH_POW, e, x));
+        const retval = $.valueOf(items_to_cons(MATH_POW, e, x));
         return [TFLAG_DIFF, retval];
     }
 }

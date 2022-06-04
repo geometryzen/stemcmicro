@@ -10,8 +10,8 @@ import { is_hyp } from './operators/hyp/is_hyp';
 import { numerator } from './operators/numerator/numerator';
 import { is_sym } from './operators/sym/is_sym';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
-import { is_imu } from './predicates/is_imu';
-import { is_num } from './predicates/is_num';
+import { is_imu } from './operators/imu/is_imu';
+import { is_num } from './operators/num/is_num';
 import { print2dascii } from './print2d';
 import { print_number } from './print_number';
 import {
@@ -61,19 +61,19 @@ import { NAME_SCRIPT_LAST } from './runtime/ns_script';
 import { stack_push } from './runtime/stack';
 import { SystemError } from './runtime/SystemError';
 import { scan } from './scanner/scan';
-import { True } from './tree/boo/Boo';
-import { is_boo } from './tree/boo/is_boo';
-import { is_flt } from './tree/flt/is_flt';
+import { booT } from './tree/boo/Boo';
+import { is_boo } from './operators/boo/is_boo';
+import { is_flt } from './operators/flt/is_flt';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { negOne, one, Rat, zero } from './tree/rat/Rat';
 import { assert_str } from './tree/str/assert_str';
-import { is_str } from './tree/str/is_str';
+import { is_str } from './operators/str/is_str';
 import { Sym } from './tree/sym/Sym';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
-import { car, cdr, Cons, is_cons, is_nil, NIL, U } from './tree/tree';
-import { is_uom } from './tree/uom/is_uom';
+import { car, cdr, Cons, is_cons, is_nil, nil, U } from './tree/tree';
+import { is_uom } from './operators/uom/is_uom';
 import { is_blade } from './tree/vec/Algebra';
 
 export function get_script_last($: ExtensionEnv): U {
@@ -207,12 +207,12 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
         defs.setPrintMode(printMode);
         try {
             if (printMode === PRINTMODE_COMPUTER) {
-                const str = print_expr(value, $);
+                const str = render_as_infix(value, $);
                 texts.push(str);
                 store_text_in_binding(str, LAST_COMPUTER_PRINT, $);
             }
             else if (printMode === PRINTMODE_HUMAN) {
-                const str = print_expr(value, $);
+                const str = render_as_infix(value, $);
                 texts.push(str);
                 store_text_in_binding(str, LAST_HUMAN_PRINT, $);
             }
@@ -222,12 +222,12 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
                 store_text_in_binding(str, LAST_2DASCII_PRINT, $);
             }
             else if (printMode === PRINTMODE_LATEX) {
-                const str = print_expr(value, $);
+                const str = render_as_infix(value, $);
                 texts.push(str);
                 store_text_in_binding(str, LAST_LATEX_PRINT, $);
             }
             else if (printMode === PRINTMODE_LIST) {
-                const str = print_list(value, $);
+                const str = render_as_sexpr(value, $);
                 texts.push(str);
                 store_text_in_binding(str, LAST_LIST_PRINT, $);
             }
@@ -273,10 +273,10 @@ function print_char(c: string): string {
 
 function print_base_of_denom(base: U, $: ExtensionEnv): string {
     if (should_group_base_of_denom(base)) {
-        return `(${print_expr(base, $)})`;
+        return `(${render_as_infix(base, $)})`;
     }
     else {
-        return print_expr(base, $);
+        return render_as_infix(base, $);
     }
 }
 
@@ -301,13 +301,13 @@ function should_group_base_of_denom(expr: U): boolean {
 
 function print_expo_of_denom(expo: U, $: ExtensionEnv): string {
     if (is_rat(expo) && expo.isFraction()) {
-        return `(${print_expr(expo, $)})`;
+        return `(${render_as_infix(expo, $)})`;
     }
     if (is_add(expo) || is_multiply(expo) || is_power(expo)) {
-        return `(${print_expr(expo, $)})`;
+        return `(${render_as_infix(expo, $)})`;
     }
     else {
-        return print_expr(expo, $);
+        return render_as_infix(expo, $);
     }
 }
 
@@ -466,13 +466,12 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
 
 /**
  * This is used for almost everything except printing in s-expr format.
- * @param p 
+ * @param expr 
  * @param $ 
  * @returns 
  */
-export function print_expr(p: U, $: ExtensionEnv): string {
-    // console.lg(`print_expr ${p}`);
-    return print_additive_expr(p, $);
+export function render_as_infix(expr: U, $: ExtensionEnv): string {
+    return print_additive_expr(expr, $);
 }
 
 export function print_additive_expr(p: U, $: ExtensionEnv): string {
@@ -723,7 +722,7 @@ function print_grouping_expr(expr: U, $: ExtensionEnv): string {
     // console.lg(`print_grouping_expr ${expr}`);
     let str = '';
     str += print_char('(');
-    str += print_expr(expr, $);
+    str += render_as_infix(expr, $);
     str += print_char(')');
     return str;
 }
@@ -741,7 +740,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
         accumulator += print_grouping_expr(p, $);
     }
     else {
-        accumulator += print_expr(p, $);
+        accumulator += render_as_infix(p, $);
     }
     accumulator += print_char('!');
     return accumulator;
@@ -750,7 +749,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
 function print_ABS_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\left |');
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += print_str(' \\right |');
     return accumulator;
 }
@@ -758,68 +757,68 @@ function print_ABS_latex(p: U, $: ExtensionEnv): string {
 function print_BINOMIAL_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\binom{');
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += print_str('}{');
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     accumulator += print_str('} ');
     return accumulator;
 }
 
 function print_DOT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += print_str(' \\cdot ');
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     return accumulator;
 }
 
 function print_DOT_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'dot(';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ', ';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_SIN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.sin(';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_COS_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.cos(';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_TAN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.tan(';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCSIN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.asin(';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCCOS_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.acos(';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCTAN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.atan(';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
@@ -827,7 +826,7 @@ function print_ARCTAN_codegen(p: U, $: ExtensionEnv): string {
 function print_SQRT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\sqrt{');
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += print_str('} ');
     return accumulator;
 }
@@ -838,7 +837,7 @@ function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
     if (is_cons(cadr(p))) {
         accumulator += print_str('(');
     }
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     if (is_cons(cadr(p))) {
         accumulator += print_str(')');
     }
@@ -850,7 +849,7 @@ function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
 function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('transpose(');
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -858,7 +857,7 @@ function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
 function print_UNIT_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('identity(');
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -869,7 +868,7 @@ function print_INV_latex(p: Cons, $: ExtensionEnv): string {
     if (is_cons(cadr(p))) {
         str += print_str('(');
     }
-    str += print_expr(cadr(p), $);
+    str += render_as_infix(cadr(p), $);
     if (is_cons(cadr(p))) {
         str += print_str(')');
     }
@@ -881,7 +880,7 @@ function print_INV_latex(p: Cons, $: ExtensionEnv): string {
 function print_INV_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('inv(');
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -899,14 +898,14 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
         const theIntegral = cdr(cdr(p));
 
         accumulator += print_str('\\int^{');
-        accumulator += print_expr(car(cdr(theIntegral)), $);
+        accumulator += render_as_infix(car(cdr(theIntegral)), $);
         accumulator += print_str('}_{');
-        accumulator += print_expr(car(theIntegral), $);
+        accumulator += render_as_infix(car(theIntegral), $);
         accumulator += print_str('} \\! ');
         p = cdr(theIntegral);
     }
 
-    accumulator += print_expr(functionBody, $);
+    accumulator += render_as_infix(functionBody, $);
     accumulator += print_str(' \\,');
 
     p = originalIntegral;
@@ -914,7 +913,7 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
     for (let i = 1; i <= numberOfIntegrals; i++) {
         const theVariable = cdr(p);
         accumulator += print_str(' \\mathrm{d} ');
-        accumulator += print_expr(car(theVariable), $);
+        accumulator += render_as_infix(car(theVariable), $);
         if (i < numberOfIntegrals) {
             accumulator += print_str(' \\, ');
         }
@@ -963,7 +962,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
     }
     else {
         for (let i = 0; i < p.dim(j); i++) {
-            accumulator += print_expr(p.elem(k), $);
+            accumulator += render_as_infix(p.elem(k), $);
             // add separator between elements in the
             // inner-most dimension
             if (i !== p.dim(j) - 1) {
@@ -1026,7 +1025,7 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
     }
     else {
         for (let i = 0; i < p.dim(j); i++) {
-            accumulator += print_expr(p.elem(k), $);
+            accumulator += render_as_infix(p.elem(k), $);
             // separator between elements in each row
             if (i !== p.dim(j) - 1) {
                 accumulator += print_str(' & ');
@@ -1045,13 +1044,13 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
 
 function print_SUM_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '\\sum_{';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     accumulator += '=';
-    accumulator += print_expr(cadddr(p), $);
+    accumulator += render_as_infix(cadddr(p), $);
     accumulator += '}^{';
-    accumulator += print_expr(caddddr(p), $);
+    accumulator += render_as_infix(caddddr(p), $);
     accumulator += '}{';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += '}';
     return accumulator;
 }
@@ -1065,24 +1064,24 @@ function print_SUM_codegen(p: U, $: ExtensionEnv): string {
     const accumulator =
         '(function(){' +
         ' var ' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         '; ' +
         ' var holderSum = 0; ' +
         ' var lowerlimit = ' +
-        print_expr(lowerlimit, $) +
+        render_as_infix(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        print_expr(upperlimit, $) +
+        render_as_infix(upperlimit, $) +
         '; ' +
         ' for (' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         ' = lowerlimit; ' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         ' < upperlimit; ' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         '++) { ' +
         '   holderSum += ' +
-        print_expr(body, $) +
+        render_as_infix(body, $) +
         ';' +
         ' } ' +
         ' return holderSum;' +
@@ -1099,18 +1098,18 @@ function print_TEST_latex(p: U, $: ExtensionEnv): string {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (NIL === cdr(p)) {
+        if (nil === cdr(p)) {
             accumulator += '{';
-            accumulator += print_expr(car(p), $);
+            accumulator += render_as_infix(car(p), $);
             accumulator += '} & otherwise ';
             accumulator += ' \\\\\\\\';
             break;
         }
 
         accumulator += '{';
-        accumulator += print_expr(cadr(p), $);
+        accumulator += render_as_infix(cadr(p), $);
         accumulator += '} & if & ';
-        accumulator += print_expr(car(p), $);
+        accumulator += render_as_infix(car(p), $);
         accumulator += ' \\\\\\\\';
 
         // test unsuccessful, continue to the
@@ -1130,9 +1129,9 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (NIL === cdr(p)) {
+        if (nil === cdr(p)) {
             accumulator += 'else {';
-            accumulator += 'return (' + print_expr(car(p), $) + ');,$';
+            accumulator += 'return (' + render_as_infix(car(p), $) + ');,$';
             accumulator += '}';
             break;
         }
@@ -1141,8 +1140,8 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
             accumulator += ' else ';
         }
 
-        accumulator += 'if (' + print_expr(car(p), $) + '){,$';
-        accumulator += 'return (' + print_expr(cadr(p), $) + ');,$';
+        accumulator += 'if (' + render_as_infix(car(p), $) + '){,$';
+        accumulator += 'return (' + render_as_infix(cadr(p), $) + ');,$';
         accumulator += '}';
 
         // test unsuccessful, continue to the
@@ -1158,51 +1157,51 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
 
 function print_TESTLT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += '}';
     accumulator += ' < ';
     accumulator += '{';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTLE_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += '}';
     accumulator += ' \\leq ';
     accumulator += '{';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTGT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += '}';
     accumulator += ' > ';
     accumulator += '{';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTGE_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += '}';
     accumulator += ' \\geq ';
     accumulator += '{';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTEQ_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += '}';
     accumulator += ' = ';
     accumulator += '{';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     return (accumulator += '}');
 }
 
@@ -1218,10 +1217,10 @@ function print_FOR_codegen(p: U, $: ExtensionEnv): string {
         variable +
         '; ' +
         ' var lowerlimit = ' +
-        print_expr(lowerlimit, $) +
+        render_as_infix(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        print_expr(upperlimit, $) +
+        render_as_infix(upperlimit, $) +
         '; ' +
         ' for (' +
         variable +
@@ -1231,7 +1230,7 @@ function print_FOR_codegen(p: U, $: ExtensionEnv): string {
         variable +
         '++) { ' +
         '   ' +
-        print_expr(body, $) +
+        render_as_infix(body, $) +
         ' } ' +
         '})()';
 
@@ -1243,7 +1242,7 @@ function print_DO_codegen(p: U, $: ExtensionEnv): string {
 
     p = cdr(p);
     while (is_cons(p)) {
-        accumulator += print_expr(car(p), $);
+        accumulator += render_as_infix(car(p), $);
         p = cdr(p);
     }
 
@@ -1252,22 +1251,22 @@ function print_DO_codegen(p: U, $: ExtensionEnv): string {
 
 function print_SETQ_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += ' = ';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     accumulator += '; ';
     return accumulator;
 }
 
 function print_PRODUCT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '\\prod_{';
-    accumulator += print_expr(caddr(p), $);
+    accumulator += render_as_infix(caddr(p), $);
     accumulator += '=';
-    accumulator += print_expr(cadddr(p), $);
+    accumulator += render_as_infix(cadddr(p), $);
     accumulator += '}^{';
-    accumulator += print_expr(caddddr(p), $);
+    accumulator += render_as_infix(caddddr(p), $);
     accumulator += '}{';
-    accumulator += print_expr(cadr(p), $);
+    accumulator += render_as_infix(cadr(p), $);
     accumulator += '}';
     return accumulator;
 }
@@ -1281,24 +1280,24 @@ function print_PRODUCT_codegen(p: U, $: ExtensionEnv): string {
     const accumulator =
         '(function(){' +
         ' var ' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         '; ' +
         ' var holderProduct = 1; ' +
         ' var lowerlimit = ' +
-        print_expr(lowerlimit, $) +
+        render_as_infix(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        print_expr(upperlimit, $) +
+        render_as_infix(upperlimit, $) +
         '; ' +
         ' for (' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         ' = lowerlimit; ' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         ' < upperlimit; ' +
-        print_expr(variable, $) +
+        render_as_infix(variable, $) +
         '++) { ' +
         '   holderProduct *= ' +
-        print_expr(body, $) +
+        render_as_infix(body, $) +
         ';' +
         ' } ' +
         ' return holderProduct;' +
@@ -1347,13 +1346,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         else {
             if (defs.printMode === PRINTMODE_LATEX) {
                 str += print_str('\\sqrt{');
-                str += print_expr(base, $);
+                str += render_as_infix(base, $);
                 str += print_str('}');
                 return str;
             }
             else if (defs.codeGen) {
                 str += print_str('Math.sqrt(');
-                str += print_expr(base, $);
+                str += render_as_infix(base, $);
                 str += print_str(')');
                 return str;
             }
@@ -1370,12 +1369,12 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
         if (defs.printMode === PRINTMODE_LATEX) {
             str += print_str('e^{');
-            str += print_expr(expo, $);
+            str += render_as_infix(expo, $);
             str += print_str('}');
         }
         else {
             str += print_str('exp(');
-            str += print_expr(expo, $);
+            str += render_as_infix(expo, $);
             str += print_str(')');
         }
         return str;
@@ -1412,11 +1411,11 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
                 if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
                     str += print_str('(');
-                    str += print_expr(base, $);
+                    str += render_as_infix(base, $);
                     str += print_str(')');
                 }
                 else {
-                    str += print_expr(base, $);
+                    str += render_as_infix(base, $);
                 }
 
                 if (defs.printMode === PRINTMODE_LATEX) {
@@ -1462,7 +1461,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // we omit the "2" on the radical
             if (!is_num_and_eq_two(denomExponent)) {
                 str += print_str('[');
-                str += print_expr(denomExponent, $);
+                str += render_as_infix(denomExponent, $);
                 str += print_str(']');
             }
             str += print_str('{');
@@ -1480,7 +1479,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         // (e.g. square root turns into a radical
         // with a power one underneath) so handle
         // this case simply here, just print the base
-        str += print_expr(base, $);
+        str += render_as_infix(base, $);
     }
     else {
         // print the base,
@@ -1503,13 +1502,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // As an example, in JavaScript unary minus technically has higher precedence than exponentiation,
             // but compilers sometimes require parentheses to avoid errors.
             str += print_str('(');
-            str += print_expr(base, $);
+            str += render_as_infix(base, $);
             str += print_str(')');
         }
         else if (is_add(base)) {
             // Addition has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += print_expr(base, $);
+            str += render_as_infix(base, $);
             str += print_str(')');
         }
         else if (is_multiply(base)) {
@@ -1527,13 +1526,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         else if (is_outer(base)) {
             // Outer product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += print_expr(base, $);
+            str += render_as_infix(base, $);
             str += print_str(')');
         }
         else if (is_inner_or_dot(base)) {
             // Inner product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += print_expr(base, $);
+            str += render_as_infix(base, $);
             str += print_str(')');
         }
         else if (is_num(base) && (lt_num_num(base, zero) || isfraction(base))) {
@@ -1572,18 +1571,18 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // in latex mode, one can omit the curly braces
             // wrapping the exponent if the exponent is only
             // one character long
-            if (print_expr(expo, $).length > 1) {
+            if (render_as_infix(expo, $).length > 1) {
                 str += print_str('{');
-                str += print_expr(expo, $);
+                str += render_as_infix(expo, $);
                 str += print_str('}');
             }
             else {
-                str += print_expr(expo, $);
+                str += render_as_infix(expo, $);
             }
         }
         else if (is_cons(expo) || isfraction(expo) || (is_num(expo) && lt_num_num(expo, zero))) {
             str += print_str('(');
-            str += print_expr(expo, $);
+            str += render_as_infix(expo, $);
             str += print_str(')');
         }
         else {
@@ -1601,16 +1600,16 @@ function print_index_function(p: U, $: ExtensionEnv): string {
         str += print_grouping_expr(car(p), $);
     }
     else {
-        str += print_expr(car(p), $);
+        str += render_as_infix(car(p), $);
     }
     str += print_str('[');
     p = cdr(p);
     if (is_cons(p)) {
-        str += print_expr(car(p), $);
+        str += render_as_infix(car(p), $);
         p = cdr(p);
         while (is_cons(p)) {
             str += print_str(',');
-            str += print_expr(car(p), $);
+            str += render_as_infix(car(p), $);
             p = cdr(p);
         }
     }
@@ -1644,7 +1643,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     }
 
     if (is_boo(expr)) {
-        return expr.equals(True) ? 'True' : 'False';
+        return expr.equals(booT) ? 'True' : 'False';
     }
 
     if (is_str(expr)) {
@@ -1689,7 +1688,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 }
             }
         }
-        str += print_expr(expr, $);
+        str += render_as_infix(expr, $);
         if (!omtPrns) {
             if (sign_of_term(expr) === '-' || defs.printMode !== PRINTMODE_LATEX) {
                 if (defs.printMode === PRINTMODE_LATEX) {
@@ -1707,7 +1706,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (!omtPrns) {
             str += print_str('(');
         }
-        str += print_expr(expr, $);
+        str += render_as_infix(expr, $);
         if (!omtPrns) {
             str += print_str(')');
         }
@@ -1745,17 +1744,17 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (!defs.codeGen) {
             const parameters = caddr(expr);
             str += print_str('function ');
-            const returned = print_list(parameters, $);
+            const returned = render_as_sexpr(parameters, $);
             str += returned;
             str += print_str(' -> ');
         }
-        str += print_expr(fbody, $);
+        str += render_as_infix(fbody, $);
         return str;
     }
 
     if (car(expr) === PATTERN) {
         let str = '';
-        str += print_expr(caadr(expr), $);
+        str += render_as_infix(caadr(expr), $);
         if (defs.printMode === PRINTMODE_LATEX) {
             str += print_str(' \\rightarrow ');
         }
@@ -1768,7 +1767,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             }
         }
 
-        str += print_expr(car(cdr(cadr(expr))), $);
+        str += render_as_infix(car(cdr(cadr(expr))), $);
         return str;
     }
 
@@ -1945,7 +1944,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + print_expr(cadr(expr), $) + ') < (' + print_expr(caddr(expr), $) + '))';
+                '((' + render_as_infix(cadr(expr), $) + ') < (' + render_as_infix(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1958,7 +1957,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + print_expr(cadr(expr), $) + ') <= (' + print_expr(caddr(expr), $) + '))';
+                '((' + render_as_infix(cadr(expr), $) + ') <= (' + render_as_infix(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1971,7 +1970,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + print_expr(cadr(expr), $) + ') > (' + print_expr(caddr(expr), $) + '))';
+                '((' + render_as_infix(cadr(expr), $) + ') > (' + render_as_infix(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1984,7 +1983,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + print_expr(cadr(expr), $) + ') >= (' + print_expr(caddr(expr), $) + '))';
+                '((' + render_as_infix(cadr(expr), $) + ') >= (' + render_as_infix(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1997,7 +1996,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + print_expr(cadr(expr), $) + ') === (' + print_expr(caddr(expr), $) + '))';
+                '((' + render_as_infix(cadr(expr), $) + ') === (' + render_as_infix(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -2009,31 +2008,31 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     else if (car(expr).equals(FLOOR)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.floor(' + print_expr(cadr(expr), $) + '),$';
+            str += 'Math.floor(' + render_as_infix(cadr(expr), $) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lfloor {' + print_expr(cadr(expr), $) + '} \\rfloor ,$';
+            str += ' \\lfloor {' + render_as_infix(cadr(expr), $) + '} \\rfloor ,$';
             return str;
         }
     }
     else if (car(expr).equals(CEILING)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.ceiling(' + print_expr(cadr(expr), $) + '),$';
+            str += 'Math.ceiling(' + render_as_infix(cadr(expr), $) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lceil {' + print_expr(cadr(expr), $) + '} \\rceil ,$';
+            str += ' \\lceil {' + render_as_infix(cadr(expr), $) + '} \\rceil ,$';
             return str;
         }
     }
     else if (car(expr).equals(ROUND)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.round(' + print_expr(cadr(expr), $) + '),$';
+            str += 'Math.round(' + render_as_infix(cadr(expr), $) + '),$';
             return str;
         }
     }
@@ -2045,9 +2044,9 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         }
         else {
             let str = '';
-            str += print_expr(cadr(expr), $);
+            str += render_as_infix(cadr(expr), $);
             str += print_str('=');
-            str += print_expr(caddr(expr), $);
+            str += render_as_infix(caddr(expr), $);
             return str;
         }
     }
@@ -2056,7 +2055,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         let str = '';
         str += print_factor(expr.car, false, false, $);
         expr = expr.cdr;
-        if (NIL === expr) {
+        if (nil === expr) {
             return str;
         }
         else {
@@ -2064,11 +2063,11 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 str += print_str('(');
             }
             if (is_cons(expr)) {
-                str += print_expr(car(expr), $);
+                str += render_as_infix(car(expr), $);
                 expr = cdr(expr);
                 while (is_cons(expr)) {
                     str += print_str(',');
-                    str += print_expr(car(expr), $);
+                    str += render_as_infix(car(expr), $);
                     expr = cdr(expr);
                 }
             }
@@ -2132,26 +2131,23 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
 
 /**
  * The standard way of serializing to s-expr format.
- * @param expr 
- * @param $ 
- * @returns 
+ * @param expr The expression to be rendered.
+ * @param $ The extension environment.
  */
-export function print_list(expr: U, $: ExtensionEnv): string {
-    // console.lg(`print_list ${expr}`);
-    // 
+export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
     if (is_cons(expr)) {
         let str = '';
         str += '(';
-        str += print_list(car(expr), $);
+        str += render_as_sexpr(car(expr), $);
         expr = cdr(expr);
         while (is_cons(expr)) {
             str += ' ';
-            str += print_list(car(expr), $);
+            str += render_as_sexpr(car(expr), $);
             expr = cdr(expr);
         }
-        if (expr !== NIL) {
+        if (expr !== nil) {
             str += ' . ';
-            str += print_list(expr, $);
+            str += render_as_sexpr(expr, $);
         }
         str += ')';
         return str;

@@ -5,7 +5,7 @@ import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -59,14 +59,14 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         switch (compare_terms_redux(lhs, rhs, $)) {
             case SIGN_GT: {
                 // // console.lg('SIGN_GT');
-                const A = makeList(opr, rhs, lhs);
+                const A = items_to_cons(opr, rhs, lhs);
                 const B = $.valueOf(A);
                 return [TFLAG_DIFF, B];
             }
             case SIGN_EQ: {
                 // console.lg('SIGN_EQ');
                 if (lhs.equals(rhs)) {
-                    return [TFLAG_DIFF, $.valueOf(makeList(MATH_MUL, two, lhs))];
+                    return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_MUL, two, lhs))];
                 }
                 else {
                     return [TFLAG_NONE, expr];

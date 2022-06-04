@@ -9,11 +9,11 @@ import { yyfloat } from './operators/float/float';
 import { real } from './real';
 import { defs, halt, moveTos } from './runtime/defs';
 import { stack_push } from './runtime/stack';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
-import { NIL, U } from './tree/tree';
+import { nil, U } from './tree/tree';
 
 // find the roots of a polynomial numerically
 const NROOTS_YMAX = 101;
@@ -55,7 +55,7 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): void {
     let p2: U = $.valueOf(caddr(p1));
     p1 = $.valueOf(cadr(p1));
 
-    p2 = NIL === p2 ? guess(p1) : p2;
+    p2 = nil === p2 ? guess(p1) : p2;
 
     if (!is_poly_expanded_form(p1, p2, $)) {
         halt('nroots: polynomial?');
@@ -93,7 +93,7 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): void {
         if (Math.abs(nroots_a.i) < NROOTS_DELTA) {
             nroots_a.i = 0.0;
         }
-        stack_push($.add(flt(nroots_a.r), $.multiply(flt(nroots_a.i), imu)));
+        stack_push($.add(wrap_as_flt(nroots_a.r), $.multiply(wrap_as_flt(nroots_a.i), imu)));
         NROOTS_divpoly(k);
     }
 

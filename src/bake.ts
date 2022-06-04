@@ -6,7 +6,7 @@ import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMB
 import { use_expanding_with_unary_function } from './runtime/defs';
 import { is_add, is_multiply } from './runtime/helpers';
 import { SystemError } from './runtime/SystemError';
-import { integer } from './tree/rat/Rat';
+import { wrap_as_int } from './tree/rat/Rat';
 import { car, cons, is_cons, U } from './tree/tree';
 
 /**
@@ -143,7 +143,7 @@ function bake_poly_term(k: number, coefficient: U, term: U, $: ExtensionEnv): U[
         result.push(term);
     }
     else {
-        result.push(makeList(POWER, term, integer(k)));
+        result.push(makeList(POWER, term, wrap_as_int(k)));
     }
     if (result.length > 1) {
         return [makeList(MULTIPLY, ...result)];

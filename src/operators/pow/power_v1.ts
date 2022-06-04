@@ -11,19 +11,19 @@ import { nativeInt } from "../../nativeInt";
 import { power_sum, simplify_polar } from "../../power";
 import { pow_rat_rat } from "../../pow_rat_rat";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { is_num } from "../../predicates/is_num";
+import { is_num } from "../num/is_num";
 import { rect } from "../rect/rect";
 import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
 import { defs, DynamicConstants } from "../../runtime/defs";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { sine } from "../sin/sin";
 import { power_tensor } from "../../tensor";
-import { flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { wrap_as_flt } from "../../tree/flt/Flt";
+import { is_flt } from "../flt/is_flt";
 import { caddr, cadr } from "../../tree/helpers";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_tensor } from "../tensor/is_tensor";
 import { car, Cons, is_cons, is_nil, U } from "../../tree/tree";
 import { QQ } from "../../tree/uom/QQ";
 import { abs } from "../abs/abs";
@@ -161,7 +161,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // e^some_float
     // Expect this to be covered by math.exp.Flt operator.
     if (is_base_of_natural_logarithm(base) && is_flt(expo)) {
-        const result = flt(Math.exp(expo.d));
+        const result = wrap_as_flt(Math.exp(expo.d));
         return hook(result, "N");
     }
 
@@ -299,7 +299,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
             const pi =
                 defs.evaluatingAsFloats ||
                     (iscomplexnumberdouble(base, $) && is_flt(expo))
-                    ? flt(Math.PI)
+                    ? wrap_as_flt(Math.PI)
                     : PI;
             let tmp = $.multiply(
                 $.power(abs(base, $), expo),

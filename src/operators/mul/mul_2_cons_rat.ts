@@ -2,10 +2,10 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -32,7 +32,7 @@ class Op extends Function2<Cons, Rat> implements Operator<Cons> {
             return [TFLAG_DIFF, lhs];
         }
         else {
-            return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
+            return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
         }
     }
 }

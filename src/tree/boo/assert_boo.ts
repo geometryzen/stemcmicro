@@ -1,7 +1,7 @@
 import { SystemError } from "../../runtime/SystemError";
 import { U } from "../tree";
 import { Boo } from "./Boo";
-import { is_boo } from "./is_boo";
+import { is_boo } from "../../operators/boo/is_boo";
 
 export function assert_boo(expr: U): Boo {
     if (is_boo(expr)) {

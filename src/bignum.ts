@@ -2,13 +2,13 @@ import bigInt from 'big-integer';
 import { mdiv, mmul } from './mmul';
 import { mpow } from './mpow';
 import { nativeInt } from './nativeInt';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { halt } from './runtime/defs';
 import { stack_pop, stack_push } from './runtime/stack';
-import { flt, Flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt, Flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { Num } from './tree/num/Num';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { one, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
@@ -68,7 +68,7 @@ export function divide_numbers(lhs: Num, rhs: Num): Num {
     const a = is_flt(lhs) ? lhs.d : lhs.toNumber();
     const b = is_flt(rhs) ? rhs.d : rhs.toNumber();
 
-    return flt(a / b);
+    return wrap_as_flt(a / b);
 }
 
 /**
@@ -190,7 +190,7 @@ export function pop_number(): Num {
 
 export function rat_to_flt(n: Rat): Flt {
     const d = n.toNumber();
-    return flt(d);
+    return wrap_as_flt(d);
 }
 
 //static unsigned int *__factorial(int)

@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "./and";
 import { BCons } from "./BCons";
 import { Function2 } from "./Function2";
@@ -28,7 +28,7 @@ class Op<L extends U, R extends U> extends Function2<BCons<Sym, U, L>, R> implem
         const X = lhs.lhs;
         const Z = lhs.rhs;
         const A = rhs;
-        return [TFLAG_DIFF, makeList(opr, makeList(lhs.opr, X, A), Z)];
+        return [TFLAG_DIFF, items_to_cons(opr, items_to_cons(lhs.opr, X, A), Z)];
     }
 }
 

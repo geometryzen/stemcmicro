@@ -1,6 +1,5 @@
 
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_HYP, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -31,9 +30,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     constructor($: ExtensionEnv) {
         super('mul_2_hyp_sym', MATH_MUL, is_hyp, is_sym, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_HYP, HASH_SYM);
-    }
-    cost(expr: EXPR, costs: CostTable, depth: number): number {
-        return super.cost(expr, costs, depth) + 1;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

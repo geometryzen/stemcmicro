@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function1 } from "../helpers/Function1";
@@ -21,7 +21,7 @@ class ConjInner extends Function1<BCons<Sym, U, U>> implements Operator<BCons<Sy
         super('conj_inner', MATH_CONJ, and(is_cons, is_inner_2_any_any), $);
     }
     transform1(opr: Sym, arg: BCons<Sym, U, U>): [TFLAGS, U] {
-        return [TFLAG_DIFF, makeList(arg.opr, arg.rhs, arg.lhs)];
+        return [TFLAG_DIFF, items_to_cons(arg.opr, arg.rhs, arg.lhs)];
     }
 }
 

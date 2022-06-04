@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createSymEngine } from "../src/runtime/symengine";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("add", function () {
@@ -8,7 +8,7 @@ describe("add", function () {
         const lines: string[] = [
             `2.0+3`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Flt'],
             version: 3
         });
@@ -23,7 +23,7 @@ describe("add", function () {
         const lines: string[] = [
             `2+3.0`
         ];
-        const engine = createSymEngine({
+        const engine = create_engine({
             dependencies: ['Flt'],
             version: 3
         });

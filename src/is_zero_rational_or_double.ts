@@ -1,9 +1,9 @@
 // this routine is a simple check on whether we have
 // a basic zero in our hands. It doesn't perform any
 
-import { is_flt } from "./tree/flt/is_flt";
+import { is_flt } from "./operators/flt/is_flt";
 import { Num } from "./tree/num/Num";
-import { is_rat } from "./tree/rat/is_rat";
+import { is_rat } from "./operators/rat/is_rat";
 import { U } from "./tree/tree";
 
 /**

@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Eval_polar } from "../../polar";
 import { POLAR } from "../../runtime/constants";
@@ -19,9 +19,15 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_polar(expr, $);
-        const changed = !retval.equals(expr);
-        return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
+        if ($.isExpanding()) {
+            const retval = Eval_polar(expr, $);
+            const changed = !retval.equals(expr);
+            return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
+        }
+        else {
+            // TODO: Not quite right because we would like to evaluate the arguments.
+            return [TFLAG_NONE, expr];
+        }
     }
 }
 

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CostTable } from "../../env/CostTable";
 import { ExtensionEnv, Operator, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -10,9 +9,6 @@ export abstract class KeywordOperator implements Operator<Sym> {
         // Nothing to see here.
     }
     abstract readonly name: string;
-    cost(expr: U, costs: CostTable): number {
-        return costs.getCost(this.keyword, this.$);
-    }
     isImag(expr: Sym): boolean {
         throw new Error("Keyword.isImag Symbol Method not implemented.");
     }

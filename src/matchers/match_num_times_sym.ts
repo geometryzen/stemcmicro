@@ -1,7 +1,7 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { is_sym } from "../operators/sym/is_sym";
 import { MULTIPLY } from "../runtime/constants";
-import { is_num } from "../predicates/is_num";
+import { is_num } from "../operators/num/is_num";
 import { Num } from "../tree/num/Num";
 import { Sym } from "../tree/sym/Sym";
 import { Cons } from "../tree/tree";

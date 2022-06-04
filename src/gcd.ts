@@ -3,13 +3,13 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { isunivarpolyfactoredorexpandedform, is_negative_number } from './is';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { makeList } from './makeList';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { MULTIPLY } from './runtime/constants';
 import { use_expanding_with_binary_function } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { one } from './tree/rat/Rat';
 import { car, cdr, is_cons, U } from './tree/tree';
 

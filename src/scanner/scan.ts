@@ -10,9 +10,9 @@ import { defs } from '../runtime/defs';
 import { MATH_ADD, MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Boo } from '../tree/boo/Boo';
 import { Sym } from '../tree/sym/Sym';
-import { is_tensor } from '../tree/tensor/is_tensor';
+import { is_tensor } from '../operators/tensor/is_tensor';
 import { Tensor } from '../tree/tensor/Tensor';
-import { makeList, NIL, U } from '../tree/tree';
+import { items_to_cons, nil, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
 import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
@@ -91,7 +91,7 @@ export function scan(sourceText: string, options: ScanOptions): [scanned: number
 
     state.advance();
     if (state.code === T_END) {
-        return [0, NIL];
+        return [0, nil];
     }
     const expr = scan_stmt(state);
     if (!state.assignmentFound) {
@@ -105,7 +105,7 @@ export function scan_meta(sourceText: string): U {
     state.meta_mode = true;
     state.advance();
     if (state.code === T_END) {
-        return NIL;
+        return nil;
     }
     return scan_stmt(state);
 }
@@ -170,10 +170,10 @@ function scan_stmt(state: InputState): U {
 
         // if it's a := then add a quote
         if (was_quote_assign) {
-            rhs = makeList(QUOTE.clone(pos, end), rhs);
+            rhs = items_to_cons(QUOTE.clone(pos, end), rhs);
         }
 
-        result = makeList(ASSIGN.clone(pos, end), result, rhs);
+        result = items_to_cons(ASSIGN.clone(pos, end), result, rhs);
 
         state.isSymbolLeftOfAssignment = true;
 
@@ -259,7 +259,7 @@ function scan_relational_expr(state: InputState): U {
         const opr = state.tokenToSym();
         state.advance();
         const rhs = scan_additive_expr(state);
-        return hook(makeList(opr, result, rhs), "A");
+        return hook(items_to_cons(opr, result, rhs), "A");
     }
 
     return hook(result, "B");
@@ -300,7 +300,7 @@ function scan_additive_expr(state: InputState): U {
             case T_PLUS: {
                 const opr = clone_symbol_using_info(MATH_ADD, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, scan_multiplicative_expr(state));
+                result = items_to_cons(opr, result, scan_multiplicative_expr(state));
                 break;
             }
             default: {
@@ -309,7 +309,7 @@ function scan_additive_expr(state: InputState): U {
                 assert_token_code(state.code, T_MINUS);
                 const opr = clone_symbol_using_info(MATH_ADD, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, scanner_negate(scan_multiplicative_expr(state)));
+                result = items_to_cons(opr, result, scanner_negate(scan_multiplicative_expr(state)));
                 break;
             }
         }
@@ -365,7 +365,7 @@ function scan_multiplicative_expr(state: InputState): U {
             case AsteriskToken: {
                 const opr = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, scan_outer_expr(state));
+                result = items_to_cons(opr, result, scan_outer_expr(state));
                 break;
             }
             case T_FWDSLASH: {
@@ -373,7 +373,7 @@ function scan_multiplicative_expr(state: InputState): U {
                 // But I think it belongs in the transformations.
                 const opr = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, inverse(scan_outer_expr(state)));
+                result = items_to_cons(opr, result, inverse(scan_outer_expr(state)));
                 break;
             }
             default: {
@@ -410,7 +410,7 @@ function scan_outer_expr(state: InputState): U {
     while (is_outer(state.code, state.newLine, state.useCaretForExponentiation)) {
         const opr = clone_symbol_using_info(MATH_OUTER, state.tokenToSym());
         state.advance();
-        result = makeList(opr, result, scan_inner_expr(state));
+        result = items_to_cons(opr, result, scan_inner_expr(state));
     }
 
     return result;
@@ -437,26 +437,26 @@ function scan_inner_expr(state: InputState): U {
             case T_LTLT: {
                 const opr = clone_symbol_using_info(MATH_LCO, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, scan_power_expr(state));
+                result = items_to_cons(opr, result, scan_power_expr(state));
                 break;
             }
             case T_GTGT: {
                 const opr = clone_symbol_using_info(MATH_RCO, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, scan_power_expr(state));
+                result = items_to_cons(opr, result, scan_power_expr(state));
                 break;
             }
             case T_VBAR: {
                 const opr = clone_symbol_using_info(MATH_INNER, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, scan_power_expr(state));
+                result = items_to_cons(opr, result, scan_power_expr(state));
                 break;
             }
             default: {
                 state.expect(T_MIDDLE_DOT);
                 const opr = clone_symbol_using_info(MATH_INNER, state.tokenToSym());
                 state.advance();
-                result = makeList(opr, result, scan_power_expr(state));
+                result = items_to_cons(opr, result, scan_power_expr(state));
                 break;
             }
         }
@@ -494,7 +494,7 @@ function scan_power_expr(state: InputState): U {
         if (stack.length > 0) {
             const opr = assert_sym(stack.pop() as U);
             const lhs = stack.pop() as U;
-            stack.push(makeList(clone_symbol_using_info(MATH_POW, opr), lhs, rhs));
+            stack.push(items_to_cons(clone_symbol_using_info(MATH_POW, opr), lhs, rhs));
         }
         else {
             return rhs;
@@ -622,7 +622,7 @@ function scan_factor(state: InputState): U {
 
     while (state.text === '!') {
         state.advance();
-        result = makeList(FACTORIAL, result);
+        result = items_to_cons(FACTORIAL, result);
     }
 
     // in theory we could already count the
@@ -632,7 +632,7 @@ function scan_factor(state: InputState): U {
     // the parser is not the place.
     while (state.tokenCharCode() === TRANSPOSE_CHAR_CODE) {
         state.advance();
-        result = makeList(TRANSPOSE, result);
+        result = items_to_cons(TRANSPOSE, result);
     }
 
     return result;
@@ -652,7 +652,7 @@ function scan_index(indexable: U, state: InputState): U {
     state.expect(T_RSQB);
     state.advance();
 
-    return makeList(...items);
+    return items_to_cons(...items);
 }
 
 function addSymbolRightOfAssignment(state: InputState, theSymbol: string): void {
@@ -905,7 +905,7 @@ function scan_function_call_with_function_name(state: InputState): U {
     }
 
     // console.lg('-- scan_function_call_with_function_name end');
-    return makeList(...fcall);
+    return items_to_cons(...fcall);
 }
 
 function scan_function_call_without_function_name(lhs: U, state: InputState): U {
@@ -934,7 +934,7 @@ function scan_function_call_without_function_name(lhs: U, state: InputState): U 
     state.expect(T_RPAR);
     state.advance();
 
-    return makeList(...fcall);
+    return items_to_cons(...fcall);
 }
 
 /**

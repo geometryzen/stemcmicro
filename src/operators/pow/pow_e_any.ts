@@ -2,11 +2,11 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { is_imu } from "../../predicates/is_imu";
+import { is_imu } from "../imu/is_imu";
 import { MATH_ADD, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -78,18 +78,18 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                     return [TFLAG_DIFF, negOne];
                 }
                 if ($.isReal(expo_rhs)) {
-                    const c = makeList(MATH_COS, expo_rhs);
-                    const s = makeList(MATH_SIN, expo_rhs);
-                    const i_times_s = makeList(MATH_MUL, imu, s);
-                    return [TFLAG_DIFF, makeList(MATH_ADD, c, i_times_s)];
+                    const c = items_to_cons(MATH_COS, expo_rhs);
+                    const s = items_to_cons(MATH_SIN, expo_rhs);
+                    const i_times_s = items_to_cons(MATH_MUL, imu, s);
+                    return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, i_times_s)];
                 }
             }
             if (is_cons(expo_lhs) && is_imu_times_pi(expo_lhs)) {
                 if ($.isReal(expo_rhs)) {
-                    const c = makeList(MATH_COS, expo_rhs);
-                    const s = makeList(MATH_SIN, expo_rhs);
-                    const i_times_s = makeList(MATH_MUL, imu, s);
-                    return [TFLAG_DIFF, makeList(MATH_ADD, c, i_times_s)];
+                    const c = items_to_cons(MATH_COS, expo_rhs);
+                    const s = items_to_cons(MATH_SIN, expo_rhs);
+                    const i_times_s = items_to_cons(MATH_MUL, imu, s);
+                    return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, i_times_s)];
                 }
             }
         }

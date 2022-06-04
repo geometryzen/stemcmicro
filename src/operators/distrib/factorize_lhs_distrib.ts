@@ -1,7 +1,7 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -56,8 +56,8 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const A = lhs.rhs;
         const B = rhs.rhs;
         const X = lhs.lhs;
-        const A_op2_B = $.valueOf(makeList(op2, A, B));
-        return [TFLAG_DIFF, $.valueOf(makeList(op1, X, A_op2_B))];
+        const A_op2_B = $.valueOf(items_to_cons(op2, A, B));
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(op1, X, A_op2_B))];
     }
 }
 

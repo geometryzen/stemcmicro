@@ -5,7 +5,7 @@ import { factorial } from './factorial';
 import { is_quarter_turn } from './is_quarter_turn';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { is_add } from './runtime/helpers';
-import { integer, negOne, one, zero } from './tree/rat/Rat';
+import { wrap_as_int, negOne, one, zero } from './tree/rat/Rat';
 import { car, cdr, is_cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
@@ -43,12 +43,12 @@ export function power_sum(n: number, p1: U, $: ExtensionEnv): U {
     p1 = cdr(p1);
     for (let i = 0; i < k; i++) {
         for (let j = 0; j <= n; j++) {
-            powers[i * (n + 1) + j] = $.power(car(p1), integer(j));
+            powers[i * (n + 1) + j] = $.power(car(p1), wrap_as_int(j));
         }
         p1 = cdr(p1);
     }
 
-    p1 = factorial(integer(n));
+    p1 = factorial(wrap_as_int(n));
 
     for (let i = 0; i < k; i++) {
         a[i] = 0;
@@ -96,7 +96,7 @@ function multinomial_sum(k: number, n: number, a: number[], i: number, m: number
     // coefficient
     let temp = p1;
     for (let j = 0; j < k; j++) {
-        temp = $.divide(temp, factorial(integer(a[j])));
+        temp = $.divide(temp, factorial(wrap_as_int(a[j])));
     }
 
     // factors

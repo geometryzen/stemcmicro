@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { print_expr, print_list } from "../src/print";
-import { createSymEngine } from "../src/runtime/symengine";
+import { render_as_infix, render_as_sexpr } from "../src/print";
+import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("simplify", function () {
@@ -8,11 +8,11 @@ describe("simplify", function () {
         const lines: string[] = [
             `simplify(exp(-3/4*i*pi))`
         ];
-        const engine = createSymEngine();
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "(power e (* -3/4 i pi))");
-        assert.strictEqual(print_expr(actual, $), "e**(-3/4*i*pi)");
+        assert.strictEqual(render_as_sexpr(actual, $), "(power e (* -3/4 i pi))");
+        assert.strictEqual(render_as_infix(actual, $), "e**(-3/4*i*pi)");
 
         engine.release();
     });
@@ -21,11 +21,11 @@ describe("simplify", function () {
         const lines: string[] = [
             `simplify(cos(x)^2+sin(x)^2)`
         ];
-        const engine = createSymEngine({ useCaretForExponentiation: true });
+        const engine = create_engine({ useCaretForExponentiation: true });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(print_list(actual, $), "1");
-        assert.strictEqual(print_expr(actual, $), "1");
+        assert.strictEqual(render_as_sexpr(actual, $), "1");
+        assert.strictEqual(render_as_infix(actual, $), "1");
 
         engine.release();
     });

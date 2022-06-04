@@ -6,7 +6,7 @@ import { expsin } from './expsin';
 import { COS, COSH, SIN, SINH, TAN, TANH } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { half, one, two } from './tree/rat/Rat';
 import { car, is_cons, U } from './tree/tree';
 

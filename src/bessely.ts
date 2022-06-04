@@ -4,8 +4,8 @@ import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
 import { BESSELY } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
 import { negOne } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -40,7 +40,7 @@ function yybessely(X: U, N: U, $: ExtensionEnv): U {
 
     if (is_flt(X) && !isNaN(n)) {
         const d = yn(n, X.d);
-        return flt(d);
+        return wrap_as_flt(d);
     }
 
     if (is_negative_term(N)) {

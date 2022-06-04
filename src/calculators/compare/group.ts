@@ -1,12 +1,12 @@
-import { is_blade } from "../../operators/blade/BladeExtension";
+import { is_blade } from "../../operators/blade/is_blade";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_imu } from "../../predicates/is_imu";
-import { is_flt } from "../../tree/flt/is_flt";
-import { is_rat } from "../../tree/rat/is_rat";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_imu } from "../../operators/imu/is_imu";
+import { is_flt } from "../../operators/flt/is_flt";
+import { is_rat } from "../../operators/rat/is_rat";
+import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../../tree/tree";
-import { is_uom } from "../../tree/uom/is_uom";
+import { is_uom } from "../../operators/uom/is_uom";
 
 const GROUP_NIL = 0;
 const GROUP_NUM = 1;

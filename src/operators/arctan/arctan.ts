@@ -7,8 +7,8 @@ import { numerator } from '../numerator/numerator';
 import { ARCTAN, COS, POWER, SIN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_multiply, is_power } from '../../runtime/helpers';
-import { flt } from '../../tree/flt/Flt';
-import { is_flt } from '../../tree/flt/is_flt';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { is_flt } from '../flt/is_flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { third, zero } from '../../tree/rat/Rat';
 import { car, cdr, U } from '../../tree/tree';
@@ -38,7 +38,7 @@ export function arctan(x: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(x)) {
-        return flt(Math.atan(x.d));
+        return wrap_as_flt(Math.atan(x.d));
     }
 
     if ($.isZero(x)) {

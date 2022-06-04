@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLA
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
@@ -35,7 +35,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];
     }
 }
 

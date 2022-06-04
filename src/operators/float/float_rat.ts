@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { flt } from "../../tree/flt/Flt";
-import { is_rat } from "../../tree/rat/is_rat";
+import { wrap_as_flt } from "../../tree/flt/Flt";
+import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -17,7 +17,7 @@ class FloatRat extends Function1<Rat> implements Operator<U> {
         super('float_rat', new Sym('float'), is_rat, $);
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
-        return [TFLAG_DIFF, flt(arg.toNumber(), arg.pos, arg.end)];
+        return [TFLAG_DIFF, wrap_as_flt(arg.toNumber(), arg.pos, arg.end)];
     }
 }
 

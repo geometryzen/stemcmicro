@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
-import { is_num } from "../../predicates/is_num";
+import { is_num } from "../../operators/num/is_num";
 import { Num } from "../../tree/num/Num";
 import { is_cons, U } from "../../tree/tree";
 import { add_num_num } from "../add/add_num_num";

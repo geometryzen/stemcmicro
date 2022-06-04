@@ -1,8 +1,7 @@
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, PHASE_EXPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 
@@ -40,26 +39,13 @@ class Explicator extends FunctionVarArgs implements Operator<Cons> {
     constructor(name: string, opr: Sym, private readonly id: Rat, $: ExtensionEnv) {
         super(name, opr, $);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: U, costs: CostTable, depth: number): number {
-        if (is_cons(expr)) {
-            const $ = this.$;
-            const childDepth = depth + 1;
-            let cost = $.cost(expr.head, childDepth);
-            for (const arg of expr.tail()) {
-                cost += this.$.cost(arg, childDepth);
-            }
-            return cost;
-        }
-        throw new Error("Method not implemented.");
-    }
     transform(expr: U): [TFLAGS, U] {
         if (is_cons(expr) && is_opr(this.opr, expr) && expr.length > 3) {
             const $ = this.$;
             let argList = expr.argList;
             let retval: U = this.id;
             while (is_cons(argList)) {
-                retval = makeList(this.opr, retval, argList.car);
+                retval = items_to_cons(this.opr, retval, argList.car);
                 argList = argList.argList;
             }
             return [TFLAG_DIFF, $.valueOf(retval)];

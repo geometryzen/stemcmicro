@@ -1,6 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { imu } from "../../env/imu";
 import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../../predicates/is_imu";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_POW } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -32,8 +33,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         return false;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
+        const $ = this.$;
         if (rhs.isTwo()) {
             return [TFLAG_DIFF, negOne];
+        }
+        else if (rhs.isMinusOne()) {
+            return [TFLAG_DIFF, $.negate(imu)];
         }
         else {
             return [TFLAG_NONE, expr];

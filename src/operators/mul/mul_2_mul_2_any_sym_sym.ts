@@ -1,6 +1,5 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -42,9 +41,6 @@ class Op extends Function2X<BCons<Sym, U, Sym>, Sym> implements Operator<BCons<S
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_sym_sym', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_sym, symbols_must_exchange($), $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
-    }
-    cost(expr: BCons<Sym, BCons<Sym, U, Sym>, Sym>, costs: CostTable, depth: number): number {
-        return super.cost(expr, costs, depth) + 1;
     }
     transform2(opr: Sym, lhs: BCons<Sym, U, Sym>, rhs: Sym, orig: BCons<Sym, BCons<Sym, U, Sym>, Sym>): [TFLAGS, U] {
         const $ = this.$;

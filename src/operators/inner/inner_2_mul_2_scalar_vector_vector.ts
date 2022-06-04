@@ -2,7 +2,7 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_CONJ } from "../conj/MATH_CONJ";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
@@ -47,9 +47,9 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const a = lhs.lhs;
         const x = lhs.rhs;
         const y = rhs;
-        const xy = $.valueOf(makeList(opr, x, y));
-        const ca = $.valueOf(makeList(MATH_CONJ, a));
-        const retval = $.valueOf(makeList(lhs.opr, ca, xy));
+        const xy = $.valueOf(items_to_cons(opr, x, y));
+        const ca = $.valueOf(items_to_cons(MATH_CONJ, a));
+        const retval = $.valueOf(items_to_cons(lhs.opr, ca, xy));
         return [TFLAG_DIFF, retval];
     }
 }

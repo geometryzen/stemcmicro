@@ -4,11 +4,11 @@ import { simplify } from './operators/simplify/simplify';
 import { MSIGN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
-import { is_flt } from './tree/flt/is_flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr, cddr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { one, zero } from './tree/rat/Rat';
-import { car, cdr, Cons, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 
 // If the number of args is odd then the last arg is the default result.
 // Works like a switch statement. Could also be used for piecewise
@@ -24,7 +24,7 @@ function _test(p1: U, $: ExtensionEnv): U {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (NIL === cdr(p1)) {
+        if (nil === cdr(p1)) {
             return $.valueOf(car(p1)); // default case
         }
 

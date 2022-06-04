@@ -1,4 +1,5 @@
 /**
+ * @hidden
  * Special methods for operators on elements of abelian groups (additive).
  * This is provided for interface consistency.
  * It may not adhere to strict mathematical definitions.

@@ -5,7 +5,7 @@ import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -46,7 +46,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const Y = lhs.rhs;
         const Z = rhs;
         const mnA = do_factorize_rhs(Y, Z, one, orig, $)[1];
-        return [TFLAG_DIFF, $.valueOf(makeList(MATH_ADD, X, mnA))];
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_ADD, X, mnA))];
     }
 }
 

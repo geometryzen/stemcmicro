@@ -1,4 +1,3 @@
-import { CostTable } from "../../env/CostTable";
 import { Extension, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { U } from "../../tree/tree";
 
@@ -28,9 +27,6 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     constructor(private readonly extension: Extension<T>, private readonly $: ExtensionEnv) {
         // Nothing going on here because this is a crude adaption of the Extension.
         // This would be a good place to cache symbols that will be needed later.
-    }
-    cost(expr: T, costs: CostTable, depth: number): number {
-        return this.extension.cost(expr, costs, depth, this.$);
     }
     get key(): string | undefined {
         return this.extension.key;

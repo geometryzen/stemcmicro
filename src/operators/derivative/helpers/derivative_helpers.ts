@@ -38,9 +38,9 @@ import { sine } from '../../sin/sin';
 import { ysinh } from '../../../sinh';
 import { subst } from '../../../subst';
 import { caddr, cadr } from '../../../tree/helpers';
-import { integer, negOne, one, two, zero } from '../../../tree/rat/Rat';
+import { wrap_as_int, negOne, one, two, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
-import { car, cdr, is_cons, NIL, U } from '../../../tree/tree';
+import { car, cdr, is_cons, nil, U } from '../../../tree/tree';
 import { simplify } from '../../simplify/simplify';
 import { is_sym } from '../../sym/is_sym';
 import { derivative_wrt } from '../derivative_wrt';
@@ -194,7 +194,7 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
 function dfunction(p1: U, p2: Sym, $: ExtensionEnv): U {
     const p3 = cdr(p1); // p3 is the argument list for the function
 
-    if (NIL === p3 || p3.contains(p2)) {
+    if (nil === p3 || p3.contains(p2)) {
         return makeList(MATH_DERIVATIVE, p1, p2);
     }
     return zero;
@@ -212,7 +212,7 @@ function dcos(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 function dtan(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative_wrt(cadr(p1), p2, $);
-    return $.multiply(deriv, $.power($.cos(cadr(p1)), integer(-2)));
+    return $.multiply(deriv, $.power($.cos(cadr(p1)), wrap_as_int(-2)));
 }
 
 function darcsin(p1: U, p2: Sym, $: ExtensionEnv): U {
@@ -260,7 +260,7 @@ function dcosh(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 function dtanh(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative_wrt(cadr(p1), p2, $);
-    return $.multiply(deriv, $.power(ycosh(cadr(p1), $), integer(-2)));
+    return $.multiply(deriv, $.power(ycosh(cadr(p1), $), wrap_as_int(-2)));
 }
 
 function darcsinh(p1: U, p2: Sym, $: ExtensionEnv): U {
@@ -327,7 +327,7 @@ export function derfc(p1: U, p2: Sym, $: ExtensionEnv): U {
                 exp($.multiply($.power(cadr(p1), two), negOne), $),
                 $.power(DynamicConstants.Pi(), rational(-1, 2))
             ),
-            integer(-2)
+            wrap_as_int(-2)
         ),
         deriv
     );

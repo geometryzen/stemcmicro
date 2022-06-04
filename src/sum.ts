@@ -4,7 +4,7 @@ import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { evaluate_integer } from './scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from './tree/helpers';
-import { integer, zero } from './tree/rat/Rat';
+import { wrap_as_int, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 // 'sum' function
@@ -48,7 +48,7 @@ function _sum(p1: U, $: ExtensionEnv): U {
     let temp: U = zero;
     try {
         for (let i = j; i <= k; i++) {
-            $.setBinding(index, integer(i));
+            $.setBinding(index, wrap_as_int(i));
             temp = $.add(temp, $.valueOf(body));
         }
     }

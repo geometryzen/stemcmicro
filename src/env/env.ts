@@ -5,7 +5,7 @@ import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { makeList } from "../makeList";
 import { yyarg } from "../operators/arg/arg";
-import { is_blade } from "../operators/blade/BladeExtension";
+import { is_blade } from "../operators/blade/is_blade";
 import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
 import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
 import { denominator } from "../operators/denominator/denominator";
@@ -16,11 +16,9 @@ import { associative_implicator } from "../operators/helpers/associative_implica
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { numerator } from "../operators/numerator/numerator";
 import { is_sym } from "../operators/sym/is_sym";
-import { SymPattern } from "../operators/sym/SymPattern";
-import { Pattern } from "../patterns/Pattern";
-import { is_imu } from "../predicates/is_imu";
-import { is_num } from "../predicates/is_num";
-import { print_expr } from "../print";
+import { is_imu } from "../operators/imu/is_imu";
+import { is_num } from "../operators/num/is_num";
+import { render_as_infix } from "../print";
 import { FUNCTION } from "../runtime/constants";
 import { implicate } from "../runtime/execute";
 import { is_add } from "../runtime/helpers";
@@ -28,17 +26,16 @@ import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER, MATH_POW } from "../runtime
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { VERSION_LATEST } from "../runtime/version";
-import { is_boo } from "../tree/boo/is_boo";
-import { is_flt } from "../tree/flt/is_flt";
-import { is_rat } from "../tree/rat/is_rat";
+import { is_boo } from "../operators/boo/is_boo";
+import { is_flt } from "../operators/flt/is_flt";
+import { is_rat } from "../operators/rat/is_rat";
 import { negOne, Rat, zero } from "../tree/rat/Rat";
-import { is_str } from "../tree/str/is_str";
+import { is_str } from "../operators/str/is_str";
 import { Sym } from "../tree/sym/Sym";
-import { is_tensor } from "../tree/tensor/is_tensor";
+import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
-import { is_uom } from "../tree/uom/is_uom";
+import { is_uom } from "../operators/uom/is_uom";
 import { Eval_user_function } from "../userfunc";
-import { CostTable } from "./CostTable";
 import { diffFlag, ExtensionEnv, FEATURE, haltFlag, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
 export interface EnvOptions {
@@ -97,8 +94,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
 
     const symTab: SymTab = createSymTab();
 
-    const costTable = new CostTable();
-
     const builders: OperatorBuilder<U>[] = [];
     /**
      * The operators in buckets that are determined by the phase and operator.
@@ -150,12 +145,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
-        addCost(pattern: Pattern, value: number): void {
-            costTable.addCost(pattern, value);
-        },
-        setCost(sym: Sym, cost: number): void {
-            costTable.addCost(new SymPattern(sym), cost);
-        },
         setField(kind: 'R' | undefined): void {
             fieldKind = kind;
         },
@@ -256,9 +245,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             else {
                 return cosine_of_angle(x, $);
             }
-        },
-        cost(expr: U, depth: number): number {
-            return $.operatorFor(expr).cost(expr, costTable, depth);
         },
         defineKey(sym: Sym): Sym {
             return symTab.defineKey(sym);
@@ -526,7 +512,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return selectOperator(expr.name, expr);
             }
             else {
-                throw new SystemError(`operatorFor ${print_expr(expr, $)}`);
+                throw new SystemError(`operatorFor ${render_as_infix(expr, $)}`);
             }
         },
         outer(lhs: U, rhs: U): U {
@@ -695,7 +681,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 return [TFLAG_NONE, expr];
             }
             else {
-                throw new SystemError(`transform ${print_expr(expr, $)}`);
+                throw new SystemError(`transform ${render_as_infix(expr, $)}`);
             }
         },
         valueOf(expr: U): U {

@@ -3,7 +3,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAG_HAL
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, makeList, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { value_of } from "../helpers/valueOf";
@@ -12,7 +12,7 @@ import { is_sym } from "../sym/is_sym";
 function canoncal_reorder_inner_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
     switch (compare_sym_sym(lhs, rhs)) {
         case SIGN_GT: {
-            return [TFLAG_DIFF, value_of(makeList(opr, rhs, lhs), $)];
+            return [TFLAG_DIFF, value_of(items_to_cons(opr, rhs, lhs), $)];
         }
         default: {
             return [TFLAG_HALT, orig];
@@ -54,7 +54,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             if ($.treatAsScalar(rhs)) {
                 // TODO: This is incorrect because 
                 // scalar | scalar
-                return [TFLAG_DIFF, value_of(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
+                return [TFLAG_DIFF, value_of(items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
             }
             else if ($.treatAsVector(rhs)) {
                 // scalar | vector
@@ -75,7 +75,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                 if ($.isFactoring()) {
                     if (lhs.equals(rhs)) {
                         // x | x = x * x - x ^ x = x * x
-                        return [TFLAG_DIFF, makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, lhs)];
+                        return [TFLAG_DIFF, items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, lhs)];
                     }
                 }
                 return canoncal_reorder_inner_factors_sym_sym(opr, lhs, rhs, expr, $);
@@ -88,7 +88,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         else {
             if ($.treatAsScalar(rhs)) {
                 // something | scalar
-                return [TFLAG_DIFF, value_of(makeList(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
+                return [TFLAG_DIFF, value_of(items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
             }
             else if ($.treatAsVector(rhs)) {
                 // something | vector

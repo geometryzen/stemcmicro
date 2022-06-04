@@ -1,6 +1,6 @@
-import { flt } from "../../tree/flt/Flt";
+import { wrap_as_flt } from "../../tree/flt/Flt";
 import { Num } from "../../tree/num/Num";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../../operators/rat/is_rat";
 
 export function add_num_num(lhs: Num, rhs: Num): Num {
     if (is_rat(lhs)) {
@@ -10,14 +10,14 @@ export function add_num_num(lhs: Num, rhs: Num): Num {
         else {
             const a = lhs.toNumber();
             const b = rhs.d;
-            return flt(a + b);
+            return wrap_as_flt(a + b);
         }
     }
     else {
         if (is_rat(rhs)) {
             const a = lhs.d;
             const b = rhs.toNumber();
-            return flt(a + b);
+            return wrap_as_flt(a + b);
         }
         else {
             return lhs.add(rhs);

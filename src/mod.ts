@@ -4,13 +4,13 @@ import { is_rat_integer } from './is_rat_integer';
 import { makeList } from './makeList';
 import { mmod } from './mmul';
 import { nativeInt } from './nativeInt';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { MOD } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';
-import { is_flt } from './tree/flt/is_flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
-import { integer, Rat } from './tree/rat/Rat';
+import { wrap_as_int, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 export function Eval_mod(p1: U, $: ExtensionEnv): void {
@@ -33,7 +33,7 @@ function mod(p1: U, p2: U, $: ExtensionEnv): U {
         if (isNaN(n)) {
             halt('mod function: cannot convert float value to integer');
         }
-        p1 = integer(n);
+        p1 = wrap_as_int(n);
     }
 
     if (is_flt(p2)) {
@@ -41,7 +41,7 @@ function mod(p1: U, p2: U, $: ExtensionEnv): U {
         if (isNaN(n)) {
             halt('mod function: cannot convert float value to integer');
         }
-        p2 = integer(n);
+        p2 = wrap_as_int(n);
     }
 
     if (!is_rat_integer(p1) || !is_rat_integer(p2)) {

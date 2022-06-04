@@ -7,7 +7,7 @@ import { is_add } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { sine } from './operators/sin/sin';
 import { cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { half, negOne, Rat } from './tree/rat/Rat';
 import { car, cdr, U } from './tree/tree';
 

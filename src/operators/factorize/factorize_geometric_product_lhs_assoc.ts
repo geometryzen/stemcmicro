@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -58,7 +58,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const X = lhs.lhs;
         const a = lhs.rhs.lhs;
         const b = lhs.rhs.rhs;
-        return [TFLAG_DIFF, makeList(opr, X, makeList(MATH_MUL, a, b))];
+        return [TFLAG_DIFF, items_to_cons(opr, X, items_to_cons(MATH_MUL, a, b))];
     }
 }
 

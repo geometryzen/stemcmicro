@@ -1,10 +1,9 @@
-import { CostTable } from "../../env/CostTable";
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../../tree/flt/is_flt";
+import { is_flt } from "../flt/is_flt";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -33,10 +32,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('mul_2_sym_flt', MATH_MUL, is_sym, is_flt, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_FLT);
-    }
-    cost(expr: EXP, costs: CostTable, depth: number): number {
-        const baseCost = super.cost(expr, costs, depth);
-        return baseCost + 1;
     }
     isScalar(expr: EXP): boolean {
         return this.$.isScalar(expr.lhs);

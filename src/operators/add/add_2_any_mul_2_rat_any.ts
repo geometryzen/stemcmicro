@@ -1,10 +1,10 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../../tree/rat/is_rat";
+import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -38,7 +38,7 @@ class Op extends Function2X<U, BCons<Sym, Rat, U>> implements Operator<Cons> {
         if (succ.isOne()) {
             return [TFLAG_DIFF, lhs];
         }
-        return [TFLAG_DIFF, makeList(rhs.opr, succ, lhs)];
+        return [TFLAG_DIFF, items_to_cons(rhs.opr, succ, lhs)];
     }
 }
 

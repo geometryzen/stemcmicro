@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -6,7 +6,8 @@ import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { compare_blade_blade, is_blade } from "../blade/BladeExtension";
+import { compare_blade_blade } from "../blade/BladeExtension";
+import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 

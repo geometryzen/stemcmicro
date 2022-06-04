@@ -5,21 +5,21 @@ import { abs } from './operators/abs/abs';
 import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
 import { is_sym } from './operators/sym/is_sym';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
-import { is_num } from './predicates/is_num';
-import { print_expr } from './print';
+import { is_num } from './operators/num/is_num';
+import { render_as_infix } from './print';
 import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER, SYM_MATH_COMPONENT } from './runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from './runtime/helpers';
 import { number_to_floating_point_string } from './runtime/number_to_floating_point_string';
 import { Flt } from './tree/flt/Flt';
-import { is_flt } from './tree/flt/is_flt';
+import { is_flt } from './operators/flt/is_flt';
 import { caar, caddr, cadr } from './tree/helpers';
 import { Num } from './tree/num/Num';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { one, Rat } from './tree/rat/Rat';
-import { is_str } from './tree/str/is_str';
+import { is_str } from './operators/str/is_str';
 import { Str } from './tree/str/Str';
 import { Sym } from './tree/sym/Sym';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, cdr, is_cons, U } from './tree/tree';
 
@@ -106,7 +106,7 @@ export function print2dascii(p: U, $: ExtensionEnv): string {
     const [h, w, y] = Array.from(get_size(0, yindex));
 
     if (w > 100) {
-        print_expr(p, $);
+        render_as_infix(p, $);
         return '';
     }
 

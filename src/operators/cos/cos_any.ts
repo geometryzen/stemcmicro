@@ -1,10 +1,10 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { MATH_LT } from "../../runtime/ns_math";
-import { is_boo } from "../../tree/boo/is_boo";
+import { is_boo } from "../boo/is_boo";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { makeList, U } from "../../tree/tree";
+import { items_to_cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
@@ -29,11 +29,11 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         // console.log(`${this.name} arg=${print_expr(arg, this.$)}`);
         const $ = this.$;
-        const arg_LT_0 = $.valueOf(makeList(MATH_LT, arg, zero));
+        const arg_LT_0 = $.valueOf(items_to_cons(MATH_LT, arg, zero));
         if (is_boo(arg_LT_0)) {
             if (arg_LT_0.isTrue()) {
                 const A = $.negate(arg);
-                const B = $.valueOf(makeList(MATH_COS, A));
+                const B = $.valueOf(items_to_cons(MATH_COS, A));
                 return [TFLAG_DIFF, B];
             }
             else {

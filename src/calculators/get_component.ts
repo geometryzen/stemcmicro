@@ -7,8 +7,8 @@
 
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { is_integer_or_integer_float } from "../is";
-import { is_rat } from "../tree/rat/is_rat";
-import { is_tensor } from "../tree/tensor/is_tensor";
+import { is_rat } from "../operators/rat/is_rat";
+import { is_tensor } from "../operators/tensor/is_tensor";
 import { Tensor } from "../tree/tensor/Tensor";
 import { Cons, is_cons, is_nil, U } from "../tree/tree";
 import { cadnr } from "./cadnr";

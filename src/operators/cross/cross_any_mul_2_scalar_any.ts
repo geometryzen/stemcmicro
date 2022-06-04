@@ -1,7 +1,7 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -33,8 +33,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const a = rhs.lhs;
         const X = lhs;
         const Y = rhs.rhs;
-        const crossXY = $.valueOf(makeList(opr, X, Y));
-        const retval = $.valueOf(makeList(MATH_MUL, a, crossXY));
+        const crossXY = $.valueOf(items_to_cons(opr, X, Y));
+        const retval = $.valueOf(items_to_cons(MATH_MUL, a, crossXY));
         return [TFLAG_DIFF, retval];
     }
 }

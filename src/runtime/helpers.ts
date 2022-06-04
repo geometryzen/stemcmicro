@@ -1,7 +1,7 @@
 import { MATH_ABS } from "../operators/abs/MATH_ABS";
-import { is_num } from "../predicates/is_num";
+import { is_num } from "../operators/num/is_num";
 import { is_opr_eq } from "../predicates/is_opr_eq";
-import { is_tensor } from "../tree/tensor/is_tensor";
+import { is_tensor } from "../operators/tensor/is_tensor";
 import { Tensor } from "../tree/tensor/Tensor";
 import { Num } from "../tree/num/Num";
 import { Sym } from "../tree/sym/Sym";

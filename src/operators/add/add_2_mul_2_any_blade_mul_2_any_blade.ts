@@ -1,10 +1,11 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { compare_blade_blade, is_blade } from "../blade/BladeExtension";
+import { compare_blade_blade } from "../blade/BladeExtension";
+import { is_blade } from "../blade/is_blade";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -47,7 +48,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
-        const retval = $.valueOf(makeList(opr, rhs, lhs));
+        const retval = $.valueOf(items_to_cons(opr, rhs, lhs));
         return [TFLAG_DIFF, retval];
     }
 }

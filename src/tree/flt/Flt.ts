@@ -1,8 +1,14 @@
 import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
-export function flt(d: number, pos?: number, end?: number): Flt {
-    return new Flt(d, pos, end);
+/**
+ * Constructs a floating point number object from a number primitive.
+ * @param value The floating point number value.
+ * @param pos The start position of the number in the source text.
+ * @param end The end position of the number in the source text.
+ */
+export function wrap_as_flt(value: number, pos?: number, end?: number): Flt {
+    return new Flt(value, pos, end);
 }
 
 export class Flt extends Atom {
@@ -16,7 +22,7 @@ export class Flt extends Atom {
         return this.d >= 0 ? this : this.neg();
     }
     add(rhs: Flt): Flt {
-        return flt(this.d + rhs.d);
+        return wrap_as_flt(this.d + rhs.d);
     }
     compare(other: Flt): 1 | -1 | 0 {
         if (this.d > other.d) {
@@ -60,13 +66,10 @@ export class Flt extends Atom {
         return this.d === 0;
     }
     mul(rhs: Flt): Flt {
-        return flt(this.d * rhs.d);
+        return wrap_as_flt(this.d * rhs.d);
     }
     neg(): Flt {
-        return flt(-this.d);
-    }
-    toCtorString(): string {
-        return `${this.name}(${this.d})`;
+        return wrap_as_flt(-this.d);
     }
     toInfixString(): string {
         return `${this.d}`;
@@ -78,14 +81,13 @@ export class Flt extends Atom {
         return this.d;
     }
     toString(): string {
-        // TODO: Serialize in floating point notation, be done with Flt(...) wrapper.
-        return `Flt(${this.d})`;
+        return `${this.name}(${this.d})`;
     }
 }
 
-export const zeroAsDouble = flt(0.0);
-export const oneAsDouble = flt(1.0);
-export const piAsDouble = flt(Math.PI);
-export const εAsDouble = flt(1e-6);
-export const eAsDouble = flt(Math.E);
-export const negOneAsDouble = flt(-1.0);
+export const zeroAsDouble = wrap_as_flt(0.0);
+export const oneAsDouble = wrap_as_flt(1.0);
+export const piAsDouble = wrap_as_flt(Math.PI);
+export const εAsDouble = wrap_as_flt(1e-6);
+export const eAsDouble = wrap_as_flt(Math.E);
+export const negOneAsDouble = wrap_as_flt(-1.0);

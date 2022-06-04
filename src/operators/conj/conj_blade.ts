@@ -1,8 +1,8 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/BladeExtension";
+import { is_blade } from "../blade/is_blade";
 import { Function1 } from "../helpers/Function1";
 import { MATH_CONJ } from "./MATH_CONJ";
 

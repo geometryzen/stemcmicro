@@ -5,7 +5,7 @@ import { INNER, SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from '../../runtime/helpers';
 import { stack_push } from '../../runtime/stack';
-import { car, cdr, is_cons, NIL, U } from '../../tree/tree';
+import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 
 /* dot =====================================================================
 
@@ -93,12 +93,12 @@ export function Eval_inner(p1: U, $: ExtensionEnv): void {
     const args: U[] = [];
     args.push(car(cdr(p1)));
     const secondArgument = car(cdr(cdr(p1)));
-    if (NIL === secondArgument) {
+    if (nil === secondArgument) {
         halt('pattern needs at least a template and a transformed version');
     }
 
     let moreArgs = cdr(cdr(p1));
-    while (NIL !== moreArgs) {
+    while (nil !== moreArgs) {
         args.push(car(moreArgs));
         moreArgs = cdr(moreArgs);
     }
@@ -216,7 +216,7 @@ export function get_innerprod_factors(tree: U, factors_accumulator: U[]): void {
         return;
     }
 
-    if (NIL === cdr(tree)) {
+    if (nil === cdr(tree)) {
         get_innerprod_factors(car(tree), factors_accumulator);
         return;
     }
@@ -232,7 +232,7 @@ export function get_innerprod_factors(tree: U, factors_accumulator: U[]): void {
 }
 
 function add_factor_to_accumulator(tree: U, factors_accumulator: U[]): void {
-    if (NIL !== tree) {
+    if (nil !== tree) {
         // console.lg ">> adding to factors_accumulator: " + tree
         factors_accumulator.push(tree);
     }

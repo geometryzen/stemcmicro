@@ -131,9 +131,6 @@ export class Tensor<T extends U = U> extends Atom {
     someElements(callbackfn: (value: T, index: number, array: T[]) => boolean): boolean {
         return this.elems.some(callbackfn);
     }
-    toCtorString(): string {
-        return `${this.name}(dims = ${this.dims}, elems = ${this.elems})`;
-    }
     toInfixString(): string {
         return '<tensor>';
     }

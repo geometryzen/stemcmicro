@@ -7,7 +7,7 @@ import { halt } from './runtime/defs';
 import { is_identity_matrix, is_inner_or_dot, is_inv, is_num_or_tensor_or_identity_matrix } from './runtime/helpers';
 import { is_square_matrix } from './tensor';
 import { Err } from './tree/err/Err';
-import { is_tensor } from './tree/tensor/is_tensor';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { one, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';

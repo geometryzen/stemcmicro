@@ -1,4 +1,3 @@
-import { CostTable } from "../../env/CostTable";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
@@ -28,9 +27,6 @@ class Sqrt extends Function1<ARG> implements Operator<EXPR> {
     constructor($: ExtensionEnv) {
         super('sqrt_1_any', MATH_SQRT, is_any, $);
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
-    }
-    cost(expr: EXPR, costs: CostTable, depth: number): number {
-        return super.cost(expr, costs, depth) + 1 + 1;
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         return [TFLAG_DIFF, this.$.valueOf(makeList(MATH_POW, arg, half))];

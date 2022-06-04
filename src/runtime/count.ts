@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { is_sym } from "../operators/sym/is_sym";
-import { is_tensor } from '../tree/tensor/is_tensor';
+import { is_tensor } from '../operators/tensor/is_tensor';
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, U } from '../tree/tree';
 

@@ -1,7 +1,6 @@
-import { CostTable } from "../../env/CostTable";
-import { diffFlag, ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, makeList, U } from "../../tree/tree";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 import { BCons } from "./BCons";
 import { FunctionVarArgs } from "./FunctionVarArgs";
@@ -10,12 +9,6 @@ import { GUARD } from "./GUARD";
 export abstract class Function2<L extends U, R extends U> extends FunctionVarArgs {
     constructor(name: string, opr: Sym, private readonly guardL: GUARD<U, L>, private readonly guardR: GUARD<U, R>, $: ExtensionEnv) {
         super(name, opr, $);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cost(expr: BCons<Sym, L, R>, costs: CostTable, depth: number): number {
-        const $ = this.$;
-        const childDepth = depth + 1;
-        return costs.getCost(expr, $) + $.cost(expr.opr, childDepth) + $.cost(expr.lhs, childDepth) + $.cost(expr.rhs, childDepth);
     }
     isKind(expr: U): boolean {
         const m = this.match(expr);
@@ -72,7 +65,7 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
             }
             */
             if (diffFlag(flagsL) || diffFlag(flagsR)) {
-                return [TFLAG_DIFF, $.valueOf(makeList(m.opr, lhs, rhs))];
+                return [TFLAG_DIFF, $.valueOf(items_to_cons(m.opr, lhs, rhs))];
             }
             else {
                 return this.transform2(m.opr, m.lhs, m.rhs, m);

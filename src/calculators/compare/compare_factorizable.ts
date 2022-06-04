@@ -1,5 +1,6 @@
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { compare_blade_blade, is_blade } from "../../operators/blade/BladeExtension";
+import { compare_blade_blade } from "../../operators/blade/BladeExtension";
+import { is_blade } from "../../operators/blade/is_blade";
 import { BCons } from "../../operators/helpers/BCons";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

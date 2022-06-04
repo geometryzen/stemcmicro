@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_G
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, makeList, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -35,21 +35,21 @@ export function canonical_order_terms_3(t1: Sym, t2: Sym, t3: Sym, orig: EXPR, $
                 switch (t2.compare(t3)) {
                     case SIGN_GT: {
                         // t3, t1, t1
-                        const t3t2 = makeList(MATH_ADD, t3, t2);
-                        return [TFLAG_DIFF, hook(makeList(MATH_ADD, t3t2, t1), "A")];
+                        const t3t2 = items_to_cons(MATH_ADD, t3, t2);
+                        return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t3t2, t1), "A")];
                     }
                     default: {
                         // t2, (t1,t3)
                         switch (t3.compare(t1)) {
                             case SIGN_GT: {
                                 // t2, t1, t3
-                                const t2t1 = makeList(MATH_ADD, t2, t1);
-                                return [TFLAG_DIFF, hook(makeList(MATH_ADD, t2t1, t3), "B")];
+                                const t2t1 = items_to_cons(MATH_ADD, t2, t1);
+                                return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t2t1, t3), "B")];
                             }
                             default: {
                                 // t2, t3, t1
-                                const t2t3 = makeList(MATH_ADD, t2, t3);
-                                return [TFLAG_DIFF, hook($.valueOf(makeList(MATH_ADD, t2t3, t1)), "C")];
+                                const t2t3 = items_to_cons(MATH_ADD, t2, t3);
+                                return [TFLAG_DIFF, hook($.valueOf(items_to_cons(MATH_ADD, t2t3, t1)), "C")];
                             }
                         }
                     }
@@ -62,12 +62,12 @@ export function canonical_order_terms_3(t1: Sym, t2: Sym, t3: Sym, orig: EXPR, $
                         // (t1,t3), t2
                         switch (t3.compare(t1)) {
                             case SIGN_GT: {
-                                const t1t3 = makeList(MATH_ADD, t1, t3);
-                                return [TFLAG_DIFF, hook(makeList(MATH_ADD, t1t3, t2), "D")];
+                                const t1t3 = items_to_cons(MATH_ADD, t1, t3);
+                                return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t1t3, t2), "D")];
                             }
                             default: {
-                                const t3t1 = makeList(MATH_ADD, t3, t1);
-                                return [TFLAG_DIFF, hook(makeList(MATH_ADD, t3t1, t2), "E")];
+                                const t3t1 = items_to_cons(MATH_ADD, t3, t1);
+                                return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t3t1, t2), "E")];
                             }
                         }
                     }
@@ -77,8 +77,8 @@ export function canonical_order_terms_3(t1: Sym, t2: Sym, t3: Sym, orig: EXPR, $
                             return [TFLAG_NONE, hook(orig, "F")];
                         }
                         if ($.isAssocR(MATH_ADD)) {
-                            const t2t3 = makeList(MATH_ADD, t2, t3);
-                            return [TFLAG_DIFF, hook(makeList(MATH_ADD, t1, t2t3), "G")];
+                            const t2t3 = items_to_cons(MATH_ADD, t2, t3);
+                            return [TFLAG_DIFF, hook(items_to_cons(MATH_ADD, t1, t2t3), "G")];
                         }
                         return [TFLAG_NONE, hook(orig, "H")];
                     }

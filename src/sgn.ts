@@ -5,9 +5,9 @@ import { mmul } from './mmul';
 import { abs } from './operators/abs/abs';
 import { SGN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { is_flt } from './tree/flt/is_flt';
+import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
-import { is_rat } from './tree/rat/is_rat';
+import { is_rat } from './operators/rat/is_rat';
 import { negOne, one, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 

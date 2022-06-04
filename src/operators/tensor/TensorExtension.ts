@@ -1,12 +1,11 @@
-import { CostTable } from "../../env/CostTable";
-import { Extension, ExtensionEnv, TFLAG_NONE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
 import { subst } from "../../subst";
-import { is_tensor } from "../../tree/tensor/is_tensor";
+import { is_tensor } from "./is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
-import { Cons, NIL, U } from "../../tree/tree";
+import { Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
@@ -50,7 +49,7 @@ export function equal_mat_mat(p1: Tensor, p2: Tensor, $: ExtensionEnv): boolean 
 
 export function add_mat_mat(A: Tensor, B: Tensor, $: ExtensionEnv): Cons | Tensor {
     if (!A.sameDimensions(B)) {
-        return NIL;
+        return nil;
     }
     return A.map(function (a, i) {
         return $.add(a, B.elem(i));
@@ -90,17 +89,6 @@ class TensorExtension implements Extension<Tensor> {
     }
     get name(): string {
         return 'TensorExtension';
-    }
-    cost(expr: Tensor<U>, costs: CostTable, depth: number, $: ExtensionEnv): number {
-        // I'm adding 1 to the cost of the matrix for the matrix itself.
-        // We might favor operations that replace a matrix?
-        return expr
-            .mapElements(function (elem) {
-                return $.cost(elem, depth);
-            })
-            .reduce(function (prev, curr) {
-                return prev + curr;
-            }, 1);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Tensor): boolean {

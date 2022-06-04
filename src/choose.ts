@@ -1,7 +1,7 @@
 import { compare_num_num } from './calculators/compare/compare_num_num';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factorial } from './factorial';
-import { is_num } from './predicates/is_num';
+import { is_num } from './operators/num/is_num';
 import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';

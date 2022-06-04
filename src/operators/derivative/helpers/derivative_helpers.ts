@@ -35,7 +35,7 @@ import { is_abs, is_add } from '../../../runtime/helpers';
 // import { stack_push } from '../../runtime/stack';
 import { sgn } from '../../../sgn';
 import { sine } from '../../sin/sin';
-import { ysinh } from '../../sinh/sinh';
+import { sinh } from '../../sinh/sinh';
 import { subst } from '../../../subst';
 import { caddr, cadr } from '../../../tree/helpers';
 import { wrap_as_int, negOne, one, two, zero } from '../../../tree/rat/Rat';
@@ -255,7 +255,7 @@ function dsinh(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 function dcosh(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative_wrt(cadr(p1), p2, $);
-    return $.multiply(deriv, ysinh(cadr(p1), $));
+    return $.multiply(deriv, sinh(cadr(p1), $));
 }
 
 function dtanh(p1: U, p2: Sym, $: ExtensionEnv): U {

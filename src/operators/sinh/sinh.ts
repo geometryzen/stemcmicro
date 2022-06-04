@@ -1,7 +1,6 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { ARCSINH, SINH } from '../../runtime/constants';
-import { stack_push } from '../../runtime/stack';
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
@@ -11,24 +10,23 @@ import { is_flt } from '../flt/is_flt';
 //            exp(x) - exp(-x)
 //  sinh(x) = ----------------
 //                   2
-export function Eval_sinh(p1: U, $: ExtensionEnv): void {
-    const result = ysinh($.valueOf(cadr(p1)), $);
-    stack_push(result);
-}
 
-export function ysinh(p1: U, $: ExtensionEnv): U {
-    if (car(p1).equals(ARCSINH)) {
-        return cadr(p1);
+/**
+ * sinh(x) = (1/2) * (exp(x) - exp(-x))
+ */
+export function sinh(expr: U, $: ExtensionEnv): U {
+    if (car(expr).equals(ARCSINH)) {
+        return cadr(expr);
     }
-    if (is_flt(p1)) {
-        let d = Math.sinh(p1.d);
+    if (is_flt(expr)) {
+        let d = Math.sinh(expr.d);
         if (Math.abs(d) < 1e-10) {
             d = 0.0;
         }
         return wrap_as_flt(d);
     }
-    if ($.isZero(p1)) {
+    if ($.isZero(expr)) {
         return zero;
     }
-    return makeList(SINH, p1);
+    return makeList(SINH, expr);
 }

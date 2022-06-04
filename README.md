@@ -8,14 +8,14 @@ symbolic-math is a Javascript (Typescript) library for symbolic mathematics.
 
 ```typescript
 import { assert } from "chai";
-import { createSymEngine, render_as_infix, render_as_sexpr } from "../index";
+import { create_engine, render_as_infix, render_as_sexpr } from "../index";
 
-describe("tutorial", function () {
-    it("Getting Started", function () {
+describe("example", function () {
+    it("...", function () {
         const lines: string[] = [
             `1+1`
         ];
-        const engine = createSymEngine();
+        const engine = create_engine();
         const { values } = engine.executeScript(lines.join('\n'));
         const $ = engine.$;
         assert.strictEqual(render_as_sexpr(values[0], $), "2");

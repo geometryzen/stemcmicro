@@ -2,6 +2,7 @@ export { ExtensionEnv, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_
 export { is_blade } from './src/operators/blade/is_blade';
 export { is_boo } from './src/operators/boo/is_boo';
 export { is_flt } from './src/operators/flt/is_flt';
+export { is_hyp } from './src/operators/hyp/is_hyp';
 export { is_imu } from './src/operators/imu/is_imu';
 export { is_num } from './src/operators/num/is_num';
 export { is_rat } from './src/operators/rat/is_rat';
@@ -16,6 +17,7 @@ export { ScanOptions, scan_source_text } from './src/scanner/scan_source_text';
 export { Atom } from './src/tree/atom/Atom';
 export { Boo, booF, booT } from './src/tree/boo/Boo';
 export { Flt, wrap_as_flt } from './src/tree/flt/Flt';
+export { Hyp } from './src/tree/hyp/Hyp';
 export { Imu, imu } from './src/tree/imu/ImaginaryUnit';
 export { Num } from './src/tree/num/Num';
 export { Rat, wrap_as_int } from './src/tree/rat/Rat';
@@ -26,4 +28,3 @@ export { Cons, is_cons, is_nil, items_to_cons, nil, U } from './src/tree/tree';
 export { Uom } from './src/tree/uom/Uom';
 export { BasisBlade } from './src/tree/vec/BasisBlade';
 export { Blade } from './src/tree/vec/Blade';
-

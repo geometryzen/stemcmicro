@@ -39,6 +39,7 @@
         "unit-float": "mocha 'units/float.spec.ts'",
         "unit-floor": "mocha 'units/floor.spec.ts'",
         "unit-grad": "mocha 'units/grad.spec.ts'",
+        "unit-guide": "mocha 'units/guide.spec.ts'",
         "unit-imu": "mocha 'units/imu.spec.ts'",
         "unit-inner": "mocha 'units/inner.spec.ts'",
         "unit-integral": "mocha 'units/integral.spec.ts'",

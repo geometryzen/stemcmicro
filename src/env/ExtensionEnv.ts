@@ -48,10 +48,6 @@ export interface ExtensionEnv {
      */
     readonly explicateMode: boolean;
     /**
-     * Modifying expressions for appearance rather than processing.
-     */
-    readonly prettyfmtMode: boolean;
-    /**
      * Making associativity implicit in the tree structure.
      */
     readonly implicateMode: boolean;
@@ -143,13 +139,12 @@ export interface OperatorBuilder<T extends U> {
 export const PHASE_EXPLICATE = 1;
 export const PHASE_EXPANDING = 2;
 export const PHASE_FACTORING = 4;
-export const PHASE_COSMETICS = 8;
-export const PHASE_IMPLICATE = 16;
+export const PHASE_IMPLICATE = 8;
 
-export const phases = [PHASE_EXPLICATE, PHASE_EXPANDING, PHASE_FACTORING, PHASE_COSMETICS, PHASE_IMPLICATE];
+export const phases = [PHASE_EXPLICATE, PHASE_EXPANDING, PHASE_FACTORING, PHASE_IMPLICATE];
 
 export const PHASE_FLAGS_NONE = 0;
-export const PHASE_FLAGS_ALL = PHASE_EXPLICATE | PHASE_EXPANDING | PHASE_FACTORING | PHASE_COSMETICS | PHASE_IMPLICATE;
+export const PHASE_FLAGS_ALL = PHASE_EXPLICATE | PHASE_EXPANDING | PHASE_FACTORING | PHASE_IMPLICATE;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = PHASE_EXPANDING | PHASE_FACTORING;
 
 export interface Operator<T extends U> {

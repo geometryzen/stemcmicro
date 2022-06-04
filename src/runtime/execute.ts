@@ -1,14 +1,14 @@
 import { bake } from "../bake";
-import { ExtensionEnv, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../operators/imu/is_imu';
-import { scan_source_text } from '../scanner/scan_source_text';
-import { ScanOptions } from '../scanner/scan';
-import { subst } from '../subst';
 import { is_rat } from "../operators/rat/is_rat";
+import { ScanOptions } from '../scanner/scan';
+import { scan_source_text } from '../scanner/scan_source_text';
+import { subst } from '../subst';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
-import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, PRETTYFMT, SYMBOL_I, SYMBOL_J } from './constants';
+import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
 import { defs, halt, TOS } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
 
@@ -65,7 +65,7 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
 
     defs.prints.length = 0;
 
-    const value = top_level_transform(tree, $);
+    const value = multi_phase_transform(tree, $);
 
     prints.push(...defs.prints);
 
@@ -107,7 +107,7 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
 /**
  *
  */
-export function top_level_transform(scanned: U, $: ExtensionEnv): U {
+export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
     const stack: U[] = [];
 
@@ -120,7 +120,7 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
 
     // $.setAssocL(MATH_ADD, true);
     // $.setAssocL(MATH_MUL, true);
-    stack.push(scanned);
+    stack.push(tree);
 
     if (isNotDisabled(EXPLICATE, $)) {
         // // console.lg("Explicating...");
@@ -137,13 +137,13 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
     if (isNotDisabled(AUTOEXPAND, $)) {
         $.setPhase(PHASE_EXPANDING);
         // console.lg("Expanding...");
-        stack.push(transform(stack.pop() as U, $, 'expanding'));
+        stack.push(transform_with_reason(stack.pop() as U, $, 'expanding'));
     }
 
     if (isNotDisabled(AUTOFACTOR, $)) {
         $.setPhase(PHASE_FACTORING);
         // console.lg("Factoring...");
-        stack.push(transform(stack.pop() as U, $, 'factoring'));
+        stack.push(transform_with_reason(stack.pop() as U, $, 'factoring'));
         // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
     }
 
@@ -162,15 +162,8 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
             // console.lg("Baking...");
             let expr = bake(stack.pop() as U, $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.
-            expr = transform(expr, $, 'bake     ');
+            expr = transform_with_reason(expr, $, 'bake     ');
             // console.lg(`baked     : ${print_list(expr, $)}`);
-            stack.push(expr);
-        }
-
-        if (isNotDisabled(PRETTYFMT, $)) {
-            // console.lg("Prettying...");
-            const expr = cosmetics(stack.pop() as U, $);
-            // console.lg(`prettyfmt : ${print_expr(expr, $)}`);
             stack.push(expr);
         }
 
@@ -181,7 +174,7 @@ export function top_level_transform(scanned: U, $: ExtensionEnv): U {
             // console.lg(`implicated : ${print_expr(expr, $)}`);
             stack.push(expr);
         }
-        post_processing(scanned, stack[0], stack, $);
+        post_processing(tree, stack[0], stack, $);
     }
     else {
         stack.push(nil);
@@ -203,15 +196,25 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  * @returns 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function transform(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
+function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
     // console.lg(`Entering ${reason.toUpperCase()} ${print_expr(inExpr, $)} ${print_list(inExpr, $)}`);
 
-    inExpr.reset(TFLAG_NONE);
-
-    const [, outExpr] = $.transform(inExpr);
+    const outExpr = transform(inExpr, $);
 
     // console.lg(`Leaving ${reason.toUpperCase()} ${print_expr(outExpr, $)} ${print_list(outExpr, $)}`);
 
+    return outExpr;
+}
+
+/**
+ * 
+ * @param expr 
+ * @param $ 
+ * @returns 
+ */
+export function transform(expr: U, $: ExtensionEnv): U {
+    expr.reset(TFLAG_NONE);
+    const [, outExpr] = $.transform(expr);
     return outExpr;
 }
 
@@ -250,7 +253,7 @@ function explicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
     $.setPhase(PHASE_EXPLICATE);
     try {
-        return transform(input, $, 'explicate');
+        return transform_with_reason(input, $, 'explicate');
     }
     finally {
         $.setPhase(phase);
@@ -261,18 +264,7 @@ export function implicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
     $.setPhase(PHASE_IMPLICATE);
     try {
-        return transform(input, $, 'implicate');
-    }
-    finally {
-        $.setPhase(phase);
-    }
-}
-
-function cosmetics(input: U, $: ExtensionEnv): U {
-    const phase = $.getPhase();
-    $.setPhase(PHASE_COSMETICS);
-    try {
-        return transform(input, $, 'cosmetics');
+        return transform_with_reason(input, $, 'implicate');
     }
     finally {
         $.setPhase(phase);

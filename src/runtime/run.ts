@@ -9,7 +9,7 @@ import { Sym } from '../tree/sym/Sym';
 import { car, cdr, nil, U } from '../tree/tree';
 import { MIDDLE_DOT_REGEX_GLOBAL, predefinedSymbolsInGlobalScope_doNotTrackInDependencies, TRANSPOSE_REGEX_GLOBAL } from './constants';
 import { defs, hard_reset } from './defs';
-import { check_stack, top_level_transform } from './execute';
+import { check_stack, multi_phase_transform } from './execute';
 import { soft_reset } from './init';
 import { normalize_unicode_dots } from './normalize_dots';
 import { stack_pop, stack_push } from './stack';
@@ -505,7 +505,7 @@ export function run(stringToBeRun: string, $: ExtensionEnv, generateLatex = fals
         try {
             defs.prints.length = 0;
 
-            p2 = top_level_transform(p1, $);
+            p2 = multi_phase_transform(p1, $);
 
             // if the return value is NIL there isn't much point
             // in adding "NIL" to the printout

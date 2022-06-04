@@ -1,4 +1,4 @@
-export { ExtensionEnv, Operator, OperatorBuilder, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from './src/env/ExtensionEnv';
+export { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from './src/env/ExtensionEnv';
 export { is_blade } from './src/operators/blade/is_blade';
 export { is_boo } from './src/operators/boo/is_boo';
 export { is_flt } from './src/operators/flt/is_flt';
@@ -10,6 +10,7 @@ export { is_sym } from './src/operators/sym/is_sym';
 export { is_tensor } from './src/operators/tensor/is_tensor';
 export { is_uom } from './src/operators/uom/is_uom';
 export { render_as_infix, render_as_sexpr } from './src/print';
+export { transform } from './src/runtime/execute';
 export { Assoc, create_engine, DEPENDENCY, Engine, EngineOptions } from './src/runtime/symengine';
 export { ScanOptions, scan_source_text } from './src/scanner/scan_source_text';
 export { Atom } from './src/tree/atom/Atom';

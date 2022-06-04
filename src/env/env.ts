@@ -6,18 +6,24 @@ import { is_poly_expanded_form } from "../is";
 import { makeList } from "../makeList";
 import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/is_blade";
+import { is_boo } from "../operators/boo/is_boo";
 import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
 import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
 import { denominator } from "../operators/denominator/denominator";
 import { derivative_wrt } from "../operators/derivative/derivative_wrt";
 import { is_err } from "../operators/err/is_err";
+import { is_flt } from "../operators/flt/is_flt";
 import { associative_explicator } from "../operators/helpers/associative_explicator";
 import { associative_implicator } from "../operators/helpers/associative_implicator";
 import { is_hyp } from "../operators/hyp/is_hyp";
-import { numerator } from "../operators/numerator/numerator";
-import { is_sym } from "../operators/sym/is_sym";
 import { is_imu } from "../operators/imu/is_imu";
 import { is_num } from "../operators/num/is_num";
+import { numerator } from "../operators/numerator/numerator";
+import { is_rat } from "../operators/rat/is_rat";
+import { is_str } from "../operators/str/is_str";
+import { is_sym } from "../operators/sym/is_sym";
+import { is_tensor } from "../operators/tensor/is_tensor";
+import { is_uom } from "../operators/uom/is_uom";
 import { render_as_infix } from "../print";
 import { FUNCTION } from "../runtime/constants";
 import { implicate } from "../runtime/execute";
@@ -26,17 +32,11 @@ import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER, MATH_POW } from "../runtime
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { VERSION_LATEST } from "../runtime/version";
-import { is_boo } from "../operators/boo/is_boo";
-import { is_flt } from "../operators/flt/is_flt";
-import { is_rat } from "../operators/rat/is_rat";
 import { negOne, Rat, zero } from "../tree/rat/Rat";
-import { is_str } from "../operators/str/is_str";
 import { Sym } from "../tree/sym/Sym";
-import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_cons, is_nil, U } from "../tree/tree";
-import { is_uom } from "../operators/uom/is_uom";
 import { Eval_user_function } from "../userfunc";
-import { diffFlag, ExtensionEnv, FEATURE, haltFlag, Operator, OperatorBuilder, phases, PHASE_COSMETICS, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, haltFlag, Operator, OperatorBuilder, phases, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -365,9 +365,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         },
         get explicateMode(): boolean {
             return current_phase === PHASE_EXPLICATE;
-        },
-        get prettyfmtMode(): boolean {
-            return current_phase === PHASE_COSMETICS;
         },
         get implicateMode(): boolean {
             return current_phase === PHASE_IMPLICATE;

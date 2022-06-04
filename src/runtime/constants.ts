@@ -170,7 +170,6 @@ export const BAKE = new Sym('bake');
 export const ASSUME_REAL_VARIABLES = new Sym('assumeRealVariables');
 export const EXPLICATE = new Sym('explicate');
 export const IMPLICATE = new Sym('implicate');
-export const PRETTYFMT = new Sym('prettyfmt');
 export const TRACE = new Sym('trace');
 export const FORCE_FIXED_PRINTOUT = new Sym('forceFixedPrintout');
 export const MAX_FIXED_PRINTOUT_DIGITS = new Sym('maxFixedPrintoutDigits');

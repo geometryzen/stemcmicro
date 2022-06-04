@@ -250,7 +250,7 @@ function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void
 }
 
 function explicate(input: U, $: ExtensionEnv): U {
-    const phase = $.getPhase();
+    const phase = $.getFocus();
     $.setFocus(FOCUS_EXPLICATE);
     try {
         return transform_with_reason(input, $, 'explicate');
@@ -261,7 +261,7 @@ function explicate(input: U, $: ExtensionEnv): U {
 }
 
 export function implicate(input: U, $: ExtensionEnv): U {
-    const phase = $.getPhase();
+    const phase = $.getFocus();
     $.setFocus(FOCUS_IMPLICATE);
     try {
         return transform_with_reason(input, $, 'implicate');

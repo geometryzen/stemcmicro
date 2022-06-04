@@ -13,7 +13,7 @@ export function Eval_rationalize(expr: U, $: ExtensionEnv): U {
 }
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
-    const phase = $.getPhase();
+    const phase = $.getFocus();
     $.setFocus(FOCUS_FACTORING);
     try {
         return yyrationalize(argList, $);

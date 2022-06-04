@@ -1,11 +1,11 @@
-import { ExtensionEnv, Sign } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { is_num } from './operators/num/is_num';
-import { DET } from './runtime/constants';
-import { is_square_matrix } from './tensor';
-import { wrap_as_int, one, zero } from './tree/rat/Rat';
-import { Tensor } from './tree/tensor/Tensor';
-import { U } from './tree/tree';
+import { ExtensionEnv, Sign } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { is_num } from '../num/is_num';
+import { DET } from '../../runtime/constants';
+import { is_square_matrix } from '../../tensor';
+import { wrap_as_int, one, zero } from '../../tree/rat/Rat';
+import { Tensor } from '../../tree/tensor/Tensor';
+import { U } from '../../tree/tree';
 
 /* det =====================================================================
 

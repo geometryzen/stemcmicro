@@ -1,4 +1,4 @@
-import { determinant_symbolic } from '../../det';
+import { determinant_symbolic } from '../det/det';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';

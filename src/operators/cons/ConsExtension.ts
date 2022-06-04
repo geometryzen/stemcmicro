@@ -46,8 +46,7 @@ import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eva
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { Eval_real } from "../../real";
-import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, REAL, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
+import { APPROXRATIO, ARCCOS, ARCCOSH, ARCSINH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CIRCEXP, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, SINH, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
@@ -66,17 +65,17 @@ import { Eval_taylor } from "../../taylor";
 import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
 import { Eval_transpose } from "../../transpose";
 import { Err } from "../../tree/err/Err";
-import { is_flt } from "../flt/is_flt";
 import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
-import { is_rat } from "../rat/is_rat";
-import { wrap_as_int, one, zero } from "../../tree/rat/Rat";
+import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
 import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor_elements";
-import { is_tensor } from "../tensor/is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { Eval_zero } from "../../zero";
+import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
+import { is_tensor } from "../tensor/is_tensor";
 
 /**
  * Cons, like Sym is actually fundamental to the tree (not an Extension).
@@ -429,9 +428,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case RANK:
                 Eval_rank(expr, $);
-                return stack_pop();
-            case REAL:
-                Eval_real(expr, $);
                 return stack_pop();
             case SGN:
                 Eval_sgn(expr, $);

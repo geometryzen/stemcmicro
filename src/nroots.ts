@@ -6,7 +6,7 @@ import { imag } from './imag';
 import { is_poly_expanded_form } from './is';
 import { sort_stack } from './misc';
 import { yyfloat } from './operators/float/float';
-import { real } from './real';
+import { real } from './operators/real/real';
 import { defs, halt, moveTos } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';

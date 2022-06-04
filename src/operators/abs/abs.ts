@@ -6,7 +6,7 @@ import { imag } from '../../imag';
 import { equaln, is_negative_number, is_negative_term, is_num_and_gt_zero } from '../../is';
 import { makeList } from '../../makeList';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { real } from '../../real';
+import { real } from '../real/real';
 import { PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { has_clock_form, has_exp_form } from '../../runtime/find';

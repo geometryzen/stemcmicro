@@ -73,7 +73,7 @@ export interface ExtensionEnv {
     factorize(poly: U, x: U): U;
     getBinding(sym: Sym): U;
     getBindings(): { sym: Sym, binding: U | undefined }[];
-    getPhase(): number;
+    getFocus(): number;
     /**
      * Used to make the environment ready after all operator builders have been added.
      */
@@ -82,8 +82,10 @@ export interface ExtensionEnv {
     inverse(expr: U): U;
     isAssocL(opr: Sym): boolean;
     isAssocR(opr: Sym): boolean;
+    isExplicating(): boolean;
     isExpanding(): boolean;
     isFactoring(): boolean;
+    isImplicating(): boolean;
     /**
      * Meaning is imaginary valued. i.e. evaluates to i times a real number.
      */

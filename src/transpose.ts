@@ -198,7 +198,7 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
 }
 
 export function transpose_factoring(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
-    const phase = $.getPhase();
+    const phase = $.getFocus();
     $.setFocus(FOCUS_FACTORING);
     try {
         return transpose(p1, p2, p3, $);

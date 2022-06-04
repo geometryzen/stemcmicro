@@ -260,6 +260,7 @@ import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
+import { real_any } from '../operators/real/real_any';
 import { rect_varargs } from '../operators/rect/rect_varargs';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
@@ -273,6 +274,7 @@ import { sin_hyp } from '../operators/sin/sin_hyp';
 import { sin_mul_2_any_imu } from '../operators/sin/sin_mul_2_any_imu';
 import { sin_mul_2_rat_any } from '../operators/sin/sin_mul_2_rat_any';
 import { sin_sym } from '../operators/sin/sin_sym';
+import { sinh_sym } from '../operators/sinh/sinh_sym';
 import { sqrt_1_any } from '../operators/sqrt/sqrt_1_any';
 import { sqrt_1_rat } from '../operators/sqrt/sqrt_1_rat';
 import { st_add_2_any_hyp } from '../operators/st/st_add_2_any_hyp';
@@ -690,6 +692,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: EngineOpti
     $.defineOperator(printlist_keyword);
     $.defineOperator(quote_varargs);
     $.defineOperator(rationalize_fn);
+    $.defineOperator(real_any);
     $.defineOperator(rect_varargs);
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);
@@ -697,6 +700,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: EngineOpti
     $.defineOperator(script_last_0);
     $.defineOperator(shape_varargs);
     $.defineOperator(simplify_varargs);
+    $.defineOperator(sinh_sym);
 
     $.defineOperator(succ_rat);
     $.defineOperator(succ_any);

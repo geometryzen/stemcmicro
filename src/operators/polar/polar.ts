@@ -1,10 +1,10 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { imu } from './env/imu';
-import { exp } from './exp';
-import { abs } from './operators/abs/abs';
-import { evalPolar } from './runtime/defs';
-import { cadr } from './tree/helpers';
-import { U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { imu } from '../../env/imu';
+import { exp } from '../../exp';
+import { abs } from '../abs/abs';
+import { evalPolar } from '../../runtime/defs';
+import { cadr } from '../../tree/helpers';
+import { U } from '../../tree/tree';
 
 /*
 Convert complex z to polar form

@@ -9,10 +9,10 @@ import { equalq, is_negative_number, is_num_and_eq_minus_one, is_plus_or_minus_o
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { makeList } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
-import { polar } from '../../polar';
+import { polar } from '../polar/polar';
 import { is_imu } from '../imu/is_imu';
 import { is_num } from '../num/is_num';
-import { real } from '../../real';
+import { real } from '../real/real';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';

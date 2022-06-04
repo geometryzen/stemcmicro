@@ -1,6 +1,6 @@
-import { imu } from './env/imu';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { wrap_as_flt } from './tree/flt/Flt';
+import { imu } from '../../env/imu';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { wrap_as_flt } from '../../tree/flt/Flt';
 
 // power function for double precision floating point
 export function dpow(base: number, expo: number, $: ExtensionEnv) {

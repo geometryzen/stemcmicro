@@ -2,7 +2,7 @@ import { clockform } from '../operators/clock/clock';
 import { complex_conjugate } from '../complex_conjugate';
 import { ExtensionEnv } from '../env/ExtensionEnv';
 import { imu } from '../env/imu';
-import { polar } from '../polar';
+import { polar } from '../operators/polar/polar';
 import { stack_push } from '../runtime/stack';
 import { cadr } from '../tree/helpers';
 import { U } from '../tree/tree';

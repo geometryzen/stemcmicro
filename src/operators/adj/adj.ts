@@ -1,10 +1,10 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { cofactor } from './operators/cofactor/cofactor';
-import { assert_square_matrix_tensor } from './tensor';
-import { Err } from './tree/err/Err';
-import { is_tensor } from './operators/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
-import { car, Cons, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { cofactor } from '../cofactor/cofactor';
+import { assert_square_matrix_tensor } from '../../tensor';
+import { Err } from '../../tree/err/Err';
+import { is_tensor } from '../tensor/is_tensor';
+import { Tensor } from '../../tree/tensor/Tensor';
+import { car, Cons, U } from '../../tree/tree';
 
 /* adj =====================================================================
 

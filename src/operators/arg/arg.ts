@@ -5,7 +5,7 @@ import { equaln, is_negative, is_negative_number, is_num_and_gt_zero, is_one_ove
 import { makeList } from '../../makeList';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_imu } from '../imu/is_imu';
-import { real } from '../../real';
+import { real } from '../real/real';
 import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { defs, DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';

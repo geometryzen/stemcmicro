@@ -1,5 +1,5 @@
 import { compare_terms_redux } from "../../calculators/compare/compare_terms";
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, FOCUS_FLAGS_EXPANDING_UNION_FACTORING, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FOCUS_FLAGS_EXPANDING_UNION_FACTORING, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -47,7 +47,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const Z = lhs.rhs;
         const A = rhs;
         const signum = compare_terms_redux(Z, A, $);
-        // console.log(`${this.name} ${signum} lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+        // console.log(`${this.name} ${signum} lhs=${render_as_infix(lhs, $)} rhs=${render_as_infix(rhs, $)}`);
         switch (signum) {
             case SIGN_GT: {
                 // (X + Z) + A => (X + A) + Z

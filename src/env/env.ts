@@ -282,7 +282,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         getBindings() {
             return symTab.getBindings();
         },
-        getPhase(): number {
+        getFocus(): number {
             return current_focus;
         },
         initialize(): void {
@@ -367,11 +367,17 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                 throw new SystemError(`isAssocR(${opr})`);
             }
         },
+        isExplicating(): boolean {
+            return current_focus == FOCUS_EXPLICATE;
+        },
         isExpanding(): boolean {
             return current_focus == FOCUS_EXPANDING;
         },
         isFactoring(): boolean {
             return current_focus === FOCUS_FACTORING;
+        },
+        isImplicating(): boolean {
+            return current_focus == FOCUS_IMPLICATE;
         },
         get explicateMode(): boolean {
             return current_focus === FOCUS_EXPLICATE;
@@ -382,7 +388,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isImag(expr);
-            // console.lg(`${op.name} isImag ${expr} => ${retval}`);
+            // console.log(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isMinusOne(expr: U): boolean {
@@ -394,7 +400,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         isReal(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isReal(expr);
-            // console.log(`${op.name} isReal ${expr} => ${retval}`);
+            // console.log(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isScalar(expr: U): boolean {

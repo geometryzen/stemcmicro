@@ -55,6 +55,7 @@
         "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-print": "mocha 'units/print.spec.ts'",
         "unit-proto": "mocha 'units/proto.spec.ts'",
+        "unit-real": "mocha 'units/real.spec.ts'",
         "unit-rect": "mocha 'units/rect.spec.ts'",
         "unit-rationalize": "mocha 'units/rationalize.spec.ts'",
         "unit-roots": "mocha 'units/roots.spec.ts'",

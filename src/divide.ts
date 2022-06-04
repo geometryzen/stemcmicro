@@ -24,7 +24,7 @@ export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
 }
 
 export function divide_expand(lhs: U, rhs: U, $: ExtensionEnv): U {
-    const phase = $.getPhase();
+    const phase = $.getFocus();
     $.setFocus(FOCUS_EXPANDING);
     try {
         return divide(lhs, rhs, $);

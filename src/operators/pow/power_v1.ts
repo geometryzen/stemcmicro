@@ -1,7 +1,7 @@
 import { nativeDouble, rational } from "../../bignum";
 import { gt_num_num } from "../../calculators/compare/gt_num_num";
 import { complex_conjugate } from "../../complex_conjugate";
-import { dpow } from "../../dpow";
+import { dpow } from "./dpow";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";

@@ -1,5 +1,5 @@
-import { adj } from './adj';
-import { det } from './det';
+import { adj } from './operators/adj/adj';
+import { det } from './operators/det/det';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { INV, INVG } from './runtime/constants';

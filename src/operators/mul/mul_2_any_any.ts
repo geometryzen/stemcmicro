@@ -1,6 +1,6 @@
 
 import { compare_factors } from "../../calculators/compare/compare_factors";
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { defs } from "../../runtime/defs";
@@ -31,9 +31,13 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         super('mul_2_any_any', MATH_MUL, is_any, is_any, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_ANY, HASH_ANY);
     }
+    isReal(expr: EXPR): boolean {
+        const $ = this.$;
+        return ($.isReal(expr.lhs) && $.isReal(expr.rhs));
+    }
     isImag(expr: EXPR): boolean {
         const $ = this.$;
-        return $.isImag(expr.lhs) && $.isReal(expr.rhs);
+        return ($.isImag(expr.lhs) && $.isReal(expr.rhs)) || ($.isReal(expr.lhs) && $.isImag(expr.rhs));
     }
     isScalar(expr: EXPR): boolean {
         const $ = this.$;

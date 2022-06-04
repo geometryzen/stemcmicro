@@ -1,4 +1,4 @@
-import { det } from "../../det";
+import { det } from "./det";
 import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { DET } from "../../runtime/constants";

@@ -67,6 +67,7 @@
         "unit-scriptlast": "mocha 'units/scriptlast.spec.ts'",
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",
+        "unit-sinh": "mocha 'units/sinh.spec.ts'",
         "unit-sqrt": "mocha 'units/sqrt.spec.ts'",
         "unit-tan": "mocha 'units/tan.spec.ts'",
         "unit-tensor": "mocha 'units/tensor.spec.ts'",

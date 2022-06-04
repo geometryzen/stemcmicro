@@ -55,6 +55,7 @@ import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { and_varargs } from '../operators/and/and_varargs';
 import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
+import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
 import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arg_varargs } from '../operators/arg/arg_varargs';
 import { assign_any_any } from '../operators/assign/assign_any_any';
@@ -274,6 +275,9 @@ import { sin_hyp } from '../operators/sin/sin_hyp';
 import { sin_mul_2_any_imu } from '../operators/sin/sin_mul_2_any_imu';
 import { sin_mul_2_rat_any } from '../operators/sin/sin_mul_2_rat_any';
 import { sin_sym } from '../operators/sin/sin_sym';
+import { sinh_any } from '../operators/sinh/sinh_any';
+import { sinh_flt } from '../operators/sinh/sinh_flt';
+import { sinh_rat } from '../operators/sinh/sinh_rat';
 import { sinh_sym } from '../operators/sinh/sinh_sym';
 import { sqrt_1_any } from '../operators/sqrt/sqrt_1_any';
 import { sqrt_1_rat } from '../operators/sqrt/sqrt_1_rat';
@@ -613,6 +617,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: EngineOpti
     $.defineOperator(algebra_2_tensor_tensor);
     $.defineOperator(and_varargs);
     $.defineOperator(arcsin_varargs);
+    $.defineOperator(arcsinh_any);
     $.defineOperator(arctan_varargs);
     $.defineOperator(arg_varargs);
 
@@ -700,7 +705,11 @@ export function register_known_operators(version: 1 | 2 | 3, options: EngineOpti
     $.defineOperator(script_last_0);
     $.defineOperator(shape_varargs);
     $.defineOperator(simplify_varargs);
+
+    $.defineOperator(sinh_flt);
+    $.defineOperator(sinh_rat);
     $.defineOperator(sinh_sym);
+    $.defineOperator(sinh_any);
 
     $.defineOperator(succ_rat);
     $.defineOperator(succ_any);

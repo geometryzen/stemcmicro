@@ -35,7 +35,7 @@ import { is_abs, is_add } from '../../../runtime/helpers';
 // import { stack_push } from '../../runtime/stack';
 import { sgn } from '../../../sgn';
 import { sine } from '../../sin/sin';
-import { ysinh } from '../../../sinh';
+import { ysinh } from '../../sinh/sinh';
 import { subst } from '../../../subst';
 import { caddr, cadr } from '../../../tree/helpers';
 import { wrap_as_int, negOne, one, two, zero } from '../../../tree/rat/Rat';

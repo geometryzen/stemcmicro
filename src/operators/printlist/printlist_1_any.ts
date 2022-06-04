@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { print_in_mode } from "../../print";
+import { print_in_mode } from "../../print/print";
 import { defs, PRINTMODE_LIST } from "../../runtime/defs";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, nil, U } from "../../tree/tree";

@@ -3,7 +3,7 @@ import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
 import { clear_patterns } from './src/pattern';
-import { render_as_infix } from './src/print';
+import { render_as_infix } from './src/print/print';
 import { defs } from './src/runtime/defs';
 import { define_special_symbols, execute_definitions } from './src/runtime/init';
 import { create_engine, Engine, EngineOptions } from './src/runtime/symengine';

@@ -4,12 +4,12 @@
 // e.g. when printing a base elevated to a negative exponent
 // prints the inverse of the base powered to the unsigned
 
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { defs, PRINTMODE_LATEX } from "./runtime/defs";
-import { number_to_floating_point_string } from "./runtime/number_to_floating_point_string";
-import { is_flt } from "./operators/flt/is_flt";
-import { Num } from "./tree/num/Num";
-import { is_rat } from "./operators/rat/is_rat";
+import { ExtensionEnv } from '../env/ExtensionEnv';
+import { defs, PRINTMODE_LATEX } from "../runtime/defs";
+import { number_to_floating_point_string } from "../runtime/number_to_floating_point_string";
+import { is_flt } from "../operators/flt/is_flt";
+import { Num } from "../tree/num/Num";
+import { is_rat } from "../operators/rat/is_rat";
 
 // exponent.
 export function print_number(p: Num, signed: boolean, $: ExtensionEnv): string {

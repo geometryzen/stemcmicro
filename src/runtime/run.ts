@@ -1,6 +1,6 @@
 import { to_code_string } from '../code/to_code_string';
 import { ExtensionEnv } from '../env/ExtensionEnv';
-import { to_latex_string } from '../latex/to_latex_string';
+import { render_as_latex } from '../print/render_as_latex';
 import { is_sym } from '../operators/sym/is_sym';
 import { scan } from '../scanner/scan';
 import { simplifyForCodeGeneration } from '../operators/simplify/eval_simplify';
@@ -232,7 +232,7 @@ export function findDependenciesInScript(stringToBeParsed: string, $: ExtensionE
 
                     const generatedBody = to_code_string(toBePrinted, $);
 
-                    const bodyForReadableSummaryOfGeneratedCode = to_latex_string(toBePrinted, $);
+                    const bodyForReadableSummaryOfGeneratedCode = render_as_latex(toBePrinted, $);
 
                     if (variablesWithCycles.indexOf(key) !== -1) {
                         generatedCode +=
@@ -522,7 +522,7 @@ export function run(stringToBeRun: string, $: ExtensionEnv, generateLatex = fals
                 collectedPlainResult += '\n';
                 if (generateLatex) {
                     collectedLatexResult =
-                        '$$' + to_latex_string(p2, $) + '$$';
+                        '$$' + render_as_latex(p2, $) + '$$';
                 }
             }
 

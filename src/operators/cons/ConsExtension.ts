@@ -41,7 +41,7 @@ import { makeList } from "../../makeList";
 import { Eval_mod } from "../../mod";
 import { Eval_nroots } from "../../nroots";
 import { Eval_prime } from "../../prime";
-import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print";
+import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";

@@ -4,7 +4,7 @@ import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_num } from "../../operators/num/is_num";
-import { render_as_infix } from "../../print";
+import { render_as_infix } from "../../print/print";
 import { is_rat } from "../../operators/rat/is_rat";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_cons, U } from "../../tree/tree";

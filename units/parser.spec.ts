@@ -1,10 +1,10 @@
 
 import { assert } from "chai";
+import { render_as_infix, render_as_sexpr } from "../index";
+import { is_str } from "../src/operators/str/is_str";
 import { ts_parse } from "../src/parser/ts_parse";
-import { render_as_infix, render_as_sexpr } from "../src/print";
 import { transform_tree } from "../src/runtime/execute";
 import { create_engine } from "../src/runtime/symengine";
-import { is_str } from "../src/operators/str/is_str";
 import { assert_one_value } from "./assert_one_value";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 

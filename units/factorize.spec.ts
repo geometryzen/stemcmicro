@@ -1,11 +1,11 @@
 import { assert } from "chai";
+import { render_as_infix, render_as_sexpr } from "../index";
 import { factorizeL } from "../src/calculators/factorizeL";
 import { imu } from "../src/env/imu";
 import { makeList } from "../src/makeList";
-import { render_as_infix, render_as_sexpr } from "../src/print";
+import { is_rat } from "../src/operators/rat/is_rat";
 import { MATH_MUL } from "../src/runtime/ns_math";
 import { create_engine } from "../src/runtime/symengine";
-import { is_rat } from "../src/operators/rat/is_rat";
 import { negOne, one, Rat, two } from "../src/tree/rat/Rat";
 import { Sym } from "../src/tree/sym/Sym";
 import { U } from "../src/tree/tree";

@@ -35,6 +35,7 @@
         "unit-denominator": "mocha 'units/denominator.spec.ts'",
         "unit-derivative": "mocha 'units/derivative.spec.ts'",
         "unit-env": "mocha 'units/env.spec.ts'",
+        "unit-example": "mocha 'units/example.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-float": "mocha 'units/float.spec.ts'",
         "unit-floor": "mocha 'units/floor.spec.ts'",

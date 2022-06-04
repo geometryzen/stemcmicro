@@ -1,6 +1,6 @@
 import { assert } from "chai";
+import { render_as_sexpr } from "../index";
 import { createEnv } from "../src/env/env";
-import { render_as_sexpr } from "../src/print";
 import { create_engine } from "../src/runtime/symengine";
 import { Sym } from "../src/tree/sym/Sym";
 

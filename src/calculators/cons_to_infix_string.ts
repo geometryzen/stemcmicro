@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { render_as_infix } from "../print";
+import { render_as_infix } from "../print/print";
 import { Cons } from "../tree/tree";
 
 /**

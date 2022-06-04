@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { FOCUS_EXPANDING, FOCUS_FACTORING } from "../src/env/ExtensionEnv";
-import { render_as_infix } from "../src/print";
+import { render_as_infix } from "../src/print/print";
 import { create_engine } from "../src/runtime/symengine";
 import { scan_source_text } from "../src/scanner/scan_source_text";
 

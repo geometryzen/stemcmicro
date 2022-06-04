@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../env/ExtensionEnv';
-import { print_multiplicative_expr, sign_of_term } from "../print";
+import { print_multiplicative_expr, sign_of_term } from "./print";
 import { U } from "../tree/tree";
 
 /**

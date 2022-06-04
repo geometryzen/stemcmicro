@@ -1,7 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { yyfloat } from './operators/float/float';
 import { makeList } from './makeList';
-import { print_str } from './print';
+import { print_str } from './print/print';
 import { EIGEN, EIGENVAL, EIGENVEC } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { stack_push } from './runtime/stack';

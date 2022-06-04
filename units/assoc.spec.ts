@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../src/print";
+import { render_as_infix, render_as_sexpr } from "../index";
 import { MATH_ADD, MATH_MUL } from "../src/runtime/ns_math";
 import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";

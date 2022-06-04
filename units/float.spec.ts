@@ -1,6 +1,5 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../src/print";
-import { create_engine } from "../src/runtime/symengine";
+import { create_engine, render_as_infix, render_as_sexpr } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("float", function () {

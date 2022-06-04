@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { render_as_infix } from "../src/print";
+import { render_as_infix } from "../src/print/print";
 import { create_engine } from "../src/runtime/symengine";
 
 describe("round", function () {

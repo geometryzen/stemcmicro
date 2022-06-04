@@ -24,7 +24,7 @@ import { is_str } from "../operators/str/is_str";
 import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_uom } from "../operators/uom/is_uom";
-import { render_as_infix } from "../print";
+import { render_as_infix } from "../print/print";
 import { FUNCTION } from "../runtime/constants";
 import { implicate } from "../runtime/execute";
 import { is_add } from "../runtime/helpers";

@@ -1,6 +1,5 @@
 import { assert } from 'chai';
-import { is_uom } from '../index';
-import { render_as_infix, render_as_sexpr } from '../src/print';
+import { is_uom, render_as_infix, render_as_sexpr } from '../index';
 import { create_engine } from '../src/runtime/symengine';
 import { assert_one_value_execute } from './assert_one_value_execute';
 

@@ -1,6 +1,6 @@
 import { assert } from "chai";
+import { render_as_infix, render_as_sexpr } from "../index";
 import { get_component } from "../src/calculators/get_component";
-import { render_as_infix, render_as_sexpr } from "../src/print";
 import { create_engine } from "../src/runtime/symengine";
 import { wrap_as_int } from "../src/tree/rat/Rat";
 import { Sym } from "../src/tree/sym/Sym";

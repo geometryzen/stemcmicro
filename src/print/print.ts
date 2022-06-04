@@ -1,19 +1,23 @@
-import { mp_denominator, mp_numerator } from './bignum';
-import { lt_num_num } from './calculators/compare/lt_num_num';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { equaln, isfraction, isNumberOneOverSomething, is_negative_number, is_negative_term, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from './is';
-import { abs } from './operators/abs/abs';
-import { denominator } from './operators/denominator/denominator';
-import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
-import { is_err } from './operators/err/is_err';
-import { is_hyp } from './operators/hyp/is_hyp';
-import { numerator } from './operators/numerator/numerator';
-import { is_sym } from './operators/sym/is_sym';
-import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
-import { is_imu } from './operators/imu/is_imu';
-import { is_num } from './operators/num/is_num';
-import { print2dascii } from './print2d';
-import { print_number } from './print_number';
+import { mp_denominator, mp_numerator } from '../bignum';
+import { lt_num_num } from '../calculators/compare/lt_num_num';
+import { ExtensionEnv } from '../env/ExtensionEnv';
+import { equaln, isfraction, isNumberOneOverSomething, is_negative_number, is_negative_term, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from '../is';
+import { abs } from '../operators/abs/abs';
+import { is_boo } from '../operators/boo/is_boo';
+import { denominator } from '../operators/denominator/denominator';
+import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
+import { is_err } from '../operators/err/is_err';
+import { is_flt } from '../operators/flt/is_flt';
+import { is_hyp } from '../operators/hyp/is_hyp';
+import { is_imu } from '../operators/imu/is_imu';
+import { is_num } from '../operators/num/is_num';
+import { numerator } from '../operators/numerator/numerator';
+import { is_rat } from '../operators/rat/is_rat';
+import { is_str } from '../operators/str/is_str';
+import { is_sym } from '../operators/sym/is_sym';
+import { is_tensor } from '../operators/tensor/is_tensor';
+import { is_uom } from '../operators/uom/is_uom';
+import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import {
     ADD,
     ARCCOS,
@@ -54,27 +58,24 @@ import {
     TESTLE,
     TESTLT,
     UNIT
-} from './runtime/constants';
-import { defs, PrintMode, PRINTMODE_2DASCII, PRINTMODE_COMPUTER, PRINTMODE_HUMAN, PRINTMODE_LATEX, PRINTMODE_LIST } from './runtime/defs';
-import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_multiply, is_outer, is_power, is_transpose } from './runtime/helpers';
-import { NAME_SCRIPT_LAST } from './runtime/ns_script';
-import { stack_push } from './runtime/stack';
-import { SystemError } from './runtime/SystemError';
-import { scan } from './scanner/scan';
-import { booT } from './tree/boo/Boo';
-import { is_boo } from './operators/boo/is_boo';
-import { is_flt } from './operators/flt/is_flt';
-import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from './tree/helpers';
-import { is_rat } from './operators/rat/is_rat';
-import { negOne, one, Rat, zero } from './tree/rat/Rat';
-import { assert_str } from './tree/str/assert_str';
-import { is_str } from './operators/str/is_str';
-import { Sym } from './tree/sym/Sym';
-import { is_tensor } from './operators/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
-import { car, cdr, Cons, is_cons, is_nil, nil, U } from './tree/tree';
-import { is_uom } from './operators/uom/is_uom';
-import { is_blade } from './tree/vec/Algebra';
+} from '../runtime/constants';
+import { defs, PrintMode, PRINTMODE_2DASCII, PRINTMODE_COMPUTER, PRINTMODE_HUMAN, PRINTMODE_LATEX, PRINTMODE_LIST } from '../runtime/defs';
+import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_multiply, is_outer, is_power, is_transpose } from '../runtime/helpers';
+import { NAME_SCRIPT_LAST } from '../runtime/ns_script';
+import { stack_push } from '../runtime/stack';
+import { SystemError } from '../runtime/SystemError';
+import { scan } from '../scanner/scan';
+import { booT } from '../tree/boo/Boo';
+import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
+import { negOne, one, Rat, zero } from '../tree/rat/Rat';
+import { assert_str } from '../tree/str/assert_str';
+import { Sym } from '../tree/sym/Sym';
+import { Tensor } from '../tree/tensor/Tensor';
+import { car, cdr, Cons, is_cons, is_nil, nil, U } from '../tree/tree';
+import { is_blade } from '../tree/vec/Algebra';
+import { print2dascii } from './print2d';
+import { print_number } from './print_number';
+import { render_as_sexpr } from './render_as_sexpr';
 
 export function get_script_last($: ExtensionEnv): U {
     return $.valueOf(NAME_SCRIPT_LAST);
@@ -2127,32 +2128,6 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         }
         throw new Error(`${expr} ???`);
     }
-}
-
-/**
- * The standard way of serializing to s-expr format.
- * @param expr The expression to be rendered.
- * @param $ The extension environment.
- */
-export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
-    if (is_cons(expr)) {
-        let str = '';
-        str += '(';
-        str += render_as_sexpr(car(expr), $);
-        expr = cdr(expr);
-        while (is_cons(expr)) {
-            str += ' ';
-            str += render_as_sexpr(car(expr), $);
-            expr = cdr(expr);
-        }
-        if (expr !== nil) {
-            str += ' . ';
-            str += render_as_sexpr(expr, $);
-        }
-        str += ')';
-        return str;
-    }
-    return $.toListString(expr);
 }
 
 function print_multiply_sign(): string {

@@ -13,7 +13,7 @@
     "scripts": {
         "build": "rollup -c",
         "lint": "eslint . --ext .ts",
-        "unit": "nyc mocha 'units/**/*.spec.ts'",
+        "unit": "mocha 'units/**/*.spec.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
         "unit-add": "mocha 'units/add.spec.ts'",
         "unit-algebra": "mocha 'units/algebra.spec.ts'",

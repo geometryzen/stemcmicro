@@ -1,7 +1,7 @@
 
 import { divide_numbers } from "./bignum";
 import { binop } from "./calculators/binop";
-import { ExtensionEnv, PHASE_EXPANDING } from "./env/ExtensionEnv";
+import { ExtensionEnv, FOCUS_EXPANDING } from "./env/ExtensionEnv";
 import { is_num } from "./operators/num/is_num";
 import { MATH_MUL } from "./runtime/ns_math";
 import { U } from "./tree/tree";
@@ -25,11 +25,11 @@ export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
 
 export function divide_expand(lhs: U, rhs: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_EXPANDING);
+    $.setFocus(FOCUS_EXPANDING);
     try {
         return divide(lhs, rhs, $);
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }

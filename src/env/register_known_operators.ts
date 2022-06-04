@@ -79,7 +79,9 @@ import { contract_varargs } from '../operators/contract/contract_varargs';
 import { cos_add_2_any_any } from '../operators/cos/cos_add_2_any_any';
 import { cos_any } from '../operators/cos/cos_any';
 import { cos_hyp } from '../operators/cos/cos_hyp';
+import { cos_mul_2_any_imu } from '../operators/cos/cos_mul_2_any_imu';
 import { cos_sym } from '../operators/cos/cos_sym';
+import { cosh_sym } from '../operators/cosh/cosh_sym';
 import { cross_add_2_any_any_any } from '../operators/cross/cross_add_2_any_any_any';
 import { cross_any_add_2_any_any } from '../operators/cross/cross_any_add_2_any_any';
 import { cross_any_any } from '../operators/cross/cross_any_any';
@@ -268,6 +270,7 @@ import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simp
 import { sin_add_2_any_any } from '../operators/sin/sin_add_2_any_any';
 import { sin_any } from '../operators/sin/sin_any';
 import { sin_hyp } from '../operators/sin/sin_hyp';
+import { sin_mul_2_any_imu } from '../operators/sin/sin_mul_2_any_imu';
 import { sin_mul_2_rat_any } from '../operators/sin/sin_mul_2_rat_any';
 import { sin_sym } from '../operators/sin/sin_sym';
 import { sqrt_1_any } from '../operators/sqrt/sqrt_1_any';
@@ -624,9 +627,12 @@ export function register_known_operators(version: 1 | 2 | 3, options: EngineOpti
     $.defineOperator(contract_varargs);
 
     $.defineOperator(cos_add_2_any_any);
+    $.defineOperator(cos_mul_2_any_imu);
     $.defineOperator(cos_sym);
     $.defineOperator(cos_hyp);
     $.defineOperator(cos_any);
+
+    $.defineOperator(cosh_sym);
 
     $.defineOperator(cross_blade_blade);
     // Linearity Laws
@@ -699,6 +705,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: EngineOpti
     $.defineOperator(sin_sym);
     $.defineOperator(sin_hyp);
     $.defineOperator(sin_mul_2_rat_any);
+    $.defineOperator(sin_mul_2_any_imu);
     $.defineOperator(sin_any);
 
     $.defineOperator(sqrt_1_rat);

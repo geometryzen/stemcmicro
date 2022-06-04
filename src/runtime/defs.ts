@@ -2,7 +2,7 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
-import { ExtensionEnv, PHASE_EXPANDING, PHASE_FACTORING } from "../env/ExtensionEnv";
+import { ExtensionEnv, FOCUS_EXPANDING, FOCUS_FACTORING } from "../env/ExtensionEnv";
 import { Flt, wrap_as_flt, piAsDouble, zeroAsDouble } from "../tree/flt/Flt";
 import { Num } from "../tree/num/Num";
 import { negOne, one, zero } from "../tree/rat/Rat";
@@ -270,45 +270,45 @@ export function hard_reset() {
 
 export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_FACTORING);
+    $.setFocus(FOCUS_FACTORING);
     try {
         return func(arg, $);
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }
 
 export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_FACTORING);
+    $.setFocus(FOCUS_FACTORING);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }
 
 export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_EXPANDING);
+    $.setFocus(FOCUS_EXPANDING);
     try {
         return func(arg, $);
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }
 
 export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_EXPANDING);
+    $.setFocus(FOCUS_EXPANDING);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }
 

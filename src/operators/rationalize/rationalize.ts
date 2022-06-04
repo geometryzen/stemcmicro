@@ -1,5 +1,5 @@
 import { condense } from '../../condense';
-import { ExtensionEnv, PHASE_FACTORING } from '../../env/ExtensionEnv';
+import { ExtensionEnv, FOCUS_FACTORING } from '../../env/ExtensionEnv';
 import { gcd } from '../../gcd';
 import { is_negative_number } from '../../is';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -14,12 +14,12 @@ export function Eval_rationalize(expr: U, $: ExtensionEnv): U {
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_FACTORING);
+    $.setFocus(FOCUS_FACTORING);
     try {
         return yyrationalize(argList, $);
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }
 

@@ -1,4 +1,4 @@
-export { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from './src/env/ExtensionEnv';
+export { ExtensionEnv, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_IMPLICATE, Operator, OperatorBuilder, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from './src/env/ExtensionEnv';
 export { is_blade } from './src/operators/blade/is_blade';
 export { is_boo } from './src/operators/boo/is_boo';
 export { is_flt } from './src/operators/flt/is_flt';

@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
+import { ExtensionEnv, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
@@ -135,13 +135,13 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!
     if (isNotDisabled(AUTOEXPAND, $)) {
-        $.setPhase(PHASE_EXPANDING);
+        $.setFocus(FOCUS_EXPANDING);
         // console.lg("Expanding...");
         stack.push(transform_with_reason(stack.pop() as U, $, 'expanding'));
     }
 
     if (isNotDisabled(AUTOFACTOR, $)) {
-        $.setPhase(PHASE_FACTORING);
+        $.setFocus(FOCUS_FACTORING);
         // console.lg("Factoring...");
         stack.push(transform_with_reason(stack.pop() as U, $, 'factoring'));
         // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
@@ -251,22 +251,22 @@ function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void
 
 function explicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_EXPLICATE);
+    $.setFocus(FOCUS_EXPLICATE);
     try {
         return transform_with_reason(input, $, 'explicate');
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }
 
 export function implicate(input: U, $: ExtensionEnv): U {
     const phase = $.getPhase();
-    $.setPhase(PHASE_IMPLICATE);
+    $.setFocus(FOCUS_IMPLICATE);
     try {
         return transform_with_reason(input, $, 'implicate');
     }
     finally {
-        $.setPhase(phase);
+        $.setFocus(phase);
     }
 }

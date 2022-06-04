@@ -115,7 +115,7 @@ export interface ExtensionEnv {
     setAssocL(opr: Sym, value: boolean): void;
     setAssocR(opr: Sym, value: boolean): void;
     setBinding(sym: Sym, binding: U): void;
-    setPhase(phase: number): void;
+    setFocus(focus: number): void;
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;
     toListString(expr: U): string;
@@ -136,16 +136,16 @@ export interface OperatorBuilder<T extends U> {
     create($: ExtensionEnv): Operator<T>;
 }
 
-export const PHASE_EXPLICATE = 1;
-export const PHASE_EXPANDING = 2;
-export const PHASE_FACTORING = 4;
-export const PHASE_IMPLICATE = 8;
+export const FOCUS_EXPLICATE = 1;
+export const FOCUS_EXPANDING = 2;
+export const FOCUS_FACTORING = 4;
+export const FOCUS_IMPLICATE = 8;
 
-export const phases = [PHASE_EXPLICATE, PHASE_EXPANDING, PHASE_FACTORING, PHASE_IMPLICATE];
+export const foci = [FOCUS_EXPLICATE, FOCUS_EXPANDING, FOCUS_FACTORING, FOCUS_IMPLICATE];
 
-export const PHASE_FLAGS_NONE = 0;
-export const PHASE_FLAGS_ALL = PHASE_EXPLICATE | PHASE_EXPANDING | PHASE_FACTORING | PHASE_IMPLICATE;
-export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = PHASE_EXPANDING | PHASE_FACTORING;
+export const FOCUS_FLAGS_NONE = 0;
+export const FOCUS_FLAGS_ALL = FOCUS_EXPLICATE | FOCUS_EXPANDING | FOCUS_FACTORING | FOCUS_IMPLICATE;
+export const FOCUS_FLAGS_EXPANDING_UNION_FACTORING = FOCUS_EXPANDING | FOCUS_FACTORING;
 
 export interface Operator<T extends U> {
     readonly key?: string;

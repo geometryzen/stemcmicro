@@ -1,8 +1,8 @@
 import bigInt from 'big-integer';
 import { bignum_truncate, makePositive, makeSignSameAs, mp_denominator, mp_numerator } from './bignum';
-import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative_number, is_num_and_eq_minus_one, is_one_over_two } from './is';
+import { imu } from './env/imu';
+import { is_negative_number, is_num_and_eq_minus_one } from './is';
 import { isSmall } from './isSmall';
 import { is_rat_integer } from './is_rat_integer';
 import { makeList } from './makeList';
@@ -29,8 +29,8 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
         return hook(one, "A");
     }
 
-    // if (-1)^(1/2) -> leave it as is
-    if (is_num_and_eq_minus_one(base) && is_one_over_two(expo)) {
+    // (power -1 1/2) is replaced by the imaginary unit.
+    if (base.isMinusOne() && expo.isHalf()) {
         // console.lg(`power(base => ${base}, expo => ${expo}) => i`);
         return hook(imu, "B");
     }

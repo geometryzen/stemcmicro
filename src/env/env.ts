@@ -36,7 +36,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { diffFlag, ExtensionEnv, FEATURE, haltFlag, Operator, OperatorBuilder, phases, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, foci, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_FLAGS_ALL, FOCUS_IMPLICATE, haltFlag, Operator, OperatorBuilder, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -99,21 +99,31 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
      * The operators in buckets that are determined by the phase and operator.
      */
     const ops_by_phase: { [key: string]: Operator<U>[] }[] = [];
-    for (const phase of phases) {
+    for (const phase of foci) {
         ops_by_phase[phase] = {};
     }
     const assocs: { [key: string]: Assoc } = {};
 
-    let current_phase: number = PHASE_EXPANDING;
+    let current_focus: number = FOCUS_EXPANDING;
 
     let fieldKind: 'R' | undefined = 'R';
 
     function currentOps(): { [key: string]: Operator<U>[] } {
-        const ops = ops_by_phase[current_phase];
-        if (typeof ops === 'undefined') {
-            throw new Error(`currentOps(${current_phase})`);
+        switch (current_focus) {
+            case FOCUS_EXPLICATE:
+            case FOCUS_EXPANDING:
+            case FOCUS_FACTORING:
+            case FOCUS_IMPLICATE: {
+                const ops = ops_by_phase[current_focus];
+                if (typeof ops === 'undefined') {
+                    throw new Error(`currentOps(${current_focus})`);
+                }
+                return ops;
+            }
+            default: {
+                return {};
+            }
         }
-        return ops;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -137,7 +147,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for key ${key}`);
         }
         else {
-            throw new SystemError(`No operators for key ${key} in phase ${current_phase}`);
+            throw new SystemError(`No operators for key ${key} in phase ${current_focus}`);
         }
     }
 
@@ -203,7 +213,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         },
         reset(): void {
             builders.length = 0;
-            for (const phase of phases) {
+            for (const phase of foci) {
                 const ops = ops_by_phase[phase];
                 for (const key in ops) {
                     ops[key] = [];
@@ -273,7 +283,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             return symTab.getBindings();
         },
         getPhase(): number {
-            return current_phase;
+            return current_focus;
         },
         initialize(): void {
             // This tells us which features to allow.
@@ -288,8 +298,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                     continue;
                 }
                 // If an operator does not restrict the phases to which it applies then it applies to all phases.
-                const phaseFlags = typeof op.phases === 'number' ? op.phases : PHASE_FLAGS_ALL;
-                for (const phase of phases) {
+                const phaseFlags = typeof op.phases === 'number' ? op.phases : FOCUS_FLAGS_ALL;
+                for (const phase of foci) {
                     if (phaseFlags & phase) {
                         const ops = ops_by_phase[phase];
                         if (op.hash) {
@@ -358,16 +368,16 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
             }
         },
         isExpanding(): boolean {
-            return current_phase == PHASE_EXPANDING;
+            return current_focus == FOCUS_EXPANDING;
         },
         isFactoring(): boolean {
-            return current_phase === PHASE_FACTORING;
+            return current_focus === FOCUS_FACTORING;
         },
         get explicateMode(): boolean {
-            return current_phase === PHASE_EXPLICATE;
+            return current_focus === FOCUS_EXPLICATE;
         },
         get implicateMode(): boolean {
-            return current_phase === PHASE_IMPLICATE;
+            return current_focus === FOCUS_IMPLICATE;
         },
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
@@ -473,7 +483,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
-                throw new SystemError(`${expr}, current_phase = ${current_phase} ${JSON.stringify(keys)}`);
+                throw new SystemError(`${expr}, current_phase = ${current_focus} ${JSON.stringify(keys)}`);
             }
             else if (is_num(expr)) {
                 return selectOperator(expr.name, expr);
@@ -548,8 +558,8 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         setBinding(sym: Sym, binding: U): void {
             symTab.setBinding(sym, binding);
         },
-        setPhase(phase: number): void {
-            current_phase = phase;
+        setFocus(focus: number): void {
+            current_focus = focus;
         },
         subtract(lhs: U, rhs: U): U {
             const A = $.negate(rhs);
@@ -600,7 +610,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
                                         // console.lg(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
                                     curExpr = newExpr;

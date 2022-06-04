@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, FOCUS_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -89,7 +89,7 @@ function reduceByFactoringOnRight(lhs: U, rhs: U, common: U, $: ExtensionEnv): U
  */
 class Op extends Function2X<BCons<Sym, U, U>, BCons<Sym, U, U>> implements Operator<Cons> {
     readonly hash: string;
-    readonly phases = PHASE_FACTORING;
+    readonly phases = FOCUS_FACTORING;
     constructor($: ExtensionEnv) {
         super('mul_rhs_distrib_over_add_factor', MATH_ADD, and(is_cons, is_mul_2_any_any), and(is_cons, is_mul_2_any_any), cross($), $);
         this.hash = hash_binop_cons_cons(this.opr, MATH_MUL, MATH_MUL);

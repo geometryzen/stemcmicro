@@ -61,7 +61,6 @@ export interface ExtensionEnv {
     beginSpecial(): void;
     clearBindings(): void;
     clearRenamed(): void;
-    compare(lhs: U, rhs: U): Sign;
     cos(expr: U): U;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;

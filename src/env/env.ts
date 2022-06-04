@@ -36,7 +36,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { diffFlag, ExtensionEnv, FEATURE, foci, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_FLAGS_ALL, FOCUS_IMPLICATE, haltFlag, Operator, OperatorBuilder, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, foci, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_FLAGS_ALL, FOCUS_IMPLICATE, haltFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -241,10 +241,6 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         },
         clearRenamed(): void {
             symTab.clearRenamed();
-        },
-        compare(lhs: U, rhs: U): Sign {
-            // TODO: What is this?
-            return this.compare(lhs, rhs);
         },
         cos(x: U): U {
             // TODO: This should just build then evaluate.

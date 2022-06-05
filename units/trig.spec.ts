@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -14,10 +13,9 @@ describe("trig", function () {
             const engine = create_engine({
                 dependencies: []
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), '(* (cos b) (sin a))');
-            assert.strictEqual(render_as_infix(value, $), 'cos(b)*sin(a)');
+            assert.strictEqual(engine.renderAsSExpr(value), '(* (cos b) (sin a))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(b)*sin(a)');
         });
         it("cos(b)*sin(a)", function () {
             const lines: string[] = [
@@ -26,10 +24,9 @@ describe("trig", function () {
             const engine = create_engine({
                 dependencies: []
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), '(* (cos b) (sin a))');
-            assert.strictEqual(render_as_infix(value, $), 'cos(b)*sin(a)');
+            assert.strictEqual(engine.renderAsSExpr(value), '(* (cos b) (sin a))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(b)*sin(a)');
         });
         it("sin(b)*cos(a)", function () {
             const lines: string[] = [
@@ -38,10 +35,9 @@ describe("trig", function () {
             const engine = create_engine({
                 dependencies: []
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), '(* (cos a) (sin b))');
-            assert.strictEqual(render_as_infix(value, $), 'cos(a)*sin(b)');
+            assert.strictEqual(engine.renderAsSExpr(value), '(* (cos a) (sin b))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*sin(b)');
         });
         it("cos(a)*sin(b)", function () {
             const lines: string[] = [
@@ -50,10 +46,9 @@ describe("trig", function () {
             const engine = create_engine({
                 dependencies: []
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), '(* (cos a) (sin b))');
-            assert.strictEqual(render_as_infix(value, $), 'cos(a)*sin(b)');
+            assert.strictEqual(engine.renderAsSExpr(value), '(* (cos a) (sin b))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*sin(b)');
         });
         it("sin(x)*cos(x)", function () {
             // How do we resolve the ambiguity when the arguments are the same?
@@ -63,10 +58,9 @@ describe("trig", function () {
             const engine = create_engine({
                 dependencies: []
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), '(* (cos x) (sin x))');
-            assert.strictEqual(render_as_infix(value, $), 'cos(x)*sin(x)');
+            assert.strictEqual(engine.renderAsSExpr(value), '(* (cos x) (sin x))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(x)*sin(x)');
         });
         it("cos(x)*sin(x)", function () {
             const lines: string[] = [
@@ -75,10 +69,9 @@ describe("trig", function () {
             const engine = create_engine({
                 dependencies: []
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), '(* (cos x) (sin x))');
-            assert.strictEqual(render_as_infix(value, $), 'cos(x)*sin(x)');
+            assert.strictEqual(engine.renderAsSExpr(value), '(* (cos x) (sin x))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(x)*sin(x)');
         });
     });
 });

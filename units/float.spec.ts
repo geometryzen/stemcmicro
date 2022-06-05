@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine, render_as_infix, render_as_sexpr } from "../index";
+import { create_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("float", function () {
@@ -10,10 +10,9 @@ describe("float", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "3.141593...");
-        assert.strictEqual(render_as_infix(actual, $), "3.141593...");
+        assert.strictEqual(engine.renderAsSExpr(actual), "3.141593...");
+        assert.strictEqual(engine.renderAsInfix(actual), "3.141593...");
         engine.release();
     });
     it("B", function () {
@@ -21,10 +20,9 @@ describe("float", function () {
             `1+i`
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(+ 1 i)");
-        assert.strictEqual(render_as_infix(actual, $), "1+i");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(+ 1 i)");
+        assert.strictEqual(engine.renderAsInfix(actual), "1+i");
         engine.release();
     });
     it("C", function () {
@@ -32,10 +30,9 @@ describe("float", function () {
             `1+2*i`
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(+ 1 (* 2 i))");
-        assert.strictEqual(render_as_infix(actual, $), "1+2*i");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(+ 1 (* 2 i))");
+        assert.strictEqual(engine.renderAsInfix(actual), "1+2*i");
         engine.release();
     });
     it("D", function () {
@@ -43,10 +40,9 @@ describe("float", function () {
             `(1+2*i)^(1/2)`
         ];
         const engine = create_engine({ useCaretForExponentiation: true });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(power (+ 1 (* 2 i)) 1/2)");
-        assert.strictEqual(render_as_infix(actual, $), "(1+2*i)^(1/2)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(power (+ 1 (* 2 i)) 1/2)");
+        assert.strictEqual(engine.renderAsInfix(actual), "(1+2*i)^(1/2)");
         engine.release();
     });
     xit("E", function () {
@@ -57,10 +53,9 @@ describe("float", function () {
             dependencies: ['Flt'],
             useCaretForExponentiation: true
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(power (add 1.0 (multiply 2.0 i)) 0.5)");
-        assert.strictEqual(render_as_infix(actual, $), "1.272020...+0.786151...*i");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(power (add 1.0 (multiply 2.0 i)) 0.5)");
+        assert.strictEqual(engine.renderAsInfix(actual), "1.272020...+0.786151...*i");
         engine.release();
     });
     it("F", function () {
@@ -71,10 +66,9 @@ describe("float", function () {
             dependencies: ['Flt'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "x");
-        assert.strictEqual(render_as_infix(actual, $), "x");
+        assert.strictEqual(engine.renderAsSExpr(actual), "x");
+        assert.strictEqual(engine.renderAsInfix(actual), "x");
         engine.release();
     });
     it("G", function () {
@@ -85,10 +79,9 @@ describe("float", function () {
             dependencies: ['Flt'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "3.141593...");
-        assert.strictEqual(render_as_infix(actual, $), "3.141593...");
+        assert.strictEqual(engine.renderAsSExpr(actual), "3.141593...");
+        assert.strictEqual(engine.renderAsInfix(actual), "3.141593...");
         engine.release();
     });
 });

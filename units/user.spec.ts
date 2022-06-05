@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -13,10 +12,9 @@ describe("user", function () {
         ];
         const engine = create_engine({
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "4");
-        assert.strictEqual(render_as_infix(value, $), "4");
+        assert.strictEqual(engine.renderAsSExpr(value), "4");
+        assert.strictEqual(engine.renderAsInfix(value), "4");
         engine.release();
     });
     it("f(0,0)", function () {
@@ -30,10 +28,9 @@ describe("user", function () {
             dependencies: ['Flt'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(+ (+ (+ 1 (sin 0.0)) 0.0) (sin 0))");
-        assert.strictEqual(render_as_infix(value, $), "((1+sin(0.0))+0.0)+sin(0)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (+ (+ 1 (sin 0.0)) 0.0) (sin 0))");
+        assert.strictEqual(engine.renderAsInfix(value), "((1+sin(0.0))+0.0)+sin(0)");
         engine.release();
     });
 });

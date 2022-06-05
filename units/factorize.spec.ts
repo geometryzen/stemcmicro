@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { factorizeL } from "../src/calculators/factorizeL";
 import { imu } from "../src/env/imu";
 import { makeList } from "../src/makeList";
@@ -119,10 +118,9 @@ describe("factorizeR", function () {
             `2*a*b-a*b`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '(* a b)');
-        assert.strictEqual(render_as_infix(actual, $), 'a*b');
+        assert.strictEqual(engine.renderAsSExpr(actual), '(* a b)');
+        assert.strictEqual(engine.renderAsInfix(actual), 'a*b');
         engine.release();
     });
     it("2 * X + X", function () {
@@ -131,10 +129,9 @@ describe("factorizeR", function () {
             `2*a*b+a*b`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '(* 3 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '3*a*b');
+        assert.strictEqual(engine.renderAsSExpr(actual), '(* 3 a b)');
+        assert.strictEqual(engine.renderAsInfix(actual), '3*a*b');
         engine.release();
     });
     it("X + 2 * X", function () {
@@ -143,10 +140,9 @@ describe("factorizeR", function () {
             `a*b+2*a*b`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '(* 3 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '3*a*b');
+        assert.strictEqual(engine.renderAsSExpr(actual), '(* 3 a b)');
+        assert.strictEqual(engine.renderAsInfix(actual), '3*a*b');
         engine.release();
     });
     it("-2 * X + X", function () {
@@ -155,10 +151,9 @@ describe("factorizeR", function () {
             `-2*a*b+a*b`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '(* -1 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '-a*b');
+        assert.strictEqual(engine.renderAsSExpr(actual), '(* -1 a b)');
+        assert.strictEqual(engine.renderAsInfix(actual), '-a*b');
         engine.release();
     });
 });
@@ -170,10 +165,9 @@ describe("", function () {
             `(X + 2 * A) + 3 * A`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '5*A+X');
+        assert.strictEqual(engine.renderAsInfix(actual), '5*A+X');
         engine.release();
     });
     it("(X + 2 * A) + A", function () {
@@ -182,10 +176,9 @@ describe("", function () {
             `(X + 2 * A) + A`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '3*A+X');
+        assert.strictEqual(engine.renderAsInfix(actual), '3*A+X');
         engine.release();
     });
     it("(X + A) + 2 * A", function () {
@@ -194,10 +187,9 @@ describe("", function () {
             `(X + A) + 2*A`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '3*A+X');
+        assert.strictEqual(engine.renderAsInfix(actual), '3*A+X');
         engine.release();
     });
     it("(X + 2 * A * B) + 3 * A * B", function () {
@@ -206,10 +198,9 @@ describe("", function () {
             `(X + 2 * A * B) + 3 * A * B`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '5*A*B+X');
+        assert.strictEqual(engine.renderAsInfix(actual), '5*A*B+X');
         engine.release();
     });
     it("(X + 2 * A * B) + A * B", function () {
@@ -218,10 +209,9 @@ describe("", function () {
             `(X + 2 * A * B) + A * B`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '3*A*B+X');
+        assert.strictEqual(engine.renderAsInfix(actual), '3*A*B+X');
         engine.release();
     });
     it("(X + A * B) + 2 * A * B", function () {
@@ -230,10 +220,9 @@ describe("", function () {
             `(X + A * B) + 2 * A * B`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
-        assert.strictEqual(render_as_infix(actual, $), '3*A*B+X');
+        assert.strictEqual(engine.renderAsInfix(actual), '3*A*B+X');
         engine.release();
     });
 });
@@ -244,10 +233,9 @@ describe("factorize right", function () {
             `a*b+b`,
         ];
         const engine = create_engine({ useDefinitions: false });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
-        assert.strictEqual(render_as_infix(value, $), "(1+a)*b");
+        assert.strictEqual(engine.renderAsInfix(value), "(1+a)*b");
         engine.release();
     });
     it("factoring", function () {
@@ -255,10 +243,9 @@ describe("factorize right", function () {
             `a*b*c+c`,
         ];
         const engine = create_engine({ useDefinitions: false });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
-        assert.strictEqual(render_as_infix(value, $), "(1+a*b)*c");
+        assert.strictEqual(engine.renderAsInfix(value), "(1+a*b)*c");
         engine.release();
     });
     it("factoring", function () {
@@ -266,10 +253,9 @@ describe("factorize right", function () {
             `a*b*c*d*e+c*d*e`,
         ];
         const engine = create_engine({ useDefinitions: false });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
-        assert.strictEqual(render_as_infix(value, $), "(1+a*b)*c*d*e");
+        assert.strictEqual(engine.renderAsInfix(value), "(1+a*b)*c*d*e");
         engine.release();
     });
 });

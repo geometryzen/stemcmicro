@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine, render_as_infix, render_as_sexpr } from "../index";
+import { create_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("derivative-sandbox", function () {
@@ -10,10 +10,9 @@ describe("derivative-sandbox", function () {
             `d(cos(x),x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(* -1 (sin x))");
-        assert.strictEqual(render_as_infix(actual, $), "-sin(x)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(* -1 (sin x))");
+        assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
         engine.release();
     });
 });
@@ -26,10 +25,9 @@ describe("derivative", function () {
             `d(f,x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(d f x)");
-        assert.strictEqual(render_as_infix(actual, $), "d(f,x)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(d f x)");
+        assert.strictEqual(engine.renderAsInfix(actual), "d(f,x)");
 
         engine.release();
     });
@@ -38,10 +36,9 @@ describe("derivative", function () {
             `d(a,x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "0");
-        assert.strictEqual(render_as_infix(actual, $), "0");
+        assert.strictEqual(engine.renderAsSExpr(actual), "0");
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
 
         engine.release();
     });
@@ -50,10 +47,9 @@ describe("derivative", function () {
             `d(x,x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "1");
-        assert.strictEqual(render_as_infix(actual, $), "1");
+        assert.strictEqual(engine.renderAsSExpr(actual), "1");
+        assert.strictEqual(engine.renderAsInfix(actual), "1");
 
         engine.release();
     });
@@ -63,10 +59,9 @@ describe("derivative", function () {
             `d(x**2,x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(* 2 x)");
-        assert.strictEqual(render_as_infix(actual, $), "2*x");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(* 2 x)");
+        assert.strictEqual(engine.renderAsInfix(actual), "2*x");
 
         engine.release();
     });
@@ -77,10 +72,9 @@ describe("derivative", function () {
             `d(x*x,x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual, $), "(* 2 x)");
-        assert.strictEqual(render_as_infix(actual, $), "2*x");
+        assert.strictEqual(engine.renderAsInfix(actual), "2*x");
         engine.release();
     });
     it("d(sin(x),x)", function () {
@@ -90,10 +84,9 @@ describe("derivative", function () {
             `d(sin(x),x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(cos x)");
-        assert.strictEqual(render_as_infix(actual, $), "cos(x)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(cos x)");
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)");
         engine.release();
     });
     it("d(cos(x),x)", function () {
@@ -103,10 +96,9 @@ describe("derivative", function () {
             `d(cos(x),x)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(* -1 (sin x))");
-        assert.strictEqual(render_as_infix(actual, $), "-sin(x)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(* -1 (sin x))");
+        assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
         engine.release();
     });
 });

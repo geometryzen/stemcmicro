@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine, is_cons, nil, render_as_infix, render_as_sexpr } from "../index";
+import { create_engine, is_cons, nil } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sanity", function () {
@@ -15,10 +15,9 @@ describe("sanity", function () {
             useCaretForExponentiation: true,
             useDefinitions: true
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "i");
-        assert.strictEqual(render_as_infix(actual, $), "i");
+        assert.strictEqual(engine.renderAsSExpr(actual), "i");
+        assert.strictEqual(engine.renderAsInfix(actual), "i");
         engine.release();
     });
 });

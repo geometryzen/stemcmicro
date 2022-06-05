@@ -13,7 +13,6 @@ test/
 tests/
 tests-from-master/
 types/
-check_publish_env.js
 cloudbuild.yaml
 contributing.md
 dump.txt

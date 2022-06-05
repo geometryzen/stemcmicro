@@ -1,6 +1,5 @@
 import { assert } from 'chai';
-import { is_uom, render_as_infix, render_as_sexpr } from '../index';
-import { create_engine } from '../src/runtime/symengine';
+import { create_engine, is_uom } from '../index';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("SI units", function () {
@@ -12,10 +11,9 @@ describe("SI units", function () {
         const engine = create_engine({
             dependencies: ['Uom']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(* 1/5 kg)");
-        assert.strictEqual(render_as_infix(actual, $), "1/5*kg");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(* 1/5 kg)");
+        assert.strictEqual(engine.renderAsInfix(actual), "1/5*kg");
         engine.release();
     });
     it("(Uom, Flt)", function () {
@@ -26,10 +24,9 @@ describe("SI units", function () {
         const engine = create_engine({
             dependencies: ['Flt', 'Uom']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(* 0.2 kg)");
-        assert.strictEqual(render_as_infix(actual, $), "0.2*kg");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(* 0.2 kg)");
+        assert.strictEqual(engine.renderAsInfix(actual), "0.2*kg");
         engine.release();
     });
 });
@@ -43,9 +40,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "kg");
             engine.release();
         });
         it("meter", function () {
@@ -55,9 +51,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "m");
+            assert.strictEqual(engine.renderAsSExpr(actual), "m");
             engine.release();
         });
         it("second", function () {
@@ -67,9 +62,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "s");
+            assert.strictEqual(engine.renderAsSExpr(actual), "s");
             engine.release();
         });
         it("coulomb", function () {
@@ -79,9 +73,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "C");
+            assert.strictEqual(engine.renderAsSExpr(actual), "C");
             engine.release();
         });
         it("ampere", function () {
@@ -91,9 +84,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "A");
+            assert.strictEqual(engine.renderAsSExpr(actual), "A");
             engine.release();
         });
         it("kelvin", function () {
@@ -103,9 +95,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "K");
+            assert.strictEqual(engine.renderAsSExpr(actual), "K");
             engine.release();
         });
         it("mole", function () {
@@ -115,9 +106,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "mol");
+            assert.strictEqual(engine.renderAsSExpr(actual), "mol");
             engine.release();
         });
         it("candela", function () {
@@ -127,9 +117,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "cd");
+            assert.strictEqual(engine.renderAsSExpr(actual), "cd");
             engine.release();
         });
     });
@@ -143,9 +132,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "kg m");
+            assert.strictEqual(engine.renderAsSExpr(actual), "kg m");
             engine.release();
         });
         it("(Flt, Uom)", function () {
@@ -156,9 +144,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Flt', 'Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "5.0*kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "5.0*kg");
             engine.release();
         });
         it("(Uom, Flt)", function () {
@@ -169,9 +156,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Flt', 'Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "5.0*kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "5.0*kg");
             engine.release();
         });
         it("(Num, Uom)", function () {
@@ -182,9 +168,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "2*kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "2*kg");
             engine.release();
         });
         it("(Uom, Num)", function () {
@@ -195,9 +180,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "2*kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "2*kg");
             engine.release();
         });
         it("(Vec, Uom)", function () {
@@ -210,9 +194,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Blade', 'Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "e1*kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "e1*kg");
             engine.release();
         });
         it("(Uom, Vec)", function () {
@@ -225,9 +208,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Blade', 'Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "e1*kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "e1*kg");
             engine.release();
         });
     });
@@ -241,10 +223,9 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual(render_as_infix(actual, $), "m/s");
+                assert.strictEqual(engine.renderAsInfix(actual), "m/s");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -259,9 +240,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Flt', 'Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "5.0*kg ** -1");
+            assert.strictEqual(engine.renderAsInfix(actual), "5.0*kg ** -1");
             engine.release();
         });
         it("(Uom, Flt)", function () {
@@ -272,10 +252,9 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Flt', 'Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "(* 0.2 kg)");
-            assert.strictEqual(render_as_infix(actual, $), "0.2*kg");
+            assert.strictEqual(engine.renderAsSExpr(actual), "(* 0.2 kg)");
+            assert.strictEqual(engine.renderAsInfix(actual), "0.2*kg");
             engine.release();
         });
         it("(Num, Uom)", function () {
@@ -286,9 +265,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "2*kg ** -1");
+            assert.strictEqual(engine.renderAsInfix(actual), "2*kg ** -1");
             engine.release();
         });
         it("(Uom, Num)", function () {
@@ -299,9 +277,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "1/2*kg");
+            assert.strictEqual(engine.renderAsInfix(actual), "1/2*kg");
             engine.release();
         });
     });
@@ -314,9 +291,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_infix(actual, $), "2*m");
+            assert.strictEqual(engine.renderAsInfix(actual), "2*m");
             engine.release();
         });
         it("(Flt, Uom)", function () {
@@ -327,9 +303,8 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Flt', 'Uom']
             });
-            const $ = engine.$;
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], $), "operator + (Flt, Uom) is not supported.");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Flt, Uom) is not supported.");
             engine.release();
         });
         it("(Uom, Flt)", function () {
@@ -341,8 +316,7 @@ describe("uom", function () {
                 dependencies: ['Flt', 'Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            const $ = engine.$;
-            assert.strictEqual(render_as_infix(values[0], $), "operator + (Uom, Flt) is not supported.");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Uom, Flt) is not supported.");
             engine.release();
         });
         it("(Rat, Uom)", function () {
@@ -352,7 +326,7 @@ describe("uom", function () {
             ];
             const engine = create_engine();
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "operator + (Rat, Uom) is not supported.");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Rat, Uom) is not supported.");
             engine.release();
         });
         it("(Uom, Rat)", function () {
@@ -364,7 +338,7 @@ describe("uom", function () {
                 dependencies: ['Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "operator + (Uom, Rat) is not supported.");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Uom, Rat) is not supported.");
             engine.release();
         });
     });
@@ -379,10 +353,9 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual(render_as_infix(actual, $), "N");
+                assert.strictEqual(engine.renderAsInfix(actual), "N");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -399,10 +372,9 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual(render_as_infix(actual, $), "N");
+                assert.strictEqual(engine.renderAsInfix(actual), "N");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -419,10 +391,9 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual(render_as_infix(actual, $), "N");
+                assert.strictEqual(engine.renderAsInfix(actual), "N");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -442,10 +413,9 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(actual)) {
-                assert.strictEqual(render_as_infix(actual, $), "V");
+                assert.strictEqual(engine.renderAsInfix(actual), "V");
             }
             else {
                 assert.fail(`${JSON.stringify(actual)}`);
@@ -461,10 +431,9 @@ describe("uom", function () {
             const engine = create_engine({
                 dependencies: ['Uom']
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             if (is_uom(value)) {
-                assert.strictEqual($.toInfixString(value), "C");
+                assert.strictEqual(engine.renderAsInfix(value), "C");
             }
             else {
                 assert.fail(`${JSON.stringify(value)}`);

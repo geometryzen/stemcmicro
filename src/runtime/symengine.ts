@@ -1,24 +1,39 @@
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
+import { render_as_infix } from "../print/print";
+import { render_as_latex } from "../print/render_as_latex";
+import { render_as_sexpr } from "../print/render_as_sexpr";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
-import { execute_script, transform_tree } from "./execute";
+import { execute_script, transform, transform_tree } from "./execute";
 import { execute_std_definitions } from "./init";
 
-export interface Assoc {
-    sym: Sym;
-    dir: 'L' | 'R'
-}
-
-export type DEPENDENCY = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
-
 export interface EngineOptions {
-    assocs?: Assoc[];
-    dependencies?: DEPENDENCY[];
+    /**
+     * Determines the direction of association for associative operators.
+     * The default is left-association with the exception of exponentiation which associates to the right.
+     */
+    assocs?: { sym: Sym; dir: 'L' | 'R' }[];
+    /**
+     * Determines the features that the script depends on. The default value is to include all features.
+     * Restricting the features may be done for optimization or functional reasons.
+     */
+    dependencies?: ('Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector')[];
+    /**
+     * Determines which symbols should be treated as vectors as opposed to real numbers.
+     */
     treatAsVectors?: string[];
+    /**
+     * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
+     * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
+     * in applications using Geometric Algebra. The default value is false.
+     */
     useCaretForExponentiation?: boolean;
+    /**
+     *
+     */
     useDefinitions?: boolean;
 }
 
@@ -52,7 +67,11 @@ export interface Engine {
      */
     readonly $: ExtensionEnv;
     transformTree(tree: U): { value: U, prints: string[], errors: Error[] };
+    transform(expr: U): U;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
+    renderAsInfix(expr: U): string;
+    renderAsLaTeX(expr: U): string;
+    renderAsSExpr(expr: U): string;
     addRef(): void;
     release(): void;
 }
@@ -66,7 +85,7 @@ function env_options_from_engine_options(options: EngineOptions | undefined): En
     if (options) {
         const config: EnvOptions = {
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
-            includes: Array.isArray(options.dependencies) ? options.dependencies : [],
+            dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions
@@ -76,7 +95,7 @@ function env_options_from_engine_options(options: EngineOptions | undefined): En
     else {
         const config: EnvOptions = {
             assocs: [],
-            includes: [],
+            dependencies: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -101,8 +120,20 @@ export function create_engine(options?: EngineOptions): Engine {
         transformTree(tree: U): { value: U, prints: string[], errors: Error[] } {
             return transform_tree(tree, $);
         },
+        transform(expr: U): U {
+            return transform(expr, $);
+        },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);
+        },
+        renderAsInfix(expr: U): string {
+            return render_as_infix(expr, $);
+        },
+        renderAsLaTeX(expr: U): string {
+            return render_as_latex(expr, $);
+        },
+        renderAsSExpr(expr: U): string {
+            return render_as_sexpr(expr, $);
         },
         addRef(): void {
             ref_count++;

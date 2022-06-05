@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -13,9 +12,8 @@ describe("vectors", function () {
             `x*y`,
         ];
         const engine = create_engine({ treatAsVectors: ['x', 'y'] });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "x*y");
+        assert.strictEqual(engine.renderAsInfix(value), "x*y");
         engine.release();
     });
     it("x|y", function () {
@@ -23,9 +21,8 @@ describe("vectors", function () {
             `x|y`,
         ];
         const engine = create_engine({ treatAsVectors: ['x', 'y'] });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "x|y");
+        assert.strictEqual(engine.renderAsInfix(value), "x|y");
         engine.release();
     });
     it("y|x", function () {
@@ -33,9 +30,8 @@ describe("vectors", function () {
             `y|x`,
         ];
         const engine = create_engine({ treatAsVectors: ['x', 'y'] });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "x|y");
+        assert.strictEqual(engine.renderAsInfix(value), "x|y");
         engine.release();
     });
     it("x^y", function () {
@@ -43,9 +39,8 @@ describe("vectors", function () {
             `x^y`,
         ];
         const engine = create_engine({ treatAsVectors: ['x', 'y'] });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "x^y");
+        assert.strictEqual(engine.renderAsInfix(value), "x^y");
         engine.release();
     });
     it("y^x", function () {
@@ -56,9 +51,8 @@ describe("vectors", function () {
             dependencies: ['Vector'],
             treatAsVectors: ['x', 'y']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "-x^y");
+        assert.strictEqual(engine.renderAsInfix(value), "-x^y");
         engine.release();
     });
     it("x|y+x^y", function () {
@@ -69,9 +63,8 @@ describe("vectors", function () {
             dependencies: ['Vector'],
             treatAsVectors: ['x', 'y']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "x*y");
+        assert.strictEqual(engine.renderAsInfix(value), "x*y");
         engine.release();
     });
     it("A", function () {
@@ -86,10 +79,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(+ (* Ax i) (* Ay j) (* Az k))");
-        assert.strictEqual(render_as_infix(value, $), "Ax*i+Ay*j+Az*k");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* Ax i) (* Ay j) (* Az k))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*i+Ay*j+Az*k");
         engine.release();
     });
     it("abs(A)", function () {
@@ -104,10 +96,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "(Ax**2+Ay**2+Az**2)**(1/2)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(Ax**2+Ay**2+Az**2)**(1/2)");
         engine.release();
     });
     it("A|B", function () {
@@ -123,10 +114,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
-        assert.strictEqual(render_as_infix(value, $), "Ax*Bx+Ay*By+Az*Bz");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Bx+Ay*By+Az*Bz");
         engine.release();
     });
     it("A<<B", function () {
@@ -142,10 +132,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
-        assert.strictEqual(render_as_infix(value, $), "Ax*Bx+Ay*By+Az*Bz");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Bx+Ay*By+Az*Bz");
         engine.release();
     });
     it("A>>B", function () {
@@ -161,10 +150,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
-        assert.strictEqual(render_as_infix(value, $), "Ax*Bx+Ay*By+Az*Bz");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* Ax Bx) (* Ay By) (* Az Bz))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Bx+Ay*By+Az*Bz");
         engine.release();
     });
     // SLOW
@@ -182,10 +170,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(render_as_infix(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
     });
     // SLOW
@@ -203,10 +190,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(render_as_infix(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
 
         engine.release();
     });
@@ -225,10 +211,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(render_as_infix(value, $), "0");
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
     it("A|cross(B,C) ", function () {
@@ -246,10 +231,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(render_as_infix(value, $), "Ax*By*Cz-Ax*Bz*Cy-Ay*Bx*Cz+Ay*Bz*Cx+Az*Bx*Cy-Az*By*Cx");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*By*Cz-Ax*Bz*Cy-Ay*Bx*Cz+Ay*Bz*Cx+Az*Bx*Cy-Az*By*Cx");
         engine.release();
     });
     it("B|cross(C,A) ", function () {
@@ -266,10 +250,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(render_as_infix(value, $), "Ax*By*Cz-Ax*Bz*Cy-Ay*Bx*Cz+Ay*Bz*Cx+Az*Bx*Cy-Az*By*Cx");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*By*Cz-Ax*Bz*Cy-Ay*Bx*Cz+Ay*Bz*Cx+Az*Bx*Cy-Az*By*Cx");
         engine.release();
     });
     it("A|cross(B,C)-B|cross(C,A)", function () {
@@ -286,10 +269,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(render_as_infix(value, $), "0");
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
     it("abs(A)", function () {
@@ -304,10 +286,9 @@ describe("vectors", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "(Ax**2+Ay**2+Az**2)**(1/2)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(power (+ (power Ax 2) (power Ay 2) (power Az 2)) 1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(Ax**2+Ay**2+Az**2)**(1/2)");
         engine.release();
     });
     describe("Geometric Algebra with Symbols", function () {
@@ -319,10 +300,9 @@ describe("vectors", function () {
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'b', 'c']
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), "(* a b c)");
-            assert.strictEqual(render_as_infix(value, $), "a*b*c");
+            assert.strictEqual(engine.renderAsSExpr(value), "(* a b c)");
+            assert.strictEqual(engine.renderAsInfix(value), "a*b*c");
             engine.release();
         });
         it("The geometric product is associative a(bc) = abc", function () {
@@ -334,10 +314,9 @@ describe("vectors", function () {
                 `a*(b*c)`
             ];
             const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), "(* a b c)");
-            assert.strictEqual(render_as_infix(value, $), "a*b*c");
+            assert.strictEqual(engine.renderAsSExpr(value), "(* a b c)");
+            assert.strictEqual(engine.renderAsInfix(value), "a*b*c");
             engine.release();
         });
         it("abs(a)", function () {
@@ -345,10 +324,9 @@ describe("vectors", function () {
                 `abs(a)`
             ];
             const engine = create_engine({ treatAsVectors: ['a', 'n'] });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), "(power (power a 2) 1/2)");
-            assert.strictEqual(render_as_infix(value, $), "(a**2)**(1/2)");
+            assert.strictEqual(engine.renderAsSExpr(value), "(power (power a 2) 1/2)");
+            assert.strictEqual(engine.renderAsInfix(value), "(a**2)**(1/2)");
             engine.release();
         });
         it("Reflections Zero", function () {
@@ -361,10 +339,9 @@ describe("vectors", function () {
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), "(* -1 n a n)");
-            assert.strictEqual(render_as_infix(value, $), "-n*a*n");
+            assert.strictEqual(engine.renderAsSExpr(value), "(* -1 n a n)");
+            assert.strictEqual(engine.renderAsInfix(value), "-n*a*n");
             engine.release();
         });
         it("Reflections I", function () {
@@ -376,10 +353,9 @@ describe("vectors", function () {
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), "0");
-            assert.strictEqual(render_as_infix(value, $), "0");
+            assert.strictEqual(engine.renderAsSExpr(value), "0");
+            assert.strictEqual(engine.renderAsInfix(value), "0");
             engine.release();
         });
         it("Reflections II", function () {
@@ -395,10 +371,9 @@ describe("vectors", function () {
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(render_as_sexpr(value, $), "0");
-            assert.strictEqual(render_as_infix(value, $), "0");
+            assert.strictEqual(engine.renderAsSExpr(value), "0");
+            assert.strictEqual(engine.renderAsInfix(value), "0");
             engine.release();
         });
         it("Reflections Redux", function () {
@@ -410,10 +385,9 @@ describe("vectors", function () {
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
-            const $ = engine.$;
             const value = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(value,$), "0");
-            assert.strictEqual(render_as_infix(value, $), "-n*a");
+            assert.strictEqual(engine.renderAsInfix(value), "-n*a");
             engine.release();
         });
     });

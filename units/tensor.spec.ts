@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { get_component } from "../src/calculators/get_component";
 import { create_engine } from "../src/runtime/symengine";
 import { wrap_as_int } from "../src/tree/rat/Rat";
@@ -16,9 +15,8 @@ describe("tensor-sandbox", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(render_as_infix(actual, $), "a*d-b*c");
+        assert.strictEqual(engine.renderAsInfix(actual), "a*d-b*c");
         engine.release();
     });
 });
@@ -26,7 +24,6 @@ describe("tensor-sandbox", function () {
 describe("tensor", function () {
     it("sanity-check", function () {
         const engine = create_engine();
-        const $ = engine.$;
         const a = new Sym('a');
         const b = new Sym('b');
         const c = new Sym('c');
@@ -40,22 +37,22 @@ describe("tensor", function () {
         assert.strictEqual(M.ndim, 2);
         assert.strictEqual(M.dim(0), 3);
         assert.strictEqual(M.dim(1), 2);
-        assert.isTrue(get_component(ab, items_to_cons(wrap_as_int(1)), $).equals(a));
-        assert.isTrue(get_component(ab, items_to_cons(wrap_as_int(2)), $).equals(b));
-        assert.isTrue(get_component(cd, items_to_cons(wrap_as_int(1)), $).equals(c));
-        assert.isTrue(get_component(cd, items_to_cons(wrap_as_int(2)), $).equals(d));
-        assert.isTrue(get_component(ef, items_to_cons(wrap_as_int(1)), $).equals(e));
-        assert.isTrue(get_component(ef, items_to_cons(wrap_as_int(2)), $).equals(f));
-        assert.isTrue(get_component(M, items_to_cons(), $).equals(M));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1)), $).equals(ab));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2)), $).equals(cd));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3)), $).equals(ef));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1), wrap_as_int(1)), $).equals(a));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1), wrap_as_int(2)), $).equals(b));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2), wrap_as_int(1)), $).equals(c));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2), wrap_as_int(2)), $).equals(d));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3), wrap_as_int(1)), $).equals(e));
-        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3), wrap_as_int(2)), $).equals(f));
+        assert.isTrue(get_component(ab, items_to_cons(wrap_as_int(1)), engine.$).equals(a));
+        assert.isTrue(get_component(ab, items_to_cons(wrap_as_int(2)), engine.$).equals(b));
+        assert.isTrue(get_component(cd, items_to_cons(wrap_as_int(1)), engine.$).equals(c));
+        assert.isTrue(get_component(cd, items_to_cons(wrap_as_int(2)), engine.$).equals(d));
+        assert.isTrue(get_component(ef, items_to_cons(wrap_as_int(1)), engine.$).equals(e));
+        assert.isTrue(get_component(ef, items_to_cons(wrap_as_int(2)), engine.$).equals(f));
+        assert.isTrue(get_component(M, items_to_cons(), engine.$).equals(M));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1)), engine.$).equals(ab));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2)), engine.$).equals(cd));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3)), engine.$).equals(ef));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1), wrap_as_int(1)), engine.$).equals(a));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(1), wrap_as_int(2)), engine.$).equals(b));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2), wrap_as_int(1)), engine.$).equals(c));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(2), wrap_as_int(2)), engine.$).equals(d));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3), wrap_as_int(1)), engine.$).equals(e));
+        assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3), wrap_as_int(2)), engine.$).equals(f));
     });
     it("printing", function () {
         const lines: string[] = [
@@ -64,10 +61,9 @@ describe("tensor", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "[[a,b],[c,d]]");
-        assert.strictEqual(render_as_infix(actual, $), "[[a,b],[c,d]]");
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[[a,b],[c,d]]");
 
         engine.release();
     });
@@ -80,10 +76,9 @@ describe("tensor", function () {
             ];
             const sourceText = lines.join('\n');
             const engine = create_engine();
-            const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(render_as_sexpr(actual, $), "[[a,b],[c,d]]");
-            assert.strictEqual(render_as_infix(actual, $), "[[a,b],[c,d]]");
+            assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
+            assert.strictEqual(engine.renderAsInfix(actual), "[[a,b],[c,d]]");
             engine.release();
         });
         it("A[1]", function () {
@@ -93,9 +88,8 @@ describe("tensor", function () {
             ];
             const sourceText = lines.join('\n');
             const engine = create_engine();
-            const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(render_as_infix(actual, $), "[a,b]");
+            assert.strictEqual(engine.renderAsInfix(actual), "[a,b]");
             engine.release();
         });
         it("A[2]", function () {
@@ -105,9 +99,8 @@ describe("tensor", function () {
             ];
             const sourceText = lines.join('\n');
             const engine = create_engine();
-            const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(render_as_infix(actual, $), "[c,d]");
+            assert.strictEqual(engine.renderAsInfix(actual), "[c,d]");
             engine.release();
         });
         it("A[1,1]", function () {
@@ -117,9 +110,8 @@ describe("tensor", function () {
             ];
             const sourceText = lines.join('\n');
             const engine = create_engine();
-            const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(render_as_infix(actual, $), "a");
+            assert.strictEqual(engine.renderAsInfix(actual), "a");
             engine.release();
         });
         it("A[1,2]", function () {
@@ -129,9 +121,8 @@ describe("tensor", function () {
             ];
             const sourceText = lines.join('\n');
             const engine = create_engine();
-            const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(render_as_infix(actual, $), "b");
+            assert.strictEqual(engine.renderAsInfix(actual), "b");
             engine.release();
         });
         it("A[2,1]", function () {
@@ -141,9 +132,8 @@ describe("tensor", function () {
             ];
             const sourceText = lines.join('\n');
             const engine = create_engine();
-            const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(render_as_infix(actual, $), "c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c");
             engine.release();
         });
         it("A[2,2]", function () {
@@ -153,9 +143,8 @@ describe("tensor", function () {
             ];
             const sourceText = lines.join('\n');
             const engine = create_engine();
-            const $ = engine.$;
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(render_as_infix(actual, $), "d");
+            assert.strictEqual(engine.renderAsInfix(actual), "d");
             engine.release();
         });
     });
@@ -166,9 +155,8 @@ describe("tensor", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(render_as_infix(actual, $), "[[d,-b],[-c,a]]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[[d,-b],[-c,a]]");
         engine.release();
     });
     it("det", function () {
@@ -178,9 +166,8 @@ describe("tensor", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(render_as_infix(actual, $), "a*d-b*c");
+        assert.strictEqual(engine.renderAsInfix(actual), "a*d-b*c");
         engine.release();
     });
     it("inv", function () {
@@ -190,9 +177,8 @@ describe("tensor", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(render_as_infix(actual, $), "[[d,-b],[-c,a]]/(a*d-b*c)");
+        assert.strictEqual(engine.renderAsInfix(actual), "[[d,-b],[-c,a]]/(a*d-b*c)");
         engine.release();
     });
     it("inv-adj/det", function () {
@@ -202,9 +188,8 @@ describe("tensor", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(render_as_infix(actual, $), "0");
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
         engine.release();
     });
 });

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine, render_as_infix, render_as_sexpr } from "../index";
+import { create_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("grad", function () {
@@ -11,10 +11,9 @@ describe("grad", function () {
         const engine = create_engine({
             dependencies: []
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "[[1,2],[3,4]]");
-        assert.strictEqual(render_as_infix(actual, $), "[[1,2],[3,4]]");
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[1,2],[3,4]]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[[1,2],[3,4]]");
 
         engine.release();
     });
@@ -30,10 +29,9 @@ describe("grad", function () {
         const engine = create_engine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(grad F)");
-        assert.strictEqual(render_as_infix(actual, $), "grad(F)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(grad F)");
+        assert.strictEqual(engine.renderAsInfix(actual), "grad(F)");
 
         engine.release();
     });

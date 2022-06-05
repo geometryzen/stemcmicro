@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -9,10 +8,9 @@ describe("kernel", function () {
             `0`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '0');
-        assert.strictEqual(render_as_infix(actual, $), '0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '0');
+        assert.strictEqual(engine.renderAsInfix(actual), '0');
         engine.release();
     });
     it("rat(1)", function () {
@@ -20,10 +18,9 @@ describe("kernel", function () {
             `1`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '1');
-        assert.strictEqual(render_as_infix(actual, $), '1');
+        assert.strictEqual(engine.renderAsSExpr(actual), '1');
+        assert.strictEqual(engine.renderAsInfix(actual), '1');
         engine.release();
     });
     it("rat(2)", function () {
@@ -31,10 +28,9 @@ describe("kernel", function () {
             `2`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '2');
-        assert.strictEqual(render_as_infix(actual, $), '2');
+        assert.strictEqual(engine.renderAsSExpr(actual), '2');
+        assert.strictEqual(engine.renderAsInfix(actual), '2');
         engine.release();
     });
     it("add_rat_rat", function () {
@@ -42,10 +38,9 @@ describe("kernel", function () {
             `2+3`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '5');
-        assert.strictEqual(render_as_infix(actual, $), '5');
+        assert.strictEqual(engine.renderAsSExpr(actual), '5');
+        assert.strictEqual(engine.renderAsInfix(actual), '5');
         engine.release();
     });
     it("flt(0)", function () {
@@ -55,10 +50,9 @@ describe("kernel", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '0.0');
-        assert.strictEqual(render_as_infix(actual, $), '0.0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '0.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '0.0');
         engine.release();
     });
     it("flt(1)", function () {
@@ -68,10 +62,9 @@ describe("kernel", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '1.0');
-        assert.strictEqual(render_as_infix(actual, $), '1.0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '1.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '1.0');
         engine.release();
     });
     it("flt(2)", function () {
@@ -81,10 +74,9 @@ describe("kernel", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '2.0');
-        assert.strictEqual(render_as_infix(actual, $), '2.0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '2.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '2.0');
         engine.release();
     });
     it("add_flt_flt", function () {
@@ -94,10 +86,9 @@ describe("kernel", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '5.0');
-        assert.strictEqual(render_as_infix(actual, $), '5.0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '5.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '5.0');
         engine.release();
     });
     it("add_rat_flt", function () {
@@ -107,10 +98,9 @@ describe("kernel", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '5.0');
-        assert.strictEqual(render_as_infix(actual, $), '5.0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '5.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '5.0');
         engine.release();
     });
 });
@@ -122,10 +112,9 @@ describe("kernel", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '6.0');
-        assert.strictEqual(render_as_infix(actual, $), '6.0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '6.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '6.0');
         engine.release();
     });
     it("*(Rat,Rat)", function () {
@@ -133,10 +122,9 @@ describe("kernel", function () {
             `2*3`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '6');
-        assert.strictEqual(render_as_infix(actual, $), '6');
+        assert.strictEqual(engine.renderAsSExpr(actual), '6');
+        assert.strictEqual(engine.renderAsInfix(actual), '6');
         engine.release();
     });
     it("+(Rat,Rat)", function () {
@@ -144,10 +132,9 @@ describe("kernel", function () {
             `2+3`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '5');
-        assert.strictEqual(render_as_infix(actual, $), '5');
+        assert.strictEqual(engine.renderAsSExpr(actual), '5');
+        assert.strictEqual(engine.renderAsInfix(actual), '5');
         engine.release();
     });
     it("+(Flt,Flt)", function () {
@@ -157,10 +144,9 @@ describe("kernel", function () {
         const engine = create_engine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), '5.0');
-        assert.strictEqual(render_as_infix(actual, $), '5.0');
+        assert.strictEqual(engine.renderAsSExpr(actual), '5.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '5.0');
         engine.release();
     });
 });

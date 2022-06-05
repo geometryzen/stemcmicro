@@ -39,7 +39,7 @@ import { diffFlag, ExtensionEnv, FEATURE, foci, FOCUS_EXPANDING, FOCUS_EXPLICATE
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
-    includes?: FEATURE[]
+    dependencies?: FEATURE[]
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -47,7 +47,7 @@ export interface EnvOptions {
 
 interface EnvConfig {
     assocs: { sym: Sym, dir: 'L' | 'R' }[];
-    includes: FEATURE[];
+    dependencies: FEATURE[];
     treatAsVectors: string[]
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
@@ -57,7 +57,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
     if (options) {
         const config: EnvConfig = {
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
-            includes: Array.isArray(options.includes) ? options.includes : [],
+            dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
@@ -67,7 +67,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
     else {
         const config: EnvConfig = {
             assocs: [],
-            includes: [],
+            dependencies: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -285,7 +285,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         buildOperators(): void {
             for (const builder of builders) {
                 const op = builder.create($);
-                if (dependencies_satisfied(op.dependencies, config.includes)) {
+                if (dependencies_satisfied(op.dependencies, config.dependencies)) {
                     // No problem.
                 }
                 else {

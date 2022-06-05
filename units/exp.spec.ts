@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine, render_as_infix, render_as_sexpr } from "../index";
+import { create_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("exp", function () {
@@ -8,10 +8,9 @@ describe("exp", function () {
             `exp(5)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(power e 5)");
-        assert.strictEqual(render_as_infix(actual, $), "e**5");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(power e 5)");
+        assert.strictEqual(engine.renderAsInfix(actual), "e**5");
         engine.release();
     });
     it("1", function () {
@@ -20,10 +19,9 @@ describe("exp", function () {
             `exp(1)`
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "e");
-        assert.strictEqual(render_as_infix(actual, $), "e");
+        assert.strictEqual(engine.renderAsSExpr(actual), "e");
+        assert.strictEqual(engine.renderAsInfix(actual), "e");
         engine.release();
     });
     // TODO: We could do better at factoring out the rationals.
@@ -35,9 +33,8 @@ describe("exp", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(actual, $), "-1/2*2**(1/2)-1/2*2**(1/2)*i");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2**(1/2)-1/2*2**(1/2)*i");
         // assert.strictEqual(print_expr(actual, $), "(-1/2-1/2*i)*2**(1/2)");
         engine.release();
     });

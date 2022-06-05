@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { create_engine, is_blade, is_tensor, render_as_infix } from '../index';
+import { create_engine, is_blade, is_tensor } from '../index';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("operator +", function () {
@@ -15,7 +15,7 @@ describe("operator +", function () {
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "2*L1");
         engine.release();
     });
 });
@@ -75,7 +75,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "L1+L2");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1+L2");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -90,7 +90,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "L1+L2");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1+L2");
             engine.release();
         });
         it("(e1, e1)", function () {
@@ -105,7 +105,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "2*L1");
             engine.release();
         });
     });
@@ -141,7 +141,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "0");
             engine.release();
         });
     });
@@ -159,7 +159,7 @@ describe("algebra", function () {
             });
             const { values } = engine.executeScript(lines.join('\n'));
             // Interestingly, this seems to have simplified because e1 * e2 = e1 | e2 + e1 ^ e2 = e1 ^ e2 (orthogonal basis vectors).
-            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2");
             engine.release();
         });
         it("(2, e1)", function () {
@@ -174,7 +174,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "2*L1");
             engine.release();
         });
     });
@@ -192,7 +192,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2 ^ L3");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2 ^ L3");
             engine.release();
         });
     });
@@ -210,7 +210,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "1");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "1");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -226,7 +226,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "0");
             engine.release();
         });
     });
@@ -244,7 +244,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "1");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "1");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -260,7 +260,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "0");
             engine.release();
         });
     });
@@ -278,7 +278,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "1");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "1");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -294,7 +294,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "0");
             engine.release();
         });
     });
@@ -312,7 +312,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "0");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "0");
             engine.release();
         });
         it("(e1, e2)", function () {
@@ -328,7 +328,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2");
             engine.release();
         });
         it("(e1, e2, e3)", function () {
@@ -344,7 +344,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0], engine.$), "L1 ^ L2 ^ L3");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2 ^ L3");
             engine.release();
         });
     });
@@ -361,7 +361,7 @@ describe("algebra", function () {
                 `X`
             ]
             const actual = run(lines.join('\n'));
-            assert.strictEqual(render_as_infix(values[0],engine.$), "Multivector(L3)");
+            assert.strictEqual(engine.renderAsInfix(values[0], "Multivector(L3)");
         });
     });
     */
@@ -470,7 +470,7 @@ describe("algebra", function () {
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(render_as_infix(values[0], engine.$), "L1+L2");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "L1+L2");
         engine.release();
     });
     it("(e1, e1)", function () {
@@ -485,7 +485,7 @@ describe("algebra", function () {
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(render_as_infix(values[0], engine.$), "2*L1");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "2*L1");
         engine.release();
     });
 });

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine, render_as_infix, render_as_sexpr } from "../index";
+import { create_engine } from "../index";
 
 describe("real", function () {
     it("real(x+i*y) => x", function () {
@@ -11,9 +11,8 @@ describe("real", function () {
             dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        const $ = engine.$;
-        assert.strictEqual(render_as_sexpr(values[0], $), "x");
-        assert.strictEqual(render_as_infix(values[0], $), "x");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "x");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "x");
         engine.release();
     });
     it("real(exp(i*x)) => cos(x)", function () {
@@ -25,10 +24,8 @@ describe("real", function () {
             dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        const $ = engine.$;
-        // Having trouble ordering and simplifying.
-        assert.strictEqual(render_as_sexpr(values[0], $), "(cos x)");
-        assert.strictEqual(render_as_infix(values[0], $), "cos(x)");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(cos x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)");
         engine.release();
     });
 });

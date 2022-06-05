@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -11,11 +10,10 @@ describe("predicate", function () {
         const engine = create_engine({
             dependencies: []
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(render_as_sexpr(value, $), "false");
-        assert.strictEqual(render_as_infix(value, $), 'False');
+        assert.strictEqual(engine.renderAsSExpr(value), "false");
+        assert.strictEqual(engine.renderAsInfix(value), 'False');
     });
     it("x>0", function () {
         const lines: string[] = [
@@ -24,11 +22,10 @@ describe("predicate", function () {
         const engine = create_engine({
             dependencies: []
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(render_as_sexpr(value, $), "true");
-        assert.strictEqual(render_as_infix(value, $), 'True');
+        assert.strictEqual(engine.renderAsSExpr(value), "true");
+        assert.strictEqual(engine.renderAsInfix(value), 'True');
     });
     it("x<0", function () {
         const lines: string[] = [
@@ -37,11 +34,10 @@ describe("predicate", function () {
         const engine = create_engine({
             dependencies: []
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(render_as_sexpr(value, $), "false");
-        assert.strictEqual(render_as_infix(value, $), 'False');
+        assert.strictEqual(engine.renderAsSExpr(value), "false");
+        assert.strictEqual(engine.renderAsInfix(value), 'False');
     });
     it("x * y < 0", function () {
         const lines: string[] = [
@@ -50,11 +46,10 @@ describe("predicate", function () {
         const engine = create_engine({
             dependencies: []
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(render_as_sexpr(value, $), "false");
-        assert.strictEqual(render_as_infix(value, $), 'False');
+        assert.strictEqual(engine.renderAsSExpr(value), "false");
+        assert.strictEqual(engine.renderAsInfix(value), 'False');
     });
     it("x * y > 0", function () {
         const lines: string[] = [
@@ -63,10 +58,9 @@ describe("predicate", function () {
         const engine = create_engine({
             dependencies: []
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(render_as_sexpr(value, $), "true");
-        assert.strictEqual(render_as_infix(value, $), 'True');
+        assert.strictEqual(engine.renderAsSExpr(value), "true");
+        assert.strictEqual(engine.renderAsInfix(value), 'True');
     });
 });

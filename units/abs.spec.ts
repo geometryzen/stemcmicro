@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { render_as_infix, render_as_sexpr } from "../index";
 import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -14,9 +13,8 @@ describe("abs-sandbox", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "exp(x)");
+        assert.strictEqual(engine.renderAsInfix(value), "exp(x)");
         engine.release();
     });
 });
@@ -27,9 +25,8 @@ describe("abs", function () {
             `abs(x)`,
         ];
         const engine = create_engine({});
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "(x**2)**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(x**2)**(1/2)");
         engine.release();
     });
     it("abs(iy)", function () {
@@ -37,9 +34,8 @@ describe("abs", function () {
             `abs(sqrt(-1)*y)`,
         ];
         const engine = create_engine();
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "(y**2)**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(y**2)**(1/2)");
         engine.release();
     });
     it("abs(x+i*y)", function () {
@@ -50,10 +46,9 @@ describe("abs", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "(x**2+y**2)**(1/2)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(power (+ (power x 2) (power y 2)) 1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(x**2+y**2)**(1/2)");
         engine.release();
     });
     it("abs(a+i*b)", function () {
@@ -64,10 +59,9 @@ describe("abs", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(power (+ (power a 2) (power b 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "(a**2+b**2)**(1/2)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(power (+ (power a 2) (power b 2)) 1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(a**2+b**2)**(1/2)");
         engine.release();
     });
     it("abs(a+b+i*c)", function () {
@@ -79,9 +73,8 @@ describe("abs", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "(a**2+2*a*b+b**2+c**2)**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(a**2+2*a*b+b**2+c**2)**(1/2)");
         engine.release();
     });
     it("x * i", function () {
@@ -93,9 +86,8 @@ describe("abs", function () {
             `x * i`,
         ];
         const engine = create_engine({ useDefinitions: false });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "x*i");
+        assert.strictEqual(engine.renderAsInfix(value), "x*i");
         engine.release();
     });
     it("-i * i * x * x", function () {
@@ -107,9 +99,8 @@ describe("abs", function () {
             `-i * i * x * x`,
         ];
         const engine = create_engine({ useDefinitions: false });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "x**2");
+        assert.strictEqual(engine.renderAsInfix(value), "x**2");
         engine.release();
     });
     it("(x-i*y)*(x+i*y)", function () {
@@ -118,10 +109,9 @@ describe("abs", function () {
             `(x-i*y)*(x+i*y)`,
         ];
         const engine = create_engine({ useDefinitions: true });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(+ (power x 2) (power y 2))");
-        assert.strictEqual(render_as_infix(value, $), "x**2+y**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (power x 2) (power y 2))");
+        assert.strictEqual(engine.renderAsInfix(value), "x**2+y**2");
         engine.release();
     });
     it("(x-i*y)*(x+i*y)", function () {
@@ -129,10 +119,9 @@ describe("abs", function () {
             `(x-i*y)*(x+i*y)`,
         ];
         const engine = create_engine({ useDefinitions: true });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "(+ (power x 2) (power y 2))");
-        assert.strictEqual(render_as_infix(value, $), "x**2+y**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (power x 2) (power y 2))");
+        assert.strictEqual(engine.renderAsInfix(value), "x**2+y**2");
         engine.release();
     });
     it("abs(1+2.0*i)", function () {
@@ -146,10 +135,9 @@ describe("abs", function () {
             // FIXME: The absence of Imu causes this expression to loop.
             dependencies: ['Flt', 'Imu']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(value, $), "2.236068...");
-        assert.strictEqual(render_as_infix(value, $), "2.236068...");
+        assert.strictEqual(engine.renderAsSExpr(value), "2.236068...");
+        assert.strictEqual(engine.renderAsInfix(value), "2.236068...");
         engine.release();
     });
     it("exp(i*pi/3)", function () {
@@ -161,10 +149,9 @@ describe("abs", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "1/2+(1/2*3**(1/2))*i");
+        assert.strictEqual(engine.renderAsInfix(value), "1/2+(1/2*3**(1/2))*i");
         engine.release();
     });
     it("imaginary numbers with autofactor=1", function () {
@@ -177,9 +164,8 @@ describe("abs", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "(a+c)*i");
+        assert.strictEqual(engine.renderAsInfix(value), "(a+c)*i");
         engine.release();
     });
     it("imaginary numbers with autofactor=0", function () {
@@ -192,9 +178,8 @@ describe("abs", function () {
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "a*i+c*i");
+        assert.strictEqual(engine.renderAsInfix(value), "a*i+c*i");
         engine.release();
     });
 });

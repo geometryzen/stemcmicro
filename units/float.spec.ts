@@ -20,7 +20,7 @@ describe("float", function () {
         const lines: string[] = [
             `1+i`
         ];
-        const engine = create_engine({ version: 1 });
+        const engine = create_engine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), "(+ 1 i)");
@@ -31,7 +31,7 @@ describe("float", function () {
         const lines: string[] = [
             `1+2*i`
         ];
-        const engine = create_engine({ version: 1 });
+        const engine = create_engine({});
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), "(+ 1 (* 2 i))");

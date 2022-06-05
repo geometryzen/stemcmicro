@@ -223,7 +223,7 @@ function setup_test(f: () => void, engine: Engine, options: EngineOptions) {
  * @param prefix 
  */
 export function run_shardable_test(s: string[], prefix = '') {
-    const options: EngineOptions = { version: 1 };
+    const options: EngineOptions = {};
     const engine = create_engine(options);
     try {
         setup_test(() => {
@@ -325,8 +325,7 @@ function harness_options_to_engine_options(options: TestOptions | undefined): En
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : useCaretForExponentiation(VERSION_LATEST),
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : useDefinitions(VERSION_LATEST),
-            version: typeof options.version === 'number' ? options.version : VERSION_LATEST
+            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : useDefinitions(VERSION_LATEST)
         };
     }
     else {
@@ -334,8 +333,7 @@ function harness_options_to_engine_options(options: TestOptions | undefined): En
             dependencies: [],
             treatAsVectors: [],
             useCaretForExponentiation: useCaretForExponentiation(VERSION_LATEST),
-            useDefinitions: useDefinitions(VERSION_LATEST),
-            version: VERSION_LATEST
+            useDefinitions: useDefinitions(VERSION_LATEST)
         };
     }
 }
@@ -434,7 +432,7 @@ export function run_test(s: string[], engine: SymEngine, name?: string) {
  * This appears to be dead code.
  */
 export function ava_run(t: Asserts, input: string, expected: string) {
-    const engcfg: EngineOptions = { version: 1 };
+    const engcfg: EngineOptions = {};
     const engine = create_engine(engcfg);
     try {
         const $ = engine.$;

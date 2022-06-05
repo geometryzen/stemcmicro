@@ -325,8 +325,7 @@ describe("uom", function () {
                 `6.0 + kg`
             ];
             const engine = create_engine({
-                dependencies: ['Flt', 'Uom'],
-                version: 2
+                dependencies: ['Flt', 'Uom']
             });
             const $ = engine.$;
             const { values } = engine.executeScript(lines.join('\n'));
@@ -351,7 +350,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `2 + kg`
             ];
-            const engine = create_engine({ version: 2 });
+            const engine = create_engine();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(render_as_infix(values[0], engine.$), "operator + (Rat, Uom) is not supported.");
             engine.release();
@@ -362,8 +361,7 @@ describe("uom", function () {
                 `kg + 2`
             ];
             const engine = create_engine({
-                dependencies: ['Uom'],
-                version: 2
+                dependencies: ['Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(render_as_infix(values[0], engine.$), "operator + (Uom, Rat) is not supported.");

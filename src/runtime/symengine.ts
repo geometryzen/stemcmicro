@@ -6,7 +6,6 @@ import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { execute_std_definitions } from "./init";
-import { VERSION_LATEST } from "./version";
 
 export interface Assoc {
     sym: Sym;
@@ -21,7 +20,6 @@ export interface EngineOptions {
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
-    version?: 1 | 2 | 3;
 }
 
 export function init_env($: ExtensionEnv, options?: EngineOptions) {
@@ -71,8 +69,7 @@ function env_options_from_engine_options(options: EngineOptions | undefined): En
             includes: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: options.useCaretForExponentiation,
-            useDefinitions: options.useDefinitions,
-            version: options.version
+            useDefinitions: options.useDefinitions
         };
         return hook(config, "A");
     }
@@ -82,8 +79,7 @@ function env_options_from_engine_options(options: EngineOptions | undefined): En
             includes: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
-            useDefinitions: false,
-            version: VERSION_LATEST
+            useDefinitions: false
         };
         return hook(config, "B");
     }

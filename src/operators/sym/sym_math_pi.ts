@@ -1,7 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_PI } from "../../runtime/ns_math";
-import { VERSION_ONE } from "../../runtime/version";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { assert_sym } from "./assert_sym";
@@ -70,12 +69,7 @@ class SymMathPi implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Sym): string {
-        if (this.$.version > VERSION_ONE) {
-            return 'π';
-        }
-        else {
-            return 'pi';
-        }
+        return this.$.getSymbolToken(MATH_PI);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym): string {

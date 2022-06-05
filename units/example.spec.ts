@@ -1,8 +1,11 @@
 import { assert } from "chai";
 import {
     create_engine,
-    create_env, define_std_operators, execute_script,
-    execute_std_definitions, render_as_infix,
+    create_env,
+    define_std_operators,
+    execute_script,
+    execute_std_definitions,
+    render_as_infix,
     render_as_latex,
     render_as_sexpr
 } from "../index";

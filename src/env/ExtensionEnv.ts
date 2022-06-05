@@ -54,7 +54,6 @@ export interface ExtensionEnv {
      */
     readonly implicateMode: boolean;
     readonly useCaretForExponentiation: boolean;
-    readonly version: number;
     add(lhs: U, rhs: U): U;
     /**
      *

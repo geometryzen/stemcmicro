@@ -14,7 +14,7 @@ describe("parser", function () {
             `x`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), "x");
@@ -30,7 +30,7 @@ describe("parser", function () {
         const lines: string[] = [
             `12345`
         ];
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), "12345");
@@ -47,8 +47,7 @@ describe("parser", function () {
             `12345.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 2
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -65,7 +64,7 @@ describe("parser", function () {
         const lines: string[] = [
             `"Hello"`
         ];
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
@@ -90,7 +89,7 @@ describe("parser", function () {
         const lines: string[] = [
             `"Hello"`
         ];
-        const engine = create_engine({ version: 1 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
@@ -116,7 +115,7 @@ describe("parser", function () {
             `a+b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -131,7 +130,7 @@ describe("parser", function () {
             `a-b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -146,7 +145,7 @@ describe("parser", function () {
             `a*b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -161,7 +160,7 @@ describe("parser", function () {
             `a/b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -191,7 +190,7 @@ describe("parser", function () {
             `a^b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -206,7 +205,7 @@ describe("parser", function () {
             `a<<b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -221,7 +220,7 @@ describe("parser", function () {
             `a>>b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -236,7 +235,7 @@ describe("parser", function () {
             `a**b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -251,7 +250,7 @@ describe("parser", function () {
             `x = 3`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -266,7 +265,7 @@ describe("parser", function () {
             `let a: A`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -281,7 +280,7 @@ describe("parser", function () {
             `let a: Real = b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -296,7 +295,7 @@ describe("parser", function () {
             `let a: Complex = b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
@@ -311,7 +310,7 @@ describe("parser", function () {
             `let a: Vec = b`
         ];
 
-        const engine = create_engine({ version: 2 });
+        const engine = create_engine();
         const $ = engine.$;
 
         const tree = ts_parse('foo.ts', lines.join('\n'));

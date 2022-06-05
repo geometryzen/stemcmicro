@@ -8,7 +8,7 @@ describe("kernel", function () {
         const lines: string[] = [
             `0`
         ];
-        const engine = create_engine({ version: 3 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), '0');
@@ -19,7 +19,7 @@ describe("kernel", function () {
         const lines: string[] = [
             `1`
         ];
-        const engine = create_engine({ version: 3 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), '1');
@@ -30,7 +30,7 @@ describe("kernel", function () {
         const lines: string[] = [
             `2`
         ];
-        const engine = create_engine({ version: 3 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), '2');
@@ -41,7 +41,7 @@ describe("kernel", function () {
         const lines: string[] = [
             `2+3`
         ];
-        const engine = create_engine({ version: 3 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), '5');
@@ -53,8 +53,7 @@ describe("kernel", function () {
             `0.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -67,8 +66,7 @@ describe("kernel", function () {
             `1.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -81,8 +79,7 @@ describe("kernel", function () {
             `2.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -95,8 +92,7 @@ describe("kernel", function () {
             `2.0+3.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -109,8 +105,7 @@ describe("kernel", function () {
             `2+3.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -125,8 +120,7 @@ describe("kernel", function () {
             `2.0*3.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -138,7 +132,7 @@ describe("kernel", function () {
         const lines: string[] = [
             `2*3`
         ];
-        const engine = create_engine({ version: 3 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), '6');
@@ -149,7 +143,7 @@ describe("kernel", function () {
         const lines: string[] = [
             `2+3`
         ];
-        const engine = create_engine({ version: 3 });
+        const engine = create_engine();
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(render_as_sexpr(actual, $), '5');
@@ -161,8 +155,7 @@ describe("kernel", function () {
             `2.0+3.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);

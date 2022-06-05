@@ -9,8 +9,7 @@ describe("add", function () {
             `2.0+3`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -24,8 +23,7 @@ describe("add", function () {
             `2+3.0`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 3
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);

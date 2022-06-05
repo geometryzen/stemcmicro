@@ -31,7 +31,6 @@ import { is_add } from "../runtime/helpers";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
-import { VERSION_LATEST } from "../runtime/version";
 import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";
@@ -44,7 +43,6 @@ export interface EnvOptions {
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
-    version?: number;
 }
 
 interface EnvConfig {
@@ -53,7 +51,6 @@ interface EnvConfig {
     treatAsVectors: string[]
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
-    version: number;
 }
 
 function config_from_options(options: EnvOptions | undefined): EnvConfig {
@@ -63,8 +60,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             includes: Array.isArray(options.includes) ? options.includes : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
-            version: typeof options.version === 'number' ? options.version : VERSION_LATEST
+            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
         };
         return config;
     }
@@ -74,8 +70,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             includes: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
-            useDefinitions: false,
-            version: VERSION_LATEST
+            useDefinitions: false
         };
         return config;
     }
@@ -189,9 +184,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         get useCaretForExponentiation(): boolean {
             return config.useCaretForExponentiation;
-        },
-        get version(): number {
-            return config.version;
         },
         add(lhs: U, rhs: U): U {
             if (is_num(lhs)) {

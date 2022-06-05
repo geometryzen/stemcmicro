@@ -433,8 +433,7 @@ describe("algebra", function () {
             `a + (-1 * a)`
         ];
         const engine = create_engine({
-            dependencies: ['Flt'],
-            version: 2
+            dependencies: ['Flt']
         });
         const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);

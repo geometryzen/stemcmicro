@@ -54,7 +54,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return defs.evaluatingAsFloats
+        return defs.evaluatingAsFloat
             ? wrap_as_flt(Math.PI / 4.0)
             : $.multiply(rational(1, 4), PI);
     }
@@ -69,21 +69,21 @@ export function arccos(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return defs.evaluatingAsFloats
+        return defs.evaluatingAsFloat
             ? wrap_as_flt((Math.PI * 3.0) / 4.0)
             : $.multiply(rational(3, 4), PI);
     }
 
     // if x == sqrt(3)/2 then return 1/6*pi (30 degrees)
     if (isSqrtThreeOverTwo(x)) {
-        return defs.evaluatingAsFloats
+        return defs.evaluatingAsFloat
             ? wrap_as_flt(Math.PI / 6.0)
             : $.multiply(rational(1, 6), PI);
     }
 
     // if x == -sqrt(3)/2 then return 5/6*pi (150 degrees)
     if (isMinusSqrtThreeOverTwo(x)) {
-        return defs.evaluatingAsFloats
+        return defs.evaluatingAsFloat
             ? wrap_as_flt((5.0 * Math.PI) / 6.0)
             : $.multiply(rational(5, 6), PI);
     }
@@ -97,11 +97,11 @@ export function arccos(x: U, $: ExtensionEnv): U {
         case -2:
             return DynamicConstants.Pi();
         case -1:
-            return defs.evaluatingAsFloats ? wrap_as_flt((Math.PI * 2.0) / 3.0) : $.multiply(rational(2, 3), PI);
+            return defs.evaluatingAsFloat ? wrap_as_flt((Math.PI * 2.0) / 3.0) : $.multiply(rational(2, 3), PI);
         case 0:
-            return defs.evaluatingAsFloats ? wrap_as_flt(Math.PI / 2.0) : $.multiply(half, PI);
+            return defs.evaluatingAsFloat ? wrap_as_flt(Math.PI / 2.0) : $.multiply(half, PI);
         case 1:
-            return defs.evaluatingAsFloats ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
+            return defs.evaluatingAsFloat ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
         case 2:
             return DynamicConstants.Zero();
         default:

@@ -3,7 +3,6 @@ import { compare_factors } from "../../calculators/compare/compare_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { defs } from "../../runtime/defs";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -60,7 +59,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
                 return [TFLAG_NONE, orig];
             }
             case SIGN_EQ: {
-                if (defs.convert_X_times_X_to_power_X_2 && lhs.equals(rhs)) {
+                if (lhs.equals(rhs)) {
                     return [TFLAG_DIFF, $.valueOf(makeList(MATH_POW, lhs, two))];
                 }
                 return [TFLAG_NONE, orig];

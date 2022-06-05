@@ -1,5 +1,5 @@
 import { nativeInt } from '../nativeInt';
-import { defs, moveTos, halt } from '../runtime/defs';
+import { defs, move_top_of_stack, halt } from '../runtime/defs';
 import { stack_push } from '../runtime/stack';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { Tensor } from '../tree/tensor/Tensor';
@@ -68,7 +68,7 @@ export function set_component(n: number): void {
         }
         elems[k] = RVALUE as U;
 
-        moveTos(defs.tos - n);
+        move_top_of_stack(defs.tos - n);
         stack_push(new Tensor(dims, elems));
         return;
     }
@@ -93,7 +93,7 @@ export function set_component(n: number): void {
         elems[k + i] = RVALUE.elem(i);
     }
 
-    moveTos(defs.tos - n);
+    move_top_of_stack(defs.tos - n);
 
     stack_push(new Tensor(dims, elems));
 }

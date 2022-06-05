@@ -72,7 +72,7 @@ class RatExtension implements Extension<Rat> {
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Rat) {
             // console.lg(`RatExtension.transform ${expr}`);
-            if (defs.evaluatingAsFloats) {
+            if (defs.evaluatingAsFloat) {
                 return [TFLAG_DIFF, wrap_as_flt(expr.toNumber())];
             }
             else {

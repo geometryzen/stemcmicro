@@ -1,15 +1,14 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
 import { is_num } from "../../operators/num/is_num";
-import { defs } from "../../runtime/defs";
+import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_multiply } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { is_tensor } from "../../operators/tensor/is_tensor";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, is_cons, nil, U } from "../../tree/tree";
-import { multiply_num_num } from "../mul/multiply_num_num";
 import { sort_terms } from "../compare/sort_terms";
+import { multiply_num_num } from "../mul/multiply_num_num";
 import { add_num_num } from "./add_num_num";
 
 export function to_list_add_sort(terms: U[], $: ExtensionEnv): U {
@@ -53,28 +52,26 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
             continue;
         }
 
-        if (defs.evaluateVersion < 3) {
-            if (is_num(a) && is_num(b)) {
-                const sum = add_num_num(a, b);
-                if ($.isZero(sum)) {
-                    // Ensure correct runtime type of the result by propagating the type correctly.
-                    typedZero = multiply_num_num(typedZero, sum);
-                    terms.splice(i, 2);
-                }
-                else {
-                    terms.splice(i, 2, sum);
-                }
-                // TODO: This looks wierd compared to the matrix case. 
-                i--;
-
-                i++;
-                continue;
+        if (is_num(a) && is_num(b)) {
+            const sum = add_num_num(a, b);
+            if ($.isZero(sum)) {
+                // Ensure correct runtime type of the result by propagating the type correctly.
+                typedZero = multiply_num_num(typedZero, sum);
+                terms.splice(i, 2);
             }
-
-            if (is_num(a) || is_num(b)) {
-                i++;
-                continue;
+            else {
+                terms.splice(i, 2, sum);
             }
+            // TODO: This looks wierd compared to the matrix case. 
+            i--;
+
+            i++;
+            continue;
+        }
+
+        if (is_num(a) || is_num(b)) {
+            i++;
+            continue;
         }
 
         const decomp_a = decompose_multiply_num_times(a);

@@ -90,7 +90,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
         is_rat(expo) &&
         !is_rat_integer(expo) &&
         is_num_and_gt_zero(expo) &&
-        !defs.evaluatingAsFloats
+        !defs.evaluatingAsFloat
     ) {
         if (expo.a < expo.b) {
             tmp = makeList(POWER, base, expo);
@@ -168,7 +168,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // complex number in exponential form, get it to rectangular
     // but only if we are not in the process of calculating a polar form,
     // otherwise we'd just undo the work we want to do
-    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !defs.evaluatingPolar) {
+    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !defs.evaluatingAsPolar) {
         // TODO: We could simply use origExpr now that it is an agument.
         const tmp = makeList(POWER, base, expo);
 
@@ -297,7 +297,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
             // value
 
             const pi =
-                defs.evaluatingAsFloats ||
+                defs.evaluatingAsFloat ||
                     (iscomplexnumberdouble(base, $) && is_flt(expo))
                     ? wrap_as_flt(Math.PI)
                     : PI;

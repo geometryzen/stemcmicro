@@ -86,7 +86,7 @@ interface Assoc {
     rhs: boolean;
 }
 
-export function createEnv(options?: EnvOptions): ExtensionEnv {
+export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const config = config_from_options(options);
 
@@ -211,7 +211,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         beginSpecial(): void {
             symTab.beginSpecial();
         },
-        reset(): void {
+        clearOperators(): void {
             builders.length = 0;
             for (const phase of foci) {
                 const ops = ops_by_phase[phase];
@@ -281,9 +281,7 @@ export function createEnv(options?: EnvOptions): ExtensionEnv {
         getFocus(): number {
             return current_focus;
         },
-        initialize(): void {
-            // This tells us which features to allow.
-            config.includes;
+        buildOperators(): void {
             for (const builder of builders) {
                 const op = builder.create($);
                 if (dependencies_satisfied(op.dependencies, config.includes)) {

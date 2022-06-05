@@ -60,6 +60,7 @@ export interface ExtensionEnv {
     arg(expr: U): U;
     beginSpecial(): void;
     clearBindings(): void;
+    clearOperators(): void;
     clearRenamed(): void;
     cos(expr: U): U;
     defineOperator(builder: OperatorBuilder<U>): void;
@@ -76,7 +77,7 @@ export interface ExtensionEnv {
     /**
      * Used to make the environment ready after all operator builders have been added.
      */
-    initialize(): void;
+    buildOperators(): void;
     inner(lhs: U, rhs: U): U;
     inverse(expr: U): U;
     isAssocL(opr: Sym): boolean;
@@ -111,7 +112,6 @@ export interface ExtensionEnv {
     outer(lhs: U, rhs: U): U;
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
-    reset(): void;
     resetSymTab(): void;
     setAssocL(opr: Sym, value: boolean): void;
     setAssocR(opr: Sym, value: boolean): void;

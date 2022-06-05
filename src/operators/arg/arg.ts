@@ -99,12 +99,12 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     const p1 = expr;
     // case of plain number
     if (is_num_and_gt_zero(p1) || PI.equals(p1)) {
-        return is_flt(p1) || defs.evaluatingAsFloats ? zeroAsDouble : zero;
+        return is_flt(p1) || defs.evaluatingAsFloat ? zeroAsDouble : zero;
     }
 
     if (is_negative_number(p1)) {
         const pi =
-            is_flt(p1) || defs.evaluatingAsFloats
+            is_flt(p1) || defs.evaluatingAsFloat
                 ? piAsDouble
                 : PI;
         return $.negate(pi);

@@ -1,13 +1,13 @@
 import { assert } from "chai";
 import { render_as_sexpr } from "../index";
-import { createEnv } from "../src/env/env";
+import { create_env } from "../src/env/env";
 import { create_engine } from "../src/runtime/symengine";
 import { Sym } from "../src/tree/sym/Sym";
 
 describe("env", function () {
     describe("constructor", function () {
         it("should be defined", function () {
-            const $ = createEnv();
+            const $ = create_env();
             assert.isDefined($);
         });
     });

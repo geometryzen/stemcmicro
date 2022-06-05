@@ -9,7 +9,7 @@ import { subst } from '../subst';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
-import { defs, halt, TOS } from './defs';
+import { defs, halt, move_top_of_stack, TOS } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
@@ -82,10 +82,10 @@ export function check_stack() {
     if (defs.chainOfUserSymbolsNotFunctionsBeingEvaluated.length !== 0) {
         halt('symbols evaluation still ongoing?');
     }
-    if (defs.evaluatingAsFloats) {
+    if (defs.evaluatingAsFloat) {
         halt('numeric evaluation still ongoing?');
     }
-    if (defs.evaluatingPolar) {
+    if (defs.evaluatingAsPolar) {
         halt('evaluation of polar still ongoing?');
     }
 }
@@ -108,6 +108,9 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
  *
  */
 export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
+
+    move_top_of_stack(0);
+    defs.frame = TOS;
 
     const stack: U[] = [];
 

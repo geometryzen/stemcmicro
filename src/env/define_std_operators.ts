@@ -321,7 +321,6 @@ import { typeof_tensor } from '../operators/typeof/typeof_tensor';
 import { is_uom, uomExtensionBuilder } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
-import { EngineOptions } from '../runtime/symengine';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 
@@ -329,13 +328,14 @@ import { ExtensionEnv } from "./ExtensionEnv";
 /**
  * Registers the Operator extension(s) with the environment.
  */
-export function register_known_operators(version: 1 | 2 | 3, options: EngineOptions | undefined, $: ExtensionEnv) {
+export function define_std_operators($: ExtensionEnv) {
 
     $.setAssocL(MATH_ADD, true);
     $.setAssocL(MATH_MUL, true);
     $.setAssocL(MATH_LCO, true);
     $.setAssocL(MATH_RCO, true);
     $.setAssocL(MATH_OUTER, true);
+    /*
     if (options) {
         if (Array.isArray(options.assocs)) {
             for (const assoc of options.assocs) {
@@ -352,7 +352,7 @@ export function register_known_operators(version: 1 | 2 | 3, options: EngineOpti
             }
         }
     }
-
+    */
     $.defineOperator(mul_rhs_distrib_over_add_expand);
     $.defineOperator(mul_lhs_distrib_over_add_expand);
 

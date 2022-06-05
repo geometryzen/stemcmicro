@@ -3,7 +3,7 @@
 // The imports below are for types only and will not create a dependency.
 //
 import { ExtensionEnv, FOCUS_EXPANDING, FOCUS_FACTORING } from "../env/ExtensionEnv";
-import { Flt, wrap_as_flt, piAsDouble, zeroAsDouble } from "../tree/flt/Flt";
+import { Flt, piAsDouble, wrap_as_flt, zeroAsDouble } from "../tree/flt/Flt";
 import { Num } from "../tree/num/Num";
 import { negOne, one, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
@@ -97,7 +97,12 @@ export class Defs {
     public codeGen = false;
     public userSimplificationsInListForm: U[] = [];
     public userSimplificationsInStringForm: string[] = [];
-    public fullDoubleOutput = false;
+    /**
+     * Determines whether floating point numbers are rendered as EcmaScript numbers.
+     * 
+     * The default value is false.
+     */
+    public renderFloatAsEcmaScript = false;
     // ========================================================================
     // Behavior Settings
     // ========================================================================
@@ -106,41 +111,44 @@ export class Defs {
      */
     public useDefinitions = true;
     /**
-     * TODO: Documentation.
+     * Determines whether numeric types are converted to floating point numbers fro numeric evaluation.
+     * 
+     * The default value as false.
      */
-    public evaluatingAsFloats = false;
+    public evaluatingAsFloat = false;
     /**
-     * TODO: Documentation
+     * Determines whether complex numbers are driven towards rectangular or polar notation.
+     * 
+     * The default value is false.
      */
-    public evaluatingPolar = false;
+    public evaluatingAsPolar = false;
 
     /**
      * Omitting zero terms from sums risks losing the structure of sums when the sum is zero.
      */
     public omitZeroTermsFromSums = true;
     /**
-     * Determines the behavior of the evaluation of a parse tree.
-     * This SHOULD be set through the set_behaviours_to_version function. 
-     */
-    public evaluateVersion: 1 | 2 | 3 = 2;
-    /**
      * In version 1.x, the print token for addition was 'add'.
      * In version 2.x, the default print token for addition is '+'.
      */
-    public addListStringToken: '+' | 'add' = '+';
+    public addSExprToken: '+' | 'add' = '+';
     /**
      * In version 1.x, the print token for multiplication was 'multiply'.
      * In version 2.x, the default print token for multiplication is '*'.
      */
-    public mulListStringToken: '*' | 'multiply' = '*';
+    public mulSExprToken: '*' | 'multiply' = '*';
 
     /**
-     * Ordinarily, we set this to true.
+     * Determines the string used to represent the Euler Number.
      */
-    public convert_X_times_X_to_power_X_2 = true;
-
     public eulerNumberToken: 'e' | 'exp(1)' = 'exp(1)';
+    /**
+     * Determines the string used during rendering to represent Pi.
+     */
     public piToken: 'π' | 'pi' = 'π';
+    /**
+     * Determines the string used during rendering to represent the empty list.
+     */
     public nilToken: 'nil' | '()' = '()';
 
     /**
@@ -170,44 +178,41 @@ export class Defs {
 export function set_behaviors_to_version(version: 1 | 2 | 3) {
     switch (version) {
         case 3: {
-            defs.evaluatingAsFloats = false;
-            defs.evaluatingPolar = false;
-            defs.evaluateVersion = version;
+            defs.evaluatingAsFloat = false;
+            defs.evaluatingAsPolar = false;
             defs.omitZeroTermsFromSums = true;
             defs.useCanonicalZero = true;
             // TODO: We may need some definitions. Need more ganularity.
             // Revoke them slowly and observe the effects.
             defs.useDefinitions = true;
-            defs.addListStringToken = '+';
-            defs.mulListStringToken = '*';
+            defs.addSExprToken = '+';
+            defs.mulSExprToken = '*';
             defs.piToken = 'π';
             defs.nilToken = '()';
             break;
         }
         case 2: {
-            defs.evaluatingAsFloats = false;
-            defs.evaluatingPolar = false;
-            defs.evaluateVersion = version;
+            defs.evaluatingAsFloat = false;
+            defs.evaluatingAsPolar = false;
             defs.omitZeroTermsFromSums = true;
             defs.useCanonicalZero = false;
             // TODO: We may need some definitions. Need more ganularity.
             // Revoke them slowly and observe the effects.
             defs.useDefinitions = true;
-            defs.addListStringToken = '+';
-            defs.mulListStringToken = '*';
+            defs.addSExprToken = '+';
+            defs.mulSExprToken = '*';
             defs.piToken = 'π';
             defs.nilToken = '()';
             break;
         }
         case 1: {
-            defs.evaluatingAsFloats = false;
-            defs.evaluatingPolar = false;
-            defs.evaluateVersion = version;
+            defs.evaluatingAsFloat = false;
+            defs.evaluatingAsPolar = false;
             defs.omitZeroTermsFromSums = true;
             defs.useCanonicalZero = true;
             defs.useDefinitions = true;
-            defs.addListStringToken = 'add';
-            defs.mulListStringToken = 'multiply';
+            defs.addSExprToken = 'add';
+            defs.mulSExprToken = 'multiply';
             defs.piToken = 'pi';
             defs.nilToken = 'nil';
             break;
@@ -230,13 +235,13 @@ export function halt(s: string): never {
     const message = defs.errorMessage;
 
     defs.errorMessage = '';
-    moveTos(0);
+    move_top_of_stack(0);
 
     const e = new Error(message);
     throw e;
 }
 
-export function moveTos(stackPos: number) {
+export function move_top_of_stack(stackPos: number) {
     if (defs.tos <= stackPos) {
         // we are moving the stack pointer
         // "up" the stack (as if we were doing a push)
@@ -259,12 +264,10 @@ export function moveTos(stackPos: number) {
  * It is called 
  * 
  * 1. Resets the stack pointer.
- * 2. Resets the Escape flag to false.
- * 3. Resets behavior settings to the defaults.
  */
 export function hard_reset() {
     // console.lg('hard_reset()');
-    moveTos(0);
+    move_top_of_stack(0);
     defs.frame = TOS;
 }
 
@@ -314,13 +317,13 @@ export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: Ext
 
 // Call a function temporarily setting "evaluatingPolar" to true
 export function evalPolar<T extends unknown[], V>(func: (...args: T) => V, ...args: T): V {
-    const prev_evaluatingPolar = defs.evaluatingPolar;
-    defs.evaluatingPolar = true;
+    const prev_evaluatingPolar = defs.evaluatingAsPolar;
+    defs.evaluatingAsPolar = true;
     try {
         return func(...args);
     }
     finally {
-        defs.evaluatingPolar = prev_evaluatingPolar;
+        defs.evaluatingAsPolar = prev_evaluatingPolar;
     }
 }
 
@@ -328,13 +331,13 @@ export function evalPolar<T extends unknown[], V>(func: (...args: T) => V, ...ar
  * Call a function temporarily setting "evaluatingAsFloats" to true.
  */
 export function evaluateAsFloats<T extends unknown[], V>(func: (...args: T) => V, ...args: T): V {
-    const prev_evaluatingAsFloats = defs.evaluatingAsFloats;
-    defs.evaluatingAsFloats = true;
+    const prev_evaluatingAsFloats = defs.evaluatingAsFloat;
+    defs.evaluatingAsFloat = true;
     try {
         return func(...args);
     }
     finally {
-        defs.evaluatingAsFloats = prev_evaluatingAsFloats;
+        defs.evaluatingAsFloat = prev_evaluatingAsFloats;
     }
 }
 
@@ -347,18 +350,18 @@ export class DynamicConstants {
     public static imaginaryunit: U;
 
     public static One(): Num {
-        return defs.evaluatingAsFloats ? DynamicConstants.oneAsDouble : one;
+        return defs.evaluatingAsFloat ? DynamicConstants.oneAsDouble : one;
     }
 
     public static NegOne(): Num {
-        return defs.evaluatingAsFloats ? DynamicConstants.negOneAsDouble : negOne;
+        return defs.evaluatingAsFloat ? DynamicConstants.negOneAsDouble : negOne;
     }
 
     public static Zero(): Num {
-        return defs.evaluatingAsFloats ? zeroAsDouble : zero;
+        return defs.evaluatingAsFloat ? zeroAsDouble : zero;
     }
 
     public static Pi(): Sym | Flt {
-        return defs.evaluatingAsFloats ? piAsDouble : PI;
+        return defs.evaluatingAsFloat ? piAsDouble : PI;
     }
 }

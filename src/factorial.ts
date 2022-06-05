@@ -3,7 +3,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
 import { FACTORIAL } from './runtime/constants';
-import { defs, moveTos, use_factoring_with_unary_function } from './runtime/defs';
+import { defs, move_top_of_stack, use_factoring_with_unary_function } from './runtime/defs';
 import { is_add, is_factorial, is_multiply, is_power } from './runtime/helpers';
 import { stack_pop, stack_push } from './runtime/stack';
 import { doexpand_eval } from './scripting/doexpand_eval';
@@ -93,7 +93,7 @@ function sfac_product(p1: U, $: ExtensionEnv): U {
 
     p1 = stack_pop();
 
-    moveTos(defs.tos - n);
+    move_top_of_stack(defs.tos - n);
 
     return p1;
 }

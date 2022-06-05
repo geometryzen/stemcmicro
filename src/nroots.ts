@@ -7,7 +7,7 @@ import { is_poly_expanded_form } from './is';
 import { sort_stack } from './misc';
 import { yyfloat } from './operators/float/float';
 import { real } from './operators/real/real';
-import { defs, halt, moveTos } from './runtime/defs';
+import { defs, halt, move_top_of_stack } from './runtime/defs';
 import { stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
 import { is_flt } from './operators/flt/is_flt';
@@ -104,7 +104,7 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): void {
         sort_stack(n, $);
         const dims = [n];
         const elems = defs.stack.slice(h, h + n) as U[];
-        moveTos(h);
+        move_top_of_stack(h);
         stack_push(new Tensor(dims, elems));
     }
 }

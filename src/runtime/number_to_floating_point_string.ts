@@ -11,7 +11,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
     // when generating code, print out
     // the standard JS Number printout
     let str: string;
-    if (defs.codeGen || defs.fullDoubleOutput) {
+    if (defs.codeGen || defs.renderFloatAsEcmaScript) {
         return '' + d;
     }
 
@@ -90,17 +90,8 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function shouldForceFixed($: ExtensionEnv): boolean {
-    if (defs.evaluateVersion === 1) {
-        // The counter-intuitive thing about the version 1.x implementation
-        // is that when there is no Rat binding, isZero evaluates to the value
-        // for a Sym, which is false and then shouldForceFixed() => true.
-        const forceFixedBinding = $.getBinding(FORCE_FIXED_PRINTOUT);
-        return !$.isZero(forceFixedBinding);
-    }
-    else {
-        const forceFixedBinding = $.getBinding(FORCE_FIXED_PRINTOUT);
-        return is_rat(forceFixedBinding) ? !$.isZero(forceFixedBinding) : false;
-    }
+    const forceFixedBinding = $.getBinding(FORCE_FIXED_PRINTOUT);
+    return is_rat(forceFixedBinding) ? !$.isZero(forceFixedBinding) : false;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -2,23 +2,17 @@ import { ExtensionEnv, FOCUS_EXPANDING } from "../env/ExtensionEnv";
 import { clear_patterns } from '../pattern';
 import { scan } from '../scanner/scan';
 import { defs } from './defs';
-import { EngineOptions } from "./symengine";
 
 /**
  * #deprecated
  */
-export function soft_reset($: ExtensionEnv): [codeGen: boolean] {
+export function soft_reset($: ExtensionEnv): void {
     clear_patterns();
 
     $.clearBindings();
 
-    // Don't redo the keywords or NIL.
-    define_special_symbols($);
-
     // We need to redo these...
-    execute_definitions(void 0, $);
-
-    return [(defs.codeGen = false)];
+    execute_std_definitions($);
 }
 
 /* cross =====================================================================
@@ -91,262 +85,33 @@ const defn_strings = [
     // 'ln(x)=log(x)',
 ];
 
-/**
- * Defines keywords, NIL, and special symbols.
- */
-export function define_std_symbols($: ExtensionEnv): void {
-    // console.lg('define_std_symbols');
-
-    define_keywords($);
-
-    define_special_symbols($);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function define_keywords($: ExtensionEnv): void {
-    // console.lg('define_keywords');
-    // $.defineSym(MATH_ABS);
-    // $.defineSym(MATH_ADD);
-    // $.defineSym(ADJ);
-    // $.defineSym(ALGEBRA);
-    // $.defineSym(AND);
-    // $.defineSym(APPROXRATIO);
-    // $.defineSym(ARCCOS);
-    // $.defineSym(ARCCOSH);
-    // $.defineSym(ARCSIN);
-    // $.defineSym(ARCSINH);
-    // $.defineSym(ARCTAN);
-    // $.defineSym(ARCTANH);
-    // $.defineSym(ARG);
-    // $.defineSym(ATOMIZE);
-    // $.defineSym(BESSELJ);
-    // $.defineSym(BESSELY);
-    // $.defineSym(BINDING);
-    // $.defineSym(BINOMIAL);
-    // $.defineSym(CEILING);
-    // $.defineSym(CHECK);
-    // $.defineSym(CHOOSE);
-    // $.defineSym(CIRCEXP);
-    // $.defineSym(CLEAR);
-    // $.defineSym(CLEARALL);
-    // $.defineSym(CLEARPATTERNS);
-    // $.defineSym(CLOCK);
-    // $.defineSym(COEFF);
-    // $.defineSym(COFACTOR);
-    // $.defineSym(COMPARE);
-    // $.defineSym(COMPARE_FACTORS);
-    // $.defineSym(COMPARE_TERMS);
-    // $.defineSym(CONDENSE);
-    // $.defineSym(CONJ);
-    // $.defineSym(CONTRACT);
-    // $.defineSym(COS);
-    // $.defineSym(COSH);
-    // $.defineSym(DECOMP);
-    // $.defineSym(DEFINT);
-    // $.defineSym(DEGREE);
-    // $.defineSym(DENOMINATOR);
-    // $.defineSym(DET);
-    // $.defineSym(DIM);
-    // $.defineSym(DIRAC);
-    // $.defineSym(DIVIDE);
-    // $.defineSym(DIVISORS);
-    // $.defineSym(DO);
-    // $.defineSym(DOT);
-    // $.defineSym(DRAW);
-    // $.defineSym(DSOLVE);
-    // $.defineSym(EQUAL);
-    // $.defineSym(ERF);
-    // $.defineSym(ERFC);
-    // $.defineSym(EIGEN);
-    // $.defineSym(EIGENVAL);
-    // $.defineSym(EIGENVEC);
-    // $.defineSym(EVAL);
-    // $.defineSym(EXP);
-    // $.defineSym(EXPAND);
-    // $.defineSym(EXPCOS);
-    // $.defineSym(EXPSIN);
-    // $.defineSym(FACTOR);
-    // $.defineSym(FACTORIAL);
-    // $.defineSym(FACTORPOLY);
-    // $.defineSym(FILTER);
-    // $.defineSym(FLOATF);
-    // $.defineSym(FLOOR);
-    // $.defineSym(FOR);
-    // $.defineSym(FUNCTION);
-    // $.defineSym(GAMMA);
-    // $.defineSym(GCD);
-    // $.defineSym(HERMITE);
-    // $.defineSym(HILBERT);
-    // $.defineSym(IF);
-    // $.defineSym(IMAG);
-    // $.defineSym(SYM_MATH_COMPONENT);
-    // $.defineSym(INNER);
-    // $.defineSym(INTEGRAL);
-    // $.defineSym(INV);
-    // $.defineSym(INVG);
-    // $.defineSym(ISINTEGER);
-    // $.defineSym(ISPRIME);
-    // $.defineSym(LAGUERRE);
-    // LAPLACE when it is ready.
-    // $.defineSym(LCM);
-    // $.defineSym(LCO);
-    // $.defineSym(LEADING);
-    // $.defineSym(LEGENDRE);
-    // $.defineSym(LOG);
-    // $.defineSym(LOOKUP);
-    // $.defineSym(MOD);
-    // $.defineSym(MULTIPLY);
-    // $.defineSym(NOT);
-    // $.defineSym(NROOTS);
-    // $.defineSym(NUMBER);
-    // $.defineSym(NUMERATOR);
-    // $.defineSym(OPERATOR);
-    // $.defineSym(OR);
-    // $.defineSym(OUTER);
-    // $.defineSym(PATTERN);
-    // $.defineSym(PATTERNSINFO);
-    // $.defineSym(POLAR);
-    // $.defineSym(POWER);
-    // $.defineSym(PRIME);
-    // $.defineSym(PRINT);
-    // $.defineSym(PRINT2DASCII);
-    // $.defineSym(PRINTFULL);
-    // $.defineSym(PRINTLATEX);
-    // $.defineSym(PRINTLIST);
-    // $.defineSym(PRINTPLAIN);
-    // $.defineSym(PRINT_LEAVE_E_ALONE);
-    // $.defineSym(PRINT_LEAVE_X_ALONE);
-    // $.defineSym(PRODUCT);
-    // $.defineSym(QUOTE);
-    // $.defineSym(QUOTIENT);
-    // $.defineSym(RANK);
-    // $.defineSym(RATIONALIZE);
-    // $.defineSym(RCO);
-    // $.defineSym(REAL);
-    // $.defineSym(YYRECT);
-    // $.defineSym(ROOTS);
-    // $.defineSym(ROUND);
-    // $.defineSym(LANG_ASSIGN);
-    // $.defineSym(SGN);
-    // $.defineSym(SILENTPATTERN);
-    // $.defineSym(SIMPLIFY);
-    // $.defineSym(SIN);
-    // $.defineSym(SINH);
-    // $.defineSym(SHAPE);
-    // $.defineSym(SQRT);
-    // $.defineSym(STOP);
-    // $.defineSym(SUBST);
-    // $.defineSym(SUBTRACT);
-    // $.defineSym(SUM);
-    // $.defineSym(SYMBOLSINFO);
-    // $.defineSym(TAN);
-    // $.defineSym(TANH);
-    // $.defineSym(TAYLOR);
-    // $.defineSym(TEST);
-    // $.defineSym(TESTEQ);
-    // $.defineSym(TESTGE);
-    // $.defineSym(TESTGT);
-    // $.defineSym(TESTLE);
-    // $.defineSym(TESTLT);
-    // $.defineSym(TRANSPOSE);
-    // $.defineSym(UNIT);
-    // $.defineSym(UOM);
-    // $.defineSym(ZERO);
-}
-
-export function define_special_symbols($: ExtensionEnv): void {
-    // console.lg('define_special_symbols');
-
-    $.beginSpecial();
-
-    // $.defineSym(AUTOEXPAND);
-    // $.defineSym(BAKE);
-    // $.defineSym(ASSUME_REAL_VARIABLES);
-
-    // $.defineSym(LAST);
-
-    // $.defineSym(LAST_PRINT);
-    // $.defineSym(LAST_2DASCII_PRINT);
-    // $.defineSym(LAST_COMPUTER_PRINT);
-    // $.defineSym(LAST_LATEX_PRINT);
-    // $.defineSym(LAST_LIST_PRINT);
-    // $.defineSym(LAST_HUMAN_PRINT);
-
-    // $.defineSym(TRACE);
-
-    // $.defineSym(FORCE_FIXED_PRINTOUT);
-    // $.defineSym(MAX_FIXED_PRINTOUT_DIGITS);
-
-    // $.defineSym(DRAWX); // special purpose internal symbols
-    // $.defineSym(METAB);
-    // $.defineSym(METAX);
-    // $.defineSym(SECRETX);
-
-    // $.defineSym(VERSION);
-
-    // $.defineSym(PI);
-
-    // Not sure why these aren't defined to be user symbols?
-    // $.defineSym(SYMBOL_I);
-    // $.defineSym(SYMBOL_IDENTITY_MATRIX);
-
-    $.endSpecial();
-
-    // TODO: Figure out confusion regarding the symbols below.
-    // $.defineSym(SYMBOL_A);
-    // $.defineSym(SYMBOL_B);
-    // $.defineSym(SYMBOL_C);
-    // $.defineSym(SYMBOL_D);
-    // $.defineSym(SYMBOL_J);
-    // $.defineSym(SYMBOL_N);
-    // $.defineSym(SYMBOL_R);
-    // $.defineSym(SYMBOL_S);
-    // $.defineSym(SYMBOL_T);
-    // $.defineSym(SYMBOL_X);
-    // $.defineSym(SYMBOL_Y);
-    // $.defineSym(SYMBOL_Z);
-
-    // $.defineSym(SYMBOL_A_UNDERSCORE);
-    // $.defineSym(SYMBOL_B_UNDERSCORE);
-    // $.defineSym(SYMBOL_X_UNDERSCORE);
-
-    // $.defineSym(C1);
-    // $.defineSym(C2);
-    // $.defineSym(C3);
-    // $.defineSym(C4);
-    // $.defineSym(C5);
-    // $.defineSym(C6);
-}
-
-export function execute_definitions(options: EngineOptions | undefined, $: ExtensionEnv): void {
-    // console.lg('execute_definitions()');
-    if (options && options.useDefinitions) {
-        const originalCodeGen = defs.codeGen;
-        defs.codeGen = false;
-        try {
-            for (let i = 0; i < defn_strings.length; i++) {
-                const defn_string = defn_strings[i];
-                const [scanned, tree] = scan(defn_string, { useCaretForExponentiation: $.useCaretForExponentiation });
-                try {
-                    if (scanned > 0) {
-                        // Evaluating the tree for the side-effect which is to establish a binding.
-                        $.setFocus(FOCUS_EXPANDING);
-                        $.valueOf(tree);
-                    }
+export function execute_std_definitions($: ExtensionEnv): void {
+    // console.lg('execute_std_definitions()');
+    const originalCodeGen = defs.codeGen;
+    defs.codeGen = false;
+    try {
+        for (let i = 0; i < defn_strings.length; i++) {
+            const defn_string = defn_strings[i];
+            const [scanned, tree] = scan(defn_string, { useCaretForExponentiation: $.useCaretForExponentiation });
+            try {
+                if (scanned > 0) {
+                    // Evaluating the tree for the side-effect which is to establish a binding.
+                    $.setFocus(FOCUS_EXPANDING);
+                    $.valueOf(tree);
                 }
-                catch (e) {
-                    if (e instanceof Error) {
-                        throw new Error(`Unable to compute the value of definition ${JSON.stringify(defn_string)}. Cause: ${e.message}. Stack: ${e.stack}`);
-                    }
-                    else {
-                        throw new Error(`Unable to compute the value of definition ${JSON.stringify(defn_string)}. Cause: ${e}`);
-                    }
+            }
+            catch (e) {
+                if (e instanceof Error) {
+                    throw new Error(`Unable to compute the value of definition ${JSON.stringify(defn_string)}. Cause: ${e.message}. Stack: ${e.stack}`);
+                }
+                else {
+                    throw new Error(`Unable to compute the value of definition ${JSON.stringify(defn_string)}. Cause: ${e}`);
                 }
             }
         }
-        finally {
-            // restore the symbol dependencies as they were before.
-            defs.codeGen = originalCodeGen;
-        }
+    }
+    finally {
+        // restore the symbol dependencies as they were before.
+        defs.codeGen = originalCodeGen;
     }
 }

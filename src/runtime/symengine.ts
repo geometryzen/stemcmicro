@@ -1,11 +1,11 @@
-import { createEnv, EnvOptions } from "../env/env";
+import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { register_known_operators } from "../env/register_known_operators";
+import { define_std_operators } from "../env/define_std_operators";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { defs, hard_reset, set_behaviors_to_version } from "./defs";
 import { execute_script, transform_tree } from "./execute";
-import { define_std_symbols, execute_definitions } from "./init";
+import { execute_std_definitions } from "./init";
 import { VERSION_LATEST } from "./version";
 
 export interface Assoc {
@@ -39,7 +39,7 @@ function version_from_options(options: EngineOptions | undefined): 1 | 2 | 3 {
     }
 }
 
-function init($: ExtensionEnv, options?: EngineOptions) {
+export function init_env($: ExtensionEnv, options?: EngineOptions) {
 
     const version = version_from_options(options);
 
@@ -52,19 +52,19 @@ function init($: ExtensionEnv, options?: EngineOptions) {
     // TODO: We would like to get away from these global defs and instead use the environment.
     set_behaviors_to_version(version);
 
-    define_std_symbols($);
+    $.clearOperators();
 
-    $.reset();
+    define_std_operators($);
 
-    register_known_operators(version, options, $);
+    $.buildOperators();
 
-    $.initialize();
-
-    execute_definitions(options, $);
+    if (options && options.useDefinitions) {
+        execute_std_definitions($);
+    }
 }
 
-function term($: ExtensionEnv) {
-    $.reset();
+export function env_term($: ExtensionEnv) {
+    $.clearOperators();
 
     $.resetSymTab();
 }
@@ -117,10 +117,9 @@ function env_options_from_engine_options(options: EngineOptions | undefined): En
  */
 export function create_engine(options?: EngineOptions): Engine {
     let ref_count = 1;
-    // TODO: At some point we stop using the global ExtensionEnv and create our own...
     const envOptions: EnvOptions = env_options_from_engine_options(options);
-    const $ = createEnv(envOptions);
-    init($, options);
+    const $ = create_env(envOptions);
+    init_env($, options);
     const theEngine: Engine = {
         get $(): ExtensionEnv {
             return $;
@@ -137,7 +136,7 @@ export function create_engine(options?: EngineOptions): Engine {
         release(): void {
             ref_count--;
             if (ref_count === 0) {
-                term($);
+                env_term($);
             }
         }
     };

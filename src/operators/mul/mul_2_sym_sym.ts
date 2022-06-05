@@ -1,8 +1,7 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
-import { defs } from "../../runtime/defs";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -14,7 +13,7 @@ import { is_sym } from "../sym/is_sym";
 
 function canoncal_reorder_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons, $: ExtensionEnv): [TFLAGS, U] {
     // We have to handle the case of equality if we want to use the STABLE flag.
-    if (defs.convert_X_times_X_to_power_X_2 && lhs.equalsSym(rhs)) {
+    if (lhs.equalsSym(rhs)) {
         return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_POW, lhs, two))];
     }
     switch (compare_sym_sym(lhs, rhs)) {
@@ -69,7 +68,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         // console.log(`${this.name} lhs: ${type(lhs, $)} = ${lhs} rhs: ${type(rhs, $)} = ${rhs}`);
         // Short Circuit, but only when factoring.
-        if (defs.convert_X_times_X_to_power_X_2 && lhs.equals(rhs)) {
+        if (lhs.equals(rhs)) {
             if ($.isFactoring()) {
                 return [TFLAG_DIFF, value_of(items_to_cons(MATH_POW, lhs, two), $)];
             }

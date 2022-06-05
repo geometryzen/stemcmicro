@@ -83,13 +83,13 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     if (is_rat(N) && MEQUAL(N.b, 2)) {
         // n = 1/2
         if (MEQUAL(N.a, 1)) {
-            const twoOverPi = defs.evaluatingAsFloats ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
+            const twoOverPi = defs.evaluatingAsFloat ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
             return $.multiply($.power($.divide(twoOverPi, X), half), sine(X, $));
         }
 
         // n = -1/2
         if (MEQUAL(N.a, -1)) {
-            const twoOverPi = defs.evaluatingAsFloats ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
+            const twoOverPi = defs.evaluatingAsFloat ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
             return $.multiply($.power($.divide(twoOverPi, X), half), $.cos(X));
         }
 

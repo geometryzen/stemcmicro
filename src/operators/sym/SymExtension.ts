@@ -27,7 +27,7 @@ class SymExtension implements Extension<Sym> {
     valueOf(sym: Sym, $: ExtensionEnv): U {
         // Doing the dirty work for PI. Why do we need a special case?
         // What about E from the math namespace?
-        if (PI.equals(sym) && defs.evaluatingAsFloats) {
+        if (PI.equals(sym) && defs.evaluatingAsFloat) {
             return piAsDouble;
         }
 

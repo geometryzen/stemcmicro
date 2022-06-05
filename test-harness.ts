@@ -5,7 +5,7 @@ import process from 'process';
 import { clear_patterns } from './src/pattern';
 import { render_as_infix } from './src/print/print';
 import { defs } from './src/runtime/defs';
-import { define_special_symbols, execute_definitions } from './src/runtime/init';
+import { execute_std_definitions } from './src/runtime/init';
 import { create_engine, Engine, EngineOptions } from './src/runtime/symengine';
 import { VERSION_LATEST } from './src/runtime/version';
 import { U } from './src/tree/tree';
@@ -191,10 +191,12 @@ function setup_test(f: () => void, engine: Engine, options: EngineOptions) {
 
     // We need to redo these...
     const $ = engine.$;
+
     $.clearBindings();
-    // Don't redo the keywords or NIL.
-    define_special_symbols($);
-    execute_definitions(options, $);
+
+    if (options && options.useDefinitions) {
+        execute_std_definitions($);
+    }
 
     // TODO: Remove these comments when everything is working.
     // Not going to do this anymore.

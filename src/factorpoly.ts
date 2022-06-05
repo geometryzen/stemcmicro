@@ -11,7 +11,7 @@ import { multiply_noexpand, negate_noexpand } from './multiply';
 import { denominator } from './operators/denominator/denominator';
 import { divpoly } from './quotient';
 import { rect } from './operators/rect/rect';
-import { defs, halt, moveTos, use_factoring_with_unary_function } from './runtime/defs';
+import { defs, halt, move_top_of_stack, use_factoring_with_unary_function } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
 import { wrap_as_int, negOne, one, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -295,7 +295,7 @@ function get_factor_from_real_root(polycoeff: U[], factpoly_expo: number, p2: U,
             const [neg_poly] = Evalpoly(neg_p5_div_p4, polycoeff, factpoly_expo, $);
 
             if ($.isZero(neg_poly)) {
-                moveTos(h);
+                move_top_of_stack(h);
                 return [true, p4, p5];
             }
 
@@ -306,13 +306,13 @@ function get_factor_from_real_root(polycoeff: U[], factpoly_expo: number, p2: U,
             const [pos_poly] = Evalpoly(p5_div_p4, polycoeff, factpoly_expo, $);
 
             if ($.isZero(pos_poly)) {
-                moveTos(h);
+                move_top_of_stack(h);
                 return [true, p4, p5];
             }
         }
     }
 
-    moveTos(h);
+    move_top_of_stack(h);
 
     return [false, p4, p5];
 }
@@ -336,7 +336,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     stack_push(p3);
     [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
     if ($.isZero(p6)) {
-        moveTos(h);
+        move_top_of_stack(h);
         return [true, p4];
     }
 
@@ -348,7 +348,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     stack_push(p3);
     [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
     if ($.isZero(p6)) {
-        moveTos(h);
+        move_top_of_stack(h);
         return [true, p4];
     }
 
@@ -371,13 +371,13 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
             const [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
 
             if ($.isZero(p6)) {
-                moveTos(h);
+                move_top_of_stack(h);
                 return [true, p4];
             }
         }
     }
 
-    moveTos(h);
+    move_top_of_stack(h);
 
     return [false, p4];
 }

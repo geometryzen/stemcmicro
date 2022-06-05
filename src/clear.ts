@@ -3,7 +3,7 @@ import { is_sym } from './operators/sym/is_sym';
 import { clear_patterns } from './pattern';
 import { halt } from './runtime/defs';
 import { execute_script } from './runtime/execute';
-import { define_special_symbols, execute_definitions } from './runtime/init';
+import { execute_std_definitions } from './runtime/init';
 import { stack_push } from './runtime/stack';
 import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 
@@ -24,11 +24,8 @@ export function Eval_clearall($: ExtensionEnv) {
 
     $.clearBindings();
 
-    // Don't redo the keywords or NIL.
-    define_special_symbols($);
-
     // We need to redo these...
-    execute_definitions(void 0, $);
+    execute_std_definitions($);
 
     stack_push(nil);
 }

@@ -1,6 +1,6 @@
 import { Flt } from "../../tree/flt/Flt";
+import { U } from "../../tree/tree";
 
-// TODO: Move into the Double module.
-export function is_flt(p: unknown): p is Flt {
-    return p instanceof Flt;
+export function is_flt(expr: U): expr is Flt {
+    return expr instanceof Flt;
 }

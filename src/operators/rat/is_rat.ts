@@ -1,5 +1,6 @@
 import { Rat } from "../../tree/rat/Rat";
+import { U } from "../../tree/tree";
 
-export function is_rat(p: unknown): p is Rat {
-    return p instanceof Rat;
+export function is_rat(expr: U): expr is Rat {
+    return expr instanceof Rat;
 }

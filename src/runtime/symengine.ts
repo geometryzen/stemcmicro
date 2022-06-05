@@ -95,7 +95,7 @@ function env_options_from_engine_options(options: EngineOptions | undefined): En
     else {
         const config: EnvOptions = {
             assocs: [],
-            dependencies: [],
+            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false

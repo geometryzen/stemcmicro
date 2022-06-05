@@ -8,52 +8,19 @@ symbolic-math is a Javascript (Typescript) library for symbolic mathematics.
 
 ```typescript
 import { assert } from "chai";
-import {
-    create_engine,
-    create_env,
-    define_std_operators,
-    execute_script,
-    execute_std_definitions,
-    render_as_infix,
-    render_as_latex,
-    render_as_sexpr
-} from "../index";
+import { create_engine } from "../index";
 
 describe("example", function () {
-    it("Using the Engine object for convenience.", function () {
+    it("a divided by b", function () {
         const lines: string[] = [
             `a/b`
         ];
-        const engine = create_engine();
-        const { values } = engine.executeScript(lines.join('\n'));
-        const $ = engine.$;
-        assert.strictEqual(render_as_infix(values[0], $), "a/b");
-        assert.strictEqual(render_as_sexpr(values[0], $), "(* a (power b -1))");
-        assert.strictEqual(render_as_latex(values[0], $), "\\frac{a}{b}");
-        engine.release();
-    });
-    it("Using the Environment directly for fine-grained control.", function () {
-        const lines: string[] = [
-            `a/b`
-        ];
-
-        const $ = create_env();
-
-        $.resetSymTab();
-
-        $.clearOperators();
-
-        define_std_operators($);
-
-        $.buildOperators();
-
-        execute_std_definitions($);
-
-        const { values } = execute_script(lines.join('\n'), $);
-
-        assert.strictEqual(render_as_infix(values[0], $), "a/b");
-        assert.strictEqual(render_as_sexpr(values[0], $), "(* a (power b -1))");
-        assert.strictEqual(render_as_latex(values[0], $), "\\frac{a}{b}");
+        const eng = create_engine();
+        const { values } = eng.executeScript(lines.join('\n'));
+        assert.strictEqual(eng.renderAsInfix(values[0]), "a/b");
+        assert.strictEqual(eng.renderAsSExpr(values[0]), "(* a (power b -1))");
+        assert.strictEqual(eng.renderAsLaTeX(values[0]), "\\frac{a}{b}");
+        eng.release();
     });
 });
 ```

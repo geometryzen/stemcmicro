@@ -297,16 +297,13 @@ export const nil = new Cons(0, void 0, void 0);
  * Returns true if arg is a Cons and is not NIL.
  * For NIL testing, test for identical equality to NIL.
  */
-export function is_cons(arg: U): arg is Cons {
-    // TODO: This may be useful for catching bugs.
-    // How to define it in one place?
-    // It MUST respect freedom of extensions.
-    if (typeof arg === 'undefined') {
-        throw new Error("is_cons(arg); arg must be defined.");
+export function is_cons(expr: U): expr is Cons {
+    if (typeof expr === 'undefined') {
+        return false;
     }
     else {
-        if (arg instanceof Cons) {
-            return arg !== nil;
+        if (expr instanceof Cons) {
+            return !is_nil(expr);
         }
         else {
             return false;
@@ -314,8 +311,8 @@ export function is_cons(arg: U): arg is Cons {
     }
 }
 
-export function is_nil(arg: U): boolean {
-    return arg.equals(nil);
+export function is_nil(expr: U): boolean {
+    return expr.equals(nil);
 }
 
 /**

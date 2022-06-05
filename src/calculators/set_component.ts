@@ -1,7 +1,7 @@
 import { nativeInt } from '../nativeInt';
-import { defs, move_top_of_stack, halt } from '../runtime/defs';
-import { stack_push } from '../runtime/stack';
 import { is_tensor } from '../operators/tensor/is_tensor';
+import { defs, halt, move_top_of_stack } from '../runtime/defs';
+import { stack_push } from '../runtime/stack';
 import { Tensor } from '../tree/tensor/Tensor';
 import { U } from '../tree/tree';
 
@@ -30,7 +30,7 @@ export function set_component(n: number): void {
     }
 
     const s = defs.tos - n;
-    const RVALUE = defs.stack[s];
+    const RVALUE = defs.stack[s] as U;
     const lhs: Tensor = defs.stack[s + 1] as Tensor;
 
     if (!is_tensor(lhs)) {

@@ -3,14 +3,14 @@ import { imu } from './env/imu';
 import { guess } from './guess';
 import { is_rat_integer } from './is_rat_integer';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
-import { is_sym } from './operators/sym/is_sym';
+import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
+import { is_rat } from './operators/rat/is_rat';
+import { is_sym } from './operators/sym/is_sym';
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
 import { Num } from './tree/num/Num';
-import { is_rat } from './operators/rat/is_rat';
 import { Rat } from './tree/rat/Rat';
 import { car, cdr, is_cons, nil, U } from './tree/tree';
 
@@ -372,7 +372,7 @@ export function isfraction(p: U): p is Rat {
  * @param expr The expresson being tested.
  * @param n The value that the expression must match.
  */
-export function equaln(expr: U | null | undefined, n: number): boolean {
+export function equaln(expr: U/* | null | undefined*/, n: number): boolean {
     if (expr !== null) {
         if (is_rat(expr)) {
             return MEQUAL(expr.a, n) && MEQUAL(expr.b, 1);

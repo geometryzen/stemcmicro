@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { create_engine } from "../index";
 
 describe("example", function () {
-    it("...", function () {
+    it("a divided by b", function () {
         const lines: string[] = [
             `a/b`
         ];

@@ -1,6 +1,5 @@
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
-import { clockform } from '../clock/clock';
 import { condense, yycondense } from '../../condense';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
 import { factor } from "../../factor";
@@ -9,10 +8,6 @@ import { equalq, is_negative_number, is_num_and_eq_minus_one, is_plus_or_minus_o
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { makeList } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
-import { polar } from '../polar/polar';
-import { is_imu } from '../imu/is_imu';
-import { is_num } from '../num/is_num';
-import { real } from '../real/real';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';
@@ -22,19 +17,24 @@ import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
 import { transpose_factoring } from '../../transpose';
 import { caddr, cadr } from '../../tree/helpers';
-import { is_rat } from '../rat/is_rat';
-import { half, wrap_as_int, one, third, three, two, zero } from '../../tree/rat/Rat';
+import { half, one, third, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
-import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
+import { clockform } from '../clock/clock';
 import { denominator } from "../denominator/denominator";
 import { yyfloat } from '../float/float';
 import { BCons } from '../helpers/BCons';
+import { is_imu } from '../imu/is_imu';
+import { is_num } from '../num/is_num';
 import { numerator } from "../numerator/numerator";
+import { polar } from '../polar/polar';
 import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
+import { is_rat } from '../rat/is_rat';
 import { rationalize_factoring } from '../rationalize/rationalize';
+import { real } from '../real/real';
 import { rect } from '../rect/rect';
+import { is_tensor } from '../tensor/is_tensor';
 
 function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
     // when we do code generation, we proceed to
@@ -150,7 +150,7 @@ function simplify_tensor(M: Tensor, $: ExtensionEnv) {
     );
 
     if ($.isZero(simple_M)) {
-        return defs.useCanonicalZero ? zero : simple_M;
+        return simple_M;
     }
     else {
         return simple_M;

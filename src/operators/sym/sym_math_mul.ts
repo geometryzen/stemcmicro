@@ -1,7 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { VERSION_ONE } from "../../runtime/version";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { assert_sym } from "./assert_sym";
@@ -74,21 +73,11 @@ class SymMathMul implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Sym): string {
-        if (this.$.version > VERSION_ONE) {
-            return '*';
-        }
-        else {
-            return 'multiply';
-        }
+        return '*';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym): string {
-        if (this.$.version > VERSION_ONE) {
-            return '*';
-        }
-        else {
-            return 'multiply';
-        }
+        return this.$.getSymbolToken(MATH_MUL);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

@@ -39,9 +39,7 @@ import {
     LAST_LATEX_PRINT,
     LAST_LIST_PRINT,
     MULTIPLY,
-    PATTERN,
-    PI,
-    POWER,
+    PATTERN, POWER,
     PRINT_LEAVE_E_ALONE,
     PRINT_LEAVE_X_ALONE,
     PRODUCT,
@@ -61,6 +59,7 @@ import {
 } from '../runtime/constants';
 import { defs, PrintMode, PRINTMODE_2DASCII, PRINTMODE_COMPUTER, PRINTMODE_HUMAN, PRINTMODE_LATEX, PRINTMODE_LIST } from '../runtime/defs';
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_multiply, is_outer, is_power, is_transpose } from '../runtime/helpers';
+import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
 import { NAME_SCRIPT_LAST } from '../runtime/ns_script';
 import { stack_push } from '../runtime/stack';
 import { SystemError } from '../runtime/SystemError';
@@ -2099,15 +2098,20 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return print_str('Math.E');
         }
         else {
-            return print_str('e');
+            if (defs.printMode === PRINTMODE_LATEX) {
+                return print_str('e');
+            }
+            else {
+                return print_str($.getSymbolToken(MATH_E));
+            }
         }
     }
-    else if (PI.equals(expr)) {
+    else if (MATH_PI.equals(expr)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             return print_str('\\pi');
         }
         else {
-            return print_str(defs.piToken);
+            return print_str($.getSymbolToken(MATH_PI));
         }
     }
     else {
@@ -2118,13 +2122,18 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return expr.printname;
         }
         if (is_nil(expr)) {
-            return '()';
+            return print_str($.getSymbolToken(MATH_NIL));
         }
         if (is_err(expr)) {
             return expr.message;
         }
         if (is_imu(expr)) {
-            return 'i';
+            if (defs.printMode === PRINTMODE_LATEX) {
+                return print_str('i');
+            }
+            else {
+                return print_str($.getSymbolToken(MATH_IMU));
+            }
         }
         throw new Error(`${expr} ???`);
     }

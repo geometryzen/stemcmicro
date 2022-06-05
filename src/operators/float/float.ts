@@ -1,20 +1,22 @@
 import { rat_to_flt } from '../../bignum';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
+import { EvaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { PI } from '../../runtime/constants';
-import { evaluateAsFloats } from '../../runtime/defs';
 import { stack_push } from '../../runtime/stack';
 import { eAsDouble, Flt, piAsDouble } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { is_rat } from '../rat/is_rat';
-import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, is_cons, U } from '../../tree/tree';
+import { is_rat } from '../rat/is_rat';
+import { is_tensor } from '../tensor/is_tensor';
 
 export function Eval_float(expr: Cons, $: ExtensionEnv): void {
     // console.lg(`Eval_floats ${$.toListString(expr)}`);
-    evaluateAsFloats(() => {
+    const mode = $.getModeFlag(EvaluatingAsFloat);
+    $.setModeFlag(EvaluatingAsFloat, true);
+    try {
         const A = cadr(expr);
         // console.lg(`Eval_floats A => ${$.toListString(A)}`);
         const B = $.valueOf(A);
@@ -24,7 +26,10 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): void {
         const D = $.valueOf(C);
         // console.lg(`Eval_floats D => ${$.toListString(D)}`);
         stack_push(D);
-    });
+    }
+    finally {
+        $.setModeFlag(EvaluatingAsFloat, mode);
+    }
 }
 /*
 function checkFloatHasWorkedOutCompletely(nodeToCheck: U, $: ExtensionEnv) {
@@ -45,9 +50,14 @@ function checkFloatHasWorkedOutCompletely(nodeToCheck: U, $: ExtensionEnv) {
 */
 
 export function zzfloat(p1: U, $: ExtensionEnv): U {
-    return evaluateAsFloats(function () {
+    const mode = $.getModeFlag(EvaluatingAsFloat);
+    $.setModeFlag(EvaluatingAsFloat, true);
+    try {
         return $.valueOf(yyfloat($.valueOf(p1), $));
-    });
+    }
+    finally {
+        $.setModeFlag(EvaluatingAsFloat, mode);
+    }
 }
 // zzfloat doesn't necessarily result in a double
 // , for example if there are variables. But
@@ -57,7 +67,14 @@ export function zzfloat(p1: U, $: ExtensionEnv): U {
 // checkFloatHasWorkedOutCompletely(defs.stack[defs.tos-1],$)
 
 export function yyfloat(p1: U, $: ExtensionEnv): U {
-    return evaluateAsFloats(yyfloat_, p1, $);
+    const mode = $.getModeFlag(EvaluatingAsFloat);
+    $.setModeFlag(EvaluatingAsFloat, true);
+    try {
+        return yyfloat_(p1, $);
+    }
+    finally {
+        $.setModeFlag(EvaluatingAsFloat, mode);
+    }
 }
 
 function yyfloat_(expr: U, $: ExtensionEnv): Flt | Cons | Tensor | U {

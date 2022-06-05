@@ -9,15 +9,15 @@ import {
     isSqrtThreeOverTwo
 } from './is';
 import { makeList } from './makeList';
+import { EvaluatingAsFloat } from './modes/modes';
 import { nativeInt } from './nativeInt';
-import { ARCCOS, COS, PI, POWER } from './runtime/constants';
-import { defs, DynamicConstants } from './runtime/defs';
-import { is_multiply } from './runtime/helpers';
-import { wrap_as_flt } from './tree/flt/Flt';
 import { is_flt } from './operators/flt/is_flt';
-import { cadr } from './tree/helpers';
 import { is_rat } from './operators/rat/is_rat';
-import { half, third, two } from './tree/rat/Rat';
+import { ARCCOS, COS, PI, POWER } from './runtime/constants';
+import { is_multiply } from './runtime/helpers';
+import { piAsDouble, wrap_as_flt, zeroAsDouble } from './tree/flt/Flt';
+import { cadr } from './tree/helpers';
+import { half, third, two, zero } from './tree/rat/Rat';
 import { car, cdr, U } from './tree/tree';
 
 /* arccos =====================================================================
@@ -54,9 +54,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return defs.evaluatingAsFloat
-            ? wrap_as_flt(Math.PI / 4.0)
-            : $.multiply(rational(1, 4), PI);
+        return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(Math.PI / 4.0) : $.multiply(rational(1, 4), PI);
     }
 
     // if x == -1/sqrt(2) then return 3/4*pi (135 degrees)
@@ -69,23 +67,17 @@ export function arccos(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return defs.evaluatingAsFloat
-            ? wrap_as_flt((Math.PI * 3.0) / 4.0)
-            : $.multiply(rational(3, 4), PI);
+        return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt((Math.PI * 3.0) / 4.0) : $.multiply(rational(3, 4), PI);
     }
 
     // if x == sqrt(3)/2 then return 1/6*pi (30 degrees)
     if (isSqrtThreeOverTwo(x)) {
-        return defs.evaluatingAsFloat
-            ? wrap_as_flt(Math.PI / 6.0)
-            : $.multiply(rational(1, 6), PI);
+        return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(Math.PI / 6.0) : $.multiply(rational(1, 6), PI);
     }
 
     // if x == -sqrt(3)/2 then return 5/6*pi (150 degrees)
     if (isMinusSqrtThreeOverTwo(x)) {
-        return defs.evaluatingAsFloat
-            ? wrap_as_flt((5.0 * Math.PI) / 6.0)
-            : $.multiply(rational(5, 6), PI);
+        return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt((5.0 * Math.PI) / 6.0) : $.multiply(rational(5, 6), PI);
     }
 
     if (!is_rat(x)) {
@@ -95,15 +87,15 @@ export function arccos(x: U, $: ExtensionEnv): U {
     const n = nativeInt($.multiply(x, two));
     switch (n) {
         case -2:
-            return DynamicConstants.Pi();
+            return $.getModeFlag(EvaluatingAsFloat) ? piAsDouble : PI;
         case -1:
-            return defs.evaluatingAsFloat ? wrap_as_flt((Math.PI * 2.0) / 3.0) : $.multiply(rational(2, 3), PI);
+            return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt((Math.PI * 2.0) / 3.0) : $.multiply(rational(2, 3), PI);
         case 0:
-            return defs.evaluatingAsFloat ? wrap_as_flt(Math.PI / 2.0) : $.multiply(half, PI);
+            return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(Math.PI / 2.0) : $.multiply(half, PI);
         case 1:
-            return defs.evaluatingAsFloat ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
+            return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
         case 2:
-            return DynamicConstants.Zero();
+            return $.getModeFlag(EvaluatingAsFloat) ? zeroAsDouble : zero;
         default:
             return makeList(ARCCOS, x);
     }

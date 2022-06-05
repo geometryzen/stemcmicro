@@ -54,7 +54,7 @@ export function cosine_of_angle(x: U, $: ExtensionEnv): U {
     // convoluted as we'd need to look at both numerator and
     // denominator.
 
-    const n = nativeInt($.divide($.multiply(x, wrap_as_int(180)), DynamicConstants.Pi()));
+    const n = nativeInt($.divide($.multiply(x, wrap_as_int(180)), DynamicConstants.Pi($)));
 
     // console.log(`n=${n}`);
 

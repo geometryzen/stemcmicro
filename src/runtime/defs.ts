@@ -3,9 +3,9 @@
 // The imports below are for types only and will not create a dependency.
 //
 import { ExtensionEnv, FOCUS_EXPANDING, FOCUS_FACTORING } from "../env/ExtensionEnv";
-import { Flt, piAsDouble, wrap_as_flt, zeroAsDouble } from "../tree/flt/Flt";
-import { Num } from "../tree/num/Num";
-import { negOne, one, zero } from "../tree/rat/Rat";
+import { EvaluatingAsFloat } from "../modes/modes";
+import { Flt, negOneAsDouble, piAsDouble } from "../tree/flt/Flt";
+import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { PI } from "./constants";
@@ -54,7 +54,6 @@ export class Defs {
     public symbolsInExpressionsWithoutAssignments: string[] = [];
     public patternHasBeenFound = false;
     public inited = false;
-    public chainOfUserSymbolsNotFunctionsBeingEvaluated: Sym[] = [];
     public readonly prints: string[] = [];
 
     /**
@@ -97,65 +96,10 @@ export class Defs {
     public codeGen = false;
     public userSimplificationsInListForm: U[] = [];
     public userSimplificationsInStringForm: string[] = [];
-    /**
-     * Determines whether floating point numbers are rendered as EcmaScript numbers.
-     * 
-     * The default value is false.
-     */
-    public renderFloatAsEcmaScript = false;
     // ========================================================================
     // Behavior Settings
     // ========================================================================
-    /**
-     * 
-     */
-    public useDefinitions = true;
-    /**
-     * Determines whether numeric types are converted to floating point numbers fro numeric evaluation.
-     * 
-     * The default value as false.
-     */
-    public evaluatingAsFloat = false;
-    /**
-     * Determines whether complex numbers are driven towards rectangular or polar notation.
-     * 
-     * The default value is false.
-     */
-    public evaluatingAsPolar = false;
-
-    /**
-     * Omitting zero terms from sums risks losing the structure of sums when the sum is zero.
-     */
-    public omitZeroTermsFromSums = true;
-    /**
-     * In version 1.x, the print token for addition was 'add'.
-     * In version 2.x, the default print token for addition is '+'.
-     */
-    public addSExprToken: '+' | 'add' = '+';
-    /**
-     * In version 1.x, the print token for multiplication was 'multiply'.
-     * In version 2.x, the default print token for multiplication is '*'.
-     */
-    public mulSExprToken: '*' | 'multiply' = '*';
-
-    /**
-     * Determines the string used to represent the Euler Number.
-     */
-    public eulerNumberToken: 'e' | 'exp(1)' = 'exp(1)';
-    /**
-     * Determines the string used during rendering to represent Pi.
-     */
-    public piToken: 'π' | 'pi' = 'π';
-    /**
-     * Determines the string used during rendering to represent the empty list.
-     */
-    public nilToken: 'nil' | '()' = '()';
-
-    /**
-     * Determines whether structures which are zero can be reduced to a single symbol.
-     * Mathematically, this is desirable, but some like to see structure preserved.
-     */
-    public useCanonicalZero = false;
+    public imuToken: 'i' | 'j' = 'i';
 
     get printMode(): PrintMode {
         return this.$printMode;
@@ -169,54 +113,6 @@ export class Defs {
     }
     setTestFlag(test_flag: boolean) {
         this.$test_flag = test_flag;
-    }
-}
-
-/**
- * @param version The major version number.
- */
-export function set_behaviors_to_version(version: 1 | 2 | 3) {
-    switch (version) {
-        case 3: {
-            defs.evaluatingAsFloat = false;
-            defs.evaluatingAsPolar = false;
-            defs.omitZeroTermsFromSums = true;
-            defs.useCanonicalZero = true;
-            // TODO: We may need some definitions. Need more ganularity.
-            // Revoke them slowly and observe the effects.
-            defs.useDefinitions = true;
-            defs.addSExprToken = '+';
-            defs.mulSExprToken = '*';
-            defs.piToken = 'π';
-            defs.nilToken = '()';
-            break;
-        }
-        case 2: {
-            defs.evaluatingAsFloat = false;
-            defs.evaluatingAsPolar = false;
-            defs.omitZeroTermsFromSums = true;
-            defs.useCanonicalZero = false;
-            // TODO: We may need some definitions. Need more ganularity.
-            // Revoke them slowly and observe the effects.
-            defs.useDefinitions = true;
-            defs.addSExprToken = '+';
-            defs.mulSExprToken = '*';
-            defs.piToken = 'π';
-            defs.nilToken = '()';
-            break;
-        }
-        case 1: {
-            defs.evaluatingAsFloat = false;
-            defs.evaluatingAsPolar = false;
-            defs.omitZeroTermsFromSums = true;
-            defs.useCanonicalZero = true;
-            defs.useDefinitions = true;
-            defs.addSExprToken = 'add';
-            defs.mulSExprToken = 'multiply';
-            defs.piToken = 'pi';
-            defs.nilToken = 'nil';
-            break;
-        }
     }
 }
 
@@ -315,53 +211,14 @@ export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: Ext
     }
 }
 
-// Call a function temporarily setting "evaluatingPolar" to true
-export function evalPolar<T extends unknown[], V>(func: (...args: T) => V, ...args: T): V {
-    const prev_evaluatingPolar = defs.evaluatingAsPolar;
-    defs.evaluatingAsPolar = true;
-    try {
-        return func(...args);
-    }
-    finally {
-        defs.evaluatingAsPolar = prev_evaluatingPolar;
-    }
-}
-
 /**
- * Call a function temporarily setting "evaluatingAsFloats" to true.
+ * TODO: Make more use of this. 
  */
-export function evaluateAsFloats<T extends unknown[], V>(func: (...args: T) => V, ...args: T): V {
-    const prev_evaluatingAsFloats = defs.evaluatingAsFloat;
-    defs.evaluatingAsFloat = true;
-    try {
-        return func(...args);
-    }
-    finally {
-        defs.evaluatingAsFloat = prev_evaluatingAsFloats;
-    }
-}
-
 export class DynamicConstants {
-    // Maybe the oracle should own these, or initialize with i.
-    private static oneAsDouble = wrap_as_flt(1.0);
-    private static negOneAsDouble = wrap_as_flt(-1.0);
-
-    // i is the square root of -1 i.e. -1 ^ 1/2
-    public static imaginaryunit: U;
-
-    public static One(): Num {
-        return defs.evaluatingAsFloat ? DynamicConstants.oneAsDouble : one;
+    public static NegOne($: ExtensionEnv): Flt | Rat {
+        return $.getModeFlag(EvaluatingAsFloat) ? negOneAsDouble : negOne;
     }
-
-    public static NegOne(): Num {
-        return defs.evaluatingAsFloat ? DynamicConstants.negOneAsDouble : negOne;
-    }
-
-    public static Zero(): Num {
-        return defs.evaluatingAsFloat ? zeroAsDouble : zero;
-    }
-
-    public static Pi(): Sym | Flt {
-        return defs.evaluatingAsFloat ? piAsDouble : PI;
+    public static Pi($: ExtensionEnv): Sym | Flt {
+        return $.getModeFlag(EvaluatingAsFloat) ? piAsDouble : PI;
     }
 }

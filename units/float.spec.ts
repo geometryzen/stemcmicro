@@ -23,7 +23,7 @@ describe("float", function () {
         const engine = create_engine({ version: 1 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(add 1 i)");
+        assert.strictEqual(render_as_sexpr(actual, $), "(+ 1 i)");
         assert.strictEqual(render_as_infix(actual, $), "1+i");
         engine.release();
     });
@@ -34,7 +34,7 @@ describe("float", function () {
         const engine = create_engine({ version: 1 });
         const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_sexpr(actual, $), "(add 1 (multiply 2 i))");
+        assert.strictEqual(render_as_sexpr(actual, $), "(+ 1 (* 2 i))");
         assert.strictEqual(render_as_infix(actual, $), "1+2*i");
         engine.release();
     });

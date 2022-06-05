@@ -42,7 +42,7 @@ export function clockform(z: U, $: ExtensionEnv): U {
     // section in power)
     const arg_z = $.arg(z);
     // console.lg(`arg_z=${print_expr(arg_z, $)}`);
-    const pi = DynamicConstants.Pi();
+    const pi = DynamicConstants.Pi($);
     // console.lg(`pi=${print_expr(pi, $)}`);
     const direction = makeList(POWER, negOne, $.divide(arg_z, pi));
     // console.lg(`direction=${print_expr(direction, $)}`);

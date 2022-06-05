@@ -9,15 +9,15 @@ import {
     isSqrtThreeOverTwo
 } from '../../is';
 import { makeList } from '../../makeList';
+import { EvaluatingAsFloat } from '../../modes/modes';
 import { nativeInt } from '../../nativeInt';
 import { ARCSIN, PI, POWER } from '../../runtime/constants';
-import { defs, DynamicConstants } from '../../runtime/defs';
 import { is_multiply, is_sin } from '../../runtime/helpers';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { wrap_as_flt, zeroAsDouble } from '../../tree/flt/Flt';
+import { half, third, two, zero } from '../../tree/rat/Rat';
+import { car, cdr, is_cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 import { is_rat } from '../rat/is_rat';
-import { half, third, two } from '../../tree/rat/Rat';
-import { car, cdr, is_cons, U } from '../../tree/tree';
 
 /* arcsin =====================================================================
 
@@ -68,21 +68,17 @@ export function arcsin(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return defs.evaluatingAsFloat
-            ? wrap_as_flt(-Math.PI / 4.0)
-            : $.multiply(rational(-1, 4), PI);
+        return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(-Math.PI / 4.0) : $.multiply(rational(-1, 4), PI);
     }
 
     // if x == sqrt(3)/2 then return 1/3*pi (60 degrees)
     if (isSqrtThreeOverTwo(x)) {
-        return defs.evaluatingAsFloat ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
+        return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
     }
 
     // if x == -sqrt(3)/2 then return -1/3*pi (-60 degrees)
     if (isMinusSqrtThreeOverTwo(x)) {
-        return defs.evaluatingAsFloat
-            ? wrap_as_flt(-Math.PI / 3.0)
-            : $.multiply(rational(-1, 3), PI);
+        return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(-Math.PI / 3.0) : $.multiply(rational(-1, 3), PI);
     }
 
     if (!is_rat(x)) {
@@ -92,21 +88,15 @@ export function arcsin(x: U, $: ExtensionEnv): U {
     const n = nativeInt(x.mul(two));
     switch (n) {
         case -2:
-            return defs.evaluatingAsFloat
-                ? wrap_as_flt(-Math.PI / 2.0)
-                : $.multiply(rational(-1, 2), PI);
+            return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(-Math.PI / 2.0) : $.multiply(rational(-1, 2), PI);
         case -1:
-            return defs.evaluatingAsFloat
-                ? wrap_as_flt(-Math.PI / 6.0)
-                : $.multiply(rational(-1, 6), PI);
+            return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(-Math.PI / 6.0) : $.multiply(rational(-1, 6), PI);
         case 0:
-            return DynamicConstants.Zero();
+            return $.getModeFlag(EvaluatingAsFloat) ? zeroAsDouble : zero;
         case 1:
-            return defs.evaluatingAsFloat
-                ? wrap_as_flt(Math.PI / 6.0)
-                : $.multiply(rational(1, 6), PI);
+            return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(Math.PI / 6.0) : $.multiply(rational(1, 6), PI);
         case 2:
-            return defs.evaluatingAsFloat ? wrap_as_flt(Math.PI / 2.0) : $.multiply(half, PI);
+            return $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(Math.PI / 2.0) : $.multiply(half, PI);
         default:
             return makeList(ARCSIN, x);
     }

@@ -1,6 +1,6 @@
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_RAT } from "../../hashing/hash_info";
-import { defs } from '../../runtime/defs';
+import { EvaluatingAsFloat } from "../../modes/modes";
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { one, Rat } from "../../tree/rat/Rat";
 import { U } from "../../tree/tree";
@@ -12,7 +12,7 @@ export function is_rat(p: unknown): p is Rat {
 
 class RatExtension implements Extension<Rat> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+    constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
     get key(): string {
@@ -72,7 +72,7 @@ class RatExtension implements Extension<Rat> {
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Rat) {
             // console.lg(`RatExtension.transform ${expr}`);
-            if (defs.evaluatingAsFloat) {
+            if (this.$.getModeFlag(EvaluatingAsFloat)) {
                 return [TFLAG_DIFF, wrap_as_flt(expr.toNumber())];
             }
             else {

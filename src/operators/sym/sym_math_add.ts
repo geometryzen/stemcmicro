@@ -1,7 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { VERSION_ONE } from "../../runtime/version";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_sym } from "./is_sym";
@@ -74,20 +73,10 @@ class SymMathAdd implements Operator<Sym> {
         }
     }
     toInfixString(): string {
-        if (this.$.version > VERSION_ONE) {
-            return '+';
-        }
-        else {
-            return 'add';
-        }
+        return '+';
     }
     toListString(): string {
-        if (this.$.version > VERSION_ONE) {
-            return '+';
-        }
-        else {
-            return 'add';
-        }
+        return this.$.getSymbolToken(MATH_ADD);
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_sym(expr) && MATH_ADD.equalsSym(expr)) {

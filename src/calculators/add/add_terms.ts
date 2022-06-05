@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { defs } from "../../runtime/defs";
+import { KeepZeroTermsInSums } from "../../modes/modes";
 import { is_add } from "../../runtime/helpers";
 import { is_cons, U } from "../../tree/tree";
 import { to_list_add_sort } from "./to_list_add_sort";
@@ -25,20 +25,7 @@ export function append_terms(terms: U[], term: U, $: ExtensionEnv): void {
         });
     }
     else if ($.isZero(term)) {
-        if (defs.omitZeroTermsFromSums) {
-            // Do nothing (omit zeroes).
-
-            // TODO We could maintain structure by finding the extension that is responsible for the zero,
-            // getting the multiplicative identity element for that zero value and then multiply out the existing xs.
-            // let xs = [x1, x2, ...] 
-            // sum(xs) + 0 => sum(xs * 1), where 1 has the same type as the zero.
-            // BUT... This only works if there is an additive identity and that is not guaranteed.
-            // const ext = $.extensionOf(x);
-            // Maybe implementations could return the identity or NIL if it does not exist?
-            // e.g. For square matrices it would exist.
-            // const mul_identity = ext.one(x, $);
-        }
-        else {
+        if ($.getModeFlag(KeepZeroTermsInSums)) {
             terms.push(term);
         }
     }

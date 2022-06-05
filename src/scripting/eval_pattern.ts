@@ -51,8 +51,8 @@ export function Eval_pattern(p1: U, $: ExtensionEnv): void {
     // this is likely to create garbage collection
     // problems in the C version as it's an
     // untracked reference
-    let stringKey = 'template: ' + $.toListString(arg1);
-    stringKey += ' tests: ' + $.toListString(arg3);
+    let stringKey = 'template: ' + $.toSExprString(arg1);
+    stringKey += ' tests: ' + $.toSExprString(arg3);
     // console.lg(`pattern stringkey: ${stringKey}`);
 
     const index = defs.userSimplificationsInStringForm.indexOf(stringKey);

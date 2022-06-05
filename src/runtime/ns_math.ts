@@ -8,6 +8,8 @@
 
 import { Sym } from "../tree/sym/Sym";
 
+export const MATH_NAMESPACE = new Sym('math');
+
 /**
  * Addition
  */
@@ -113,3 +115,10 @@ export const MATH_HAS_TYPE = new Sym(':');
 * tau(x) = 2 * π * x
 */
 export const MATH_TAU = new Sym('tau');
+/**
+ * WARNING: nil cannot be relied upon to be a Sym in the system. In fact, in this implementation
+ * nil is implemented as a Cons. However, this symbolic constant can be used as a key for
+ * naming the concept of the empty list.
+ */
+export const MATH_NIL = new Sym('nil', MATH_NAMESPACE);
+export const MATH_IMU = new Sym('unit-imaginary-number', MATH_NAMESPACE);

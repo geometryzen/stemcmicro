@@ -1,9 +1,9 @@
+import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { define_std_operators } from "../env/define_std_operators";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { defs, hard_reset, set_behaviors_to_version } from "./defs";
+import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { execute_std_definitions } from "./init";
 import { VERSION_LATEST } from "./version";
@@ -24,33 +24,11 @@ export interface EngineOptions {
     version?: 1 | 2 | 3;
 }
 
-function version_from_options(options: EngineOptions | undefined): 1 | 2 | 3 {
-    if (typeof options === 'undefined') {
-        return 2;
-    }
-    else {
-        if (typeof options.version === 'undefined') {
-            return 2;
-        }
-        if (typeof options.version === 'number') {
-            return options.version;
-        }
-        throw new Error("options.version MUST be a number");
-    }
-}
-
 export function init_env($: ExtensionEnv, options?: EngineOptions) {
-
-    const version = version_from_options(options);
 
     hard_reset();
 
-    defs.chainOfUserSymbolsNotFunctionsBeingEvaluated = [];
-
     $.resetSymTab();
-
-    // TODO: We would like to get away from these global defs and instead use the environment.
-    set_behaviors_to_version(version);
 
     $.clearOperators();
 

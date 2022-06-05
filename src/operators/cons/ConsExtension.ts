@@ -154,16 +154,16 @@ class ConsExtension implements Extension<Cons> {
     toListString(cons: Cons, $: ExtensionEnv): string {
         let str = '';
         str += '(';
-        str += $.toListString(cons.car);
+        str += $.toSExprString(cons.car);
         let expr = cons.cdr;
         while (is_cons(expr)) {
             str += ' ';
-            str += $.toListString(expr.car);
+            str += $.toSExprString(expr.car);
             expr = expr.cdr;
         }
         if (expr !== nil) {
             str += ' . ';
-            str += $.toListString(expr);
+            str += $.toSExprString(expr);
         }
         str += ')';
         return str;

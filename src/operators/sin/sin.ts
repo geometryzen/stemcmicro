@@ -78,7 +78,7 @@ function sine_of_angle(p1: U, $: ExtensionEnv): U {
     // convoluted as we'd need to look at both numerator and
     // denominator.
     // TODO: DynamicConstants.Pi
-    const n = nativeInt($.divide($.multiply(p1, wrap_as_int(180)), DynamicConstants.Pi()));
+    const n = nativeInt($.divide($.multiply(p1, wrap_as_int(180)), DynamicConstants.Pi($)));
 
     // most "good" (i.e. compact) trigonometric results
     // happen for a round number of degrees. There are some exceptions

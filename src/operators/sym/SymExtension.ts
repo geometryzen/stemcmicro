@@ -1,7 +1,7 @@
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
+import { EvaluatingAsFloat } from "../../modes/modes";
 import { PI } from "../../runtime/constants";
-import { defs } from "../../runtime/defs";
 import { piAsDouble } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { nil, U } from "../../tree/tree";
@@ -27,7 +27,7 @@ class SymExtension implements Extension<Sym> {
     valueOf(sym: Sym, $: ExtensionEnv): U {
         // Doing the dirty work for PI. Why do we need a special case?
         // What about E from the math namespace?
-        if (PI.equals(sym) && defs.evaluatingAsFloat) {
+        if (PI.equals(sym) && $.getModeFlag(EvaluatingAsFloat)) {
             return piAsDouble;
         }
 

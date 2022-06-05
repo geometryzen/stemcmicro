@@ -1,18 +1,18 @@
-import { denominator } from './operators/denominator/denominator';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { equaln, is_negative_number } from './is';
 import { makeList } from './makeList';
+import { denominator } from './operators/denominator/denominator';
+import { is_flt } from './operators/flt/is_flt';
 import { numerator } from './operators/numerator/numerator';
+import { is_rat } from './operators/rat/is_rat';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
 import { LOG } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
-import { is_rat } from './operators/rat/is_rat';
 import { one, zero } from './tree/rat/Rat';
 import { Cons, U } from './tree/tree';
 
@@ -39,7 +39,7 @@ export function logarithm(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_negative_number(expr)) {
-        return $.add(logarithm($.negate(expr), $), $.multiply(imu, DynamicConstants.Pi()));
+        return $.add(logarithm($.negate(expr), $), $.multiply(imu, DynamicConstants.Pi($)));
     }
 
     if (is_flt(expr)) {

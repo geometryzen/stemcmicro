@@ -79,12 +79,7 @@ class SymMathPi implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym): string {
-        if (this.$.version > VERSION_ONE) {
-            return 'π';
-        }
-        else {
-            return 'pi';
-        }
+        return this.$.getSymbolToken(MATH_PI);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

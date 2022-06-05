@@ -79,15 +79,6 @@ export function check_stack() {
     if (defs.frame !== TOS) {
         halt(`frame error defs.frame = ${defs.frame} TOS = ${TOS}`);
     }
-    if (defs.chainOfUserSymbolsNotFunctionsBeingEvaluated.length !== 0) {
-        halt('symbols evaluation still ongoing?');
-    }
-    if (defs.evaluatingAsFloat) {
-        halt('numeric evaluation still ongoing?');
-    }
-    if (defs.evaluatingAsPolar) {
-        halt('evaluation of polar still ongoing?');
-    }
 }
 
 /**

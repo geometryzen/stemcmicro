@@ -11,7 +11,7 @@ export function symbolsinfo($: ExtensionEnv): string {
     for (const { sym, binding } of bnds) {
         const printname = sym.key();
         if (binding) {
-            const bindingi = (`${$.toListString(binding)}`).substring(0, 4);
+            const bindingi = (`${$.toSExprString(binding)}`).substring(0, 4);
             str +=
                 'symbol: ' +
                 printname +

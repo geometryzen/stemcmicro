@@ -5,19 +5,20 @@ import { exp } from '../../exp';
 import { imag } from '../../imag';
 import { equaln, is_negative_number, is_negative_term, is_num_and_gt_zero } from '../../is';
 import { makeList } from '../../makeList';
+import { EvaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { real } from '../real/real';
 import { PI } from '../../runtime/constants';
-import { DynamicConstants } from '../../runtime/defs';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { oneAsDouble } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, one, two, zero } from '../../tree/rat/Rat';
-import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, U } from '../../tree/tree';
+import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { simplify, simplify_trig } from '../simplify/simplify';
+import { is_tensor } from '../tensor/is_tensor';
 import { MATH_ABS } from './MATH_ABS';
 
 //(docs are generated from top-level comments, keep an eye on the formatting!)
@@ -167,7 +168,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     // abs(-1^anything) = abs(-1)^anything = 1^anything = 1
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
         // -1 to any power
-        return hook(DynamicConstants.One(), "G");
+        return hook($.getModeFlag(EvaluatingAsFloat) ? oneAsDouble : one, "G");
     }
 
     // abs(base^expo) is equal to abs(base)^expo IF expo is positive

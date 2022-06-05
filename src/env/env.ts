@@ -28,7 +28,7 @@ import { render_as_infix } from "../print/print";
 import { FUNCTION } from "../runtime/constants";
 import { implicate } from "../runtime/execute";
 import { is_add } from "../runtime/helpers";
-import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER, MATH_POW } from "../runtime/ns_math";
+import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { VERSION_LATEST } from "../runtime/version";
@@ -36,7 +36,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { diffFlag, ExtensionEnv, FEATURE, foci, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_FLAGS_ALL, FOCUS_IMPLICATE, haltFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, foci, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_FLAGS_ALL, FOCUS_IMPLICATE, haltFlag, MODE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -107,6 +107,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     let current_focus: number = FOCUS_EXPANDING;
 
     let fieldKind: 'R' | undefined = 'R';
+
+    /**
+     * Modes flags of the environment.
+     */
+    const mode_flag: { [mode: string]: boolean } = {};
+    /**
+     * Override tokens for symbols used during rendering.
+     */
+    const sym_token: { [key: string]: string } = {};
 
     function currentOps(): { [key: string]: Operator<U>[] } {
         switch (current_focus) {
@@ -431,6 +440,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
             return yyfactorpoly(p, x, $);
         },
+        getModeFlag(mode: MODE): boolean {
+            return !!mode_flag[mode];
+        },
+        getSymbolToken(sym: Sym): string {
+            return sym_token[sym.key()];
+        },
         inner(lhs: U, rhs: U): U {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
             const value_lhs = $.valueOf(lhs);
@@ -561,6 +576,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setFocus(focus: number): void {
             current_focus = focus;
         },
+        setModeFlag(mode: MODE, value: boolean): void {
+            mode_flag[mode] = value;
+        },
+        setSymbolToken(sym: Sym, token: string): void {
+            sym_token[sym.key()] = token;
+        },
         subtract(lhs: U, rhs: U): U {
             const A = $.negate(rhs);
             const B = binop(MATH_ADD, lhs, A, $);
@@ -570,7 +591,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const op = $.operatorFor(expr);
             return op.toInfixString(expr);
         },
-        toListString(expr: U): string {
+        toSExprString(expr: U): string {
             const op = $.operatorFor(expr);
             return op.toListString(expr);
         },
@@ -695,6 +716,21 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.transform(expr)[1];
         }
     };
+
+    // TODO: Consistency in names used for symbols in symbolic expressions.
+    $.setSymbolToken(MATH_ADD, '+');        // changing will break  82 cases.
+    $.setSymbolToken(MATH_MUL, '*');        // changing will break 113 cases.
+    $.setSymbolToken(MATH_POW, 'power');    // changing will break  22 cases.
+    $.setSymbolToken(MATH_RCO, 'rco');
+    $.setSymbolToken(MATH_LCO, 'lco');
+    $.setSymbolToken(MATH_INNER, 'inner');
+    $.setSymbolToken(MATH_OUTER, 'outer');
+
+    $.setSymbolToken(MATH_E, 'e');
+    $.setSymbolToken(MATH_PI, 'π');
+    $.setSymbolToken(MATH_NIL, '()');
+    $.setSymbolToken(MATH_IMU, 'i');
+
     return $;
 }
 

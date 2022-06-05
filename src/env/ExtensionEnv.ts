@@ -38,6 +38,8 @@ export function haltFlag(flags: TFLAGS): boolean {
  */
 export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector' | '~Vector';
 
+export type MODE = 'evaluatingAsFloat' | 'evaluatingAsPolar' | 'keepZeroTermsInSums' | 'renderFloatAsEcmaScript';
+
 export interface ExtensionEnv {
     setField(kind: 'R' | undefined): void;
     treatAsReal(sym: Sym): boolean;
@@ -74,6 +76,8 @@ export interface ExtensionEnv {
     getBinding(sym: Sym): U;
     getBindings(): { sym: Sym, binding: U | undefined }[];
     getFocus(): number;
+    getModeFlag(mode: MODE): boolean;
+    getSymbolToken(sym: Sym): string;
     /**
      * Used to make the environment ready after all operator builders have been added.
      */
@@ -117,9 +121,11 @@ export interface ExtensionEnv {
     setAssocR(opr: Sym, value: boolean): void;
     setBinding(sym: Sym, binding: U): void;
     setFocus(focus: number): void;
+    setModeFlag(mode: MODE, value: boolean): void;
+    setSymbolToken(sym: Sym, token: string): void;
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;
-    toListString(expr: U): string;
+    toSExprString(expr: U): string;
     transform(expr: U): [TFLAGS, U];
     valueOf(expr: U): U;
 }

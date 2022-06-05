@@ -24,5 +24,5 @@ export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
         str += ')';
         return str;
     }
-    return $.toListString(expr);
+    return $.toSExprString(expr);
 }

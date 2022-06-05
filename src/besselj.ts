@@ -1,16 +1,16 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_negative_term } from './is';
 import { makeList } from './makeList';
+import { EvaluatingAsFloat } from './modes/modes';
 import { nativeInt } from './nativeInt';
-import { BESSELJ, MEQUAL, MSIGN, PI } from './runtime/constants';
-import { defs } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { sine } from './operators/sin/sin';
-import { wrap_as_flt } from './tree/flt/Flt';
 import { is_flt } from './operators/flt/is_flt';
-import { caddr, cadr } from './tree/helpers';
 import { is_rat } from './operators/rat/is_rat';
-import { half, wrap_as_int, negOne, one, two, zero } from './tree/rat/Rat';
+import { sine } from './operators/sin/sin';
+import { BESSELJ, MEQUAL, MSIGN, PI } from './runtime/constants';
+import { stack_push } from './runtime/stack';
+import { wrap_as_flt } from './tree/flt/Flt';
+import { caddr, cadr } from './tree/helpers';
+import { half, negOne, one, two, wrap_as_int, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 /* besselj =====================================================================
@@ -83,13 +83,13 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     if (is_rat(N) && MEQUAL(N.b, 2)) {
         // n = 1/2
         if (MEQUAL(N.a, 1)) {
-            const twoOverPi = defs.evaluatingAsFloat ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
+            const twoOverPi = $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
             return $.multiply($.power($.divide(twoOverPi, X), half), sine(X, $));
         }
 
         // n = -1/2
         if (MEQUAL(N.a, -1)) {
-            const twoOverPi = defs.evaluatingAsFloat ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
+            const twoOverPi = $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
             return $.multiply($.power($.divide(twoOverPi, X), half), $.cos(X));
         }
 

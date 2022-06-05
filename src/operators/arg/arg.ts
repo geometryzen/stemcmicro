@@ -3,18 +3,19 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imag } from '../../imag';
 import { equaln, is_negative, is_negative_number, is_num_and_gt_zero, is_one_over_two } from '../../is';
 import { makeList } from '../../makeList';
+import { EvaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { is_imu } from '../imu/is_imu';
-import { real } from '../real/real';
 import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
-import { defs, DynamicConstants } from '../../runtime/defs';
+import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { piAsDouble, zeroAsDouble } from '../../tree/flt/Flt';
-import { is_flt } from '../flt/is_flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, U } from '../../tree/tree';
 import { arctan } from '../arctan/arctan';
+import { is_flt } from '../flt/is_flt';
+import { is_imu } from '../imu/is_imu';
+import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { is_sym } from '../sym/is_sym';
 
@@ -99,14 +100,11 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     const p1 = expr;
     // case of plain number
     if (is_num_and_gt_zero(p1) || PI.equals(p1)) {
-        return is_flt(p1) || defs.evaluatingAsFloat ? zeroAsDouble : zero;
+        return is_flt(p1) || $.getModeFlag(EvaluatingAsFloat) ? zeroAsDouble : zero;
     }
 
     if (is_negative_number(p1)) {
-        const pi =
-            is_flt(p1) || defs.evaluatingAsFloat
-                ? piAsDouble
-                : PI;
+        const pi = is_flt(p1) || $.getModeFlag(EvaluatingAsFloat) ? piAsDouble : PI;
         return $.negate(pi);
     }
 
@@ -120,7 +118,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
 
     // Implementation in which the imaginary unit is it's own object.
     if (is_imu(p1)) {
-        return $.multiply(DynamicConstants.Pi(), half);
+        return $.multiply(DynamicConstants.Pi($), half);
     }
 
     const base = cadr(p1);
@@ -128,7 +126,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     // Implementation in which imaginary unit is (power -1 1/2).
     if (is_power(p1) && equaln(base, -1)) {
         // -1 to a power
-        return $.multiply(DynamicConstants.Pi(), caddr(p1));
+        return $.multiply(DynamicConstants.Pi($), caddr(p1));
     }
 
     if (is_power(p1) && is_base_of_natural_logarithm(base)) {
@@ -176,20 +174,20 @@ function arg_of_sum(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`y => ${$.toListString(y)}`);
     if ($.isZero(x)) {
         if (is_negative(y)) {
-            return $.negate(DynamicConstants.Pi());
+            return $.negate(DynamicConstants.Pi($));
         }
         else {
-            return DynamicConstants.Pi();
+            return DynamicConstants.Pi($);
         }
     }
     else {
         const arg1 = arctan($.divide(y, x), $);
         if (is_negative(x)) {
             if (is_negative(y)) {
-                return subtract(arg1, DynamicConstants.Pi(), $); // quadrant 1 -> 3
+                return subtract(arg1, DynamicConstants.Pi($), $); // quadrant 1 -> 3
             }
             else {
-                return $.add(arg1, DynamicConstants.Pi()); // quadrant 4 -> 2
+                return $.add(arg1, DynamicConstants.Pi($)); // quadrant 4 -> 2
             }
         }
         return arg1;

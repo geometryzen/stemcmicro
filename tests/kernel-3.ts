@@ -10,7 +10,7 @@ run_test([
 
     'printlist',
     '(multiply 3 a)',
-], { version: 1 });
+], {});
 // ADD 02
 run_test([
     'a + a + b',
@@ -18,7 +18,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 a) b)'
-], { version: 1 });
+], {});
 // ADD 03
 run_test([
     'a + a + c',
@@ -26,7 +26,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 a) c)'
-], { version: 1 });
+], {});
 // ADD 04
 run_test([
     'a + b + a',
@@ -34,7 +34,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 a) b)'
-], { version: 1 });
+], {});
 // ADD 05
 run_test([
     'a + b + b',
@@ -42,7 +42,7 @@ run_test([
 
     'printlist',
     '(add a (multiply 2 b))'
-], { version: 1 });
+], {});
 // ADD 06
 run_test([
     'a + b + c',
@@ -50,7 +50,7 @@ run_test([
 
     'printlist',
     '(add a b c)',
-], { version: 1 });
+], {});
 // ADD 07
 run_test([
     'a + c + a',
@@ -58,7 +58,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 a) c)'
-], { version: 1 });
+], {});
 // ADD 08
 run_test([
     'a + c + b',
@@ -66,7 +66,7 @@ run_test([
 
     'printlist',
     '(add a b c)'
-], { version: 1 });
+], {});
 // ADD 09
 run_test([
     'a + c + c',
@@ -74,7 +74,7 @@ run_test([
 
     'printlist',
     '(add a (multiply 2 c))'
-], { version: 1 });
+], {});
 // ADD 10
 run_test([
     'b + a + a',
@@ -82,7 +82,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 a) b)'
-], { version: 1 });
+], {});
 // ADD 11
 run_test([
     'b + a + b',
@@ -90,7 +90,7 @@ run_test([
 
     'printlist',
     '(add a (multiply 2 b))'
-], { version: 1 });
+], {});
 // ADD 12
 run_test([
     'b + a + c',
@@ -98,7 +98,7 @@ run_test([
 
     'printlist',
     '(add a b c)'
-], { version: 1 });
+], {});
 // ADD 13
 run_test([
     'b + b + a',
@@ -106,7 +106,7 @@ run_test([
 
     'printlist',
     '(add a (multiply 2 b))'
-], { version: 1 });
+], {});
 // ADD 14
 run_test([
     'b + b + b',
@@ -114,7 +114,7 @@ run_test([
 
     'printlist',
     '(multiply 3 b)'
-], { version: 1 });
+], {});
 // ADD 15
 run_test([
     'b + b + c',
@@ -122,7 +122,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 b) c)'
-], { version: 1 });
+], {});
 // ADD 16
 run_test([
     'b + c + a',
@@ -130,7 +130,7 @@ run_test([
 
     'printlist',
     '(add a b c)'
-], { version: 1 });
+], {});
 // ADD 17
 run_test([
     'b + c + b',
@@ -138,7 +138,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 b) c)'
-], { version: 1 });
+], {});
 // ADD 18
 run_test([
     'b + c + c',
@@ -146,7 +146,7 @@ run_test([
 
     'printlist',
     '(add b (multiply 2 c))'
-], { version: 1 });
+], {});
 // ADD 19
 run_test([
     'c + a + a',
@@ -154,7 +154,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 a) c)'
-], { version: 1 });
+], {});
 // ADD 20
 run_test([
     'c + a + b',
@@ -162,7 +162,7 @@ run_test([
 
     'printlist',
     '(add a b c)'
-], { version: 1 });
+], {});
 // ADD 21
 run_test([
     'c + a + c',
@@ -170,7 +170,7 @@ run_test([
 
     'printlist',
     '(add a (multiply 2 c))'
-], { version: 1 });
+], {});
 // ADD 22
 run_test([
     'c + b + a',
@@ -178,7 +178,7 @@ run_test([
 
     'printlist',
     '(add a b c)'
-], { version: 1 });
+], {});
 // ADD 23
 run_test([
     'c + b + b',
@@ -186,7 +186,7 @@ run_test([
 
     'printlist',
     '(add (multiply 2 b) c)'
-], { version: 1 });
+], {});
 // ADD 24
 run_test([
     'c + b + c',
@@ -194,7 +194,7 @@ run_test([
 
     'printlist',
     '(add b (multiply 2 c))'
-], { version: 1 });
+], {});
 // ADD 25
 run_test([
     'c + c + a',
@@ -202,7 +202,7 @@ run_test([
 
     'printlist',
     '(add a (multiply 2 c))'
-], { version: 1 });
+], {});
 // ADD 26
 run_test([
     'c + c + b',
@@ -210,7 +210,7 @@ run_test([
 
     'printlist',
     '(add b (multiply 2 c))'
-], { version: 1 });
+], {});
 // ADD 27
 run_test([
     'c + c + c',
@@ -218,4 +218,4 @@ run_test([
 
     'printlist',
     '(multiply 3 c)'
-], { version: 1 });
+], {});

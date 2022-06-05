@@ -7,7 +7,6 @@ import { render_as_infix } from './src/print/print';
 import { defs } from './src/runtime/defs';
 import { execute_std_definitions } from './src/runtime/init';
 import { create_engine, Engine, EngineOptions } from './src/runtime/symengine';
-import { VERSION_LATEST } from './src/runtime/version';
 import { U } from './src/tree/tree';
 
 const shardCount = Number(process.env['TEST_TOTAL_SHARDS']) || 1;
@@ -249,7 +248,6 @@ export interface TestOptions {
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
     verbose?: boolean;
-    version?: 1 | 2 | 3;
     name?: string;
 }
 
@@ -259,39 +257,6 @@ interface TestConfig {
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
     verbose: boolean;
-    version: 1 | 2 | 3;
-}
-
-function useCaretForExponentiation(version: 1 | 2 | 3 | undefined): boolean {
-    if (typeof version === 'number') {
-        switch (version) {
-            case 1: {
-                return true;
-            }
-            default: {
-                return false;
-            }
-        }
-    }
-    else {
-        return false;
-    }
-}
-
-function useDefinitions(version: 1 | 2 | 3 | undefined): boolean {
-    if (typeof version === 'number') {
-        switch (version) {
-            case 1: {
-                return true;
-            }
-            default: {
-                return false;
-            }
-        }
-    }
-    else {
-        return false;
-    }
 }
 
 function test_config_from_options(options: TestOptions | undefined): TestConfig {
@@ -299,10 +264,9 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
         const config: TestConfig = {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : useCaretForExponentiation(options.version),
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : useDefinitions(options.version),
-            verbose: typeof options.verbose === 'boolean' ? options.verbose : false,
-            version: typeof options.version === 'number' ? options.version : VERSION_LATEST
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
+            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
+            verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
         return config;
     }
@@ -310,10 +274,9 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
         const config: TestConfig = {
             dependencies: [],
             treatAsVectors: [],
-            useCaretForExponentiation: useCaretForExponentiation(VERSION_LATEST),
-            useDefinitions: useDefinitions(VERSION_LATEST),
-            verbose: false,
-            version: VERSION_LATEST
+            useCaretForExponentiation: false,
+            useDefinitions: false,
+            verbose: false
         };
         return config;
     }
@@ -324,16 +287,16 @@ function harness_options_to_engine_options(options: TestOptions | undefined): En
         return {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : useCaretForExponentiation(VERSION_LATEST),
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : useDefinitions(VERSION_LATEST)
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
+            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
         };
     }
     else {
         return {
             dependencies: [],
             treatAsVectors: [],
-            useCaretForExponentiation: useCaretForExponentiation(VERSION_LATEST),
-            useDefinitions: useDefinitions(VERSION_LATEST)
+            useCaretForExponentiation: false,
+            useDefinitions: false
         };
     }
 }

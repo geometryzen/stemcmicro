@@ -51,12 +51,12 @@ run_test([
 
     'printlist',
     '-1'
-], { version: 3 });
+], {});
 
 run_test([
     '2*3',
     '6',
-], { version: 3 });
+], {});
 
 // Sym
 run_test([
@@ -65,7 +65,7 @@ run_test([
 
     'printlist',
     'x',
-], { version: 3 });
+], {});
 
 // TODO: Unicode symbols
 
@@ -76,7 +76,7 @@ run_test([
 
     'printlist',
     '(* -2 x)',
-], { version: 3 });
+], {});
 
 // Rat * Sym
 run_test([
@@ -85,7 +85,7 @@ run_test([
 
     'printlist',
     '(* -2 x)',
-], { version: 3 });
+], {});
 
 // Sym * Rat
 run_test([
@@ -94,7 +94,7 @@ run_test([
 
     'printlist',
     '(* -2 x)',
-], { version: 3 });
+], {});
 
 // -Sym (Unary Minus)
 run_test([
@@ -103,7 +103,7 @@ run_test([
 
     'printlist',
     '(* -1 x)'
-], { version: 3 });
+], {});
 
 // In version 1.x, the caret (circumflex) symbol is used for exponentiation.
 run_test([
@@ -112,7 +112,7 @@ run_test([
 
     'printlist',
     '(power a 2)'
-], { version: 3 });
+], {});
 
 // Sym * Sym
 run_test([
@@ -136,7 +136,7 @@ run_test([
 
     'printlist',
     '(power a 2)',
-], { version: 3 });
+], {});
 
 // Sym + Sym
 run_test([
@@ -165,4 +165,4 @@ run_test([
 
     'printlist',
     '0',
-], { version: 3 });
+], {});

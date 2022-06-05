@@ -1,4 +1,3 @@
-import { VERSION_NEXT } from '../src/runtime/version';
 import { run_test } from '../test-harness';
 
 run_test([
@@ -26,17 +25,17 @@ run_test([
     'succ(1)',
     '2',
 
-], { version: VERSION_NEXT });
+], {});
 
 run_test([
     'succ(succ(succ(5)))',
     '8'
-], { version: VERSION_NEXT });
+], {});
 
 run_test([
     'pred(pred(pred(9)))',
     '6'
-], { version: VERSION_NEXT });
+], {});
 
 run_test([
     'iszero(0)',
@@ -48,4 +47,4 @@ run_test([
     'iszero(pred(succ(0)))',
     'true'
 
-], { version: VERSION_NEXT });
+], {});

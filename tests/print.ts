@@ -26,4 +26,4 @@ run_test([
     // One more just to make sure that all of the keywords return script.last rather than NIL.
     'print',
     '-2 x',
-], { version: 3 });
+], {});

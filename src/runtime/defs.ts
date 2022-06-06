@@ -19,19 +19,33 @@ export const TOS = 100000;
 export const DEBUG = false;
 export const PRINTOUTRESULT = false;
 
-// printing-related constants
+/**
+ * LATEX is MathJax compatible.
+ */
 export const PRINTMODE_LATEX = 'PRINTMODE_LATEX';
-export const PRINTMODE_2DASCII = 'PRINTMODE_2DASCII';
-export const PRINTMODE_COMPUTER = 'PRINTMODE_COMPUTER';
+/**
+ * ASCII is a two-dimensional rendering.
+ */
+export const PRINTMODE_ASCII = 'PRINTMODE_ASCII';
+/**
+ * INFIX is how we normally write math but whitespace is removed.
+ */
+export const PRINTMODE_INFIX = 'PRINTMODE_INFIX';
+/**
+ * HUMAN is like INFIX but with extra whitespace.
+ */
 export const PRINTMODE_HUMAN = 'PRINTMODE_HUMAN';
-export const PRINTMODE_LIST = 'PRINTMODE_LIST';
+/**
+ * SEXPR or Symbolic Expression is LISP-like.
+ */
+export const PRINTMODE_SEXPR = 'PRINTMODE_SEXPR';
 
 export type PrintMode =
     | typeof PRINTMODE_LATEX
-    | typeof PRINTMODE_2DASCII
-    | typeof PRINTMODE_COMPUTER
+    | typeof PRINTMODE_ASCII
+    | typeof PRINTMODE_INFIX
     | typeof PRINTMODE_HUMAN
-    | typeof PRINTMODE_LIST;
+    | typeof PRINTMODE_SEXPR;
 
 export class Defs {
     /**
@@ -40,7 +54,7 @@ export class Defs {
      * It is set to true during the execution of the test harness, and reset after.
      */
     private $test_flag = false;
-    private $printMode: PrintMode = PRINTMODE_COMPUTER;
+    private $printMode: PrintMode = PRINTMODE_INFIX;
     constructor() {
         // Nothing to see here yet.
     }

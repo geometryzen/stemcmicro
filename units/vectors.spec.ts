@@ -3,16 +3,15 @@ import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("vectors", function () {
-    it("x|y+x^y", function () {
+    it("x", function () {
         const lines: string[] = [
-            `x|y+x^y`,
+            `x`,
         ];
-        const engine = create_engine({
-            dependencies: ['Vector'],
-            treatAsVectors: ['x', 'y']
-        });
+        const engine = create_engine({ treatAsVectors: ['x'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "x*y");
+        assert.strictEqual(engine.renderAsInfix(value), "x");
+        assert.strictEqual(engine.renderAsLaTeX(value), "\\vec{x}");
+        assert.strictEqual(engine.renderAsSExpr(value), "x");
         engine.release();
     });
 });
@@ -25,6 +24,8 @@ describe("vectors", function () {
         const engine = create_engine({ treatAsVectors: ['x', 'y'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x*y");
+        // TODO: Whitespace might be good here.
+        assert.strictEqual(engine.renderAsLaTeX(value), "\\vec{x}\\vec{y}");
         engine.release();
     });
     it("x|y", function () {
@@ -34,6 +35,7 @@ describe("vectors", function () {
         const engine = create_engine({ treatAsVectors: ['x', 'y'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x|y");
+        assert.strictEqual(engine.renderAsLaTeX(value), "\\vec{x} \\mid \\vec{y}");
         engine.release();
     });
     it("y|x", function () {
@@ -52,6 +54,7 @@ describe("vectors", function () {
         const engine = create_engine({ treatAsVectors: ['x', 'y'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x^y");
+        assert.strictEqual(engine.renderAsLaTeX(value), "\\vec{x} \\wedge \\vec{y}");
         engine.release();
     });
     it("y^x", function () {
@@ -353,6 +356,7 @@ describe("vectors", function () {
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(value), "(* -1 n a n)");
             assert.strictEqual(engine.renderAsInfix(value), "-n*a*n");
+            assert.strictEqual(engine.renderAsLaTeX(value), "-\\vec{n}\\vec{a}\\vec{n}");
             engine.release();
         });
         it("Reflections I", function () {
@@ -401,5 +405,23 @@ describe("vectors", function () {
             assert.strictEqual(engine.renderAsInfix(value), "-n*a");
             engine.release();
         });
+    });
+    it("Scalar,Blade ordering", function () {
+        const lines: string[] = [
+            `G = algebra([1,1,1],["i","j","k"])`,
+            `i=G[1]`,
+            `j=G[2]`,
+            `k=G[3]`,
+            `A = i * Ax + j * Ay`,
+            `B = i * Bx + j * By`,
+            `A*B`
+        ];
+        const engine = create_engine({
+            dependencies: ['Blade']
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* Ax Bx) (* Ay By) (* (+ (* Ax By) (* -1 Ay Bx)) i^j))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Bx+Ay*By+(Ax*By-Ay*Bx)*i^j");
+        engine.release();
     });
 });

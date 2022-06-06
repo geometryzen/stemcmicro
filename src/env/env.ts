@@ -583,6 +583,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const op = $.operatorFor(expr);
             return op.toInfixString(expr);
         },
+        toLatexString(expr: U): string {
+            const op = $.operatorFor(expr);
+            return op.toLatexString(expr);
+        },
         toSExprString(expr: U): string {
             const op = $.operatorFor(expr);
             return op.toListString(expr);

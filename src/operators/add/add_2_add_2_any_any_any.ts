@@ -47,7 +47,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const Z = lhs.rhs;
         const A = rhs;
         const signum = compare_terms_redux(Z, A, $);
-        // console.log(`${this.name} ${signum} lhs=${render_as_infix(lhs, $)} rhs=${render_as_infix(rhs, $)}`);
+        // console.lg(`${this.name} ${signum} Z=${render_as_infix(Z, $)} A=${render_as_infix(A, $)}`);
         switch (signum) {
             case SIGN_GT: {
                 // (X + Z) + A => (X + A) + Z

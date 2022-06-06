@@ -57,7 +57,7 @@ import {
     TESTLT,
     UNIT
 } from '../runtime/constants';
-import { defs, PrintMode, PRINTMODE_2DASCII, PRINTMODE_COMPUTER, PRINTMODE_HUMAN, PRINTMODE_LATEX, PRINTMODE_LIST } from '../runtime/defs';
+import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
 import { NAME_SCRIPT_LAST } from '../runtime/ns_script';
@@ -105,7 +105,7 @@ export function Eval_print2dascii(expr: Cons, $: ExtensionEnv): void {
     try {
         const argList = expr.cdr;
         if (is_cons(argList)) {
-            const texts = print_in_mode(argList, PRINTMODE_2DASCII, $);
+            const texts = print_in_mode(argList, PRINTMODE_ASCII, $);
             defs.prints.push(...texts);
         }
     }
@@ -122,7 +122,7 @@ export function Eval_printcomputer(expr: Cons, $: ExtensionEnv): void {
     try {
         const argList = expr.cdr;
         if (is_cons(argList)) {
-            const texts = print_in_mode(argList, PRINTMODE_COMPUTER, $);
+            const texts = print_in_mode(argList, PRINTMODE_INFIX, $);
             defs.prints.push(...texts);
         }
     }
@@ -182,7 +182,7 @@ export function Eval_printlist(expr: Cons, $: ExtensionEnv): void {
     try {
         const argList = expr.cdr;
         if (is_cons(argList)) {
-            const texts = print_in_mode(argList, PRINTMODE_LIST, $);
+            const texts = print_in_mode(argList, PRINTMODE_SEXPR, $);
             defs.prints.push(...texts);
         }
     }
@@ -206,7 +206,7 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
         const origPrintMode = printMode;
         defs.setPrintMode(printMode);
         try {
-            if (printMode === PRINTMODE_COMPUTER) {
+            if (printMode === PRINTMODE_INFIX) {
                 const str = render_as_infix(value, $);
                 texts.push(str);
                 store_text_in_binding(str, LAST_COMPUTER_PRINT, $);
@@ -216,7 +216,7 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
                 texts.push(str);
                 store_text_in_binding(str, LAST_HUMAN_PRINT, $);
             }
-            else if (printMode === PRINTMODE_2DASCII) {
+            else if (printMode === PRINTMODE_ASCII) {
                 const str = print2dascii(value, $);
                 texts.push(str);
                 store_text_in_binding(str, LAST_2DASCII_PRINT, $);
@@ -226,7 +226,7 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
                 texts.push(str);
                 store_text_in_binding(str, LAST_LATEX_PRINT, $);
             }
-            else if (printMode === PRINTMODE_LIST) {
+            else if (printMode === PRINTMODE_SEXPR) {
                 const str = render_as_sexpr(value, $);
                 texts.push(str);
                 store_text_in_binding(str, LAST_LIST_PRINT, $);
@@ -2174,6 +2174,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     }
     else {
         if (is_sym(expr)) {
+            if (defs.printMode === PRINTMODE_INFIX) {
+                return $.toInfixString(expr);
+            }
+            if (defs.printMode === PRINTMODE_LATEX) {
+                return $.toLatexString(expr);
+            }
             return expr.ln;
         }
         if (is_hyp(expr)) {

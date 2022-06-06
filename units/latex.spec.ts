@@ -11,7 +11,7 @@ describe("latex", function () {
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(^ a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a^b");
-        assert.strictEqual(engine.renderAsLaTeX(actual), "a \\wedge b");
+        assert.strictEqual(engine.renderAsLaTeX(actual), "\\vec{a} \\wedge \\vec{b}");
         engine.release();
     });
     it("inner", function () {
@@ -23,7 +23,7 @@ describe("latex", function () {
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(| a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a|b");
-        assert.strictEqual(engine.renderAsLaTeX(actual), "a \\mid b");
+        assert.strictEqual(engine.renderAsLaTeX(actual), "\\vec{a} \\mid \\vec{b}");
         engine.release();
     });
     it("lco", function () {
@@ -35,7 +35,7 @@ describe("latex", function () {
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(<< a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a<<b");
-        assert.strictEqual(engine.renderAsLaTeX(actual), "a \\ll b");
+        assert.strictEqual(engine.renderAsLaTeX(actual), "\\vec{a} \\ll \\vec{b}");
         engine.release();
     });
     it("rco", function () {
@@ -47,7 +47,7 @@ describe("latex", function () {
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(>> a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a>>b");
-        assert.strictEqual(engine.renderAsLaTeX(actual), "a \\gg b");
+        assert.strictEqual(engine.renderAsLaTeX(actual), "\\vec{a} \\gg \\vec{b}");
         engine.release();
     });
 });

@@ -96,7 +96,13 @@ class SymExtension implements Extension<Sym> {
         return sym.key();
     }
     toLatexString(sym: Sym): string {
-        return sym.key();
+        const $ = this.$;
+        if ($.treatAsVector(sym)) {
+            return `\\vec{${sym.key()}}`;
+        }
+        else {
+            return sym.key();
+        }
     }
     toListString(sym: Sym): string {
         const token = this.$.getSymbolToken(sym);

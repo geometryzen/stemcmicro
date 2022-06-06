@@ -124,6 +124,7 @@ export interface ExtensionEnv {
     setSymbolToken(sym: Sym, token: string): void;
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;
+    toLatexString(expr: U): string;
     toSExprString(expr: U): string;
     transform(expr: U): [TFLAGS, U];
     valueOf(expr: U): U;

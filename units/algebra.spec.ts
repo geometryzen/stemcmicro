@@ -329,6 +329,7 @@ describe("algebra", function () {
             });
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "L1^L2");
+            assert.strictEqual(engine.renderAsLaTeX(values[0]), "L1 \\wedge L2");
             engine.release();
         });
         it("(e1, e2, e3)", function () {

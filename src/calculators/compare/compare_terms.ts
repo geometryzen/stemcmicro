@@ -3,22 +3,22 @@ import { imu } from "../../env/imu";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
 import { compare_blade_blade } from "../../operators/blade/BladeExtension";
 import { is_blade } from "../../operators/blade/is_blade";
+import { is_flt } from "../../operators/flt/is_flt";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_hyp } from "../../operators/hyp/is_hyp";
+import { is_imu } from "../../operators/imu/is_imu";
 import { is_inner_2_any_any } from "../../operators/inner/is_inner_2_any_any";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_blade_rat } from "../../operators/mul/is_mul_2_blade_rat";
 import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
+import { is_num } from "../../operators/num/is_num";
 import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
-import { is_imu } from "../../operators/imu/is_imu";
-import { is_num } from "../../operators/num/is_num";
-import { is_flt } from "../../operators/flt/is_flt";
-import { is_cons, U } from "../../tree/tree";
 import { is_uom } from "../../operators/uom/is_uom";
+import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 import { compare_factorizable } from "./compare_factorizable";
 import { compare_opr_opr } from "./compare_opr_opr";
@@ -99,6 +99,12 @@ export function compare_terms_redux(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                     return compare_terms_redux(lhs.lhs, rhs.lhs, $);
                 }
             }
+        }
+        if (is_mul_2_any_blade(lhs)) {
+            return SIGN_GT;
+        }
+        if (is_mul_2_any_blade(rhs)) {
+            return SIGN_LT;
         }
         if (is_mul_2_any_any(lhs) && is_mul_2_any_any(rhs)) {
             switch (compare_terms_redux(lhs.lhs, rhs.lhs, $)) {

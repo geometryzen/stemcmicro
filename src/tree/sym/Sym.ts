@@ -88,6 +88,7 @@ export class Sym extends Atom {
      * Use this method when you want the QName as a string that can be used to index a map.
      */
     key(): string {
+        // TOOD: This could be cached, improving performance.
         if (this.ns) {
             return `${this.ns.key()}.${this.ln}`;
         }

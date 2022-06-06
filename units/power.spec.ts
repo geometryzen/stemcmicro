@@ -26,13 +26,13 @@ describe("Exponentiation", function () {
         assert.strictEqual(engine.renderAsInfix(actual), 'a**b');
         engine.release();
     });
-    it("a^b should parse for version 1", function () {
+    it("a^b should parse", function () {
         const lines: string[] = [
             `a^b`
         ];
-        const engine = create_engine();
+        const engine = create_engine({ useCaretForExponentiation: false });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), '(outer a b)');
+        assert.strictEqual(engine.renderAsSExpr(actual), '(^ a b)');
         assert.strictEqual(engine.renderAsInfix(actual), 'a^b');
         engine.release();
     });

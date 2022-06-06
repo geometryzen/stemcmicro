@@ -31,7 +31,7 @@ describe("env", function () {
             const $ = engine.$;
             $.setSymbolToken(MATH_E, 'E');
             assert.strictEqual(engine.renderAsInfix(values[0]), "E");
-            assert.strictEqual(engine.renderAsSExpr(values[0]), "e");
+            assert.strictEqual(engine.renderAsSExpr(values[0]), "E");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "e");
             engine.release();
         });

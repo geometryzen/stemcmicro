@@ -32,13 +32,14 @@ export const MATH_MUL = new Sym('*');
 export const MATH_POW = new Sym('**');
 /**
  * The exterior or outer product. Uses '^' as the infix operator.
+ * WARNING! This must be in the global namespace in order to match the function name in scripts.
  */
 export const MATH_OUTER = new Sym('outer');
 /**
  * The inner or scalar product, a map (binary operator) from two vectors in a vector space V to a field F.
  * Uses '|' as the infix operator.
  */
-export const MATH_INNER = new Sym('|');
+export const MATH_INNER = new Sym('inner');
 
 export const MATH_INV = new Sym('inv');
 /**

@@ -1,13 +1,12 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
-import { MATH_ADD, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_inner_2_sym_sym } from "../inner/is_inner_2_sym_sym";
-import { MATH_INNER } from "../inner/MATH_INNER";
 import { is_outer_2_sym_sym } from "../outer/is_outer_2_sym_sym";
 
 class Builder implements OperatorBuilder<Cons> {

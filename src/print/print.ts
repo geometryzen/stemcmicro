@@ -58,7 +58,7 @@ import {
     UNIT
 } from '../runtime/constants';
 import { defs, PrintMode, PRINTMODE_2DASCII, PRINTMODE_COMPUTER, PRINTMODE_HUMAN, PRINTMODE_LATEX, PRINTMODE_LIST } from '../runtime/defs';
-import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_multiply, is_outer, is_power, is_transpose } from '../runtime/helpers';
+import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
 import { NAME_SCRIPT_LAST } from '../runtime/ns_script';
 import { stack_push } from '../runtime/stack';
@@ -671,11 +671,11 @@ export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: 
 
 function print_outer_operator(): string {
     if (defs.printMode === PRINTMODE_LATEX) {
-        return '';
+        return ' \\wedge ';
     }
 
     if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
-        return print_str(' ');
+        return print_str(' ^ ');
     }
     else {
         return print_str('^');
@@ -700,6 +700,38 @@ export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: 
             throw new Error();
         }
     }
+    else if (is_cons(expr) && is_lco(expr)) {
+        let argList = expr.argList;
+        if (is_cons(argList)) {
+            let str = print_factor(argList.car, false, false, $);
+            argList = argList.cdr;
+            while (is_cons(argList)) {
+                str += print_lco_operator();
+                str += print_factor(car(argList), false, true, $);
+                argList = argList.cdr;
+            }
+            return str;
+        }
+        else {
+            throw new Error();
+        }
+    }
+    else if (is_cons(expr) && is_rco(expr)) {
+        let argList = expr.argList;
+        if (is_cons(argList)) {
+            let str = print_factor(argList.car, false, false, $);
+            argList = argList.cdr;
+            while (is_cons(argList)) {
+                str += print_rco_operator();
+                str += print_factor(car(argList), false, true, $);
+                argList = argList.cdr;
+            }
+            return str;
+        }
+        else {
+            throw new Error();
+        }
+    }
     else {
         return print_factor(expr, omitParens, pastFirstFactor, $);
     }
@@ -707,14 +739,40 @@ export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: 
 
 function print_inner_operator(): string {
     if (defs.printMode === PRINTMODE_LATEX) {
-        return '';
+        return ' \\mid ';
     }
 
     if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
-        return print_str(' ');
+        return print_str(' | ');
     }
     else {
         return print_str('|');
+    }
+}
+
+function print_lco_operator(): string {
+    if (defs.printMode === PRINTMODE_LATEX) {
+        return ' \\ll ';
+    }
+
+    if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
+        return print_str(' << ');
+    }
+    else {
+        return print_str('<<');
+    }
+}
+
+function print_rco_operator(): string {
+    if (defs.printMode === PRINTMODE_LATEX) {
+        return ' \\gg ';
+    }
+
+    if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
+        return print_str(' >> ');
+    }
+    else {
+        return print_str('>>');
     }
 }
 

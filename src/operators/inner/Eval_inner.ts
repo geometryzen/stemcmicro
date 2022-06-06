@@ -1,9 +1,10 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inv } from '../../inv';
 import { makeList } from '../../makeList';
-import { INNER, SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
+import { SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from '../../runtime/helpers';
+import { MATH_INNER } from '../../runtime/ns_math';
 import { stack_push } from '../../runtime/stack';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 
@@ -106,12 +107,12 @@ export function Eval_inner(p1: U, $: ExtensionEnv): void {
     // make it so e.g. inner(a,b,c) becomes inner(a,inner(b,c))
     if (args.length > 2) {
         let temp = makeList(
-            INNER,
+            MATH_INNER,
             args[args.length - 2],
             args[args.length - 1]
         );
         for (let i = 2; i < args.length; i++) {
-            temp = makeList(INNER, args[args.length - i - 1], temp);
+            temp = makeList(MATH_INNER, args[args.length - i - 1], temp);
         }
         Eval_inner(temp, $);
         return;
@@ -198,7 +199,7 @@ export function Eval_inner(p1: U, $: ExtensionEnv): void {
         return;
     }
 
-    p1 = makeList(INNER, ...operands);
+    p1 = makeList(MATH_INNER, ...operands);
 
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));

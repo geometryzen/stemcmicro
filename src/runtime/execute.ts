@@ -33,10 +33,11 @@ export function execute_script(sourceText: string, $: ExtensionEnv): { values: U
     const prints: string[] = [];
     // console.lg(`trees.length = ${trees.length}`);
     for (const tree of trees) {
+        // console.lg(`tree = ${tree}`);
         const data = transform_tree(tree, $);
         if (data.value) {
             if (!is_nil(data.value)) {
-                // console.lg(`value = ${value}`);
+                // console.lg(`value = ${data.value}`);
                 values.push(data.value);
             }
         }

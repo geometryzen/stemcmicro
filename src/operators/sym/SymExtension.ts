@@ -96,7 +96,13 @@ class SymExtension implements Extension<Sym> {
         return sym.key();
     }
     toListString(sym: Sym): string {
-        return sym.key();
+        const token = this.$.getSymbolToken(sym);
+        if (token) {
+            return token;
+        }
+        else {
+            return sym.key();
+        }
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_sym(expr)) {

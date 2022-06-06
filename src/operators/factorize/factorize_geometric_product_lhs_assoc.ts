@@ -1,6 +1,6 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
-import { MATH_ADD, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -8,7 +8,6 @@ import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 import { is_opr_2_any_rhs } from "../helpers/is_opr_2_any_rhs";
-import { MATH_INNER } from "../inner/MATH_INNER";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

@@ -609,7 +609,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
-                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${print_list(curExpr, $)} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
@@ -713,10 +713,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolToken(MATH_ADD, '+');        // changing will break  82 cases.
     $.setSymbolToken(MATH_MUL, '*');        // changing will break 113 cases.
     $.setSymbolToken(MATH_POW, 'power');    // changing will break  22 cases.
-    $.setSymbolToken(MATH_RCO, 'rco');
-    $.setSymbolToken(MATH_LCO, 'lco');
-    $.setSymbolToken(MATH_INNER, 'inner');
-    $.setSymbolToken(MATH_OUTER, 'outer');
+    $.setSymbolToken(MATH_RCO, '>>');
+    $.setSymbolToken(MATH_LCO, '<<');
+    $.setSymbolToken(MATH_INNER, '|');
+    $.setSymbolToken(MATH_OUTER, '^');
 
     $.setSymbolToken(MATH_E, 'e');
     $.setSymbolToken(MATH_PI, 'π');

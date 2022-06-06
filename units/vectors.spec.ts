@@ -3,7 +3,18 @@ import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("vectors", function () {
-    // 
+    it("x|y+x^y", function () {
+        const lines: string[] = [
+            `x|y+x^y`,
+        ];
+        const engine = create_engine({
+            dependencies: ['Vector'],
+            treatAsVectors: ['x', 'y']
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "x*y");
+        engine.release();
+    });
 });
 
 describe("vectors", function () {

@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { Sym } from '../tree/sym/Sym';
-import { MATH_ADD, MATH_ARG, MATH_COMPONENT, MATH_FACTORIAL, MATH_INNER, MATH_INV, MATH_MUL, MATH_OUTER, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
+import { MATH_ADD, MATH_ARG, MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
 import { NAME_SCRIPT_LAST } from './ns_script';
 
 export const dontCreateNewRadicalsInDenominatorWhenEvalingMultiplication = true;
@@ -82,7 +82,6 @@ export const HILBERT = new Sym('hilbert');
 export const IF = new Sym('if');
 export const IMAG = new Sym('imag');
 export const SYM_MATH_COMPONENT = MATH_COMPONENT;
-export const INNER = MATH_INNER;
 export const INTEGRAL = new Sym('integral');
 export const INV = MATH_INV;
 export const INVG = new Sym('invg');
@@ -104,7 +103,6 @@ export const NUMBER = new Sym('number');
 export const NUMERATOR = new Sym('numerator');
 export const OPERATOR = new Sym('operator');
 export const OR = new Sym('or');
-export const OUTER = MATH_OUTER;
 export const PATTERN = new Sym('pattern');
 export const PATTERNSINFO = new Sym('patternsinfo');
 export const POLAR = new Sym('polar');

@@ -2,14 +2,15 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inv } from '../../inv';
 import { is_negative_term } from '../../is';
 import { makeList } from '../../makeList';
-import { is_num } from '../num/is_num';
-import { INNER, SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
+import { SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
 import { is_add, is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from '../../runtime/helpers';
+import { MATH_INNER } from '../../runtime/ns_math';
 import { other_x_tensor, tensor_x_other } from '../../tensor';
 import { zero } from '../../tree/rat/Rat';
-import { is_tensor } from '../tensor/is_tensor';
 import { car, cdr, U } from '../../tree/tree';
 import { is_blade } from '../../tree/vec/Algebra';
+import { is_num } from '../num/is_num';
+import { is_tensor } from '../tensor/is_tensor';
 import { inner_product_of_tensors } from './inner_product_of_tensors';
 
 /**
@@ -55,7 +56,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
         }
         else if (is_blade(p2)) {
             // TODO: We really would like to have this raise an error rather than be an acceptable expresssion
-            return hook(makeList(INNER, p1, p2), "D");
+            return hook(makeList(MATH_INNER, p1, p2), "D");
         }
         else {
             // simple check if the two consecutive elements are one the (symbolic) inv
@@ -85,14 +86,14 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
                 return hook($.multiply(p1, p2), "I");
             }
             else {
-                return hook(makeList(INNER, p1, p2), "J");
+                return hook(makeList(MATH_INNER, p1, p2), "J");
             }
         }
     }
     else if (is_blade(p1)) {
         if (is_tensor(p2)) {
             // TODO: We really would like to have this raise an error rather than be an acceptable expresssion
-            return hook(makeList(INNER, p1, p2), "K");
+            return hook(makeList(MATH_INNER, p1, p2), "K");
         }
         else if (is_blade(p2)) {
             return hook(p1.scp(p2), "L");
@@ -117,7 +118,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
                 return hook($.multiply(p1, p2), "O");
             }
             else {
-                return hook(makeList(INNER, p1, p2), "P");
+                return hook(makeList(MATH_INNER, p1, p2), "P");
             }
         }
     }

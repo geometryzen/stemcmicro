@@ -355,7 +355,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.log(`A^B elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(render_as_infix(value, $), "(Ax*By-Ay*Bx)*i ^ j+(Ax*Bz-Az*Bx)*i ^ k+(Ay*Bz-Az*By)*j ^ k");
+        assert.strictEqual(render_as_infix(value, $), "(Ax*By-Ay*Bx)*i^j+(Ax*Bz-Az*Bx)*i^k+(Ay*Bz-Az*By)*j^k");
         engine.release();
     });
     it("A^B+B^A", function () {

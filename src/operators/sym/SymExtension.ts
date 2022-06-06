@@ -95,6 +95,9 @@ class SymExtension implements Extension<Sym> {
     toInfixString(sym: Sym): string {
         return sym.key();
     }
+    toLatexString(sym: Sym): string {
+        return sym.key();
+    }
     toListString(sym: Sym): string {
         const token = this.$.getSymbolToken(sym);
         if (token) {

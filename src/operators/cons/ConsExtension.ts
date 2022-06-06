@@ -151,6 +151,10 @@ class ConsExtension implements Extension<Cons> {
     toInfixString(cons: Cons, $: ExtensionEnv): string {
         return to_infix_string(cons, $);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(cons: Cons, $: ExtensionEnv): string {
+        return to_infix_string(cons, $);
+    }
     toListString(cons: Cons, $: ExtensionEnv): string {
         let str = '';
         str += '(';

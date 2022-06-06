@@ -76,6 +76,10 @@ class SymMathMul implements Operator<Sym> {
         return '*';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(expr: Sym): string {
+        return '*';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym): string {
         return this.$.getSymbolToken(MATH_MUL);
     }

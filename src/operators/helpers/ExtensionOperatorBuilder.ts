@@ -76,6 +76,9 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     toInfixString(expr: T): string {
         return this.extension.toInfixString(expr, this.$);
     }
+    toLatexString(expr: T): string {
+        return this.extension.toLatexString(expr, this.$);
+    }
     toListString(expr: T): string {
         return this.extension.toListString(expr, this.$);
     }

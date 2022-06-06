@@ -71,6 +71,10 @@ class NilExtension implements Operator<Cons> {
         return 'nil';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(expr: Cons): string {
+        return 'nil';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Cons): string {
         return '()';
     }

@@ -80,6 +80,9 @@ class StrExtension implements Extension<Str> {
     toInfixString(str: Str): string {
         return str.toInfixString();
     }
+    toLatexString(str: Str): string {
+        return str.toInfixString();
+    }
     toListString(str: Str): string {
         return str.toListString();
     }

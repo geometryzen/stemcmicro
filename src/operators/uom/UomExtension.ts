@@ -77,6 +77,10 @@ class UomExtension implements Extension<Uom> {
     toInfixString(uom: Uom): string {
         return uom.toInfixString();
     }
+    toLatexString(uom: Uom): string {
+        // TODO: Can we do better?
+        return uom.toInfixString();
+    }
     toListString(uom: Uom): string {
         return uom.toListString();
     }

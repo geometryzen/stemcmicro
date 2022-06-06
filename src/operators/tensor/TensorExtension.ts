@@ -3,10 +3,10 @@ import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
 import { subst } from "../../subst";
-import { is_tensor } from "./is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { is_tensor } from "./is_tensor";
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
     const length = as.length;
@@ -142,6 +142,9 @@ class TensorExtension implements Extension<Tensor> {
         }
     }
     toInfixString(matrix: Tensor, $: ExtensionEnv): string {
+        return to_infix_string(matrix, $);
+    }
+    toLatexString(matrix: Tensor, $: ExtensionEnv): string {
         return to_infix_string(matrix, $);
     }
     toListString(matrix: Tensor, $: ExtensionEnv): string {

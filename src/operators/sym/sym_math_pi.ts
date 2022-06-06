@@ -72,6 +72,10 @@ class SymMathPi implements Operator<Sym> {
         return this.$.getSymbolToken(MATH_PI);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(expr: Sym): string {
+        return '\\pi';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym): string {
         return this.$.getSymbolToken(MATH_PI);
     }

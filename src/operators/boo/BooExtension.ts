@@ -74,6 +74,9 @@ export class BooExtension implements Extension<Boo> {
     toInfixString(expr: Boo): string {
         return expr.equals(booT) ? 'true' : 'false';
     }
+    toLatexString(expr: Boo): string {
+        return expr.equals(booT) ? 'true' : 'false';
+    }
     toListString(expr: Boo): string {
         return expr.equals(booT) ? 'true' : 'false';
     }

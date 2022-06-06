@@ -170,6 +170,7 @@ export interface Operator<T extends U> {
     isZero(expr: T): boolean;
     subst(expr: T, oldExpr: U, newExpr: U): U;
     toInfixString(expr: T): string;
+    toLatexString(expr: T): string;
     toListString(expr: T): string;
     transform(expr: U): [TFLAGS, U];
     valueOf(expr: T): U;
@@ -201,6 +202,7 @@ export interface Extension<T extends U> {
     one(zero: T, $: ExtensionEnv): T;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;
     toInfixString(expr: T, $: ExtensionEnv): string;
+    toLatexString(expr: T, $: ExtensionEnv): string;
     toListString(expr: T, $: ExtensionEnv): string;
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U];
     valueOf(expr: T, $: ExtensionEnv): U;

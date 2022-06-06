@@ -77,6 +77,9 @@ export class FltExtension implements Extension<Flt> {
     toInfixString(atom: Flt, $: ExtensionEnv): string {
         return number_to_floating_point_string(atom.d, $);
     }
+    toLatexString(atom: Flt, $: ExtensionEnv): string {
+        return number_to_floating_point_string(atom.d, $);
+    }
     toListString(atom: Flt, $: ExtensionEnv): string {
         return number_to_floating_point_string(atom.d, $);
     }

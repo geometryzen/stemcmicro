@@ -68,7 +68,7 @@ export interface BasisBlade<T, K> extends U {
     __neg__(): K;
     __tilde__(): K;
     add(rhs: BasisBlade<T, K>): K;
-    asString(names: string[]): string;
+    asString(names: string[], wedge: string): string;
     cliffordConjugate(): K;
     /**
      * This doesn't really make sense now that this structure is a blade.

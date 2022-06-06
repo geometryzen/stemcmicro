@@ -75,6 +75,9 @@ class SymMathAdd implements Operator<Sym> {
     toInfixString(): string {
         return '+';
     }
+    toLatexString(): string {
+        return '+';
+    }
     toListString(): string {
         return this.$.getSymbolToken(MATH_ADD);
     }

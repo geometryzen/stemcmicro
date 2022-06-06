@@ -1,8 +1,9 @@
 import { cadnr } from "../../calculators/cadnr";
-import { cons_to_infix_string } from "../../calculators/cons_to_infix_string";
-import { cons_to_list_string } from "../../calculators/cons_to_list_string";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
 import { makeList } from "../../makeList";
+import { render_as_infix } from "../../print/print";
+import { render_as_latex } from "../../print/render_as_latex";
+import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { SystemError } from "../../runtime/SystemError";
 import { subst } from "../../subst";
 import { is_cons, U } from "../../tree/tree";
@@ -12,9 +13,8 @@ import { is_sym } from "../sym/is_sym";
  * Provides a base implementation of an operator.
  * The main reusable features are:
  * 1. Matching in both operator and operand position.
- * 2. Reference counting.
- * 3. Rendering toInfixString and toListString.
- * 4. contains()
+ * 2. Rendering to Infix, LaTeX, and SExpr.
+ * 3. contains()
  * TODO: The hope is that the dead-code methods can be removed when refactoring is complete.
  */
 export abstract class AbstractOperator {
@@ -73,16 +73,13 @@ export abstract class AbstractOperator {
         throw new SystemError();
     }
     toInfixString(expr: U): string {
-        if (is_cons(expr)) {
-            return cons_to_infix_string(expr, this.$);
-        }
-        throw new SystemError();
+        return render_as_infix(expr, this.$);
+    }
+    toLatexString(expr: U): string {
+        return render_as_latex(expr, this.$);
     }
     toListString(expr: U): string {
-        if (is_cons(expr)) {
-            return cons_to_list_string(expr, this.$);
-        }
-        throw new SystemError();
+        return render_as_sexpr(expr, this.$);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: U): U {

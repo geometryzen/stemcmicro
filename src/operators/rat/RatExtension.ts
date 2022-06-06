@@ -66,6 +66,9 @@ class RatExtension implements Extension<Rat> {
     toInfixString(rat: Rat): string {
         return rat.toInfixString();
     }
+    toLatexString(rat: Rat): string {
+        return rat.toInfixString();
+    }
     toListString(rat: Rat): string {
         return rat.toListString();
     }

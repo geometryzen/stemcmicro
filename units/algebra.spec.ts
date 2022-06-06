@@ -159,7 +159,7 @@ describe("algebra", function () {
             });
             const { values } = engine.executeScript(lines.join('\n'));
             // Interestingly, this seems to have simplified because e1 * e2 = e1 | e2 + e1 ^ e2 = e1 ^ e2 (orthogonal basis vectors).
-            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1^L2");
             engine.release();
         });
         it("(2, e1)", function () {
@@ -192,7 +192,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2 ^ L3");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1^L2^L3");
             engine.release();
         });
     });
@@ -328,7 +328,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1^L2");
             engine.release();
         });
         it("(e1, e2, e3)", function () {
@@ -344,7 +344,7 @@ describe("algebra", function () {
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "L1 ^ L2 ^ L3");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "L1^L2^L3");
             engine.release();
         });
     });

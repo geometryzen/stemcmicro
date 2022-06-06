@@ -42,6 +42,9 @@ export abstract class KeywordOperator implements Operator<Sym> {
     toInfixString(expr: Sym): string {
         throw new Error("Keyword.toInfixString Symbol Method not implemented.");
     }
+    toLatexString(expr: Sym): string {
+        throw new Error("Keyword.toLatexString Symbol Method not implemented.");
+    }
     toListString(expr: Sym): string {
         return this.keyword.key();
     }

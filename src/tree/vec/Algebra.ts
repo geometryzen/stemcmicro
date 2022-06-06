@@ -532,13 +532,13 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
                 throw new Error(`sqrt on arbitrary multivectors is not yet supported.`);
             }
         },
-        asString(names?: string[]): string {
+        asString(names: string[], wedge: string): string {
             let bladePart = "";
             let i = 1;
             let x = bitmap;
             while (x !== 0) {
                 if ((x & 1) !== 0) {
-                    if (bladePart.length > 0) bladePart += " ^ ";
+                    if (bladePart.length > 0) bladePart += wedge;
                     // TODO: redundancy here with isUndefined and the explicit comparison to void 0. TypeScript prefers the latter.
                     // Can isUndefined be better typed? 
                     if (typeof names === 'undefined' || (names === null) || (names === void 0) || (i > names.length) || (names[i - 1] == null)) {
@@ -559,16 +559,16 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
             }
         },
         toInfixString(): string {
-            return theBlade.asString(labels);
+            return theBlade.asString(labels, '^');
         },
         toListString(): string {
-            return theBlade.asString(labels);
+            return theBlade.asString(labels, '^');
         },
         toLatexString(): string {
-            return theBlade.asString(labels);
+            return theBlade.asString(labels, ' \\wedge ');
         },
         toString(): string {
-            return theBlade.asString(labels);
+            return theBlade.asString(labels, '^');
         }
     };
     return theBlade;

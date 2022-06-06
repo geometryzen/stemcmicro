@@ -94,6 +94,9 @@ class BladeExtension implements Extension<Blade> {
     toInfixString(vec: Blade): string {
         return vec.toInfixString();
     }
+    toLatexString(vec: Blade): string {
+        return vec.toLatexString();
+    }
     toListString(vec: Blade): string {
         return vec.toListString();
     }

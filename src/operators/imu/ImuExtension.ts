@@ -73,6 +73,10 @@ class ImuExtension implements Operator<Cons> {
         return 'i';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(expr: Cons): string {
+        return '\\imath';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Cons): string {
         return this.$.getSymbolToken(MATH_IMU);
     }

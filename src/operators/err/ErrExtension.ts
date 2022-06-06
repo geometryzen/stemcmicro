@@ -82,6 +82,10 @@ export class ErrExtension implements Extension<Err> {
         return expr.message;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(expr: Err, $: ExtensionEnv): string {
+        return expr.message;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Err, $: ExtensionEnv): string {
         return expr.message;
     }

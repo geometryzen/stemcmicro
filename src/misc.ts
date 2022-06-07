@@ -1,4 +1,4 @@
-import { compare_terms_redux } from './calculators/compare/compare_terms';
+import { compare_terms } from './calculators/compare/compare_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_str } from './operators/str/is_str';
 import { defs } from './runtime/defs';
@@ -54,7 +54,7 @@ export function sort_stack(n: number, $: ExtensionEnv) {
     const h = defs.tos - n;
     const subsetOfStack = defs.stack.slice(h, h + n) as U[];
     subsetOfStack.sort(function (a, b) {
-        return compare_terms_redux(a, b, $);
+        return compare_terms(a, b, $);
     });
     defs.stack = defs.stack
         .slice(0, h)
@@ -69,6 +69,6 @@ export function sort_stack(n: number, $: ExtensionEnv) {
  */
 export function sort(arr: U[], $: ExtensionEnv): void {
     arr.sort(function (a, b) {
-        return compare_terms_redux(a, b, $);
+        return compare_terms(a, b, $);
     });
 }

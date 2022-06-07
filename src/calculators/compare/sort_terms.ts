@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { U } from "../../tree/tree";
-import { compare_terms_redux } from "./compare_terms";
+import { compare_terms } from "./compare_terms";
 
 /**
  * Sorts an array of terms. Assumes that terms can commute under addition. 
@@ -14,7 +14,7 @@ export function sort_terms(terms: U[], $: ExtensionEnv): U[] {
         return { value, index };
     });
     sortable.sort(function (x, y) {
-        return compare_terms_redux(x.value, y.value, $);
+        return compare_terms(x.value, y.value, $);
     });
     const sorted = sortable.map(function (elem) {
         return elem.value;

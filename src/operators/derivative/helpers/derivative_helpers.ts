@@ -2,7 +2,7 @@ import { besselj } from '../../../besselj';
 import { bessely } from '../../../bessely';
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
-import { compare_terms_redux } from '../../../calculators/compare/compare_terms';
+import { compare_terms } from '../../../calculators/compare/compare_terms';
 import { ycosh } from '../../../cosh';
 import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
@@ -179,7 +179,7 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
         const caddr_p1 = caddr(p1);
         const cadr_p3 = cadr(p3);
         // Determine whether we should be comparing as terms or factors. I think it is as terms.
-        if (compare_terms_redux(caddr_p3, caddr_p1, $) < 0) {
+        if (compare_terms(caddr_p3, caddr_p1, $) < 0) {
             return makeList(MATH_DERIVATIVE, makeList(MATH_DERIVATIVE, cadr_p3, caddr_p3), caddr_p1);
         }
         else {

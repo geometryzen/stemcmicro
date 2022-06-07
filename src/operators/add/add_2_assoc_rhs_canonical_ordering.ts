@@ -1,4 +1,4 @@
-import { compare_terms_redux } from "../../calculators/compare/compare_terms";
+import { compare_terms } from "../../calculators/compare/compare_terms";
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
@@ -30,7 +30,7 @@ function cross($: ExtensionEnv) {
             return false;
         }
         */
-        return compare_terms_redux(lhs, rhs.lhs, $) > 0;
+        return compare_terms(lhs, rhs.lhs, $) > 0;
     };
 }
 

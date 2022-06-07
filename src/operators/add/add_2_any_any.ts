@@ -1,4 +1,4 @@
-import { compare_terms_redux } from "../../calculators/compare/compare_terms";
+import { compare_terms } from "../../calculators/compare/compare_terms";
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
 import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
@@ -56,7 +56,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        switch (compare_terms_redux(lhs, rhs, $)) {
+        switch (compare_terms(lhs, rhs, $)) {
             case SIGN_GT: {
                 // // console.lg('SIGN_GT');
                 const A = items_to_cons(opr, rhs, lhs);

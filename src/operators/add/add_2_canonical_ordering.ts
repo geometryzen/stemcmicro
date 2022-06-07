@@ -1,4 +1,4 @@
-import { compare_terms_redux } from "../../calculators/compare/compare_terms";
+import { compare_terms } from "../../calculators/compare/compare_terms";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, FOCUS_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
@@ -22,7 +22,7 @@ type EXP = BCons<Sym, LHS, RHS>;
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
         // console.log(`compareTerms lhs=${print_expr(lhs, $)}, rhs=${print_expr(rhs, $)}`);
-        return compare_terms_redux(lhs, rhs, $) > 0;
+        return compare_terms(lhs, rhs, $) > 0;
     };
 }
 

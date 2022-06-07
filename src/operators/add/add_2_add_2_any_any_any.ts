@@ -1,4 +1,4 @@
-import { compare_terms_redux } from "../../calculators/compare/compare_terms";
+import { compare_terms } from "../../calculators/compare/compare_terms";
 import { ExtensionEnv, FOCUS_FLAGS_EXPANDING_UNION_FACTORING, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
@@ -46,7 +46,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const X = lhs.lhs;
         const Z = lhs.rhs;
         const A = rhs;
-        const signum = compare_terms_redux(Z, A, $);
+        const signum = compare_terms(Z, A, $);
         // console.lg(`${this.name} ${signum} Z=${render_as_infix(Z, $)} A=${render_as_infix(A, $)}`);
         switch (signum) {
             case SIGN_GT: {

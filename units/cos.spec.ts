@@ -12,7 +12,8 @@ describe("cos", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)-sin(a)*sin(b)');
+        // assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)-sin(a)*sin(b)');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a+b)');
     });
 });
 
@@ -63,7 +64,30 @@ describe("cos", function () {
     });
     it("cos(a+b)", function () {
         const lines: string[] = [
+            `autofactor=0`,
             `cos(a+b)`
+        ];
+        const engine = create_engine({
+            dependencies: []
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)-sin(a)*sin(b)');
+    });
+    it("cos(a+b)", function () {
+        const lines: string[] = [
+            `autofactor=1`,
+            `cos(a+b)`
+        ];
+        const engine = create_engine({
+            dependencies: []
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a+b)');
+    });
+    it("cos(b+a)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `cos(b+a)`
         ];
         const engine = create_engine({
             dependencies: []
@@ -73,17 +97,41 @@ describe("cos", function () {
     });
     it("cos(b+a)", function () {
         const lines: string[] = [
+            `autofactor=1`,
             `cos(b+a)`
         ];
         const engine = create_engine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)-sin(a)*sin(b)');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a+b)');
     });
     it("cos(a-b)", function () {
         const lines: string[] = [
+            `autofactor=0`,
             `cos(a-b)`
+        ];
+        const engine = create_engine({
+            dependencies: []
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)+sin(a)*sin(b)');
+    });
+    it("cos(a-b)", function () {
+        const lines: string[] = [
+            `autofactor=1`,
+            `cos(a-b)`
+        ];
+        const engine = create_engine({
+            dependencies: []
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a-b)');
+    });
+    it("cos(b-a)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `cos(b-a)`
         ];
         const engine = create_engine({
             dependencies: []
@@ -93,12 +141,13 @@ describe("cos", function () {
     });
     it("cos(b-a)", function () {
         const lines: string[] = [
+            `autofactor=1`,
             `cos(b-a)`
         ];
         const engine = create_engine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)+sin(a)*sin(b)');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a-b)');
     });
 });

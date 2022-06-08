@@ -4,6 +4,7 @@ import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { makeList } from "../makeList";
+import { UseCaretForExponentiation } from "../modes/modes";
 import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/is_blade";
 import { is_boo } from "../operators/boo/is_boo";
@@ -181,9 +182,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         treatAsVector(sym: Sym): boolean {
             // TODO: In a strict debugging mode we might check that the symbol has no binding.
             return config.treatAsVectors.indexOf(sym.ln) >= 0;
-        },
-        get useCaretForExponentiation(): boolean {
-            return config.useCaretForExponentiation;
         },
         add(lhs: U, rhs: U): U {
             if (is_num(lhs)) {
@@ -726,6 +724,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolToken(MATH_PI, 'π');
     $.setSymbolToken(MATH_NIL, '()');
     $.setSymbolToken(MATH_IMU, 'i');
+
+    // Backwards compatible, but we should simply set this to false, or leave undefined.
+    $.setModeFlag(UseCaretForExponentiation, config.useCaretForExponentiation);
 
     return $;
 }

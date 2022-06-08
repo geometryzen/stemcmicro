@@ -1,27 +1,28 @@
 import { mp_denominator, mp_numerator } from '../bignum';
 import { ExtensionEnv } from '../env/ExtensionEnv';
 import { isfraction, is_negative_number, is_num_and_eq_minus_one } from '../is';
+import { UseCaretForExponentiation } from '../modes/modes';
 import { abs } from '../operators/abs/abs';
 import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
-import { is_sym } from '../operators/sym/is_sym';
-import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
+import { is_flt } from '../operators/flt/is_flt';
 import { is_num } from '../operators/num/is_num';
-import { render_as_infix } from './print';
+import { is_rat } from '../operators/rat/is_rat';
+import { is_str } from '../operators/str/is_str';
+import { is_sym } from '../operators/sym/is_sym';
+import { is_tensor } from '../operators/tensor/is_tensor';
+import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER, SYM_MATH_COMPONENT } from '../runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from '../runtime/helpers';
 import { number_to_floating_point_string } from '../runtime/number_to_floating_point_string';
 import { Flt } from '../tree/flt/Flt';
-import { is_flt } from '../operators/flt/is_flt';
 import { caar, caddr, cadr } from '../tree/helpers';
 import { Num } from '../tree/num/Num';
-import { is_rat } from '../operators/rat/is_rat';
 import { one, Rat } from '../tree/rat/Rat';
-import { is_str } from '../operators/str/is_str';
 import { Str } from '../tree/str/Str';
 import { Sym } from '../tree/sym/Sym';
-import { is_tensor } from '../operators/tensor/is_tensor';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, is_cons, U } from '../tree/tree';
+import { render_as_infix } from './print';
 
 /*
 
@@ -623,7 +624,7 @@ function emit_power(p: U, $: ExtensionEnv) {
             else {
                 emit_grouped_expr(cadr(p), $);
             }
-            if ($.useCaretForExponentiation) {
+            if ($.getModeFlag(UseCaretForExponentiation)) {
                 __emit_char('^');
             }
             else {

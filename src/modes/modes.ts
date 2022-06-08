@@ -17,3 +17,7 @@ export const KeepZeroTermsInSums = 'keepZeroTermsInSums';
  * The default value is false.
  */
 export const RenderFloatAsEcmaScript = 'renderFloatAsEcmaScript';
+/**
+ * Determines whether caret token '^' will be used for exponentiation or for the exterior product.
+ */
+export const UseCaretForExponentiation = 'useCaretForExponentiation';

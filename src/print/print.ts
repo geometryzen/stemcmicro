@@ -2,6 +2,7 @@ import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { ExtensionEnv } from '../env/ExtensionEnv';
 import { equaln, isfraction, isNumberOneOverSomething, is_negative_number, is_negative_term, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from '../is';
+import { UseCaretForExponentiation } from '../modes/modes';
 import { abs } from '../operators/abs/abs';
 import { is_boo } from '../operators/boo/is_boo';
 import { denominator } from '../operators/denominator/denominator';
@@ -252,7 +253,7 @@ function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
     // It does not seem that reliable anyway given the simplistic escaping of the text.
     const sourceText = '"' + text + '"';
     // TOOD: Need a better routing to initialize the ScanOptions.
-    const [scanned, tree] = scan(sourceText, { useCaretForExponentiation: $.useCaretForExponentiation });
+    const [scanned, tree] = scan(sourceText, { useCaretForExponentiation: $.getModeFlag(UseCaretForExponentiation) });
     if (scanned === sourceText.length) {
         const str = assert_str(tree);
         $.setBinding(sym, str);
@@ -1604,7 +1605,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
         // print the power symbol
         if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
-            if ($.useCaretForExponentiation) {
+            if ($.getModeFlag(UseCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {
@@ -1616,7 +1617,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             str += print_str('^');
         }
         else {
-            if ($.useCaretForExponentiation) {
+            if ($.getModeFlag(UseCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {

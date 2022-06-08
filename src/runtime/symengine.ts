@@ -1,3 +1,4 @@
+import { free_vars } from "../calculators/compare/free_vars";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
@@ -69,6 +70,7 @@ export interface Engine {
     transformTree(tree: U): { value: U, prints: string[], errors: Error[] };
     transform(expr: U): U;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
+    freeVariables(expr: U): Sym[];
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
     renderAsSExpr(expr: U): string;
@@ -125,6 +127,9 @@ export function create_engine(options?: EngineOptions): Engine {
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);
+        },
+        freeVariables(expr: U): Sym[] {
+            return free_vars(expr, $);
         },
         renderAsInfix(expr: U): string {
             return render_as_infix(expr, $);

@@ -1,6 +1,7 @@
 import { bake } from "../bake";
 import { ExtensionEnv, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
+import { UseCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { ScanOptions } from '../scanner/scan';
@@ -14,7 +15,7 @@ import { NAME_SCRIPT_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
-        useCaretForExponentiation: $.useCaretForExponentiation
+        useCaretForExponentiation: $.getModeFlag(UseCaretForExponentiation)
     };
 }
 

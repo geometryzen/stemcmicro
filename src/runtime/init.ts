@@ -1,4 +1,5 @@
 import { ExtensionEnv, FOCUS_EXPANDING } from "../env/ExtensionEnv";
+import { UseCaretForExponentiation } from "../modes/modes";
 import { clear_patterns } from '../pattern';
 import { scan } from '../scanner/scan';
 import { defs } from './defs';
@@ -92,7 +93,7 @@ export function execute_std_definitions($: ExtensionEnv): void {
     try {
         for (let i = 0; i < defn_strings.length; i++) {
             const defn_string = defn_strings[i];
-            const [scanned, tree] = scan(defn_string, { useCaretForExponentiation: $.useCaretForExponentiation });
+            const [scanned, tree] = scan(defn_string, { useCaretForExponentiation: $.getModeFlag(UseCaretForExponentiation) });
             try {
                 if (scanned > 0) {
                     // Evaluating the tree for the side-effect which is to establish a binding.

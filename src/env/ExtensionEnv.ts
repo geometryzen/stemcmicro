@@ -38,7 +38,12 @@ export function haltFlag(flags: TFLAGS): boolean {
  */
 export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector' | '~Vector';
 
-export type MODE = 'evaluatingAsFloat' | 'evaluatingAsPolar' | 'keepZeroTermsInSums' | 'renderFloatAsEcmaScript';
+export type MODE =
+    'evaluatingAsFloat' |
+    'evaluatingAsPolar' |
+    'keepZeroTermsInSums' |
+    'renderFloatAsEcmaScript' |
+    'useCaretForExponentiation';
 
 export interface ExtensionEnv {
     setField(kind: 'R' | undefined): void;
@@ -53,7 +58,6 @@ export interface ExtensionEnv {
      * Making associativity implicit in the tree structure.
      */
     readonly implicateMode: boolean;
-    readonly useCaretForExponentiation: boolean;
     add(lhs: U, rhs: U): U;
     /**
      *

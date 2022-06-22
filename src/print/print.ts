@@ -1,8 +1,8 @@
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { ExtensionEnv } from '../env/ExtensionEnv';
-import { equaln, isfraction, isNumberOneOverSomething, is_negative_number, is_negative_term, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from '../is';
-import { UseCaretForExponentiation } from '../modes/modes';
+import { equaln, isfraction, isNumberOneOverSomething, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from '../is';
+import { useCaretForExponentiation } from '../modes/modes';
 import { abs } from '../operators/abs/abs';
 import { is_boo } from '../operators/boo/is_boo';
 import { denominator } from '../operators/denominator/denominator';
@@ -19,6 +19,8 @@ import { is_sym } from '../operators/sym/is_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_uom } from '../operators/uom/is_uom';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
+import { is_negative_number } from '../predicates/is_negative_number';
+import { is_negative } from '../predicates/is_negative';
 import {
     ADD,
     ARCCOS,
@@ -253,7 +255,7 @@ function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
     // It does not seem that reliable anyway given the simplistic escaping of the text.
     const sourceText = '"' + text + '"';
     // TOOD: Need a better routing to initialize the ScanOptions.
-    const [scanned, tree] = scan(sourceText, { useCaretForExponentiation: $.getModeFlag(UseCaretForExponentiation) });
+    const [scanned, tree] = scan(sourceText, { useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation) });
     if (scanned === sourceText.length) {
         const str = assert_str(tree);
         $.setBinding(sym, str);
@@ -1484,7 +1486,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
                 return str;
             }
 
-            if (is_negative_term(expo)) {
+            if (is_negative(expo)) {
                 if (defs.printMode === PRINTMODE_LATEX) {
                     str += print_str('\\frac{1}{');
                 }
@@ -1605,7 +1607,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
         // print the power symbol
         if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
-            if ($.getModeFlag(UseCaretForExponentiation)) {
+            if ($.getModeFlag(useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {
@@ -1617,7 +1619,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             str += print_str('^');
         }
         else {
-            if ($.getModeFlag(UseCaretForExponentiation)) {
+            if ($.getModeFlag(useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {
@@ -2228,7 +2230,7 @@ function is_denominator(expr: U, $: ExtensionEnv): boolean {
                     const cdr_argList = argList.cdr;
                     if (is_cons(cdr_argList)) {
                         const exponent = cdr_argList.car;
-                        return is_negative_term(exponent);
+                        return is_negative(exponent);
                     }
                 }
             }

@@ -1,15 +1,16 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
+import { cos } from './operators/cos/cosine';
 import { derivative_wrt } from './operators/derivative/derivative_wrt';
+import { sin } from './operators/sin/sine';
 import { is_sym } from './operators/sym/is_sym';
 import { COS, LEGENDRE, SECRETX, SIN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { sine } from './operators/sin/sin';
 import { square } from './square';
 import { subst } from './subst';
 import { cadddr, caddr, cadr } from './tree/helpers';
-import { half, wrap_as_int, one, zero } from './tree/rat/Rat';
+import { half, one, wrap_as_int, zero } from './tree/rat/Rat';
 import { car, nil, U } from './tree/tree';
 
 /*
@@ -116,10 +117,10 @@ function __legendre3(p1: U, m: number, X: U, $: ExtensionEnv): U | undefined {
 
     let base = $.subtract(one, square(X, $));
     if (car(X).equals(COS)) {
-        base = square(sine(cadr(X), $), $);
+        base = square(sin(cadr(X), $), $);
     }
     else if (car(X).equals(SIN)) {
-        base = square($.cos(cadr(X)), $);
+        base = square(cos(cadr(X), $), $);
     }
 
     let result = $.multiply(p1, $.power(base, $.multiply(wrap_as_int(m), half)));

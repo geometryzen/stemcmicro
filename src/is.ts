@@ -7,6 +7,7 @@ import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
 import { is_rat } from './operators/rat/is_rat';
 import { is_sym } from './operators/sym/is_sym';
+import { is_negative_number } from './predicates/is_negative_number';
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
@@ -19,23 +20,6 @@ import { car, cdr, is_cons, nil, U } from './tree/tree';
 // Maybe document the matching patterns?
 // Using block comments makes it possible to compose these with logical operators.
 //
-
-/**
- * The expression must be a Rat or Flt, otherwise the return value is false.
- * Returns true if expr < 0.
- * @param expr The expression being tested.
- */
-export function is_negative_number(expr: U): expr is Num & { __ts_sign: -1 } {
-    if (is_rat(expr)) {
-        return expr.isNegative();
-    }
-    else if (is_flt(expr)) {
-        return expr.isNegative();
-    }
-    else {
-        return false;
-    }
-}
 
 /**
  * The expression must be a Rat or Flt, otherwise the return value is false.
@@ -96,10 +80,14 @@ export function is_plus_or_minus_one(x: U, $: ExtensionEnv): boolean {
 
 export function is_integer_or_integer_float(p: U): p is Num & { __ts_integer: true } {
     if (is_flt(p)) {
+
         if (p.d === Math.round(p.d)) {
             return true;
         }
         return false;
+    }
+    if (is_rat(p)) {
+        return p.isInteger();
     }
     return is_rat_integer(p);
 }
@@ -220,12 +208,6 @@ function is_poly_expanded_form_factor(p: U, x: U, $: ExtensionEnv): boolean {
     }
 }
 
-// --------------------------------------
-
-export function is_negative_term(p: U) {
-    return is_negative_number(p) || (is_cons(p) && is_multiply(p) && is_negative_number(car(p.cdr)));
-}
-
 function has_negative_rational_exponent(expr: U): boolean {
     if (is_power(expr)) {
         if (is_rat(car(cdr(cdr(expr))))) {
@@ -314,18 +296,6 @@ export function is_complex_number(expr: U): boolean {
 
 export function iseveninteger(p: U): boolean {
     return is_rat_integer(p) && p.a.isEven();
-}
-
-/**
- * It's a bit strange to ask a symbolic expression if it is negative.
- * The meaning is whether the expression, assumed to be written with canonical ordering,
- * has a certain structure w.r.t. minus signs. If the expression is deemed to be negative
- * then in the case of even functions we negate it to get a canonical ordering.
- * @param p 
- * @returns 
- */
-export function is_negative(p: U): boolean {
-    return (is_add(p) && is_negative_term(cadr(p))) || is_negative_term(p);
 }
 
 // returns 1 if there's a symbol somewhere.

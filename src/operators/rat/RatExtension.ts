@@ -1,6 +1,6 @@
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_RAT } from "../../hashing/hash_info";
-import { EvaluatingAsFloat } from "../../modes/modes";
+import { evaluatingAsFloat } from "../../modes/modes";
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { one, Rat } from "../../tree/rat/Rat";
 import { U } from "../../tree/tree";
@@ -75,7 +75,7 @@ class RatExtension implements Extension<Rat> {
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Rat) {
             // console.lg(`RatExtension.transform ${expr}`);
-            if (this.$.getModeFlag(EvaluatingAsFloat)) {
+            if (this.$.getModeFlag(evaluatingAsFloat)) {
                 return [TFLAG_DIFF, wrap_as_flt(expr.toNumber())];
             }
             else {

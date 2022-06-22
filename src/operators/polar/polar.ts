@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
-import { EvaluatingAsPolar } from '../../modes/modes';
+import { evaluatingAsPolar } from '../../modes/modes';
 import { cadr } from '../../tree/helpers';
 import { U } from '../../tree/tree';
 import { abs } from '../abs/abs';
@@ -24,12 +24,12 @@ export function polar(p1: U, $: ExtensionEnv): U {
     // representations into rect, we set a "stack flag"
     // here to avoid that, so we don't undo the
     // work that we are trying to do.
-    const mode = $.getModeFlag(EvaluatingAsPolar);
-    $.setModeFlag(EvaluatingAsPolar, true);
+    const mode = $.getModeFlag(evaluatingAsPolar);
+    $.setModeFlag(evaluatingAsPolar, true);
     try {
         return $.multiply(abs(p1, $), exp($.multiply(imu, $.arg(p1)), $));
     }
     finally {
-        $.setModeFlag(EvaluatingAsPolar, mode);
+        $.setModeFlag(evaluatingAsPolar, mode);
     }
 }

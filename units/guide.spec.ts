@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { create_engine } from "../index";
-import { FOCUS_EXPANDING } from "../src/env/ExtensionEnv";
+import { PHASE_EXPANDING } from "../src/env/ExtensionEnv";
 import { transform } from "../src/runtime/execute";
 import { scan_source_text } from "../src/scanner/scan_source_text";
 
@@ -41,7 +41,7 @@ describe("guide", function () {
         assert.strictEqual($.isFactoring(), false, 'isFactoring');
         assert.strictEqual($.implicateMode, false, 'isImplicating');
 
-        $.setFocus(FOCUS_EXPANDING);
+        $.setFocus(PHASE_EXPANDING);
         const valueTwo = transform(treeTwo, $);
 
         assert.strictEqual(engine.renderAsSExpr(valueTwo), "(+ (* (cos x) (sin (* i y))) (* (cos (* i y)) (sin x)))");
@@ -86,7 +86,7 @@ describe("guide", function () {
         assert.strictEqual($.isFactoring(), false, 'isFactoring');
         assert.strictEqual($.implicateMode, false, 'isImplicating');
 
-        $.setFocus(FOCUS_EXPANDING);
+        $.setFocus(PHASE_EXPANDING);
         const valueTwo = transform(treeTwo, $);
 
         // The ordering isn't very predictable.

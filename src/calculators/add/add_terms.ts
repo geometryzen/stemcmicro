@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { KeepZeroTermsInSums } from "../../modes/modes";
+import { keepZeroTermsInSums } from "../../modes/modes";
 import { is_add } from "../../runtime/helpers";
 import { is_cons, U } from "../../tree/tree";
 import { to_list_add_sort } from "./to_list_add_sort";
@@ -25,7 +25,7 @@ export function append_terms(terms: U[], term: U, $: ExtensionEnv): void {
         });
     }
     else if ($.isZero(term)) {
-        if ($.getModeFlag(KeepZeroTermsInSums)) {
+        if ($.getModeFlag(keepZeroTermsInSums)) {
             terms.push(term);
         }
     }

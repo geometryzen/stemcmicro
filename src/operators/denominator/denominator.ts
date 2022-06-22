@@ -1,13 +1,14 @@
 import { mp_denominator } from '../../bignum';
+import { cadnr } from '../../calculators/cadnr';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_negative_term } from '../../is';
 import { multiply_items } from '../../multiply';
-import { rationalize_factoring } from '../rationalize/rationalize';
+import { is_negative } from '../../predicates/is_negative';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
-import { is_rat } from '../rat/is_rat';
 import { one } from '../../tree/rat/Rat';
 import { car, Cons, is_cons, U } from '../../tree/tree';
+import { is_rat } from '../rat/is_rat';
+import { rationalize_factoring } from '../rationalize/rationalize';
 
 /* denominator =====================================================================
 
@@ -60,8 +61,12 @@ export function denominator(expr: U, $: ExtensionEnv): U {
         return hook(mp_denominator(expr));
     }
 
-    if (is_power(expr) && is_negative_term(caddr(expr))) {
-        return hook($.inverse(expr));
+    if (is_power(expr) && is_negative(caddr(expr))) {
+        const base = cadnr(expr, 1);
+        const expo = cadnr(expr, 2);
+        if ($.isReal(base) && $.isReal(expo)) {
+            return hook($.inverse(expr));
+        }
     }
 
     return hook(one);

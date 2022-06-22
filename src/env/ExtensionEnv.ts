@@ -41,6 +41,7 @@ export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector' | '~Vector';
 export type MODE =
     'evaluatingAsFloat' |
     'evaluatingAsPolar' |
+    'evaluatingTrigAsExp' |
     'keepZeroTermsInSums' |
     'renderFloatAsEcmaScript' |
     'useCaretForExponentiation';
@@ -67,7 +68,6 @@ export interface ExtensionEnv {
     clearBindings(): void;
     clearOperators(): void;
     clearRenamed(): void;
-    cos(expr: U): U;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     defineKey(sym: Sym): Sym;
@@ -147,16 +147,16 @@ export interface OperatorBuilder<T extends U> {
     create($: ExtensionEnv): Operator<T>;
 }
 
-export const FOCUS_EXPLICATE = 1;
-export const FOCUS_EXPANDING = 2;
-export const FOCUS_FACTORING = 4;
-export const FOCUS_IMPLICATE = 8;
+export const PHASE_EXPLICATE = 1;
+export const PHASE_EXPANDING = 2;
+export const PHASE_FACTORING = 4;
+export const PHASE_IMPLICATE = 8;
 
-export const foci = [FOCUS_EXPLICATE, FOCUS_EXPANDING, FOCUS_FACTORING, FOCUS_IMPLICATE];
+export const PHASE_SEQUENCE = [PHASE_EXPLICATE, PHASE_EXPANDING, PHASE_FACTORING, PHASE_IMPLICATE];
 
-export const FOCUS_FLAGS_NONE = 0;
-export const FOCUS_FLAGS_ALL = FOCUS_EXPLICATE | FOCUS_EXPANDING | FOCUS_FACTORING | FOCUS_IMPLICATE;
-export const FOCUS_FLAGS_EXPANDING_UNION_FACTORING = FOCUS_EXPANDING | FOCUS_FACTORING;
+export const PHASE_FLAGS_NONE = 0;
+export const PHASE_FLAGS_ALL = PHASE_EXPLICATE | PHASE_EXPANDING | PHASE_FACTORING | PHASE_IMPLICATE;
+export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = PHASE_EXPANDING | PHASE_FACTORING;
 
 export interface Operator<T extends U> {
     readonly key?: string;

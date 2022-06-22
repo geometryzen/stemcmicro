@@ -1,7 +1,7 @@
 import { mp_denominator, mp_numerator } from '../bignum';
 import { ExtensionEnv } from '../env/ExtensionEnv';
-import { isfraction, is_negative_number, is_num_and_eq_minus_one } from '../is';
-import { UseCaretForExponentiation } from '../modes/modes';
+import { isfraction, is_num_and_eq_minus_one } from '../is';
+import { useCaretForExponentiation } from '../modes/modes';
 import { abs } from '../operators/abs/abs';
 import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
 import { is_flt } from '../operators/flt/is_flt';
@@ -11,6 +11,7 @@ import { is_str } from '../operators/str/is_str';
 import { is_sym } from '../operators/sym/is_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
+import { is_negative_number } from '../predicates/is_negative_number';
 import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER, SYM_MATH_COMPONENT } from '../runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from '../runtime/helpers';
 import { number_to_floating_point_string } from '../runtime/number_to_floating_point_string';
@@ -624,7 +625,7 @@ function emit_power(p: U, $: ExtensionEnv) {
             else {
                 emit_grouped_expr(cadr(p), $);
             }
-            if ($.getModeFlag(UseCaretForExponentiation)) {
+            if ($.getModeFlag(useCaretForExponentiation)) {
                 __emit_char('^');
             }
             else {

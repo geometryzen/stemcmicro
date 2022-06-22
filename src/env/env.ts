@@ -4,12 +4,10 @@ import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { makeList } from "../makeList";
-import { UseCaretForExponentiation } from "../modes/modes";
+import { useCaretForExponentiation } from "../modes/modes";
 import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/is_blade";
 import { is_boo } from "../operators/boo/is_boo";
-import { cosine_of_angle } from "../operators/cos/cosine_of_angle";
-import { cosine_of_angle_sum } from "../operators/cos/cosine_of_angle_sum";
 import { denominator } from "../operators/denominator/denominator";
 import { derivative_wrt } from "../operators/derivative/derivative_wrt";
 import { is_err } from "../operators/err/is_err";
@@ -28,7 +26,6 @@ import { is_uom } from "../operators/uom/is_uom";
 import { render_as_infix } from "../print/print";
 import { FUNCTION } from "../runtime/constants";
 import { implicate } from "../runtime/execute";
-import { is_add } from "../runtime/helpers";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
@@ -36,7 +33,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { diffFlag, ExtensionEnv, FEATURE, foci, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_FLAGS_ALL, FOCUS_IMPLICATE, haltFlag, MODE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
@@ -95,12 +92,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * The operators in buckets that are determined by the phase and operator.
      */
     const ops_by_phase: { [key: string]: Operator<U>[] }[] = [];
-    for (const phase of foci) {
+    for (const phase of PHASE_SEQUENCE) {
         ops_by_phase[phase] = {};
     }
     const assocs: { [key: string]: Assoc } = {};
 
-    let current_focus: number = FOCUS_EXPANDING;
+    let current_focus: number = PHASE_EXPANDING;
 
     let fieldKind: 'R' | undefined = 'R';
 
@@ -115,10 +112,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     function currentOps(): { [key: string]: Operator<U>[] } {
         switch (current_focus) {
-            case FOCUS_EXPLICATE:
-            case FOCUS_EXPANDING:
-            case FOCUS_FACTORING:
-            case FOCUS_IMPLICATE: {
+            case PHASE_EXPLICATE:
+            case PHASE_EXPANDING:
+            case PHASE_FACTORING:
+            case PHASE_IMPLICATE: {
                 const ops = ops_by_phase[current_focus];
                 if (typeof ops === 'undefined') {
                     throw new Error(`currentOps(${current_focus})`);
@@ -198,13 +195,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         arg(expr: U): U {
             const A = numerator(expr, $);
-            // console.lg(`numer=${print_expr(A, $)}`);
+            // console.lg(`numer=${render_as_infix(A, $)}`);
             const B = denominator(expr, $);
-            // console.lg(`denom=${print_expr(B, $)}`);
+            // console.lg(`denom=${render_as_infix(B, $)}`);
             const C = yyarg(A, $);
-            // console.lg(`arg_numer=${print_expr(C, $)}`);
+            // console.lg(`arg_numer=${render_as_infix(C, $)}`);
             const D = yyarg(B, $);
-            // console.lg(`arg_denom=${print_expr(D, $)}`);
+            // console.lg(`arg_denom=${render_as_infix(D, $)}`);
             return $.subtract(C, D);
         },
         beginSpecial(): void {
@@ -212,7 +209,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         clearOperators(): void {
             builders.length = 0;
-            for (const phase of foci) {
+            for (const phase of PHASE_SEQUENCE) {
                 const ops = ops_by_phase[phase];
                 for (const key in ops) {
                     ops[key] = [];
@@ -240,16 +237,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         clearRenamed(): void {
             symTab.clearRenamed();
-        },
-        cos(x: U): U {
-            // TODO: This should just build then evaluate.
-            // In which case it need not be here.
-            if (is_cons(x) && is_add(x)) {
-                return cosine_of_angle_sum(x, $);
-            }
-            else {
-                return cosine_of_angle(x, $);
-            }
         },
         defineKey(sym: Sym): Sym {
             return symTab.defineKey(sym);
@@ -291,8 +278,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     continue;
                 }
                 // If an operator does not restrict the phases to which it applies then it applies to all phases.
-                const phaseFlags = typeof op.phases === 'number' ? op.phases : FOCUS_FLAGS_ALL;
-                for (const phase of foci) {
+                const phaseFlags = typeof op.phases === 'number' ? op.phases : PHASE_FLAGS_ALL;
+                for (const phase of PHASE_SEQUENCE) {
                     if (phaseFlags & phase) {
                         const ops = ops_by_phase[phase];
                         if (op.hash) {
@@ -361,27 +348,27 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         isExplicating(): boolean {
-            return current_focus == FOCUS_EXPLICATE;
+            return current_focus == PHASE_EXPLICATE;
         },
         isExpanding(): boolean {
-            return current_focus == FOCUS_EXPANDING;
+            return current_focus == PHASE_EXPANDING;
         },
         isFactoring(): boolean {
-            return current_focus === FOCUS_FACTORING;
+            return current_focus === PHASE_FACTORING;
         },
         isImplicating(): boolean {
-            return current_focus == FOCUS_IMPLICATE;
+            return current_focus == PHASE_IMPLICATE;
         },
         get explicateMode(): boolean {
-            return current_focus === FOCUS_EXPLICATE;
+            return current_focus === PHASE_EXPLICATE;
         },
         get implicateMode(): boolean {
-            return current_focus === FOCUS_IMPLICATE;
+            return current_focus === PHASE_IMPLICATE;
         },
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isImag(expr);
-            // console.log(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
+            // // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isMinusOne(expr: U): boolean {
@@ -393,7 +380,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isReal(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isReal(expr);
-            // console.log(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
+            // // console.lg(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isScalar(expr: U): boolean {
@@ -622,10 +609,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     if (haltFlag(flags)) {
                                         // doneWithExpr remains true.
                                         outFlags |= TFLAG_HALT;
-                                        // console.lg(`DIFF HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                        // console.lg(`DIFF HALT: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
                                     curExpr = newExpr;
@@ -638,7 +625,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else {
-                                    // console.log(`NOFLAGS..: op.name=${op.name} op.hash=${op.hash} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    // // console.lg(`NOFLAGS..: op.name=${op.name} op.hash=${op.hash} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                 }
                             }
                         }
@@ -651,7 +638,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     if (!is_nil(binding)) {
                                         if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
                                             const newExpr = Eval_user_function(curExpr, $);
-                                            // console.log(`USER FUNC oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                            // // console.lg(`USER FUNC oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
                                             return [TFLAG_DIFF, newExpr];
                                         }
                                     }
@@ -726,7 +713,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolToken(MATH_IMU, 'i');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
-    $.setModeFlag(UseCaretForExponentiation, config.useCaretForExponentiation);
+    $.setModeFlag(useCaretForExponentiation, config.useCaretForExponentiation);
 
     return $;
 }

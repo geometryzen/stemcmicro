@@ -1,5 +1,5 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
-import { ExtensionEnv, FOCUS_FLAGS_EXPANDING_UNION_FACTORING, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_FLAGS_EXPANDING_UNION_FACTORING, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -27,7 +27,7 @@ type EXPR = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
-    readonly phases = FOCUS_FLAGS_EXPANDING_UNION_FACTORING;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_any_any', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, $);
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);

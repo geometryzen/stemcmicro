@@ -1,4 +1,4 @@
-import { ExtensionEnv, FOCUS_FACTORING } from './env/ExtensionEnv';
+import { ExtensionEnv, PHASE_FACTORING } from './env/ExtensionEnv';
 import { is_num_and_eq_two } from './is';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
@@ -199,7 +199,7 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
 
 export function transpose_factoring(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_FACTORING);
+    $.setFocus(PHASE_FACTORING);
     try {
         return transpose(p1, p2, p3, $);
     }

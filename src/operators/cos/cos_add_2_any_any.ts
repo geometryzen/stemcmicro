@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, FOCUS_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -28,7 +28,7 @@ type EXP = UCons<Sym, ARG>;
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = FOCUS_EXPANDING;
+    readonly phases = PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('cos_add_2_any_any', MATH_COS, and(is_cons, is_opr_2_lhs_any(MATH_ADD, is_any)), $);
         this.hash = hash_unaop_cons(MATH_COS, MATH_ADD);

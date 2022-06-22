@@ -29,8 +29,8 @@ describe("user", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (+ (+ 1 (sin 0.0)) 0.0) (sin 0))");
-        assert.strictEqual(engine.renderAsInfix(value), "((1+sin(0.0))+0.0)+sin(0)");
+        assert.strictEqual(engine.renderAsSExpr(value), "1.0");
+        assert.strictEqual(engine.renderAsInfix(value), "1.0");
         engine.release();
     });
 });

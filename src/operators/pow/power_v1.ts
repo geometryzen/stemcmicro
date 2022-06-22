@@ -6,7 +6,7 @@ import { imu } from "../../env/imu";
 import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";
 import { is_rat_integer } from "../../is_rat_integer";
 import { makeList } from "../../makeList";
-import { EvaluatingAsFloat, EvaluatingAsPolar } from "../../modes/modes";
+import { evaluatingAsFloat, evaluatingAsPolar } from "../../modes/modes";
 import { nativeInt } from "../../nativeInt";
 import { power_sum, simplify_polar } from "../../power";
 import { pow_rat_rat } from "../../pow_rat_rat";
@@ -21,11 +21,12 @@ import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, Cons, is_cons, is_nil, U } from "../../tree/tree";
 import { QQ } from "../../tree/uom/QQ";
 import { abs } from "../abs/abs";
+import { cos } from "../cos/cosine";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
 import { rect } from "../rect/rect";
-import { sine } from "../sin/sin";
+import { sin } from "../sin/sine";
 import { is_tensor } from "../tensor/is_tensor";
 import { is_uom } from "../uom/UomExtension";
 import { dpow } from "./dpow";
@@ -57,7 +58,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     //  1 ^ a    ->  1
     //  a ^ 0    ->  1
     if ($.equals(base, one) || $.isZero(expo)) {
-        const dynOne = $.getModeFlag(EvaluatingAsFloat) ? oneAsDouble : one;
+        const dynOne = $.getModeFlag(evaluatingAsFloat) ? oneAsDouble : one;
         return hook(dynOne, "A");
     }
 
@@ -68,7 +69,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
 
     //   -1 ^ -1    ->  -1
     if (is_num_and_eq_minus_one(base) && is_num_and_eq_minus_one(expo)) {
-        const negOne = $.negate($.getModeFlag(EvaluatingAsFloat) ? oneAsDouble : one);
+        const negOne = $.negate($.getModeFlag(evaluatingAsFloat) ? oneAsDouble : one);
         return hook(negOne, "C");
     }
 
@@ -91,7 +92,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
         is_rat(expo) &&
         !is_rat_integer(expo) &&
         is_num_and_gt_zero(expo) &&
-        !$.getModeFlag(EvaluatingAsFloat)
+        !$.getModeFlag(evaluatingAsFloat)
     ) {
         if (expo.a < expo.b) {
             tmp = makeList(POWER, base, expo);
@@ -169,12 +170,12 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // complex number in exponential form, get it to rectangular
     // but only if we are not in the process of calculating a polar form,
     // otherwise we'd just undo the work we want to do
-    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getModeFlag(EvaluatingAsPolar)) {
+    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getModeFlag(evaluatingAsPolar)) {
         // TODO: We could simply use origExpr now that it is an agument.
         const tmp = makeList(POWER, base, expo);
-
         const hopefullySimplified = rect(tmp, $); // put new (hopefully simplified expr) in exponent
         if (!hopefullySimplified.contains(PI)) {
+            // console.lg(`hopefullySimplified=${hopefullySimplified}`);
             return hook(hopefullySimplified, "O");
         }
     }
@@ -252,7 +253,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     //  sin(x) ^ 2n -> (1 - cos(x) ^ 2) ^ n
     if (defs.trigmode === 1 && car(base).equals(SIN) && iseveninteger(expo)) {
         const result = $.power(
-            $.subtract(one, $.power($.cos(cadr(base)), two)),
+            $.subtract(one, $.power(cos(cadr(base), $), two)),
             $.multiply(expo, half)
         );
         return hook(result, "U");
@@ -261,7 +262,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     //  cos(x) ^ 2n -> (1 - sin(x) ^ 2) ^ n
     if (defs.trigmode === 2 && car(base).equals(COS) && iseveninteger(expo)) {
         const result = $.power(
-            $.subtract(one, $.power(sine(cadr(base), $), two)),
+            $.subtract(one, $.power(sin(cadr(base), $), two)),
             $.multiply(expo, half)
         );
         return hook(result, "V");
@@ -297,7 +298,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
             // need to evaluate PI to its actual double
             // value
 
-            const pi = $.getModeFlag(EvaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? wrap_as_flt(Math.PI) : PI;
+            const pi = $.getModeFlag(evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? wrap_as_flt(Math.PI) : PI;
             let tmp = $.multiply(
                 $.power(abs(base, $), expo),
                 $.power(negOne, $.divide($.multiply($.arg(base), expo), pi))

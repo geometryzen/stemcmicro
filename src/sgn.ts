@@ -1,13 +1,14 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_complex_number, is_negative_term } from './is';
+import { is_complex_number } from './is';
 import { makeList } from './makeList';
 import { mmul } from './mmul';
 import { abs } from './operators/abs/abs';
+import { is_flt } from './operators/flt/is_flt';
+import { is_rat } from './operators/rat/is_rat';
+import { is_negative } from './predicates/is_negative';
 import { SGN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
-import { is_rat } from './operators/rat/is_rat';
 import { negOne, one, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
@@ -50,7 +51,7 @@ export function sgn(X: U, $: ExtensionEnv): U {
         return $.multiply($.power(negOne, abs(X, $)), X);
     }
 
-    if (is_negative_term(X)) {
+    if (is_negative(X)) {
         return $.multiply(makeList(SGN, $.negate(X)), negOne);
     }
 

@@ -1,14 +1,13 @@
-import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { imu } from './env/imu';
 import { exp } from './exp';
 import { expcos } from './expcos';
 import { expsin } from './expsin';
-import { COS, COSH, SIN, SINH, TAN, TANH } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { cadr } from './tree/helpers';
 import { is_tensor } from './operators/tensor/is_tensor';
+import { COS, COSH, SIN, SINH, TAN, TANH } from './runtime/constants';
+import { cadr } from './tree/helpers';
 import { half, one, two } from './tree/rat/Rat';
-import { car, is_cons, U } from './tree/tree';
+import { car, Cons, is_cons, U } from './tree/tree';
 
 /* circexp =====================================================================
 
@@ -26,12 +25,12 @@ General description
 Returns expression x with circular and hyperbolic functions converted to exponential forms. Sometimes this will simplify an expression.
 
 */
-export function Eval_circexp(p1: U, $: ExtensionEnv): void {
+export function Eval_circexp(p1: Cons, $: ExtensionEnv): U {
     const result = circexp($.valueOf(cadr(p1)), $);
-    stack_push($.valueOf(result));
+    return $.valueOf(result);
 }
 
-function circexp(p1: U, $: ExtensionEnv): U {
+export function circexp(p1: U, $: ExtensionEnv): U {
     if (car(p1).equals(COS)) {
         return expcos(cadr(p1), $);
     }

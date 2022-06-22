@@ -1,12 +1,12 @@
 import { condense } from '../../condense';
-import { ExtensionEnv, FOCUS_FACTORING } from '../../env/ExtensionEnv';
+import { ExtensionEnv, PHASE_FACTORING } from '../../env/ExtensionEnv';
 import { gcd } from '../../gcd';
-import { is_negative_number } from '../../is';
+import { is_negative_number } from '../../predicates/is_negative_number';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { one, zero } from '../../tree/rat/Rat';
-import { is_tensor } from '../tensor/is_tensor';
 import { is_cons, U } from '../../tree/tree';
+import { is_tensor } from '../tensor/is_tensor';
 
 export function Eval_rationalize(expr: U, $: ExtensionEnv): U {
     return rationalize_factoring($.valueOf(cadr(expr)), $);
@@ -14,7 +14,7 @@ export function Eval_rationalize(expr: U, $: ExtensionEnv): U {
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_FACTORING);
+    $.setFocus(PHASE_FACTORING);
     try {
         return yyrationalize(argList, $);
     }

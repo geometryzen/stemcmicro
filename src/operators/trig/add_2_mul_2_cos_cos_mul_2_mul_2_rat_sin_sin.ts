@@ -1,4 +1,4 @@
-import { ExtensionEnv, FOCUS_FACTORING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_FACTORING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -53,7 +53,7 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = FOCUS_FACTORING;
+    readonly phases = PHASE_FACTORING;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_cos_cos_mul_2_mul_2_rat_sin_sin', MATH_ADD, guardL, guardR, cross, $);
         this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);

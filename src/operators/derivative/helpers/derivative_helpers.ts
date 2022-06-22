@@ -40,8 +40,9 @@ import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
 import { car, cdr, is_cons, nil, U } from '../../../tree/tree';
+import { cos } from '../../cos/cosine';
 import { simplify } from '../../simplify/simplify';
-import { sine } from '../../sin/sin';
+import { sin } from '../../sin/sine';
 import { sinh } from '../../sinh/sinh';
 import { is_sym } from '../../sym/is_sym';
 import { derivative_wrt } from '../derivative_wrt';
@@ -203,17 +204,17 @@ function dfunction(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 function dsin(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative_wrt(cadr(p1), p2, $);
-    return $.multiply(deriv, $.cos(cadr(p1)));
+    return $.multiply(deriv, cos(cadr(p1), $));
 }
 
 function dcos(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative_wrt(cadr(p1), p2, $);
-    return $.negate($.multiply(deriv, sine(cadr(p1), $)));
+    return $.negate($.multiply(deriv, sin(cadr(p1), $)));
 }
 
 function dtan(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative_wrt(cadr(p1), p2, $);
-    return $.multiply(deriv, $.power($.cos(cadr(p1)), wrap_as_int(-2)));
+    return $.multiply(deriv, $.power(cos(cadr(p1), $), wrap_as_int(-2)));
 }
 
 function darcsin(p1: U, p2: Sym, $: ExtensionEnv): U {

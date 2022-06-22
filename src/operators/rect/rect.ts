@@ -2,16 +2,17 @@ import { cadnr } from '../../calculators/cadnr';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { makeList } from '../../makeList';
-import { is_imu } from '../imu/is_imu';
 import { ASSUME_REAL_VARIABLES, COS, RECT } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_add, is_multiply } from '../../runtime/helpers';
 import { MATH_SIN } from '../../runtime/ns_math';
-import { sine } from '../sin/sin';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, U } from '../../tree/tree';
 import { abs } from '../abs/abs';
+import { cos } from '../cos/cosine';
+import { is_imu } from '../imu/is_imu';
+import { sin } from '../sin/sine';
 import { is_sym } from '../sym/is_sym';
 
 /**
@@ -74,7 +75,7 @@ export function rect(z: U, $: ExtensionEnv): U {
     // abs(z) * (cos(arg(z)) + i sin(arg(z)))
     const result = $.multiply(
         abs(z, $),
-        $.add($.cos($.arg(z)), $.multiply(imu, sine($.arg(z), $)))
+        $.add(cos($.arg(z), $), $.multiply(imu, sin($.arg(z), $)))
     );
 
     return result;

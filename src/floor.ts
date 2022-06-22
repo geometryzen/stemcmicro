@@ -1,13 +1,13 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative_number } from './is';
 import { is_rat_integer } from './is_rat_integer';
 import { makeList } from './makeList';
 import { mdiv } from './mmul';
+import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
+import { is_negative_number } from './predicates/is_negative_number';
 import { FLOOR } from './runtime/constants';
 import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
 import { negOne, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';

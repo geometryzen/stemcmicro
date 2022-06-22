@@ -1,5 +1,5 @@
 import { binop } from './calculators/binop';
-import { ExtensionEnv, FOCUS_FACTORING } from './env/ExtensionEnv';
+import { ExtensionEnv, PHASE_FACTORING } from './env/ExtensionEnv';
 import { use_factoring_with_unary_function, use_factoring_with_binary_function } from './runtime/defs';
 import { MATH_MUL } from './runtime/ns_math';
 import { one } from './tree/rat/Rat';
@@ -48,7 +48,7 @@ export function multiply_items(items: U[], $: ExtensionEnv): U {
 // n an integer
 export function multiply_items_factoring(items: U[], $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_FACTORING);
+    $.setFocus(PHASE_FACTORING);
     try {
         return multiply_items(items, $);
     }

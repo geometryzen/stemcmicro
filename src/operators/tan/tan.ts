@@ -1,15 +1,15 @@
 import { rational } from '../../bignum';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_negative } from '../../is';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
+import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { wrap_as_flt } from '../../tree/flt/Flt';
-import { is_flt } from '../flt/is_flt';
 import { cadr } from '../../tree/helpers';
-import { half, wrap_as_int, negOne, one, third, three, zero } from '../../tree/rat/Rat';
+import { half, negOne, one, third, three, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { car, Cons, U } from '../../tree/tree';
+import { is_flt } from '../flt/is_flt';
 
 // Tangent function of numerical and symbolic arguments
 export function Eval_tan(p1: Cons, $: ExtensionEnv): U {

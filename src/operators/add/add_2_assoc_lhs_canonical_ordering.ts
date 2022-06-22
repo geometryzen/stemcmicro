@@ -1,5 +1,5 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
-import { ExtensionEnv, Operator, OperatorBuilder, FOCUS_EXPLICATE, FOCUS_FLAGS_ALL, FOCUS_IMPLICATE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, PHASE_FLAGS_ALL, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -35,7 +35,7 @@ function cross($: ExtensionEnv) {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = FOCUS_FLAGS_ALL & (~FOCUS_EXPLICATE) & (~FOCUS_IMPLICATE);
+    readonly phases = PHASE_FLAGS_ALL & (~PHASE_EXPLICATE) & (~PHASE_IMPLICATE);
     constructor($: ExtensionEnv) {
         super('add_2_assoc_lhs_canonical_ordering', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross($), $);
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);

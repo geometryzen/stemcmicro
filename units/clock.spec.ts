@@ -4,7 +4,7 @@ import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("clock", function () {
-    it("i", function () {
+    xit("i", function () {
         const lines: string[] = [
             `autofactor=0`,
             `implicate=0`,
@@ -20,7 +20,7 @@ describe("clock", function () {
         assert.strictEqual(render_as_infix(value, $), "i");
         engine.release();
     });
-    it("(1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i)", function () {
+    xit("(1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i)", function () {
         const lines: string[] = [
             `autofactor=1`,
             `implicate=0`,
@@ -36,7 +36,7 @@ describe("clock", function () {
         assert.strictEqual(render_as_infix(value, $), "3**(1/2)*i");
         engine.release();
     });
-    it("((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
+    xit("((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
         const lines: string[] = [
             `autofactor=1`,
             `implicate=0`,
@@ -52,7 +52,7 @@ describe("clock", function () {
         assert.strictEqual(render_as_infix(value, $), "-3**(1/2)");
         engine.release();
     });
-    it("-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
+    xit("-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
         const lines: string[] = [
             `autofactor=1`,
             `implicate=0`,
@@ -68,7 +68,7 @@ describe("clock", function () {
         assert.strictEqual(render_as_infix(value, $), "1/2*3**(1/2)");
         engine.release();
     });
-    it("(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
+    xit("(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
         const lines: string[] = [
             `autofactor=1`,
             `implicate=0`,
@@ -84,7 +84,7 @@ describe("clock", function () {
         assert.strictEqual(render_as_infix(value, $), "3/4");
         engine.release();
     });
-    it("1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
+    xit("1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
         const lines: string[] = [
             `autofactor=1`,
             `implicate=0`,
@@ -100,7 +100,7 @@ describe("clock", function () {
         assert.strictEqual(render_as_infix(value, $), "1");
         engine.release();
     });
-    it("(1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2)**(1/2)", function () {
+    xit("(1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2)**(1/2)", function () {
         const lines: string[] = [
             `autofactor=0`,
             `implicate=0`,
@@ -116,7 +116,7 @@ describe("clock", function () {
         assert.strictEqual(render_as_infix(value, $), "1");
         engine.release();
     });
-    it("exp(i*pi/3)", function () {
+    xit("exp(i*pi/3)", function () {
         const lines: string[] = [
             `autofactor=1`,
             `implicate=0`,

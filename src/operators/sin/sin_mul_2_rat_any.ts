@@ -1,7 +1,6 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
@@ -10,6 +9,8 @@ import { BCons } from "../helpers/BCons";
 import { Function1 } from "../helpers/Function1";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
 import { UCons } from "../helpers/UCons";
+import { is_rat } from "../rat/is_rat";
+import { transform_sin } from "./transform_sin";
 import { MATH_SIN } from "./MATH_SIN";
 
 class Builder implements OperatorBuilder<U> {
@@ -37,12 +38,12 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         const k = arg.lhs;
         const X = arg.rhs;
         if (k.isNegative()) {
-            const A = $.valueOf(items_to_cons(MATH_MUL, k.abs(), X));
-            const B = $.valueOf(items_to_cons(MATH_SIN, A));
-            const C = $.negate(B);
-            return [TFLAG_DIFF, C];
+            const kX = $.valueOf(items_to_cons(MATH_MUL, k.abs(), X));
+            const sin_kX = $.valueOf(items_to_cons(MATH_SIN, kX));
+            const minus_sin_kX = $.negate(sin_kX);
+            return [TFLAG_DIFF, minus_sin_kX];
         }
-        return [TFLAG_HALT, expr];
+        return transform_sin(arg, expr, $);
     }
 }
 

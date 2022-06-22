@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, FOCUS_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
@@ -32,7 +32,7 @@ const guardA: GUARD<U, ARG> = and(is_cons, is_opr_2_lhs_rhs(MATH_ADD, is_any, is
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = FOCUS_EXPANDING;
+    readonly phases = PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('st_add_2_any_hyp', MATH_STANDARD_PART, guardA, $);
         this.hash = hash_unaop_cons(MATH_STANDARD_PART, MATH_ADD);

@@ -3,6 +3,22 @@ import { create_engine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("canon", function () {
+    describe("Ordering", function () {
+        it("...", function () {
+            const lines: string[] = [
+                `implicate=0`,
+                `i * x * pi * 2`
+            ];
+            const engine = create_engine({
+                dependencies: ['Imu'],
+                useDefinitions: true
+            });
+            const expr = assert_one_value_execute(lines.join('\n'), engine);
+            // assert.strictEqual(engine.renderAsSExpr(expr), '(+ (* (| a c) b) (* (| a b) c))');
+            assert.strictEqual(engine.renderAsInfix(expr), '((2*π)*x)*i');
+            engine.release();
+        });
+    });
     describe("mul_2_inner_2_vector_vector_vector", function () {
         it("(a|b)*c", function () {
             const lines: string[] = [
@@ -95,6 +111,7 @@ describe("canon", function () {
             engine.release();
         });
     });
+
     describe("add_2_mul_2_inner_2_sym_sym_sym_mul_2_inner_2_sym_sym_sym", function () {
         it("(a|b)*c+(a|c)*b", function () {
             const lines: string[] = [

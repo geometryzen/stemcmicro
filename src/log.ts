@@ -1,12 +1,13 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
-import { equaln, is_negative_number } from './is';
+import { equaln } from './is';
 import { makeList } from './makeList';
 import { denominator } from './operators/denominator/denominator';
 import { is_flt } from './operators/flt/is_flt';
 import { numerator } from './operators/numerator/numerator';
 import { is_rat } from './operators/rat/is_rat';
 import { is_base_of_natural_logarithm } from './predicates/is_base_of_natural_logarithm';
+import { is_negative_number } from './predicates/is_negative_number';
 import { LOG } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';

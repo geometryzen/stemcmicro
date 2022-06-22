@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, FOCUS_IMPLICATE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
@@ -39,7 +39,7 @@ function is_opr(sym: Sym) {
  */
 class Implicator extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = FOCUS_IMPLICATE;
+    readonly phases = PHASE_IMPLICATE;
     constructor(name: string, opr: Sym, $: ExtensionEnv) {
         // Ensure that the operator in the lhs operand is the same as the dominant operator symbol...
         super(name, opr, and(is_cons, is_opr(opr)), is_any, $);

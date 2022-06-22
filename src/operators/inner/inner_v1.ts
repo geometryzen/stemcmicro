@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inv } from '../../inv';
-import { is_negative_term } from '../../is';
 import { makeList } from '../../makeList';
+import { is_negative } from '../../predicates/is_negative';
 import { SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
 import { is_add, is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from '../../runtime/helpers';
 import { MATH_INNER } from '../../runtime/ns_math';
@@ -27,7 +27,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
     // a*b*inner(M1,M2), but of course we can only "bring out" in a and b the
     // scalars, because it's the only commutative part. that's going to be
     // trickier to do in general  but let's start with just the signs.
-    if (is_negative_term(p2) && is_negative_term(p1)) {
+    if (is_negative(p2) && is_negative(p1)) {
         p2 = $.negate(p2);
         p1 = $.negate(p1);
     }

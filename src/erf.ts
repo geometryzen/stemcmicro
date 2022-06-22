@@ -1,11 +1,11 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { erfc } from './erfc';
-import { is_negative_term } from './is';
 import { makeList } from './makeList';
+import { is_flt } from './operators/flt/is_flt';
+import { is_negative } from './predicates/is_negative';
 import { ERF } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -44,7 +44,7 @@ function yerf(p1: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    if (is_negative_term(p1)) {
+    if (is_negative(p1)) {
         return $.negate(makeList(ERF, $.negate(p1)));
     }
 

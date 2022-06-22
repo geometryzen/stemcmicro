@@ -1,11 +1,12 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative_term } from './is';
 import { makeList } from './makeList';
-import { EvaluatingAsFloat } from './modes/modes';
+import { evaluatingAsFloat } from './modes/modes';
 import { nativeInt } from './nativeInt';
+import { cos } from './operators/cos/cosine';
 import { is_flt } from './operators/flt/is_flt';
 import { is_rat } from './operators/rat/is_rat';
-import { sine } from './operators/sin/sin';
+import { sin } from './operators/sin/sine';
+import { is_negative } from './predicates/is_negative';
 import { BESSELJ, MEQUAL, MSIGN, PI } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
@@ -83,14 +84,14 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     if (is_rat(N) && MEQUAL(N.b, 2)) {
         // n = 1/2
         if (MEQUAL(N.a, 1)) {
-            const twoOverPi = $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
-            return $.multiply($.power($.divide(twoOverPi, X), half), sine(X, $));
+            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
+            return $.multiply($.power($.divide(twoOverPi, X), half), sin(X, $));
         }
 
         // n = -1/2
         if (MEQUAL(N.a, -1)) {
-            const twoOverPi = $.getModeFlag(EvaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
-            return $.multiply($.power($.divide(twoOverPi, X), half), $.cos(X));
+            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : $.divide(two, PI);
+            return $.multiply($.power($.divide(twoOverPi, X), half), cos(X, $));
         }
 
         // besselj(x,n) = (2/x) (n-sgn(n)) besselj(x,n-sgn(n)) - besselj(x,n-2*sgn(n))
@@ -106,14 +107,14 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     }
 
     //if 0 # test cases needed
-    if (is_negative_term(X)) {
+    if (is_negative(X)) {
         return $.multiply(
             $.multiply($.power($.negate(X), N), $.power(X, $.negate(N))),
             makeList(BESSELJ, $.negate(X), N)
         );
     }
 
-    if (is_negative_term(N)) {
+    if (is_negative(N)) {
         return $.multiply(
             $.power(negOne, N),
             makeList(BESSELJ, X, $.negate(N))

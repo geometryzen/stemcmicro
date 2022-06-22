@@ -1,7 +1,7 @@
 import { bake } from "../bake";
-import { ExtensionEnv, FOCUS_EXPANDING, FOCUS_EXPLICATE, FOCUS_FACTORING, FOCUS_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
-import { UseCaretForExponentiation } from "../modes/modes";
+import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { ScanOptions } from '../scanner/scan';
@@ -15,7 +15,7 @@ import { NAME_SCRIPT_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
-        useCaretForExponentiation: $.getModeFlag(UseCaretForExponentiation)
+        useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation)
     };
 }
 
@@ -34,7 +34,7 @@ export function execute_script(sourceText: string, $: ExtensionEnv): { values: U
     const prints: string[] = [];
     // console.lg(`trees.length = ${trees.length}`);
     for (const tree of trees) {
-        // console.lg(`tree = ${tree}`);
+        //  console.lg(`tree = ${render_as_infix(tree, $)}`);
         const data = transform_tree(tree, $);
         if (data.value) {
             if (!is_nil(data.value)) {
@@ -131,13 +131,13 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!
     if (isNotDisabled(AUTOEXPAND, $)) {
-        $.setFocus(FOCUS_EXPANDING);
+        $.setFocus(PHASE_EXPANDING);
         // console.lg("Expanding...");
         stack.push(transform_with_reason(stack.pop() as U, $, 'expanding'));
     }
 
     if (isNotDisabled(AUTOFACTOR, $)) {
-        $.setFocus(FOCUS_FACTORING);
+        $.setFocus(PHASE_FACTORING);
         // console.lg("Factoring...");
         stack.push(transform_with_reason(stack.pop() as U, $, 'factoring'));
         // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
@@ -193,11 +193,11 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
-    // console.lg(`Entering ${reason.toUpperCase()} ${print_expr(inExpr, $)} ${print_list(inExpr, $)}`);
+    // console.log(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)} ${render_as_sexpr(inExpr, $)}`);
 
     const outExpr = transform(inExpr, $);
 
-    // console.lg(`Leaving ${reason.toUpperCase()} ${print_expr(outExpr, $)} ${print_list(outExpr, $)}`);
+    // console.log(`Leaving ${reason.toUpperCase()} ${render_as_infix(outExpr, $)} ${render_as_sexpr(outExpr, $)}`);
 
     return outExpr;
 }
@@ -247,7 +247,7 @@ function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void
 
 function explicate(input: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_EXPLICATE);
+    $.setFocus(PHASE_EXPLICATE);
     try {
         return transform_with_reason(input, $, 'explicate');
     }
@@ -258,7 +258,7 @@ function explicate(input: U, $: ExtensionEnv): U {
 
 export function implicate(input: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_IMPLICATE);
+    $.setFocus(PHASE_IMPLICATE);
     try {
         return transform_with_reason(input, $, 'implicate');
     }

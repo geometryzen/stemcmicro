@@ -1,10 +1,13 @@
 import { subtract } from '../../calculators/sub/subtract';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imag } from '../../imag';
-import { equaln, is_negative, is_negative_number, is_num_and_gt_zero, is_one_over_two } from '../../is';
+import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
 import { makeList } from '../../makeList';
-import { EvaluatingAsFloat } from '../../modes/modes';
+import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
+import { is_negative } from '../../predicates/is_negative';
+import { is_negative_number } from '../../predicates/is_negative_number';
+import { is_opr_eq } from '../../predicates/is_opr_eq';
 import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -13,7 +16,9 @@ import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, U } from '../../tree/tree';
 import { arctan } from '../arctan/arctan';
+import { MATH_EXP } from '../exp/MATH_EXP';
 import { is_flt } from '../flt/is_flt';
+import { is_unaop } from '../helpers/is_unaop';
 import { is_imu } from '../imu/is_imu';
 import { real } from '../real/real';
 import { rect } from '../rect/rect';
@@ -86,7 +91,7 @@ Notes
 */
 
 export function Eval_arg(expr: Cons, $: ExtensionEnv): U {
-    // console.lg(`expr => ${expr}`);
+    // console.lg(`Eval_arg expr => ${expr}`);
     const z = cadr(expr);
     // console.lg(`z => ${z}`);
     const value_of_z = $.valueOf(z);
@@ -97,14 +102,14 @@ export function Eval_arg(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function yyarg(expr: U, $: ExtensionEnv): U {
-    const p1 = expr;
+    // console.lg(`yyarg expr=${expr}`);
     // case of plain number
-    if (is_num_and_gt_zero(p1) || PI.equals(p1)) {
-        return is_flt(p1) || $.getModeFlag(EvaluatingAsFloat) ? zeroAsDouble : zero;
+    if (is_num_and_gt_zero(expr) || PI.equals(expr)) {
+        return is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? zeroAsDouble : zero;
     }
 
-    if (is_negative_number(p1)) {
-        const pi = is_flt(p1) || $.getModeFlag(EvaluatingAsFloat) ? piAsDouble : PI;
+    if (is_negative_number(expr)) {
+        const pi = is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? piAsDouble : PI;
         return $.negate(pi);
     }
 
@@ -112,46 +117,54 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     // arg(a) is always 0 when a is real but no,
     // arg(a) is pi when a is negative so we have
     // to leave unexpressed
-    if (is_sym(p1)) {
-        return makeList(ARG, p1);
+    if (is_sym(expr)) {
+        return makeList(ARG, expr);
     }
 
     // Implementation in which the imaginary unit is it's own object.
-    if (is_imu(p1)) {
+    if (is_imu(expr)) {
         return $.multiply(DynamicConstants.Pi($), half);
     }
 
-    const base = cadr(p1);
+    const base = cadr(expr);
 
     // Implementation in which imaginary unit is (power -1 1/2).
-    if (is_power(p1) && equaln(base, -1)) {
+    if (is_power(expr) && equaln(base, -1)) {
         // -1 to a power
-        return $.multiply(DynamicConstants.Pi($), caddr(p1));
+        return $.multiply(DynamicConstants.Pi($), caddr(expr));
     }
 
-    if (is_power(p1) && is_base_of_natural_logarithm(base)) {
+    // (power e X) => imag(X)
+    if (is_power(expr) && is_base_of_natural_logarithm(base)) {
         // exponential
         // arg(a^(1/2)) is always equal to 1/2 * arg(a)
         // this can obviously be made more generic TODO
-        return imag(caddr(p1), $);
+        return imag(caddr(expr), $);
     }
 
-    if (is_power(p1) && is_one_over_two(caddr(p1))) {
-        const arg1 = $.arg(cadr(p1));
-        return $.multiply(arg1, caddr(p1));
+    // (exp X) => imag(X)
+    if (is_cons(expr) && is_unaop(expr) && is_opr_eq(expr, MATH_EXP)) {
+        const arg = imag(expr.arg, $);
+        return arg;
     }
 
-    if (is_multiply(p1)) {
+    if (is_power(expr) && is_one_over_two(caddr(expr))) {
+        const arg1 = $.arg(cadr(expr));
+        return $.multiply(arg1, caddr(expr));
+    }
+
+
+    if (is_multiply(expr)) {
         // product of factors
-        return p1.tail().map(function (x) {
+        return expr.tail().map(function (x) {
             return $.arg(x);
         }).reduce(function (x, y) {
             return $.add(x, y);
         }, zero);
     }
 
-    if (is_cons(p1) && is_add(p1)) {
-        return arg_of_sum(p1, $);
+    if (is_cons(expr) && is_add(expr)) {
+        return arg_of_sum(expr, $);
     }
     if (!$.isZero($.getBinding(ASSUME_REAL_VARIABLES))) {
         // if we assume all passed values are real
@@ -160,7 +173,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
 
     // if we don't assume all passed values are real, all
     // we con do is to leave unexpressed
-    return makeList(ARG, p1);
+    return makeList(ARG, expr);
 }
 
 function arg_of_sum(expr: Cons, $: ExtensionEnv): U {

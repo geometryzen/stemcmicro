@@ -5,15 +5,16 @@ import { yycondense } from './condense';
 import { ydivisors } from './divisors';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
-import { contains_floating_values_or_floatf, is_negative_term } from './is';
+import { contains_floating_values_or_floatf } from './is';
 import { lcm } from './lcm';
 import { multiply_noexpand, negate_noexpand } from './multiply';
 import { denominator } from './operators/denominator/denominator';
-import { divpoly } from './quotient';
 import { rect } from './operators/rect/rect';
+import { is_negative } from './predicates/is_negative';
+import { divpoly } from './quotient';
 import { defs, halt, move_top_of_stack, use_factoring_with_unary_function } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
-import { wrap_as_int, negOne, one, zero } from './tree/rat/Rat';
+import { negOne, one, wrap_as_int, zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
 // Factor a polynomial
@@ -226,7 +227,7 @@ export function yyfactorpoly(p1: U, p2: U, $: ExtensionEnv): U {
 
     // factor out negative sign
 
-    if (factpoly_expo > 0 && is_negative_term(coes[factpoly_expo])) {
+    if (factpoly_expo > 0 && is_negative(coes[factpoly_expo])) {
         //prev_expanding = expanding
         //expanding = 1
         //expanding = prev_expanding

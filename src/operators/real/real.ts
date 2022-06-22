@@ -1,9 +1,9 @@
 import { complex_conjugate } from '../../complex_conjugate';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { rect } from '../rect/rect';
 import { cadr } from '../../tree/helpers';
 import { two } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
+import { rect } from '../rect/rect';
 
 /*
  Returns the real part of complex z
@@ -35,10 +35,10 @@ export function real(z: U, $: ExtensionEnv): U {
     // I'm not sure why this first step is necessary; it should not be.
     const rect_z = rect(z, $);
     const conj_z = complex_conjugate(rect_z, $);
-    // console.lg(`rect_z => ${$.toInfixString(rect_z)}`);
-    // console.lg(`conj_z => ${$.toInfixString(conj_z)}`);
+    // console.log(`rect_z => ${$.toInfixString(rect_z)}`);
+    // console.log(`conj_z => ${$.toInfixString(conj_z)}`);
     const two_re = $.add(rect_z, conj_z);
-    // console.lg(`2*x => ${$.toInfixString(two_re)}`);
+    // console.log(`2*x => ${$.toInfixString(two_re)}`);
     const re = $.divide(two_re, two);
     return hook(re, "");
 }

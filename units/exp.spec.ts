@@ -24,7 +24,106 @@ describe("exp", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "e");
         engine.release();
     });
-    // TODO: We could do better at factoring out the rationals.
+    // TODO: Conversion of trig functions.
+    it("exp(i*pi)", function () {
+        const lines: string[] = [
+            `exp(i*pi)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(π)+sin(π)*i");
+        // assert.strictEqual(engine.renderAsInfix(actual), "-1");
+        engine.release();
+    });
+    // TODO: Conversion of trig functions.
+    it("exp(pi*i)", function () {
+        const lines: string[] = [
+            `exp(pi*i)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(π)+sin(π)*i");
+        // assert.strictEqual(engine.renderAsInfix(actual), "-1");
+        engine.release();
+    });
+    it("exp(i*x)", function () {
+        const lines: string[] = [
+            `exp(i*x)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)+sin(x)*i");
+        engine.release();
+    });
+    it("exp(-i*x)", function () {
+        const lines: string[] = [
+            `exp(-i*x)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)-sin(x)*i");
+        engine.release();
+    });
+    it("exp(x*i)+exp(-x*i)", function () {
+        const lines: string[] = [
+            `exp(x*i)+exp(-x*i)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "2*cos(x)");
+        engine.release();
+    });
+    it("exp(-x*i)+exp(x*i)", function () {
+        const lines: string[] = [
+            `exp(-x*i)+exp(x*i)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "2*cos(x)");
+        engine.release();
+    });
+    it("exp(x*i)-exp(-x*i)", function () {
+        const lines: string[] = [
+            `exp(x*i)-exp(-x*i)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "2*sin(x)*i");
+        engine.release();
+    });
+    it("exp(-x*i)-exp(x*i)", function () {
+        const lines: string[] = [
+            `exp(-x*i)-exp(x*i)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "-2*sin(x)*i");
+        engine.release();
+    });
     it("exp(-3/4*i*pi)", function () {
         const lines: string[] = [
             `exp(-3/4*i*pi)`
@@ -35,7 +134,6 @@ describe("exp", function () {
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2**(1/2)-1/2*2**(1/2)*i");
-        // assert.strictEqual(print_expr(actual, $), "(-1/2-1/2*i)*2**(1/2)");
         engine.release();
     });
 });

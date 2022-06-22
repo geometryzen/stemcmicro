@@ -3,10 +3,12 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
 import { imag } from '../../imag';
-import { equaln, is_negative_number, is_negative_term, is_num_and_gt_zero } from '../../is';
+import { equaln, is_num_and_gt_zero } from '../../is';
 import { makeList } from '../../makeList';
-import { EvaluatingAsFloat } from '../../modes/modes';
+import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
+import { is_negative_number } from '../../predicates/is_negative_number';
+import { is_negative } from '../../predicates/is_negative';
 import { PI } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -168,7 +170,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     // abs(-1^anything) = abs(-1)^anything = 1^anything = 1
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
         // -1 to any power
-        return hook($.getModeFlag(EvaluatingAsFloat) ? oneAsDouble : one, "G");
+        return hook($.getModeFlag(evaluatingAsFloat) ? oneAsDouble : one, "G");
     }
 
     // abs(base^expo) is equal to abs(base)^expo IF expo is positive
@@ -205,7 +207,7 @@ export function abs(x: U, $: ExtensionEnv): U {
         return hook(retval, "L");
     }
 
-    if (is_negative_term(expr) || (is_cons(expr) && is_add(expr) && is_negative_term(cadr(expr)))) {
+    if (is_negative(expr) || (is_cons(expr) && is_add(expr) && is_negative(cadr(expr)))) {
         const neg_expr = $.negate(expr);
         return hook(makeList(MATH_ABS, neg_expr), "M");
     }

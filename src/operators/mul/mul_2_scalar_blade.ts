@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, Operator, OperatorBuilder, FOCUS_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -26,7 +26,7 @@ type EXP = BCons<Sym, LHS, RHS>;
  */
 class Op extends Function2<LHS, Blade> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = FOCUS_FLAGS_EXPANDING_UNION_FACTORING;
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
         super('mul_2_scalar_blade', MATH_MUL, is_scalar($), is_blade, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_ANY, HASH_BLADE);

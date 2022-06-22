@@ -1,5 +1,7 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, FOCUS_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
+import { is_negative } from "../../predicates/is_negative";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -35,7 +37,20 @@ function cross($: ExtensionEnv) {
             if (x1.equals(x2)) {
                 return true;
             }
-            return false;
+            else if (is_zero_sum(x1, x2, $)) {
+                /*
+                if (is_negative(x1)) {
+                    console.log(`x1 + x2 = 0, x1=${x1}, x2=${x2} x1 is negative`);
+                }
+                if (is_negative(x2)) {
+                    console.log(`x1 + x2 = 0, x1=${x1}, x2=${x2} x2 is negative`);
+                }
+                */
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else {
             return false;
@@ -45,19 +60,36 @@ function cross($: ExtensionEnv) {
 
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = FOCUS_FACTORING;
+    readonly phases = PHASE_FACTORING;
     constructor(public readonly name: string, op1: Sym, op2: Sym, $: ExtensionEnv) {
         super(name, op2, and(is_cons, is_opr_2_any_any(op1)), and(is_cons, is_opr_2_any_any(op1)), cross($), $);
         this.hash = hash_binop_cons_cons(op2, op1, op1);
     }
-    transform2(op2: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+    transform2(op2: Sym, lhs: LHS, rhs: RHS, oldExpr: EXP): [TFLAGS, U] {
         const $ = this.$;
         const op1 = lhs.opr;
         const A = lhs.rhs;
         const B = rhs.rhs;
-        const X = lhs.lhs;
-        const A_op2_B = $.valueOf(items_to_cons(op2, A, B));
-        return [TFLAG_DIFF, $.valueOf(items_to_cons(op1, X, A_op2_B))];
+        const x1 = lhs.lhs;
+        const x2 = rhs.lhs;
+        if (x1.equals(x2)) {
+            const A_op2_B = $.valueOf(items_to_cons(op2, A, B));
+            return [TFLAG_DIFF, $.valueOf(items_to_cons(op1, x1, A_op2_B))];
+        }
+        else if (is_zero_sum(x1, x2, $)) {
+            if (is_negative(x1)) {
+                const A_op2_B = $.valueOf(items_to_cons(op2, $.negate(A), B));
+                return [TFLAG_DIFF, $.valueOf(items_to_cons(op1, $.negate(x1), A_op2_B))];
+            }
+            if (is_negative(x2)) {
+                const A_op2_B = $.valueOf(items_to_cons(op2, A, $.negate(B)));
+                return [TFLAG_DIFF, $.valueOf(items_to_cons(op1, x1, A_op2_B))];
+            }
+            return [TFLAG_NONE, oldExpr];
+        }
+        else {
+            return [TFLAG_NONE, oldExpr];
+        }
     }
 }
 

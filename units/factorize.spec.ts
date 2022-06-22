@@ -48,6 +48,27 @@ function is_rat_times_any(expr: U): boolean {
     return is_rat(lhs);
 }
 
+describe("factorize Rat", function () {
+    it("k*x+k*y", function () {
+        const lines: string[] = [
+            `k*x+k*y`,
+        ];
+        const engine = create_engine({ useDefinitions: false });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "k*(x+y)");
+        engine.release();
+    });
+    it("k*x-k*y", function () {
+        const lines: string[] = [
+            `k*x-k*y`,
+        ];
+        const engine = create_engine({ useDefinitions: false });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "k*(x-y)");
+        engine.release();
+    });
+});
+
 describe("factorizeL", function () {
     it("(a) should be [a, 1]", function () {
         const retval = factorizeL(a);

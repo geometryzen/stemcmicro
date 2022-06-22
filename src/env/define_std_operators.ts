@@ -66,6 +66,7 @@ import { boo } from '../operators/boo/BooExtension';
 import { ceiling_any } from '../operators/ceiling/ceiling_any';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
+import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { conj_any } from '../operators/conj/conj_any';
@@ -241,6 +242,7 @@ import { pow } from '../operators/pow/pow';
 import { pow_2_any_any } from '../operators/pow/pow_2_any_any';
 import { pow_2_any_rat } from '../operators/pow/pow_2_any_rat';
 import { pow_2_cons_rat } from '../operators/pow/pow_2_cons_rat';
+import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
 import { pow_2_flt_rat } from '../operators/pow/pow_2_flt_rat';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_any_any_rat';
@@ -249,7 +251,6 @@ import { pow_2_rat_mul_2_rat_rat } from '../operators/pow/pow_2_rat_mul_2_rat_ra
 import { pow_2_rat_rat } from '../operators/pow/pow_2_rat_rat';
 import { pow_2_sym_rat } from '../operators/pow/pow_2_sym_rat';
 import { pow_2_uom_rat } from '../operators/pow/pow_2_uom_rat';
-import { pow_2_e_any } from '../operators/pow/pow_e_any';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
 import { printlist_1_any } from '../operators/printlist/printlist_1_any';
@@ -302,6 +303,7 @@ import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
 import { testgt_mul_2_any_any_rat } from '../operators/testgt/testgt_mul_2_any_any_rat';
 import { testgt_rat_rat } from '../operators/testgt/testgt_rat_rat';
 import { testgt_sym_rat } from '../operators/testgt/testgt_sym_rat';
+import { testlt_flt_rat } from '../operators/testlt/testlt_flt_rat';
 import { testlt_mul_2_any_any_rat } from '../operators/testlt/testlt_mul_2_any_any_rat';
 import { testlt_rat_rat } from '../operators/testlt/testlt_rat_rat';
 import { testlt_sym_rat } from '../operators/testlt/testlt_sym_rat';
@@ -634,6 +636,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(ceiling_rat);
     $.defineOperator(ceiling_any);
 
+    $.defineOperator(circexp_any);
+
     $.defineOperator(clock_any);
 
     $.defineOperator(cofactor_varargs);
@@ -746,6 +750,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(testeq_sym_rat);
 
+    $.defineOperator(testlt_flt_rat);
     $.defineOperator(testlt_rat_rat);
     $.defineOperator(testlt_sym_rat);
     $.defineOperator(testlt_mul_2_any_any_rat);

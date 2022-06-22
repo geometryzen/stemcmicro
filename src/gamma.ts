@@ -1,8 +1,8 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative_term } from './is';
 import { makeList } from './makeList';
 import { is_rat } from './operators/rat/is_rat';
-import { sine } from './operators/sin/sin';
+import { sin } from './operators/sin/sine';
+import { is_negative } from './predicates/is_negative';
 import { GAMMA, MEQUAL } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_add } from './runtime/helpers';
@@ -42,11 +42,11 @@ function gammaf(p1: U, $: ExtensionEnv): U {
     //    return
     //  }
 
-    if (is_negative_term(p1)) {
+    if (is_negative(p1)) {
         return $.divide(
             $.multiply(DynamicConstants.Pi($), negOne),
             $.multiply(
-                $.multiply(sine($.multiply(DynamicConstants.Pi($), p1), $), p1),
+                $.multiply(sin($.multiply(DynamicConstants.Pi($), p1), $), p1),
                 gamma($.negate(p1), $)
             )
         );

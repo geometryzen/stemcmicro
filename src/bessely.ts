@@ -1,11 +1,11 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_negative_term } from './is';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
+import { is_flt } from './operators/flt/is_flt';
+import { is_negative } from './predicates/is_negative';
 import { BESSELY } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
 import { negOne } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -43,7 +43,7 @@ function yybessely(X: U, N: U, $: ExtensionEnv): U {
         return wrap_as_flt(d);
     }
 
-    if (is_negative_term(N)) {
+    if (is_negative(N)) {
         return $.multiply($.power(negOne, N), makeList(BESSELY, X, $.negate(N)));
     }
 

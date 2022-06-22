@@ -1,8 +1,9 @@
 import { rational } from '../../bignum';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { equaln, equalq, is_negative } from '../../is';
+import { equaln, equalq } from '../../is';
 import { makeList } from '../../makeList';
-import { EvaluatingAsFloat } from '../../modes/modes';
+import { evaluatingAsFloat } from '../../modes/modes';
+import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, COS, PI, POWER, SIN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_multiply, is_power } from '../../runtime/helpers';
@@ -69,7 +70,7 @@ export function arctan(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 3) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return $.multiply(rational(1, 6), $.getModeFlag(EvaluatingAsFloat) ? piAsDouble : PI);
+        return $.multiply(rational(1, 6), $.getModeFlag(evaluatingAsFloat) ? piAsDouble : PI);
     }
 
     // arctan(1) -> pi/4

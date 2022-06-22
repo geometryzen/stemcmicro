@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, FOCUS_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
@@ -23,7 +23,7 @@ class Builder implements OperatorBuilder<Cons> {
  */
 class Op extends Function2<Rat, BCons<Sym, Sym, Sym>> implements Operator<Cons> {
     readonly hash: string;
-    readonly phases = FOCUS_IMPLICATE;
+    readonly phases = PHASE_IMPLICATE;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_mul_2_sym_sym', MATH_MUL, is_rat, and(is_cons, is_mul_2_sym_sym), $);
         this.hash = hash_binop_atom_cons(MATH_MUL, HASH_RAT, MATH_MUL);

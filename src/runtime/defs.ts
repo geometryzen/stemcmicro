@@ -2,8 +2,8 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
-import { ExtensionEnv, FOCUS_EXPANDING, FOCUS_FACTORING } from "../env/ExtensionEnv";
-import { EvaluatingAsFloat } from "../modes/modes";
+import { ExtensionEnv, PHASE_EXPANDING, PHASE_FACTORING } from "../env/ExtensionEnv";
+import { evaluatingAsFloat } from "../modes/modes";
 import { Flt, negOneAsDouble, piAsDouble } from "../tree/flt/Flt";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
@@ -183,7 +183,7 @@ export function hard_reset() {
 
 export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_FACTORING);
+    $.setFocus(PHASE_FACTORING);
     try {
         return func(arg, $);
     }
@@ -194,7 +194,7 @@ export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv
 
 export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_FACTORING);
+    $.setFocus(PHASE_FACTORING);
     try {
         return func(lhs, rhs, $);
     }
@@ -205,7 +205,7 @@ export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: Ext
 
 export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_EXPANDING);
+    $.setFocus(PHASE_EXPANDING);
     try {
         return func(arg, $);
     }
@@ -216,7 +216,7 @@ export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv
 
 export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
     const phase = $.getFocus();
-    $.setFocus(FOCUS_EXPANDING);
+    $.setFocus(PHASE_EXPANDING);
     try {
         return func(lhs, rhs, $);
     }
@@ -230,9 +230,9 @@ export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: Ext
  */
 export class DynamicConstants {
     public static NegOne($: ExtensionEnv): Flt | Rat {
-        return $.getModeFlag(EvaluatingAsFloat) ? negOneAsDouble : negOne;
+        return $.getModeFlag(evaluatingAsFloat) ? negOneAsDouble : negOne;
     }
     public static Pi($: ExtensionEnv): Sym | Flt {
-        return $.getModeFlag(EvaluatingAsFloat) ? piAsDouble : PI;
+        return $.getModeFlag(evaluatingAsFloat) ? piAsDouble : PI;
     }
 }

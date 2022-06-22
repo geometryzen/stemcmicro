@@ -24,7 +24,6 @@ describe("exp", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "e");
         engine.release();
     });
-    // TODO: Conversion of trig functions.
     it("exp(i*pi)", function () {
         const lines: string[] = [
             `exp(i*pi)`
@@ -34,11 +33,9 @@ describe("exp", function () {
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "cos(π)+sin(π)*i");
-        // assert.strictEqual(engine.renderAsInfix(actual), "-1");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1");
         engine.release();
     });
-    // TODO: Conversion of trig functions.
     it("exp(pi*i)", function () {
         const lines: string[] = [
             `exp(pi*i)`
@@ -48,8 +45,7 @@ describe("exp", function () {
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "cos(π)+sin(π)*i");
-        // assert.strictEqual(engine.renderAsInfix(actual), "-1");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1");
         engine.release();
     });
     it("exp(i*x)", function () {

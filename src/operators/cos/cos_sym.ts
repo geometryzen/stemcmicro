@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -6,6 +6,7 @@ import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
 import { is_sym } from "../sym/is_sym";
 import { MATH_COS } from "./MATH_COS";
+import { transform_cos } from "./transform_cos";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -26,7 +27,9 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         return this.$.isReal(exp.arg);
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        return [TFLAG_HALT, expr];
+        const $ = this.$;
+        // TODO: Optimize.I
+        return transform_cos(arg, expr, $);
     }
 }
 

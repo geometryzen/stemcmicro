@@ -20,7 +20,6 @@ import { factorial } from "../../factorial";
 import { Eval_filter } from "../../filter";
 import { Eval_for } from "../../for";
 import { Eval_gamma } from "../../gamma";
-import { Eval_gcd } from "../../gcd";
 import { hermite } from "../../hermite";
 import { invg } from "../../inv";
 import { Eval_isprime } from "../../isprime";
@@ -36,7 +35,7 @@ import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eva
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, GCD, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, ZERO } from "../../runtime/constants";
+import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
@@ -56,7 +55,6 @@ import { Err } from "../../tree/err/Err";
 import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
-import { Eval_zero } from "../../zero";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_rat } from "../rat/is_rat";
@@ -301,9 +299,6 @@ class ConsExtension implements Extension<Cons> {
             case GAMMA:
                 Eval_gamma(expr, $);
                 return stack_pop();
-            case GCD:
-                Eval_gcd(expr, $);
-                return stack_pop();
             case HERMITE:
                 Eval_hermite(expr, $);
                 return stack_pop();
@@ -427,9 +422,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case TRANSPOSE:
                 Eval_transpose(expr, $);
-                return stack_pop();
-            case ZERO:
-                Eval_zero(expr, $);
                 return stack_pop();
             default:
                 throw new Error();

@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { gcd } from '../../gcd';
+import { gcd } from '../gcd/gcd';
 import { use_expanding_with_binary_function } from '../../runtime/defs';
 import { car, cdr, is_cons, U } from '../../tree/tree';
 

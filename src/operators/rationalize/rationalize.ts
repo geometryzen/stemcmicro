@@ -1,6 +1,6 @@
 import { condense } from '../../condense';
 import { ExtensionEnv, PHASE_FACTORING } from '../../env/ExtensionEnv';
-import { gcd } from '../../gcd';
+import { gcd } from '../gcd/gcd';
 import { is_negative_number } from '../../predicates/is_negative_number';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';

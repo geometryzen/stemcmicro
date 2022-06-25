@@ -131,6 +131,7 @@ import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
 import { floor_varargs } from '../operators/floor/floor_varargs';
 import { is_flt, op_flt } from '../operators/flt/FltExtension';
+import { gcd_varargs } from '../operators/gcd/gcd_varargs';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
@@ -335,6 +336,7 @@ import { typeof_tensor } from '../operators/typeof/typeof_tensor';
 import { unit_any } from '../operators/unit/unit_any';
 import { is_uom, uomExtensionBuilder } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
+import { zero_varargs } from '../operators/zero/zero_varargs';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
@@ -578,6 +580,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(conj_blade);
     $.defineOperator(conj_any);
 
+    $.defineOperator(gcd_varargs);
+
     $.defineOperator(inner_2_num_num);
     $.defineOperator(inner_2_rat_imu);
     $.defineOperator(inner_2_rat_sym);
@@ -798,6 +802,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(unit_any);
 
     $.defineOperator(uom_1_str);
+
+    $.defineOperator(zero_varargs);
 
     // NIL is implemented as an empty Cons, so it has to be defined before the generic Cons operator.
     $.defineOperator(nilExtensionBuilder);

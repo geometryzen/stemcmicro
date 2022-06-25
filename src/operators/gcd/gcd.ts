@@ -1,31 +1,30 @@
-import { compare_num_num } from './calculators/compare/compare_num_num';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { isunivarpolyfactoredorexpandedform } from './is';
-import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
-import { makeList } from './makeList';
-import { is_num } from './operators/num/is_num';
-import { is_rat } from './operators/rat/is_rat';
-import { is_negative_number } from './predicates/is_negative_number';
-import { MULTIPLY } from './runtime/constants';
-import { use_expanding_with_binary_function } from './runtime/defs';
-import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { caddr, cadr } from './tree/helpers';
-import { one } from './tree/rat/Rat';
-import { car, cdr, is_cons, U } from './tree/tree';
+import { compare_num_num } from '../../calculators/compare/compare_num_num';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { isunivarpolyfactoredorexpandedform } from '../../is';
+import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
+import { makeList } from '../../makeList';
+import { is_num } from '../num/is_num';
+import { is_rat } from '../rat/is_rat';
+import { is_negative_number } from '../../predicates/is_negative_number';
+import { MULTIPLY } from '../../runtime/constants';
+import { use_expanding_with_binary_function } from '../../runtime/defs';
+import { is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { caddr, cadr } from '../../tree/helpers';
+import { one } from '../../tree/rat/Rat';
+import { car, cdr, is_cons, U } from '../../tree/tree';
 
 // Greatest common denominator
 // can also be run on polynomials, however
 // it works only on the integers and it works
 // by factoring the polynomials (not Euclidean algorithm)
-export function Eval_gcd(p1: U, $: ExtensionEnv): void {
+export function Eval_gcd(p1: U, $: ExtensionEnv): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
 
     if (is_cons(p1)) {
         result = p1.tail().reduce((acc: U, p: U) => gcd(acc, $.valueOf(p), $), result);
     }
-    stack_push(result);
+    return result;
 }
 
 export function gcd(p1: U, p2: U, $: ExtensionEnv): U {

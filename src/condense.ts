@@ -1,5 +1,5 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { gcd } from './gcd';
+import { gcd } from './operators/gcd/gcd';
 import { multiply_noexpand } from './multiply';
 import { use_factoring_with_unary_function } from './runtime/defs';
 import { is_add } from './runtime/helpers';

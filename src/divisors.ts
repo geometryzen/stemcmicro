@@ -1,7 +1,7 @@
 import { sort_factors } from './calculators/compare/sort_factors';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factor_small_number } from './factor';
-import { gcd } from './gcd';
+import { gcd } from './operators/gcd/gcd';
 import { nativeInt } from './nativeInt';
 import { is_num } from './operators/num/is_num';
 import { is_add, is_multiply, is_power } from './runtime/helpers';

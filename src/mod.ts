@@ -4,19 +4,18 @@ import { is_rat_integer } from './is_rat_integer';
 import { makeList } from './makeList';
 import { mmod } from './mmul';
 import { nativeInt } from './nativeInt';
+import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
 import { MOD } from './runtime/constants';
 import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
-import { wrap_as_int, Rat } from './tree/rat/Rat';
+import { Rat, wrap_as_int } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
-export function Eval_mod(p1: U, $: ExtensionEnv): void {
+export function Eval_mod(p1: U, $: ExtensionEnv): U {
     const arg2 = $.valueOf(caddr(p1));
     const arg1 = $.valueOf(cadr(p1));
-    stack_push(mod(arg1, arg2, $));
+    return mod(arg1, arg2, $);
 }
 
 function mod(p1: U, p2: U, $: ExtensionEnv): U {

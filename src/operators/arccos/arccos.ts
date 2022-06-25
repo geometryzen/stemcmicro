@@ -1,5 +1,5 @@
-import { rational } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { rational } from '../../bignum';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
 import {
     equaln,
     equalq,
@@ -7,18 +7,18 @@ import {
     isMinusSqrtThreeOverTwo,
     isoneoversqrttwo,
     isSqrtThreeOverTwo
-} from './is';
-import { makeList } from './makeList';
-import { evaluatingAsFloat } from './modes/modes';
-import { nativeInt } from './nativeInt';
-import { is_flt } from './operators/flt/is_flt';
-import { is_rat } from './operators/rat/is_rat';
-import { ARCCOS, COS, PI, POWER } from './runtime/constants';
-import { is_multiply } from './runtime/helpers';
-import { piAsDouble, wrap_as_flt, zeroAsDouble } from './tree/flt/Flt';
-import { cadr } from './tree/helpers';
-import { half, third, two, zero } from './tree/rat/Rat';
-import { car, cdr, U } from './tree/tree';
+} from '../../is';
+import { makeList } from '../../makeList';
+import { evaluatingAsFloat } from '../../modes/modes';
+import { nativeInt } from '../../nativeInt';
+import { is_flt } from '../flt/is_flt';
+import { is_rat } from '../rat/is_rat';
+import { ARCCOS, COS, PI, POWER } from '../../runtime/constants';
+import { is_multiply } from '../../runtime/helpers';
+import { piAsDouble, wrap_as_flt, zeroAsDouble } from '../../tree/flt/Flt';
+import { cadr } from '../../tree/helpers';
+import { half, third, two, zero } from '../../tree/rat/Rat';
+import { car, cdr, U } from '../../tree/tree';
 
 /* arccos =====================================================================
 

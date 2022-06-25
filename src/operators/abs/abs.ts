@@ -2,7 +2,7 @@ import { complex_conjugate } from '../../complex_conjugate';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
-import { imag } from '../../imag';
+import { imag } from '../imag/imag';
 import { equaln, is_num_and_gt_zero } from '../../is';
 import { makeList } from '../../makeList';
 import { evaluatingAsFloat } from '../../modes/modes';

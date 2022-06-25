@@ -1,6 +1,6 @@
 import { subtract } from '../../calculators/sub/subtract';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { imag } from '../../imag';
+import { imag } from '../imag/imag';
 import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
 import { makeList } from '../../makeList';
 import { evaluatingAsFloat } from '../../modes/modes';

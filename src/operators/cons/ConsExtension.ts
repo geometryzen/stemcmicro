@@ -1,8 +1,4 @@
 import { Eval_approxratio } from "../../approxratio";
-import { Eval_arccosh } from "../../arccosh";
-import { Eval_arctanh } from "../../arctanh";
-import { Eval_besselj } from "../../besselj";
-import { Eval_bessely } from "../../bessely";
 import { Eval_binomial } from "../../binomial";
 import { Eval_choose } from "../../choose";
 import { Eval_clear, Eval_clearall } from "../../clear";
@@ -26,7 +22,6 @@ import { Eval_for } from "../../for";
 import { Eval_gamma } from "../../gamma";
 import { Eval_gcd } from "../../gcd";
 import { hermite } from "../../hermite";
-import { Eval_imag } from "../../imag";
 import { invg } from "../../inv";
 import { Eval_isprime } from "../../isprime";
 import { is_rat_integer } from "../../is_rat_integer";
@@ -37,18 +32,16 @@ import { Eval_legendre } from "../../legendre";
 import { Eval_log } from "../../log";
 import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
-import { Eval_mod } from "../../mod";
 import { Eval_nroots } from "../../nroots";
 import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, ARCCOS, ARCCOSH, ARCTANH, ASSIGN, BESSELJ, BESSELY, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, GCD, HERMITE, IF, IMAG, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MOD, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, UNIT, ZERO } from "../../runtime/constants";
+import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, GCD, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LCM, LEADING, LEGENDRE, LOG, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE, ZERO } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
-import { Eval_arccos } from "../../scripting/eval_arccos";
 import { Eval_if } from "../../scripting/eval_if";
 import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern } from "../../scripting/eval_pattern";
 import { Eval_power } from "../../scripting/eval_power";
@@ -64,8 +57,6 @@ import { Eval_transpose } from "../../transpose";
 import { Err } from "../../tree/err/Err";
 import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
-import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor_elements";
-import { Tensor } from "../../tree/tensor/Tensor";
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { Eval_zero } from "../../zero";
 import { is_flt } from "../flt/is_flt";
@@ -212,24 +203,6 @@ class ConsExtension implements Extension<Cons> {
 
         // TODO: This switch will fail because Sym is no longer interred.
         switch (op) {
-            case ARCCOS: {
-                Eval_arccos(expr, $);
-                return stack_pop();
-            }
-            case ARCCOSH:
-                Eval_arccosh(expr, $);
-                return stack_pop();
-            case ARCTANH:
-                Eval_arctanh(expr, $);
-                return stack_pop();
-                // case ATOMIZE: Eval_atomize();
-                return stack_pop();
-            case BESSELJ:
-                Eval_besselj(expr, $);
-                return stack_pop();
-            case BESSELY:
-                Eval_bessely(expr, $);
-                return stack_pop();
             case BINDING:
                 Eval_binding(expr, $);
                 return stack_pop();
@@ -339,9 +312,6 @@ class ConsExtension implements Extension<Cons> {
             case IF:
                 Eval_if(expr, $);
                 return stack_pop();
-            case IMAG:
-                Eval_imag(expr, $);
-                return stack_pop();
             case INVG:
                 Eval_invg(expr, $);
                 return stack_pop();
@@ -369,9 +339,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case LOOKUP:
                 Eval_lookup(expr, $);
-                return stack_pop();
-            case MOD:
-                Eval_mod(expr, $);
                 return stack_pop();
             case MULTIPLY: {
                 // This should be done by the math_mul extension.
@@ -468,9 +435,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case TRANSPOSE:
                 Eval_transpose(expr, $);
-                return stack_pop();
-            case UNIT:
-                Eval_unit(expr, $);
                 return stack_pop();
             case ZERO:
                 Eval_zero(expr, $);
@@ -686,29 +650,6 @@ function Eval_subst(p1: Cons, $: ExtensionEnv): void {
     const oldExpr = $.valueOf(caddr(p1));
     const expr = $.valueOf(cadddr(p1));
     stack_push($.valueOf(subst(expr, oldExpr, newExpr, $)));
-}
-
-// always returns a matrix with rank 2
-// i.e. two dimensions,
-// the passed parameter is the size
-function Eval_unit(expr: U, $: ExtensionEnv) {
-    const n = evaluate_integer(cadr(expr), $);
-
-    if (isNaN(n)) {
-        stack_push(expr);
-        return;
-    }
-
-    if (n < 1) {
-        stack_push(expr);
-        return;
-    }
-
-    const sizes = [n, n];
-    const elems = create_tensor_elements_diagonal(n, one, zero);
-    const I = new Tensor(sizes, elems);
-
-    stack_push(I);
 }
 
 // like Eval() except "=" (assignment) is treated

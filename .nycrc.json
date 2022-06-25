@@ -1,10 +1,8 @@
 {
     "extends": "@istanbuljs/nyc-config-typescript",
     "include": [
-        "runtime/**/*.ts",
         "src/**/*.ts",
-        "index.ts",
-        "inspector.ts"
+        "index.ts"
     ],
     "exclude": [
         "node_modules/"

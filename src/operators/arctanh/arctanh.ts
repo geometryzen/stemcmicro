@@ -1,12 +1,11 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { ARCTANH, TANH } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
-import { cadr } from './tree/helpers';
-import { zero } from './tree/rat/Rat';
-import { car, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { is_flt } from '../flt/is_flt';
+import { ARCTANH, TANH } from '../../runtime/constants';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { cadr } from '../../tree/helpers';
+import { zero } from '../../tree/rat/Rat';
+import { car, U } from '../../tree/tree';
 
 /* arctanh =====================================================================
 
@@ -23,8 +22,8 @@ General description
 Returns the inverse hyperbolic tangent of x.
 
 */
-export function Eval_arctanh(x: U, $: ExtensionEnv): void {
-    stack_push(arctanh($.valueOf(cadr(x)), $));
+export function Eval_arctanh(x: U, $: ExtensionEnv): U {
+    return arctanh($.valueOf(cadr(x)), $);
 }
 
 function arctanh(x: U, $: ExtensionEnv): U {

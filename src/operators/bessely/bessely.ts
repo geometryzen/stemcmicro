@@ -1,14 +1,13 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { is_flt } from './operators/flt/is_flt';
-import { is_negative } from './predicates/is_negative';
-import { BESSELY } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { wrap_as_flt } from './tree/flt/Flt';
-import { caddr, cadr } from './tree/helpers';
-import { negOne } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { is_negative } from '../../predicates/is_negative';
+import { BESSELY } from '../../runtime/constants';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { caddr, cadr } from '../../tree/helpers';
+import { negOne } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
+import { is_flt } from '../flt/is_flt';
 
 /* bessely =====================================================================
 
@@ -26,9 +25,8 @@ General description
 Bessel function of second kind.
 
 */
-export function Eval_bessely(p1: U, $: ExtensionEnv): void {
-    const result = bessely($.valueOf(cadr(p1)), $.valueOf(caddr(p1)), $);
-    stack_push(result);
+export function Eval_bessely(p1: U, $: ExtensionEnv): U {
+    return bessely($.valueOf(cadr(p1)), $.valueOf(caddr(p1)), $);
 }
 
 export function bessely(p1: U, p2: U, $: ExtensionEnv): U {

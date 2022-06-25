@@ -1,5 +1,5 @@
-import { besselj } from '../../../besselj';
-import { bessely } from '../../../bessely';
+import { besselj } from '../../besselj/besselj';
+import { bessely } from '../../bessely/bessely';
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
 import { compare_terms } from '../../../calculators/compare/compare_terms';

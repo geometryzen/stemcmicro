@@ -1,18 +1,17 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { evaluatingAsFloat } from './modes/modes';
-import { nativeInt } from './nativeInt';
-import { cos } from './operators/cos/cosine';
-import { is_flt } from './operators/flt/is_flt';
-import { is_rat } from './operators/rat/is_rat';
-import { sin } from './operators/sin/sine';
-import { is_negative } from './predicates/is_negative';
-import { BESSELJ, MEQUAL, MSIGN, PI } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { wrap_as_flt } from './tree/flt/Flt';
-import { caddr, cadr } from './tree/helpers';
-import { half, negOne, one, two, wrap_as_int, zero } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { evaluatingAsFloat } from '../../modes/modes';
+import { nativeInt } from '../../nativeInt';
+import { cos } from '../cos/cosine';
+import { is_flt } from '../flt/is_flt';
+import { is_rat } from '../rat/is_rat';
+import { sin } from '../sin/sine';
+import { is_negative } from '../../predicates/is_negative';
+import { BESSELJ, MEQUAL, MSIGN, PI } from '../../runtime/constants';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { caddr, cadr } from '../../tree/helpers';
+import { half, negOne, one, two, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
 
 /* besselj =====================================================================
 
@@ -52,9 +51,8 @@ Examples:
   besselj(x,-3/2) = -(1/x) besselj(x,-1/2) - besselj(x,1/2)
 
 */
-export function Eval_besselj(p1: U, $: ExtensionEnv): void {
-    const result = besselj($.valueOf(cadr(p1)), $.valueOf(caddr(p1)), $);
-    stack_push(result);
+export function Eval_besselj(p1: U, $: ExtensionEnv): U {
+    return besselj($.valueOf(cadr(p1)), $.valueOf(caddr(p1)), $);
 }
 
 export function besselj(p1: U, p2: U, $: ExtensionEnv): U {

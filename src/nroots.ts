@@ -2,7 +2,7 @@ import { coeff } from './coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
-import { imag } from './imag';
+import { imag } from './operators/imag/imag';
 import { is_poly_expanded_form } from './is';
 import { sort_stack } from './misc';
 import { yyfloat } from './operators/float/float';

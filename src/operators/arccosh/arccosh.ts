@@ -1,13 +1,12 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { ARCCOSH, COSH } from './runtime/constants';
-import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
-import { cadr } from './tree/helpers';
-import { zero } from './tree/rat/Rat';
-import { car, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { is_flt } from '../flt/is_flt';
+import { ARCCOSH, COSH } from '../../runtime/constants';
+import { halt } from '../../runtime/defs';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { cadr } from '../../tree/helpers';
+import { zero } from '../../tree/rat/Rat';
+import { car, U } from '../../tree/tree';
 
 /* arccosh =====================================================================
 
@@ -24,8 +23,8 @@ General description
 Returns the inverse hyperbolic cosine of x.
 
 */
-export function Eval_arccosh(x: U, $: ExtensionEnv): void {
-    stack_push(arccosh($.valueOf(cadr(x)), $));
+export function Eval_arccosh(x: U, $: ExtensionEnv): U {
+    return arccosh($.valueOf(cadr(x)), $);
 }
 
 function arccosh(x: U, $: ExtensionEnv): U {

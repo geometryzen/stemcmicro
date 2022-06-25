@@ -54,12 +54,17 @@ import { add_2_zzz_mul_2_rat_aaa } from '../operators/add/add_2_zzz_mul_2_rat_aa
 import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { and_varargs } from '../operators/and/and_varargs';
+import { arccos_varargs } from '../operators/arccos/arccos_varargs';
+import { arccosh_varargs } from '../operators/arccosh/arccosh_varargs';
 import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
 import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
 import { arctan_varargs } from '../operators/arctan/arctan_varargs';
+import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
 import { arg_varargs } from '../operators/arg/arg_varargs';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
+import { besselj_varargs } from '../operators/besselj/besselj_varargs';
+import { bessely_varargs } from '../operators/bessely/bessely_varargs';
 import { bladeExtensionBuilder } from '../operators/blade/BladeExtension';
 import { is_blade } from '../operators/blade/is_blade';
 import { boo } from '../operators/boo/BooExtension';
@@ -130,6 +135,7 @@ import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hypExtensionBuilder } from '../operators/hyp/HypExtension';
+import { imag_any } from '../operators/imag/imag_any';
 import { imuExtensionBuilder } from '../operators/imu/ImuExtension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner } from '../operators/inner/inner';
@@ -156,6 +162,7 @@ import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_any_mul_2_scalar_any } from '../operators/lco/lco_2_any_mul_2_scalar_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
 import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_any_any';
+import { mod_varargs } from '../operators/mod/mod_varargs';
 import { associate_right_mul_2_mul_2_any_any_any } from '../operators/mul/associate_right_mul_2_mul_2_any_any_any';
 import { canonicalize_mul_2_mul_2_sym_sym_sym } from '../operators/mul/canonicalize_mul_2_mul_2_sym_sym_sym';
 import { canonicalize_mul_2_sym_mul_2_sym_sym } from '../operators/mul/canonicalize_mul_2_sym_mul_2_sym_sym';
@@ -323,6 +330,7 @@ import { mul_2_sin_cos } from '../operators/trig/mul_2_sin_cos';
 import { typeof_any } from '../operators/typeof/typeof_any';
 import { typeof_blade } from '../operators/typeof/typeof_blade';
 import { typeof_tensor } from '../operators/typeof/typeof_tensor';
+import { unit_any } from '../operators/unit/unit_any';
 import { is_uom, uomExtensionBuilder } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
@@ -592,6 +600,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(lco_2_any_mul_2_scalar_any);
     $.defineOperator(lco_2_any_any);
 
+    $.defineOperator(mod_varargs);
+
     $.defineOperator(outer_2_blade_blade);
     $.defineOperator(outer_2_add_2_any_any_any);
     $.defineOperator(outer_2_mul_2_scalar_any_any);
@@ -624,13 +634,19 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(algebra_2_tensor_tensor);
     $.defineOperator(and_varargs);
+    $.defineOperator(arccos_varargs);
+    $.defineOperator(arccosh_varargs);
     $.defineOperator(arcsin_varargs);
     $.defineOperator(arcsinh_any);
     $.defineOperator(arctan_varargs);
+    $.defineOperator(arctanh_varargs);
     $.defineOperator(arg_varargs);
 
     $.defineOperator(assign_sym_any);
     $.defineOperator(assign_any_any);
+
+    $.defineOperator(besselj_varargs);
+    $.defineOperator(bessely_varargs);
 
     $.defineOperator(ceiling_flt);
     $.defineOperator(ceiling_rat);
@@ -685,6 +701,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(floor_varargs);
 
     $.defineOperator(hilbert_varargs);
+
+    $.defineOperator(imag_any);
 
     $.defineOperator(index_varargs);
 
@@ -771,6 +789,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(hypExtensionBuilder);
     $.defineOperator(errExtensionBuilder);
     $.defineOperator(imuExtensionBuilder);
+
+    $.defineOperator(unit_any);
 
     $.defineOperator(uom_1_str);
 

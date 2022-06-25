@@ -1,11 +1,10 @@
-import { complex_conjugate } from './complex_conjugate';
-import { imu } from './env/imu';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { rect } from './operators/rect/rect';
-import { stack_push } from './runtime/stack';
-import { cadr } from './tree/helpers';
-import { two } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { complex_conjugate } from '../../complex_conjugate';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { imu } from '../../env/imu';
+import { cadr } from '../../tree/helpers';
+import { two } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
+import { rect } from '../rect/rect';
 
 /*
  Returns the coefficient of the imaginary part of complex z
@@ -18,9 +17,8 @@ import { U } from './tree/tree';
   exp(i a)  sin(a)
 */
 
-export function Eval_imag(p1: U, $: ExtensionEnv): void {
-    const result = imag($.valueOf(cadr(p1)), $);
-    stack_push(result);
+export function Eval_imag(p1: U, $: ExtensionEnv): U {
+    return imag($.valueOf(cadr(p1)), $);
 }
 
 export function imag(z: U, $: ExtensionEnv): U {

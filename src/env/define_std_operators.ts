@@ -158,6 +158,7 @@ import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
+import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_any_mul_2_scalar_any } from '../operators/lco/lco_2_any_mul_2_scalar_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
@@ -593,6 +594,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inner_2_any_imu);
     $.defineOperator(inner_2_any_any);
     $.defineOperator(inner);
+
+    $.defineOperator(lcm_varargs);
 
     $.defineOperator(lco_2_blade_blade);
     $.defineOperator(lco_2_add_2_any_any_any);

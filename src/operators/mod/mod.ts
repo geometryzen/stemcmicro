@@ -1,16 +1,16 @@
 import bigInt from 'big-integer';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_rat_integer } from './is_rat_integer';
-import { makeList } from './makeList';
-import { mmod } from './mmul';
-import { nativeInt } from './nativeInt';
-import { is_flt } from './operators/flt/is_flt';
-import { is_num } from './operators/num/is_num';
-import { MOD } from './runtime/constants';
-import { halt } from './runtime/defs';
-import { caddr, cadr } from './tree/helpers';
-import { Rat, wrap_as_int } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { is_rat_integer } from '../../is_rat_integer';
+import { makeList } from '../../makeList';
+import { mmod } from '../../mmul';
+import { nativeInt } from '../../nativeInt';
+import { is_flt } from '../flt/is_flt';
+import { is_num } from '../num/is_num';
+import { MOD } from '../../runtime/constants';
+import { halt } from '../../runtime/defs';
+import { caddr, cadr } from '../../tree/helpers';
+import { Rat, wrap_as_int } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
 
 export function Eval_mod(p1: U, $: ExtensionEnv): U {
     const arg2 = $.valueOf(caddr(p1));

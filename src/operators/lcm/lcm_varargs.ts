@@ -1,7 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { Eval_mod } from "./mod";
-import { MOD } from "../../runtime/constants";
+import { Eval_lcm } from "./lcm";
+import { LCM } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
@@ -14,15 +14,15 @@ class Builder implements OperatorBuilder<U> {
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('mod', MOD, $);
+        super('lcm', LCM, $);
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_mod(expr, $);
+        const retval = Eval_lcm(expr, $);
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const mod_varargs = new Builder();
+export const lcm_varargs = new Builder();

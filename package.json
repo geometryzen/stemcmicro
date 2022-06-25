@@ -57,6 +57,7 @@
         "unit-integral": "mocha 'units/integral.spec.ts'",
         "unit-kernel": "mocha 'units/kernel.spec.ts'",
         "unit-latex": "mocha 'units/latex.spec.ts'",
+        "unit-lcm": "mocha 'units/lcm.spec.ts'",
         "unit-log": "mocha 'units/log.spec.ts'",
         "unit-mod": "mocha 'units/mod.spec.ts'",
         "unit-mul": "mocha 'units/mul.spec.ts'",

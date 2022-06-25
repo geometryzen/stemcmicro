@@ -6,7 +6,7 @@ import { ydivisors } from './divisors';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { contains_floating_values_or_floatf } from './is';
-import { lcm } from './lcm';
+import { lcm } from './operators/lcm/lcm';
 import { multiply_noexpand, negate_noexpand } from './multiply';
 import { denominator } from './operators/denominator/denominator';
 import { rect } from './operators/rect/rect';

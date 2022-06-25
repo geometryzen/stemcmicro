@@ -11,7 +11,6 @@ import { is_negative_number } from './predicates/is_negative_number';
 import { LOG } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
 import { caddr, cadr } from './tree/helpers';
 import { one, zero } from './tree/rat/Rat';
@@ -25,9 +24,8 @@ import { Cons, U } from './tree/tree';
 // In engineering, biology, astronomy, "log" can stand instead
 // for the "common" logarithm i.e. base 10. Also note that Google
 // calculations use log for the common logarithm.
-export function Eval_log(expr: Cons, $: ExtensionEnv): void {
-    const result = logarithm($.valueOf(cadr(expr)), $);
-    stack_push(result);
+export function Eval_log(expr: Cons, $: ExtensionEnv): U {
+    return logarithm($.valueOf(cadr(expr)), $);
 }
 
 export function logarithm(expr: U, $: ExtensionEnv): U {

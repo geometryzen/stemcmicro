@@ -162,6 +162,7 @@ import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_any_mul_2_scalar_any } from '../operators/lco/lco_2_any_mul_2_scalar_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
 import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_any_any';
+import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
 import { associate_right_mul_2_mul_2_any_any_any } from '../operators/mul/associate_right_mul_2_mul_2_any_any_any';
 import { canonicalize_mul_2_mul_2_sym_sym_sym } from '../operators/mul/canonicalize_mul_2_mul_2_sym_sym_sym';
@@ -600,6 +601,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(lco_2_any_mul_2_scalar_any);
     $.defineOperator(lco_2_any_any);
 
+    $.defineOperator(log_varargs);
     $.defineOperator(mod_varargs);
 
     $.defineOperator(outer_2_blade_blade);

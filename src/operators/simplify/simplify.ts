@@ -16,7 +16,7 @@ import { DEBUG, defs, use_factoring_with_unary_function } from '../../runtime/de
 import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/helpers';
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
-import { transpose_factoring } from '../../transpose';
+import { transpose_factoring } from '../transpose/transpose';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, one, third, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';

@@ -86,6 +86,7 @@
         "unit-sqrt": "mocha 'units/sqrt.spec.ts'",
         "unit-tan": "mocha 'units/tan.spec.ts'",
         "unit-tensor": "mocha 'units/tensor.spec.ts'",
+        "unit-transpose": "mocha 'units/transpose.spec.ts'",
         "unit-tree": "mocha 'units/tree.spec.ts'",
         "unit-trie": "mocha 'units/Trie.spec.ts'",
         "unit-trig": "mocha 'units/trig.spec.ts'",

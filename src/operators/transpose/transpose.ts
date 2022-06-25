@@ -1,21 +1,20 @@
-import { ExtensionEnv, PHASE_FACTORING } from './env/ExtensionEnv';
-import { is_num_and_eq_two } from './is';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { is_num } from './operators/num/is_num';
-import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from './runtime/constants';
-import { halt } from './runtime/defs';
-import { is_add, is_identity_matrix, is_inner_or_dot, is_multiply, is_transpose } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { cadddr, caddr, cadr, cddr } from './tree/helpers';
-import { one, two, zero } from './tree/rat/Rat';
-import { is_tensor } from './operators/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
-import { car, cdr, is_cons, nil, U } from './tree/tree';
+import { ExtensionEnv, PHASE_FACTORING } from '../../env/ExtensionEnv';
+import { is_num_and_eq_two } from '../../is';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { is_num } from '../num/is_num';
+import { is_tensor } from '../tensor/is_tensor';
+import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from '../../runtime/constants';
+import { halt } from '../../runtime/defs';
+import { is_add, is_identity_matrix, is_inner_or_dot, is_multiply, is_transpose } from '../../runtime/helpers';
+import { cadddr, caddr, cadr, cddr } from '../../tree/helpers';
+import { one, two, zero } from '../../tree/rat/Rat';
+import { Tensor } from '../../tree/tensor/Tensor';
+import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 
 
 // Transpose tensor indices
-export function Eval_transpose(p1: U, $: ExtensionEnv): void {
+export function Eval_transpose(p1: U, $: ExtensionEnv): U {
     const arg1 = $.valueOf(cadr(p1));
     let arg2: U = one;
     let arg3: U = two;
@@ -24,7 +23,7 @@ export function Eval_transpose(p1: U, $: ExtensionEnv): void {
         arg3 = $.valueOf(cadddr(p1));
     }
 
-    stack_push(transpose(arg1, arg2, arg3, $));
+    return transpose(arg1, arg2, arg3, $);
 }
 
 // by default p3 is 2 and p2 is 1

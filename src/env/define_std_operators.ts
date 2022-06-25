@@ -317,6 +317,7 @@ import { testlt_flt_rat } from '../operators/testlt/testlt_flt_rat';
 import { testlt_mul_2_any_any_rat } from '../operators/testlt/testlt_mul_2_any_any_rat';
 import { testlt_rat_rat } from '../operators/testlt/testlt_rat_rat';
 import { testlt_sym_rat } from '../operators/testlt/testlt_sym_rat';
+import { transpose_varargs } from '../operators/transpose/transpose_varargs';
 import { add_2_mul_2_cos_cos_mul_2_mul_2_rat_sin_sin } from '../operators/trig/add_2_mul_2_cos_cos_mul_2_mul_2_rat_sin_sin';
 import { add_2_mul_2_cos_cos_mul_2_sin_sin } from '../operators/trig/add_2_mul_2_cos_cos_mul_2_sin_sin';
 import { add_2_mul_2_cos_sin_mul_2_cos_sin_factoring } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_cos_sin_factoring';
@@ -785,6 +786,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(testgt_rat_rat);
     $.defineOperator(testgt_sym_rat);
     $.defineOperator(testgt_mul_2_any_any_rat);
+
+    $.defineOperator(transpose_varargs);
 
     $.defineOperator(sym_math_add);
     $.defineOperator(sym_math_mul);

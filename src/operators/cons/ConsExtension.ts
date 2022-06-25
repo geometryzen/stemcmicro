@@ -50,7 +50,7 @@ import { Eval_sum } from "../../sum";
 import { Eval_tanh } from "../../tanh";
 import { Eval_taylor } from "../../taylor";
 import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
-import { Eval_transpose } from "../../transpose";
+import { Eval_transpose } from "../transpose/transpose";
 import { Err } from "../../tree/err/Err";
 import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";

@@ -1,12 +1,11 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { ARCCOSH, COSH } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
-import { cadr } from './tree/helpers';
-import { one } from './tree/rat/Rat';
-import { car, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { is_flt } from '../flt/is_flt';
+import { ARCCOSH, COSH } from '../../runtime/constants';
+import { wrap_as_flt } from '../../tree/flt/Flt';
+import { cadr } from '../../tree/helpers';
+import { one } from '../../tree/rat/Rat';
+import { car, U } from '../../tree/tree';
 
 /* cosh =====================================================================
 
@@ -29,9 +28,8 @@ Returns the hyperbolic cosine of x
 ```
 
 */
-export function Eval_cosh(p1: U, $: ExtensionEnv): void {
-    const result = ycosh($.valueOf(cadr(p1)), $);
-    stack_push(result);
+export function Eval_cosh(p1: U, $: ExtensionEnv): U {
+    return ycosh($.valueOf(cadr(p1)), $);
 }
 
 export function ycosh(p1: U, $: ExtensionEnv): U {

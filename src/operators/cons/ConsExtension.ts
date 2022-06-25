@@ -3,7 +3,7 @@ import { Eval_binomial } from "../../binomial";
 import { Eval_choose } from "../../choose";
 import { Eval_clear, Eval_clearall } from "../../clear";
 import { Eval_coeff } from "../../coeff";
-import { Eval_cosh } from "../../cosh";
+import { Eval_cosh } from "../cosh/cosh";
 import { Eval_decomp } from "../../decomp";
 import { Eval_degree } from "../../degree";
 import { Eval_dirac } from "../../dirac";
@@ -35,7 +35,7 @@ import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eva
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT, TRANSPOSE } from "../../runtime/constants";
+import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, COSH, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TANH, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
@@ -50,7 +50,6 @@ import { Eval_sum } from "../../sum";
 import { Eval_tanh } from "../../tanh";
 import { Eval_taylor } from "../../taylor";
 import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
-import { Eval_transpose } from "../transpose/transpose";
 import { Err } from "../../tree/err/Err";
 import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
@@ -419,9 +418,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case TESTLT:
                 Eval_testlt(expr, $);
-                return stack_pop();
-            case TRANSPOSE:
-                Eval_transpose(expr, $);
                 return stack_pop();
             default:
                 throw new Error();

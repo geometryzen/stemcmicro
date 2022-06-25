@@ -3,7 +3,7 @@ import { bessely } from '../../bessely/bessely';
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
 import { compare_terms } from '../../../calculators/compare/compare_terms';
-import { ycosh } from '../../../cosh';
+import { ycosh } from '../../cosh/cosh';
 import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
 import { exp } from '../../../exp';

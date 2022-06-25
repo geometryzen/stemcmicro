@@ -89,6 +89,7 @@ import { cos_hyp } from '../operators/cos/cos_hyp';
 import { cos_mul_2_any_imu } from '../operators/cos/cos_mul_2_any_imu';
 import { cos_sym } from '../operators/cos/cos_sym';
 import { cosh_sym } from '../operators/cosh/cosh_sym';
+import { cosh_varargs } from '../operators/cosh/cosh_varargs';
 import { cross_add_2_any_any_any } from '../operators/cross/cross_add_2_any_any_any';
 import { cross_any_add_2_any_any } from '../operators/cross/cross_any_add_2_any_any';
 import { cross_any_any } from '../operators/cross/cross_any_any';
@@ -676,6 +677,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(cos_any);
 
     $.defineOperator(cosh_sym);
+    $.defineOperator(cosh_varargs);
 
     $.defineOperator(cross_blade_blade);
     // Linearity Laws

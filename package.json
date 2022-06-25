@@ -37,6 +37,7 @@
         "unit-conj": "mocha 'units/conj.spec.ts'",
         "unit-contract": "mocha 'units/contract.spec.ts'",
         "unit-cos": "mocha 'units/cos.spec.ts'",
+        "unit-cosh": "mocha 'units/cosh.spec.ts'",
         "unit-cross": "mocha 'units/cross.spec.ts'",
         "unit-current": "mocha 'units/current.spec.ts'",
         "unit-defint": "mocha 'units/defint.spec.ts'",

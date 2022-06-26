@@ -308,6 +308,7 @@ import { sym_math_mul } from '../operators/sym/sym_math_mul';
 import { sym_math_pi } from '../operators/sym/sym_math_pi';
 import { sym_math_pow } from '../operators/sym/sym_math_pow';
 import { tan_varargs } from '../operators/tan/tan_varargs';
+import { tanh_varargs } from '../operators/tanh/tanh_varargs';
 import { tau } from '../operators/tau/tau';
 import { tensorExtensionBuilder } from '../operators/tensor/TensorExtension';
 import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
@@ -771,6 +772,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(st_any);
 
     $.defineOperator(tan_varargs);
+    $.defineOperator(tanh_varargs);
 
     $.defineOperator(typeof_tensor);
     $.defineOperator(typeof_blade);

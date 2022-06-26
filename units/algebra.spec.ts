@@ -38,7 +38,7 @@ describe("algebra", function () {
             const G30 = assert_one_value_execute(lines.join('\n'), engine);
             assert.isTrue(is_tensor(G30));
             if (is_tensor(G30)) {
-                assert.strictEqual(G30.ndim, 1);
+                assert.strictEqual(G30.rank, 1);
                 assert.strictEqual(G30.dim(0), 3);
                 const e1 = G30.elem(0);
                 const e2 = G30.elem(1);

@@ -7,12 +7,12 @@ import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
 
 export function inner_product_of_tensors(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
-    const n = p1.dim(p1.ndim - 1);
+    const n = p1.dim(p1.rank - 1);
     if (n !== p2.dim(0)) {
         halt('inner: tensor dimension check');
     }
 
-    const ndim = p1.ndim + p2.ndim - 2;
+    const ndim = p1.rank + p2.rank - 2;
 
     if (ndim > MAXDIM) {
         halt('inner: rank of result exceeds maximum');
@@ -33,7 +33,7 @@ export function inner_product_of_tensors(p1: Tensor, p2: Tensor, $: ExtensionEnv
     //    4  3        bk = 4 * 3 = 12
     //
     //---------------------------------------------------------------------
-    const ak = p1.sliceDimensions(0, p1.ndim - 1).reduce((a, b) => a * b, 1);
+    const ak = p1.sliceDimensions(0, p1.rank - 1).reduce((a, b) => a * b, 1);
     const bk = p2.sliceDimensions(1).reduce((a, b) => a * b, 1);
 
     const elems: U[] = create_tensor_elements(ak * bk, zero);
@@ -80,7 +80,7 @@ export function inner_product_of_tensors(p1: Tensor, p2: Tensor, $: ExtensionEnv
         return elems[0];
     }
     else {
-        const dims = [...p1.sliceDimensions(0, p1.ndim - 1), ...p2.sliceDimensions(1, p2.ndim),];
+        const dims = [...p1.sliceDimensions(0, p1.rank - 1), ...p2.sliceDimensions(1, p2.rank),];
         return new Tensor(dims, elems);
     }
 }

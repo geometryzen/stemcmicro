@@ -231,7 +231,7 @@ export function abs(x: U, $: ExtensionEnv): U {
 
 // also called the "norm" of a vector
 function abs_tensor(M: Tensor, $: ExtensionEnv): U {
-    if (M.ndim !== 1) {
+    if (M.rank !== 1) {
         throw new Error('abs(tensor) with tensor rank > 1');
     }
     // 

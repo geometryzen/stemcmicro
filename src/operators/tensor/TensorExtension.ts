@@ -20,15 +20,15 @@ function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
 }
 
 export function equal_mat_mat(p1: Tensor, p2: Tensor, $: ExtensionEnv): boolean {
-    if (p1.ndim < p2.ndim) {
+    if (p1.rank < p2.rank) {
         return false;
     }
 
-    if (p1.ndim > p2.ndim) {
+    if (p1.rank > p2.rank) {
         return false;
     }
 
-    for (let i = 0; i < p1.ndim; i++) {
+    for (let i = 0; i < p1.rank; i++) {
         if (p1.dim(i) < p2.dim(i)) {
             return false;
         }
@@ -57,7 +57,7 @@ export function add_mat_mat(A: Tensor, B: Tensor, $: ExtensionEnv): Cons | Tenso
 }
 
 export function outer_mat_mat(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): Tensor {
-    const ndim = lhs.ndim + rhs.ndim;
+    const ndim = lhs.rank + rhs.rank;
     if (ndim > MAXDIM) {
         throw new Error('outer: rank of result exceeds maximum');
     }

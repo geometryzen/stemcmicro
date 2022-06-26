@@ -34,7 +34,7 @@ import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eva
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, RANK, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
@@ -369,9 +369,6 @@ class ConsExtension implements Extension<Cons> {
             case QUOTIENT:
                 Eval_quotient(expr, $);
                 return stack_pop();
-            case RANK:
-                Eval_rank(expr, $);
-                return stack_pop();
             case SGN:
                 Eval_sgn(expr, $);
                 return stack_pop();
@@ -495,7 +492,7 @@ function Eval_dim(p1: U, $: ExtensionEnv) {
     if (!is_tensor(p2)) {
         stack_push(one); // dim of scalar is 1
     }
-    else if (n < 1 || n > p2.ndim) {
+    else if (n < 1 || n > p2.rank) {
         stack_push(p1);
     }
     else {
@@ -604,14 +601,6 @@ function Eval_operator(p1: U, $: ExtensionEnv) {
     const result = makeList(OPERATOR, ...mapped);
     stack_push(result);
 }
-
-// rank definition
-function Eval_rank(p1: U, $: ExtensionEnv) {
-    p1 = $.valueOf(cadr(p1));
-    const rank = is_tensor(p1) ? wrap_as_int(p1.ndim) : zero;
-    stack_push(rank);
-}
-
 
 function Eval_stop() {
     throw new Error('user stop');

@@ -34,7 +34,7 @@ describe("tensor", function () {
         const cd = new Tensor([2], [c, d]);
         const ef = new Tensor([2], [e, f]);
         const M = new Tensor([3, 2], [a, b, c, d, e, f]);
-        assert.strictEqual(M.ndim, 2);
+        assert.strictEqual(M.rank, 2);
         assert.strictEqual(M.dim(0), 3);
         assert.strictEqual(M.dim(1), 2);
         assert.isTrue(get_component(ab, items_to_cons(wrap_as_int(1)), engine.$).equals(a));

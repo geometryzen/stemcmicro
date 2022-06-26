@@ -1004,7 +1004,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
 
     // if not the last dimension, we are just printing wrappers
     // and recursing down i.e. we print the next dimension
-    if (j < p.ndim - 1) {
+    if (j < p.rank - 1) {
         for (let i = 0; i < p.dim(j); i++) {
             let retString: string;
             [k, retString] = Array.from(print_tensor_inner(p, j + 1, k, $)) as [
@@ -1039,7 +1039,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
 
 function print_tensor_latex(p: Tensor<U>, $: ExtensionEnv): string {
     let accumulator = '';
-    if (p.ndim <= 2) {
+    if (p.rank <= 2) {
         accumulator += print_tensor_inner_latex(true, p, 0, 0, $)[1];
     }
     return accumulator;
@@ -1069,7 +1069,7 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
 
     // if not the last dimension, we are just printing wrappers
     // and recursing down i.e. we print the next dimension
-    if (j < p.ndim - 1) {
+    if (j < p.rank - 1) {
         for (let i = 0; i < p.dim(j); i++) {
             let retString: string;
             [k, retString] = Array.from(

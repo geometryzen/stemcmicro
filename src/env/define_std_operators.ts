@@ -267,6 +267,7 @@ import { pred_rat } from '../operators/pred/pred_rat';
 import { printlist_1_any } from '../operators/printlist/printlist_1_any';
 import { printlist_keyword } from '../operators/printlist/printlist_keyword';
 import { quote_varargs } from '../operators/quote/quote_varargs';
+import { rank_varargs } from '../operators/rank/rank_varargs';
 import { is_rat, rat } from '../operators/rat/RatExtension';
 import { rationalize_fn } from '../operators/rationalize/rationalize_fn';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
@@ -625,6 +626,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(outer_2_any_add_2_any_any);
     $.defineOperator(outer_2_any_mul_2_scalar_any);
     $.defineOperator(outer_2_any_any);
+
+    $.defineOperator(rank_varargs);
 
     $.defineOperator(rco_2_blade_blade);
     $.defineOperator(rco_2_add_2_any_any_any);

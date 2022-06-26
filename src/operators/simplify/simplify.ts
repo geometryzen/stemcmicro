@@ -565,7 +565,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     defs.recursionLevelNestedRadicalsRemoval++;
     const r = roots(temp, SECRETX, $);
     defs.recursionLevelNestedRadicalsRemoval--;
-    if (r.ndim === 0) {
+    if (r.rank === 0) {
         if (DEBUG) {
             // eslint-disable-next-line no-console
             // console.lg('roots bailed out because of too much recursion');

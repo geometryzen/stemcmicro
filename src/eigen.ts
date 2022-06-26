@@ -188,7 +188,7 @@ function EIG_check_arg(p1: U, $: ExtensionEnv): | { arg: Tensor<Flt>; invalid?: 
         return { invalid: p1 };
     }
 
-    if (p1.ndim !== 2 || p1.dim(0) !== p1.dim(1)) {
+    if (p1.rank !== 2 || p1.dim(0) !== p1.dim(1)) {
         halt('eigen: argument is not a square matrix');
     }
 

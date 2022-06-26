@@ -45,8 +45,10 @@ export class Tensor<T extends U = U> extends Atom {
     }
     /**
      * The number of indexing steps required to get to the lowest level.
+     * This is what we call the rank of the tensor.
+     * It is the length of the dimensions array.
      */
-    public get ndim() {
+    public get rank() {
         return this.dims.length;
     }
     public get nelem() {
@@ -120,7 +122,7 @@ export class Tensor<T extends U = U> extends Atom {
         return false;
     }
     sameDimensions(other: Tensor): boolean {
-        if (this.ndim !== other.ndim) {
+        if (this.rank !== other.rank) {
             return false;
         }
         return this.dims.every((size, i) => size === other.dim(i));
@@ -138,7 +140,7 @@ export class Tensor<T extends U = U> extends Atom {
         return '<tensor>';
     }
     toString(): string {
-        return `${this.name}(ndim=${this.ndim}, dim=[${this.dims}], elems=[${this.elems.map(function (elem) {
+        return `${this.name}(ndim=${this.rank}, dim=[${this.dims}], elems=[${this.elems.map(function (elem) {
             return `${elem}`;
         }).join(',')}])`;
     }

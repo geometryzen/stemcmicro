@@ -408,7 +408,7 @@ describe("scan", function () {
         // dimensions should be recorded correctly.  
         const M = expect_one_tree(" [ [ a , b ] , [ c , d ], [ e, f ] ] ");
         if (is_tensor(M)) {
-            assert.strictEqual(M.ndim, 2);
+            assert.strictEqual(M.rank, 2);
             assert.strictEqual(M.dim(0), 3);
             assert.strictEqual(M.dim(1), 2);
             expect_sym(M.elem(0), NAME_A, 'a', 5, 6);

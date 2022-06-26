@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 export function outer_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
-    const ndim = p1.ndim + p2.ndim;
+    const ndim = p1.rank + p2.rank;
     if (ndim > MAXDIM) {
         halt('outer: rank of result exceeds maximum');
     }

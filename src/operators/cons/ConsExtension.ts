@@ -34,10 +34,9 @@ import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eva
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, ASSIGN, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, DECOMP, DEGREE, DIM, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, DECOMP, DEGREE, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
-import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { Eval_if } from "../../scripting/eval_if";
 import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern } from "../../scripting/eval_pattern";
 import { Eval_power } from "../../scripting/eval_power";
@@ -56,7 +55,6 @@ import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
-import { is_tensor } from "../tensor/is_tensor";
 
 /**
  * Cons, like Sym is actually fundamental to the tree (not an Extension).
@@ -226,9 +224,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case DEGREE:
                 Eval_degree(expr, $);
-                return stack_pop();
-            case DIM:
-                Eval_dim(expr, $);
                 return stack_pop();
             case DIRAC:
                 Eval_dirac(expr, $);
@@ -470,36 +465,6 @@ function Eval_check(p1: U, $: ExtensionEnv) {
     }
 }
 
-/* dim =====================================================================
- 
-Tags
-----
-scripting, JS, internal, treenode, general concept
- 
-Parameters
-----------
-m,n
- 
-General description
--------------------
-Returns the cardinality of the nth index of tensor "m".
- 
-*/
-function Eval_dim(p1: U, $: ExtensionEnv) {
-    //int n
-    const p2 = $.valueOf(cadr(p1));
-    const n = is_cons(cddr(p1)) ? evaluate_integer(caddr(p1), $) : 1;
-    if (!is_tensor(p2)) {
-        stack_push(one); // dim of scalar is 1
-    }
-    else if (n < 1 || n > p2.rank) {
-        stack_push(p1);
-    }
-    else {
-        stack_push(wrap_as_int(p2.dim(n - 1)));
-    }
-}
-
 function Eval_divisors(p1: U, $: ExtensionEnv) {
     stack_push(divisors($.valueOf(cadr(p1)), $));
 }
@@ -611,31 +576,6 @@ function Eval_subst(p1: Cons, $: ExtensionEnv): void {
     const oldExpr = $.valueOf(caddr(p1));
     const expr = $.valueOf(cadddr(p1));
     stack_push($.valueOf(subst(expr, oldExpr, newExpr, $)));
-}
-
-// like Eval() except "=" (assignment) is treated
-// as "==" (equality test)
-// This is because
-//  * this allows users to be lazy and just
-//    use "=" instead of "==" as per more common
-//    mathematical notation
-//  * in many places we don't expect an assignment
-//    e.g. we don't expect to test the zero-ness
-//    of an assignment or the truth value of
-//    an assignment
-// Note that these are questionable assumptions
-// as for example in most programming languages one
-// can indeed test the value of an assignment (the
-// value is just the evaluation of the right side)
-
-export function Eval_predicate(p1: U, $: ExtensionEnv): U {
-    if (car(p1).equals(ASSIGN)) {
-        // replace the assignment in the
-        // head with an equality test
-        p1 = makeList(TESTEQ), cadr(p1), caddr(p1);
-    }
-
-    return $.valueOf(p1);
 }
 
 export const cons = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {

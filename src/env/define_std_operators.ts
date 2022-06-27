@@ -103,6 +103,7 @@ import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_a
 import { derivative_fn } from '../operators/derivative/derivative_fn';
 import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
+import { dim_varargs } from '../operators/dim/dim_varargs';
 import { factorize_lhs_distrib } from '../operators/distrib/factorize_lhs_distrib';
 import { inner_lhs_distrib_over_add_expand } from '../operators/distrib/inner_lhs_distrib_over_add_expand';
 import { inner_rhs_distrib_over_add_expand } from '../operators/distrib/inner_rhs_distrib_over_add_expand';
@@ -702,6 +703,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(derivative_fn);
 
     $.defineOperator(det_any);
+
+    $.defineOperator(dim_varargs);
 
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);

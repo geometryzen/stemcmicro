@@ -9,8 +9,8 @@
 
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from "../env/imu";
-import { Eval_predicate } from "../operators/cons/ConsExtension";
 import { zzfloat } from "../operators/float/float";
+import { Eval_predicate } from "../operators/predicate/predicate";
 import { is_num_or_tensor_or_identity_matrix } from "../runtime/helpers";
 import { U } from "../tree/tree";
 import { float_eval_abs_eval } from "./float_eval_abs_eval";

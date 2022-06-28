@@ -1,13 +1,9 @@
-import { besselj } from '../../besselj/besselj';
-import { bessely } from '../../bessely/bessely';
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
 import { compare_terms } from '../../../calculators/compare/compare_terms';
-import { ycosh } from '../../cosh/cosh';
 import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
 import { exp } from '../../../exp';
-import { hermite } from '../../../hermite';
 import { makeList } from '../../../makeList';
 import {
     ARCCOS,
@@ -40,7 +36,11 @@ import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
 import { car, cdr, is_cons, nil, U } from '../../../tree/tree';
+import { besselj } from '../../besselj/besselj';
+import { bessely } from '../../bessely/bessely';
 import { cos } from '../../cos/cosine';
+import { ycosh } from '../../cosh/cosh';
+import { hermite } from '../../hermite/hermite';
 import { simplify } from '../../simplify/simplify';
 import { sin } from '../../sin/sine';
 import { sinh } from '../../sinh/sinh';

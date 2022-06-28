@@ -1,6 +1,6 @@
 {
     "name": "symbolic-math",
-    "version": "0.9.47",
+    "version": "0.9.48",
     "description": "Computer Algebra System in TypeScript",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
@@ -50,10 +50,12 @@
         "unit-factorize": "mocha 'units/factorize.spec.ts'",
         "unit-float": "mocha 'units/float.spec.ts'",
         "unit-floor": "mocha 'units/floor.spec.ts'",
+        "unit-gamma": "mocha 'units/gamma.spec.ts'",
         "unit-gcd": "mocha 'units/gcd.spec.ts'",
         "unit-grad": "mocha 'units/grad.spec.ts'",
         "unit-guide": "mocha 'units/guide.spec.ts'",
         "unit-hashinfo": "mocha 'units/hashinfo.spec.ts'",
+        "unit-hermite": "mocha 'units/hermite.spec.ts'",
         "unit-imag": "mocha 'units/imag.spec.ts'",
         "unit-imu": "mocha 'units/imu.spec.ts'",
         "unit-inner": "mocha 'units/inner.spec.ts'",
@@ -175,14 +177,14 @@
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
-        "@rollup/plugin-commonjs": "^22.0.0",
+        "@rollup/plugin-commonjs": "^22.0.1",
         "@rollup/plugin-node-resolve": "^13.3.0",
         "@rollup/plugin-typescript": "^8.3.3",
         "@types/chai": "^4.3.1",
         "@types/mocha": "^9.1.1",
         "@types/node": "^18.0.0",
-        "@typescript-eslint/eslint-plugin": "^5.29.0",
-        "@typescript-eslint/parser": "^5.29.0",
+        "@typescript-eslint/eslint-plugin": "^5.30.0",
+        "@typescript-eslint/parser": "^5.30.0",
         "chai": "^4.3.6",
         "eslint": "^8.18.0",
         "gh-pages": "^4.0.0",
@@ -192,7 +194,7 @@
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "rollup-plugin-terser": "^7.0.2",
         "ts-node": "^10.8.1",
-        "typedoc": "^0.22.17",
+        "typedoc": "^0.23.1",
         "typescript": "^4.7.4"
     }
 }

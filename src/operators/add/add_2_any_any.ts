@@ -56,7 +56,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        switch (compare_terms(lhs, rhs, $)) {
+        const sign = compare_terms(lhs, rhs, $);
+        // console.lg(`add_2_any_any sign=${sign}`);
+        switch (sign) {
             case SIGN_GT: {
                 // // console.lg('SIGN_GT');
                 const A = items_to_cons(opr, rhs, lhs);

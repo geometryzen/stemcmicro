@@ -18,8 +18,6 @@ import { Eval_factor } from "../../factor";
 import { factorial } from "../../factorial";
 import { Eval_filter } from "../../filter";
 import { Eval_for } from "../../for";
-import { Eval_gamma } from "../../gamma";
-import { hermite } from "../../hermite";
 import { invg } from "../../inv";
 import { Eval_isprime } from "../../isprime";
 import { is_rat_integer } from "../../is_rat_integer";
@@ -34,7 +32,7 @@ import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eva
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, DECOMP, DEGREE, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, GAMMA, HERMITE, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, MULTIPLY, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, DECOMP, DEGREE, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, IF, INVG, ISINTEGER, ISPRIME, LAGUERRE, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -285,12 +283,6 @@ class ConsExtension implements Extension<Cons> {
             case FOR:
                 Eval_for(expr, $);
                 return stack_pop();
-            case GAMMA:
-                Eval_gamma(expr, $);
-                return stack_pop();
-            case HERMITE:
-                Eval_hermite(expr, $);
-                return stack_pop();
             case IF:
                 Eval_if(expr, $);
                 return stack_pop();
@@ -316,12 +308,6 @@ class ConsExtension implements Extension<Cons> {
             case LOOKUP:
                 Eval_lookup(expr, $);
                 return stack_pop();
-            case MULTIPLY: {
-                // This should be done by the math_mul extension.
-                throw new Error();
-                // Eval_multiply(expr, $);
-                // return pop();
-            }
             case NROOTS:
                 Eval_nroots(expr, $);
                 return stack_pop();
@@ -531,12 +517,6 @@ function Eval_factorpoly(p1: U, $: ExtensionEnv) {
         temp = p1.tail().reduce((a: U, b: U) => $.factorize(a, $.valueOf(b)), temp);
     }
     stack_push(temp);
-}
-
-function Eval_hermite(p1: U, $: ExtensionEnv) {
-    const arg2 = $.valueOf(caddr(p1));
-    const arg1 = $.valueOf(cadr(p1));
-    stack_push(hermite(arg1, arg2, $));
 }
 
 function Eval_invg(p1: U, $: ExtensionEnv): void {

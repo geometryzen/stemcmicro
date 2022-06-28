@@ -1,15 +1,14 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { is_rat } from './operators/rat/is_rat';
-import { sin } from './operators/sin/sine';
-import { is_negative } from './predicates/is_negative';
-import { GAMMA, MEQUAL } from './runtime/constants';
-import { DynamicConstants } from './runtime/defs';
-import { is_add } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { cadr } from './tree/helpers';
-import { half, negOne, Rat } from './tree/rat/Rat';
-import { car, cdr, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { is_rat } from '../rat/is_rat';
+import { sin } from '../sin/sine';
+import { is_negative } from '../../predicates/is_negative';
+import { GAMMA, MEQUAL } from '../../runtime/constants';
+import { DynamicConstants } from '../../runtime/defs';
+import { is_add } from '../../runtime/helpers';
+import { cadr } from '../../tree/helpers';
+import { half, negOne, Rat } from '../../tree/rat/Rat';
+import { car, cdr, U } from '../../tree/tree';
 
 //-----------------------------------------------------------------------------
 //
@@ -18,9 +17,8 @@ import { car, cdr, U } from './tree/tree';
 //  Gamma function gamma(x)
 //
 //-----------------------------------------------------------------------------
-export function Eval_gamma(p1: U, $: ExtensionEnv): void {
-    const result = gamma($.valueOf(cadr(p1)), $);
-    stack_push(result);
+export function Eval_gamma(p1: U, $: ExtensionEnv): U {
+    return gamma($.valueOf(cadr(p1)), $);
 }
 
 function gamma(p1: U, $: ExtensionEnv): U {

@@ -1,5 +1,5 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
-import { ExtensionEnv, PHASE_FLAGS_EXPANDING_UNION_FACTORING, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -46,6 +46,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const X = lhs.lhs;
         const Z = lhs.rhs;
         const A = rhs;
+        // console.lg(`add_2_add_2_any_any_any`);
         const signum = compare_terms(Z, A, $);
         // console.lg(`${this.name} ${signum} Z=${render_as_infix(Z, $)} A=${render_as_infix(A, $)}`);
         switch (signum) {

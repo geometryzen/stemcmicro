@@ -1,5 +1,5 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -25,11 +25,7 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
-        /*
-        if ($.implicateMode) {
-            return false;
-        }
-        */
+        // console.lg(`add_2_assoc_rhs_canonical_ordering`);
         return compare_terms(lhs, rhs.lhs, $) > 0;
     };
 }

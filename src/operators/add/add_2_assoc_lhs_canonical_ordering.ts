@@ -25,7 +25,9 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
-        return compare_terms(lhs.rhs, rhs, $) > 0;
+        const sign = compare_terms(lhs.rhs, rhs, $);
+        // console.lg(`add_2_assoc_lhs_canonical_ordering sign=${sign}`);
+        return sign > 0;
         // return compare_terms(lhs.rhs, rhs, $) > 0;
     };
 }

@@ -133,9 +133,11 @@ import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
 import { floor_varargs } from '../operators/floor/floor_varargs';
 import { is_flt, op_flt } from '../operators/flt/FltExtension';
+import { gamma_varargs } from '../operators/gamma/gamma_varargs';
 import { gcd_varargs } from '../operators/gcd/gcd_varargs';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
+import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hypExtensionBuilder } from '../operators/hyp/HypExtension';
 import { imag_any } from '../operators/imag/imag_any';
@@ -585,7 +587,11 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(conj_blade);
     $.defineOperator(conj_any);
 
+    $.defineOperator(gamma_varargs);
+
     $.defineOperator(gcd_varargs);
+
+    $.defineOperator(hermite_varargs);
 
     $.defineOperator(inner_2_num_num);
     $.defineOperator(inner_2_rat_imu);

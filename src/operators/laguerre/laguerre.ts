@@ -1,13 +1,12 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { is_sym } from './operators/sym/is_sym';
-import { LAGUERRE, SECRETX } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { subst } from './subst';
-import { cadddr, caddr, cadr } from './tree/helpers';
-import { wrap_as_int, one, zero } from './tree/rat/Rat';
-import { nil, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { LAGUERRE, SECRETX } from '../../runtime/constants';
+import { subst } from '../../subst';
+import { cadddr, caddr, cadr } from '../../tree/helpers';
+import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { nil, U } from '../../tree/tree';
+import { is_sym } from '../sym/is_sym';
 
 /*
  Laguerre function
@@ -34,13 +33,13 @@ In the "for" loop i = n-1 so the recurrence relation becomes
 
   (i+1)*L(x,n,k) = (2*i+1-x+k)*L(x,n-1,k) - (i+k)*L(x,n-2,k)
 */
-export function Eval_laguerre(p1: U, $: ExtensionEnv): void {
+export function Eval_laguerre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
     const K = nil === p2 ? zero : p2;
 
-    stack_push(laguerre(X, N, K, $));
+    return laguerre(X, N, K, $);
 }
 
 function laguerre(X: U, N: U, K: U, $: ExtensionEnv): U {

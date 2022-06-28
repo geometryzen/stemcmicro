@@ -1,17 +1,16 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { cos } from './operators/cos/cosine';
-import { derivative_wrt } from './operators/derivative/derivative_wrt';
-import { sin } from './operators/sin/sine';
-import { is_sym } from './operators/sym/is_sym';
-import { COS, LEGENDRE, SECRETX, SIN } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { square } from './square';
-import { subst } from './subst';
-import { cadddr, caddr, cadr } from './tree/helpers';
-import { half, one, wrap_as_int, zero } from './tree/rat/Rat';
-import { car, nil, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { cos } from '../cos/cosine';
+import { derivative_wrt } from '../derivative/derivative_wrt';
+import { sin } from '../sin/sine';
+import { is_sym } from '../sym/is_sym';
+import { COS, LEGENDRE, SECRETX, SIN } from '../../runtime/constants';
+import { square } from '../../square';
+import { subst } from '../../subst';
+import { cadddr, caddr, cadr } from '../../tree/helpers';
+import { half, one, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { car, nil, U } from '../../tree/tree';
 
 /*
  Legendre function
@@ -42,13 +41,13 @@ For m > 0
 
   P(x,n,m) = (-1)^m * (1-x^2)^(m/2) * d^m/dx^m P(x,n)
 */
-export function Eval_legendre(p1: U, $: ExtensionEnv): void {
+export function Eval_legendre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
     const M = nil === p2 ? zero : p2;
 
-    stack_push(legendre(X, N, M, $));
+    return legendre(X, N, M, $);
 }
 
 function legendre(X: U, N: U, M: U, $: ExtensionEnv): U {

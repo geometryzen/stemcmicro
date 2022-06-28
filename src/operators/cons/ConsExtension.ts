@@ -22,7 +22,7 @@ import { invg } from "../../inv";
 import { Eval_isprime } from "../../isprime";
 import { is_rat_integer } from "../../is_rat_integer";
 import { Eval_leading } from "../../leading";
-import { Eval_legendre } from "../../legendre";
+import { Eval_legendre } from "../legendre/legendre";
 import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
 import { Eval_nroots } from "../../nroots";

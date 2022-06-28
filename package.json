@@ -62,6 +62,7 @@
         "unit-integral": "mocha 'units/integral.spec.ts'",
         "unit-kernel": "mocha 'units/kernel.spec.ts'",
         "unit-laguerre": "mocha 'units/laguerre.spec.ts'",
+        "unit-legendre": "mocha 'units/legendre.spec.ts'",
         "unit-latex": "mocha 'units/latex.spec.ts'",
         "unit-lcm": "mocha 'units/lcm.spec.ts'",
         "unit-log": "mocha 'units/log.spec.ts'",

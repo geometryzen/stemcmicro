@@ -1,16 +1,15 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_complex_number } from './is';
-import { makeList } from './makeList';
-import { mmul } from './mmul';
-import { abs } from './operators/abs/abs';
-import { is_flt } from './operators/flt/is_flt';
-import { is_rat } from './operators/rat/is_rat';
-import { is_negative } from './predicates/is_negative';
-import { SGN } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { cadr } from './tree/helpers';
-import { negOne, one, zero } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { is_complex_number } from '../../is';
+import { makeList } from '../../makeList';
+import { mmul } from '../../mmul';
+import { is_negative } from '../../predicates/is_negative';
+import { SGN } from '../../runtime/constants';
+import { cadr } from '../../tree/helpers';
+import { negOne, one, zero } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
+import { abs } from '../abs/abs';
+import { is_flt } from '../flt/is_flt';
+import { is_rat } from '../rat/is_rat';
 
 //-----------------------------------------------------------------------------
 //s
@@ -20,9 +19,8 @@ import { U } from './tree/tree';
 //
 //
 //-----------------------------------------------------------------------------
-export function Eval_sgn(p1: U, $: ExtensionEnv): void {
-    const result = sgn($.valueOf(cadr(p1)), $);
-    stack_push(result);
+export function Eval_sgn(p1: U, $: ExtensionEnv): U {
+    return sgn($.valueOf(cadr(p1)), $);
 }
 
 export function sgn(X: U, $: ExtensionEnv): U {

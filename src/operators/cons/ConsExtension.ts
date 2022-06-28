@@ -39,7 +39,7 @@ import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern
 import { Eval_power } from "../../scripting/eval_power";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { Eval_sgn } from "../../sgn";
+import { Eval_sgn } from "../sgn/sgn";
 import { subst } from "../../subst";
 import { Eval_sum } from "../../sum";
 import { Eval_taylor } from "../../taylor";

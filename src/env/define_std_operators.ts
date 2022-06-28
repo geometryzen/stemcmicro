@@ -284,6 +284,7 @@ import { rect_varargs } from '../operators/rect/rect_varargs';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
+import { sgn_varargs } from '../operators/sgn/sgn_varargs';
 import { shape_varargs } from '../operators/shape/shape_varargs';
 import { simplify_varargs } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
@@ -762,6 +763,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(round_varargs);
 
     $.defineOperator(script_last_0);
+    $.defineOperator(sgn_varargs);
     $.defineOperator(shape_varargs);
     $.defineOperator(simplify_varargs);
 

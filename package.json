@@ -83,6 +83,7 @@
         "unit-roots": "mocha 'units/roots.spec.ts'",
         "unit-round": "mocha 'units/round.spec.ts'",
         "unit-sanity": "mocha 'units/sanity.spec.ts'",
+        "unit-sgn": "mocha 'units/sgn.spec.ts'",
         "unit-shape": "mocha 'units/shape.spec.ts'",
         "unit-sym": "mocha 'units/Sym.spec.ts'",
         "unit-scalars": "mocha 'units/scalars.spec.ts'",

@@ -30,7 +30,7 @@ import {
 import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
 // import { stack_push } from '../../runtime/stack';
-import { sgn } from '../../../sgn';
+import { sgn } from '../../sgn/sgn';
 import { subst } from '../../../subst';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';

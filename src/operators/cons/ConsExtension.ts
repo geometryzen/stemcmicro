@@ -2,7 +2,6 @@ import { Eval_approxratio } from "../../approxratio";
 import { Eval_binomial } from "../../binomial";
 import { Eval_choose } from "../../choose";
 import { Eval_clear, Eval_clearall } from "../../clear";
-import { Eval_coeff } from "../../coeff";
 import { Eval_decomp } from "../../decomp";
 import { Eval_degree } from "../../degree";
 import { Eval_dirac } from "../../dirac";
@@ -22,7 +21,6 @@ import { invg } from "../../inv";
 import { Eval_isprime } from "../../isprime";
 import { is_rat_integer } from "../../is_rat_integer";
 import { Eval_leading } from "../../leading";
-import { Eval_legendre } from "../legendre/legendre";
 import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
 import { Eval_nroots } from "../../nroots";
@@ -31,7 +29,7 @@ import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eva
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, COEFF, DECOMP, DEGREE, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, IF, INVG, ISINTEGER, ISPRIME, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, BINOMIAL, CHECK, CHOOSE, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DEGREE, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, IF, INVG, ISINTEGER, ISPRIME, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SGN, SILENTPATTERN, STOP, SUBST, SUM, SYMBOLSINFO, TAYLOR, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -39,7 +37,6 @@ import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern
 import { Eval_power } from "../../scripting/eval_power";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { Eval_sgn } from "../sgn/sgn";
 import { subst } from "../../subst";
 import { Eval_sum } from "../../sum";
 import { Eval_taylor } from "../../taylor";
@@ -50,7 +47,9 @@ import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { Eval_legendre } from "../legendre/legendre";
 import { is_rat } from "../rat/is_rat";
+import { Eval_sgn } from "../sgn/sgn";
 import { is_sym } from "../sym/is_sym";
 
 /**
@@ -212,9 +211,6 @@ class ConsExtension implements Extension<Cons> {
             }
             case CLEARPATTERNS:
                 Eval_clearpatterns();
-                return stack_pop();
-            case COEFF:
-                Eval_coeff(expr, $);
                 return stack_pop();
             case DECOMP:
                 Eval_decomp(expr, $);

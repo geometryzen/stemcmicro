@@ -1,14 +1,13 @@
-import { subtract } from './calculators/sub/subtract';
-import { divide_expand } from './divide';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { filter } from './filter';
-import { is_mul_2_any_any } from './operators/mul/is_mul_2_any_any';
-import { SYMBOL_X } from './runtime/constants';
-import { stack_push } from './runtime/stack';
-import { subst } from './subst';
-import { cadddr, caddr, cadr } from './tree/helpers';
-import { one, zero } from './tree/rat/Rat';
-import { Cons, is_cons, nil, U } from './tree/tree';
+import { subtract } from '../../calculators/sub/subtract';
+import { divide_expand } from '../../divide';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { filter } from '../../filter';
+import { SYMBOL_X } from '../../runtime/constants';
+import { subst } from '../../subst';
+import { cadddr, caddr, cadr } from '../../tree/helpers';
+import { one, zero } from '../../tree/rat/Rat';
+import { Cons, is_cons, nil, U } from '../../tree/tree';
+import { is_mul_2_any_any } from '../mul/is_mul_2_any_any';
 
 /* coeff =====================================================================
 
@@ -25,7 +24,7 @@ General description
 Returns the coefficient of x^n in polynomial p. The x argument can be omitted for polynomials in x.
 
 */
-export function Eval_coeff(p1: U, $: ExtensionEnv): void {
+export function Eval_coeff(p1: U, $: ExtensionEnv): U {
     const p = $.valueOf(cadr(p1));
     let x = $.valueOf(caddr(p1));
     let n = $.valueOf(cadddr(p1));
@@ -36,13 +35,11 @@ export function Eval_coeff(p1: U, $: ExtensionEnv): void {
         x = SYMBOL_X;
     }
 
-    // divide p by x^n, keep the constant term (the term no containing x)
+    // divide p by x^n, keep the constant term (the term not containing x)
     const x_pow_n = $.power(x, n);
     const p_div_x_pow_n = $.divide(p, x_pow_n);
-    // FIXME: We are getting 1*d instead of d.
-    // TODO: We could detect when x_pow_1 is one and short-circuit the division.
     const k = filter(p_div_x_pow_n, x, $);
-    stack_push(k);
+    return k;
 }
 
 //-----------------------------------------------------------------------------

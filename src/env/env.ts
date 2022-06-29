@@ -612,7 +612,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                         // console.lg(`DIFF HALT: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                         doneWithExpr = false;
                                     }
                                     curExpr = newExpr;

@@ -1,6 +1,6 @@
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
-import { coeff } from './coeff';
+import { coeff } from './operators/coeff/coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';

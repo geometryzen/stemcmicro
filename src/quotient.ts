@@ -1,4 +1,4 @@
-import { coeff } from './coeff';
+import { coeff } from './operators/coeff/coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { SYMBOL_X } from './runtime/constants';
 import { stack_push } from './runtime/stack';

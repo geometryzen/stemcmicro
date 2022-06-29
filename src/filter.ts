@@ -1,10 +1,10 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { is_add } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
-import { is_tensor } from './operators/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
 import { zero } from './tree/rat/Rat';
-import { car, cdr, is_cons, U } from './tree/tree';
+import { Tensor } from './tree/tensor/Tensor';
+import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 /*
 Remove terms that involve a given symbol or expression. For example...
@@ -26,8 +26,8 @@ export function Eval_filter(p1: U, $: ExtensionEnv): void {
 /**
  * Filter out terms in the polynomial f that contain x.
  * In other words, return only the constant part of f when x is the variable.
- * @param F 
- * @param X 
+ * @param F The polynomial.
+ * @param X The variable.
  */
 export function filter(F: U, X: U, $: ExtensionEnv): U {
     return filter_main(F, X, $);
@@ -49,10 +49,8 @@ function filter_main(F: U, X: U, $: ExtensionEnv): U {
     return F;
 }
 
-function filter_sum(F: U, X: U, $: ExtensionEnv): U {
-    return is_cons(F)
-        ? F.tail().reduce((a: U, b: U) => $.add(a, filter(b, X, $)), zero)
-        : zero;
+function filter_sum(F: Cons, X: U, $: ExtensionEnv): U {
+    return F.tail().reduce((a: U, b: U) => $.add(a, filter(b, X, $)), zero);
 }
 
 function filter_tensor(F: Tensor, X: U, $: ExtensionEnv): U {

@@ -1,4 +1,4 @@
-import { coeff } from './coeff';
+import { coeff } from './operators/coeff/coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, is_poly_expanded_form } from './is';
 import { makeList } from './makeList';

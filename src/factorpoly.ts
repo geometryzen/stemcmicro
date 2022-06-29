@@ -1,5 +1,5 @@
 import { rational } from './bignum';
-import { coeff } from './coeff';
+import { coeff } from './operators/coeff/coeff';
 import { complex_conjugate } from './complex_conjugate';
 import { yycondense } from './condense';
 import { ydivisors } from './divisors';

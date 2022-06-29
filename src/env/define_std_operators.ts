@@ -73,6 +73,7 @@ import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
 import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
+import { coeff_varargs } from '../operators/coeff/coeff_varargs';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { conj_any } from '../operators/conj/conj_any';
 import { conj_blade } from '../operators/conj/conj_blade';
@@ -684,7 +685,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(circexp_any);
 
     $.defineOperator(clock_any);
-
+    $.defineOperator(coeff_varargs);
     $.defineOperator(cofactor_varargs);
     $.defineOperator(contract_varargs);
 

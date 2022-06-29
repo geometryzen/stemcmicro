@@ -21,9 +21,9 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
-        // console.log(`compareTerms lhs=${print_expr(lhs, $)}, rhs=${print_expr(rhs, $)}`);
+        // console.log(`compareTerms lhs=${render_as_infix(lhs, $)}, rhs=${render_as_sexpr(rhs, $)}`);
         const sign = compare_terms(lhs, rhs, $);
-        // console.lg(`add_2_canonical_ordering sign=${sign}`);
+        // console.log(`add_2_canonical_ordering sign=${sign}`);
         return sign > 0;
     };
 }
@@ -40,7 +40,9 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         super('add_2_canonical_ordering', MATH_ADD, is_any, is_any, cross($), $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, exp: EXP): [TFLAGS, U] {
+        // console.log(`${this.name} exp=${exp}`);
         return [TFLAG_DIFF, this.$.valueOf(makeList(opr, rhs, lhs))];
     }
 }

@@ -20,7 +20,7 @@ import { compare_vars_vars } from "./compare_vars_vars";
 import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.lg(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+    // console.log(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }
@@ -58,6 +58,10 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         if ($.isImag(rhs)) {
             return SIGN_LT;
         }
+        if (is_num(rhs)) {
+            // Comparing (power x 1) to (power x 0)
+            return compare_num_num(one, zero);
+        }
         if (is_cons(rhs) && is_pow_2_any_any(rhs)) {
             const base = rhs.lhs;
             const expo = rhs.rhs;
@@ -76,6 +80,10 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (is_sym(rhs)) {
         if ($.isImag(lhs)) {
             return SIGN_GT;
+        }
+        if (is_num(lhs)) {
+            // Comparing (power x 0) to (power x 1)
+            return compare_num_num(zero, one);
         }
         if (is_cons(lhs) && is_pow_2_any_any(lhs)) {
             const base = lhs.lhs;
@@ -107,9 +115,13 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         if ($.isImag(lhs)) {
             return SIGN_GT;
         }
+        if (is_sym(lhs)) {
+            return compare_num_num(one, zero);
+        }
         if (is_cons(lhs) && is_pow_2_any_any(lhs)) {
+            const base = lhs.lhs;
             const expo = lhs.rhs;
-            if (is_num(expo)) {
+            if (is_sym(base) && is_num(expo)) {
                 return compare_num_num(expo, zero);
             }
         }

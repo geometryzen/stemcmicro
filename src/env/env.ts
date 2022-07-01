@@ -368,7 +368,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isImag(expr);
-            // // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
+            // console.log(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isMinusOne(expr: U): boolean {
@@ -380,7 +380,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isReal(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isReal(expr);
-            // // console.lg(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
+            // console.log(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isScalar(expr: U): boolean {

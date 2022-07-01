@@ -1,13 +1,13 @@
 
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
+import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -30,6 +30,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('mul_2_rat_sym', MATH_MUL, is_rat, is_sym, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_SYM);
+    }
+    isReal(expr: EXP): boolean {
+        return this.$.isReal(expr.rhs);
+    }
+    isImag(expr: EXP): boolean {
+        return this.$.isImag(expr.rhs);
     }
     isScalar(expr: EXP): boolean {
         return this.$.isScalar(expr.rhs);

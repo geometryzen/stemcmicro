@@ -266,7 +266,7 @@ describe("factorize right", function () {
         const engine = create_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
-        assert.strictEqual(engine.renderAsInfix(value), "(1+a*b)*c");
+        assert.strictEqual(engine.renderAsInfix(value), "(a*b+1)*c");
         engine.release();
     });
     it("factoring", function () {
@@ -276,7 +276,7 @@ describe("factorize right", function () {
         const engine = create_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
-        assert.strictEqual(engine.renderAsInfix(value), "(1+a*b)*c*d*e");
+        assert.strictEqual(engine.renderAsInfix(value), "(a*b+1)*c*d*e");
         engine.release();
     });
 });

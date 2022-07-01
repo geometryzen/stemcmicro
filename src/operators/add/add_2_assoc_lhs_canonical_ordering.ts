@@ -9,6 +9,7 @@ import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
+import { is_add } from "./is_add";
 import { is_add_2_any_any } from "./is_add_2_any_any";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -25,10 +26,15 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
-        const sign = compare_terms(lhs.rhs, rhs, $);
-        // console.lg(`add_2_assoc_lhs_canonical_ordering sign=${sign}`);
-        return sign > 0;
-        // return compare_terms(lhs.rhs, rhs, $) > 0;
+        // If the right hand side is an addition then the ordering will be indeterminate.
+        if (is_cons(rhs) && is_add(rhs)) {
+            return false;
+        }
+        else {
+            const sign = compare_terms(lhs.rhs, rhs, $);
+            // console.log(`add_2_assoc_lhs_canonical_ordering lhs.rhs=${render_as_infix(lhs.rhs, $)} rhs=${render_as_infix(rhs, $)} sign=${sign}`);
+            return sign > 0;
+        }
     };
 }
 

@@ -1,4 +1,4 @@
-import { degree } from './degree';
+import { degree } from './operators/degree/degree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { filter } from './filter';
 import { guess } from './guess';

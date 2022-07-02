@@ -1,7 +1,6 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_sym } from './operators/sym/is_sym';
 import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
 import { evaluate_integer } from './scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from './tree/helpers';
 import { wrap_as_int, zero } from './tree/rat/Rat';
@@ -15,9 +14,9 @@ import { U } from './tree/tree';
 //define X p6
 
 // leaves the sum at the top of the stack
-export function Eval_sum(arg: U, $: ExtensionEnv): void {
+export function Eval_sum(arg: U, $: ExtensionEnv): U {
     const result = _sum(arg, $);
-    stack_push(result);
+    return result;
 }
 
 function _sum(p1: U, $: ExtensionEnv): U {

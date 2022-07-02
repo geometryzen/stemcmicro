@@ -100,6 +100,7 @@ import { cross_any_mul_2_scalar_any } from '../operators/cross/cross_any_mul_2_s
 import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
 import { cross_mul_2_scalar_any_any } from '../operators/cross/cross_mul_2_scalar_any_any';
 import { defint } from '../operators/defint/defint';
+import { degree_varargs } from '../operators/degree/degree_varargs';
 import { denominator_fn } from '../operators/denominator/denominator_fn';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
@@ -311,6 +312,7 @@ import { st_sym } from '../operators/st/st_sym';
 import { str } from '../operators/str/StrExtension';
 import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
+import { sum_varargs } from '../operators/sum/sum_varargs';
 import { is_sym } from '../operators/sym/is_sym';
 import { symExtensionBuilder } from '../operators/sym/SymExtension';
 import { sym_math_add } from '../operators/sym/sym_math_add';
@@ -597,6 +599,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(conj_blade);
     $.defineOperator(conj_any);
 
+    $.defineOperator(degree_varargs);
+
     $.defineOperator(gamma_varargs);
 
     $.defineOperator(gcd_varargs);
@@ -797,6 +801,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(st_rat);
     $.defineOperator(st_sym);
     $.defineOperator(st_any);
+
+    $.defineOperator(sum_varargs);
+
     $.defineOperator(taylor_varargs);
     $.defineOperator(tan_varargs);
     $.defineOperator(tanh_varargs);

@@ -1,4 +1,4 @@
-import { degree } from './degree';
+import { degree } from './operators/degree/degree';
 import { divide_expand } from './divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factors } from './factors';

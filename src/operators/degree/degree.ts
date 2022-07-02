@@ -1,13 +1,12 @@
-import { compare_num_num } from './calculators/compare/compare_num_num';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { guess } from './guess';
-import { is_num } from './operators/num/is_num';
-import { is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { caddr, cadr } from './tree/helpers';
-import { Num } from './tree/num/Num';
-import { one, zero } from './tree/rat/Rat';
-import { is_cons, nil, U } from './tree/tree';
+import { compare_num_num } from '../../calculators/compare/compare_num_num';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { guess } from '../../guess';
+import { is_num } from '../num/is_num';
+import { is_power } from '../../runtime/helpers';
+import { caddr, cadr } from '../../tree/helpers';
+import { Num } from '../../tree/num/Num';
+import { one, zero } from '../../tree/rat/Rat';
+import { Cons, is_cons, nil, U } from '../../tree/tree';
 
 /* deg =====================================================================
 
@@ -24,11 +23,11 @@ General description
 Returns the degree of polynomial p(x).
 
 */
-export function Eval_degree(p1: U, $: ExtensionEnv): void {
-    p1 = $.valueOf(caddr(p1));
+export function Eval_degree(degreeInvoke: Cons, $: ExtensionEnv): U {
+    const p1 = $.valueOf(caddr(degreeInvoke));
     const top = $.valueOf(cadr(p1));
     const variable = nil.equals(p1) ? guess(top) : p1;
-    stack_push(degree(top, variable, $));
+    return degree(top, variable, $);
 }
 
 //-----------------------------------------------------------------------------

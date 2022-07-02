@@ -1,11 +1,10 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_sym } from './operators/sym/is_sym';
-import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { evaluate_integer } from './scripting/evaluate_integer';
-import { caddddr, cadddr, caddr, cadr } from './tree/helpers';
-import { wrap_as_int, one } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { halt } from '../../runtime/defs';
+import { evaluate_integer } from '../../scripting/evaluate_integer';
+import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
+import { one, wrap_as_int } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
+import { is_sym } from '../sym/is_sym';
 
 // 'product' function
 
@@ -15,7 +14,7 @@ import { U } from './tree/tree';
 //define X p6
 
 // leaves the product at the top of the stack
-export function Eval_product(p1: U, $: ExtensionEnv): void {
+export function Eval_product(p1: U, $: ExtensionEnv): U {
     // 1st arg
     const body = cadr(p1);
 
@@ -28,15 +27,13 @@ export function Eval_product(p1: U, $: ExtensionEnv): void {
     // 3rd arg (lower limit)
     const j = evaluate_integer(cadddr(p1), $);
     if (isNaN(j)) {
-        stack_push(p1);
-        return;
+        return p1;
     }
 
     // 4th arg (upper limit)
     const k = evaluate_integer(caddddr(p1), $);
     if (isNaN(k)) {
-        stack_push(p1);
-        return;
+        return p1;
     }
 
     // remember contents of the index
@@ -50,8 +47,9 @@ export function Eval_product(p1: U, $: ExtensionEnv): void {
         const arg2 = $.valueOf(body);
         temp = $.multiply(temp, arg2);
     }
-    stack_push(temp);
 
     // put back the index variable to original content
     $.setBinding(indexVariable, oldIndexVariableValue);
+
+    return temp;
 }

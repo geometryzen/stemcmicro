@@ -1,10 +1,10 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_sym } from './operators/sym/is_sym';
-import { halt } from './runtime/defs';
-import { evaluate_integer } from './scripting/evaluate_integer';
-import { caddddr, cadddr, caddr, cadr } from './tree/helpers';
-import { wrap_as_int, zero } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { is_sym } from '../sym/is_sym';
+import { halt } from '../../runtime/defs';
+import { evaluate_integer } from '../../scripting/evaluate_integer';
+import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
+import { wrap_as_int, zero } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
 
 // 'sum' function
 

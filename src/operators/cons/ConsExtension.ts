@@ -24,9 +24,8 @@ import { Eval_nroots } from "../../nroots";
 import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
-import { Eval_product } from "../../product";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, IF, INVG, ISINTEGER, ISPRIME, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, PRODUCT, QUOTIENT, SILENTPATTERN, STOP, SUBST, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, DO, EIGEN, EIGENVAL, EIGENVEC, EQUAL, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, FOR, IF, INVG, ISINTEGER, ISPRIME, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SUBST, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -319,9 +318,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case PRINTPLAIN:
                 Eval_printhuman(expr, $);
-                return stack_pop();
-            case PRODUCT:
-                Eval_product(expr, $);
                 return stack_pop();
             case QUOTIENT:
                 Eval_quotient(expr, $);

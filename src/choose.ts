@@ -2,7 +2,6 @@ import { compare_num_num } from './calculators/compare/compare_num_num';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factorial } from './factorial';
 import { is_num } from './operators/num/is_num';
-import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';
 import { car, Cons, U } from './tree/tree';
@@ -30,7 +29,7 @@ For example, the number of five card hands is choose(52,5)
                      k! (n - k)!
 ```
 */
-export function Eval_choose(expr: Cons, $: ExtensionEnv): void {
+export function Eval_choose(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`Eval_choose ${$.toListString(expr)}`);
     const cdr_expr = expr.cdr;
     const N = $.valueOf(car(cdr_expr));
@@ -38,7 +37,7 @@ export function Eval_choose(expr: Cons, $: ExtensionEnv): void {
     const K = $.valueOf(cadr(cdr_expr));
     // console.lg(`K => ${$.toListString(K)}`);
     const result = choose(N, K, $);
-    stack_push(result);
+    return result;
 }
 
 function choose(N: U, K: U, $: ExtensionEnv): U {

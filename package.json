@@ -30,6 +30,7 @@
         "unit-bootstrap": "mocha 'units/bootstrap.spec.ts'",
         "unit-breakdown": "mocha 'units/breakdown.spec.ts'",
         "unit-canon": "mocha 'units/canon.spec.ts'",
+        "unit-choose": "mocha 'units/choose.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
         "unit-clock": "mocha 'units/clock.spec.ts'",
         "unit-coeff": "mocha 'units/coeff.spec.ts'",

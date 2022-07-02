@@ -72,6 +72,7 @@ import { boo } from '../operators/boo/BooExtension';
 import { ceiling_any } from '../operators/ceiling/ceiling_any';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
+import { choose_varargs } from '../operators/choose/choose_varargs';
 import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
@@ -586,6 +587,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_varargs);
 
     $.defineOperator(binomial_varargs);
+    $.defineOperator(choose_varargs);
 
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);

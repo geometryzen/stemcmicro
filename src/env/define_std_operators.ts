@@ -318,6 +318,7 @@ import { sym_math_pow } from '../operators/sym/sym_math_pow';
 import { tan_varargs } from '../operators/tan/tan_varargs';
 import { tanh_varargs } from '../operators/tanh/tanh_varargs';
 import { tau } from '../operators/tau/tau';
+import { taylor_varargs } from '../operators/taylor/taylor_varargs';
 import { tensorExtensionBuilder } from '../operators/tensor/TensorExtension';
 import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
 import { testgt_mul_2_any_any_rat } from '../operators/testgt/testgt_mul_2_any_any_rat';
@@ -791,15 +792,15 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(st_rat);
     $.defineOperator(st_sym);
     $.defineOperator(st_any);
-
+    $.defineOperator(taylor_varargs);
     $.defineOperator(tan_varargs);
     $.defineOperator(tanh_varargs);
+    $.defineOperator(tau);
 
     $.defineOperator(typeof_tensor);
     $.defineOperator(typeof_blade);
     $.defineOperator(typeof_any);
 
-    $.defineOperator(tau);
 
     $.defineOperator(testeq_sym_rat);
 

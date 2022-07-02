@@ -9,7 +9,7 @@ import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/is_blade";
 import { is_boo } from "../operators/boo/is_boo";
 import { denominator } from "../operators/denominator/denominator";
-import { derivative_wrt } from "../operators/derivative/derivative_wrt";
+import { derivative } from "../operators/derivative/derivative";
 import { is_err } from "../operators/err/is_err";
 import { is_flt } from "../operators/flt/is_flt";
 import { associative_explicator } from "../operators/helpers/associative_explicator";
@@ -242,7 +242,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return symTab.defineKey(sym);
         },
         derivative(expr: U, wrt: U): U {
-            return derivative_wrt(expr, wrt, $);
+            return derivative(expr, wrt, $);
         },
         divide(lhs: U, rhs: U): U {
             if (is_num(lhs) && is_num(rhs)) {

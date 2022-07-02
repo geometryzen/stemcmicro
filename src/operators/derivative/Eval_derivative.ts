@@ -5,7 +5,7 @@ import { nativeInt } from '../../nativeInt';
 import { is_num } from '../num/is_num';
 import { Err } from '../../tree/err/Err';
 import { car, cdr, Cons, nil, U } from '../../tree/tree';
-import { derivative_wrt } from './derivative_wrt';
+import { derivative } from './derivative';
 
 export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
     // evaluate 1st arg to get function F
@@ -58,7 +58,7 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
         let temp = F;
         if (n >= 0) {
             for (let i = 0; i < n; i++) {
-                temp = derivative_wrt(temp, X, $);
+                temp = derivative(temp, X, $);
             }
         }
         else {

@@ -101,4 +101,17 @@ describe("derivative", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
         engine.release();
     });
+    it("d(1/(5+4*cos(x)),x)", function () {
+        const lines: string[] = [
+            `autofactor=1`,
+            `implicate=1`,
+            `d(1/(5+4*cos(x)),x)`
+        ];
+        const engine = create_engine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // assert.strictEqual(engine.renderAsSExpr(actual), "(* (* (* 4 (power (+ 5 (* 4 (cos x))) -1)) (sin x)) (power (+ 5 (* 4 (cos x))) -1))");
+        // TODO: The denominator should contain a squared term expressed using power.
+        assert.strictEqual(engine.renderAsInfix(actual), "4*sin(x)/((5+4*cos(x))*(5+4*cos(x)))");
+        engine.release();
+    });
 });

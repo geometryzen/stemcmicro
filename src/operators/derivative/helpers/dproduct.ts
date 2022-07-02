@@ -3,7 +3,7 @@ import { ExtensionEnv } from "../../../env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "../../../length_of_cons_or_zero";
 import { multiply_items } from "../../../multiply";
 import { car, cdr, U } from "../../../tree/tree";
-import { derivative_wrt } from "../derivative_wrt";
+import { derivative } from "../derivative";
 
 /**
  * TODO: This function allows the product to be of more than two expressions.
@@ -22,7 +22,7 @@ export function dproduct(p1: U, p2: U, $: ExtensionEnv): U {
         for (let j = 0; j < n; j++) {
             let temp = car(p3);
             if (i === j) {
-                temp = derivative_wrt(temp, p2, $);
+                temp = derivative(temp, p2, $);
             }
             arr.push(temp);
             p3 = cdr(p3);

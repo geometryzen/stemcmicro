@@ -17,7 +17,7 @@ import { caddr, cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
 import { car, cdr, Cons, is_cons, nil, U } from '../../tree/tree';
-import { derivative_wrt } from '../derivative/derivative_wrt';
+import { derivative } from '../derivative/derivative';
 import { is_sym } from '../sym/is_sym';
 
 /*
@@ -444,7 +444,7 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         else {
             n = -n;
             for (let i = 0; i < n; i++) {
-                temp = derivative_wrt(temp, X, $);
+                temp = derivative(temp, X, $);
             }
         }
 

@@ -6,7 +6,7 @@ import { is_tensor } from "../tensor/is_tensor";
 import { U } from "../../tree/tree";
 import { d_scalar_scalar } from "./helpers/derivative_helpers";
 
-export function derivative_wrt(expr: U, wrt: U, $: ExtensionEnv): U {
+export function derivative(expr: U, wrt: U, $: ExtensionEnv): U {
     if (is_num(wrt)) {
         throw new SystemError('undefined function');
     }

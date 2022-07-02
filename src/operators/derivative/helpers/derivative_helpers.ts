@@ -20,7 +20,7 @@ import {
     ERFC,
     HERMITE,
     INTEGRAL,
-    LOG, SECRETX,
+    LOG, MULTIPLY, POWER, SECRETX,
     SGN,
     SIN,
     SINH,
@@ -29,8 +29,6 @@ import {
 } from '../../../runtime/constants';
 import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
-// import { stack_push } from '../../runtime/stack';
-import { sgn } from '../../sgn/sgn';
 import { subst } from '../../../subst';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
@@ -41,121 +39,130 @@ import { bessely } from '../../bessely/bessely';
 import { cos } from '../../cos/cosine';
 import { ycosh } from '../../cosh/cosh';
 import { hermite } from '../../hermite/hermite';
+import { sgn } from '../../sgn/sgn';
 import { simplify } from '../../simplify/simplify';
 import { sin } from '../../sin/sine';
 import { sinh } from '../../sinh/sinh';
 import { is_sym } from '../../sym/is_sym';
-import { derivative_wrt } from '../derivative_wrt';
+import { derivative } from '../derivative';
 import { MATH_DERIVATIVE } from '../MATH_DERIVATIVE';
+import { dpower } from './dpower';
+import { dproduct } from './dproduct';
 
-export function d_scalar_scalar(p1: U, p2: U, $: ExtensionEnv): U {
-    // console.log(`d_scalar_scalar ${p1} ${p2}`);
-    if (is_sym(p2)) {
-        return d_scalar_scalar_1(p1, p2, $);
+export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
+    // console.log(`d_scalar_scalar ${render_as_infix(F, $)} ${render_as_infix(X, $)}`);
+    if (is_sym(X)) {
+        return d_scalar_scalar_1(F, X, $);
     }
 
     // Example: d(sin(cos(x)),cos(x))
     // Replace cos(x) <- X, find derivative, then do X <- cos(x)
-    const arg1 = subst(p1, p2, SECRETX, $); // p1: sin(cos(x)), p2: cos(x), SECRETX: X => sin(cos(x)) -> sin(X)
-    const darg1x = derivative_wrt(arg1, SECRETX, $);
-    return subst(darg1x, SECRETX, p2, $); // p2:  cos(x)  =>  cos(X) -> cos(cos(x))
+    const arg1 = subst(F, X, SECRETX, $); // p1: sin(cos(x)), p2: cos(x), SECRETX: X => sin(cos(x)) -> sin(X)
+    const darg1x = derivative(arg1, SECRETX, $);
+    return subst(darg1x, SECRETX, X, $); // p2:  cos(x)  =>  cos(X) -> cos(cos(x))
 }
 
-function d_scalar_scalar_1(p1: U, p2: Sym, $: ExtensionEnv): U {
+function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     // d(x,x)?
-    if (p1.equals(p2)) {
+    if (F.equals(X)) {
         return one;
     }
 
     // d(a,x)?
-    if (!is_cons(p1)) {
+    if (!is_cons(F)) {
         return zero;
     }
 
     // TODO: The generalization here would seem to be that we delegate the task to a binary operation implemented by the
     // operator that matches.
-    if (is_abs(p1)) {
-        return dabs(p1, p2, $);
+    if (is_abs(F)) {
+        return dabs(F, X, $);
     }
-    if (is_add(p1)) {
-        return dsum(p1, p2, $);
+    if (is_add(F)) {
+        return dsum(F, X, $);
     }
     // console.log(`car(p1)=>${car(p1)}`);
     // Turning these into matching patterns...
-    const opr = car(p1);
+    const opr = car(F);
+    if (opr.equals(MULTIPLY)) {
+        return dproduct(F, X, $);
+    }
+    if (opr.equals(POWER)) {
+        return dpower(F, X, $);
+    }
     if (opr.equals(MATH_DERIVATIVE)) {
-        return dd(p1, p2, $);
+        return dd(F, X, $);
     }
     if (opr.equals(LOG)) {
-        return dlog(p1, p2, $);
+        return dlog(F, X, $);
     }
     if (opr.equals(SIN)) {
-        return dsin(p1, p2, $);
+        return dsin(F, X, $);
     }
     if (opr.equals(COS)) {
-        return dcos(p1, p2, $);
+        return dcos(F, X, $);
     }
     if (opr.equals(TAN)) {
-        return dtan(p1, p2, $);
+        return dtan(F, X, $);
     }
     if (opr.equals(ARCSIN)) {
-        return darcsin(p1, p2, $);
+        return darcsin(F, X, $);
     }
     if (opr.equals(ARCCOS)) {
-        return darccos(p1, p2, $);
+        return darccos(F, X, $);
     }
     if (opr.equals(ARCTAN)) {
-        return darctan(p1, p2, $);
+        return darctan(F, X, $);
     }
     if (opr.equals(SINH)) {
-        return dsinh(p1, p2, $);
+        return dsinh(F, X, $);
     }
     if (opr.equals(COSH)) {
-        return dcosh(p1, p2, $);
+        return dcosh(F, X, $);
     }
     if (opr.equals(TANH)) {
-        return dtanh(p1, p2, $);
+        return dtanh(F, X, $);
     }
     if (opr.equals(ARCSINH)) {
-        return darcsinh(p1, p2, $);
+        return darcsinh(F, X, $);
     }
     if (opr.equals(ARCCOSH)) {
-        return darccosh(p1, p2, $);
+        return darccosh(F, X, $);
     }
     if (opr.equals(ARCTANH)) {
-        return darctanh(p1, p2, $);
+        return darctanh(F, X, $);
     }
     if (opr.equals(SGN)) {
-        return dsgn(p1, p2, $);
+        return dsgn(F, X, $);
     }
     if (opr.equals(HERMITE)) {
-        return dhermite(p1, p2, $);
+        return dhermite(F, X, $);
     }
     if (opr.equals(ERF)) {
-        return derf(p1, p2, $);
+        return derf(F, X, $);
     }
     if (opr.equals(ERFC)) {
-        return derfc(p1, p2, $);
+        return derfc(F, X, $);
     }
     if (opr.equals(BESSELJ)) {
-        return dbesselj(p1, p2, $);
+        return dbesselj(F, X, $);
     }
     if (opr.equals(BESSELY)) {
-        return dbessely(p1, p2, $);
+        return dbessely(F, X, $);
     }
-    if (car(p1) === INTEGRAL && caddr(p1) === p2) {
-        return derivative_of_integral(p1);
+    if (car(F) === INTEGRAL && caddr(F) === X) {
+        return derivative_of_integral(F);
     }
-    return dfunction(p1, p2, $);
+    return dfunction(F, X, $);
 }
 
 function dsum(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const toAdd = is_cons(p1) ? p1.tail().map((el) => derivative_wrt(el, p2, $)) : [];
+    const toAdd = is_cons(p1) ? p1.tail().map((el) => derivative(el, p2, $)) : [];
     return add_terms(toAdd, $);
 }
 
 function dlog(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.divide(deriv, cadr(p1));
 }
 
@@ -172,7 +179,7 @@ function dlog(p1: U, p2: Sym, $: ExtensionEnv): U {
 //  caddr(p1) = y
 function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
     // d(f(x,y),x)
-    const p3 = derivative_wrt(cadr(p1), p2, $);
+    const p3 = derivative(cadr(p1), p2, $);
 
     if (car(p3) === MATH_DERIVATIVE) {
         // handle dx terms
@@ -188,12 +195,13 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
         }
     }
 
-    return derivative_wrt(p3, caddr(p1), $);
+    return derivative(p3, caddr(p1), $);
 }
 
 // derivative of a generic function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function dfunction(p1: U, p2: Sym, $: ExtensionEnv): U {
+    // console.log(`dfunction ${render_as_infix(p1, $)} ${render_as_infix(p2, $)}`);
     const p3 = cdr(p1); // p3 is the argument list for the function
 
     if (nil === p3 || p3.contains(p2)) {
@@ -203,22 +211,22 @@ function dfunction(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 function dsin(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(deriv, cos(cadr(p1), $));
 }
 
 function dcos(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.negate($.multiply(deriv, sin(cadr(p1), $)));
 }
 
 function dtan(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(deriv, $.power(cos(cadr(p1), $), wrap_as_int(-2)));
 }
 
 function darcsin(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         deriv,
         $.power($.subtract(one, $.power(cadr(p1), two)), rational(-1, 2))
@@ -226,7 +234,7 @@ function darcsin(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 function darccos(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.negate(
         $.multiply(
             deriv,
@@ -244,29 +252,29 @@ function darccos(p1: U, p2: Sym, $: ExtensionEnv): U {
 //
 //  d(arctan(y/x),y)  1/(x*(y^2/x^2+1))  x/(x^2+y^2)
 function darctan(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return simplify(
         $.multiply(deriv, $.inverse($.add(one, $.power(cadr(p1), two)))), $
     );
 }
 
 function dsinh(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(deriv, ycosh(cadr(p1), $));
 }
 
 function dcosh(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(deriv, sinh(cadr(p1), $));
 }
 
 function dtanh(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(deriv, $.power(ycosh(cadr(p1), $), wrap_as_int(-2)));
 }
 
 function darcsinh(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         deriv,
         $.power($.add($.power(cadr(p1), two), one), rational(-1, 2))
@@ -274,7 +282,7 @@ function darcsinh(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 function darccosh(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         deriv,
         $.power($.add($.power(cadr(p1), two), negOne), rational(-1, 2))
@@ -282,7 +290,7 @@ function darccosh(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function darctanh(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         deriv,
         $.inverse($.subtract(one, $.power(cadr(p1), two)))
@@ -290,17 +298,17 @@ export function darctanh(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function dabs(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(deriv, sgn(cadr(p1), $));
 }
 
 export function dsgn(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply($.multiply(deriv, dirac(cadr(p1), $)), two);
 }
 
 export function dhermite(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         $.multiply(deriv, $.multiply(two, caddr(p1))),
         hermite(cadr(p1), $.add(caddr(p1), negOne), $)
@@ -308,7 +316,7 @@ export function dhermite(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function derf(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         $.multiply(
             $.multiply(
@@ -322,7 +330,7 @@ export function derf(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function derfc(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         $.multiply(
             $.multiply(
@@ -343,7 +351,7 @@ export function dbesselj(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function dbesselj0(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         $.multiply(deriv, besselj(cadr(p1), one, $)),
         negOne
@@ -351,7 +359,7 @@ export function dbesselj0(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function dbesseljn(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     const A = $.add(caddr(p1), negOne);
     const B = $.multiply(caddr(p1), negOne);
     const C = besselj(cadr(p1), A, $);
@@ -370,7 +378,7 @@ export function dbessely(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function dbessely0(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     return $.multiply(
         $.multiply(deriv, besselj(cadr(p1), one, $)),
         negOne
@@ -378,7 +386,7 @@ export function dbessely0(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function dbesselyn(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative_wrt(cadr(p1), p2, $);
+    const deriv = derivative(cadr(p1), p2, $);
     const A = $.add(caddr(p1), negOne);
     const B = $.multiply(caddr(p1), negOne);
     const C = $.divide(B, cadr(p1));

@@ -2,20 +2,18 @@ import { assert } from "chai";
 import { create_engine } from "../src/runtime/symengine";
 
 describe("current", function () {
-    it("division", function () {
+    it("d(1/(5+4*cos(x)),x)", function () {
         const lines: string[] = [
-            `autofactor=0`,
+            `autofactor=1`,
             `implicate=1`,
-            `(((10+30*x**2)+40*x**3)+20*x)/(x**3)`
+            `d(1/(5+4*cos(x)),x)`
         ];
         const engine = create_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 10 (power x -3)) (* 20 (power x -2)) (* 30 (power x -1)) 40)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "10/(x**3)+20/(x**2)+30/x+40");
-        // Algebrite...
-        // assert.strictEqual(engine.renderAsInfix(values[0]), "40+10/(x^3)+20/(x^2)+30/x");
+        // assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 10 (power x -3)) (* 20 (power x -2)) (* 30 (power x -1)) 40)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "4*sin(x)/((5+4*cos(x))*(5+4*cos(x)))");
         engine.release();
     });
 });

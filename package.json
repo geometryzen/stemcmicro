@@ -1,6 +1,6 @@
 {
     "name": "symbolic-math",
-    "version": "0.9.48",
+    "version": "0.9.49",
     "description": "Computer Algebra System in TypeScript",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
@@ -96,6 +96,7 @@
         "unit-sqrt": "mocha 'units/sqrt.spec.ts'",
         "unit-tan": "mocha 'units/tan.spec.ts'",
         "unit-tanh": "mocha 'units/tanh.spec.ts'",
+        "unit-taylor": "mocha 'units/taylor.spec.ts'",
         "unit-tensor": "mocha 'units/tensor.spec.ts'",
         "unit-transpose": "mocha 'units/transpose.spec.ts'",
         "unit-tree": "mocha 'units/tree.spec.ts'",

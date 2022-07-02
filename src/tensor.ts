@@ -2,7 +2,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { inv } from './inv';
 import { makeList } from './makeList';
 import { nativeInt } from './nativeInt';
-import { derivative_wrt } from './operators/derivative/derivative_wrt';
+import { derivative } from './operators/derivative/derivative';
 import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
 import { MAXDIM, POWER } from './runtime/constants';
 import { Err } from './tree/err/Err';
@@ -85,7 +85,7 @@ export function d_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
     const elems = new Array<U>(iLen * jLen);
     for (let i = 0; i < iLen; i++) {
         for (let j = 0; j < jLen; j++) {
-            elems[i * jLen + j] = derivative_wrt(p1.elem(i), p2.elem(j), $);
+            elems[i * jLen + j] = derivative(p1.elem(i), p2.elem(j), $);
         }
     }
     return new Tensor(sizes, elems);
@@ -98,7 +98,7 @@ export function d_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
 //-----------------------------------------------------------------------------
 export function d_scalar_tensor(p1: U, p2: Tensor, $: ExtensionEnv): U {
     const sizes = [p2.dim(0)];
-    const elems = p2.mapElements((elem) => derivative_wrt(p1, elem, $));
+    const elems = p2.mapElements((elem) => derivative(p1, elem, $));
     return new Tensor(sizes, elems);
 }
 
@@ -108,7 +108,7 @@ export function d_scalar_tensor(p1: U, p2: Tensor, $: ExtensionEnv): U {
 //
 //-----------------------------------------------------------------------------
 export function d_tensor_scalar(p1: Tensor, p2: U, $: ExtensionEnv): U {
-    const elems = p1.mapElements((elem) => derivative_wrt(elem, p2, $));
+    const elems = p1.mapElements((elem) => derivative(elem, p2, $));
     return p1.withElements(elems);
 }
 

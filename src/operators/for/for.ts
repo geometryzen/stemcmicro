@@ -1,11 +1,10 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_sym } from './operators/sym/is_sym';
-import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { evaluate_integer } from './scripting/evaluate_integer';
-import { caddddr, cadddr, caddr, cadr } from './tree/helpers';
-import { wrap_as_int } from './tree/rat/Rat';
-import { nil, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { halt } from '../../runtime/defs';
+import { evaluate_integer } from '../../scripting/evaluate_integer';
+import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
+import { wrap_as_int } from '../../tree/rat/Rat';
+import { nil, U } from '../../tree/tree';
+import { is_sym } from '../sym/is_sym';
 
 // 'for' function
 
@@ -28,7 +27,7 @@ B: 1...9
 // define B p4
 // define I p5
 // define X p6
-export function Eval_for(p1: U, $: ExtensionEnv): void {
+export function Eval_for(p1: U, $: ExtensionEnv): U {
     const loopingVariable = caddr(p1);
     if (!is_sym(loopingVariable)) {
         halt('for: 2nd arg should be the variable to loop over');
@@ -36,14 +35,12 @@ export function Eval_for(p1: U, $: ExtensionEnv): void {
 
     const j = evaluate_integer(cadddr(p1), $);
     if (isNaN(j)) {
-        stack_push(p1);
-        return;
+        return p1;
     }
 
     const k = evaluate_integer(caddddr(p1), $);
     if (isNaN(k)) {
-        stack_push(p1);
-        return;
+        return p1;
     }
 
     // remember contents of the index
@@ -61,5 +58,5 @@ export function Eval_for(p1: U, $: ExtensionEnv): void {
     }
 
     // return value
-    stack_push(nil);
+    return nil;
 }

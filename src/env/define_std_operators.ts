@@ -120,6 +120,7 @@ import { outer_2_add_2_any_any_any } from '../operators/distrib/outer_2_add_2_an
 import { outer_2_any_add_2_any_any } from '../operators/distrib/outer_2_any_add_2_any_any';
 import { rco_2_add_2_any_any_any } from '../operators/distrib/rco_2_add_2_any_any_any';
 import { rco_2_any_add_2_any_any } from '../operators/distrib/rco_2_any_add_2_any_any';
+import { do_varargs } from '../operators/do/do_varargs';
 import { errExtensionBuilder } from '../operators/err/ErrExtension';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
@@ -137,6 +138,7 @@ import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
 import { floor_varargs } from '../operators/floor/floor_varargs';
 import { is_flt, op_flt } from '../operators/flt/FltExtension';
+import { for_varargs } from '../operators/for/for_varargs';
 import { gamma_varargs } from '../operators/gamma/gamma_varargs';
 import { gcd_varargs } from '../operators/gcd/gcd_varargs';
 import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_canonical_order';
@@ -731,6 +733,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(dim_varargs);
 
+    $.defineOperator(do_varargs);
+
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
     $.defineOperator(exp_any);
@@ -743,6 +747,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(float_rat);
     $.defineOperator(float_imu);
     $.defineOperator(floor_varargs);
+
+    $.defineOperator(for_varargs);
 
     $.defineOperator(hilbert_varargs);
 

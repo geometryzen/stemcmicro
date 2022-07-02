@@ -65,6 +65,7 @@ import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
 import { bessely_varargs } from '../operators/bessely/bessely_varargs';
+import { binomial_varargs } from '../operators/binomial/binomial_varargs';
 import { bladeExtensionBuilder } from '../operators/blade/BladeExtension';
 import { is_blade } from '../operators/blade/is_blade';
 import { boo } from '../operators/boo/BooExtension';
@@ -583,6 +584,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
     $.defineOperator(mul_varargs);
+
+    $.defineOperator(binomial_varargs);
 
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);

@@ -1,11 +1,10 @@
-import { lt_num_num } from './calculators/compare/lt_num_num';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { factorial } from './factorial';
-import { is_num } from './operators/num/is_num';
-import { stack_push } from './runtime/stack';
-import { caddr, cadr } from './tree/helpers';
-import { zero } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { lt_num_num } from '../../calculators/compare/lt_num_num';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { factorial } from '../../factorial';
+import { caddr, cadr } from '../../tree/helpers';
+import { zero } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
+import { is_num } from '../num/is_num';
 
 //  Binomial coefficient
 //
@@ -19,11 +18,11 @@ import { U } from './tree/tree';
 //
 //  The binomial coefficient vanishes for k < 0 or k > n. (A=B, p. 19)
 
-export function Eval_binomial(p1: U, $: ExtensionEnv): void {
+export function Eval_binomial(p1: U, $: ExtensionEnv): U {
     const N = $.valueOf(cadr(p1));
     const K = $.valueOf(caddr(p1));
     const result = binomial(N, K, $);
-    stack_push(result);
+    return result;
 }
 
 function binomial(N: U, K: U, $: ExtensionEnv): U {

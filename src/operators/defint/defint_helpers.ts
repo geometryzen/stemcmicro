@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { subst } from '../../subst';
+import { subst } from '../subst/subst';
 import { cadr, cddr } from '../../tree/helpers';
 import { car, cdr, Cons, is_cons, U } from '../../tree/tree';
 import { integral } from '../integral/integral_helpers';

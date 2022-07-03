@@ -5,7 +5,7 @@ import { render_as_infix } from "../../print/print";
 import { render_as_latex } from "../../print/render_as_latex";
 import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { SystemError } from "../../runtime/SystemError";
-import { subst } from "../../subst";
+import { subst } from "../subst/subst";
 import { is_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 

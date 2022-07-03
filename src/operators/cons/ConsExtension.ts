@@ -24,7 +24,7 @@ import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, EIGEN, EIGENVAL, EIGENVEC, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, ISPRIME, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SUBST, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, EIGEN, EIGENVAL, EIGENVEC, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, ISPRIME, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -32,10 +32,10 @@ import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern
 import { Eval_power } from "../../scripting/eval_power";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { subst } from "../../subst";
+import { subst } from "../subst/subst";
 import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
 import { Err } from "../../tree/err/Err";
-import { cadddr, caddr, cadr, cddr } from "../../tree/helpers";
+import { cadr, cddr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
@@ -315,9 +315,6 @@ class ConsExtension implements Extension<Cons> {
             case STOP:
                 Eval_stop();
                 return stack_pop();
-            case SUBST:
-                Eval_subst(expr, $);
-                return stack_pop();
             case SYMBOLSINFO:
                 Eval_symbolsinfo($);
                 return stack_pop();
@@ -492,13 +489,6 @@ function Eval_operator(p1: U, $: ExtensionEnv) {
 
 function Eval_stop() {
     throw new Error('user stop');
-}
-
-function Eval_subst(p1: Cons, $: ExtensionEnv): void {
-    const newExpr = $.valueOf(cadr(p1));
-    const oldExpr = $.valueOf(caddr(p1));
-    const expr = $.valueOf(cadddr(p1));
-    stack_push($.valueOf(subst(expr, oldExpr, newExpr, $)));
 }
 
 export const cons = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {

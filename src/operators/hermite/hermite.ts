@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { HERMITE, SECRETX } from '../../runtime/constants';
-import { subst } from '../../subst';
+import { subst } from '../subst/subst';
 import { one, two, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
 import { U } from '../../tree/tree';

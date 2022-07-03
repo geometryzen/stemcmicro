@@ -1,7 +1,7 @@
 
 import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { subst } from './subst';
+import { subst } from './operators/subst/subst';
 import { U } from './tree/tree';
 
 /* conj =====================================================================

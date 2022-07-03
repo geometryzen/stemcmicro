@@ -3,7 +3,7 @@ import { divide_expand } from '../../divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { filter } from '../../filter';
 import { SYMBOL_X } from '../../runtime/constants';
-import { subst } from '../../subst';
+import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { one, zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, nil, U } from '../../tree/tree';

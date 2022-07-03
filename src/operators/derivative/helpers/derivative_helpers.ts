@@ -29,7 +29,7 @@ import {
 } from '../../../runtime/constants';
 import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
-import { subst } from '../../../subst';
+import { subst } from '../../subst/subst';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';

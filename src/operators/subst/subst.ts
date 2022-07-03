@@ -1,5 +1,5 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { cons, is_cons, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { cons, is_cons, U } from '../../tree/tree';
 
 export function subst(expr: U, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
     if (expr.equals(oldExpr)) {

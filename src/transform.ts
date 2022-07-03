@@ -6,7 +6,7 @@ import { is_num } from './operators/num/is_num';
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
 import { DEBUG, defs, use_factoring_with_unary_function } from './runtime/defs';
 import { scan_meta } from './scanner/scan';
-import { subst } from './subst';
+import { subst } from './operators/subst/subst';
 import { caddr, cadr, cdddr, cddr } from './tree/helpers';
 import { one } from './tree/rat/Rat';
 import { car, cdr, is_cons, nil, U } from './tree/tree';

@@ -7,7 +7,7 @@ import { sin } from '../sin/sine';
 import { is_sym } from '../sym/is_sym';
 import { COS, LEGENDRE, SECRETX, SIN } from '../../runtime/constants';
 import { square } from '../../square';
-import { subst } from '../../subst';
+import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { half, one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { car, nil, U } from '../../tree/tree';

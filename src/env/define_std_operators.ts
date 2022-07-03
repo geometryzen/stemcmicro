@@ -313,6 +313,7 @@ import { st_mul_2_rat_any } from '../operators/st/st_mul_2_rat_any';
 import { st_rat } from '../operators/st/st_rat';
 import { st_sym } from '../operators/st/st_sym';
 import { str } from '../operators/str/StrExtension';
+import { subst_varargs } from '../operators/subst/subst_varargs';
 import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
 import { sum_varargs } from '../operators/sum/sum_varargs';
@@ -812,6 +813,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(st_sym);
     $.defineOperator(st_any);
 
+    $.defineOperator(subst_varargs);
     $.defineOperator(sum_varargs);
 
     $.defineOperator(taylor_varargs);

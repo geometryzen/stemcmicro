@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { LAGUERRE, SECRETX } from '../../runtime/constants';
-import { subst } from '../../subst';
+import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { nil, U } from '../../tree/tree';

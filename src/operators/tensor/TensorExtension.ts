@@ -2,7 +2,7 @@ import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../e
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
-import { subst } from "../../subst";
+import { subst } from "../subst/subst";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";

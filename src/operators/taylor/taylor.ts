@@ -5,7 +5,7 @@ import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { TAYLOR } from '../../runtime/constants';
 import { stack_peek } from '../../runtime/stack';
-import { subst } from '../../subst';
+import { subst } from '../subst/subst';
 import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { car, cdr, nil, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';

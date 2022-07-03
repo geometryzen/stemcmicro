@@ -8,7 +8,7 @@ import { sort_stack } from './misc';
 import { yyfloat } from './operators/float/float';
 import { real } from './operators/real/real';
 import { defs, halt, move_top_of_stack } from './runtime/defs';
-import { stack_push } from './runtime/stack';
+import { stack_pop, stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
 import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
@@ -51,7 +51,7 @@ for (let initNRoots = 0; initNRoots < NROOTS_YMAX; initNRoots++) {
     nroots_c[initNRoots] = new numericRootOfPolynomial();
 }
 
-export function Eval_nroots(p1: U, $: ExtensionEnv): void {
+export function Eval_nroots(p1: U, $: ExtensionEnv): U {
     let p2: U = $.valueOf(caddr(p1));
     p1 = $.valueOf(cadr(p1));
 
@@ -107,6 +107,9 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): void {
         move_top_of_stack(h);
         stack_push(new Tensor(dims, elems));
     }
+
+    const retval = stack_pop();
+    return retval;
 }
 
 // divide the polynomial by its leading coefficient

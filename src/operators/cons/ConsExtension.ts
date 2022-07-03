@@ -19,12 +19,11 @@ import { is_rat_integer } from "../../is_rat_integer";
 import { Eval_leading } from "../../leading";
 import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
-import { Eval_nroots } from "../../nroots";
 import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, EIGEN, EIGENVAL, EIGENVEC, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, ISPRIME, LEADING, LEGENDRE, LOOKUP, NROOTS, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, EIGEN, EIGENVAL, EIGENVEC, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, ISPRIME, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -32,7 +31,6 @@ import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern
 import { Eval_power } from "../../scripting/eval_power";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { subst } from "../subst/subst";
 import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
 import { Err } from "../../tree/err/Err";
 import { cadr, cddr } from "../../tree/helpers";
@@ -40,8 +38,8 @@ import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
-import { Eval_legendre } from "../legendre/legendre";
 import { is_rat } from "../rat/is_rat";
+import { subst } from "../subst/subst";
 import { is_sym } from "../sym/is_sym";
 
 /**
@@ -264,14 +262,8 @@ class ConsExtension implements Extension<Cons> {
             case LEADING:
                 Eval_leading(expr, $);
                 return stack_pop();
-            case LEGENDRE:
-                Eval_legendre(expr, $);
-                return stack_pop();
             case LOOKUP:
                 Eval_lookup(expr, $);
-                return stack_pop();
-            case NROOTS:
-                Eval_nroots(expr, $);
                 return stack_pop();
             case OPERATOR:
                 Eval_operator(expr, $);
@@ -400,35 +392,6 @@ function Eval_check(p1: U, $: ExtensionEnv) {
 
 function Eval_divisors(p1: U, $: ExtensionEnv) {
     stack_push(divisors($.valueOf(cadr(p1)), $));
-}
-
-/* do =====================================================================
- 
-Tags
-----
-scripting, JS, internal, treenode, general concept
- 
-Parameters
-----------
-a,b,...
- 
-General description
--------------------
-Evaluates each argument from left to right. Returns the result of the last argument.
- 
-*/
-export function Eval_do(p1: U, $: ExtensionEnv): U {
-    stack_push(car(p1));
-    p1 = cdr(p1);
-
-    while (is_cons(p1)) {
-        stack_pop();
-        stack_push($.valueOf(car(p1)));
-        p1 = cdr(p1);
-    }
-
-    const retval = stack_pop();
-    return retval;
 }
 
 // for example, Eval(f,x,2)

@@ -75,6 +75,7 @@
         "unit-mod": "mocha 'units/mod.spec.ts'",
         "unit-mul": "mocha 'units/mul.spec.ts'",
         "unit-numerator": "mocha 'units/numerator.spec.ts'",
+        "unit-nroots": "mocha 'units/nroots.spec.ts'",
         "unit-parser": "mocha 'units/parser.spec.ts'",
         "unit-physics": "mocha 'units/physics.spec.ts'",
         "unit-pierce": "mocha 'units/pierce.spec.ts'",

@@ -249,6 +249,7 @@ import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
 import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
 import { nilExtensionBuilder } from '../operators/nil/NilExtension';
 import { not_fn } from '../operators/not/not_fn';
+import { nroots_varargs } from '../operators/nroots/nroots_varargs';
 import { number_fn } from '../operators/number/number_fn';
 import { numerator_fn } from '../operators/numerator/numerator_fn';
 import { or_varargs } from '../operators/or/or_varargs';
@@ -766,6 +767,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(not_fn);
     $.defineOperator(number_fn);
     $.defineOperator(numerator_fn);
+    $.defineOperator(nroots_varargs);
     $.defineOperator(or_varargs);
 
     $.defineOperator(pred_rat);

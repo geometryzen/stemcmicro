@@ -1,14 +1,14 @@
-import { sort_factors } from './calculators/compare/sort_factors';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { factor_small_number } from './factor';
-import { gcd } from './operators/gcd/gcd';
-import { nativeInt } from './nativeInt';
-import { is_num } from './operators/num/is_num';
-import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { caddr, cadr } from './tree/helpers';
-import { Tensor } from './tree/tensor/Tensor';
-import { wrap_as_int, one, zero } from './tree/rat/Rat';
-import { car, cdr, is_cons, U } from './tree/tree';
+import { sort_factors } from '../../calculators/compare/sort_factors';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { factor_small_number } from '../../factor';
+import { nativeInt } from '../../nativeInt';
+import { is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { caddr, cadr } from '../../tree/helpers';
+import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { Tensor } from '../../tree/tensor/Tensor';
+import { car, cdr, is_cons, U } from '../../tree/tree';
+import { gcd } from '../gcd/gcd';
+import { is_num } from '../num/is_num';
 
 function signum(n: number): 1 | -1 | 0 {
     if (n < 0) {
@@ -33,11 +33,9 @@ function signum(n: number): 1 | -1 | 0 {
 //
 //-----------------------------------------------------------------------------
 export function divisors(term: U, $: ExtensionEnv): U {
-    // console.lg(`divisors(p=${JSON.stringify(p)})`);
     const factors = ydivisors(term, $);
     const n = factors.length;
-    sort_factors(factors, $);
-    return new Tensor([n], factors);
+    return new Tensor([n], sort_factors(factors, $));
 }
 
 export function ydivisors(p1: U, $: ExtensionEnv): U[] {

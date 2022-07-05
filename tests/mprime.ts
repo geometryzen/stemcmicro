@@ -1,5 +1,5 @@
 import { mint } from '../src/bignum';
-import { mprime } from '../src/mprime';
+import { mprime } from '../src/operators/isprime/mprime';
 import { primetab } from '../src/runtime/constants';
 import { test } from '../test-harness';
 

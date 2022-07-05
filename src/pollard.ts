@@ -5,7 +5,7 @@ import { madd, msub } from './madd';
 import { makeList } from './makeList';
 import { mgcd } from './mgcd';
 import { mdiv, mdivrem, mmod, mmul } from './mmul';
-import { mprime } from './mprime';
+import { mprime } from './operators/isprime/mprime';
 import { MEQUAL, MULTIPLY, POWER, primetab } from './runtime/constants';
 import { mcmp } from './runtime/mcmp';
 import { negOne, Rat } from './tree/rat/Rat';

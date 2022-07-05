@@ -2,7 +2,7 @@ import { rational } from './bignum';
 import { coeff } from './operators/coeff/coeff';
 import { complex_conjugate } from './complex_conjugate';
 import { yycondense } from './condense';
-import { ydivisors } from './divisors';
+import { ydivisors } from './operators/divisors/divisors';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { contains_floating_values_or_floatf } from './is';

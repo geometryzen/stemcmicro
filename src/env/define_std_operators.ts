@@ -120,6 +120,7 @@ import { outer_2_add_2_any_any_any } from '../operators/distrib/outer_2_add_2_an
 import { outer_2_any_add_2_any_any } from '../operators/distrib/outer_2_any_add_2_any_any';
 import { rco_2_add_2_any_any_any } from '../operators/distrib/rco_2_add_2_any_any_any';
 import { rco_2_any_add_2_any_any } from '../operators/distrib/rco_2_any_add_2_any_any';
+import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
 import { errExtensionBuilder } from '../operators/err/ErrExtension';
 import { exp_any } from '../operators/exp/exp_any';
@@ -167,6 +168,7 @@ import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { inner_2_vec_vec } from '../operators/inner/inner_2_vec_vec';
 import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
+import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
@@ -734,6 +736,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(det_any);
 
     $.defineOperator(dim_varargs);
+    $.defineOperator(divisors_varargs);
 
     $.defineOperator(do_varargs);
 
@@ -760,7 +763,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(integral_varargs);
     $.defineOperator(inv_any);
-
+    $.defineOperator(isprime_varargs);
     $.defineOperator(iszero_rat);
     $.defineOperator(iszero_any);
 

@@ -2,7 +2,7 @@ import { Eval_approxratio } from "../../approxratio";
 import { Eval_clear, Eval_clearall } from "../../clear";
 import { Eval_decomp } from "../../decomp";
 import { Eval_dirac } from "../../dirac";
-import { divisors } from "../../divisors";
+import { divisors } from "../divisors/divisors";
 import { Eval_eigen, Eval_eigenval, Eval_eigenvec } from "../../eigen";
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Eval_erf } from "../../erf";
@@ -14,7 +14,6 @@ import { Eval_factor } from "../../factor";
 import { factorial } from "../../factorial";
 import { Eval_filter } from "../../filter";
 import { invg } from "../../inv";
-import { Eval_isprime } from "../../isprime";
 import { is_rat_integer } from "../../is_rat_integer";
 import { Eval_leading } from "../../leading";
 import { Eval_lookup } from "../../lookup";
@@ -23,7 +22,7 @@ import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, EIGEN, EIGENVAL, EIGENVEC, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, ISPRIME, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DECOMP, DIRAC, DIVISORS, EIGEN, EIGENVAL, EIGENVEC, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORIAL, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -256,9 +255,6 @@ class ConsExtension implements Extension<Cons> {
             case ISINTEGER:
                 Eval_isinteger(expr, $);
                 return stack_pop();
-            case ISPRIME:
-                Eval_isprime(expr, $);
-                return stack_pop();
             case LEADING:
                 Eval_leading(expr, $);
                 return stack_pop();
@@ -390,8 +386,8 @@ function Eval_check(p1: U, $: ExtensionEnv) {
     }
 }
 
-function Eval_divisors(p1: U, $: ExtensionEnv) {
-    stack_push(divisors($.valueOf(cadr(p1)), $));
+export function Eval_divisors(p1: U, $: ExtensionEnv): U {
+    return divisors($.valueOf(cadr(p1)), $);
 }
 
 // for example, Eval(f,x,2)

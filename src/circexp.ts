@@ -1,8 +1,8 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { exp } from './exp';
-import { expcos } from './expcos';
-import { expsin } from './expsin';
+import { expcos } from './operators/expcos/expcos';
+import { expsin } from './operators/expsin/expsin';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { COS, COSH, SIN, SINH, TAN, TANH } from './runtime/constants';
 import { cadr } from './tree/helpers';

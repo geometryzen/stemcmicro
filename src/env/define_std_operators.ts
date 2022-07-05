@@ -128,6 +128,8 @@ import { errExtensionBuilder } from '../operators/err/ErrExtension';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_rat } from '../operators/exp/exp_rat';
+import { expcos_varargs } from '../operators/expcos/expcos_varargs';
+import { expsin_varargs } from '../operators/expsin/expsin_varargs';
 import { factorial_varargs } from '../operators/factorial/factorial_varargs';
 import { factorize_ab_minus_two_a_dot_b } from '../operators/factorize/factorize_ab_minus_two_a_dot_b';
 import { factorize_geometric_product_add } from '../operators/factorize/factorize_geometric_product_add';
@@ -749,6 +751,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
     $.defineOperator(exp_any);
+
+    $.defineOperator(expcos_varargs);
+    $.defineOperator(expsin_varargs);
 
     $.defineOperator(factorial_varargs);
 

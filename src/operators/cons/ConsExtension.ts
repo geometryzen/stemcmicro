@@ -5,8 +5,6 @@ import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/Ext
 import { Eval_erf } from "../../erf";
 import { Eval_erfc } from "../../erfc";
 import { Eval_expand } from "../../expand";
-import { Eval_expcos } from "../../expcos";
-import { Eval_expsin } from "../../expsin";
 import { Eval_factor } from "../../factor";
 import { factorial } from "../../factorial";
 import { Eval_filter } from "../../filter";
@@ -19,7 +17,7 @@ import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DIRAC, ERF, ERFC, EVAL, EXPAND, EXPCOS, EXPSIN, FACTOR, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DIRAC, ERF, ERFC, EVAL, EXPAND, FACTOR, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -206,12 +204,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case EXPAND:
                 Eval_expand(expr, $);
-                return stack_pop();
-            case EXPCOS:
-                Eval_expcos(expr, $);
-                return stack_pop();
-            case EXPSIN:
-                Eval_expsin(expr, $);
                 return stack_pop();
             case FACTOR:
                 Eval_factor(expr, $);

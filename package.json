@@ -54,6 +54,8 @@
         "unit-env": "mocha 'units/env.spec.ts'",
         "unit-example": "mocha 'units/example.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",
+        "unit-expcos": "mocha 'units/expcos.spec.ts'",
+        "unit-expsin": "mocha 'units/expsin.spec.ts'",
         "unit-factorial": "mocha 'units/factorial.spec.ts'",
         "unit-factorize": "mocha 'units/factorize.spec.ts'",
         "unit-float": "mocha 'units/float.spec.ts'",

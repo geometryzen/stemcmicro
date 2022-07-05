@@ -1,17 +1,17 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { yyfloat } from './operators/float/float';
-import { makeList } from './makeList';
-import { print_str } from './print/print';
-import { EIGEN, EIGENVAL, EIGENVEC } from './runtime/constants';
-import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { wrap_as_flt, Flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
-import { cadr } from './tree/helpers';
-import { is_tensor } from './operators/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
-import { Sym } from './tree/sym/Sym';
-import { nil, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { yyfloat } from '../float/float';
+import { is_flt } from '../flt/is_flt';
+import { is_tensor } from '../tensor/is_tensor';
+import { print_str } from '../../print/print';
+import { EIGEN, EIGENVAL, EIGENVEC } from '../../runtime/constants';
+import { halt } from '../../runtime/defs';
+import { stack_push } from '../../runtime/stack';
+import { Flt, wrap_as_flt } from '../../tree/flt/Flt';
+import { cadr } from '../../tree/helpers';
+import { Sym } from '../../tree/sym/Sym';
+import { Tensor } from '../../tree/tensor/Tensor';
+import { nil, U } from '../../tree/tree';
 
 /* eigen =====================================================================
 
@@ -133,9 +133,8 @@ General description
 Compute eigenvalues of m. See "eigen" for more info.
 
 */
-export function Eval_eigenval(p1: U, $: ExtensionEnv) {
-    const result = _eigenval(p1, $);
-    stack_push(result);
+export function Eval_eigenval(p1: U, $: ExtensionEnv): U {
+    return _eigenval(p1, $);
 }
 
 function _eigenval(p1: U, $: ExtensionEnv): U {
@@ -165,9 +164,8 @@ General description
 Compute eigenvectors of m. See "eigen" for more info.
 
 */
-export function Eval_eigenvec(p1: U, $: ExtensionEnv) {
-    const result = _eigenvec(p1, $);
-    stack_push(result);
+export function Eval_eigenvec(p1: U, $: ExtensionEnv): U {
+    return _eigenvec(p1, $);
 }
 
 function _eigenvec(p1: U, $: ExtensionEnv): U {

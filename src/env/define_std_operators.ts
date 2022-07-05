@@ -122,10 +122,13 @@ import { rco_2_add_2_any_any_any } from '../operators/distrib/rco_2_add_2_any_an
 import { rco_2_any_add_2_any_any } from '../operators/distrib/rco_2_any_add_2_any_any';
 import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
+import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
+import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
 import { errExtensionBuilder } from '../operators/err/ErrExtension';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_rat } from '../operators/exp/exp_rat';
+import { factorial_varargs } from '../operators/factorial/factorial_varargs';
 import { factorize_ab_minus_two_a_dot_b } from '../operators/factorize/factorize_ab_minus_two_a_dot_b';
 import { factorize_geometric_product_add } from '../operators/factorize/factorize_geometric_product_add';
 import { factorize_geometric_product_lhs_assoc } from '../operators/factorize/factorize_geometric_product_lhs_assoc';
@@ -740,9 +743,14 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(do_varargs);
 
+    $.defineOperator(eigenval_varargs);
+    $.defineOperator(eigenvec_varargs);
+
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
     $.defineOperator(exp_any);
+
+    $.defineOperator(factorial_varargs);
 
     $.defineOperator(float_mul_2_flt_sym);
     $.defineOperator(float_cons);

@@ -1,6 +1,6 @@
 import { lt_num_num } from '../../calculators/compare/lt_num_num';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { factorial } from '../../factorial';
+import { factorial } from '../factorial/factorial';
 import { caddr, cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';

@@ -1,32 +1,14 @@
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { guess } from './guess';
-import { is_rat_integer } from './is_rat_integer';
-import { multiply_items_factoring } from './multiply';
-import { factor_number } from './pollard';
-import { MAXPRIMETAB, primetab } from './runtime/constants';
-import { halt } from './runtime/defs';
-import { is_multiply } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
-import { caddr, cadr, cdddr } from './tree/helpers';
-import { wrap_as_int, one, Rat } from './tree/rat/Rat';
-import { is_cons, nil, U } from './tree/tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { is_rat_integer } from '../../is_rat_integer';
+import { multiply_items_factoring } from '../../multiply';
+import { factor_number } from '../../pollard';
+import { MAXPRIMETAB, primetab } from '../../runtime/constants';
+import { halt } from '../../runtime/defs';
+import { is_multiply } from '../../runtime/helpers';
+import { one, Rat, wrap_as_int } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
 
-// factor a polynomial or integer
-export function Eval_factor(p1: U, $: ExtensionEnv): void {
-    const top = $.valueOf(cadr(p1));
-    const p2 = $.valueOf(caddr(p1));
-    const variable = nil === p2 ? guess(top) : p2;
-    let temp = factor(top, variable, $);
-
-    // more factoring?
-    p1 = cdddr(p1);
-    if (is_cons(p1)) {
-        temp = [...p1].reduce((acc: U, p: U) => factor_again(acc, $.valueOf(p), $), temp);
-    }
-    stack_push(temp);
-}
-
-function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
+export function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
     if (is_multiply(p1)) {
         const arr: U[] = [];
         p1.tail().forEach((el) => factor_term(arr, el, p2, $));

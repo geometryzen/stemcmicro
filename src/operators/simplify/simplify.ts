@@ -2,7 +2,7 @@ import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
-import { factor } from "../../factor";
+import { factor } from "../factor/factor";
 import { areunivarpolysfactoredorexpandedform, gcd } from "../gcd/gcd";
 import { equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';

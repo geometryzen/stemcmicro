@@ -1,6 +1,6 @@
 import { compare_num_num } from './calculators/compare/compare_num_num';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { factorial } from './factorial';
+import { factorial } from './operators/factorial/factorial';
 import { is_num } from './operators/num/is_num';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';

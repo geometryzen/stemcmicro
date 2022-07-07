@@ -5,8 +5,6 @@ import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/Ext
 import { Eval_erf } from "../../erf";
 import { Eval_erfc } from "../../erfc";
 import { Eval_expand } from "../../expand";
-import { Eval_factor } from "../../factor";
-import { factorial } from "../../factorial";
 import { Eval_filter } from "../../filter";
 import { invg } from "../../inv";
 import { is_rat_integer } from "../../is_rat_integer";
@@ -17,7 +15,7 @@ import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DIRAC, ERF, ERFC, EVAL, EXPAND, FACTOR, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DIRAC, ERF, ERFC, EXPAND, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -27,13 +25,12 @@ import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
 import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
 import { Err } from "../../tree/err/Err";
-import { cadr, cddr } from "../../tree/helpers";
+import { cadr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_rat } from "../rat/is_rat";
-import { subst } from "../subst/subst";
 import { is_sym } from "../sym/is_sym";
 
 /**
@@ -199,14 +196,8 @@ class ConsExtension implements Extension<Cons> {
             case ERFC:
                 Eval_erfc(expr, $);
                 return stack_pop();
-            case EVAL:
-                Eval_Eval(expr, $);
-                return stack_pop();
             case EXPAND:
                 Eval_expand(expr, $);
-                return stack_pop();
-            case FACTOR:
-                Eval_factor(expr, $);
                 return stack_pop();
             case FACTORPOLY:
                 Eval_factorpoly(expr, $);
@@ -355,22 +346,6 @@ function Eval_check(p1: U, $: ExtensionEnv) {
         // returned true or false -> 1 or 0
         stack_push(wrap_as_int(Number(checkResult)));
     }
-}
-
-// for example, Eval(f,x,2)
-
-function Eval_Eval(p1: U, $: ExtensionEnv) {
-    let tmp = $.valueOf(cadr(p1));
-    p1 = cddr(p1);
-    while (is_cons(p1)) {
-        tmp = subst(tmp, $.valueOf(car(p1)), $.valueOf(cadr(p1)), $);
-        p1 = cddr(p1);
-    }
-    stack_push($.valueOf(tmp));
-}
-
-export function Eval_factorial(p1: U, $: ExtensionEnv): U {
-    return factorial($.valueOf(cadr(p1)));
 }
 
 function Eval_factorpoly(p1: U, $: ExtensionEnv) {

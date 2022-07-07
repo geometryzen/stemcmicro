@@ -1,15 +1,15 @@
-import { bignum_factorial } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
-import { nativeInt } from './nativeInt';
-import { FACTORIAL } from './runtime/constants';
-import { defs, move_top_of_stack, use_factoring_with_unary_function } from './runtime/defs';
-import { is_add, is_factorial, is_multiply, is_power } from './runtime/helpers';
-import { stack_pop, stack_push } from './runtime/stack';
-import { doexpand_eval } from './scripting/doexpand_eval';
-import { caddr, cadr } from './tree/helpers';
-import { wrap_as_int, one, zero } from './tree/rat/Rat';
-import { is_cons, nil, U } from './tree/tree';
+import { bignum_factorial } from '../../bignum';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { makeList } from '../../makeList';
+import { nativeInt } from '../../nativeInt';
+import { FACTORIAL } from '../../runtime/constants';
+import { defs, move_top_of_stack, use_factoring_with_unary_function } from '../../runtime/defs';
+import { is_add, is_factorial, is_multiply, is_power } from '../../runtime/helpers';
+import { stack_pop, stack_push } from '../../runtime/stack';
+import { doexpand_eval } from '../../scripting/doexpand_eval';
+import { caddr, cadr } from '../../tree/helpers';
+import { wrap_as_int, one, zero } from '../../tree/rat/Rat';
+import { is_cons, nil, U } from '../../tree/tree';
 
 export function factorial(p1: U): U {
     const n = nativeInt(p1);

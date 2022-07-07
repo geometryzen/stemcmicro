@@ -1,7 +1,7 @@
 import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { exp } from './exp';
-import { factorial } from './factorial';
+import { factorial } from './operators/factorial/factorial';
 import { is_quarter_turn } from './is_quarter_turn';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { is_add } from './runtime/helpers';

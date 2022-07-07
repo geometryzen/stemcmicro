@@ -4,9 +4,9 @@ import { imu } from '../env/imu';
 import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
+import { subst } from '../operators/subst/subst';
 import { ScanOptions } from '../scanner/scan';
 import { scan_source_text } from '../scanner/scan_source_text';
-import { subst } from '../operators/subst/subst';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
@@ -193,11 +193,11 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
-    // console.log(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)}}`);
+    // console.log(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)}`);
 
     const outExpr = transform(inExpr, $);
 
-    // console.log(`Leaving ${reason.toUpperCase()} ${render_as_infix(outExpr, $)}}`);
+    // console.log(`Leaving ${reason.toUpperCase()} ${render_as_infix(outExpr, $)}`);
 
     return outExpr;
 }

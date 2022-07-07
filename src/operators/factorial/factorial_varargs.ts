@@ -1,9 +1,14 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { factorial } from "./factorial";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { FACTORIAL } from "../../runtime/constants";
+import { cadr } from "../../tree/helpers";
 import { Cons, U } from "../../tree/tree";
-import { Eval_factorial } from "../cons/ConsExtension";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+
+function Eval_factorial(p1: U, $: ExtensionEnv): U {
+    return factorial($.valueOf(cadr(p1)));
+}
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

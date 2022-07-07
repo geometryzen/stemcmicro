@@ -1,6 +1,6 @@
 import { bignum_power_number, bignum_truncate } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { factor_small_number } from './factor';
+import { factor_small_number } from './operators/factor/factor';
 import { makeList } from './makeList';
 import { multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';

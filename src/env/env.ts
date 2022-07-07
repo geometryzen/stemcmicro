@@ -577,6 +577,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return op.toListString(expr);
         },
         transform(expr: U): [TFLAGS, U] {
+            const continueIfExprChanges = true;
             if (expr.meta === TFLAG_HALT) {
                 return [TFLAG_HALT, expr];
             }
@@ -598,7 +599,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
-                        // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
@@ -613,7 +614,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     }
                                     else {
                                         // console.log(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                        doneWithExpr = false;
+                                        if (continueIfExprChanges) {
+                                            doneWithExpr = false;
+                                        }
                                     }
                                     curExpr = newExpr;
                                     break;

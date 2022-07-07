@@ -1,6 +1,6 @@
 import { add_terms } from './calculators/add/add_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { factorial } from './factorial';
+import { factorial } from './operators/factorial/factorial';
 import { equaln, is_num_and_eq_minus_one } from './is';
 import { multiply_items_factoring } from './multiply';
 import { FACTORIAL } from './runtime/constants';

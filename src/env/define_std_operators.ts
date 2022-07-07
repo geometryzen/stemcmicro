@@ -125,11 +125,13 @@ import { do_varargs } from '../operators/do/do_varargs';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
 import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
 import { errExtensionBuilder } from '../operators/err/ErrExtension';
+import { eval_varargs } from '../operators/eval/eval_varargs';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_rat } from '../operators/exp/exp_rat';
 import { expcos_varargs } from '../operators/expcos/expcos_varargs';
 import { expsin_varargs } from '../operators/expsin/expsin_varargs';
+import { factor_varargs } from '../operators/factor/factor_varargs';
 import { factorial_varargs } from '../operators/factorial/factorial_varargs';
 import { factorize_ab_minus_two_a_dot_b } from '../operators/factorize/factorize_ab_minus_two_a_dot_b';
 import { factorize_geometric_product_add } from '../operators/factorize/factorize_geometric_product_add';
@@ -748,6 +750,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(eigenval_varargs);
     $.defineOperator(eigenvec_varargs);
 
+    $.defineOperator(eval_varargs);
+
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
     $.defineOperator(exp_any);
@@ -755,6 +759,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(expcos_varargs);
     $.defineOperator(expsin_varargs);
 
+    $.defineOperator(factor_varargs);
     $.defineOperator(factorial_varargs);
 
     $.defineOperator(float_mul_2_flt_sym);

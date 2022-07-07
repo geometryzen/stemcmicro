@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { factorial } from '../../factorial';
+import { factorial } from '../factorial/factorial';
 import { guess } from '../../guess';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';

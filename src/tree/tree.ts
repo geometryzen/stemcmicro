@@ -42,7 +42,7 @@ export function is_singleton(expr: Cons): boolean {
 }
 
 /**
- * Symbolic expressions are built by connecting Cons structs.
+ * Symbolic expressions are built by connecting Cons structures.
  *
  * For example, (a * b + c) is built like this:
  * 
@@ -63,7 +63,8 @@ export function is_singleton(expr: Cons): boolean {
  *                       |       |    |       |    |       |
  *                       |_______|    |_______|    |_______|
  * 
- * A non-NIL SYM is never a cdr. There will be a CONS with a NIL cdr and a car containing the SYM.
+ * A NIL is a special kind of Cons in which the isCons method returns false.
+ * A SYM is never a cdr. There will be a CONS with a NIL cdr and a car containing the SYM.
  * 
  */
 export class Cons implements U {

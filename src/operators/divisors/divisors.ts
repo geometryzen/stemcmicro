@@ -1,6 +1,6 @@
 import { sort_factors } from '../../calculators/compare/sort_factors';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { factor_small_number } from '../../factor';
+import { factor_small_number } from '../factor/factor';
 import { nativeInt } from '../../nativeInt';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';

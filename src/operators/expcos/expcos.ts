@@ -1,27 +1,16 @@
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { ExtensionEnv, TFLAG_KEEP } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
-import { exp } from '../../exp';
-import { cadr } from '../../tree/helpers';
+import { MATH_E, MATH_POW } from '../../runtime/ns_math';
 import { half } from '../../tree/rat/Rat';
-import { U } from '../../tree/tree';
-
-// Do the exponential cosine function.
-export function Eval_expcos(p1: U, $: ExtensionEnv): U {
-    return expcos($.valueOf(cadr(p1)), $);
-}
+import { items_to_cons, U } from '../../tree/tree';
 
 /**
- * cos(x) => (1/2) exp(i*x) + (1/2) exp(-i*x)
+ * expcos(x) = (1/2)*(exp(x*i)+exp(-x*i))
  */
 export function expcos(x: U, $: ExtensionEnv): U {
-    return $.add(
-        $.multiply(
-            exp($.multiply(imu, x), $),
-            half
-        ),
-        $.multiply(
-            exp($.multiply($.negate(imu), x), $),
-            half
-        )
-    );
+    const exp_pos_x_times_i = items_to_cons(MATH_POW, MATH_E, $.multiply(x, imu));
+    exp_pos_x_times_i.meta |= TFLAG_KEEP;
+    const exp_neg_x_times_i = items_to_cons(MATH_POW, MATH_E, $.multiply($.negate(x), imu));
+    exp_neg_x_times_i.meta |= TFLAG_KEEP;
+    return $.multiply(half, $.add(exp_pos_x_times_i, exp_neg_x_times_i));
 }

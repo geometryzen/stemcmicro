@@ -1,6 +1,6 @@
 
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -40,6 +40,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly breaker = true;
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['~Vector'];
+    readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_sym', MATH_MUL, is_sym, is_sym, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_SYM);

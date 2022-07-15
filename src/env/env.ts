@@ -14,6 +14,7 @@ import { is_err } from "../operators/err/is_err";
 import { is_flt } from "../operators/flt/is_flt";
 import { associative_explicator } from "../operators/helpers/associative_explicator";
 import { associative_implicator } from "../operators/helpers/associative_implicator";
+import { value_of } from "../operators/helpers/valueOf";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
 import { is_num } from "../operators/num/is_num";
@@ -31,7 +32,7 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
-import { is_cons, is_nil, U } from "../tree/tree";
+import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
 import { diffFlag, ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 
@@ -517,8 +518,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         outer(lhs: U, rhs: U): U {
             return binop(MATH_OUTER, lhs, rhs, $);
         },
-        power(base: U, exponent: U): U {
-            return binop(MATH_POW, base, exponent, $);
+        power(base: U, expo: U): U {
+            const b = value_of(base, $);
+            const e = value_of(expo, $);
+            const p = items_to_cons(MATH_POW, b, e);
+            return value_of(p, $);
         },
         remove(varName: Sym): void {
             symTab.remove(varName);
@@ -577,6 +581,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return op.toListString(expr);
         },
         transform(expr: U): [TFLAGS, U] {
+            // The legacy behaviour is to transform an expression once.
+            // The modern behaviour is to transform until stability is achieved.
             const continueIfExprChanges = true;
             if (expr.meta === TFLAG_HALT) {
                 return [TFLAG_HALT, expr];

@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, keepFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { evaluatingTrigAsExp } from "../../modes/modes";
@@ -88,9 +88,11 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                     if (is_imu(expo_lhs)) {
                         if (MATH_PI.equals(expo_rhs)) {
                             // Euler's identity.
+                            // console.log(`Euler 1`);
                             return [TFLAG_DIFF, negOne];
                         }
                         if ($.isReal(expo_rhs)) {
+                            // console.log(`Euler 2`);
                             const c = items_to_cons(MATH_COS, expo_rhs);
                             const s = items_to_cons(MATH_SIN, expo_rhs);
                             const i_times_s = items_to_cons(MATH_MUL, imu, s);
@@ -102,10 +104,16 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                     // expo_lhs=X
                     // expo_rhs=i
                     if ($.isReal(expo_lhs) && is_imu(expo_rhs)) {
-                        const c = items_to_cons(MATH_COS, expo_lhs);
-                        const s = items_to_cons(MATH_SIN, expo_lhs);
-                        const s_times_i = items_to_cons(MATH_MUL, s, imu);
-                        return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, s_times_i)];
+                        // console.log(`Euler 3 ${render_as_infix(expr, $)} meta=${keepFlag(expr.meta)}`);
+                        if (keepFlag(expr.meta)) {
+                            return [TFLAG_NONE, expr];
+                        }
+                        else {
+                            const c = items_to_cons(MATH_COS, expo_lhs);
+                            const s = items_to_cons(MATH_SIN, expo_lhs);
+                            const s_times_i = items_to_cons(MATH_MUL, s, imu);
+                            return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, s_times_i)];
+                        }
                     }
                     // Euler's formula with rational factor.
                     // exp(k*X*i) = cos(k*X) + i * sin(k*X)
@@ -113,6 +121,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                     // expo_lhs=k*X
                     // expo_rhs=i
                     if (is_cons(expo_lhs) && is_opr_2_lhs_any(MATH_MUL, is_rat)(expo_lhs) && $.isReal(expo_lhs.rhs) && is_imu(expo_rhs)) {
+                        // console.log(`Euler 4`);
                         //
                         // const k = expo_lhs.lhs;
                         // const X = expo_lhs.rhs;

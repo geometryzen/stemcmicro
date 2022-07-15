@@ -144,6 +144,7 @@ export class Cons implements U {
         }
     }
     reset(meta: number): void {
+        // console.log(`Cons.reset(meta=${meta})`);
         this.meta = meta;
         if (this.$car) {
             this.$car.reset(meta);

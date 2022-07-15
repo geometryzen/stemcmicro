@@ -2,15 +2,18 @@ import { assert } from "chai";
 import { create_engine } from "../src/runtime/symengine";
 
 describe("current", function () {
-    it("d(1/(5+4*cos(x)),x)", function () {
+    it("abs(a+b+i*c)", function () {
         const lines: string[] = [
-            `d(1/(5+4*cos(x)),x)`
+            `implicate=1`,
+            `abs(a+b+i*c)`
         ];
         const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true,
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "4*sin(x)/((5+4*cos(x))*(5+4*cos(x)))");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "(a**2+2*a*b+b**2+c**2)**(1/2)");
         engine.release();
     });
 });

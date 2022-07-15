@@ -20,16 +20,22 @@ export const TFLAG_DIFF = 1 << 0;
  * The expression did not change as a result of the transformation because it is stable.
  */
 export const TFLAG_HALT = 1 << 1;
+/**
+ * The expression node should be preserved.
+ */
+export const TFLAG_KEEP = 1 << 2;
 
 export function diffFlag(flags: TFLAGS): boolean {
-    // return flags;
     return (flags & TFLAG_DIFF) === TFLAG_DIFF;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function haltFlag(flags: TFLAGS): boolean {
-    // return false;
     return (flags & TFLAG_HALT) === TFLAG_HALT;
+}
+
+export function keepFlag(flags: TFLAGS): boolean {
+    return (flags & TFLAG_KEEP) === TFLAG_KEEP;
 }
 
 // TODO: Need to be able to handle positive and negative cases (like Vector).

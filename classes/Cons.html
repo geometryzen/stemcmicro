@@ -14,12 +14,13 @@
 <li><a href="Cons.html">Cons</a></li></ul>
 <h1>Class Cons</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Symbolic expressions are built by connecting Cons structs.</p>
+<div class="tsd-comment tsd-typography"><p>Symbolic expressions are built by connecting Cons structures.</p>
 <p>For example, (a * b + c) is built like this:</p>
 <p>The car links go downwards, the cdr links go to the right.</p>
 <pre><code><span class="hl-1">      </span><span class="hl-2">_______</span><span class="hl-1">      </span><span class="hl-2">_______</span><span class="hl-1">                                            </span><span class="hl-2">_______</span><span class="hl-1">      </span><span class="hl-2">_______</span><br/><span class="hl-1">     |</span><span class="hl-6">CONS</span><span class="hl-1">   |---&gt;|</span><span class="hl-6">CONS</span><span class="hl-1">   |-----------------------------------------&gt;|</span><span class="hl-6">CONS</span><span class="hl-1">   |---&gt;|</span><span class="hl-6">NIL</span><span class="hl-1">    |</span><br/><span class="hl-1">     |       |    |       |                                          |       |    |       |</span><br/><span class="hl-1">     |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|                                          |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|       </span><br/><span class="hl-1">         |            |                                                  |</span><br/><span class="hl-1">      </span><span class="hl-2">___v___</span><span class="hl-1">      </span><span class="hl-2">___v___</span><span class="hl-1">      </span><span class="hl-2">_______</span><span class="hl-1">      </span><span class="hl-2">_______</span><span class="hl-1">      </span><span class="hl-2">_______</span><span class="hl-1">     </span><span class="hl-2">___v___</span><br/><span class="hl-1">     |</span><span class="hl-6">SYM</span><span class="hl-1"> +  |    |</span><span class="hl-6">CONS</span><span class="hl-1">   |---&gt;|</span><span class="hl-6">CONS</span><span class="hl-1">   |---&gt;|</span><span class="hl-6">CONS</span><span class="hl-1">   |---&gt;|</span><span class="hl-6">NIL</span><span class="hl-1">    |   |</span><span class="hl-6">SYM</span><span class="hl-1"> </span><span class="hl-2">c</span><span class="hl-1">  |</span><br/><span class="hl-1">     |       |    |       |    |       |    |       |    |       |   |       |</span><br/><span class="hl-1">     |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|   |</span><span class="hl-2">_______</span><span class="hl-1">|</span><br/><span class="hl-1">                      |            |            |</span><br/><span class="hl-1">                   </span><span class="hl-2">___v___</span><span class="hl-1">      </span><span class="hl-2">___v___</span><span class="hl-1">      </span><span class="hl-2">___v___</span><br/><span class="hl-1">                  |</span><span class="hl-6">SYM</span><span class="hl-1"> *  |    |</span><span class="hl-6">SYM</span><span class="hl-1"> </span><span class="hl-2">a</span><span class="hl-1">  |    |</span><span class="hl-6">SYM</span><span class="hl-1"> </span><span class="hl-2">b</span><span class="hl-1">  |</span><br/><span class="hl-1">                  |       |    |       |    |       |</span><br/><span class="hl-1">                  |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|    |</span><span class="hl-2">_______</span><span class="hl-1">|</span>
 </code></pre>
-<p>A non-NIL SYM is never a cdr. There will be a CONS with a NIL cdr and a car containing the SYM.</p>
+<p>A NIL is a special kind of Cons in which the isCons method returns false.
+A SYM is never a cdr. There will be a CONS with a NIL cdr and a car containing the SYM.</p>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
@@ -99,19 +100,19 @@
 <div class="tsd-signature">end<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/U.html">U</a>.<a href="../interfaces/U.html#end">end</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/de49212/src/tree/tree.ts#L70">src/tree/tree.ts:70</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/1412636/src/tree/tree.ts#L71">src/tree/tree.ts:71</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="meta" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>meta</span><a href="#meta" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">meta<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/U.html">U</a>.<a href="../interfaces/U.html#meta">meta</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/de49212/src/tree/tree.ts#L70">src/tree/tree.ts:70</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/1412636/src/tree/tree.ts#L71">src/tree/tree.ts:71</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="pos" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>pos</span><a href="#pos" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">pos<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/U.html">U</a>.<a href="../interfaces/U.html#pos">pos</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/de49212/src/tree/tree.ts#L70">src/tree/tree.ts:70</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/1412636/src/tree/tree.ts#L71">src/tree/tree.ts:71</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class"><a id="arg" class="tsd-anchor"></a>

@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_NONE } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
@@ -209,7 +209,8 @@ function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' |
  * @returns 
  */
 export function transform(expr: U, $: ExtensionEnv): U {
-    expr.reset(TFLAG_NONE);
+    expr.reset(TFLAG_DIFF);
+    expr.reset(TFLAG_HALT);
     const [, outExpr] = $.transform(expr);
     return outExpr;
 }

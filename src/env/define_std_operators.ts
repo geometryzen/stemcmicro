@@ -77,6 +77,7 @@ import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
+import { condense_varargs } from '../operators/condense/condense_varargs';
 import { conj_any } from '../operators/conj/conj_any';
 import { conj_blade } from '../operators/conj/conj_blade';
 import { conj_flt } from '../operators/conj/conj_flt';
@@ -711,6 +712,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(clock_any);
     $.defineOperator(coeff_varargs);
     $.defineOperator(cofactor_varargs);
+    $.defineOperator(condense_varargs);
     $.defineOperator(contract_varargs);
 
     $.defineOperator(cos_add_2_any_any);

@@ -22,6 +22,11 @@ export interface U {
     readonly end?: number;
 }
 
+export function reset_meta_flag(current: number, which: number): number {
+    const retval = current & ~which;
+    return retval;
+}
+
 /**
  * Determines whether a Cons expression contains a single item.
  * @param expr 
@@ -145,7 +150,7 @@ export class Cons implements U {
     }
     reset(meta: number): void {
         // console.log(`Cons.reset(meta=${meta})`);
-        this.meta = meta;
+        this.meta = reset_meta_flag(this.meta, meta);
         if (this.$car) {
             this.$car.reset(meta);
         }

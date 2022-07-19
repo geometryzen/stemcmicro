@@ -3,16 +3,6 @@ import { run_test } from '../test-harness';
 run_test([
     'ceiling(a)',
     'ceiling(a)',
-]);
-
-run_test([
-    'ceiling(a+b)',
-    'ceiling(a+b)',
-]);
-
-run_test([
-    'ceiling(a)',
-    'ceiling(a)',
 
     'ceiling(a+b)',
     'ceiling(a+b)',

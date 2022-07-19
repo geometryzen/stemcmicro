@@ -1,4 +1,4 @@
-import { U } from "../tree";
+import { reset_meta_flag, U } from "../tree";
 
 export abstract class Atom implements U {
     private $meta = 0;
@@ -6,7 +6,7 @@ export abstract class Atom implements U {
 
     }
     reset(meta: number): void {
-        this.$meta = meta;
+        this.$meta = reset_meta_flag(this.$meta, meta);
     }
     get meta(): number {
         return this.$meta;

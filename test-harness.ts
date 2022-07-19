@@ -285,7 +285,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
 function harness_options_to_engine_options(options: TestOptions | undefined): EngineOptions {
     if (options) {
         return {
-            dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
+            dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
@@ -293,7 +293,7 @@ function harness_options_to_engine_options(options: TestOptions | undefined): En
     }
     else {
         return {
-            dependencies: [],
+            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false

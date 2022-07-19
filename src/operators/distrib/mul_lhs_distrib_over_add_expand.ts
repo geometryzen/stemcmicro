@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, keepFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -30,6 +30,9 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<BCons<Sym, U
     transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>, expr: BCons<Sym, U, BCons<Sym, U, U>>): [TFLAGS, U] {
         const $ = this.$;
         if ($.isExpanding()) {
+            if (keepFlag(expr.meta)) {
+                return [TFLAG_NONE, expr];
+            }
             const a = lhs;
             const b = rhs.lhs;
             const c = rhs.rhs;

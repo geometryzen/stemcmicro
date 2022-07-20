@@ -148,6 +148,60 @@ describe("tensor", function () {
             engine.release();
         });
     });
+    describe("algebra", function () {
+        it("[[a,b],[c,d]]+[[p,q],[r,s]]", function () {
+            const lines: string[] = [
+                `[[a,b],[c,d]]+[[p,q],[r,s]]`
+            ];
+            const engine = create_engine({
+                dependencies: [],
+                useDefinitions: false,
+                useCaretForExponentiation: false
+            });
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(engine.renderAsInfix(values[0]), "[[a+p,b+q],[c+r,d+s]]");
+            engine.release();
+        });
+        it("[[p,q],[r,s]]+[[a,b],[c,d]]", function () {
+            const lines: string[] = [
+                `[[p,q],[r,s]]+[[a,b],[c,d]]`
+            ];
+            const engine = create_engine({
+                dependencies: [],
+                useDefinitions: false,
+                useCaretForExponentiation: false
+            });
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(engine.renderAsInfix(values[0]), "[[a+p,b+q],[c+r,d+s]]");
+            engine.release();
+        });
+        it("s*[[a,b],[c,d]]", function () {
+            const lines: string[] = [
+                `s*[[a,b],[c,d]]`
+            ];
+            const engine = create_engine({
+                dependencies: [],
+                useDefinitions: false,
+                useCaretForExponentiation: false
+            });
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(engine.renderAsInfix(values[0]), "[[s*a,s*b],[s*c,s*d]]");
+            engine.release();
+        });
+        it("[[a,b],[c,d]]*s", function () {
+            const lines: string[] = [
+                `[[a,b],[c,d]]*s`
+            ];
+            const engine = create_engine({
+                dependencies: [],
+                useDefinitions: false,
+                useCaretForExponentiation: false
+            });
+            const { values } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(engine.renderAsInfix(values[0]), "[[a*s,b*s],[c*s,d*s]]");
+            engine.release();
+        });
+    });
     it("adj", function () {
         const lines: string[] = [
             `A=[[a,b],[c,d]]`,
@@ -178,7 +232,7 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_engine();
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[[d,-b],[-c,a]]/(a*d-b*c)");
+        assert.strictEqual(engine.renderAsInfix(actual), "[[d/(a*d+(-b)*c),(-b)/(a*d+(-b)*c)],[(-c)/(a*d+(-b)*c),a/(a*d+(-b)*c)]]");
         engine.release();
     });
     it("inv-adj/det", function () {
@@ -189,7 +243,22 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_engine();
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "0");
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[0,0],[0,0]]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[[0,0],[0,0]]");
+        engine.release();
+    });
+    it("-[0,0]", function () {
+        const lines: string[] = [
+            `-[0,0]`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true,
+            useCaretForExponentiation: false
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[0,0]");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[0,0]");
         engine.release();
     });
 });

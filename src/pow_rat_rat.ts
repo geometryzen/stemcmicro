@@ -3,7 +3,7 @@ import { bignum_truncate, makePositive, makeSignSameAs, mp_denominator, mp_numer
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { is_num_and_eq_minus_one } from './is';
-import { isSmall } from './isSmall';
+import { in_safe_integer_range } from './in_safe_integer_range';
 import { is_rat_integer } from './is_rat_integer';
 import { makeList } from './makeList';
 import { mpow } from './mpow';
@@ -100,7 +100,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
     }
 
     // At this point BASE is a positive integer and EXPO is not an integer.
-    if (!isSmall(expo.a) || !isSmall(expo.b)) {
+    if (!in_safe_integer_range(expo.a) || !in_safe_integer_range(expo.b)) {
         return hook(makeList(POWER, base, expo), "L");
     }
 
@@ -179,5 +179,5 @@ function normalize_angle(A: Rat, $: ExtensionEnv): U {
 }
 
 function is_small_integer(p: Rat): boolean {
-    return isSmall(p.a);
+    return in_safe_integer_range(p.a);
 }

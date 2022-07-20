@@ -48,6 +48,7 @@ import { add_2_rat_uom } from '../operators/add/add_2_rat_uom';
 import { add_2_sym_mul_2_sym_rat } from '../operators/add/add_2_sym_mul_2_sym_rat';
 import { add_2_sym_rat } from '../operators/add/add_2_sym_rat';
 import { add_2_sym_sym } from '../operators/add/add_2_sym_sym';
+import { add_2_tensor_tensor } from '../operators/add/add_2_tensor_tensor';
 import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
 import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
@@ -240,6 +241,7 @@ import { mul_2_rat_mul_2_rat_any } from '../operators/mul/mul_2_rat_mul_2_rat_an
 import { mul_2_rat_mul_2_sym_sym } from '../operators/mul/mul_2_rat_mul_2_sym_sym';
 import { mul_2_rat_rat } from '../operators/mul/mul_2_rat_rat';
 import { mul_2_rat_sym } from '../operators/mul/mul_2_rat_sym';
+import { mul_2_rat_tensor } from '../operators/mul/mul_2_rat_tensor';
 import { mul_2_scalar_blade } from '../operators/mul/mul_2_scalar_blade';
 import { mul_2_scalar_mul_2_scalar_any } from '../operators/mul/mul_2_scalar_mul_2_scalar_any';
 import { mul_2_sym_add_2_sym_sym } from '../operators/mul/mul_2_sym_add_2_sym_sym';
@@ -253,6 +255,9 @@ import { mul_2_sym_pow_2_sym_two } from '../operators/mul/mul_2_sym_pow_2_sym_tw
 import { mul_2_sym_rat } from '../operators/mul/mul_2_sym_rat';
 import { mul_2_sym_sym } from '../operators/mul/mul_2_sym_sym';
 import { mul_2_sym_sym_general } from '../operators/mul/mul_2_sym_sym_general';
+import { mul_2_sym_tensor } from '../operators/mul/mul_2_sym_tensor';
+import { mul_2_tensor_any } from '../operators/mul/mul_2_tensor_any';
+import { mul_2_tensor_sym } from '../operators/mul/mul_2_tensor_sym';
 import { mul_2_uom_flt } from '../operators/mul/mul_2_uom_flt';
 import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
@@ -430,6 +435,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_rat_rat);
     $.defineOperator(add_2_rat_sym);
     $.defineOperator(add_2_rat_cons);
+    $.defineOperator(add_2_tensor_tensor);
     $.defineOperator(add_2_uom_flt);
     $.defineOperator(add_2_uom_rat);
 
@@ -517,6 +523,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_rat_flt);
     $.defineOperator(mul_2_rat_rat);
     $.defineOperator(mul_2_rat_sym);
+    $.defineOperator(mul_2_rat_tensor);
     $.defineOperator(mul_2_rat_mul_2_rat_any);
     $.defineOperator(mul_2_rat_mul_2_sym_sym);
     $.defineOperator(mul_2_rat_any);
@@ -569,6 +576,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_sym_sym_general);
     $.defineOperator(mul_2_sym_sym);
     $.defineOperator(mul_2_sym_imu);
+    $.defineOperator(mul_2_sym_tensor);
+    $.defineOperator(mul_2_tensor_sym);
+    $.defineOperator(mul_2_tensor_any);
     $.defineOperator(mul_2_pow_2_zzz_rat_aaa);
     $.defineOperator(mul_2_mul_2_any_X_pow_2_X_rat);
     $.defineOperator(mul_2_mul_2_any_Z_pow_2_A_any);

@@ -11,6 +11,7 @@ import { is_outer_2_any_any } from "../../operators/outer/is_outer_2_any_any";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/is_rat";
 import { is_sym } from "../../operators/sym/is_sym";
+import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_uom } from "../../operators/uom/is_uom";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -75,6 +76,9 @@ export function free_vars(expr: U, $: ExtensionEnv): Sym[] {
         return [];
     }
     if (is_flt(expr)) {
+        return [];
+    }
+    if (is_tensor(expr)) {
         return [];
     }
     throw new Error(`free_vars ${expr}`);

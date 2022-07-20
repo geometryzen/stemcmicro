@@ -2,10 +2,10 @@ import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../e
 import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
-import { subst } from "../subst/subst";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { subst } from "../subst/subst";
 import { is_tensor } from "./is_tensor";
 
 function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
@@ -47,7 +47,7 @@ export function equal_mat_mat(p1: Tensor, p2: Tensor, $: ExtensionEnv): boolean 
     return true;
 }
 
-export function add_mat_mat(A: Tensor, B: Tensor, $: ExtensionEnv): Cons | Tensor {
+export function add_tensor_tensor(A: Tensor, B: Tensor, $: ExtensionEnv): Cons | Tensor {
     if (!A.sameDimensions(B)) {
         return nil;
     }

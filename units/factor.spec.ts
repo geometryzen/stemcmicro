@@ -9,6 +9,7 @@ describe("factor", function () {
         const engine = create_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
+        // Expecting 2^2
         assert.strictEqual(engine.renderAsInfix(values[0]), "");
         engine.release();
     });

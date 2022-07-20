@@ -339,8 +339,8 @@ describe("vectors", function () {
             ];
             const engine = create_engine({ treatAsVectors: ['a', 'n'] });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), "(power (power a 2) 1/2)");
-            assert.strictEqual(engine.renderAsInfix(value), "(a**2)**(1/2)");
+            assert.strictEqual(engine.renderAsSExpr(value), "(abs a)");
+            assert.strictEqual(engine.renderAsInfix(value), "abs(a)");
             engine.release();
         });
         it("Reflections Zero", function () {

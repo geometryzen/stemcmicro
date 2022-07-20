@@ -2,13 +2,12 @@ import { complex_conjugate } from '../../complex_conjugate';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
-import { imag } from '../imag/imag';
 import { equaln, is_num_and_gt_zero } from '../../is';
 import { makeList } from '../../makeList';
 import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { is_negative_number } from '../../predicates/is_negative_number';
 import { is_negative } from '../../predicates/is_negative';
+import { is_negative_number } from '../../predicates/is_negative_number';
 import { PI } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -17,6 +16,8 @@ import { caddr, cadr } from '../../tree/helpers';
 import { half, one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, U } from '../../tree/tree';
+import { imag } from '../imag/imag';
+import { is_imu } from '../imu/is_imu';
 import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { simplify, simplify_trig } from '../simplify/simplify';
@@ -102,10 +103,11 @@ export function abs(x: U, $: ExtensionEnv): U {
 export function abs(x: U, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg(`abs ${print_expr(x, $)} => ${print_expr(retval, $)} @ ${description}`);
+        // console.log(`abs ${render_as_infix(x, $)} => ${render_as_infix(retval, $)} @ ${description}`);
         return retval;
     };
 
+    // Just to prove that the argument is not re-assigned.
     const expr: U = x;
 
     if ($.isZero(expr)) {
@@ -125,10 +127,13 @@ export function abs(x: U, $: ExtensionEnv): U {
     }
 
     if (PI.equals(expr)) {
-        return hook(expr, "E");
+        return hook(expr, "E1");
     }
 
     // ??? should there be a shortcut case here for the imaginary unit?
+    if (is_imu(expr)) {
+        return hook(one, "E2");
+    }
 
     // now handle decomposition cases ----------------------------------------------
 
@@ -190,7 +195,7 @@ export function abs(x: U, $: ExtensionEnv): U {
         return hook(exp(real(caddr(expr), $), $), "I");
     }
 
-    if (is_multiply(expr)) {
+    if (is_cons(expr) && is_multiply(expr)) {
         // product
         return hook(expr.tail().map(function (x) {
             return abs(x, $);

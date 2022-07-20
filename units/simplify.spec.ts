@@ -9,13 +9,14 @@ describe("simplify", function () {
         ];
         const engine = create_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // Expecting -(1+i)/(2^(1/2))
         assert.strictEqual(engine.renderAsSExpr(actual), "(power e (* -3/4 i pi))");
         assert.strictEqual(engine.renderAsInfix(actual), "e**(-3/4*i*pi)");
 
         engine.release();
     });
     // This currently loops because clockform calls abs which goes to inner product and nothing gets any simpler.
-    xit("cos(x)^2+sin(x)^2", function () {
+    it("cos(x)^2+sin(x)^2", function () {
         const lines: string[] = [
             `simplify(cos(x)^2+sin(x)^2)`
         ];

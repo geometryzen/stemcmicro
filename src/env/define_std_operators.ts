@@ -1,5 +1,6 @@
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { abs_any } from '../operators/abs/abs_any';
+import { abs_factorize } from '../operators/abs/abs_factorize';
 import { abs_rat } from '../operators/abs/abs_rat';
 import { abs_sym_real } from '../operators/abs/abs_sym_real';
 import { add_2_add_2_any_any_any } from '../operators/add/add_2_add_2_any_any_any';
@@ -684,6 +685,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(abs_rat);
     $.defineOperator(abs_sym_real);
     $.defineOperator(abs_any);
+    $.defineOperator(abs_factorize);
 
     $.defineOperator(adj_any);
 

@@ -82,10 +82,10 @@ run_test([
     'abs(((-1)^(1/2) / (3^(1/2)))^(1/2))',
     '1/3^(1/4)',
 
-    'abs(exp(i theta))',
+    'abs(exp(i * theta))',
     '1',
 
-    'abs(exp(-i theta))',
+    'abs(exp(-i * theta))',
     '1',
 
     'abs((-1)^theta)',
@@ -147,7 +147,7 @@ run_test([
     'abs(a-b)+abs(b-a)',
     '2*abs(a-b)',
 
-    'abs(3 + 4 i)',
+    'abs(3 + 4 * i)',
     '5',
 
     'abs([2,3,4])',
@@ -183,7 +183,7 @@ run_test([
     '1.0',
 ], {
     verbose: true,
-    dependencies: ['Imu'],
+    dependencies: ['Flt', 'Imu'],
     useCaretForExponentiation: true,
     useDefinitions: true
 });

@@ -82,7 +82,6 @@ for (let charTabIndex = 0; charTabIndex < YMAX; charTabIndex++) {
 let yindex = 0;
 let level = 0;
 let emit_x = 0;
-let expr_level = 0;
 
 // this is not really the translated version,
 // the original is in window.cpp and is
@@ -160,7 +159,6 @@ function emit_expr(p: U, $: ExtensionEnv): void {
     //    printexpr(p)
     //    return
     //  }
-    expr_level++;
     if (is_add(p)) {
         p = cdr(p);
         if (__is_negative(car(p))) {
@@ -196,8 +194,6 @@ function emit_expr(p: U, $: ExtensionEnv): void {
         }
         emit_term(p, $);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    expr_level--;
 }
 
 function emit_unsigned_expr(p: U, $: ExtensionEnv) {

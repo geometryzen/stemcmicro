@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { create_engine } from "../src/runtime/symengine";
 
 describe("laguerre", function () {
-    xit("laguerre(x,0)", function () {
+    it("laguerre(x,0)", function () {
         const lines: string[] = [
             `laguerre(x,0)`
         ];
@@ -13,7 +13,7 @@ describe("laguerre", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "1");
         engine.release();
     });
-    xit("laguerre(x,1)", function () {
+    it("laguerre(x,1)", function () {
         const lines: string[] = [
             `laguerre(x,1)`
         ];

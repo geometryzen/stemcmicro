@@ -7,8 +7,10 @@ import { is_imu } from "../../operators/imu/is_imu";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
+import { is_mul_2_sym_sym } from "../../operators/mul/is_mul_2_sym_sym";
 import { is_num } from "../../operators/num/is_num";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
+import { is_pow_2_sym_rat } from "../../operators/pow/is_pow_2_sym_rat";
 import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
 import { one, zero } from "../../tree/rat/Rat";
@@ -20,23 +22,29 @@ import { compare_vars_vars } from "./compare_vars_vars";
 import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // console.log(`ENTERING compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const hook = function (retval: Sign, description: string): Sign {
+        // console.log(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
+        return retval;
+    };
     // console.log(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     if (lhs.equals(rhs)) {
-        return SIGN_EQ;
+        return hook(SIGN_EQ, "A");
     }
     if (is_sym(lhs) && is_sym(rhs)) {
-        return compare_sym_sym(lhs, rhs);
+        return hook(compare_sym_sym(lhs, rhs), "B");
     }
     if (is_cons(lhs)) {
         if (is_mul_2_num_any(lhs)) {
             // A factor of a number on the lhs has no effect.
             // Note that this only catches the case when lhs = (* Num X).
-            return compare_terms(lhs.rhs, rhs, $);
+            return hook(compare_terms(lhs.rhs, rhs, $), "C");
         }
         if (is_mul_2_any_any(lhs)) {
             const [a, b] = factorizeL(lhs);
             if (is_rat(a)) {
-                return compare_terms(b, rhs, $);
+                return hook(compare_terms(b, rhs, $), "D");
             }
         }
     }
@@ -44,30 +52,30 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         if (is_mul_2_num_any(rhs)) {
             // A factor of a number on the rhs has no effect.
             // Note that this only catches the case when rhs = (* Num X).
-            return compare_terms(lhs, rhs.rhs, $);
+            return hook(compare_terms(lhs, rhs.rhs, $), "E");
         }
         if (is_mul_2_any_any(rhs)) {
             const [a, b] = factorizeL(rhs);
             // console.lg(`factorizeL ${print_expr(rhs, $)} => a = ${print_expr(a, $)}, b = ${print_expr(b, $)}`);
             if (is_rat(a)) {
-                return compare_terms(lhs, b, $);
+                return hook(compare_terms(lhs, b, $), "F");
             }
         }
     }
     if (is_sym(lhs)) {
         if ($.isImag(rhs)) {
-            return SIGN_LT;
+            return hook(SIGN_LT, "G");
         }
         if (is_num(rhs)) {
             // Comparing (power x 1) to (power x 0)
-            return compare_num_num(one, zero);
+            return hook(compare_num_num(one, zero), "H");
         }
         if (is_cons(rhs) && is_pow_2_any_any(rhs)) {
             const base = rhs.lhs;
             const expo = rhs.rhs;
             if (lhs.equals(base)) {
                 if (is_num(expo)) {
-                    return compare_num_num(one, expo);
+                    return hook(compare_num_num(one, expo), "I");
                 }
             }
         }
@@ -75,22 +83,22 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         const rvars = free_vars(rhs, $);
         // console.lg(`A. compare_vars_vars lvars=${lvars} rvars=${rvars}`);
         const retval = compare_vars_vars(lvars, rvars);
-        return retval;
+        return hook(retval, "J");
     }
     if (is_sym(rhs)) {
         if ($.isImag(lhs)) {
-            return SIGN_GT;
+            return hook(SIGN_GT, "K");
         }
         if (is_num(lhs)) {
             // Comparing (power x 0) to (power x 1)
-            return compare_num_num(zero, one);
+            return hook(compare_num_num(zero, one), "L");
         }
         if (is_cons(lhs) && is_pow_2_any_any(lhs)) {
             const base = lhs.lhs;
             const expo = lhs.rhs;
             if (rhs.equals(base)) {
                 if (is_num(expo)) {
-                    return compare_num_num(expo, one);
+                    return hook(compare_num_num(expo, one), "M");
                 }
             }
         }
@@ -98,58 +106,58 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         const rvars = free_vars(rhs, $);
         // console.lg(`B. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
         const retval = compare_vars_vars(lvars, rvars);
-        return retval;
+        return hook(retval, "N");
     }
     if (is_num(lhs)) {
         if ($.isImag(rhs)) {
-            return SIGN_LT;
+            return hook(SIGN_LT, "O");
         }
         if (is_cons(rhs) && is_pow_2_any_any(rhs)) {
             const expo = rhs.rhs;
             if (is_num(expo)) {
-                return compare_num_num(zero, expo);
+                return hook(compare_num_num(zero, expo), "P");
             }
         }
     }
     if (is_num(rhs)) {
         if ($.isImag(lhs)) {
-            return SIGN_GT;
+            return hook(SIGN_GT, "Q");
         }
         if (is_sym(lhs)) {
-            return compare_num_num(one, zero);
+            return hook(compare_num_num(one, zero), "R");
         }
         if (is_cons(lhs) && is_pow_2_any_any(lhs)) {
             const base = lhs.lhs;
             const expo = lhs.rhs;
             if (is_sym(base) && is_num(expo)) {
-                return compare_num_num(expo, zero);
+                return hook(compare_num_num(expo, zero), "S");
             }
         }
     }
     if (is_blade(lhs)) {
         if (is_blade(rhs)) {
-            return compare_blade_blade(lhs, rhs);
+            return hook(compare_blade_blade(lhs, rhs), "T");
         }
     }
     if (is_cons(lhs) && is_cons(rhs)) {
         if (is_mul_2_any_blade(lhs) && is_mul_2_any_blade(rhs)) {
             switch (compare_blade_blade(lhs.rhs, rhs.rhs)) {
                 case SIGN_GT: {
-                    return SIGN_GT;
+                    return hook(SIGN_GT, "U");
                 }
                 case SIGN_LT: {
-                    return SIGN_LT;
+                    return hook(SIGN_LT, "V");
                 }
                 default: {
-                    return compare_terms(lhs.lhs, rhs.lhs, $);
+                    return hook(compare_terms(lhs.lhs, rhs.lhs, $), "W");
                 }
             }
         }
         if (is_mul_2_any_blade(lhs)) {
-            return SIGN_GT;
+            return hook(SIGN_GT, "X");
         }
         if (is_mul_2_any_blade(rhs)) {
-            return SIGN_LT;
+            return hook(SIGN_LT, "Y");
         }
         if (is_mul_2_any_any(lhs) && is_mul_2_any_any(rhs)) {
             switch (compare_terms(lhs.lhs, rhs.lhs, $)) {
@@ -183,6 +191,30 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                         return compare_num_num(expoL, expoR);
                     }
                     return compare_terms(expoL, expoR, $);
+                }
+            }
+        }
+        if (is_pow_2_sym_rat(lhs) && is_mul_2_sym_sym(rhs)) {
+            const base = lhs.lhs;
+            const expo = lhs.rhs;
+            if (expo.isTwo()) {
+                if (base.equals(rhs.lhs)) {
+                    return compare_terms(base, rhs.rhs, $);
+                }
+                if (base.equals(rhs.rhs)) {
+                    return compare_terms(base, rhs.lhs, $);
+                }
+            }
+        }
+        if (is_mul_2_sym_sym(lhs) && is_pow_2_sym_rat(rhs)) {
+            const base = rhs.lhs;
+            const expo = rhs.rhs;
+            if (expo.isTwo()) {
+                if (lhs.lhs.equals(base)) {
+                    return compare_terms(lhs.rhs, base, $);
+                }
+                if (lhs.rhs.equals(base)) {
+                    return compare_terms(lhs.lhs, base, $);
                 }
             }
         }
@@ -240,7 +272,7 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     const rvars = free_vars(rhs, $);
     // console.log(`C. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
     const retval = compare_vars_vars(lvars, rvars);
-    return retval;
+    return hook(retval, "Z");
 
     // // console.lg(`UNDECIDED compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
     // return SIGN_EQ;

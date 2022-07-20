@@ -1,10 +1,10 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { half } from "../../tree/rat/Rat";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
+import { abs } from "./abs";
 import { MATH_ABS } from "./MATH_ABS";
 
 class Builder implements OperatorBuilder<U> {
@@ -23,17 +23,24 @@ type EXP = UCons<Sym, ARG>;
  * It should work for real numbers, complex numbers, blades, tensors and scalars.
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
+    readonly phases = PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('abs_any', MATH_ABS, is_any, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
+        const retval = abs(arg, $);
+        const changed = !retval.equals(expr);
+        return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
+
         // TODO: Perhaps we should qualify that we are unpacking functions.
         // console.lg(`expr=${print_expr(expr, $)}`);
+        /*
         const A = $.inner(arg, arg);
         const B = $.power(A, half);
         return [TFLAG_DIFF, B];
+        */
     }
 }
 

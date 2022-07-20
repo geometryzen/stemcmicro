@@ -26,16 +26,26 @@ describe("abs", function () {
         ];
         const engine = create_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
+        engine.release();
+    });
+    it("abs(x)", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `abs(x)`,
+        ];
+        const engine = create_engine({});
+        const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(x**2)**(1/2)");
         engine.release();
     });
-    it("abs(iy)", function () {
+    it("abs(i*y)", function () {
         const lines: string[] = [
-            `abs(sqrt(-1)*y)`,
+            `abs(i*y)`,
         ];
-        const engine = create_engine();
+        const engine = create_engine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(y**2)**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "abs(y)");
         engine.release();
     });
     it("abs(x+i*y)", function () {
@@ -180,6 +190,74 @@ describe("abs", function () {
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "a*i+c*i");
+        engine.release();
+    });
+    it("abs(x)", function () {
+        const lines: string[] = [
+            `abs(x)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true,
+            useCaretForExponentiation: false
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(abs x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "abs(x)");
+        engine.release();
+    });
+    it("abs(x*y)", function () {
+        const lines: string[] = [
+            `abs(x*y)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true,
+            useCaretForExponentiation: false
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        // assert.strictEqual(engine.renderAsSExpr(values[0]), "(abs x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "abs(x)*abs(y)");
+        engine.release();
+    });
+    it("abs(x)*abs(x)", function () {
+        const lines: string[] = [
+            `abs(x)*abs(x)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true,
+            useCaretForExponentiation: false
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "x**2");
+        engine.release();
+    });
+    it("abs(x*i)", function () {
+        const lines: string[] = [
+            `abs(x*i)`
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true,
+            useCaretForExponentiation: false
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        // assert.strictEqual(engine.renderAsSExpr(values[0]), "(abs x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "abs(x)");
+        engine.release();
+    });
+    it("abs(a+b+c*i)", function () {
+        const lines: string[] = [
+            `implicate=1`,
+            `abs(a+b+c*i)`,
+        ];
+        const engine = create_engine({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "(a**2+2*a*b+b**2+c**2)**(1/2)");
         engine.release();
     });
 });

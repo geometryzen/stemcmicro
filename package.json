@@ -1,6 +1,6 @@
 {
     "name": "symbolic-math",
-    "version": "0.9.54",
+    "version": "0.9.55",
     "description": "Computer Algebra System in TypeScript",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",

@@ -56,7 +56,7 @@ export function add_tensor_tensor(A: Tensor, B: Tensor, $: ExtensionEnv): Cons |
     });
 }
 
-export function outer_mat_mat(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): Tensor {
+export function outer_tensor_tensor(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): Tensor {
     const ndim = lhs.rank + rhs.rank;
     if (ndim > MAXDIM) {
         throw new Error('outer: rank of result exceeds maximum');
@@ -159,7 +159,7 @@ class TensorExtension implements Extension<Tensor> {
             });
             // TODO: We should only create a new expression if the elements have changed.
             // To do this...
-            // 1. zip the ols and new elements together.
+            // 1. zip the old and new elements together.
             // 2. Determine if there have been changes.
             // 3. Possibly construct a new matrix.
             const retval = expr.withElements(new_elements);

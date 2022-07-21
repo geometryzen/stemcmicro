@@ -258,6 +258,7 @@ import { mul_2_sym_sym_general } from '../operators/mul/mul_2_sym_sym_general';
 import { mul_2_sym_tensor } from '../operators/mul/mul_2_sym_tensor';
 import { mul_2_tensor_any } from '../operators/mul/mul_2_tensor_any';
 import { mul_2_tensor_sym } from '../operators/mul/mul_2_tensor_sym';
+import { mul_2_tensor_tensor } from '../operators/mul/mul_2_tensor_tensor';
 import { mul_2_uom_flt } from '../operators/mul/mul_2_uom_flt';
 import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
@@ -579,6 +580,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_sym_tensor);
     $.defineOperator(mul_2_tensor_sym);
     $.defineOperator(mul_2_tensor_any);
+    $.defineOperator(mul_2_tensor_tensor);
     $.defineOperator(mul_2_pow_2_zzz_rat_aaa);
     $.defineOperator(mul_2_mul_2_any_X_pow_2_X_rat);
     $.defineOperator(mul_2_mul_2_any_Z_pow_2_A_any);

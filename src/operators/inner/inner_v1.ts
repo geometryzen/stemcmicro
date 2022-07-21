@@ -11,7 +11,7 @@ import { car, cdr, U } from '../../tree/tree';
 import { is_blade } from '../../tree/vec/Algebra';
 import { is_num } from '../num/is_num';
 import { is_tensor } from '../tensor/is_tensor';
-import { inner_product_of_tensors } from './inner_product_of_tensors';
+import { inner_tensor_tensor } from './inner_tensor_tensor';
 
 /**
  * Note: Eval_inner contains addition code such as converting (inner a1 a2 a3 ...) to binary form.
@@ -52,7 +52,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
 
     if (is_tensor(p1)) {
         if (is_tensor(p2)) {
-            return hook(inner_product_of_tensors(p1, p2, $), "C");
+            return hook(inner_tensor_tensor(p1, p2, $), "C");
         }
         else if (is_blade(p2)) {
             // TODO: We really would like to have this raise an error rather than be an acceptable expresssion

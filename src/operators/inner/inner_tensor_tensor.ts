@@ -6,7 +6,7 @@ import { create_tensor_elements } from "../../tree/tensor/create_tensor_elements
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
 
-export function inner_product_of_tensors(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
+export function inner_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
     const n = p1.dim(p1.rank - 1);
     if (n !== p2.dim(0)) {
         halt('inner: tensor dimension check');

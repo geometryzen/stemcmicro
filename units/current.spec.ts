@@ -2,9 +2,9 @@ import { assert } from "chai";
 import { create_engine } from "../src/runtime/symengine";
 
 describe("current", function () {
-    it("[[a,b],[c,d]]*[[p,q],[r,s]]", function () {
+    it("numerator(1/(x-1)/(x-2))", function () {
         const lines: string[] = [
-            `[[a,b],[c,d]]*[[p,q],[r,s]]`
+            `numerator(1/(x-1)/(x-2))`
         ];
         const engine = create_engine({
             dependencies: [],
@@ -12,7 +12,7 @@ describe("current", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "[[a*p+b*r,a*q+b*s],[c*p+d*r,c*q+d*s]]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
         engine.release();
     });
 });

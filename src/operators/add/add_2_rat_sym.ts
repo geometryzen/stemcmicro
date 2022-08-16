@@ -1,14 +1,18 @@
 
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
+import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
+
+type LHS = Rat;
+type RHS = Sym;
+type EXP = BCons<Sym, LHS, RHS>;
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -26,7 +30,22 @@ class Op extends Function2<Rat, Sym> implements Operator<Cons> {
         super('add_2_rat_sym', MATH_ADD, is_rat, is_sym, $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_SYM);
     }
-    transform2(opr: Sym, lhs: Rat, rhs: Sym, orig: BCons<Sym, Rat, Sym>): [TFLAGS, U] {
+    override isScalar(expr: EXP): boolean {
+        const lhs = expr.lhs;
+        const rhs = expr.rhs;
+        // console.lg(`lhs=${lhs}`);
+        // console.lg(`rhs=${rhs}`);
+        return this.$.isScalar(lhs) && this.$.isScalar(rhs);
+    }
+    override isReal(expr: EXP): boolean {
+        const lhs = expr.lhs;
+        const rhs = expr.rhs;
+        // console.lg(`lhs=${lhs}`);
+        // console.lg(`rhs=${rhs}`);
+        // Stronger than needed...
+        return this.$.isReal(lhs) && this.$.isReal(rhs);
+    }
+    override transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {
             return [TFLAG_DIFF, rhs];
         }

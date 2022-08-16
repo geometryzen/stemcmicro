@@ -69,4 +69,15 @@ describe("numerator", function () {
 
         engine.release();
     });
+    it("numerator(1/(x-1)/(x-2))", function () {
+        const lines: string[] = [
+            `numerator(1/(x-1)/(x-2))`
+        ];
+        const engine = create_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "1");
+        assert.strictEqual(engine.renderAsInfix(actual), "1");
+
+        engine.release();
+    });
 });

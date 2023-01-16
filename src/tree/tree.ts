@@ -73,9 +73,11 @@ export function is_singleton(expr: Cons): boolean {
  * 
  */
 export class Cons implements U {
-    #car: U|undefined;
-    constructor(public meta: number, car: U | undefined, private readonly $cdr: U | undefined, readonly pos?: number, readonly end?: number) {
+    #car: U | undefined;
+    #cdr: U | undefined;
+    constructor(public meta: number, car: U | undefined, cdr: U | undefined, readonly pos?: number, readonly end?: number) {
         this.#car = car;
+        this.#cdr = cdr;
     }
     get name(): 'Cons' | 'Nil' {
         if (this.#car) {
@@ -100,8 +102,8 @@ export class Cons implements U {
      * Returns the cdr property if it is defined, otherwise NIL.
      */
     get cdr(): U {
-        if (this.$cdr) {
-            return this.$cdr;
+        if (this.#cdr) {
+            return this.#cdr;
         }
         else {
             return nil;
@@ -117,8 +119,8 @@ export class Cons implements U {
         if (this === needle || this.equals(needle)) {
             return true;
         }
-        if (this.#car && this.$cdr) {
-            return this.#car.contains(needle) || this.$cdr.contains(needle);
+        if (this.#car && this.#cdr) {
+            return this.#car.contains(needle) || this.#cdr.contains(needle);
         }
         return false;
     }
@@ -155,14 +157,14 @@ export class Cons implements U {
         if (this.#car) {
             this.#car.reset(meta);
         }
-        if (this.$cdr) {
-            this.$cdr.reset(meta);
+        if (this.#cdr) {
+            this.#cdr.reset(meta);
         }
     }
     public toString(): string {
         // If you call car or cdr you get an infinite loop because NIL is a Cons.
         const head = this.#car;
-        const tail = this.$cdr;
+        const tail = this.#cdr;
         if (head) {
             return `(${head} ${tail})`;
         }
@@ -194,7 +196,7 @@ export class Cons implements U {
      */
     tail(): U[] {
         if (this !== nil) {
-            const cdr = this.$cdr;
+            const cdr = this.#cdr;
             if (cdr && is_cons(cdr)) {
                 return [...cdr];
             }

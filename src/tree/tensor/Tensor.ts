@@ -118,6 +118,9 @@ export class Tensor<T extends U = U> extends Atom {
     isCons(): boolean {
         return false;
     }
+    /**
+     * @override
+     */
     isNil(): boolean {
         return false;
     }

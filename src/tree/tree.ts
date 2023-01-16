@@ -75,9 +75,17 @@ export function is_singleton(expr: Cons): boolean {
 export class Cons implements U {
     #car: U | undefined;
     #cdr: U | undefined;
-    constructor(public meta: number, car: U | undefined, cdr: U | undefined, readonly pos?: number, readonly end?: number) {
+    #meta: number;
+    constructor(meta: number, car: U | undefined, cdr: U | undefined, readonly pos?: number, readonly end?: number) {
         this.#car = car;
         this.#cdr = cdr;
+        this.#meta = meta;
+    }
+    get meta(): number {
+        return this.#meta;
+    }
+    set meta(meta: number) {
+        this.#meta = meta;
     }
     get name(): 'Cons' | 'Nil' {
         if (this.#car) {

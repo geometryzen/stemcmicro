@@ -15,7 +15,7 @@
         "test": "tests"
     },
     "scripts": {
-        "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
+        "build": "rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf ./dist",
         "lint": "eslint . --ext .ts",
         "units": "nyc mocha 'units/**/*.spec.ts'",

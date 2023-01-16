@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es2020",
-        "module": "es6",
+        "module": "esnext",
         "sourceMap": true,
         "outDir": "build",
         "strict": true,
@@ -13,6 +13,12 @@
         "declaration": true,
         "declarationDir": "types",
         "emitDeclarationOnly": true,
-        "removeComments": true
-    }
+        "removeComments": true,
+        "resolveJsonModule": true
+    },
+    "include": [
+        "index.ts",
+        "src/**/*.ts",
+        "rollup.config.mts"
+    ]
 }

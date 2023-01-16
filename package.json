@@ -15,7 +15,7 @@
         "test": "tests"
     },
     "scripts": {
-        "build": "npm run clean && rollup -c",
+        "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf ./dist",
         "lint": "eslint . --ext .ts",
         "units": "nyc mocha 'units/**/*.spec.ts'",
@@ -203,7 +203,10 @@
         "multivector",
         "symbolic"
     ],
-    "author": "David Geo Holmes",
+    "author": {
+        "name": "David Geo Holmes",
+        "email": "david.geo.holmes@gmail.com"
+    },
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/geometryzen/symbolic-math/issues"
@@ -221,6 +224,7 @@
         "@types/chai": "^4.3.3",
         "@types/mocha": "^9.1.1",
         "@types/node": "^18.11.18",
+        "@types/rollup-plugin-peer-deps-external": "^2.2.1",
         "@typescript-eslint/eslint-plugin": "^5.48.1",
         "@typescript-eslint/parser": "^5.48.1",
         "chai": "^4.3.7",
@@ -229,6 +233,7 @@
         "mocha": "^10.2.0",
         "nyc": "^15.1.0",
         "release-it": "^15.6.0",
+        "rollup": "^3.10.0",
         "rollup-plugin-dts": "^5.1.1",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "rollup-plugin-terser": "^7.0.2",

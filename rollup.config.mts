@@ -1,8 +1,8 @@
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
+import { RollupOptions } from 'rollup';
 import dts from 'rollup-plugin-dts';
-import external from 'rollup-plugin-peer-deps-external';
 import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json' assert { type: 'json' };
 
@@ -16,7 +16,7 @@ const banner = `/**
 */
 `.trim();
 
-export default [
+const options: RollupOptions[] = [
     {
         input: 'index.ts',
         output: [
@@ -42,7 +42,6 @@ export default [
         plugins: [
             // Allows us to consume the 'big-integer' library, which is CommonJS :(
             commonjs(),
-            external(),
             resolve(),
             typescript({ tsconfig: './tsconfig.json' })
         ]
@@ -52,4 +51,6 @@ export default [
         output: [{ file: pkg.types, format: "esm" }],
         plugins: [dts()],
     }
-]
+];
+
+export default options;

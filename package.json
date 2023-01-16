@@ -183,7 +183,8 @@
         "pages": "npm run docs:typedoc && gh-pages -d docs",
         "pretest": "npm run build",
         "prepublishOnly": "npm run units",
-        "release": "release-it"
+        "release": "release-it",
+        "test": "npm run units"
     },
     "repository": {
         "type": "git",

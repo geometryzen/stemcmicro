@@ -73,11 +73,12 @@ export function is_singleton(expr: Cons): boolean {
  * 
  */
 export class Cons implements U {
-    constructor(public meta: number, private readonly $car: U | undefined, private readonly $cdr: U | undefined, readonly pos?: number, readonly end?: number) {
-        // Nothing to see here.
+    #car: U|undefined;
+    constructor(public meta: number, car: U | undefined, private readonly $cdr: U | undefined, readonly pos?: number, readonly end?: number) {
+        this.#car = car;
     }
     get name(): 'Cons' | 'Nil' {
-        if (this.$car) {
+        if (this.#car) {
             return 'Cons';
         }
         else {
@@ -88,8 +89,8 @@ export class Cons implements U {
      * Returns the car property if it is defined, otherwise NIL.
      */
     get car(): U {
-        if (this.$car) {
-            return this.$car;
+        if (this.#car) {
+            return this.#car;
         }
         else {
             return nil;
@@ -116,8 +117,8 @@ export class Cons implements U {
         if (this === needle || this.equals(needle)) {
             return true;
         }
-        if (this.$car && this.$cdr) {
-            return this.$car.contains(needle) || this.$cdr.contains(needle);
+        if (this.#car && this.$cdr) {
+            return this.#car.contains(needle) || this.$cdr.contains(needle);
         }
         return false;
     }
@@ -133,7 +134,7 @@ export class Cons implements U {
         }
     }
     isCons(): boolean {
-        if (this.$car) {
+        if (this.#car) {
             return true;
         }
         else {
@@ -141,7 +142,7 @@ export class Cons implements U {
         }
     }
     isNil(): boolean {
-        if (this.$car) {
+        if (this.#car) {
             return false;
         }
         else {
@@ -151,8 +152,8 @@ export class Cons implements U {
     reset(meta: number): void {
         // console.log(`Cons.reset(meta=${meta})`);
         this.meta = reset_meta_flag(this.meta, meta);
-        if (this.$car) {
-            this.$car.reset(meta);
+        if (this.#car) {
+            this.#car.reset(meta);
         }
         if (this.$cdr) {
             this.$cdr.reset(meta);
@@ -160,7 +161,7 @@ export class Cons implements U {
     }
     public toString(): string {
         // If you call car or cdr you get an infinite loop because NIL is a Cons.
-        const head = this.$car;
+        const head = this.#car;
         const tail = this.$cdr;
         if (head) {
             return `(${head} ${tail})`;

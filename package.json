@@ -179,7 +179,7 @@
         "test-zero": "mocha 'tests/zero.ts'",
         "coverage": "mocha 'tests/**/*.spec.ts'",
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
-        "docs:typedoc": "trash docs && typedoc --options typedoc.json",
+        "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "pages": "npm run docs:typedoc && gh-pages -d docs",
         "pretest": "npm run build",
         "prepublishOnly": "npm run build && npm run units && npm run lint && npm run pages",

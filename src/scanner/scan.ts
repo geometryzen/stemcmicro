@@ -25,50 +25,6 @@ export interface ScanOptions {
     useCaretForExponentiation: boolean;
 }
 
-// This scanner uses the recursive descent method.
-//
-// The char pointers token_str and scan_str are pointers to the input string as
-// in the following example.
-//
-//  | g | a | m | m | a |   | a | l | p | h | a |
-//    ^                   ^
-//    token_str           scan_str
-//
-// The char pointer token.buf points to a malloc buffer.
-//
-//  | g | a | m | m | a | \0 |
-//    ^
-//    token.buf
-//
-// In the sequence of method invocations for scanning,
-// first we do the calls for scanning the operands
-// of the operators of least precedence.
-// So, since precedence in maths goes something like
-// (form high to low) exponents, mult/div, plus/minus
-// so we scan first for terms, then factors, then powers.
-// That's the general idea, but of course we also have to deal
-// with things like parens, non-commutative
-// dot (or inner) product, assignments and tests,
-// function calls etc.
-// Note that a^1/2 is, correctly, a/2, not, incorrectly, sqrt(a),
-// see comment in related test in power.coffee for more about this.
-
-//  Notes:
-//
-//  Formerly add() and multiply() were used to construct expressions but
-//  this preevaluation caused problems.
-//
-//  For example, suppose A has the floating point value inf.
-//
-//  Before, the expression A/A resulted in 1 because the scanner would
-//  divide the symbols.
-//
-//  After removing add() and multiply(), A/A results in nan which is the
-//  correct result.
-//
-//  The functions negate() and inverse() are used but they do not cause
-//  problems with preevaluation of symbols.
-
 /**
  * Scans the input string, s, leaving the expression on the stack.
  * Returns zero when there is nothing left to scan.
@@ -349,7 +305,7 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
 }
 
 /**
- * Correspons to scan_term
+ * Corresponds to scan_term
  */
 function scan_multiplicative_expr(state: InputState): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

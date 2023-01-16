@@ -1,18 +1,18 @@
 import { reset_meta_flag, U } from "../tree";
 
 export abstract class Atom implements U {
-    private $meta = 0;
+    #meta = 0;
     constructor(public readonly name: string, public readonly pos?: number, public readonly end?: number) {
 
     }
     reset(meta: number): void {
-        this.$meta = reset_meta_flag(this.$meta, meta);
+        this.#meta = reset_meta_flag(this.#meta, meta);
     }
     get meta(): number {
-        return this.$meta;
+        return this.#meta;
     }
     set meta(meta: number) {
-        this.$meta = meta;
+        this.#meta = meta;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     contains(needle: U): boolean {

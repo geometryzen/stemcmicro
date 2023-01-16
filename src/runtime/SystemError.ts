@@ -9,6 +9,6 @@ export class SystemError extends Error {
     constructor(message?: string) {
         super(message);
         // eslint-disable-next-line no-console
-        console.log(message, new Error().stack);
+        console.warn(message, new Error().stack);
     }
 }

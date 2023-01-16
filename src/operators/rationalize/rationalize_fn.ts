@@ -21,7 +21,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         const retval = Eval_rationalize(expr, $);
-        // console.log(`rationalize() => ${print_expr(retval, $)}`);
+        // console.lg(`rationalize() => ${print_expr(retval, $)}`);
         const flags = TFLAG_HALT | (!retval.equals(expr) ? TFLAG_DIFF : TFLAG_NONE);
         return [flags, retval];
     }

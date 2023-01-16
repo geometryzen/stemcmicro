@@ -13,7 +13,7 @@ import { is_flt } from '../flt/is_flt';
 
 
 export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
-    // console.log(`cosine_of_angle arg=${render_as_infix(x, $)}`);
+    // console.lg(`cosine_of_angle arg=${render_as_infix(x, $)}`);
 
     if (car(x).equals(ARCCOS)) {
         return [TFLAG_DIFF, cadr(x)];

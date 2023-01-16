@@ -37,7 +37,7 @@ class Op extends Function2<Sym, BCons<Sym, Sym, Sym>> implements Operator<Cons> 
         this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_MUL);
     }
     transform2(opr: Sym, lhs: Sym, rhs: BCons<Sym, Sym, Sym>, expr: BCons<Sym, Sym, BCons<Sym, Sym, Sym>>): [TFLAGS, U] {
-        // console.log(`${this.name} explicate=${this.$.explicateMode} implicate=${this.$.implicateMode}`);
+        // console.lg(`${this.name} explicate=${this.$.explicateMode} implicate=${this.$.implicateMode}`);
         const $ = this.$;
         if ($.explicateMode) {
             return canoncal_reorder_factors_mul_sym_sym_sym(lhs, rhs, expr, $);

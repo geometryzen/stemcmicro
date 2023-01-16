@@ -54,7 +54,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         if (m.isMinusOne() && n.isMinusOne()) {
             return [TFLAG_DIFF, b];
         }
-        // console.log(`${this.name} ${lhs} ${rhs}`);
+        // console.lg(`${this.name} ${lhs} ${rhs}`);
         return [TFLAG_NONE, expr];
     }
 }

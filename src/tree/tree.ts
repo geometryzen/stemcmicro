@@ -152,7 +152,7 @@ export class Cons implements U {
         }
     }
     reset(meta: number): void {
-        // console.log(`Cons.reset(meta=${meta})`);
+        // console.lg(`Cons.reset(meta=${meta})`);
         this.meta = reset_meta_flag(this.meta, meta);
         if (this.#car) {
             this.#car.reset(meta);

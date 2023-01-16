@@ -80,11 +80,11 @@ export function coeff(expr: U, x: U, $: ExtensionEnv): U[] {
     // eslint-disable-next-line no-constant-condition
     while (true) {
         // console.lg();
-        // console.log(`P(${x}) => ${print_expr(p, $)}`);
-        // console.log(`P(${x}) => ${print_list(p, $)}`);
+        // console.lg(`P(${x}) => ${print_expr(p, $)}`);
+        // console.lg(`P(${x}) => ${print_list(p, $)}`);
         const p0 = subst(p, x, zero, $);
         const c = $.valueOf(p0);
-        // console.log(`c = P(${x}=0) => ${print_expr(c, $)}`);
+        // console.lg(`c = P(${x}=0) => ${print_expr(c, $)}`);
         coefficients.push(c);
 
         // console.lg(`subtracting ${print_list(c, $)} from ${print_list(p, $)}`);

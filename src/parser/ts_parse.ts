@@ -193,7 +193,7 @@ export function ts_parse(fileName: string, sourceText: string): U {
             }
             default: {
                 // eslint-disable-next-line no-console
-                console.log(`Unhandled: ${SyntaxKind[node.kind]}`);
+                console.warn(`Unhandled: ${SyntaxKind[node.kind]}`);
             }
         }
         return node;

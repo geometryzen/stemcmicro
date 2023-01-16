@@ -40,7 +40,7 @@ import { dpow } from "./dpow";
  * @returns 
  */
 export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
-    // console.log(`power_v1 base=${print_list(base, $)} expo=${print_list(expo, $)}`);
+    // console.lg(`power_v1 base=${print_list(base, $)} expo=${print_list(expo, $)}`);
     if (typeof base === 'undefined') {
         throw new Error("base must be defined.");
     }

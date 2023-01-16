@@ -90,9 +90,9 @@ Notes
  */
 /*
 export function abs(x: U, $: ExtensionEnv): U {
-    console.log(`abs x=${print_list(x, $)}`);
+    console.lg(`abs x=${print_list(x, $)}`);
     const A = $.inner(x, x);
-    console.log(`A=${print_list(A, $)}`);
+    console.lg(`A=${print_list(A, $)}`);
     const B = $.power(A, half);
     return B;
 }
@@ -103,7 +103,7 @@ export function abs(x: U, $: ExtensionEnv): U {
 export function abs(x: U, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.log(`abs ${render_as_infix(x, $)} => ${render_as_infix(retval, $)} @ ${description}`);
+        // console.lg(`abs ${render_as_infix(x, $)} => ${render_as_infix(retval, $)} @ ${description}`);
         return retval;
     };
 

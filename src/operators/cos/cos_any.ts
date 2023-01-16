@@ -27,10 +27,10 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         this.hash = hash_unaop_atom(MATH_COS, HASH_ANY);
     }
     transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
-        // console.log(`${this.name} arg=${render_as_infix(arg, this.$)}`);
+        // console.lg(`${this.name} arg=${render_as_infix(arg, this.$)}`);
         const $ = this.$;
         const arg_LT_0 = $.valueOf(items_to_cons(MATH_LT, arg, zero));
-        // console.log(`${this.name} arg=${render_as_infix(arg_LT_0, this.$)}`);
+        // console.lg(`${this.name} arg=${render_as_infix(arg_LT_0, this.$)}`);
         if (is_boo(arg_LT_0)) {
             if (arg_LT_0.isTrue()) {
                 const A = $.negate(arg);

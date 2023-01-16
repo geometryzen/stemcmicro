@@ -112,7 +112,7 @@ function _runTest<T extends unknown[]>(
     // console.time(name);
     try {
         // eslint-disable-next-line no-console
-        // console.lg(name);
+        console.log(name);
         f(new Asserts(), ...args);
     }
     finally {
@@ -133,7 +133,7 @@ function test<T extends unknown[]>(
         _runTest(name, f, ...args);
         passedTests++;
         // eslint-disable-next-line no-console
-        // console.lg('OK');
+        console.log('OK');
         process.stdout.write('.');
     }
     catch (e) {
@@ -334,9 +334,9 @@ export function run_test(s: string[], options?: TestOptions): void {
                     }
                     try {
                         const A = engine.executeScript(sourceText);
-                        // console.lg(`values => ${A.values}`);
-                        // console.lg(`errors => ${A.errors}`);
-                        // console.lg(`prints => ${JSON.stringify(A.prints)}`);
+                        console.log(`values => ${A.values}`);
+                        console.log(`errors => ${A.errors}`);
+                        console.log(`prints => ${JSON.stringify(A.prints)}`);
                         if (A.errors.length > 0) {
                             const B = A.errors[0];
                             const C = B.message;

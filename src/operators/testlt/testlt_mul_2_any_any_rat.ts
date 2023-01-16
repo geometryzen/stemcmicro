@@ -1,16 +1,16 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_GT, MATH_LT, MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
-import { is_boo } from "../boo/is_boo";
-import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_boo } from "../boo/is_boo";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
+import { is_rat } from "../rat/is_rat";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -51,15 +51,13 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
                 return [TFLAG_DIFF, cond ? booT : booF];
             }
             else {
-                /*
-                console.log();
-                console.log(`opr=${opr}`);
-                console.log(`x=${x}`);
-                console.log(`y=${y}`);
-                console.log(`k=${rhs}`);
-                console.log(`DEBUG ${x} < 0 => ${x_LT_0}, ${x} > 0 => ${x_GT_0}`);
-                console.log(`DEBUG ${y} < 0 => ${y_LT_0}, ${y} > 0 => ${y_GT_0}`);
-                */
+                // console.lg();
+                // console.lg(`opr=${opr}`);
+                // console.lg(`x=${x}`);
+                // console.lg(`y=${y}`);
+                // console.lg(`k=${rhs}`);
+                // console.lg(`DEBUG ${x} < 0 => ${x_LT_0}, ${x} > 0 => ${x_GT_0}`);
+                // console.lg(`DEBUG ${y} < 0 => ${y_LT_0}, ${y} > 0 => ${y_GT_0}`);
             }
             return [TFLAG_DIFF, booF];
         }

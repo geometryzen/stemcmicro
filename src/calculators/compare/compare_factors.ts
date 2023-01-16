@@ -38,7 +38,7 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         return SIGN_LT;
     }
     // We are led to believe that lhs and rhs have the same group, but we must be careful
-    // console.log(`compare_factors lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
+    // console.lg(`compare_factors lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
     if (is_sym(lhs)) {
         if (is_sym(rhs)) {
             if ($.treatAsVector(lhs) && $.treatAsVector(rhs)) {

@@ -40,10 +40,10 @@ function cross($: ExtensionEnv) {
             else if (is_zero_sum(x1, x2, $)) {
                 /*
                 if (is_negative(x1)) {
-                    console.log(`x1 + x2 = 0, x1=${x1}, x2=${x2} x1 is negative`);
+                    console.lg(`x1 + x2 = 0, x1=${x1}, x2=${x2} x1 is negative`);
                 }
                 if (is_negative(x2)) {
-                    console.log(`x1 + x2 = 0, x1=${x1}, x2=${x2} x2 is negative`);
+                    console.lg(`x1 + x2 = 0, x1=${x1}, x2=${x2} x2 is negative`);
                 }
                 */
                 return true;

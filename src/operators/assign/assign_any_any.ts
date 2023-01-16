@@ -86,7 +86,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        // console.log(`${this.name} ${print_expr(lhs, $)} ${ASSIGN} ${print_expr(rhs, $)}`);
+        // console.lg(`${this.name} ${print_expr(lhs, $)} ${ASSIGN} ${print_expr(rhs, $)}`);
         // $.setBinding(lhs, rhs);
         // Assignments return NIL to prevent them from being printed.
         // That's a bit unfortunate for chained assignments.

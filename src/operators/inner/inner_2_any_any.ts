@@ -18,7 +18,7 @@ class Op extends Function2<U, U> implements Operator<Cons> {
         super('inner_2_any_any', MATH_INNER, is_any, is_any, $);
     }
     transform2(opr: Sym, lhs: U, rhs: U, expr: BCons<Sym, U, U>): [TFLAGS, U] {
-        // console.log(`${this.name} lhs=${lhs} rhs=${rhs}`);
+        // console.lg(`${this.name} lhs=${lhs} rhs=${rhs}`);
         return [TFLAG_NONE, expr];
     }
 }

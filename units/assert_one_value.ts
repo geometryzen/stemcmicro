@@ -7,7 +7,7 @@ import { U } from '../src/tree/tree';
 export function assert_one_value(retval: { value: U, errors: Error[] }): U {
     if (retval.errors.length > 0) {
         // eslint-disable-next-line no-console
-        console.log(retval.errors[0].stack);
+        console.warn(retval.errors[0].stack);
         assert.fail(`You've got errors! errors => ${retval.errors}`);
     }
     else {

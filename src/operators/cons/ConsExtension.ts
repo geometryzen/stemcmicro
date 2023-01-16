@@ -132,7 +132,7 @@ class ConsExtension implements Extension<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
-        // console.log(`ConsExtension.transform ${expr}`);
+        // console.lg(`ConsExtension.transform ${expr}`);
         return [TFLAG_NONE, expr];
     }
     valueOf(expr: Cons, $: ExtensionEnv): U {

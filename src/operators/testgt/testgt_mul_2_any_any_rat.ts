@@ -52,13 +52,13 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             }
             else {
                 /*
-                console.log();
-                console.log(`opr=${opr}`);
-                console.log(`x=${x}`);
-                console.log(`y=${y}`);
-                console.log(`k=${rhs}`);
-                console.log(`DEBUG ${x} < 0 => ${x_LT_0}, ${x} > 0 => ${x_GT_0}`);
-                console.log(`DEBUG ${y} < 0 => ${y_LT_0}, ${y} > 0 => ${y_GT_0}`);
+                // console.lg();
+                // console.lg(`opr=${opr}`);
+                // console.lg(`x=${x}`);
+                // console.lg(`y=${y}`);
+                // console.lg(`k=${rhs}`);
+                // console.lg(`DEBUG ${x} < 0 => ${x_LT_0}, ${x} > 0 => ${x_GT_0}`);
+                // console.lg(`DEBUG ${y} < 0 => ${y_LT_0}, ${y} > 0 => ${y_GT_0}`);
                 */
             }
             return [TFLAG_DIFF, booF];

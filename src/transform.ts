@@ -3,10 +3,10 @@ import { decomp } from './decomp';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { is_num } from './operators/num/is_num';
-import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
-import { DEBUG, defs, use_factoring_with_unary_function } from './runtime/defs';
-import { scan_meta } from './scanner/scan';
 import { subst } from './operators/subst/subst';
+import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
+import { DEBUG, use_factoring_with_unary_function } from './runtime/defs';
+import { scan_meta } from './scanner/scan';
 import { caddr, cadr, cdddr, cddr } from './tree/helpers';
 import { one } from './tree/rat/Rat';
 import { car, cdr, is_cons, nil, U } from './tree/tree';
@@ -53,7 +53,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
 
     if (DEBUG) {
         // eslint-disable-next-line no-console
-        console.log(`         !!!!!!!!!   transform on: ${F}`);
+        // console.lg(`         !!!!!!!!!   transform on: ${F}`);
     }
 
     const state = saveMetaBindings($);
@@ -65,10 +65,10 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
 
     if (DEBUG) {
         // eslint-disable-next-line no-console
-        console.log(`  ${result.length} decomposed elements ====== `);
+        // console.lg(`  ${result.length} decomposed elements ====== `);
         for (let i = 0; i < result.length; i++) {
             // eslint-disable-next-line no-console
-            console.log(`  decomposition element ${i}: ${result[i]}`);
+            // console.lg(`  decomposition element ${i}: ${result[i]}`);
         }
     }
 
@@ -98,9 +98,9 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
             const theTransform = s as U;
             if (DEBUG) {
                 // eslint-disable-next-line no-console
-                console.log(`applying transform: ${theTransform}`);
+                // console.lg(`applying transform: ${theTransform}`);
                 // eslint-disable-next-line no-console
-                console.log(`scanning table entry ${theTransform}`);
+                // console.lg(`scanning table entry ${theTransform}`);
             }
 
             // replacements of meta variables. Note that we don't
@@ -142,11 +142,11 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
 
                     if (DEBUG) {
                         // eslint-disable-next-line no-console
-                        console.log('tos before recursive transform: ' + defs.tos);
+                        // console.lg('tos before recursive transform: ' + defs.tos);
                         // eslint-disable-next-line no-console
-                        console.log(`testing: ${secondTerm}`);
+                        // console.lg(`testing: ${secondTerm}`);
                         // eslint-disable-next-line no-console
-                        console.log(`about to try to simplify other term: ${secondTerm}`);
+                        // console.lg(`about to try to simplify other term: ${secondTerm}`);
                     }
                     const [t, success] = transform(
                         secondTerm,
@@ -161,10 +161,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
 
                     if (DEBUG) {
                         // eslint-disable-next-line no-console
-                        console.log(
-                            `tried to simplify other term: ${secondTerm} ...successful?: ${success} ...transformed: ${transformedTerms[transformedTerms.length - 1]
-                            }`
-                        );
+                        // console.lg(`tried to simplify other term: ${secondTerm} ...successful?: ${success} ...transformed: ${transformedTerms[transformedTerms.length - 1]}`);
                     }
                 }
 
@@ -182,7 +179,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
         for (const eachTransformEntry of Array.from(s as string[])) {
             if (DEBUG) {
                 // eslint-disable-next-line no-console
-                console.log(`scanning table entry ${eachTransformEntry}`);
+                // console.lg(`scanning table entry ${eachTransformEntry}`);
                 if ((eachTransformEntry + '').indexOf('f(sqrt(a+b*x),2/3*1/b*sqrt((a+b*x)^3))') !== -1) {
                     // ?
                 }

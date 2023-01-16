@@ -193,11 +193,11 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
-    // console.log(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)}`);
+    // console.lg(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)}`);
 
     const outExpr = transform(inExpr, $);
 
-    // console.log(`Leaving ${reason.toUpperCase()} ${render_as_infix(outExpr, $)}`);
+    // console.lg(`Leaving ${reason.toUpperCase()} ${render_as_infix(outExpr, $)}`);
 
     return outExpr;
 }

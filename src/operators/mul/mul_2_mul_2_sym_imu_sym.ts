@@ -41,7 +41,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             case SIGN_GT: {
                 const ab = $.valueOf(items_to_cons(opr, a, b));
                 const abi = $.valueOf(items_to_cons(MATH_MUL, ab, i));
-                // console.log(`${this.name} ${print_expr(orig, $)} ==> ${print_expr(Xia, $)}`);
+                // console.lg(`${this.name} ${print_expr(orig, $)} ==> ${print_expr(Xia, $)}`);
                 return [TFLAG_DIFF, abi];
             }
             default: {

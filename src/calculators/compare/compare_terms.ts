@@ -22,13 +22,13 @@ import { compare_vars_vars } from "./compare_vars_vars";
 import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.log(`ENTERING compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+    // console.lg(`ENTERING compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: Sign, description: string): Sign {
-        // console.log(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
+        // console.lg(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
         return retval;
     };
-    // console.log(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+    // console.lg(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     if (lhs.equals(rhs)) {
         return hook(SIGN_EQ, "A");
     }
@@ -270,7 +270,7 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
     const lvars = free_vars(lhs, $);
     const rvars = free_vars(rhs, $);
-    // console.log(`C. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
+    // console.lg(`C. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
     const retval = compare_vars_vars(lvars, rvars);
     return hook(retval, "Z");
 

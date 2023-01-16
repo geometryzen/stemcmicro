@@ -60,7 +60,6 @@ export function scan_source_text(sourceText: string, options?: ScanOptions): { t
                 // We should be returning user errors rather than throwing them.
                 // Then the only errors being thrown should be SystemError, which we don't want to catch.
                 // eslint-disable-next-line no-console
-                console.log(error.stack);
                 errors.push(error);
             }
             else {

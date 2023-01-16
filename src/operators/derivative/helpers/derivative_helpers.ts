@@ -50,7 +50,7 @@ import { dpower } from './dpower';
 import { dproduct } from './dproduct';
 
 export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
-    // console.log(`d_scalar_scalar ${render_as_infix(F, $)} ${render_as_infix(X, $)}`);
+    // console.lg(`d_scalar_scalar ${render_as_infix(F, $)} ${render_as_infix(X, $)}`);
     if (is_sym(X)) {
         return d_scalar_scalar_1(F, X, $);
     }
@@ -81,7 +81,7 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     if (is_add(F)) {
         return dsum(F, X, $);
     }
-    // console.log(`car(p1)=>${car(p1)}`);
+    // console.lg(`car(p1)=>${car(p1)}`);
     // Turning these into matching patterns...
     const opr = car(F);
     if (opr.equals(MULTIPLY)) {
@@ -201,7 +201,7 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
 // derivative of a generic function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function dfunction(p1: U, p2: Sym, $: ExtensionEnv): U {
-    // console.log(`dfunction ${render_as_infix(p1, $)} ${render_as_infix(p2, $)}`);
+    // console.lg(`dfunction ${render_as_infix(p1, $)} ${render_as_infix(p2, $)}`);
     const p3 = cdr(p1); // p3 is the argument list for the function
 
     if (nil === p3 || p3.contains(p2)) {

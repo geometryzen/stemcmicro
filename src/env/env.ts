@@ -369,7 +369,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isImag(expr);
-            // console.log(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
+            // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isMinusOne(expr: U): boolean {
@@ -381,7 +381,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isReal(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isReal(expr);
-            // console.log(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
+            // console.lg(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
         isScalar(expr: U): boolean {
@@ -605,7 +605,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
-                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
@@ -619,7 +619,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                         // console.lg(`DIFF HALT: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                     }
                                     else {
-                                        // console.log(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                         if (continueIfExprChanges) {
                                             doneWithExpr = false;
                                         }

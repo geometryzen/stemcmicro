@@ -45,7 +45,7 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
     // Use "derivative" instead of "d" if there is no user function "d"
     if (DEBUG) {
         // eslint-disable-next-line no-console
-        console.log(`Eval_user_function evaluating: ${car(expr)}`);
+        // console.lg(`Eval_user_function evaluating: ${car(expr)}`);
     }
     if (car(expr) === SYMBOL_D && $.getBinding(SYMBOL_D) === SYMBOL_D) {
         const retval = Eval_derivative(expr, $);

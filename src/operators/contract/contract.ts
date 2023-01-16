@@ -40,7 +40,7 @@ export function Eval_contract(p1: Cons, $: ExtensionEnv): U {
 }
 
 function contract(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
-    // console.log(`contract ${print_expr(p1, $)} ${print_expr(p2, $)} ${print_expr(p3, $)}`);
+    // console.lg(`contract ${print_expr(p1, $)} ${print_expr(p2, $)} ${print_expr(p3, $)}`);
     const ai = [];
     const an = [];
 

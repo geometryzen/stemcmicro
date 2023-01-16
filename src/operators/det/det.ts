@@ -35,7 +35,7 @@ export function det(M: Tensor, $: ExtensionEnv): U {
     };
 
     if (!is_square_matrix(M)) {
-        // console.log(`must be square M=${print_expr(M, $)}`);
+        // console.lg(`must be square M=${print_expr(M, $)}`);
         return hook(makeList(DET, M));
     }
 

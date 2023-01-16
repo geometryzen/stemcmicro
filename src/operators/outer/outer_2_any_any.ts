@@ -23,7 +23,7 @@ class Op extends Function2<U, U> implements Operator<Cons> {
         this.hash = hash_binop_atom_atom(this.opr, HASH_ANY, HASH_ANY);
     }
     transform2(opr: Sym, lhs: U, rhs: U, expr: BCons<Sym, U, U>): [TFLAGS, U] {
-        // console.log(`${this.name}`);
+        // console.lg(`${this.name}`);
         return [TFLAG_NONE, expr];
     }
 }

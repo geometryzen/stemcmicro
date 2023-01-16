@@ -33,7 +33,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, exp: EXP): [TFLAGS, U] {
-        // console.log(`${this.name} exp=${exp}`);
+        // console.lg(`${this.name} exp=${exp}`);
         if (rhs.isZero()) {
             return [TFLAG_DIFF, lhs];
         }

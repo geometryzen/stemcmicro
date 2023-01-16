@@ -32,7 +32,7 @@ function cross($: ExtensionEnv) {
         }
         else {
             const sign = compare_terms(lhs, rhs.lhs, $);
-            // console.log(`add_2_assoc_rhs_canonical_ordering lhs=${render_as_infix(lhs, $)} rhs.lhs=${render_as_infix(rhs.lhs, $)} sign=${sign}`);
+            // console.lg(`add_2_assoc_rhs_canonical_ordering lhs=${render_as_infix(lhs, $)} rhs.lhs=${render_as_infix(rhs.lhs, $)} sign=${sign}`);
             return sign > 0;
         }
     };

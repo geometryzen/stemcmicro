@@ -52,9 +52,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             case SIGN_GT: {
                 // This flipping of e.g. (a*b)*c to c*(a*b) is way to coarse and conflist with e.g. mul_2_sym_mul_2_sym_sym.
                 // const A = makeList(opr, rhs, lhs);
-                // console.log(`${this.name} ${print_expr(orig, $)} A = ${print_expr(A, $)}`);
+                // console.lg(`${this.name} ${print_expr(orig, $)} A = ${print_expr(A, $)}`);
                 // const B = $.valueOf(A);
-                // console.log(`${this.name} ${print_expr(orig, $)} B = ${print_expr(B, $)}`);
+                // console.lg(`${this.name} ${print_expr(orig, $)} B = ${print_expr(B, $)}`);
                 // return [CHANGED, B];
                 return [TFLAG_NONE, orig];
             }

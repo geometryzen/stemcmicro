@@ -528,7 +528,7 @@ function scan_first_factor(state: InputState): [is_num: boolean, expr: U] {
     }
     else {
         // We were probably expecting something.
-        // console.log(`code=${JSON.stringify(code)}`);
+        // console.lg(`code=${JSON.stringify(code)}`);
         state.scan_error('syntax error');
     }
 }

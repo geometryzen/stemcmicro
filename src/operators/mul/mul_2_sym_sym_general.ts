@@ -72,7 +72,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        // console.log(`${this.name} lhs: ${type(lhs, $)} = ${lhs} rhs: ${type(rhs, $)} = ${rhs}`);
+        // console.lg(`${this.name} lhs: ${type(lhs, $)} = ${lhs} rhs: ${type(rhs, $)} = ${rhs}`);
         // Short Circuit, but only when factoring.
         if (lhs.equals(rhs)) {
             if ($.isFactoring()) {

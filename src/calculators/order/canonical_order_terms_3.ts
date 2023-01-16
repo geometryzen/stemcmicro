@@ -20,7 +20,7 @@ export function canonical_order_terms_3(t1: U, t2: U, t3: U, orig: Cons, $: Exte
         // console.lg(`${$.toListString(t1)} ${$.toListString(t2)} ${$.toListString(t3)} => ${$.toListString(retval)} canonical_order_terms_3 @ ${description} orig = ${$.toListString(orig)}`);
         return retval;
     };
-    // console.log(`${$.toListString(X)} ${$.toListString(Y)} ${$.toListString(Z)} orig = ${$.toListString(orig)}`);
+    // console.lg(`${$.toListString(X)} ${$.toListString(Y)} ${$.toListString(Z)} orig = ${$.toListString(orig)}`);
     // assert_not_add(Y);
     // assert_not_add(Z);
     if (is_cons(t1) && is_add_2_any_any(t1)) {

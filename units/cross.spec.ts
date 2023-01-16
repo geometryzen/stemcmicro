@@ -22,7 +22,7 @@ describe("cross", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
         // eslint-disable-next-line no-console
-        // console.log(`double cross elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`double cross elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
         assert.strictEqual(render_as_infix(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
@@ -307,7 +307,7 @@ describe("cross", function () {
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
-        // console.log(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
         assert.strictEqual(render_as_infix(value, $), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
         engine.release();
@@ -331,7 +331,7 @@ describe("cross", function () {
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
-        // console.log(`cross(A,B)+cross(B,A) elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`cross(A,B)+cross(B,A) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
         assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
@@ -353,7 +353,7 @@ describe("cross", function () {
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
-        // console.log(`A^B elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`A^B elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
         assert.strictEqual(render_as_infix(value, $), "(Ax*By-Ay*Bx)*i^j+(Ax*Bz-Az*Bx)*i^k+(Ay*Bz-Az*By)*j^k");
         engine.release();
@@ -375,7 +375,7 @@ describe("cross", function () {
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
-        // console.log(`A^B+B^A elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`A^B+B^A elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
         assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
@@ -483,7 +483,7 @@ describe("cross", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
         // eslint-disable-next-line no-console
-        // console.log(`cross(A,B)-I*(A^B) elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`cross(A,B)-I*(A^B) elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
         assert.strictEqual(render_as_infix(value, $), "0");
         engine.release();
@@ -529,7 +529,7 @@ describe("cross", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
         // eslint-disable-next-line no-console
-        // console.log(`double cross elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`double cross elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
         assert.strictEqual(render_as_infix(value, $), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
         engine.release();
@@ -566,7 +566,7 @@ describe("cross", function () {
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
-        // console.log(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
+        // console.lg(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
         assert.strictEqual(render_as_infix(value, $), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
         engine.release();

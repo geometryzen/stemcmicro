@@ -49,11 +49,11 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
-        // console.log(`${this.name} exp=${print_expr(exp, $)}`);
+        // console.lg(`${this.name} exp=${print_expr(exp, $)}`);
         const X = lhs;
         const k = rhs.rhs;
         const p1 = makeList(rhs.opr, X, k.succ());
-        // console.log(`p1=${print_expr(p1, $)}`);
+        // console.lg(`p1=${print_expr(p1, $)}`);
         const p2 = $.valueOf(p1);
         return [TFLAG_DIFF, p2];
     }

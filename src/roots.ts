@@ -25,7 +25,7 @@ import { car, Cons, nil, U } from './tree/tree';
 // define Y p6
 
 export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
-    // console.log(`Eval_roots expr=${print_expr(expr, $)}`);
+    // console.lg(`Eval_roots expr=${print_expr(expr, $)}`);
     // A == B -> A - B
     const arg1 = cadr(expr);
     let poly: U;
@@ -47,8 +47,8 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
 
     const x = nil === arg2 ? guess(poly) : arg2;
 
-    // console.log(`poly=${print_expr(poly, $)}`);
-    // console.log(`var =${print_expr(x, $)}`);
+    // console.lg(`poly=${print_expr(poly, $)}`);
+    // console.lg(`var =${print_expr(x, $)}`);
 
     const p = implicate(poly, $);
 
@@ -87,10 +87,10 @@ function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
  * The coefficients are returned in the order [c0, c1, c2, ..., 1] where c0 is the constant coefficient.
  */
 function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
-    // console.log(`normalized_coeff ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
+    // console.lg(`normalized_coeff ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
 
     const coes = coeff(poly, x, $);
-    // console.log(`coes=${coes}`);
+    // console.lg(`coes=${coes}`);
     const divideBy = coes[coes.length - 1];
     return coes.map((coe) => $.divide(coe, divideBy));
 }
@@ -102,7 +102,7 @@ function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
  * @returns 
  */
 export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
-    // console.log(`roots ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
+    // console.lg(`roots ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
     // the simplification of nested radicals uses "roots", which in turn uses
     // simplification of nested radicals. Usually there is no problem, one level
     // of recursion does the job. Beyond that, we probably got stuck in a
@@ -116,7 +116,7 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
 
     const ks = normalized_coeff(poly, x, $);
 
-    // console.log(`ks=${ks}`);
+    // console.lg(`ks=${ks}`);
 
     const results = [];
     if (is_simple_root(ks, $)) {
@@ -128,7 +128,7 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
     }
     else {
         const roots = roots2(poly, x, $);
-        // console.log(`roots2 => ${roots}`);
+        // console.lg(`roots2 => ${roots}`);
         results.push(...roots);
     }
 
@@ -183,7 +183,7 @@ function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEn
 }
 
 function roots2(poly: U, X: U, $: ExtensionEnv): U[] {
-    // console.log(`roots2 ${print_expr(poly, $)} in variable ${print_expr(X, $)}`);
+    // console.lg(`roots2 ${print_expr(poly, $)} in variable ${print_expr(X, $)}`);
     const ks = normalized_coeff(poly, X, $);
     if (!hasImaginaryCoeff(ks)) {
         poly = $.factorize(poly, X);

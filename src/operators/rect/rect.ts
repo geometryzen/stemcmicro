@@ -27,7 +27,7 @@ export function Eval_rect(p1: Cons, $: ExtensionEnv): U {
 }
 
 export function rect(z: U, $: ExtensionEnv): U {
-    // console.log(`rect ${print_list(p1, $)}`);
+    // console.lg(`rect ${print_list(p1, $)}`);
     // if we assume real variables, then the
     // rect of any symbol is the symbol itself
     // (note that 'i' is not a symbol, it's made of (-1)^(1/2))

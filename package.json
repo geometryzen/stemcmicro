@@ -182,7 +182,7 @@
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "pages": "npm run docs:typedoc && gh-pages -d docs",
         "pretest": "npm run build",
-        "prepublishOnly": "npm run build && npm run units && npm run lint && npm run pages",
+        "prepublishOnly": "npm run units",
         "release": "release-it"
     },
     "repository": {

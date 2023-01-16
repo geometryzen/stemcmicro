@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { create_engine, is_blade, is_tensor } from '../index';
+import { createScriptEngine, is_blade, is_tensor } from '../index';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("operator +", function () {
@@ -11,7 +11,7 @@ describe("operator +", function () {
             `X = b1 + b1`,
             `X`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -31,10 +31,9 @@ describe("algebra", function () {
             const lines: string[] = [
                 `algebra([1, 1, 1], ["L1", "L2", "L3"])`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
-            const $ = engine.$;
             const G30 = assert_one_value_execute(lines.join('\n'), engine);
             assert.isTrue(is_tensor(G30));
             if (is_tensor(G30)) {
@@ -51,7 +50,7 @@ describe("algebra", function () {
                 }
                 if (is_blade(e2)) {
                     // Ensure that the toInfixString works also.
-                    assert.strictEqual($.toInfixString(e2), "L2");
+                    assert.strictEqual(engine.renderAsInfix(e2), "L2");
                 }
                 if (is_blade(e3)) {
                     assert.strictEqual(e3.toString(), "L3");
@@ -71,7 +70,7 @@ describe("algebra", function () {
                 `X = b1 + b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -86,7 +85,7 @@ describe("algebra", function () {
                 `X = b1 + b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -101,7 +100,7 @@ describe("algebra", function () {
                 `X = b1 + b1`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -118,13 +117,12 @@ describe("algebra", function () {
                 `X = b1 - b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
-            const $ = engine.$;
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // geocas could probably make this more compact.
-            assert.strictEqual($.toInfixString(actual), "L1-L2");
+            assert.strictEqual(engine.renderAsInfix(actual), "L1-L2");
 
 
             engine.release();
@@ -137,7 +135,7 @@ describe("algebra", function () {
                 `X = b1 - b1`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -154,7 +152,7 @@ describe("algebra", function () {
                 `X = b1 * b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -170,7 +168,7 @@ describe("algebra", function () {
                 `X = 2 * b1`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -188,7 +186,7 @@ describe("algebra", function () {
                 `X = b1 * b2 * b3`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -206,7 +204,7 @@ describe("algebra", function () {
                 `X = b1 | b1`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -222,7 +220,7 @@ describe("algebra", function () {
                 `X = b1 | b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -240,7 +238,7 @@ describe("algebra", function () {
                 `X = b1 << b1`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -256,7 +254,7 @@ describe("algebra", function () {
                 `X = b1 << b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -274,7 +272,7 @@ describe("algebra", function () {
                 `X = b1 >> b1`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -290,7 +288,7 @@ describe("algebra", function () {
                 `X = b1 >> b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -308,7 +306,7 @@ describe("algebra", function () {
                 `X = b1 ^ b1`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -324,7 +322,7 @@ describe("algebra", function () {
                 `X = b1 ^ b2`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -341,7 +339,7 @@ describe("algebra", function () {
                 `X = b1 ^ b2 ^ b3`,
                 `X`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -376,12 +374,11 @@ describe("algebra", function () {
             `X = b1 - b1`,
             `X`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(value), "0");
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
     it("broken?", function () {
@@ -392,12 +389,11 @@ describe("algebra", function () {
             `X = b1 - b2`,
             `X`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(value), "L1-L2");
+        assert.strictEqual(engine.renderAsInfix(value), "L1-L2");
         engine.release();
     });
     // But it works for symbols...
@@ -405,12 +401,11 @@ describe("algebra", function () {
         const lines: string[] = [
             `a + (-1 * a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(value), "0");
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
     // And works for rationals
@@ -419,12 +414,11 @@ describe("algebra", function () {
             `a = 5`,
             `a + (-1 * a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(value), "0");
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
     // And works for floats
@@ -433,12 +427,11 @@ describe("algebra", function () {
             `a = 5.0`,
             `a + (-1 * a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(value), "0.0");
+        assert.strictEqual(engine.renderAsInfix(value), "0.0");
         engine.release();
     });
 });
@@ -451,12 +444,11 @@ describe("algebra", function () {
             `X = b1 + b2`,
             `X`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(actual), "L1+L2");
+        assert.strictEqual(engine.renderAsInfix(actual), "L1+L2");
         engine.release();
     });
     it("(e1, e2)", function () {
@@ -467,7 +459,7 @@ describe("algebra", function () {
             `X = b1 + b2`,
             `X`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -482,7 +474,7 @@ describe("algebra", function () {
             `X = b1 + b1`,
             `X`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));

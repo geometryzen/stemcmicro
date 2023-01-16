@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("unit", function () {
     // This might be a generalization for argument of zero.
@@ -8,7 +8,7 @@ describe("unit", function () {
         const lines: string[] = [
             `unit(0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[]");
@@ -20,7 +20,7 @@ describe("unit", function () {
         const lines: string[] = [
             `unit(1)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1]]");
@@ -32,7 +32,7 @@ describe("unit", function () {
         const lines: string[] = [
             `unit(2)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1,0],[0,1]]");
@@ -43,7 +43,7 @@ describe("unit", function () {
         const lines: string[] = [
             `unit(3)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1,0,0],[0,1,0],[0,0,1]]");
@@ -54,7 +54,7 @@ describe("unit", function () {
         const lines: string[] = [
             `unit(4)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]");

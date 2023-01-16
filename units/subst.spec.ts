@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("subst", function () {
     it("001", function () {
         const lines: string[] = [
             `subst((-1)^(1/2),i,-3+10/9*3^(1/2)*i)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: true,
             useDefinitions: true
         });

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cos", function () {
@@ -8,7 +8,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -22,7 +22,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(x)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -33,7 +33,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(-x)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -44,7 +44,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(-x*y)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -55,7 +55,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(-x*y*z)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -67,7 +67,7 @@ describe("cos", function () {
             `autofactor=0`,
             `cos(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -78,7 +78,7 @@ describe("cos", function () {
             `autofactor=1`,
             `cos(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -89,7 +89,7 @@ describe("cos", function () {
             `autofactor=0`,
             `cos(b+a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -100,7 +100,7 @@ describe("cos", function () {
             `autofactor=1`,
             `cos(b+a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -111,7 +111,7 @@ describe("cos", function () {
             `autofactor=0`,
             `cos(a-b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -122,7 +122,7 @@ describe("cos", function () {
             `autofactor=1`,
             `cos(a-b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -133,7 +133,7 @@ describe("cos", function () {
             `autofactor=0`,
             `cos(b-a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -144,7 +144,7 @@ describe("cos", function () {
             `autofactor=1`,
             `cos(b-a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

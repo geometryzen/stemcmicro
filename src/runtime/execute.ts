@@ -5,8 +5,8 @@ import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
+import { parseScript } from '../scanner/parse_script';
 import { ScanOptions } from '../scanner/scan';
-import { scan_source_text } from '../scanner/scan_source_text';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
@@ -26,7 +26,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  * @returns The return values, print outputs, and errors.
  */
 export function execute_script(sourceText: string, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = scan_source_text(sourceText, scan_options($));
+    const { trees, errors } = parseScript(sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }

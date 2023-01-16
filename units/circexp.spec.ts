@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 /*
   'circexp(sinh(x))',
@@ -23,7 +23,7 @@ describe("circexp", function () {
         const lines: string[] = [
             `circexp(cos(x))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -36,7 +36,7 @@ describe("circexp", function () {
         const lines: string[] = [
             `circexp(sin(x))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -50,7 +50,7 @@ describe("circexp", function () {
         const lines: string[] = [
             `circexp(tan(x))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -64,7 +64,7 @@ describe("circexp", function () {
         const lines: string[] = [
             `circexp(cosh(x))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -78,7 +78,7 @@ describe("circexp", function () {
         const lines: string[] = [
             `circexp(sinh(x))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
             useDefinitions: false

@@ -2,20 +2,20 @@ import { assert } from 'chai';
 import { rational } from '../src/bignum';
 import { cadnr } from '../src/calculators/cadnr';
 import { makeList } from '../src/makeList';
-import { is_sym } from '../src/operators/sym/is_sym';
-import { ASSIGN, QUOTE } from '../src/runtime/constants';
-import { MATH_ADD, MATH_COMPONENT, MATH_EQ, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
-import { scan_source_text, ScanOptions } from '../src/scanner/scan_source_text';
-import { Boo } from '../src/tree/boo/Boo';
 import { is_boo } from '../src/operators/boo/is_boo';
-import { Flt } from '../src/tree/flt/Flt';
 import { is_flt } from '../src/operators/flt/is_flt';
 import { is_rat } from '../src/operators/rat/is_rat';
-import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
 import { is_str } from '../src/operators/str/is_str';
+import { is_sym } from '../src/operators/sym/is_sym';
+import { is_tensor } from '../src/operators/tensor/is_tensor';
+import { ASSIGN, QUOTE } from '../src/runtime/constants';
+import { MATH_ADD, MATH_COMPONENT, MATH_EQ, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
+import { ParseScriptOptions, parseScript } from '../src/scanner/parse_script';
+import { Boo } from '../src/tree/boo/Boo';
+import { Flt } from '../src/tree/flt/Flt';
+import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
 import { Str } from '../src/tree/str/Str';
 import { Sym } from '../src/tree/sym/Sym';
-import { is_tensor } from '../src/operators/tensor/is_tensor';
 import { Cons, is_cons, U } from '../src/tree/tree';
 
 const NAME_A = new Sym('a');
@@ -424,8 +424,8 @@ describe("scan", function () {
     });
 });
 
-function expect_one_tree(sourceText: string, options?: ScanOptions): U {
-    const { trees, errors } = scan_source_text(sourceText, options);
+function expect_one_tree(sourceText: string, options?: ParseScriptOptions): U {
+    const { trees, errors } = parseScript(sourceText, options);
     // console.lg(`tree => ${tree}`);
     // console.lg(`errors => ${JSON.stringify(errors)}`);
     if (errors.length > 0) {

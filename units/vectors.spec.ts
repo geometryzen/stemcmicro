@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("vectors", function () {
@@ -7,7 +7,7 @@ describe("vectors", function () {
         const lines: string[] = [
             `x`,
         ];
-        const engine = create_engine({ treatAsVectors: ['x'] });
+        const engine = createScriptEngine({ treatAsVectors: ['x'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x");
         assert.strictEqual(engine.renderAsLaTeX(value), "\\vec{x}");
@@ -21,7 +21,7 @@ describe("vectors", function () {
         const lines: string[] = [
             `x*y`,
         ];
-        const engine = create_engine({ treatAsVectors: ['x', 'y'] });
+        const engine = createScriptEngine({ treatAsVectors: ['x', 'y'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x*y");
         // TODO: Whitespace might be good here.
@@ -32,7 +32,7 @@ describe("vectors", function () {
         const lines: string[] = [
             `x|y`,
         ];
-        const engine = create_engine({ treatAsVectors: ['x', 'y'] });
+        const engine = createScriptEngine({ treatAsVectors: ['x', 'y'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x|y");
         assert.strictEqual(engine.renderAsLaTeX(value), "\\vec{x} \\mid \\vec{y}");
@@ -42,7 +42,7 @@ describe("vectors", function () {
         const lines: string[] = [
             `y|x`,
         ];
-        const engine = create_engine({ treatAsVectors: ['x', 'y'] });
+        const engine = createScriptEngine({ treatAsVectors: ['x', 'y'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x|y");
         engine.release();
@@ -51,7 +51,7 @@ describe("vectors", function () {
         const lines: string[] = [
             `x^y`,
         ];
-        const engine = create_engine({ treatAsVectors: ['x', 'y'] });
+        const engine = createScriptEngine({ treatAsVectors: ['x', 'y'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x^y");
         assert.strictEqual(engine.renderAsLaTeX(value), "\\vec{x} \\wedge \\vec{y}");
@@ -61,7 +61,7 @@ describe("vectors", function () {
         const lines: string[] = [
             `y^x`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Vector'],
             treatAsVectors: ['x', 'y']
         });
@@ -73,7 +73,7 @@ describe("vectors", function () {
         const lines: string[] = [
             `x|y+x^y`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Vector'],
             treatAsVectors: ['x', 'y']
         });
@@ -90,7 +90,7 @@ describe("vectors", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `A`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -107,7 +107,7 @@ describe("vectors", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `abs(A)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -125,7 +125,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A|B`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -143,7 +143,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A<<B`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -161,7 +161,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A>>B`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -181,7 +181,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `B*(A|C)-C*(A|B)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -201,7 +201,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -222,7 +222,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))-B*A|C+C*A|B`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -242,7 +242,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -261,7 +261,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -280,7 +280,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)-B|cross(C,A)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -297,7 +297,7 @@ describe("vectors", function () {
             `A = e1 * Ax + e2 * Ay + e3 * Az`,
             `abs(A)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -310,7 +310,7 @@ describe("vectors", function () {
             const lines: string[] = [
                 `(a*b)*c`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'b', 'c']
             });
@@ -327,7 +327,7 @@ describe("vectors", function () {
             const lines: string[] = [
                 `a*(b*c)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(value), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(value), "a*b*c");
@@ -337,7 +337,7 @@ describe("vectors", function () {
             const lines: string[] = [
                 `abs(a)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'n'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'n'] });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(value), "(abs a)");
             assert.strictEqual(engine.renderAsInfix(value), "abs(a)");
@@ -349,7 +349,7 @@ describe("vectors", function () {
                 `implicate=1`,
                 `(a*n)*n - 2*(a|n)*n`,
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
@@ -364,7 +364,7 @@ describe("vectors", function () {
                 `implicate=0`,
                 `(a*n)*n - 2*(a|n)*n + n * a * n`,
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
@@ -382,7 +382,7 @@ describe("vectors", function () {
                 `implicate=0`,
                 `a*(n*n) - 2*(a|n)*n + n * a * n`,
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
@@ -396,7 +396,7 @@ describe("vectors", function () {
                 `implicate=1`,
                 `a*n - 2*(a|n)`,
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'n']
             });
@@ -416,7 +416,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By`,
             `A*B`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

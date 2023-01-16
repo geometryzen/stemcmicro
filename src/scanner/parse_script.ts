@@ -4,7 +4,10 @@ import { normalize_unicode_dots } from "../runtime/normalize_dots";
 import { U } from "../tree/tree";
 import { scan } from "./scan";
 
-export interface ScanOptions {
+export interface ParseScriptOptions {
+    /**
+     * Determines whether the caret symbol '^' is used to denote exponentiation.
+     */
     useCaretForExponentiation?: boolean;
 }
 
@@ -12,7 +15,7 @@ interface ScanConfig {
     useCaretForExponentiation: boolean;
 }
 
-function config_from_options(options: ScanOptions | undefined): ScanConfig {
+function config_from_options(options: ParseScriptOptions | undefined): ScanConfig {
     if (options) {
         return {
             useCaretForExponentiation: !!options.useCaretForExponentiation
@@ -26,9 +29,9 @@ function config_from_options(options: ScanOptions | undefined): ScanConfig {
 /**
  * Each line of a multiline source text creates a tree in the array of trees.
  * @param sourceText The source text. May contain embedded newline characters.
- * @param options Determine how the scanning behaves.
+ * @param options Determine how the parsing behaves.
  */
-export function scan_source_text(sourceText: string, options?: ScanOptions): { trees: U[], errors: Error[] } {
+export function parseScript(sourceText: string, options?: ParseScriptOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config = config_from_options(options);

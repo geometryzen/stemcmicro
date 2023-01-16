@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("choose", function () {
     it("choose(n,k)", function () {
         const lines: string[] = [
             `choose(n,k)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (factorial n) (power (factorial k) -1) (power (factorial (+ (* -1 k) n)) -1))");

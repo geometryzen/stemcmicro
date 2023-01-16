@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 // degree does not appear to be implemented in Algebrite either.
 describe("degree", function () {
@@ -7,7 +7,7 @@ describe("degree", function () {
         const lines: string[] = [
             `degree(x)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -18,7 +18,7 @@ describe("degree", function () {
         const lines: string[] = [
             `degree(x*x)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -29,7 +29,7 @@ describe("degree", function () {
         const lines: string[] = [
             `degree(x**2)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

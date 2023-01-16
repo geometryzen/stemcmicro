@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("isprime", function () {
     it("isprime(0)", function () {
         const lines: string[] = [
             `isprime(0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -17,7 +17,7 @@ describe("isprime", function () {
         const lines: string[] = [
             `isprime(1)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -28,7 +28,7 @@ describe("isprime", function () {
         const lines: string[] = [
             `isprime(2)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -39,7 +39,7 @@ describe("isprime", function () {
         const lines: string[] = [
             `isprime(3)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -50,7 +50,7 @@ describe("isprime", function () {
         const lines: string[] = [
             `isprime(4)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -61,7 +61,7 @@ describe("isprime", function () {
         const lines: string[] = [
             `isprime(5)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -72,7 +72,7 @@ describe("isprime", function () {
         const lines: string[] = [
             `isprime(9007199254740991)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -83,7 +83,7 @@ describe("isprime", function () {
         const lines: string[] = [
             `isprime(2^53-111)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

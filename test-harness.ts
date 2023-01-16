@@ -3,10 +3,8 @@ import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
 import { clear_patterns } from './src/pattern';
-import { render_as_infix } from './src/print/print';
 import { defs } from './src/runtime/defs';
-import { execute_std_definitions } from './src/runtime/init';
-import { create_engine, Engine, EngineOptions } from './src/runtime/symengine';
+import { createScriptEngine, ScriptEngine, ScriptEngineOptions } from './src/runtime/symengine';
 import { U } from './src/tree/tree';
 
 const shardCount = Number(process.env['TEST_TOTAL_SHARDS']) || 1;
@@ -181,7 +179,7 @@ test.failing = function failing<T extends unknown[]>(name: string, f: (t: Assert
 
 export { test };
 
-function setup_test(f: () => void, engine: Engine, options: EngineOptions) {
+function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOptions) {
     // TODO: Some global issues to be addressed...
     // Inlining 'clearall' is illuminating.
     // Reveals some objects that are still global.
@@ -189,12 +187,10 @@ function setup_test(f: () => void, engine: Engine, options: EngineOptions) {
     clear_patterns();
 
     // We need to redo these...
-    const $ = engine.$;
-
-    $.clearBindings();
+    engine.clearBindings();
 
     if (options && options.useDefinitions) {
-        execute_std_definitions($);
+        engine.executeStdDefinitions();
     }
 
     // TODO: Remove these comments when everything is working.
@@ -222,15 +218,14 @@ function setup_test(f: () => void, engine: Engine, options: EngineOptions) {
  * @param prefix 
  */
 export function run_shardable_test(s: string[], prefix = '') {
-    const options: EngineOptions = {};
-    const engine = create_engine(options);
+    const options: ScriptEngineOptions = {};
+    const engine = createScriptEngine(options);
     try {
         setup_test(() => {
             for (let i = 0; i < s.length; i += 2) {
                 test((prefix || `${testIndex}: `) + s[i], t => {
                     defs.out_count = 0;
-                    const $ = engine.$;
-                    t.is(s[i + 1], render_as_infix(engine.executeScript(s[i]).values[0], $));
+                    t.is(s[i + 1], engine.renderAsInfix(engine.executeScript(s[i]).values[0]));
                 });
             }
         }, engine, options);
@@ -282,7 +277,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     }
 }
 
-function harness_options_to_engine_options(options: TestOptions | undefined): EngineOptions {
+function harness_options_to_engine_options(options: TestOptions | undefined): ScriptEngineOptions {
     if (options) {
         return {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
@@ -321,7 +316,7 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
 export function run_test(s: string[], options?: TestOptions): void {
     const config = test_config_from_options(options);
     const engcfg = harness_options_to_engine_options(options);
-    const engine = create_engine(engcfg);
+    const engine = createScriptEngine(engcfg);
     try {
         setup_test(() => {
             test(name_from_harness_options(options) || `${testIndex}`, t => {
@@ -350,8 +345,7 @@ export function run_test(s: string[], options?: TestOptions): void {
                             else {
                                 if (A.values.length > 0) {
                                     const B = A.values[0];
-                                    const $ = engine.$;
-                                    const C = render_as_infix(B, $);
+                                    const C = engine.renderAsInfix(B);
                                     t.is(s[i + 1], C, `${i}: ${sourceText}`);
                                 }
                             }
@@ -395,11 +389,10 @@ export function run_test(s: string[], engine: SymEngine, name?: string) {
  * This appears to be dead code.
  */
 export function ava_run(t: Asserts, input: string, expected: string) {
-    const engcfg: EngineOptions = {};
-    const engine = create_engine(engcfg);
+    const engcfg: ScriptEngineOptions = {};
+    const engine = createScriptEngine(engcfg);
     try {
-        const $ = engine.$;
-        setup_test(() => t.is(expected, render_as_infix(engine.executeScript(input).values[0], $)), engine, engcfg);
+        setup_test(() => t.is(expected, engine.renderAsInfix(engine.executeScript(input).values[0])), engine, engcfg);
     }
     finally {
         engine.release();

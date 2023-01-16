@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("A bootstrap", function () {
@@ -8,7 +8,7 @@ describe("A bootstrap", function () {
             `autofactor=1`,
             `a*b`
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "a*b");
 
@@ -19,7 +19,7 @@ describe("A bootstrap", function () {
             `autofactor=0`,
             `a*b`
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "a*b");
 
@@ -30,7 +30,7 @@ describe("A bootstrap", function () {
             `autofactor=0`,
             `b*a`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Vector'],
             treatAsVectors: ['a', 'b']
         });
@@ -44,7 +44,7 @@ describe("A bootstrap", function () {
             `autofactor=1`,
             `a|b+a^b`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Vector'],
             treatAsVectors: ['a', 'b']
         });
@@ -58,7 +58,7 @@ describe("A bootstrap", function () {
             `autofactor=1`,
             `a|b-a^b`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Vector'],
             treatAsVectors: ['a', 'b']
         });
@@ -74,7 +74,7 @@ describe("B bootstrap", function () {
         const lines: string[] = [
             `2*0`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "0");
         assert.strictEqual(engine.renderAsInfix(actual), "0");
@@ -84,7 +84,7 @@ describe("B bootstrap", function () {
         const lines: string[] = [
             `2*x`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* 2 x)");
         assert.strictEqual(engine.renderAsInfix(actual), "2*x");
@@ -94,7 +94,7 @@ describe("B bootstrap", function () {
         const lines: string[] = [
             `x-x`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "0");
         assert.strictEqual(engine.renderAsInfix(actual), "0");
@@ -104,7 +104,7 @@ describe("B bootstrap", function () {
 
 describe("C bootstrap", function () {
     it("createSymEngine and release", function () {
-        const engine = create_engine();
+        const engine = createScriptEngine();
         try {
             assert.isDefined(engine);
         }
@@ -116,7 +116,7 @@ describe("C bootstrap", function () {
         const lines: string[] = [
             `a`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "a");
         assert.strictEqual(engine.renderAsInfix(actual), "a");
@@ -126,7 +126,7 @@ describe("C bootstrap", function () {
         const lines: string[] = [
             `a+b`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a+b");
@@ -136,7 +136,7 @@ describe("C bootstrap", function () {
         const lines: string[] = [
             `b+a`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a+b");
@@ -146,7 +146,7 @@ describe("C bootstrap", function () {
         const lines: string[] = [
             `a*b`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a*b");
@@ -156,7 +156,7 @@ describe("C bootstrap", function () {
         const lines: string[] = [
             `b*a`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Vector'],
             treatAsVectors: ['a', 'b']
         });
@@ -169,7 +169,7 @@ describe("C bootstrap", function () {
         const lines: string[] = [
             `a-b`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* -1 b))");
         assert.strictEqual(engine.renderAsInfix(actual), "a-b");
@@ -180,7 +180,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+b+c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -191,7 +191,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+c+b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -202,7 +202,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+a+c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -213,7 +213,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+c+a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -224,7 +224,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+b+a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -235,7 +235,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+a+b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -247,7 +247,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+(b+c)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -258,7 +258,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+(c+b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -269,7 +269,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+(a+c)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -280,7 +280,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+(c+a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -291,7 +291,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+(b+a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -302,7 +302,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+(a+b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c");
@@ -315,7 +315,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*b*c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -326,7 +326,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*c*b`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -337,7 +337,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b*a*c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -348,7 +348,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b*c*a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -359,7 +359,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*b*a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -370,7 +370,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*a*b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -382,7 +382,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*(b*c)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -393,7 +393,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*(c*b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -404,7 +404,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b*(a*c)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -415,7 +415,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b*(c*a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -426,7 +426,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*(b*a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -437,7 +437,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*(a*b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -450,7 +450,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*b+c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
@@ -461,7 +461,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*c+b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a c) b)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*c+b");
@@ -472,7 +472,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b*a+c`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
@@ -483,7 +483,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b*c+a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b*c");
@@ -494,7 +494,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*b+a`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b*c");
@@ -505,7 +505,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*a*b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* a b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b*c");
@@ -517,7 +517,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*(b+c)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
             // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
@@ -529,7 +529,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*(c+b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
             // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
@@ -541,7 +541,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b*(a+c)`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+b*c");
@@ -555,7 +555,7 @@ describe("C bootstrap", function () {
                 `autofactor=1`,
                 `b*(c+a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+b*c");
@@ -568,7 +568,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*(b+a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a c) (* b c))");
             // assert.strictEqual(print_expr(actual, $), "a*c+b*c");
@@ -580,7 +580,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c*(a+b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a c) (* b c))");
             // assert.strictEqual(print_expr(actual, $), "a*c+b*c");
@@ -594,7 +594,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+b*c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b*c");
@@ -605,7 +605,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+c*b`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b*c");
@@ -616,7 +616,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+a*c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ b (* a c))");
             assert.strictEqual(engine.renderAsInfix(actual), "b+a*c");
@@ -627,7 +627,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+c*a`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ b (* a c))");
             assert.strictEqual(engine.renderAsInfix(actual), "b+a*c");
@@ -638,7 +638,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+b*a`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
@@ -649,7 +649,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+a*b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
@@ -661,7 +661,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+(a*b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
@@ -672,7 +672,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+(c*b)`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b*c");
@@ -683,7 +683,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+(a*c)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ b (* a c))");
             assert.strictEqual(engine.renderAsInfix(actual), "b+a*c");
@@ -694,7 +694,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b+(c*a)`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ b (* a c))");
             assert.strictEqual(engine.renderAsInfix(actual), "b+a*c");
@@ -705,7 +705,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+(b*a)`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
@@ -716,7 +716,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c+(a*b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
@@ -729,7 +729,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(c+a)*b`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+b*c");
@@ -740,7 +740,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(a+c)*b`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+b*c");
@@ -751,7 +751,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(b+a)*c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a c) (* b c))");
             // assert.strictEqual(print_expr(actual, $), "a*c+b*c");
@@ -764,7 +764,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(b+c)*a`
             ];
-            const engine = create_engine({ treatAsVectors: ['b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['b', 'c'] });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
             // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
@@ -777,7 +777,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(c+b)*a`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
             // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
@@ -790,7 +790,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(c+a)*b`
             ];
-            const engine = create_engine({});
+            const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+b*c");
@@ -805,7 +805,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a-b-c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* -1 b) (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a-b-c");
@@ -816,7 +816,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a-c-b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* -1 b) (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a-b-c");
@@ -827,7 +827,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b-a-c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b-c");
@@ -838,7 +838,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b-c-a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b-c");
@@ -849,7 +849,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c-b-a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
@@ -860,7 +860,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c-a-b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
@@ -872,7 +872,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c-(a-b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b+c");
@@ -883,7 +883,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a-(c-b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b-c");
@@ -894,7 +894,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b-(a-c)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b+c");
@@ -905,7 +905,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `b-(c-a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b-c");
@@ -916,7 +916,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c-(b-a)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* -1 b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "a-b+c");
@@ -927,7 +927,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `c-(a-b)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b+c");
@@ -939,7 +939,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(c-a)-b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
@@ -950,7 +950,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(a-c)-b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a (* -1 b) (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a-b-c");
@@ -961,7 +961,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(b-a)-c`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b-c");
@@ -972,7 +972,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(b-c)-a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b (* -1 c))");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b-c");
@@ -983,7 +983,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(c-b)-a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
@@ -994,7 +994,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(c-a)-b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
@@ -1007,7 +1007,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+b+c+d`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c d)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c+d");
@@ -1018,7 +1018,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a+b+c+d+e`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c d e)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c+d+e");
@@ -1029,7 +1029,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `-1**0`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "1");
             assert.strictEqual(engine.renderAsInfix(actual), "1");
@@ -1042,7 +1042,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `x`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "x");
             assert.strictEqual(engine.renderAsInfix(actual), "x");
@@ -1053,7 +1053,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `1*x`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "x");
             assert.strictEqual(engine.renderAsInfix(actual), "x");
@@ -1064,7 +1064,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `2*x`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* 2 x)");
             assert.strictEqual(engine.renderAsInfix(actual), "2*x");
@@ -1075,7 +1075,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `-2*x`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* -2 x)");
             assert.strictEqual(engine.renderAsInfix(actual), "-2*x");
@@ -1086,7 +1086,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `a*a`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(power a 2)");
             assert.strictEqual(engine.renderAsInfix(actual), "a**2");

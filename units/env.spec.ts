@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { create_env } from "../src/env/env";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_MUL, MATH_POW } from "../src/runtime/ns_math";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("env", function () {
     describe("constructor", function () {
@@ -15,7 +15,7 @@ describe("env", function () {
             const lines: string[] = [
                 `exp(1)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "e");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "e");
@@ -26,10 +26,9 @@ describe("env", function () {
             const lines: string[] = [
                 `exp(1)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
-            const $ = engine.$;
-            $.setSymbolToken(MATH_E, 'E');
+            engine.setSymbolToken(MATH_E, 'E');
             assert.strictEqual(engine.renderAsInfix(values[0]), "E");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "E");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "e");
@@ -39,7 +38,7 @@ describe("env", function () {
             const lines: string[] = [
                 `sqrt(-1)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "i");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "i");
@@ -50,10 +49,9 @@ describe("env", function () {
             const lines: string[] = [
                 `sqrt(-1)`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
-            const $ = engine.$;
-            $.setSymbolToken(MATH_IMU, 'I');
+            engine.setSymbolToken(MATH_IMU, 'I');
             assert.strictEqual(engine.renderAsInfix(values[0]), "I");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "I");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "i");
@@ -63,7 +61,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a+b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a+b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
@@ -74,10 +72,9 @@ describe("env", function () {
             const lines: string[] = [
                 `a+b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
-            const $ = engine.$;
-            $.setSymbolToken(MATH_ADD, 'ADD');
+            engine.setSymbolToken(MATH_ADD, 'ADD');
             assert.strictEqual(engine.renderAsInfix(values[0]), "a+b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(ADD a b)");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "a+b");
@@ -87,7 +84,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a*b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a*b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(* a b)");
@@ -98,10 +95,9 @@ describe("env", function () {
             const lines: string[] = [
                 `a*b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
-            const $ = engine.$;
-            $.setSymbolToken(MATH_MUL, 'MUL');
+            engine.setSymbolToken(MATH_MUL, 'MUL');
             assert.strictEqual(engine.renderAsInfix(values[0]), "a*b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(MUL a b)");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "ab");
@@ -111,7 +107,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a**b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a**b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(power a b)");
@@ -122,7 +118,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a^b`
             ];
-            const engine = create_engine({ useCaretForExponentiation: true });
+            const engine = createScriptEngine({ useCaretForExponentiation: true });
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a^b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(power a b)");
@@ -133,10 +129,9 @@ describe("env", function () {
             const lines: string[] = [
                 `a**b`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
-            const $ = engine.$;
-            $.setSymbolToken(MATH_POW, 'POW');
+            engine.setSymbolToken(MATH_POW, 'POW');
             assert.strictEqual(engine.renderAsInfix(values[0]), "a**b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(POW a b)");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "a^b");

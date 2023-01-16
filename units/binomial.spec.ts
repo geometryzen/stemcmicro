@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("binomial", function () {
     it("binomial(12,6)", function () {
         const lines: string[] = [
             `binomial(12,6)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -18,7 +18,7 @@ describe("binomial", function () {
         const lines: string[] = [
             `binomial(n,k)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -30,7 +30,7 @@ describe("binomial", function () {
         const lines: string[] = [
             `binomial(0,k)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -43,7 +43,7 @@ describe("binomial", function () {
         const lines: string[] = [
             `binomial(n,0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

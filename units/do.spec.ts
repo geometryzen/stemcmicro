@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("current", function () {
     it("d(1/(5+4*cos(x)),x)", function () {
@@ -8,7 +8,7 @@ describe("current", function () {
             `implicate=1`,
             `d(1/(5+4*cos(x)),x)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("latex", function () {
     it("outer", function () {
         const lines: string[] = [
             `a^b`
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const data = engine.executeScript(lines.join('\n'));
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(^ a b)");
@@ -18,7 +18,7 @@ describe("latex", function () {
         const lines: string[] = [
             `a|b`
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const data = engine.executeScript(lines.join('\n'));
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(| a b)");
@@ -30,7 +30,7 @@ describe("latex", function () {
         const lines: string[] = [
             `a<<b`
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const data = engine.executeScript(lines.join('\n'));
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(<< a b)");
@@ -42,7 +42,7 @@ describe("latex", function () {
         const lines: string[] = [
             `a>>b`
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const data = engine.executeScript(lines.join('\n'));
         const actual = data.values[0];
         assert.strictEqual(engine.renderAsSExpr(actual), "(>> a b)");

@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("transpose", function () {
     it("transpose([[1,2,3,4]])", function () {
         const lines: string[] = [
             `transpose([[1,2,3,4]])`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1],[2],[3],[4]]");

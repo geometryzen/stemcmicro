@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("add", function () {
@@ -8,12 +8,11 @@ describe("add", function () {
         const lines: string[] = [
             `2.0+3`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(actual), '5.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '5.0');
         // assert.strictEqual(engine.toListString(actual), '');
         engine.release();
     });
@@ -22,12 +21,11 @@ describe("add", function () {
         const lines: string[] = [
             `2+3.0`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Flt']
         });
-        const $ = engine.$;
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual($.toInfixString(actual), '5.0');
+        assert.strictEqual(engine.renderAsInfix(actual), '5.0');
         // assert.strictEqual(engine.toListString(actual), '');
         engine.release();
     });

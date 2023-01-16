@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("polar", function () {
@@ -13,7 +13,7 @@ describe("polar", function () {
             `pi=tau(1/2)`,
             `polar(1+i)`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: false
         });

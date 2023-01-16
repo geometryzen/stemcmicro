@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("rank", function () {
     it("rank(a)", function () {
         const lines: string[] = [
             `rank(a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
@@ -17,7 +17,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([a,b,c])`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -28,7 +28,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([[a,b,c]])`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "2");
@@ -39,7 +39,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([[a],[b],[c]])`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "2");

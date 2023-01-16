@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { create_engine, is_uom } from '../index';
+import { createScriptEngine, is_uom } from '../index';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("SI units", function () {
@@ -8,7 +8,7 @@ describe("SI units", function () {
             `kg = uom("kilogram")`,
             `kg / 5`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Uom']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -21,7 +21,7 @@ describe("SI units", function () {
             `kg = uom("kilogram")`,
             `kg / 5.0`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Flt', 'Uom']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -37,7 +37,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("kilogram")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -48,7 +48,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("meter")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -59,7 +59,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("second")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -70,7 +70,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("coulomb")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -81,7 +81,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("ampere")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -92,7 +92,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("kelvin")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -103,7 +103,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("mole")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -114,7 +114,7 @@ describe("uom", function () {
             const lines: string[] = [
                 `uom("candela")`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -129,7 +129,7 @@ describe("uom", function () {
                 `m = uom("meter")`,
                 `kg * m`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -141,7 +141,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `5.0 * kg`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Flt', 'Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -153,7 +153,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg * 5.0`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Flt', 'Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -165,7 +165,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `2 * kg`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -177,7 +177,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg * 2`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -191,7 +191,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `e1 * kg`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade', 'Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -205,7 +205,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg * e1`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Blade', 'Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -220,7 +220,7 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `m / s`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -237,7 +237,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `5.0 / kg`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Flt', 'Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -249,7 +249,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg / 5.0`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Flt', 'Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -262,7 +262,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `2 / kg`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -274,7 +274,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg / 2`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -288,7 +288,7 @@ describe("uom", function () {
                 `m = uom("meter")`,
                 `m + m`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -300,7 +300,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `6.0 + kg`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Flt', 'Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -312,7 +312,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg + 5.0`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Flt', 'Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -324,7 +324,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `2 + kg`
             ];
-            const engine = create_engine();
+            const engine = createScriptEngine();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Rat, Uom) is not supported.");
             engine.release();
@@ -334,7 +334,7 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `kg + 2`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -350,7 +350,7 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `kg * m / s / s`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -369,7 +369,7 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `kg * m / (s * s)`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -388,7 +388,7 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `kg * m / s ** 2`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -410,7 +410,7 @@ describe("uom", function () {
                 `J = N * m`,
                 `J / C`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -428,7 +428,7 @@ describe("uom", function () {
                 `s = uom("second")`,
                 `A * s`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

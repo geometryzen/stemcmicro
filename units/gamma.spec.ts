@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("gamma", function () {
     it("gamma(x+1)", function () {
         const lines: string[] = [
             `gamma(x+1)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(* x (gamma x))");
@@ -17,7 +17,7 @@ describe("gamma", function () {
         const lines: string[] = [
             `gamma(1/2)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(power π 1/2)");

@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("taylor", function () {
     it("taylor(1/(5+4*cos(x)),x,0,0)", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,0,0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -18,7 +18,7 @@ describe("taylor", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,1,0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -30,7 +30,7 @@ describe("taylor", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,2,0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -42,7 +42,7 @@ describe("taylor", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,6,0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

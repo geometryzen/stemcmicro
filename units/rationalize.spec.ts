@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("rationalize", function () {
@@ -7,7 +7,7 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(a/b+c/d)`
         ];
-        const engine = create_engine({ useCaretForExponentiation: true });
+        const engine = createScriptEngine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (* a d) (* b c)) (power (* b d) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a*d+b*c)/(b*d)");
@@ -18,7 +18,7 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(a/b+b/a)`
         ];
-        const engine = create_engine({ useCaretForExponentiation: true });
+        const engine = createScriptEngine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (power a 2) (power b 2)) (power (* a b) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a^2+b^2)/(a*b)");

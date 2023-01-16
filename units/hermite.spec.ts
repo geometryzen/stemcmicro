@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("hermite", function () {
     it("hermite(x,0)", function () {
         const lines: string[] = [
             `hermite(x,0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -17,7 +17,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,1)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(* 2 x)");
@@ -28,7 +28,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,2)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ -2 (* 4 (power x 2)))");
@@ -39,7 +39,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,3)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* -12 x) (* 8 (power x 3)))");
@@ -50,7 +50,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,4)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 12 (* -48 (power x 2)) (* 16 (power x 4)))");

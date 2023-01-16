@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("imag", function () {
     it("imag(a+i*b)", function () {
         const lines: string[] = [
             `imag(a+i*b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });

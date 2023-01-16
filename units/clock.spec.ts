@@ -1,6 +1,5 @@
 import { assert } from "chai";
-import { render_as_infix } from "../src/print/print";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("clock", function () {
@@ -10,14 +9,13 @@ describe("clock", function () {
             `implicate=0`,
             `clock(i)`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "i");
+        assert.strictEqual(engine.renderAsInfix(value), "i");
         engine.release();
     });
     xit("(1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i)", function () {
@@ -26,14 +24,13 @@ describe("clock", function () {
             `implicate=0`,
             `(1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i)`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "3**(1/2)*i");
+        assert.strictEqual(engine.renderAsInfix(value), "3**(1/2)*i");
         engine.release();
     });
     xit("((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
@@ -42,14 +39,13 @@ describe("clock", function () {
             `implicate=0`,
             `((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "-3**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "-3**(1/2)");
         engine.release();
     });
     xit("-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
@@ -58,14 +54,13 @@ describe("clock", function () {
             `implicate=0`,
             `-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "1/2*3**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "1/2*3**(1/2)");
         engine.release();
     });
     xit("(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
@@ -74,14 +69,13 @@ describe("clock", function () {
             `implicate=0`,
             `(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "3/4");
+        assert.strictEqual(engine.renderAsInfix(value), "3/4");
         engine.release();
     });
     xit("1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
@@ -90,14 +84,13 @@ describe("clock", function () {
             `implicate=0`,
             `1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "1");
+        assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();
     });
     xit("(1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2)**(1/2)", function () {
@@ -106,14 +99,13 @@ describe("clock", function () {
             `implicate=0`,
             `(1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2)**(1/2)`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "1");
+        assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();
     });
     xit("exp(i*pi/3)", function () {
@@ -122,14 +114,13 @@ describe("clock", function () {
             `implicate=0`,
             `exp(i*pi/3)`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "1/2+(1/2*3**(1/2))*i");
+        assert.strictEqual(engine.renderAsInfix(value), "1/2+(1/2*3**(1/2))*i");
         engine.release();
     });
     it("clock(exp(i*pi/3))", function () {
@@ -138,14 +129,13 @@ describe("clock", function () {
             `implicate=0`,
             `clock(exp(i*pi/3))`,
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const $ = engine.$;
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        assert.strictEqual(render_as_infix(value, $), "(-1)**(1/3)");
+        assert.strictEqual(engine.renderAsInfix(value), "(-1)**(1/3)");
         engine.release();
     });
 });

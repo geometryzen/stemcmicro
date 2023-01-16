@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../index";
+import { createScriptEngine } from "../index";
 
 describe("example", function () {
     it("a divided by b", function () {
         const lines: string[] = [
             `a/b`
         ];
-        const eng = create_engine();
+        const eng = createScriptEngine();
         const { values } = eng.executeScript(lines.join('\n'));
         assert.strictEqual(eng.renderAsInfix(values[0]), "a/b");
         assert.strictEqual(eng.renderAsSExpr(values[0]), "(* a (power b -1))");
@@ -17,7 +17,7 @@ describe("example", function () {
         const lines: string[] = [
             `x*(4-x)`
         ];
-        const eng = create_engine();
+        const eng = createScriptEngine();
         const { values } = eng.executeScript(lines.join('\n'));
         // TODO: It would be nice to factor the common x out the lhs or rhs.
         assert.strictEqual(eng.renderAsInfix(values[0]), "4*x-x**2");

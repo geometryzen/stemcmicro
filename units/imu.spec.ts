@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("imu", function () {
@@ -8,7 +8,7 @@ describe("imu", function () {
             `implicate=0`,
             `((-2.0*(-1)**(1/2))*2.0)*(-1)**(1/2)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Flt', 'Imu']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);

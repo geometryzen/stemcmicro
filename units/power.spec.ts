@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
@@ -7,7 +7,7 @@ describe("sandbox", function () {
         const lines: string[] = [
             `(-2)**(3/2)`
         ];
-        const engine = create_engine({ useDefinitions: true });
+        const engine = createScriptEngine({ useDefinitions: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
         assert.strictEqual(engine.renderAsInfix(actual), '-2*2**(1/2)*i');
@@ -20,7 +20,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `a**b`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(power a b)');
         assert.strictEqual(engine.renderAsInfix(actual), 'a**b');
@@ -30,7 +30,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `a^b`
         ];
-        const engine = create_engine({ useCaretForExponentiation: false });
+        const engine = createScriptEngine({ useCaretForExponentiation: false });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(^ a b)');
         assert.strictEqual(engine.renderAsInfix(actual), 'a^b');
@@ -40,7 +40,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `a**b**c`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(power a (power b c))');
         assert.strictEqual(engine.renderAsInfix(actual), 'a**(b**c)');
@@ -50,7 +50,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `a**1/2`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(* 1/2 a)');
         assert.strictEqual(engine.renderAsInfix(actual), '1/2*a');
@@ -60,7 +60,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `a**1/2 + a**1/2`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), 'a');
         assert.strictEqual(engine.renderAsInfix(actual), 'a');
@@ -70,7 +70,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `2**(1/2)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(power 2 1/2)');
         assert.strictEqual(engine.renderAsInfix(actual), '2**(1/2)');
@@ -80,7 +80,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `3 * 1/2`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '3/2');
         assert.strictEqual(engine.renderAsInfix(actual), '3/2');
@@ -90,7 +90,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `3/2-1`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '1/2');
         assert.strictEqual(engine.renderAsInfix(actual), '1/2');
@@ -100,7 +100,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `2**(3/2)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
         assert.strictEqual(engine.renderAsInfix(actual), '2*2**(1/2)');
@@ -110,7 +110,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `(-2)**(3/2)`
         ];
-        const engine = create_engine({ useDefinitions: true });
+        const engine = createScriptEngine({ useDefinitions: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
         assert.strictEqual(engine.renderAsInfix(actual), '-2*2**(1/2)*i');

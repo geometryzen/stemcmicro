@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("roots", function () {
@@ -7,7 +7,7 @@ describe("roots", function () {
         const lines: string[] = [
             `roots(a*x**2+b*x+c)`
         ];
-        const engine = create_engine({ useCaretForExponentiation: false });
+        const engine = createScriptEngine({ useCaretForExponentiation: false });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a+b");
@@ -17,7 +17,7 @@ describe("roots", function () {
         const lines: string[] = [
             `roots(a*x^2+b*x+c)`
         ];
-        const engine = create_engine({ useCaretForExponentiation: true });
+        const engine = createScriptEngine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a+b");

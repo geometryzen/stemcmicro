@@ -1,6 +1,5 @@
 import { assert } from "chai";
-import { render_as_infix } from "../src/print/print";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("print", function () {
@@ -8,40 +7,36 @@ describe("print", function () {
         const lines: string[] = [
             `a^b`,
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
-        const $ = engine.$;
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "a^b");
+        assert.strictEqual(engine.renderAsInfix(value), "a^b");
         engine.release();
     });
     it("B", function () {
         const lines: string[] = [
             `a|b`,
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b'] });
-        const $ = engine.$;
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "a|b");
+        assert.strictEqual(engine.renderAsInfix(value), "a|b");
         engine.release();
     });
     it("C", function () {
         const lines: string[] = [
             `a*b|c`,
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
-        const $ = engine.$;
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "b|c*a");
+        assert.strictEqual(engine.renderAsInfix(value), "b|c*a");
         engine.release();
     });
     it("E", function () {
         const lines: string[] = [
             `a*(b|c)`,
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
-        const $ = engine.$;
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "b|c*a");
+        assert.strictEqual(engine.renderAsInfix(value), "b|c*a");
         engine.release();
     });
     it("F", function () {
@@ -49,10 +44,9 @@ describe("print", function () {
         const lines: string[] = [
             `a*b^c`,
         ];
-        const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
-        const $ = engine.$;
+        const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(render_as_infix(value, $), "a*b^c");
+        assert.strictEqual(engine.renderAsInfix(value), "a*b^c");
         engine.release();
     });
 });

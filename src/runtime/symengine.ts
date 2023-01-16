@@ -5,13 +5,14 @@ import { ExtensionEnv } from "../env/ExtensionEnv";
 import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
+import { transform, transform_tree } from "../runtime/execute";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
-import { execute_script, transform, transform_tree } from "./execute";
+import { execute_script } from "./execute";
 import { execute_std_definitions } from "./init";
 
-export interface EngineOptions {
+export interface ScriptEngineOptions {
     /**
      * Determines the direction of association for associative operators.
      * The default is left-association with the exception of exponentiation which associates to the right.
@@ -38,7 +39,7 @@ export interface EngineOptions {
     useDefinitions?: boolean;
 }
 
-export function init_env($: ExtensionEnv, options?: EngineOptions) {
+export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
 
     hard_reset();
 
@@ -61,24 +62,25 @@ export function env_term($: ExtensionEnv) {
     $.resetSymTab();
 }
 
-export interface Engine {
-    /**
-     * Provides access to the extension environment.
-     * The returned environment is reference counted; the return value should be released when no longer needed.
-     */
-    readonly $: ExtensionEnv;
-    transformTree(tree: U): { value: U, prints: string[], errors: Error[] };
-    transform(expr: U): U;
+export interface ScriptEngine {
+    clearBindings(): void;
+    evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
+    executeStdDefinitions(): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
     freeVariables(expr: U): Sym[];
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
     renderAsSExpr(expr: U): string;
+    setAssocL(opr: Sym, value: boolean): void;
+    setAssocR(opr: Sym, value: boolean): void;
+    setSymbolToken(sym: Sym, token: string): void;
+    transform(expr: U): U;
+    valueOf(expr: U): U;
     addRef(): void;
     release(): void;
 }
 
-function env_options_from_engine_options(options: EngineOptions | undefined): EnvOptions {
+function env_options_from_engine_options(options: ScriptEngineOptions | undefined): EnvOptions {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: EnvOptions, description: string): EnvOptions {
         // console.lg(`env_options_from_engine_options(${JSON.stringify(options)}) => ${JSON.stringify(retval)} @ ${description}`);
@@ -110,20 +112,20 @@ function env_options_from_engine_options(options: EngineOptions | undefined): En
  * Creates an engine for executing scripts.
  * The returned engine is reference counted and should be released when no longer needed.
  */
-export function create_engine(options?: EngineOptions): Engine {
+export function createScriptEngine(options?: ScriptEngineOptions): ScriptEngine {
     let ref_count = 1;
     const envOptions: EnvOptions = env_options_from_engine_options(options);
     const $ = create_env(envOptions);
     init_env($, options);
-    const theEngine: Engine = {
-        get $(): ExtensionEnv {
-            return $;
+    const theEngine: ScriptEngine = {
+        clearBindings(): void {
+            $.clearBindings();
         },
-        transformTree(tree: U): { value: U, prints: string[], errors: Error[] } {
+        evaluate(tree: U): { value: U, prints: string[], errors: Error[] } {
             return transform_tree(tree, $);
         },
-        transform(expr: U): U {
-            return transform(expr, $);
+        executeStdDefinitions(): void {
+            execute_std_definitions($);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);
@@ -139,6 +141,21 @@ export function create_engine(options?: EngineOptions): Engine {
         },
         renderAsSExpr(expr: U): string {
             return render_as_sexpr(expr, $);
+        },
+        setAssocL(opr: Sym, value: boolean): void {
+            $.setAssocL(opr, value);
+        },
+        setAssocR(opr: Sym, value: boolean): void {
+            $.setAssocR(opr, value);
+        },
+        setSymbolToken(sym: Sym, token: string): void {
+            $.setSymbolToken(sym, token);
+        },
+        transform(expr: U): U {
+            return transform(expr, $);
+        },
+        valueOf(expr: U): U {
+            return $.transform(expr)[1];
         },
         addRef(): void {
             ref_count++;

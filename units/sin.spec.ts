@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sin", function () {
@@ -9,7 +9,7 @@ describe("sin", function () {
             `implicate=0`,
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -22,7 +22,7 @@ describe("sin", function () {
         const lines: string[] = [
             `sin(x)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -33,7 +33,7 @@ describe("sin", function () {
         const lines: string[] = [
             `sin(-x)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -44,7 +44,7 @@ describe("sin", function () {
         const lines: string[] = [
             `sin(-x*y)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -55,7 +55,7 @@ describe("sin", function () {
         const lines: string[] = [
             `sin(-x*y*z)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -73,7 +73,7 @@ describe("sin", function () {
             `autofactor=0`,
             `sin(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -84,7 +84,7 @@ describe("sin", function () {
             `autofactor=1`,
             `sin(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -95,7 +95,7 @@ describe("sin", function () {
             `autofactor=0`,
             `sin(a-b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -106,7 +106,7 @@ describe("sin", function () {
             `autofactor=1`,
             `sin(a-b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -117,7 +117,7 @@ describe("sin", function () {
             `autofactor=0`,
             `sin(b+a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -128,7 +128,7 @@ describe("sin", function () {
             `autofactor=1`,
             `sin(b+a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -139,7 +139,7 @@ describe("sin", function () {
             `autofactor=0`,
             `sin(b-a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -150,7 +150,7 @@ describe("sin", function () {
             `autofactor=1`,
             `sin(b-a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -162,7 +162,7 @@ describe("sin", function () {
         const lines: string[] = [
             `sin(b)*cos(a)-cos(b)*sin(a)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -173,7 +173,7 @@ describe("sin", function () {
             `autofactor=0`,
             `sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -184,7 +184,7 @@ describe("sin", function () {
             `autofactor=0`,
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -195,7 +195,7 @@ describe("sin", function () {
             `autofactor=0`,
             `cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

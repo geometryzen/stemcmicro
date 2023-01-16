@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("canon", function () {
@@ -9,7 +9,7 @@ describe("canon", function () {
                 `implicate=0`,
                 `i * x * pi * 2`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Imu'],
                 useDefinitions: true
             });
@@ -24,7 +24,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `(a|b)*c`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| a b) c)');
             assert.strictEqual(engine.renderAsInfix(expr), 'a|b*c');
@@ -34,7 +34,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `c*(a|b)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| a b) c)');
             assert.strictEqual(engine.renderAsInfix(expr), 'a|b*c');
@@ -44,7 +44,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `c*(b|a)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| a b) c)');
             assert.strictEqual(engine.renderAsInfix(expr), 'a|b*c');
@@ -54,7 +54,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `(c|b)*a`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| b c) a)');
             assert.strictEqual(engine.renderAsInfix(expr), 'b|c*a');
@@ -64,7 +64,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `a*(c|b)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| b c) a)');
             assert.strictEqual(engine.renderAsInfix(expr), 'b|c*a');
@@ -74,7 +74,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `a*(b|c)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| b c) a)');
             assert.strictEqual(engine.renderAsInfix(expr), 'b|c*a');
@@ -84,7 +84,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `(c|a)*b`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| a c) b)');
             assert.strictEqual(engine.renderAsInfix(expr), 'a|c*b');
@@ -94,7 +94,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `b*(c|a)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| a c) b)');
             assert.strictEqual(engine.renderAsInfix(expr), 'a|c*b');
@@ -104,7 +104,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `b*(a|c)`
             ];
-            const engine = create_engine({ treatAsVectors: ['a', 'b', 'c'] });
+            const engine = createScriptEngine({ treatAsVectors: ['a', 'b', 'c'] });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(expr), '(* (| a c) b)');
             assert.strictEqual(engine.renderAsInfix(expr), 'a|c*b');
@@ -117,7 +117,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `(a|b)*c+(a|c)*b`
             ];
-            const engine = create_engine({
+            const engine = createScriptEngine({
                 dependencies: ['Vector'],
                 treatAsVectors: ['a', 'b', 'c']
             });

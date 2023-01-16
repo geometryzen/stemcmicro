@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/symengine";
 
 describe("for", function () {
     it("for", function () {
@@ -9,7 +9,7 @@ describe("for", function () {
             `for(do(x=sqrt(2+x),y=2*y/x), k,1,9)`,
             `float(y)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

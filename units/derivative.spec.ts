@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_engine } from "../index";
+import { createScriptEngine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("derivative-sandbox", function () {
@@ -9,7 +9,7 @@ describe("derivative-sandbox", function () {
             `implicate=0`,
             `d(cos(x),x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* -1 (sin x))");
         assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
@@ -24,7 +24,7 @@ describe("derivative", function () {
             `d=foo`,
             `d(f,x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(d f x)");
         assert.strictEqual(engine.renderAsInfix(actual), "d(f,x)");
@@ -35,7 +35,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(a,x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "0");
         assert.strictEqual(engine.renderAsInfix(actual), "0");
@@ -46,7 +46,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(x,x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "1");
         assert.strictEqual(engine.renderAsInfix(actual), "1");
@@ -58,7 +58,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(x**2,x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* 2 x)");
         assert.strictEqual(engine.renderAsInfix(actual), "2*x");
@@ -71,7 +71,7 @@ describe("derivative", function () {
             `implicate=0`,
             `d(x*x,x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual, $), "(* 2 x)");
         assert.strictEqual(engine.renderAsInfix(actual), "2*x");
@@ -83,7 +83,7 @@ describe("derivative", function () {
             `implicate=0`,
             `d(sin(x),x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(cos x)");
         assert.strictEqual(engine.renderAsInfix(actual), "cos(x)");
@@ -95,7 +95,7 @@ describe("derivative", function () {
             `implicate=0`,
             `d(cos(x),x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* -1 (sin x))");
         assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
@@ -107,7 +107,7 @@ describe("derivative", function () {
             `implicate=1`,
             `d(1/(5+4*cos(x)),x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsSExpr(actual), "(* (* (* 4 (power (+ 5 (* 4 (cos x))) -1)) (sin x)) (power (+ 5 (* 4 (cos x))) -1))");
         // TODO: The denominator should contain a squared term expressed using power.

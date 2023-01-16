@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_engine } from "../index";
+import { createScriptEngine } from "../index";
 
 describe("sinh", function () {
     it("(x)", function () {
         const lines: string[] = [
             `sinh(x)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(sinh x)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "sinh(x)");
@@ -16,7 +16,7 @@ describe("sinh", function () {
         const lines: string[] = [
             `sinh(0)`
         ];
-        const engine = create_engine();
+        const engine = createScriptEngine();
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
@@ -26,7 +26,7 @@ describe("sinh", function () {
         const lines: string[] = [
             `sinh(0.0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -38,7 +38,7 @@ describe("sinh", function () {
         const lines: string[] = [
             `sinh(1.0)`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -50,7 +50,7 @@ describe("sinh", function () {
         const lines: string[] = [
             `sinh(arcsinh(x))`
         ];
-        const engine = create_engine({
+        const engine = createScriptEngine({
             dependencies: []
         });
         const { values } = engine.executeScript(lines.join('\n'));

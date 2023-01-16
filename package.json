@@ -1,16 +1,22 @@
 {
     "name": "symbolic-math",
-    "version": "0.9.57",
+    "version": "0.9.60",
     "description": "Computer Algebra System in TypeScript",
-    "main": "dist/cjs/index.js",
-    "module": "dist/esm/index.js",
-    "browser": "dist/umd/index.js",
-    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "system": "./dist/system/index.min.js",
+            "default": "./dist/esm/index.js"
+        }
+    },
+    "module": "./dist/esm/index.js",
+    "types": "./dist/index.d.ts",
     "directories": {
         "test": "tests"
     },
     "scripts": {
-        "build": "rollup -c",
+        "build": "npm run clean && rollup -c",
+        "clean": "rm -rf ./dist",
         "lint": "eslint . --ext .ts",
         "units": "nyc mocha 'units/**/*.spec.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
@@ -176,7 +182,8 @@
         "docs:typedoc": "trash docs && typedoc --options typedoc.json",
         "pages": "npm run docs:typedoc && gh-pages -d docs",
         "pretest": "npm run build",
-        "prepublishOnly": "npm run build && npm run units && npm run lint && npm run pages"
+        "prepublishOnly": "npm run build && npm run units && npm run lint && npm run pages",
+        "release": "release-it"
     },
     "repository": {
         "type": "git",
@@ -208,24 +215,25 @@
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
-        "@rollup/plugin-commonjs": "^22.0.2",
-        "@rollup/plugin-node-resolve": "^13.3.0",
-        "@rollup/plugin-typescript": "^8.3.4",
+        "@rollup/plugin-commonjs": "^24.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.1",
+        "@rollup/plugin-typescript": "^11.0.0",
         "@types/chai": "^4.3.3",
         "@types/mocha": "^9.1.1",
-        "@types/node": "^18.7.6",
-        "@typescript-eslint/eslint-plugin": "^5.33.1",
-        "@typescript-eslint/parser": "^5.33.1",
-        "chai": "^4.3.6",
-        "eslint": "^8.22.0",
+        "@types/node": "^18.11.18",
+        "@typescript-eslint/eslint-plugin": "^5.48.1",
+        "@typescript-eslint/parser": "^5.48.1",
+        "chai": "^4.3.7",
+        "eslint": "^8.32.0",
         "gh-pages": "^4.0.0",
-        "mocha": "^10.0.0",
+        "mocha": "^10.2.0",
         "nyc": "^15.1.0",
-        "rollup-plugin-dts": "^4.2.2",
+        "release-it": "^15.6.0",
+        "rollup-plugin-dts": "^5.1.1",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "rollup-plugin-terser": "^7.0.2",
         "ts-node": "^10.9.1",
-        "typedoc": "^0.23.10",
-        "typescript": "^4.7.4"
+        "typedoc": "^0.23.24",
+        "typescript": "^4.9.4"
     }
 }

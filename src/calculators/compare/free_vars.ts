@@ -23,6 +23,7 @@ import { Cons, is_cons, U } from "../../tree/tree";
  * This may be because it is more consistent with the results of matching.
  */
 export function free_vars(expr: U, $: ExtensionEnv): Sym[] {
+    // console.lg(`free_vars(expr=${render_as_sexpr(expr, $)})`);
     // A more accurate approach would be to delegate the task to the appropriate operator.
     // This would properly handle things like derivatives and integrals. 
     if (is_sym(expr)) {
@@ -65,6 +66,7 @@ export function free_vars(expr: U, $: ExtensionEnv): Sym[] {
             // TODO: We can do better than this.
             return free_vars((<Cons>expr).arg, $);
         }
+        return [];
     }
     if (is_imu(expr)) {
         return [];

@@ -25,15 +25,23 @@ export const TFLAG_HALT = 1 << 1;
  */
 export const TFLAG_KEEP = 1 << 2;
 
+/**
+ * Returns true if flags has the "diff" bit set.
+ */
 export function diffFlag(flags: TFLAGS): boolean {
     return (flags & TFLAG_DIFF) === TFLAG_DIFF;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/**
+ * Returns true if flags has the "halt" bit set.
+ */
 export function haltFlag(flags: TFLAGS): boolean {
     return (flags & TFLAG_HALT) === TFLAG_HALT;
 }
 
+/**
+ * Returns true if flags has the "keep" bit set.
+ */
 export function keepFlag(flags: TFLAGS): boolean {
     return (flags & TFLAG_KEEP) === TFLAG_KEEP;
 }

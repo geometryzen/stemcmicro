@@ -190,7 +190,7 @@ function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOp
     engine.clearBindings();
 
     if (options && options.useDefinitions) {
-        engine.executeStdDefinitions();
+        engine.useStandardDefinitions();
     }
 
     // TODO: Remove these comments when everything is working.

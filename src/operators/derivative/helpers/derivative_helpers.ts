@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
 import { compare_terms } from '../../../calculators/compare/compare_terms';
@@ -29,7 +30,6 @@ import {
 } from '../../../runtime/constants';
 import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
-import { subst } from '../../subst/subst';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
@@ -43,6 +43,7 @@ import { sgn } from '../../sgn/sgn';
 import { simplify } from '../../simplify/simplify';
 import { sin } from '../../sin/sine';
 import { sinh } from '../../sinh/sinh';
+import { subst } from '../../subst/subst';
 import { is_sym } from '../../sym/is_sym';
 import { derivative } from '../derivative';
 import { MATH_DERIVATIVE } from '../MATH_DERIVATIVE';
@@ -63,9 +64,16 @@ export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
 }
 
 function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
+    // console.lg(`d_scalar_scalar_1 ${render_as_infix(F, $)} ${render_as_infix(X, $)}`);
     // d(x,x)?
     if (F.equals(X)) {
         return one;
+    }
+
+    // console.lg(`f=>${render_as_infix(F, $)} is_sym(F)=>${is_sym(F)}`);
+
+    if (is_sym(F)) {
+        return makeList(MATH_DERIVATIVE, F, X);
     }
 
     // d(a,x)?

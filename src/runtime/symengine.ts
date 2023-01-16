@@ -65,7 +65,7 @@ export function env_term($: ExtensionEnv) {
 export interface ScriptEngine {
     clearBindings(): void;
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
-    executeStdDefinitions(): void;
+    useStandardDefinitions(): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
     freeVariables(expr: U): Sym[];
     renderAsInfix(expr: U): string;
@@ -124,7 +124,7 @@ export function createScriptEngine(options?: ScriptEngineOptions): ScriptEngine 
         evaluate(tree: U): { value: U, prints: string[], errors: Error[] } {
             return transform_tree(tree, $);
         },
-        executeStdDefinitions(): void {
+        useStandardDefinitions(): void {
             execute_std_definitions($);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {

@@ -1,29 +1,29 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
-import { integral } from '../integral/integral_helpers';
 import { nativeInt } from '../../nativeInt';
-import { is_num } from '../num/is_num';
 import { Err } from '../../tree/err/Err';
 import { car, cdr, Cons, nil, U } from '../../tree/tree';
+import { integral } from '../integral/integral_helpers';
+import { is_num } from '../num/is_num';
 import { derivative } from './derivative';
 
 export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
+    // eslint-disable-next-line no-console
+    // console.lg(`Eval_derivative(expr=${render_as_sexpr(expr, $)})`);
     // evaluate 1st arg to get function F
-    let p1: U = expr;
-    p1 = cdr(p1);
-    let F = $.valueOf(car(p1));
+    let F = $.valueOf(car(expr.cdr));
 
     // evaluate 2nd arg and then...
 
-    // example  result of 2nd arg  what to do
-    //
-    // d(f)      NIL    guess X, N = NIL
-    // d(f,2)    2      guess X, N = 2
-    // d(f,x)    x      X = x, N = NIL
-    // d(f,x,2)  x      X = x, N = 2
-    // d(f,x,y)  x      X = x, N = y
+    // example   result of 2nd arg  what to do
+    // -------   -----------------  ---------------
+    // d(f)      NIL                guess X, N = NIL
+    // d(f,2)    2                  guess X, N = 2
+    // d(f,x)    x                  X = x, N = NIL
+    // d(f,x,2)  x                  X = x, N = 2
+    // d(f,x,y)  x                  X = x, N = y
 
-    p1 = cdr(p1);
+    let p1 = cdr(expr.cdr);
 
     let X: U, N: U;
     const p2 = $.valueOf(car(p1));
@@ -40,6 +40,11 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
         p1 = cdr(p1);
         N = $.valueOf(car(p1));
     }
+    // console.lg(`F=${render_as_sexpr(F, $)}`);
+    // console.lg(`X=${render_as_sexpr(X, $)}`);
+    // console.lg(`p1=${render_as_sexpr(p1, $)}`);
+    // console.lg(`p2=${render_as_sexpr(p2, $)}`);
+    // console.lg(`N=${render_as_sexpr(N, $)}`);
 
     // eslint-disable-next-line no-constant-condition
     while (true) {

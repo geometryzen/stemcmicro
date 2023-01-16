@@ -6,9 +6,13 @@ import { derivative } from "../derivative";
 //-----------------------------------------------------------------------------
 //
 //       v
-//  y = u
+//  y = u                         (1)
 //
-//  log y = v log u
+//  take log of #1
+//
+//  log y = v log u               (2)
+//
+// differentiate #2 wrt x
 //
 //  1 dy   v du           dv
 //  - -- = - -- + (log u) --
@@ -19,19 +23,21 @@ import { derivative } from "../derivative";
 //  dx       u dx           dx
 //
 //-----------------------------------------------------------------------------
-export function dpower(p1: Cons, p2: U, $: ExtensionEnv): U {
+export function dpower(u_pow_v: Cons, x: U, $: ExtensionEnv): U {
+    const u = cadr(u_pow_v);
+    const v = caddr(u_pow_v);
     // v/u
-    const arg1 = $.divide(caddr(p1), cadr(p1));
+    const v_div_u = $.divide(v, u);
 
     // du/dx
-    const deriv_1 = derivative(cadr(p1), p2, $);
+    const du_by_dx = derivative(u, x, $);
 
     // log u
-    const log_1 = logarithm(cadr(p1), $);
+    const log_u = logarithm(u, $);
 
     // dv/dx
-    const deriv_2 = derivative(caddr(p1), p2, $);
+    const dv_by_dx = derivative(v, x, $);
 
     // u^v
-    return $.multiply($.add($.multiply(arg1, deriv_1), $.multiply(log_1, deriv_2)), p1);
+    return $.multiply($.add($.multiply(v_div_u, du_by_dx), $.multiply(log_u, dv_by_dx)), u_pow_v);
 }

@@ -17,6 +17,18 @@ describe("derivative-sandbox", function () {
     });
 });
 
+describe("derivative", function () {
+    it("d(a,b)", function () {
+        const lines: string[] = [
+            `d(a,b)`
+        ];
+        const engine = createScriptEngine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "(derivative a b)");
+        assert.strictEqual(engine.renderAsInfix(actual), "d(a,b)");
+        engine.release();
+    });
+});
 
 describe("derivative", function () {
     it("d(f,x), when d is bound should be left alone", function () {
@@ -37,8 +49,8 @@ describe("derivative", function () {
         ];
         const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "0");
-        assert.strictEqual(engine.renderAsInfix(actual), "0");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(derivative a x)");
+        assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)");
 
         engine.release();
     });

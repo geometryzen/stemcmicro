@@ -2,6 +2,7 @@ import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/Extensi
 import { imu } from "../../env/imu";
 import { compare_blade_blade } from "../../operators/blade/BladeExtension";
 import { is_blade } from "../../operators/blade/is_blade";
+import { MATH_DERIVATIVE } from "../../operators/derivative/MATH_DERIVATIVE";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
@@ -141,6 +142,13 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
     }
     if (is_cons(lhs) && is_cons(rhs)) {
+        const oprLHS = lhs.opr;
+        const oprRHS = rhs.opr;
+        if (oprLHS.equals(oprRHS) && oprLHS.equals(MATH_DERIVATIVE)) {
+            if (lhs.length > 1 && rhs.length > 1) {
+                return compare_terms(lhs.arg, rhs.arg, $);
+            }
+        }
         if (is_mul_2_any_blade(lhs) && is_mul_2_any_blade(rhs)) {
             switch (compare_blade_blade(lhs.rhs, rhs.rhs)) {
                 case SIGN_GT: {

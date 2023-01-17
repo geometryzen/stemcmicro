@@ -113,7 +113,12 @@ function hash_info_at_level(expr: U, level: number): INFO {
                 const arg = expr.arg;
                 return { kind: CONS, parts: [hash_opr(opr), compress(hash_info_at_level(arg, level + 1))] };
             }
-            return { kind: CONS, parts: [hash_opr(expr.opr)] };
+            if (is_sym(expr.opr)) {
+                return { kind: CONS, parts: [hash_opr(expr.opr)] };
+            }
+            else {
+                throw new Error(`${expr}`);
+            }
         }
         else {
             return { kind: CONS, parts: [hash_opr(expr.opr)] };
@@ -163,6 +168,6 @@ function hash_opr(opr: U): string {
         return opr.key();
     }
     else {
-        throw new Error();
+        throw new Error(`hash_opr(opr=${opr})`);
     }
 }

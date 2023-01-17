@@ -3,7 +3,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { compare_sym_sym } from "./compare_sym_sym";
 
 export function compare_vars_vars(lhs: Sym[], rhs: Sym[]): Sign {
-    // console.lg(`compare_vars_vars lhs=${lhs} rhs=${rhs}`);
+    // console.lg(`compare_vars_vars lhs=${JSON.stringify(lhs)} rhs=${JSON.stringify(rhs)}`);
     let gtCount = 0;
     let eqCount = 0;
     let ltCount = 0;

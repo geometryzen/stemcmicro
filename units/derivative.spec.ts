@@ -18,6 +18,39 @@ describe("derivative-sandbox", function () {
 });
 
 describe("derivative", function () {
+    it("d(a+b,x)", function () {
+        const lines: string[] = [
+            `d(a+b,x)`
+        ];
+        const engine = createScriptEngine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "(+ (derivative a x) (derivative b x))");
+        assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)+d(b,x)");
+        engine.release();
+    });
+    it("d(b+a,x)", function () {
+        const lines: string[] = [
+            `d(b+a,x)`
+        ];
+        const engine = createScriptEngine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "(+ (derivative a x) (derivative b x))");
+        assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)+d(b,x)");
+        engine.release();
+    });
+    it("d(b,x)+d(a,x)", function () {
+        const lines: string[] = [
+            `d(b,x)+d(a,x)`
+        ];
+        const engine = createScriptEngine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "(+ (derivative a x) (derivative b x))");
+        assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)+d(b,x)");
+        engine.release();
+    });
+});
+
+describe("derivative", function () {
     it("d(a,b)", function () {
         const lines: string[] = [
             `d(a,b)`

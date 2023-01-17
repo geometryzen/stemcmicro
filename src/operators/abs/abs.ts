@@ -3,7 +3,6 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
 import { equaln, is_num_and_gt_zero } from '../../is';
-import { makeList } from '../../makeList';
 import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../../predicates/is_negative';
@@ -15,7 +14,7 @@ import { oneAsDouble } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { car, is_cons, U } from '../../tree/tree';
+import { car, is_cons, items_to_cons, U } from '../../tree/tree';
 import { imag } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
 import { real } from '../real/real';
@@ -214,7 +213,7 @@ export function abs(x: U, $: ExtensionEnv): U {
 
     if (is_negative(expr) || (is_cons(expr) && is_add(expr) && is_negative(cadr(expr)))) {
         const neg_expr = $.negate(expr);
-        return hook(makeList(MATH_ABS, neg_expr), "M");
+        return hook(items_to_cons(MATH_ABS, neg_expr), "M");
     }
 
     // But we haven't handled the sum of terms.
@@ -230,7 +229,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     else {
         // Here we have given up and simply wrap the expression.
         // Perhaps the real question is whether expr is a vector in an inner product space.
-        return hook(makeList(MATH_ABS, expr), "O");
+        return hook(items_to_cons(MATH_ABS, expr), "O");
     }
 }
 

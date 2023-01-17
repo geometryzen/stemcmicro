@@ -1,10 +1,9 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
 import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -39,8 +38,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             const a = lhs.lhs;
             const b = lhs.rhs;
             const c = rhs;
-            const bc = $.valueOf(makeList(MATH_ADD, b, c));
-            const abc = $.valueOf(makeList(MATH_ADD, a, bc));
+            const bc = $.valueOf(items_to_cons(MATH_ADD, b, c));
+            const abc = $.valueOf(items_to_cons(MATH_ADD, a, bc));
             return [TFLAG_DIFF, abc];
         }
         const X = lhs.lhs;
@@ -52,8 +51,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         switch (signum) {
             case SIGN_GT: {
                 // (X + Z) + A => (X + A) + Z
-                const XA = $.valueOf(makeList(lhs.opr, X, A));
-                const retval = $.valueOf(makeList(opr, XA, Z));
+                const XA = $.valueOf(items_to_cons(lhs.opr, X, A));
+                const retval = $.valueOf(items_to_cons(opr, XA, Z));
                 return [TFLAG_DIFF, retval];
             }
             default: {

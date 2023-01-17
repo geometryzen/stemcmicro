@@ -1,14 +1,13 @@
 import { rational } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
 import { zzfloat } from './operators/float/float';
+import { is_flt } from './operators/flt/is_flt';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { APPROXRATIO } from './runtime/constants';
 import { stack_push } from './runtime/stack';
-import { is_flt } from './operators/flt/is_flt';
 import { cadr } from './tree/helpers';
-import { is_tensor } from './operators/tensor/is_tensor';
 import { wrap_as_int } from './tree/rat/Rat';
-import { car, cdr, cons, is_cons, U } from './tree/tree';
+import { car, cdr, cons, is_cons, items_to_cons, U } from './tree/tree';
 
 /*
  Guesses a rational for each float in the passed expression
@@ -47,7 +46,7 @@ function approxOneRatioOnly(p1: U, $: ExtensionEnv): U {
     }
 
     // we didn't manage, just leave unexpressed
-    return makeList(APPROXRATIO, supposedlyTheFloat);
+    return items_to_cons(APPROXRATIO, supposedlyTheFloat);
 }
 
 // original routine by John Kennedy, see

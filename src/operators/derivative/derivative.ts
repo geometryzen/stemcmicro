@@ -12,7 +12,7 @@ import { d_scalar_scalar } from "./helpers/derivative_helpers";
 export function derivative(expr: U, X: U, $: ExtensionEnv): U {
     // console.lg("derivative");
     // console.lg(`expr=${render_as_sexpr(expr, $)}`);
-    // console.lg(`wrt=${render_as_sexpr(X, $)}`);
+    // console.lg(`X=${render_as_sexpr(X, $)}`);
     if (is_num(X)) {
         throw new SystemError('undefined function');
     }

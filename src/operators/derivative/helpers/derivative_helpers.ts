@@ -33,7 +33,7 @@ import { is_abs, is_add } from '../../../runtime/helpers';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
-import { car, cdr, is_cons, nil, U } from '../../../tree/tree';
+import { car, Cons, is_cons, items_to_cons, nil, U } from '../../../tree/tree';
 import { besselj } from '../../besselj/besselj';
 import { bessely } from '../../bessely/bessely';
 import { cos } from '../../cos/cosine';
@@ -51,7 +51,7 @@ import { dpower } from './dpower';
 import { dproduct } from './dproduct';
 
 export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
-    // console.lg(`d_scalar_scalar ${render_as_infix(F, $)} ${render_as_infix(X, $)}`);
+    // console.lg(`d_scalar_scalar F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
     if (is_sym(X)) {
         return d_scalar_scalar_1(F, X, $);
     }
@@ -64,7 +64,7 @@ export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
 }
 
 function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
-    // console.lg(`d_scalar_scalar_1 ${render_as_infix(F, $)} ${render_as_infix(X, $)}`);
+    // console.lg(`d_scalar_scalar_1 F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
     // d(x,x)?
     if (F.equals(X)) {
         return one;
@@ -73,10 +73,12 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     // console.lg(`f=>${render_as_infix(F, $)} is_sym(F)=>${is_sym(F)}`);
 
     if (is_sym(F)) {
-        return makeList(MATH_DERIVATIVE, F, X);
+        return items_to_cons(MATH_DERIVATIVE, F, X);
     }
 
     // d(a,x)?
+    // TODO: Better to check for types explicitly (extensibility required).
+    // We are really checking for constantness here.
     if (!is_cons(F)) {
         return zero;
     }
@@ -208,14 +210,18 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 // derivative of a generic function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function dfunction(p1: U, p2: Sym, $: ExtensionEnv): U {
-    // console.lg(`dfunction ${render_as_infix(p1, $)} ${render_as_infix(p2, $)}`);
-    const p3 = cdr(p1); // p3 is the argument list for the function
+function dfunction(F: Cons, X: Sym, $: ExtensionEnv): U {
+    // console.lg(`dfunction F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
+    const argList = F.argList;
 
-    if (nil === p3 || p3.contains(p2)) {
-        return makeList(MATH_DERIVATIVE, p1, p2);
+    if (nil === argList || argList.contains(X)) {
+        return items_to_cons(MATH_DERIVATIVE, F, X);
     }
-    return zero;
+    else {
+        // 
+        // return zero;
+        return items_to_cons(MATH_DERIVATIVE, F, X);
+    }
 }
 
 function dsin(p1: U, p2: Sym, $: ExtensionEnv): U {

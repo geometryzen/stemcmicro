@@ -554,6 +554,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             symTab.setBinding(sym, binding);
         },
         setFocus(focus: number): void {
+            // console.lg(`ExtensionEnv.setFocus(focus=${focus})`);
             current_focus = focus;
         },
         setModeFlag(mode: MODE, value: boolean): void {

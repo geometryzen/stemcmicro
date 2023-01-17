@@ -30,4 +30,13 @@ describe("conj", function () {
         assert.strictEqual(engine.renderAsInfix(value), "x|y");
         engine.release();
     });
+    it("(-x) should be -conj(x) when symbols are treated as real numbers", function () {
+        const lines: string[] = [
+            `conj(-x)`
+        ];
+        const engine = createScriptEngine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), '-x');
+        engine.release();
+    });
 });

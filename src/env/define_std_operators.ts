@@ -85,7 +85,7 @@ import { conj_blade } from '../operators/conj/conj_blade';
 import { conj_flt } from '../operators/conj/conj_flt';
 import { conj_imaginary_unit } from '../operators/conj/conj_imag';
 import { conj_inner } from '../operators/conj/conj_inner';
-import { conj_mul_2_num_any } from '../operators/conj/conj_mul_2_num_any';
+import { conj_mul_2_any_any } from '../operators/conj/conj_mul_2_any_any';
 import { conj_rat } from '../operators/conj/conj_rat';
 import { conj_sym } from '../operators/conj/conj_sym';
 import { cons } from '../operators/cons/ConsExtension';
@@ -631,7 +631,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(conj_flt);
     $.defineOperator(conj_imaginary_unit);
     $.defineOperator(conj_blade);
-    $.defineOperator(conj_mul_2_num_any);
+    $.defineOperator(conj_mul_2_any_any);
     $.defineOperator(conj_any);
 
     $.defineOperator(degree_varargs);

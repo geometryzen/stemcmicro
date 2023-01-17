@@ -108,6 +108,7 @@ import { degree_varargs } from '../operators/degree/degree_varargs';
 import { denominator_fn } from '../operators/denominator/denominator_fn';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
+import { derivative_2_sym_sym } from '../operators/derivative/derivative_2_sym_sym';
 import { derivative_fn } from '../operators/derivative/derivative_fn';
 import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
@@ -755,7 +756,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(d_to_derivative);
     $.defineOperator(derivative_2_mul_any);
     $.defineOperator(derivative_2_pow_any);
-    // $.defineOperator(derivative_2_any_any);
+    $.defineOperator(derivative_2_sym_sym);
     $.defineOperator(derivative_fn);
 
     $.defineOperator(det_any);

@@ -385,7 +385,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return retval;
         },
         isScalar(expr: U): boolean {
-            // console.lg(`isScalar ${expr}`);
             return $.operatorFor(expr).isScalar(expr);
         },
         isVector(expr: U): boolean {

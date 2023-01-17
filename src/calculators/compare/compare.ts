@@ -23,6 +23,7 @@ import { has_imu_factor } from "./has_imu_factor";
  * @returns 
  */
 export function compare(lhs: U, rhs: U): Sign {
+    // console.lg(`ENTERING compare ${lhs} ${rhs}`);
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }

@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { compare_factors } from "../compare/compare_factors";
@@ -14,6 +14,7 @@ function compute_changed(newExpr: U, oldExpr: U): TFLAGS {
 }
 
 export function canonical_order_factors_3(s1: U, s2: U, s3: U, oldExpr: Cons, $: ExtensionEnv): [TFLAGS, U] {
+    //console.lg(`ENTERING canonical_order_factors_3 ${render_as_infix(s1, $)} ${render_as_infix(s2, $)} ${render_as_infix(s3, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string) {
         // console.lg(`s1=${s1}, s2=${s2}, s3=${s3}, retval: ${print_expr(retval, $)} @ ${description}`);

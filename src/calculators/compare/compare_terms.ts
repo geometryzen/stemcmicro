@@ -22,6 +22,7 @@ import { compare_vars_vars } from "./compare_vars_vars";
 import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // eslint-disable-next-line no-console
     // console.lg(`ENTERING compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: Sign, description: string): Sign {

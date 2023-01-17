@@ -1,12 +1,12 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_hyp } from "../../operators/hyp/is_hyp";
-import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
-import { is_sym } from "../../operators/sym/is_sym";
 import { is_imu } from "../../operators/imu/is_imu";
+import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_num } from "../../operators/num/is_num";
-import { render_as_infix } from "../../print/print";
 import { is_rat } from "../../operators/rat/is_rat";
+import { is_sym } from "../../operators/sym/is_sym";
 import { is_tensor } from "../../operators/tensor/is_tensor";
+import { render_as_infix } from "../../print/print";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 import { compare } from "./compare";
@@ -15,6 +15,7 @@ import { compare_sym_sym } from "./compare_sym_sym";
 import { group } from "./group";
 
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // console.lg(`ENTERING compare_factors ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     // Numeric factors in lhs term have no effect on ordering.
     if (is_cons(lhs) && is_mul_2_any_any(lhs)) {
         const [a, b] = factorizeL(lhs);
@@ -31,6 +32,8 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
     const gLHS = group(lhs);
     const gRHS = group(rhs);
+    // console.lg("gLHS", gLHS, render_as_infix(lhs, $));
+    // console.lg("gRHS", gRHS, render_as_infix(rhs, $));
     if (gLHS > gRHS) {
         return SIGN_GT;
     }

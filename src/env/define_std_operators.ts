@@ -207,6 +207,7 @@ import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
 import { mul_2_blade_sym } from '../operators/mul/mul_2_blade_sym';
 import { mul_2_cons_rat } from '../operators/mul/mul_2_cons_rat';
+import { mul_2_cons_sym } from '../operators/mul/mul_2_cons_sym';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
 import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
 import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_any';
@@ -218,6 +219,7 @@ import { mul_2_imu_any } from '../operators/mul/mul_2_imu_any';
 import { mul_2_imu_imu } from '../operators/mul/mul_2_imu_imu';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_blade_blade } from '../operators/mul/mul_2_mul_2_any_blade_blade';
+import { mul_2_mul_2_any_cons_sym } from '../operators/mul/mul_2_mul_2_any_cons_sym';
 import { mul_2_mul_2_any_imu_any } from '../operators/mul/mul_2_mul_2_any_imu_any';
 import { mul_2_mul_2_any_imu_imu } from '../operators/mul/mul_2_mul_2_any_imu_imu';
 import { mul_2_mul_2_any_imu_sym } from '../operators/mul/mul_2_mul_2_any_imu_sym';
@@ -548,6 +550,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_mul_2_any_imu_imu);
     $.defineOperator(mul_2_mul_2_any_imu_any);
     $.defineOperator(mul_2_mul_2_any_blade_blade);
+    $.defineOperator(mul_2_mul_2_any_cons_sym);
     $.defineOperator(mul_2_mul_2_any_sym_imu);
     $.defineOperator(mul_2_mul_2_any_sym_sym);
     $.defineOperator(mul_2_mul_2_any_sym_mul_2_imu_sym);
@@ -616,6 +619,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_sin_cos);
     $.defineOperator(mul_2_any_any);
     $.defineOperator(mul_2_cons_rat);
+    $.defineOperator(mul_2_cons_sym);
     $.defineOperator(mul_varargs);
 
     $.defineOperator(binomial_varargs);

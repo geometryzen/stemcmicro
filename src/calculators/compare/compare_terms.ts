@@ -17,6 +17,7 @@ import { is_sym } from "../../operators/sym/is_sym";
 import { one, zero } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
+import { compare_cons_cons } from "./compare_cons_cons";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_vars_vars } from "./compare_vars_vars";
@@ -145,9 +146,7 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         const oprLHS = lhs.opr;
         const oprRHS = rhs.opr;
         if (oprLHS.equals(oprRHS) && oprLHS.equals(MATH_DERIVATIVE)) {
-            if (lhs.length > 1 && rhs.length > 1) {
-                return compare_terms(lhs.arg, rhs.arg, $);
-            }
+            return compare_cons_cons(lhs, rhs, $);
         }
         if (is_mul_2_any_blade(lhs) && is_mul_2_any_blade(rhs)) {
             switch (compare_blade_blade(lhs.rhs, rhs.rhs)) {

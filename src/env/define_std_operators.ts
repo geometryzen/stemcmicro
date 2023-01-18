@@ -234,7 +234,6 @@ import { mul_2_mul_2_rat_any_mul_2_rat_any } from '../operators/mul/mul_2_mul_2_
 import { mul_2_mul_2_rat_sym_sym } from '../operators/mul/mul_2_mul_2_rat_sym_sym';
 import { mul_2_mul_2_sym_imu_sym } from '../operators/mul/mul_2_mul_2_sym_imu_sym';
 import { mul_2_one_any } from '../operators/mul/mul_2_one_any';
-import { mul_2_pow_2_sym_any_pow_2_sym_any } from '../operators/mul/mul_2_pow_2_sym_any_pow_2_sym_any';
 import { mul_2_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_pow_2_xxx_rat_xxx } from '../operators/mul/mul_2_pow_2_xxx_rat_xxx';
 import { mul_2_pow_2_zzz_rat_aaa } from '../operators/mul/mul_2_pow_2_zzz_rat_aaa';
@@ -593,7 +592,7 @@ export function define_std_operators($: ExtensionEnv) {
     // Distribution Laws in Factoring direction for symmetric and left-associated.
     // This concept should have an abstraction. 
     $.defineOperator(mul_2_pow_2_xxx_any_pow_2_xxx_any);
-    $.defineOperator(mul_2_pow_2_sym_any_pow_2_sym_any);
+    // $.defineOperator(mul_2_pow_2_sym_any_pow_2_sym_any);
     $.defineOperator(mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any);
 
     $.defineOperator(mul_2_any_mul_2_any_any);

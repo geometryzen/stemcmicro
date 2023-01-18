@@ -57,7 +57,8 @@ const guardL: GUARD<U, LHS> = and(is_cons, is_pow_2_any_any);
 const guardR: GUARD<U, RHS> = and(is_cons, is_pow_2_any_any);
 
 /**
- * (x ** k) * (y ** k) =>  (x * y) ** k, provided x and y commute (scalars). 
+ * (x ** k) * (y ** k) =>  (x * y) ** k, provided x and y commute (scalars).
+ * Don't do this! 
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;

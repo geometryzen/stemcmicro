@@ -3,52 +3,28 @@ import { createScriptEngine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("a*d(b,x)+a*d(b,y)", function () {
+    it("", function () {
         const lines: string[] = [
-            `a*d(b,x)+a*d(b,y)`
+            `(Ax*By)**2`
         ];
         const engine = createScriptEngine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* a (+ (derivative b x) (derivative b y)))");
-        assert.strictEqual(engine.renderAsInfix(value), "a*(d(b,x)+d(b,y))");
+        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) (power By 2))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
         engine.release();
     });
-    it("a*(d(b,x)+d(b,y))", function () {
+    it("", function () {
         const lines: string[] = [
-            `a*(d(b,x)+d(b,y))`
+            `Ax**2*By*By`
         ];
         const engine = createScriptEngine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* a (+ (derivative b x) (derivative b y)))");
-        assert.strictEqual(engine.renderAsInfix(value), "a*(d(b,x)+d(b,y))");
-        engine.release();
-    });
-    it("d(b,y)+d(b,x)", function () {
-        const lines: string[] = [
-            `d(b,y)+d(b,x)`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (derivative b x) (derivative b y))");
-        assert.strictEqual(engine.renderAsInfix(value), "d(b,x)+d(b,y)");
-        engine.release();
-    });
-    it("a*(d(b,y)+d(b,x))", function () {
-        const lines: string[] = [
-            `a*(d(b,y)+d(b,x))`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* a (+ (derivative b x) (derivative b y)))");
-        assert.strictEqual(engine.renderAsInfix(value), "a*(d(b,x)+d(b,y))");
+        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) (power By 2))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
         engine.release();
     });
 });

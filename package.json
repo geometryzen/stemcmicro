@@ -73,6 +73,7 @@
         "unit-for": "mocha 'units/for.spec.ts'",
         "unit-gamma": "mocha 'units/gamma.spec.ts'",
         "unit-gcd": "mocha 'units/gcd.spec.ts'",
+        "unit-gibbs": "mocha 'units/gibbs.spec.ts'",
         "unit-grad": "mocha 'units/grad.spec.ts'",
         "unit-guide": "mocha 'units/guide.spec.ts'",
         "unit-hashinfo": "mocha 'units/hashinfo.spec.ts'",

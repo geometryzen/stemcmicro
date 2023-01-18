@@ -1,10 +1,10 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
+import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -17,16 +17,11 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-function symbols_will_exchange(z: Sym, a: Sym, $: ExtensionEnv): boolean {
-    if ($.isScalar(z) || $.isScalar(a)) {
-        return compare_sym_sym(z, a) > 0;
-    }
-    return false;
-}
-
-function symbols_must_exchange($: ExtensionEnv) {
-    return function cross(lhs: BCons<Sym, U, Sym>, rhs: Sym): boolean {
-        return symbols_will_exchange(lhs.rhs, rhs, $);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function crossGuard($: ExtensionEnv) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return function (lhs: BCons<Sym, U, Sym>, rhs: Sym): boolean {
+        return true;
     };
 }
 
@@ -39,7 +34,7 @@ function symbols_must_exchange($: ExtensionEnv) {
 class Op extends Function2X<BCons<Sym, U, Sym>, Sym> implements Operator<BCons<Sym, BCons<Sym, U, Sym>, Sym>> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('mul_2_mul_2_any_sym_sym', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_sym, symbols_must_exchange($), $);
+        super('mul_2_mul_2_any_sym_sym', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_sym, crossGuard($), $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
     }
     transform2(opr: Sym, lhs: BCons<Sym, U, Sym>, rhs: Sym, orig: BCons<Sym, BCons<Sym, U, Sym>, Sym>): [TFLAGS, U] {
@@ -48,11 +43,33 @@ class Op extends Function2X<BCons<Sym, U, Sym>, Sym> implements Operator<BCons<S
             const X = lhs.lhs;
             const z = lhs.rhs;
             const a = rhs;
-            const Xa = $.valueOf(makeList(opr, X, a));
-            const Xaz = $.valueOf(makeList(lhs.opr, Xa, z));
-            return [TFLAG_DIFF, Xaz];
+            // console.lg(`X=>${render_as_infix(X, $)}`);
+            // console.lg(`z=>${render_as_infix(z, $)}`);
+            // console.lg(`a=>${render_as_infix(a, $)}`);
+            if ($.isScalar(z) || $.isScalar(a)) {
+                switch (compare_sym_sym(z, a)) {
+                    case SIGN_GT: {
+                        const Xa = $.valueOf(items_to_cons(opr, X, a));
+                        const Xaz = $.valueOf(items_to_cons(lhs.opr, Xa, z));
+                        return [TFLAG_DIFF, Xaz];
+                    }
+                    case SIGN_EQ: {
+                        const a_times_a = $.valueOf(items_to_cons(MATH_POW, a, two));
+                        const Xaa = $.valueOf(items_to_cons(MATH_MUL, X, a_times_a));
+                        return [TFLAG_DIFF, Xaa];
+                    }
+                    default: {
+                        return [TFLAG_NONE, orig];
+                    }
+                }
+            }
+            else {
+                return [TFLAG_NONE, orig];
+            }
         }
-        return [TFLAG_NONE, orig];
+        else {
+            return [TFLAG_NONE, orig];
+        }
     }
 }
 

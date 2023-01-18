@@ -264,7 +264,7 @@ export function convertMetricToNative(tensor: U): Rat[] {
                 return e;
             }
             else {
-                throw new Error("must be an integer.");
+                throw new Error(`${e} must be an integer.`);
             }
         });
     }

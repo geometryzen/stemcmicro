@@ -1,12 +1,12 @@
-import { imu } from './env/imu';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { imu } from './env/imu';
 import { exp } from './exp';
-import { factorial } from './operators/factorial/factorial';
 import { is_quarter_turn } from './is_quarter_turn';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
+import { factorial } from './operators/factorial/factorial';
 import { is_add } from './runtime/helpers';
-import { wrap_as_int, negOne, one, zero } from './tree/rat/Rat';
-import { car, cdr, is_cons, U } from './tree/tree';
+import { negOne, one, wrap_as_int, zero } from './tree/rat/Rat';
+import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
 //
@@ -32,15 +32,24 @@ import { car, cdr, is_cons, U } from './tree/tree';
 
 // first index is the term number 0..k-1, second index is the exponent 0..n
 //define A(i, j) frame[(i) * (n + 1) + (j)]
-export function power_sum(n: number, p1: U, $: ExtensionEnv): U {
-    const a: number[] = [];
+/**
+ * Computes the power of a sum. This is only valid if the terms of the sum commute.
+ * @param n 
+ * @param sum 
+ * @param $ 
+ * @returns 
+ */
+export function power_sum(n: number, sum: Cons, $: ExtensionEnv): U {
+    // console.lg(`power_sum(n=${n}, sum=${render_as_infix(sum, $)})`);
     // number of terms in the sum
-    const k = length_of_cons_otherwise_zero(p1) - 1;
+    // Notice the decrement by 1; we are not going to include the operator.
+    const k = length_of_cons_otherwise_zero(sum) - 1;
 
     // array of powers
     const powers: U[] = [];
 
-    p1 = cdr(p1);
+    // TODO: sum.argList would be better.
+    let p1 = cdr(sum);
     for (let i = 0; i < k; i++) {
         for (let j = 0; j <= n; j++) {
             powers[i * (n + 1) + j] = $.power(car(p1), wrap_as_int(j));
@@ -48,13 +57,12 @@ export function power_sum(n: number, p1: U, $: ExtensionEnv): U {
         p1 = cdr(p1);
     }
 
-    p1 = factorial(wrap_as_int(n));
-
+    const a: number[] = [];
     for (let i = 0; i < k; i++) {
         a[i] = 0;
     }
 
-    return multinomial_sum(k, n, a, 0, n, powers, p1, zero, $);
+    return multinomial_sum(k, n, a, 0, n, powers, factorial(wrap_as_int(n)), zero, $);
 }
 
 //-----------------------------------------------------------------------------
@@ -155,4 +163,24 @@ export function simplify_polar(exponent: U, $: ExtensionEnv): U | undefined {
     }
 
     return undefined;
+}
+
+/**
+ * Returns the arguments of expr as an array.
+ * The operator is not included.
+ * (opr a b c ...) => [a, b, c, ...]
+ */
+export function args_to_items(expr: Cons): U[] {
+    // Notice the decrement by 1; we are not going to include the operator.
+    const k = length_of_cons_otherwise_zero(expr) - 1;
+
+    const items: U[] = [];
+
+    // TODO: sum.argList would be better.
+    let p1 = cdr(expr);
+    for (let i = 0; i < k; i++) {
+        items.push(car(p1));
+        p1 = cdr(p1);
+    }
+    return items;
 }

@@ -8,7 +8,7 @@ import { is_rat_integer } from "../../is_rat_integer";
 import { makeList } from "../../makeList";
 import { evaluatingAsFloat, evaluatingAsPolar } from "../../modes/modes";
 import { nativeInt } from "../../nativeInt";
-import { power_sum, simplify_polar } from "../../power";
+import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { pow_rat_rat } from "../../pow_rat_rat";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
@@ -180,13 +180,19 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
         }
     }
 
+    // The following will only be true if the a's commute.
+    // That is not the case for vectors, tensors, ...
     //  (* a1 a2 a3 ...) ^ m  ->  (a1 ^ m) * (a2 ^ m) * (a3 ^ m) ...
     // note that we can't in general do this, for example
     // sqrt(x*y) != x^(1/2) y^(1/2) (counterexample" x = -1 and y = -1)
     // BUT we can carve-out here some cases where this
-    // transformation is correct
+    // transformation is correct.
     if ($.isExpanding()) {
-        if (is_multiply(base) && is_rat_integer(expo)) {
+        // console.lg(`isExpanding=${$.isExpanding()}`);
+        // console.lg(`base=>${render_as_infix(base, $)}`);
+        // console.lg(`expo=>${render_as_infix(expo, $)}`);
+        // console.lg(`base is scalar=>${$.isScalar(base)}`);
+        if (is_multiply(base) && $.isScalar(base) && is_rat_integer(expo)) {
             const aList = base.cdr;
             if (is_cons(aList)) {
                 const a1 = aList.car;
@@ -241,12 +247,23 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     }
 
     //  when expanding,
-    //  (a + b) ^ n  ->  (a + b) * (a + b) ...
+    //  (a + b + ...) ^ n  ->  (a + b + ...) * (a + b + ...) ...
+    // We check to see if 
     if ($.isExpanding() && is_add(base) && is_num(expo)) {
+        const terms = args_to_items(base);
+        const everyTermIsScalar = terms.every(function (term) {
+            return $.isScalar(term);
+        });
+        // console.lg(`everyTermIsScalar=>${everyTermIsScalar}`);
         const n = nativeInt(expo);
         if (n > 1 && !isNaN(n)) {
-            const result = power_sum(n, base, $);
-            return hook(result, "T");
+            if (everyTermIsScalar) {
+                const result = power_sum(n, base, $);
+                return hook(result, "T");
+            }
+            else {
+                // Explicit multiplication?
+            }
         }
     }
 

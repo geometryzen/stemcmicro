@@ -8,13 +8,16 @@ import { Blade } from "../../tree/vec/Blade";
 import { is_blade } from "../blade/is_blade";
 import { Function2 } from "../helpers/Function2";
 
-class Builder implements OperatorBuilder<Cons> {
+class OuterBladeBladeBuilder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
+        return new OuterBladeBlade($);
     }
 }
 
-class Op extends Function2<Blade, Blade> implements Operator<Cons> {
+/**
+ * Blade ^ Blade
+ */
+class OuterBladeBlade extends Function2<Blade, Blade> implements Operator<Cons> {
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
@@ -26,4 +29,4 @@ class Op extends Function2<Blade, Blade> implements Operator<Cons> {
     }
 }
 
-export const outer_2_blade_blade = new Builder();
+export const outer_2_blade_blade = new OuterBladeBladeBuilder();

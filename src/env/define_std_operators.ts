@@ -284,6 +284,7 @@ import { polar_varargs } from '../operators/polar/polar_varargs';
 import { pow } from '../operators/pow/pow';
 import { pow_2_any_any } from '../operators/pow/pow_2_any_any';
 import { pow_2_any_rat } from '../operators/pow/pow_2_any_rat';
+import { pow_2_blade_rat } from '../operators/pow/pow_2_blade_rat';
 import { pow_2_cons_rat } from '../operators/pow/pow_2_cons_rat';
 import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
 import { pow_2_flt_rat } from '../operators/pow/pow_2_flt_rat';
@@ -507,6 +508,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(pow_2_imu_rat);
     $.defineOperator(pow_2_uom_rat);
     $.defineOperator(pow_2_cons_rat);
+    $.defineOperator(pow_2_blade_rat);
     $.defineOperator(pow_2_any_rat);
     $.defineOperator(pow_2_any_any);
     $.defineOperator(pow);

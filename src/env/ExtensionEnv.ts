@@ -79,6 +79,11 @@ export interface ExtensionEnv {
      */
     arg(expr: U): U;
     beginSpecial(): void;
+    /**
+     * Uses the configuration disable array: disable: ['factorize']
+     */
+    canFactorize(): boolean;
+    canImplicate(): boolean;
     clearBindings(): void;
     clearOperators(): void;
     clearRenamed(): void;
@@ -165,6 +170,18 @@ export const PHASE_EXPLICATE = 1;
 export const PHASE_EXPANDING = 2;
 export const PHASE_FACTORING = 4;
 export const PHASE_IMPLICATE = 8;
+
+export function decodePhase(phase: number): string {
+    switch (phase) {
+        case PHASE_EXPLICATE: return 'explicate';
+        case PHASE_EXPANDING: return 'expanding';
+        case PHASE_FACTORING: return 'factoring';
+        case PHASE_IMPLICATE: return 'implicate';
+        default: {
+            return `${phase}`;
+        }
+    }
+}
 
 export const PHASE_SEQUENCE = [PHASE_EXPLICATE, PHASE_EXPANDING, PHASE_FACTORING, PHASE_IMPLICATE];
 

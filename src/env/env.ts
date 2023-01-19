@@ -35,10 +35,12 @@ import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
 import { diffFlag, ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { UnknownOperator } from "./UnknownOperator";
 
 export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
-    dependencies?: FEATURE[]
+    dependencies?: FEATURE[];
+    disable: ('factorize' | 'implicate')[];
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -47,6 +49,7 @@ export interface EnvOptions {
 interface EnvConfig {
     assocs: { sym: Sym, dir: 'L' | 'R' }[];
     dependencies: FEATURE[];
+    disable: ('factorize' | 'implicate')[];
     treatAsVectors: string[]
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
@@ -57,6 +60,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         const config: EnvConfig = {
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
+            disable: Array.isArray(options.disable) ? options.disable : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
@@ -67,6 +71,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         const config: EnvConfig = {
             assocs: [],
             dependencies: [],
+            disable: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -232,6 +237,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // With a smarter serializer this would not be needed.
             $.defineOperator(associative_explicator(opr, id));
             $.defineOperator(associative_implicator(opr));
+        },
+        canFactorize(): boolean {
+            return config.disable.indexOf('factorize') < 0;
+        },
+        canImplicate(): boolean {
+            return config.disable.indexOf('implicate') < 0;
         },
         clearBindings(): void {
             symTab.clearBindings();
@@ -475,7 +486,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
-                throw new SystemError(`${expr}, current_phase = ${current_focus} ${JSON.stringify(keys)}`);
+                return new UnknownOperator(expr, $);
+                // We can end up here for user-defined functions.
+                // The consumer is trying to answer a question
+                // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
             }
             else if (is_num(expr)) {
                 return selectOperator(expr.name, expr);
@@ -554,7 +568,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             symTab.setBinding(sym, binding);
         },
         setFocus(focus: number): void {
-            // console.lg(`ExtensionEnv.setFocus(focus=${focus})`);
+            // console.lg(`ExtensionEnv.setFocus(focus=${decodePhase(focus)})`);
             current_focus = focus;
         },
         setModeFlag(mode: MODE, value: boolean): void {
@@ -611,6 +625,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
                                 if (diffFlag(flags)) {
+                                    // By logging here we can see all the transformations that make changes.
+                                    // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                     outFlags |= TFLAG_DIFF;
                                     doneWithCurExpr = true;
                                     if (haltFlag(flags)) {

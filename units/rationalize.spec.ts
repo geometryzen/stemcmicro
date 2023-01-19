@@ -18,7 +18,10 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(a/b+b/a)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = createScriptEngine({
+            disable: ['factorize'],
+            useCaretForExponentiation: true
+        });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (power a 2) (power b 2)) (power (* a b) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a^2+b^2)/(a*b)");

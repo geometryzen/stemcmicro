@@ -136,11 +136,13 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
         stack.push(transform_with_reason(stack.pop() as U, $, 'expanding'));
     }
 
-    if (isNotDisabled(AUTOFACTOR, $)) {
-        $.setFocus(PHASE_FACTORING);
-        // console.lg("Factoring...");
-        stack.push(transform_with_reason(stack.pop() as U, $, 'factoring'));
-        // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
+    if ($.canFactorize()) {
+        if (isNotDisabled(AUTOFACTOR, $)) {
+            $.setFocus(PHASE_FACTORING);
+            // console.lg("Factoring...");
+            stack.push(transform_with_reason(stack.pop() as U, $, 'factoring'));
+            // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
+        }
     }
 
     const transformed = stack.pop() as U;
@@ -163,12 +165,14 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
             stack.push(expr);
         }
 
-        if (isNotDisabled(IMPLICATE, $)) {
-            // console.lg("Implicating...");
-            let expr = stack.pop() as U;
-            expr = implicate(expr, $);
-            // console.lg(`implicated : ${print_expr(expr, $)}`);
-            stack.push(expr);
+        if ($.canImplicate()) {
+            if (isNotDisabled(IMPLICATE, $)) {
+                // console.lg("Implicating...");
+                let expr = stack.pop() as U;
+                expr = implicate(expr, $);
+                // console.lg(`implicated : ${print_expr(expr, $)}`);
+                stack.push(expr);
+            }
         }
         post_processing(tree, stack[0], stack, $);
     }

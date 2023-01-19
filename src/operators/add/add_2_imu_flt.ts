@@ -28,6 +28,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly dependencies: FEATURE[] = ['Flt', 'Imu'];
     constructor($: ExtensionEnv) {
         super('add_2_imu_flt', MATH_ADD, is_imu, is_flt, $);
+        // TODO: This looks like it is assuming the structure of imu.
         this.hash = hash_binop_cons_atom(MATH_ADD, MATH_POW, HASH_FLT);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {

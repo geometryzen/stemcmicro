@@ -24,6 +24,10 @@ export interface ScriptEngineOptions {
      */
     dependencies?: ('Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector')[];
     /**
+     * Allows various phases of the processing pipeline to be disabled.
+     */
+    disable?: ('factorize' | 'implicate')[];
+    /**
      * Determines which symbols should be treated as vectors as opposed to real numbers.
      */
     treatAsVectors?: string[];
@@ -90,6 +94,7 @@ function env_options_from_engine_options(options: ScriptEngineOptions | undefine
         const config: EnvOptions = {
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
+            disable: Array.isArray(options.disable) ? options.disable : [],
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions
@@ -100,6 +105,7 @@ function env_options_from_engine_options(options: ScriptEngineOptions | undefine
         const config: EnvOptions = {
             assocs: [],
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
+            disable: [],
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false

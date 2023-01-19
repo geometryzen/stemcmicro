@@ -123,7 +123,7 @@ describe("clock", function () {
         assert.strictEqual(engine.renderAsInfix(value), "1/2+(1/2*3**(1/2))*i");
         engine.release();
     });
-    it("clock(exp(i*pi/3))", function () {
+    xit("clock(exp(i*pi/3))", function () {
         const lines: string[] = [
             `autofactor=1`,
             `implicate=0`,

@@ -29,6 +29,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         return [TFLAG_NONE, expr];
     }
+    isReal(expr: Cons): boolean {
+        return this.$.isReal(expr.lhs);
+    }
     isScalar(expr: Cons): boolean {
         return this.$.isScalar(expr.lhs);
     }

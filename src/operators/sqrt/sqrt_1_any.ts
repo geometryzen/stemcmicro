@@ -1,10 +1,9 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { MATH_POW } from "../../runtime/ns_math";
 import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { items_to_cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
@@ -29,7 +28,7 @@ class Sqrt extends Function1<ARG> implements Operator<EXPR> {
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
-        return [TFLAG_DIFF, this.$.valueOf(makeList(MATH_POW, arg, half))];
+        return [TFLAG_DIFF, this.$.valueOf(items_to_cons(MATH_POW, arg, half))];
     }
 }
 

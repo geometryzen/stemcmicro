@@ -280,3 +280,31 @@ describe("factorize right", function () {
         engine.release();
     });
 });
+
+describe("factorize", function () {
+    describe("power", function () {
+        it("Disabled", function () {
+            const lines: string[] = [
+                `x*x`
+            ];
+            const engine = createScriptEngine({
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                disable: ['factorize']
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsInfix(value), "x*x");
+            engine.release();
+        });
+        it("Enabled", function () {
+            const lines: string[] = [
+                `x*x`
+            ];
+            const engine = createScriptEngine({
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsInfix(value), "x**2");
+            engine.release();
+        });
+    });
+});

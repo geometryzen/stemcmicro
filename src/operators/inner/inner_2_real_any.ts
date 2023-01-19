@@ -1,9 +1,8 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { makeList } from "../../makeList";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -32,14 +31,15 @@ function is_real($: ExtensionEnv) {
  * X | Y => X * (1 | Y), when X is real.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+    readonly phases = PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('inner_2_real_any', MATH_INNER, is_real($), is_any, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const A = $.valueOf(makeList(opr, one, rhs));
-        const B = $.valueOf(makeList(MATH_MUL, lhs, A));
+        const A = $.valueOf(items_to_cons(opr, one, rhs));
+        const B = $.valueOf(items_to_cons(MATH_MUL, lhs, A));
         return [TFLAG_DIFF, B];
     }
 }

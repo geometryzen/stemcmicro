@@ -143,6 +143,8 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
     }
     if (is_cons(lhs) && is_cons(rhs)) {
+        // console.lg(`CONTINUING compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+        // console.lg(`OPERATORS compare_terms ${render_as_infix(lhs.opr, $)} ${render_as_infix(rhs.opr, $)}`);
         const oprLHS = lhs.opr;
         const oprRHS = rhs.opr;
         if (oprLHS.equals(oprRHS) && oprLHS.equals(MATH_DERIVATIVE)) {

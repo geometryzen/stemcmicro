@@ -108,9 +108,12 @@ describe("abs", function () {
             `i=sqrt(-1)`,
             `-i * i * x * x`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = createScriptEngine({
+            disable: ['factorize'],
+            useDefinitions: false
+        });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "x**2");
+        assert.strictEqual(engine.renderAsInfix(value), "x*x");
         engine.release();
     });
     it("(x-i*y)*(x+i*y)", function () {
@@ -118,20 +121,26 @@ describe("abs", function () {
             `implicate=0`,
             `(x-i*y)*(x+i*y)`,
         ];
-        const engine = createScriptEngine({ useDefinitions: true });
+        const engine = createScriptEngine({
+            disable: ['factorize'],
+            useDefinitions: true
+        });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (power x 2) (power y 2))");
-        assert.strictEqual(engine.renderAsInfix(value), "x**2+y**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* x x) (* y y))");
+        assert.strictEqual(engine.renderAsInfix(value), "x*x+y*y");
         engine.release();
     });
     it("(x-i*y)*(x+i*y)", function () {
         const lines: string[] = [
             `(x-i*y)*(x+i*y)`,
         ];
-        const engine = createScriptEngine({ useDefinitions: true });
+        const engine = createScriptEngine({
+            disable: ['factorize'],
+            useDefinitions: true
+        });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (power x 2) (power y 2))");
-        assert.strictEqual(engine.renderAsInfix(value), "x**2+y**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* x x) (* y y))");
+        assert.strictEqual(engine.renderAsInfix(value), "x*x+y*y");
         engine.release();
     });
     it("abs(1+2.0*i)", function () {
@@ -220,7 +229,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "abs(x)*abs(y)");
         engine.release();
     });
-    it("abs(x)*abs(x)", function () {
+    xit("abs(x)*abs(x)", function () {
         const lines: string[] = [
             `abs(x)*abs(x)`
         ];

@@ -14,7 +14,8 @@ describe("gibbs", function () {
             `A|B`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "Ax*Bx+Ay*By+Az*Bz");
@@ -47,10 +48,11 @@ describe("gibbs", function () {
             `abs(A)`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(Ax**2+Ay**2+Az**2)**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(Ax*Ax+Ay*Ay+Az*Az)**(1/2)");
         engine.release();
     });
     it("Show how to find A, given u=A+B and v=A-B", function () {
@@ -109,7 +111,28 @@ describe("gibbs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "Ax-Bx");
         engine.release();
     });
-    xit("", function () {
+    it("Determining the magnitude of A x B: Part I", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
+            `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
+            `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
+            `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+            `A = Ax * e1 + Ay * e2 + Az * e3`,
+            `B = Bx * e1 + By * e2 + Bz * e3`,
+            `(A|B)**2-Ax*Ax*Bx*Bx-Ay*Ay*By*By-Az*Az*Bz*Bz-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz-2*Ay*Az*By*Bz`
+        ];
+        const engine = createScriptEngine({
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "0");
+        engine.release();
+    });
+    it("Determining the magnitude of A x B", function () {
         const lines: string[] = [
             `G30=algebra([1,1,1],["e1","e2","e3"])`,
             `e1=G30[1]`,
@@ -122,60 +145,41 @@ describe("gibbs", function () {
             `A = Ax * e1 + Ay * e2 + Az * e3`,
             `B = Bx * e1 + By * e2 + Bz * e3`,
             `C = Cx * e1 + Cy * e2 + Cz * e3`,
-            `(A|B)**2`
+            `LHS=cross(A,B)|cross(A,B)`,
+            `RHS=(A|A)*(B|B)-(A|B)**2`,
+            `LHS-RHS`
         ];
         const engine = createScriptEngine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(Ax*Bx)**2+2*Ax*Ay*Bx*By+(Ay*By)**2+2*Ax*Az*Bx*Bz+2*Ay*Az*By*Bz+(Az*Bz)**2");
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
-    xit("", function () {
-        const lines: string[] = [
-            `G30=algebra([1,1,1],["e1","e2","e3"])`,
-            `e1=G30[1]`,
-            `e2=G30[2]`,
-            `e3=G30[3]`,
-            `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-            `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-            `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-            `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
-            `A = Ax * e1 + Ay * e2 + Az * e3`,
-            `B = Bx * e1 + By * e2 + Bz * e3`,
-            `C = Cx * e1 + Cy * e2 + Cz * e3`,
-            `D=cross(A,B)`,
-            `D|D-(A|A)*(B|B)+(A|B)**2`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "");
-        engine.release();
-    });
-    it("", function () {
+    it("Handling of Powers: Part I", function () {
         const lines: string[] = [
             `Ax**2*(By*By)`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) (power By 2))");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) By By)");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By*By");
         engine.release();
     });
-    it("", function () {
+    it("Handling of Powers: Part II", function () {
         const lines: string[] = [
             `Ax**2*By*By`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) (power By 2))");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) By By)");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By*By");
         engine.release();
     });
     it("cross(A,B)|cross(A,B)", function () {
@@ -195,10 +199,11 @@ describe("gibbs", function () {
             `D|D`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "-2*Ax*Ay*Bx*By+Ax**2*By**2-Ax*Az*Bx*Bz+Ax**2*Bz**2+Ay**2*Bx**2-Ax*Az*Bx*Bz-2*Ay*Az*By*Bz+Ay**2*Bz**2+Az**2*Bx**2+Az**2*By**2");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax*By*By+Ax*Ax*Bz*Bz-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz+Ay*Ay*Bx*Bx+Ay*Ay*Bz*Bz-2*Ay*Az*By*Bz+Az*Az*Bx*Bx+Az*Az*By*By");
         engine.release();
     });
     it("cross(A,B)|cross(A,B)", function () {
@@ -217,10 +222,11 @@ describe("gibbs", function () {
             `cross(A,B)|cross(A,B)`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "-2*Ax*Ay*Bx*By+Ax**2*By**2-Ax*Az*Bx*Bz+Ax**2*Bz**2+Ay**2*Bx**2-Ax*Az*Bx*Bz-2*Ay*Az*By*Bz+Ay**2*Bz**2+Az**2*Bx**2+Az**2*By**2");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax*By*By+Ax*Ax*Bz*Bz-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz+Ay*Ay*Bx*Bx+Ay*Ay*Bz*Bz-2*Ay*Az*By*Bz+Az*Az*Bx*Bx+Az*Az*By*By");
         engine.release();
     });
     it("A|A", function () {
@@ -239,10 +245,11 @@ describe("gibbs", function () {
             `A|A`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2+Az**2");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax+Ay*Ay+Az*Az");
         engine.release();
     });
     it("A*A should be equal to A|A (Geometric Algebra)", function () {
@@ -259,11 +266,12 @@ describe("gibbs", function () {
             `A*A`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(power Ax 2)");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(* Ax Ax)");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax");
         engine.release();
     });
     it("A*A should be equal to A|A (Geometric Algebra)", function () {
@@ -280,11 +288,12 @@ describe("gibbs", function () {
             `A*A`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (power Ax 2) (power Ay 2))");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* Ax Ax) (* Ay Ay))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax+Ay*Ay");
         engine.release();
     });
     it("A*A should be equal to A|A (Geometric Algebra)", function () {
@@ -297,11 +306,11 @@ describe("gibbs", function () {
             `A*A`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(value), "Ax**2+Ay**2+Az**2");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2+Az**2");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax+Ay*Ay+Az*Az");
         engine.release();
     });
     it("(Ax*e1)*(By*e2)", function () {
@@ -489,7 +498,50 @@ describe("gibbs", function () {
             assert.strictEqual(engine.renderAsInfix(value), "0");
             engine.release();
         });
-        xit("curl of cross product", function () {
+        it("curl of cross product: Part I", function () {
+            const lines: string[] = [
+                `G30=algebra([1,1,1],["e1","e2","e3"])`,
+                `e1=G30[1]`,
+                `e2=G30[2]`,
+                `e3=G30[3]`,
+                `Bz*e3*d(Az,z)`
+            ];
+            const engine = createScriptEngine({
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                disable: ['factorize']
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsSExpr(value), "(* Bz (derivative Az z) e3)");
+            assert.strictEqual(engine.renderAsInfix(value), "Bz*d(Az,z)*e3");
+            engine.release();
+        });
+        it("curl of cross product", function () {
+            const lines: string[] = [
+                `G30=algebra([1,1,1],["e1","e2","e3"])`,
+                `e1=G30[1]`,
+                `e2=G30[2]`,
+                `e3=G30[3]`,
+                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
+                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
+                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+                `A = Ax * e1 + Ay * e2 + Az * e3`,
+                `B = Bx * e1 + By * e2 + Bz * e3`,
+                `LHS=curl(cross(A,B))`,
+                `RHS=ddrv(A,B)-ddrv(B,A)+A*div(B)-B*div(A)`,
+                `LHS-RHS`
+            ];
+            const engine = createScriptEngine({
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                disable: ['factorize']
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsInfix(value), "0");
+            engine.release();
+        });
+    });
+    describe("SECOND DERIVATIVES", function () {
+        it("div of curl of vector is zero", function () {
             const lines: string[] = [
                 `G30=algebra([1,1,1],["e1","e2","e3"])`,
                 `e1=G30[1]`,
@@ -502,8 +554,46 @@ describe("gibbs", function () {
                 `A = Ax * e1 + Ay * e2 + Az * e3`,
                 `B = Bx * e1 + By * e2 + Bz * e3`,
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
-                `LHS=curl(cross(A,B))`,
-                `RHS=ddrv(A,B)-ddrv(B,A)+A*div(B)-B*div(A)`,
+                `div(curl(A))`
+            ];
+            const engine = createScriptEngine({
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                disable: ['factorize']
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsInfix(value), "0");
+            engine.release();
+        });
+        it("curl of grad of scalar is zero", function () {
+            const lines: string[] = [
+                `G30=algebra([1,1,1],["e1","e2","e3"])`,
+                `e1=G30[1]`,
+                `e2=G30[2]`,
+                `e3=G30[3]`,
+                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
+                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
+                `curl(grad(f))`
+            ];
+            const engine = createScriptEngine({
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsInfix(value), "0");
+            engine.release();
+        });
+        it("curl of curl of a vector", function () {
+            const lines: string[] = [
+                `G30=algebra([1,1,1],["e1","e2","e3"])`,
+                `e1=G30[1]`,
+                `e2=G30[2]`,
+                `e3=G30[3]`,
+                `A = Ax * e1 + Ay * e2 + Az * e3`,
+                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
+                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
+                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
+                `laplacian(t) = d(d(t,x),x) + d(d(t,y),y) + d(d(t,z),z)`,
+                `LHS=curl(curl(A))`,
+                `RHS=grad(div(A))-laplacian(A)`,
                 `LHS-RHS`
             ];
             const engine = createScriptEngine({

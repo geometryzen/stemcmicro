@@ -79,6 +79,11 @@ export interface ExtensionEnv {
      * Making associativity implicit in the tree structure.
      */
     readonly implicateMode: boolean;
+    /**
+     * 
+     * @param lhs 
+     * @param rhs 
+     */
     add(lhs: U, rhs: U): U;
     /**
      *

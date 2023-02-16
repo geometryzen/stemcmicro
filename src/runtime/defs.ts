@@ -67,7 +67,6 @@ export class Defs {
     public symbolsHavingReassignments: string[] = [];
     public symbolsInExpressionsWithoutAssignments: string[] = [];
     public patternHasBeenFound = false;
-    public inited = false;
 
     /**
      * top of stack
@@ -88,17 +87,6 @@ export class Defs {
      * Encapsulation with assertion may help. 
      */
     public stack: (U | undefined | null)[] = [];
-
-    public p0?: U;
-    public p1?: U;
-    public p2?: U;
-    public p3?: U;
-    public p4?: U;
-    public p5?: U;
-    public p6?: U;
-    public p7?: U;
-    public p8?: U;
-    public p9?: U;
 
     public out_count = 0;
     /**

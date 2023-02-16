@@ -9,6 +9,7 @@ import { parseScript } from '../scanner/parse_script';
 import { ScanOptions } from '../scanner/scan';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
+import { Box } from "./Box";
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { defs, move_top_of_stack } from './defs';
@@ -64,6 +65,9 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
      * The outputs from print satements for each pass of the scanner.
      */
     const prints: string[] = [];
+    /**
+     * errors aren't currently provided but could be if we caught exceptions. 
+     */
     const errors: Error[] = [];
 
     const originalPrintHandler = $.getPrintHandler();
@@ -103,7 +107,7 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
     move_top_of_stack(0);
 
-    const stack: U[] = [];
+    const box = new Box(tree);
 
     defs.trigmode = 0;
 
@@ -114,14 +118,13 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
     // $.setAssocL(MATH_ADD, true);
     // $.setAssocL(MATH_MUL, true);
-    stack.push(tree);
 
     if (isNotDisabled(EXPLICATE, $)) {
         // // console.lg("Explicating...");
-        let expr = stack.pop() as U;
+        let expr = box.pop();
         expr = explicate(expr, $);
         // // console.lg(`explicated : ${print_expr(expr, $)}`);
-        stack.push(expr);
+        box.push(expr);
     }
 
     // AUTOEXPAND, by default is unbound. i.e. only bound to it's own symbol.
@@ -130,19 +133,19 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     if (isNotDisabled(AUTOEXPAND, $)) {
         $.setFocus(PHASE_EXPANDING);
         // console.lg("Expanding...");
-        stack.push(transform_with_reason(stack.pop() as U, $, 'expanding'));
+        box.push(transform_with_reason(box.pop(), $, 'expanding'));
     }
 
     if ($.canFactorize()) {
         if (isNotDisabled(AUTOFACTOR, $)) {
             $.setFocus(PHASE_FACTORING);
             // console.lg("Factoring...");
-            stack.push(transform_with_reason(stack.pop() as U, $, 'factoring'));
+            box.push(transform_with_reason(box.pop(), $, 'factoring'));
             // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
         }
     }
 
-    const transformed = stack.pop() as U;
+    const transformed = box.pop();
     // console.lg();
     // console.lg(`tranned : ${transformed}`);
     // console.lg(`tranned : ${print_list(transformed, $)}`);
@@ -152,32 +155,32 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     if (nil !== transformed) {
         // console.lg(`tranned   : ${print_expr(transformed, $)}`);
         // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
-        stack.push(transformed);
+        box.push(transformed);
         if ($.isOne($.getBinding(BAKE))) {
             // console.lg("Baking...");
-            let expr = bake(stack.pop() as U, $);
+            let expr = bake(box.pop(), $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.
             expr = transform_with_reason(expr, $, 'bake     ');
             // console.lg(`baked     : ${print_list(expr, $)}`);
-            stack.push(expr);
+            box.push(expr);
         }
 
         if ($.canImplicate()) {
             if (isNotDisabled(IMPLICATE, $)) {
                 // console.lg("Implicating...");
-                let expr = stack.pop() as U;
+                let expr = box.pop();
                 expr = implicate(expr, $);
                 // console.lg(`implicated : ${print_expr(expr, $)}`);
-                stack.push(expr);
+                box.push(expr);
             }
         }
-        post_processing(tree, stack[0], stack, $);
+        post_processing_complex_numbers(tree, box.peek(), box, $);
     }
     else {
-        stack.push(nil);
+        box.push(nil);
     }
-    store_in_script_last(stack[0], $);
-    return stack.pop() as U;
+    store_in_script_last(box.peek(), $);
+    return box.pop();
 }
 
 function store_in_script_last(expr: U, $: ExtensionEnv): void {
@@ -217,12 +220,12 @@ export function transform(expr: U, $: ExtensionEnv): U {
 }
 
 /**
- * 
+ * Determines how instances of sqrt(-1) are represented.
  * @param input The parse tree.
  * @param output May be the result of Eval() or the out_tree after it has been bake(d).
  * @param $ The extension environment.
  */
-function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void {
+function post_processing_complex_numbers(input: U, output: U, box: Box<U>, $: ExtensionEnv): void {
     // If user asked explicitly asked to evaluate "i" or "j" and
     // they represent the imaginary unit (-1)^(1/2), then
     // show (-1)^(1/2).
@@ -239,9 +242,9 @@ function post_processing(input: U, output: U, stack: U[], $: ExtensionEnv): void
         const sym = entry.sym;
         const binding = entry.binding;
         if (binding && is_imu(binding)) {
-            const A = stack.pop() as U;
+            const A = box.pop();
             const B = subst(A, imu, sym, $);
-            stack.push(B);
+            box.push(B);
             return;
         }
     }

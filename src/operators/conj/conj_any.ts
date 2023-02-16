@@ -1,5 +1,4 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { render_as_infix } from "../../print/print";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";

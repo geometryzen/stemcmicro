@@ -1,5 +1,4 @@
 import { defs, hard_reset } from "../runtime/defs";
-import { check_stack } from "../runtime/execute";
 import { normalize_unicode_dots } from "../runtime/normalize_dots";
 import { U } from "../tree/tree";
 import { scan } from "./scan";
@@ -50,13 +49,11 @@ export function parseScript(sourceText: string, options?: ParseScriptOptions): {
         // passed input AND we can execute them...
         try {
             defs.errorMessage = '';
-            check_stack();
             // TODO: Will the scan ever not return zero?
             [scanned, tree] = scan(normalizedScript.substring(index_of_part_remaining_to_be_parsed), { useCaretForExponentiation: config.useCaretForExponentiation });
             if (scanned > 0) {
                 trees.push(tree);
             }
-            check_stack();
         }
         catch (error) {
             if (error instanceof Error) {

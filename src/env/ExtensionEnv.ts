@@ -60,8 +60,14 @@ export type MODE =
     'renderFloatAsEcmaScript' |
     'useCaretForExponentiation';
 
+export interface PrintHandler {
+    print(...items: string[]): void;
+}
+
 export interface ExtensionEnv {
+    getPrintHandler(): PrintHandler;
     setField(kind: 'R' | undefined): void;
+    setPrintHandler(handler: PrintHandler): void;
     treatAsReal(sym: Sym): boolean;
     treatAsScalar(sym: Sym): boolean;
     treatAsVector(sym: Sym): boolean;

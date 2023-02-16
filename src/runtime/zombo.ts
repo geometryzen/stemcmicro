@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../env/ExtensionEnv';
 import { Sym } from '../tree/sym/Sym';
 import { U } from '../tree/tree';
 import { hard_reset } from './defs';
-import { check_stack, multi_phase_transform } from './execute';
+import { multi_phase_transform } from './execute';
 import { stack_list, stack_pop, stack_push } from './stack';
 import { zombo_parse } from './zombo_parse';
 
@@ -16,7 +16,6 @@ import { zombo_parse } from './zombo_parse';
 export function zombo(name: string, $: ExtensionEnv, ...argus: (string | number | U)[]): U {
 
     const fn = $.getBinding(new Sym(name));
-    check_stack();
     stack_push(fn);
 
     for (const argu of Array.from(argus)) {
@@ -35,6 +34,6 @@ export function zombo(name: string, $: ExtensionEnv, ...argus: (string | number 
         throw error;
     }
     finally {
-        check_stack();
+        // Do nothing
     }
 }

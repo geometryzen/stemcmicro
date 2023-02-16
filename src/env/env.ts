@@ -34,7 +34,8 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { diffFlag, ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { diffFlag, ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
 export interface EnvOptions {
@@ -107,6 +108,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     let fieldKind: 'R' | undefined = 'R';
 
+    let printHandler: PrintHandler = new NoopPrintHandler();
+
     /**
      * Modes flags of the environment.
      */
@@ -163,8 +166,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
+        getPrintHandler(): PrintHandler {
+            return printHandler;
+        },
         setField(kind: 'R' | undefined): void {
             fieldKind = kind;
+        },
+        setPrintHandler(handler: PrintHandler): void {
+            if (handler) {
+                printHandler = handler;
+            }
+            else {
+                printHandler = new NoopPrintHandler();
+            }
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         treatAsReal(sym: Sym): boolean {

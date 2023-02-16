@@ -68,7 +68,6 @@ export class Defs {
     public symbolsInExpressionsWithoutAssignments: string[] = [];
     public patternHasBeenFound = false;
     public inited = false;
-    public readonly prints: string[] = [];
 
     /**
      * top of stack

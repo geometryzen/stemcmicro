@@ -10,7 +10,8 @@ import { ScanOptions } from '../scanner/scan';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
-import { defs, halt, move_top_of_stack, TOS } from './defs';
+import { DefaultPrintHandler } from "./DefaultPrintHandler";
+import { defs, move_top_of_stack, TOS } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
@@ -65,22 +66,20 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
     const prints: string[] = [];
     const errors: Error[] = [];
 
-    defs.prints.length = 0;
+    const originalPrintHandler = $.getPrintHandler();
+    const printHandler = new DefaultPrintHandler();
+    $.setPrintHandler(printHandler);
+    try {
+        const value = multi_phase_transform(tree, $);
 
-    const value = multi_phase_transform(tree, $);
+        prints.push(...printHandler.prints);
 
-    prints.push(...defs.prints);
-
-    return { value, prints, errors };
-}
-
-export function check_stack() {
-    if (defs.tos !== 0) {
-        halt('stack error');
+        return { value, prints, errors };
     }
-    if (defs.frame !== TOS) {
-        halt(`frame error defs.frame = ${defs.frame} TOS = ${TOS}`);
+    finally {
+        $.setPrintHandler(originalPrintHandler);
     }
+
 }
 
 /**
@@ -126,7 +125,6 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
         stack.push(expr);
     }
 
-    // The normal start is defs.expanding => true.
     // AUTOEXPAND, by default is unbound. i.e. only bound to it's own symbol.
     // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!

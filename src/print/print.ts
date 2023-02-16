@@ -19,8 +19,8 @@ import { is_sym } from '../operators/sym/is_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_uom } from '../operators/uom/is_uom';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
-import { is_negative_number } from '../predicates/is_negative_number';
 import { is_negative } from '../predicates/is_negative';
+import { is_negative_number } from '../predicates/is_negative_number';
 import {
     ADD,
     ARCCOS,
@@ -92,7 +92,8 @@ export function Eval_print(expr: Cons, $: ExtensionEnv): void {
         const argList = expr.cdr;
         if (is_cons(argList)) {
             const texts = print_in_mode(argList, defs.printMode, $);
-            defs.prints.push(...texts);
+            const printHandler = $.getPrintHandler();
+            printHandler.print(...texts);
         }
     }
     finally {
@@ -109,7 +110,8 @@ export function Eval_print2dascii(expr: Cons, $: ExtensionEnv): void {
         const argList = expr.cdr;
         if (is_cons(argList)) {
             const texts = print_in_mode(argList, PRINTMODE_ASCII, $);
-            defs.prints.push(...texts);
+            const printHandler = $.getPrintHandler();
+            printHandler.print(...texts);
         }
     }
     finally {
@@ -126,7 +128,8 @@ export function Eval_printcomputer(expr: Cons, $: ExtensionEnv): void {
         const argList = expr.cdr;
         if (is_cons(argList)) {
             const texts = print_in_mode(argList, PRINTMODE_INFIX, $);
-            defs.prints.push(...texts);
+            const printHandler = $.getPrintHandler();
+            printHandler.print(...texts);
         }
     }
     finally {
@@ -143,7 +146,8 @@ export function Eval_printlatex(expr: Cons, $: ExtensionEnv): void {
         const argList = expr.cdr;
         if (is_cons(argList)) {
             const texts = print_in_mode(argList, PRINTMODE_LATEX, $);
-            defs.prints.push(...texts);
+            const printHandler = $.getPrintHandler();
+            printHandler.print(...texts);
         }
     }
     finally {
@@ -166,7 +170,8 @@ export function Eval_printhuman(expr: Cons, $: ExtensionEnv): void {
             const argList = expr.cdr;
             if (is_cons(argList)) {
                 const texts = print_in_mode(argList, PRINTMODE_HUMAN, $);
-                defs.prints.push(...texts);
+                const printHandler = $.getPrintHandler();
+                printHandler.print(...texts);
             }
         }
         finally {
@@ -186,7 +191,8 @@ export function Eval_printlist(expr: Cons, $: ExtensionEnv): void {
         const argList = expr.cdr;
         if (is_cons(argList)) {
             const texts = print_in_mode(argList, PRINTMODE_SEXPR, $);
-            defs.prints.push(...texts);
+            const printHandler = $.getPrintHandler();
+            printHandler.print(...texts);
         }
     }
     finally {

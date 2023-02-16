@@ -1,3 +1,4 @@
+export { PrintHandler } from './src/env/ExtensionEnv';
 export { is_blade } from './src/operators/blade/is_blade';
 export { is_boo } from './src/operators/boo/is_boo';
 export { is_flt } from './src/operators/flt/is_flt';
@@ -11,6 +12,7 @@ export { is_tensor } from './src/operators/tensor/is_tensor';
 export { is_uom } from './src/operators/uom/is_uom';
 export { createScriptEngine, ScriptEngine, ScriptEngineOptions } from './src/runtime/symengine';
 export { parseScript, ParseScriptOptions } from './src/scanner/parse_script';
+export { Transformer } from './src/transform/Transformer';
 export { Atom } from './src/tree/atom/Atom';
 export { Boo, booF, booT } from './src/tree/boo/Boo';
 export { Flt, wrap_as_flt } from './src/tree/flt/Flt';
@@ -25,3 +27,4 @@ export { Cons, is_cons, is_nil, items_to_cons, nil, U } from './src/tree/tree';
 export { Uom } from './src/tree/uom/Uom';
 export { BasisBlade } from './src/tree/vec/BasisBlade';
 export { Blade } from './src/tree/vec/Blade';
+

@@ -13,11 +13,12 @@ import {
     TypeReferenceNode,
     VariableDeclaration,
     VariableDeclarationList,
-    visitNode, Visitor
+    visitNode,
+    Visitor
 } from 'typescript';
 import { IntTokenParser } from '../operators/int/IntTokenParser';
 import { ASSIGN } from '../runtime/constants';
-import { MATH_ADD, MATH_DIV, MATH_OUTER, MATH_HAS_TYPE, MATH_LCO, MATH_MUL, MATH_POW, MATH_RCO, MATH_INNER, MATH_SUB } from '../runtime/ns_math';
+import { MATH_ADD, MATH_DIV, MATH_HAS_TYPE, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from '../runtime/ns_math';
 // import { init } from '../../runtime/init';
 import { stack_pop, stack_push } from '../runtime/stack';
 import { Flt } from '../tree/flt/Flt';

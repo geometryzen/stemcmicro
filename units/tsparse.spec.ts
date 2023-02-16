@@ -6,7 +6,7 @@ import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value } from "./assert_one_value";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("parser", function () {
+describe("tsparse", function () {
     it("should be able to parse a user symbol", function () {
         const lines: string[] = [
             `x`

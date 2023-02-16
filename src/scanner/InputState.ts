@@ -60,10 +60,15 @@ export class InputState {
      * The token is a string when it contains single character operators.
      * Tokens or Operators with multiple characters are combined into a number captured in a T_* constant. e.g. T_
      */
-    private token: Token;
+    #token: Token;
     newLine: boolean;
     meta_mode = false;
 
+    /**
+     * Initialized to zero in the constructor.
+     * The only place it is incremented is in scan_error.
+     * A better name might be the input start.
+     */
     private input_str: number;
 
     /**
@@ -88,7 +93,7 @@ export class InputState {
      * @param end The zero-based starting position in the text. 
      */
     constructor(private readonly sourceText: string, end = 0) {
-        this.token = { txt: '', pos: 0, end: end };
+        this.#token = { txt: '', pos: 0, end: end };
         this.newLine = false;
 
         this.input_str = 0;
@@ -103,7 +108,7 @@ export class InputState {
         this.assignmentFound = null;
     }
     get code(): TokenCode {
-        const code = this.token.code;
+        const code = this.#token.code;
         if (code) {
             return code;
         }
@@ -112,43 +117,43 @@ export class InputState {
         }
     }
     peek(n: number): string {
-        return this.sourceText.slice(this.token.end, this.token.end + n);
+        return this.sourceText.slice(this.#token.end, this.#token.end + n);
     }
     /**
      * Returns a new InputState n characters to the right of the this input state.
      */
     read(n: number): InputState {
-        return new InputState(this.sourceText, this.token.end + n);
+        return new InputState(this.sourceText, this.#token.end + n);
     }
     get done(): boolean {
-        return this.token.end === this.sourceText.length;
+        return this.#token.end === this.sourceText.length;
     }
     get text(): string {
-        return this.token.txt;
+        return this.#token.txt;
     }
     get pos(): number {
-        return this.token.pos;
+        return this.#token.pos;
     }
     get end(): number {
-        return this.token.end;
+        return this.#token.end;
     }
     get scanned(): number {
         // console.lg(`pos: ${this.token.pos}`);
         // console.lg(`end: ${this.token.end}`);
         // console.lg(`inp: ${this.input_str}`);
-        return this.token.pos - this.input_str;
+        return this.#token.pos - this.input_str;
     }
     /**
      * The character at token.end
      */
     get curr(): string {
-        return this.sourceText[this.token.end];
+        return this.sourceText[this.#token.end];
     }
     /**
      * The character at token.end + 1
      */
     get next(): string {
-        return this.sourceText[this.token.end + 1];
+        return this.sourceText[this.#token.end + 1];
     }
     advance(): void {
         // console.lg(`ScanState.advance(from = ${JSON.stringify(this.token)})`);
@@ -157,7 +162,7 @@ export class InputState {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             this.get_token();
-            if (this.token.code === T_NewLine) {
+            if (this.#token.code === T_NewLine) {
                 this.newLine = true;
             }
             else {
@@ -178,29 +183,29 @@ export class InputState {
         }
     }
     tokenToFlt(): U {
-        return scanConfig.fltParser.parse(this.token.txt, this.token.pos, this.token.end);
+        return scanConfig.fltParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
     }
     tokenToInt(): U {
-        return scanConfig.intParser.parse(this.token.txt, this.token.pos, this.token.end);
+        return scanConfig.intParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
     }
     tokenToStr(): U {
-        return scanConfig.strParser.parse(this.token.txt, this.token.pos, this.token.end);
+        return scanConfig.strParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
     }
     tokenToSym(): Sym {
         // TODO: This stuff seems like it could go into a parser, but we would need the meta_mode.
         // Maybe we use two different symbol parsers?
-        const key = this.token.txt;
-        if (this.meta_mode && typeof this.token.txt == 'string') {
+        const key = this.#token.txt;
+        if (this.meta_mode && typeof this.#token.txt == 'string') {
             const metaKey = scanConfig.meta[key];
             if (metaKey) {
                 return metaKey;
             }
         }
         if (scanConfig.lexicon[key]) {
-            return scanConfig.lexicon[key].clone(this.token.pos, this.token.end);
+            return scanConfig.lexicon[key].clone(this.#token.pos, this.#token.end);
         }
         else {
-            return new Sym(key, void 0, this.token.pos, this.token.end);
+            return new Sym(key, void 0, this.#token.pos, this.#token.end);
         }
     }
     /**
@@ -224,19 +229,19 @@ export class InputState {
         // skip spaces
         while (is_space(this.curr)) {
             if (this.curr === '\n' || this.curr === '\r') {
-                this.token.code = T_NewLine;
-                this.token.end++;
+                this.#token.code = T_NewLine;
+                this.#token.end++;
                 return;
             }
-            this.token.end++;
+            this.#token.end++;
         }
 
-        this.token.pos = this.token.end;
+        this.#token.pos = this.#token.end;
 
         // end of string?
-        if (this.token.end === this.sourceText.length) {
-            this.token.txt = '';
-            this.token.code = T_END;
+        if (this.#token.end === this.sourceText.length) {
+            this.#token.txt = '';
+            this.#token.code = T_END;
             return;
         }
 
@@ -244,70 +249,70 @@ export class InputState {
         // console.lg(`curr = ${this.curr}`);
         if (is_digit(this.curr) || this.curr === '.') {
             while (is_digit(this.curr)) {
-                this.token.end++;
+                this.#token.end++;
             }
             if (this.curr === '.') {
-                this.token.end++;
+                this.#token.end++;
                 while (is_digit(this.curr)) {
-                    this.token.end++;
+                    this.#token.end++;
                 }
                 if (this.currEquals('e') && (this.next === '+' || this.next === '-' || is_digit(this.next))) {
-                    this.token.end += 2;
+                    this.#token.end += 2;
                     while (is_digit(this.curr)) {
-                        this.token.end++;
+                        this.#token.end++;
                     }
                 }
-                this.token.code = T_FLT;
+                this.#token.code = T_FLT;
             }
             else {
-                this.token.code = T_INT;
+                this.#token.code = T_INT;
             }
-            this.update_token_text(this.token.pos, this.token.end);
+            this.update_token_text(this.#token.pos, this.#token.end);
             return;
         }
 
         // symbol?
         if (is_alphabetic(this.curr)) {
-            this.token.code = T_SYM;
-            this.token.end++;
+            this.#token.code = T_SYM;
+            this.#token.end++;
             while (is_alphanumeric_or_underscore(this.curr)) {
-                this.token.code = T_SYM;
-                this.token.end++;
+                this.#token.code = T_SYM;
+                this.#token.end++;
             }
-            this.update_token_text(this.token.pos, this.token.end);
+            this.update_token_text(this.#token.pos, this.#token.end);
             return;
         }
 
         // string ?
         // TODO: Handle strings containing embedded double quotes
         if (this.curr === '"') {
-            this.token.end++;
+            this.#token.end++;
             while (this.curr !== '"') {
                 //if (scan_str == scanned.length || scanned[scan_str] == '\n' || scanned[scan_str] == '\r')
-                if (this.token.end === this.sourceText.length - 1) {
-                    this.token.end++;
+                if (this.#token.end === this.sourceText.length - 1) {
+                    this.#token.end++;
                     this.scan_error('runaway string');
                     // FIXME...
-                    this.token.end--;
+                    this.#token.end--;
                 }
-                this.token.end++;
+                this.#token.end++;
             }
-            this.token.end++;
-            this.token.code = T_STR;
+            this.#token.end++;
+            this.#token.code = T_STR;
             // Notice that the token.buf contains the entire un-parsed string.
-            this.update_token_text(this.token.pos, this.token.end);
+            this.update_token_text(this.#token.pos, this.#token.end);
             return;
         }
 
         // comment?
         if (this.curr === '#' || (this.curr === '-' && this.next === '-')) {
             while (this.curr && !this.currEquals('\n') && !this.currEquals('\r')) {
-                this.token.end++;
+                this.#token.end++;
             }
             if (this.curr) {
-                this.token.end++;
+                this.#token.end++;
             }
-            this.token.code = T_NewLine;
+            this.#token.code = T_NewLine;
             return;
         }
 
@@ -315,15 +320,15 @@ export class InputState {
             case '*': {
                 switch (this.next) {
                     case '*': {
-                        this.token.code = T_ASTRX_ASTRX;
-                        this.token.txt = '**';
-                        this.token.end += 2;
+                        this.#token.code = T_ASTRX_ASTRX;
+                        this.#token.txt = '**';
+                        this.#token.end += 2;
                         return;
                     }
                     default: {
-                        this.token.txt = '*';
-                        this.token.code = AsteriskToken;
-                        this.token.end += 1;
+                        this.#token.txt = '*';
+                        this.#token.code = AsteriskToken;
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -331,9 +336,9 @@ export class InputState {
             case ':': {
                 switch (this.next) {
                     case '=': {
-                        this.token.code = T_COLON_EQ;
-                        this.token.txt = ':=';
-                        this.token.end += 2;
+                        this.#token.code = T_COLON_EQ;
+                        this.#token.txt = ':=';
+                        this.#token.end += 2;
                         return;
                     }
                 }
@@ -342,15 +347,15 @@ export class InputState {
             case '=': {
                 switch (this.next) {
                     case '=': {
-                        this.token.code = T_EQ_EQ;
-                        this.token.txt = '==';
-                        this.token.end += 2;
+                        this.#token.code = T_EQ_EQ;
+                        this.#token.txt = '==';
+                        this.#token.end += 2;
                         return;
                     }
                     default: {
-                        this.token.code = T_EQ;
-                        this.token.txt = '=';
-                        this.token.end += 1;
+                        this.#token.code = T_EQ;
+                        this.#token.txt = '=';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -358,21 +363,21 @@ export class InputState {
             case '>': {
                 switch (this.next) {
                     case '=': {
-                        this.token.code = T_GTEQ;
-                        this.token.txt = '>=';
-                        this.token.end += 2;
+                        this.#token.code = T_GTEQ;
+                        this.#token.txt = '>=';
+                        this.#token.end += 2;
                         return;
                     }
                     case '>': {
-                        this.token.code = T_GTGT;
-                        this.token.txt = '>>';
-                        this.token.end += 2;
+                        this.#token.code = T_GTGT;
+                        this.#token.txt = '>>';
+                        this.#token.end += 2;
                         return;
                     }
                     default: {
-                        this.token.code = T_GT;
-                        this.token.txt = '>';
-                        this.token.end += 1;
+                        this.#token.code = T_GT;
+                        this.#token.txt = '>';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -380,21 +385,21 @@ export class InputState {
             case '<': {
                 switch (this.next) {
                     case '=': {
-                        this.token.code = T_LTEQ;
-                        this.token.txt = '<=';
-                        this.token.end += 2;
+                        this.#token.code = T_LTEQ;
+                        this.#token.txt = '<=';
+                        this.#token.end += 2;
                         return;
                     }
                     case '<': {
-                        this.token.code = T_LTLT;
-                        this.token.txt = '<<';
-                        this.token.end += 2;
+                        this.#token.code = T_LTLT;
+                        this.#token.txt = '<<';
+                        this.#token.end += 2;
                         return;
                     }
                     default: {
-                        this.token.code = T_LT;
-                        this.token.txt = '<';
-                        this.token.end += 1;
+                        this.#token.code = T_LT;
+                        this.#token.txt = '<';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -402,9 +407,9 @@ export class InputState {
             case '!': {
                 switch (this.next) {
                     case '=': {
-                        this.token.code = T_NTEQ;
-                        this.token.txt = '!=';
-                        this.token.end += 2;
+                        this.#token.code = T_NTEQ;
+                        this.#token.txt = '!=';
+                        this.#token.end += 2;
                         return;
                     }
                 }
@@ -413,9 +418,9 @@ export class InputState {
             case '(': {
                 switch (this.next) {
                     default: {
-                        this.token.code = T_LPAR;
-                        this.token.txt = '(';
-                        this.token.end += 1;
+                        this.#token.code = T_LPAR;
+                        this.#token.txt = '(';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -423,9 +428,9 @@ export class InputState {
             case ')': {
                 switch (this.next) {
                     default: {
-                        this.token.code = T_RPAR;
-                        this.token.txt = ')';
-                        this.token.end += 1;
+                        this.#token.code = T_RPAR;
+                        this.#token.txt = ')';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -433,9 +438,9 @@ export class InputState {
             case ',': {
                 switch (this.next) {
                     default: {
-                        this.token.code = T_COMMA;
-                        this.token.txt = ',';
-                        this.token.end += 1;
+                        this.#token.code = T_COMMA;
+                        this.#token.txt = ',';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -443,9 +448,9 @@ export class InputState {
             case '[': {
                 switch (this.next) {
                     default: {
-                        this.token.code = T_LSQB;
-                        this.token.txt = '[';
-                        this.token.end += 1;
+                        this.#token.code = T_LSQB;
+                        this.#token.txt = '[';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -453,9 +458,9 @@ export class InputState {
             case ']': {
                 switch (this.next) {
                     default: {
-                        this.token.code = T_RSQB;
-                        this.token.txt = ']';
-                        this.token.end += 1;
+                        this.#token.code = T_RSQB;
+                        this.#token.txt = ']';
+                        this.#token.end += 1;
                         return;
                     }
                 }
@@ -463,50 +468,50 @@ export class InputState {
         }
 
         if (this.curr === '+') {
-            this.token.txt = this.curr;
-            this.token.code = T_PLUS;
-            this.token.end += 1;
+            this.#token.txt = this.curr;
+            this.#token.code = T_PLUS;
+            this.#token.end += 1;
             return;
         }
 
         if (this.curr === '-') {
-            this.token.txt = this.curr;
-            this.token.code = T_MINUS;
-            this.token.end += 1;
+            this.#token.txt = this.curr;
+            this.#token.code = T_MINUS;
+            this.#token.end += 1;
             return;
         }
 
         if (this.curr === '^') {
-            this.token.txt = this.curr;
-            this.token.code = CaretToken;
-            this.token.end += 1;
+            this.#token.txt = this.curr;
+            this.#token.code = CaretToken;
+            this.#token.end += 1;
             return;
         }
 
         if (this.curr === '|') {
-            this.token.txt = this.curr;
-            this.token.code = T_VBAR;
-            this.token.end += 1;
+            this.#token.txt = this.curr;
+            this.#token.code = T_VBAR;
+            this.#token.end += 1;
             return;
         }
 
         if (this.curr === '/') {
-            this.token.txt = this.curr;
-            this.token.code = T_FWDSLASH;
-            this.token.end += 1;
+            this.#token.txt = this.curr;
+            this.#token.code = T_FWDSLASH;
+            this.#token.end += 1;
             return;
         }
 
         if (this.curr === '·') {
-            this.token.txt = this.curr;
-            this.token.code = T_MIDDLE_DOT;
-            this.token.end += 1;
+            this.#token.txt = this.curr;
+            this.#token.code = T_MIDDLE_DOT;
+            this.#token.end += 1;
             return;
         }
 
         // single char token. What did we miss?
-        this.token.txt = this.sourceText[this.token.end++];
-        throw new Error(`text = ${this.token.txt}`);
+        this.#token.txt = this.sourceText[this.#token.end++];
+        throw new Error(`text = ${this.#token.txt}`);
     }
 
     /**
@@ -516,7 +521,7 @@ export class InputState {
      * @param end The start position of the token.
      */
     private update_token_text(pos: number, end: number): void {
-        this.token.txt = this.sourceText.substring(pos, end);
+        this.#token.txt = this.sourceText.substring(pos, end);
         // console.lg(`update_token_buf(pos => ${pos}, end => ${end}), token.buf => ${JSON.stringify(token.buf)}`);
     }
     public scan_error(errmsg: string): never {
@@ -524,11 +529,8 @@ export class InputState {
         defs.errorMessage = '';
 
         // try not to put question mark on orphan line
-        while (this.input_str !== this.token.end) {
-            if (
-                (this.sourceText[this.input_str] === '\n' || this.sourceText[this.input_str] === '\r') &&
-                this.input_str + 1 === this.token.end
-            ) {
+        while (this.input_str !== this.#token.end) {
+            if ((this.sourceText[this.input_str] === '\n' || this.sourceText[this.input_str] === '\r') && (this.input_str + 1 === this.#token.end)) {
                 break;
             }
             defs.errorMessage += this.sourceText[this.input_str++];
@@ -542,10 +544,10 @@ export class InputState {
 
         defs.errorMessage += '\n';
 
-        throw new TokenError(errmsg, this.token.pos, this.token.end);
+        throw new TokenError(errmsg, this.#token.pos, this.#token.end);
     }
     tokenCharCode(): number | undefined {
-        const mtoken = this.munge(this.token);
+        const mtoken = this.munge(this.#token);
         if (typeof mtoken == 'string') {
             return mtoken.charCodeAt(0);
         }

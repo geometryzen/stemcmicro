@@ -1,15 +1,21 @@
 import { condense } from '../../condense';
 import { ExtensionEnv, PHASE_FACTORING } from '../../env/ExtensionEnv';
-import { gcd } from '../gcd/gcd';
 import { is_negative_number } from '../../predicates/is_negative_number';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { one, zero } from '../../tree/rat/Rat';
-import { is_cons, U } from '../../tree/tree';
+import { Cons, is_cons, U } from '../../tree/tree';
+import { gcd } from '../gcd/gcd';
 import { is_tensor } from '../tensor/is_tensor';
 
-export function Eval_rationalize(expr: U, $: ExtensionEnv): U {
-    return rationalize_factoring($.valueOf(cadr(expr)), $);
+export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
+    // const infix = render_as_infix(expr, $);
+    // console.lg("infix", infix);
+    const arg = cadr(expr);
+    // console.lg("arg", render_as_infix(arg, $));
+    const value = $.valueOf(arg);
+    // console.lg("value", render_as_infix(value, $));
+    return rationalize_factoring(value, $);
 }
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
@@ -24,7 +30,7 @@ export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
 }
 
 function yyrationalize(arg: U, $: ExtensionEnv): U {
-    // console.lg(`yyrationalize ${print_expr(arg, $)}`);
+    // console.lg(`yyrationalize ${render_as_infix(arg, $)}`);
     if (is_tensor(arg)) {
         return __rationalize_tensor(arg, $);
     }
@@ -38,7 +44,7 @@ function yyrationalize(arg: U, $: ExtensionEnv): U {
     // get common denominator
     const commonDenominator = multiply_denominators(arg, $);
 
-    // console.lg(`commonDenominator ${print_expr(commonDenominator, $)}`);
+    // console.lg(`commonDenominator ${render_as_infix(commonDenominator, $)}`);
 
     // multiply each term by common denominator
     let temp: U = zero;

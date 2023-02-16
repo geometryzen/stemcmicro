@@ -89,8 +89,6 @@ export class Defs {
      */
     public stack: (U | undefined | null)[] = [];
 
-    public frame = TOS;
-
     public p0?: U;
     public p1?: U;
     public p2?: U;
@@ -177,7 +175,6 @@ export function move_top_of_stack(stackPos: number) {
 export function hard_reset() {
     // console.lg('hard_reset()');
     move_top_of_stack(0);
-    defs.frame = TOS;
 }
 
 export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {

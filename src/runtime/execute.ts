@@ -11,7 +11,7 @@ import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
-import { defs, move_top_of_stack, TOS } from './defs';
+import { defs, move_top_of_stack } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
@@ -102,7 +102,6 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
 export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
     move_top_of_stack(0);
-    defs.frame = TOS;
 
     const stack: U[] = [];
 

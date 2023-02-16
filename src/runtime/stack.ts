@@ -31,9 +31,6 @@ export function stack_push(expr: U): void {
     if (typeof expr === 'undefined') {
         throw new Error('expr must be defined.');
     }
-    if (defs.tos >= defs.frame) {
-        throw new SystemError('stack overflow');
-    }
     defs.stack[defs.tos++] = expr;
 }
 

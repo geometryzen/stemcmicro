@@ -140,8 +140,9 @@ describe("transform", function () {
         const lines: string[] = [
             `rationalize(1/a+1/b+1/c)`
         ];
+        const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(sourceText, new ImplicateTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         // FIXME: Implication does not look complete...

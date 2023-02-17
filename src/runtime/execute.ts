@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
+import { ExtensionEnv, PHASE_EXPANDING, PHASE_FACTORING, PHASE_IMPLICATE, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
@@ -7,6 +7,9 @@ import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
 import { parseScript } from '../scanner/parse_script';
 import { ScanOptions } from '../scanner/scan';
+import { ExplicateTransformer } from "../transform/ExplicateTransformer";
+import { ImplicateTransformer } from "../transform/ImplicateTransformer";
+import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
 import { Box } from "./Box";
@@ -50,6 +53,23 @@ export function execute_script(sourceText: string, $: ExtensionEnv): { values: U
         for (const e of data.errors) {
             errors.push(e);
         }
+    }
+    return { values, prints, errors };
+}
+
+export function transform_script(sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
+    const { trees, errors } = parseScript(sourceText, scan_options($));
+    if (errors.length > 0) {
+        return { values: [], prints: [], errors };
+    }
+    const values: U[] = [];
+    const prints: string[] = [];
+    // console.log(`trees.length = ${trees.length}`);
+    for (const tree of trees) {
+        // console.log(`tree = ${render_as_sexpr(tree, $)}`);
+        values.push(transformer.transform(tree, $));
+        // prints must be collected by setting a PrintHandler.
+        // errors must be collected from exceptions?
     }
     return { values, prints, errors };
 }
@@ -101,7 +121,7 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
 }
 
 /**
- *
+ * This should not be needed when we can define our own transformer pipelines.
  */
 export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
@@ -120,10 +140,8 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     // $.setAssocL(MATH_MUL, true);
 
     if (isNotDisabled(EXPLICATE, $)) {
-        // // console.lg("Explicating...");
-        let expr = box.pop();
-        expr = explicate(expr, $);
-        // // console.lg(`explicated : ${print_expr(expr, $)}`);
+        const transformer = new ExplicateTransformer();
+        const expr = transformer.transform(box.pop(), $);
         box.push(expr);
     }
 
@@ -167,10 +185,8 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
         if ($.canImplicate()) {
             if (isNotDisabled(IMPLICATE, $)) {
-                // console.lg("Implicating...");
-                let expr = box.pop();
-                expr = implicate(expr, $);
-                // console.lg(`implicated : ${print_expr(expr, $)}`);
+                const transformer = new ImplicateTransformer();
+                const expr = transformer.transform(box.pop(), $);
                 box.push(expr);
             }
         }
@@ -247,17 +263,6 @@ function post_processing_complex_numbers(input: U, output: U, box: Box<U>, $: Ex
             box.push(B);
             return;
         }
-    }
-}
-
-function explicate(input: U, $: ExtensionEnv): U {
-    const phase = $.getFocus();
-    $.setFocus(PHASE_EXPLICATE);
-    try {
-        return transform_with_reason(input, $, 'explicate');
-    }
-    finally {
-        $.setFocus(phase);
     }
 }
 

@@ -1,11 +1,12 @@
 import { free_vars } from "../calculators/compare/free_vars";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { transform, transform_tree } from "../runtime/execute";
+import { transform_script, transform_tree } from "../runtime/execute";
+import { TreeTransformer } from "../transform/Transformer";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
@@ -79,6 +80,7 @@ export interface ScriptEngine {
     setAssocR(opr: Sym, value: boolean): void;
     setSymbolToken(sym: Sym, token: string): void;
     transform(expr: U): U;
+    transformScript(sourceText: string, transformer: TreeTransformer): { values: U[], prints: string[], errors: Error[] };
     valueOf(expr: U): U;
     addRef(): void;
     release(): void;
@@ -128,6 +130,7 @@ export function createScriptEngine(options?: ScriptEngineOptions): ScriptEngine 
             $.clearBindings();
         },
         evaluate(tree: U): { value: U, prints: string[], errors: Error[] } {
+            // This is like a fixed pipeline.
             return transform_tree(tree, $);
         },
         useStandardDefinitions(): void {
@@ -158,9 +161,18 @@ export function createScriptEngine(options?: ScriptEngineOptions): ScriptEngine 
             $.setSymbolToken(sym, token);
         },
         transform(expr: U): U {
-            return transform(expr, $);
+            // This suggests that we should have a transformer here.
+            expr.reset(TFLAG_DIFF);
+            expr.reset(TFLAG_HALT);
+            // TODO
+            const [, outExpr] = $.transform(expr);
+            return outExpr;
+        },
+        transformScript(sourceText: string, transformer: TreeTransformer): { values: U[], prints: string[], errors: Error[] } {
+            return transform_script(sourceText, transformer, $);
         },
         valueOf(expr: U): U {
+            // What is the proposition for this API?
             return $.transform(expr)[1];
         },
         addRef(): void {

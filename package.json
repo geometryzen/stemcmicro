@@ -128,6 +128,7 @@
         "unit-taylor": "mocha 'units/taylor.spec.ts'",
         "unit-tensor": "mocha 'units/tensor.spec.ts'",
         "unit-test": "mocha 'units/test.spec.ts'",
+        "unit-transform": "mocha 'units/transform.spec.ts'",
         "unit-transpose": "mocha 'units/transpose.spec.ts'",
         "unit-tree": "mocha 'units/tree.spec.ts'",
         "unit-trie": "mocha 'units/Trie.spec.ts'",

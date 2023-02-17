@@ -21,6 +21,7 @@ describe("guide", function () {
         assert.strictEqual(engine.renderAsSExpr(treeOne), "(= z (+ x (* i y)))");
         assert.strictEqual(engine.renderAsInfix(treeOne), "z=x+i*y");
 
+        // Perhaps valueOf here?
         const valueOne = engine.transform(treeOne);
 
         assert.strictEqual(engine.renderAsSExpr(valueOne), "()");

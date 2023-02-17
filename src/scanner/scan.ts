@@ -1,4 +1,6 @@
+import { is_rat } from '../operators/rat/RatExtension';
 import { assert_sym } from '../operators/sym/assert_sym';
+import { is_tensor } from '../operators/tensor/is_tensor';
 import {
     ASSIGN, FACTORIAL, PATTERN,
     predefinedSymbolsInGlobalScope_doNotTrackInDependencies,
@@ -10,7 +12,6 @@ import { defs } from '../runtime/defs';
 import { MATH_ADD, MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Boo } from '../tree/boo/Boo';
 import { Sym } from '../tree/sym/Sym';
-import { is_tensor } from '../operators/tensor/is_tensor';
 import { Tensor } from '../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
@@ -276,6 +277,7 @@ function scan_additive_expr(state: InputState): U {
 /**
  * '*' | '/' | '(' | 'Sym' | 'Function' | 'Int' | 'Flt' | 'Str'
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
     switch (code) {
         case AsteriskToken:
@@ -283,11 +285,12 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
             return true;
         }
         // TOOD: Not sure if this belongs here anymore.
-        case T_LPAR:
-        case T_SYM:
-        case T_FUNCTION:
-        case T_INT:
-        case T_FLT:
+        // case T_LPAR:
+        // case T_SYM:
+        // case T_FUNCTION:
+        // case T_INT:
+        // case T_FLT:
+        /*
         case T_STR: {
             if (newLine) {
                 return false;
@@ -300,6 +303,7 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
                 return true;
             }
         }
+        */
     }
     return false;
 }
@@ -327,9 +331,16 @@ function scan_multiplicative_expr(state: InputState): U {
             case T_FWDSLASH: {
                 // TODO: For now we leave this canonicalization in the scanner.
                 // But I think it belongs in the transformations.
-                const opr = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, inverse(scan_outer_expr(state)));
+                // console.lg("result", JSON.stringify(result));
+                if (is_rat(result) && result.isOne()) {
+                    state.advance();
+                    result = inverse(scan_outer_expr(state));
+                }
+                else {
+                    const mulOp = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
+                    state.advance();
+                    result = items_to_cons(mulOp, result, inverse(scan_outer_expr(state)));
+                }
                 break;
             }
             default: {

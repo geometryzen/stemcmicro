@@ -120,6 +120,9 @@ function is_term_pair_changed(s: U, lhs: U, rhs: U): boolean {
         if (s.item(1).equals(lhs) && s.item(2).equals(rhs)) {
             return false;
         }
+        else if (s.item(1).equals(rhs) && s.item(2).equals(lhs)) {
+            return false;
+        }
         else {
             return true;
         }

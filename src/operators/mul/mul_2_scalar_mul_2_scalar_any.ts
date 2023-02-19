@@ -1,9 +1,8 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -43,15 +42,21 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
     }
     transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>, expr: BCons<Sym, U, BCons<Sym, U, U>>): [TFLAGS, U] {
         const $ = this.$;
+        const hook = (where: string, retval: U): U => {
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            return retval;
+        };
         if ($.isAssocL(MATH_MUL)) {
             const s1 = lhs;
             const s2 = rhs.lhs;
-            const s1s2 = $.valueOf(makeList(MATH_MUL, s1, s2));
+            const s1s2 = $.valueOf(items_to_cons(MATH_MUL, s1, s2));
             const X = rhs.rhs;
-            const S = $.valueOf(makeList(MATH_MUL, s1s2, X));
-            return [TFLAG_DIFF, S];
+            const s1s2X = items_to_cons(MATH_MUL, s1s2, X);
+            // console.lg(this.name, "s1s2X", decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(s1s2X, $));
+            const S = $.valueOf(s1s2X);
+            return [TFLAG_DIFF, hook('A', S)];
         }
-        return [TFLAG_NONE, expr];
+        return [TFLAG_NONE, hook('B', expr)];
     }
 }
 

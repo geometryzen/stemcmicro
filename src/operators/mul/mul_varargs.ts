@@ -32,7 +32,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
         // The problem we have here is that we are driving an implicit association to an explicit one.
@@ -101,6 +101,9 @@ function multiply_factor_pairs(retval: U[], $: ExtensionEnv): void {
 function is_factor_pair_changed(s: U, lhs: U, rhs: U): boolean {
     if (is_cons(s) && is_mul_2_any_any(s)) {
         if (s.item(1).equals(lhs) && s.item(2).equals(rhs)) {
+            return false;
+        }
+        else if (s.item(1).equals(rhs) && s.item(2).equals(lhs)) {
             return false;
         }
         else {

@@ -34,7 +34,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, MODE_EXPANDING, MODE_EXPLICATE, MODE_FACTORING, MODE_FLAGS_ALL, MODE_IMPLICATE, MODE_SEQUENCE, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_EXPLICATE, MODE_FACTORING, MODE_FLAGS_ALL, MODE_IMPLICATE, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -309,7 +309,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // console.lg(`Ignoring ${op.name} which depends on ${JSON.stringify(op.dependencies)}`);
                     continue;
                 }
-                // If an operator does not restrict the phases to which it applies then it applies to all phases.
+                // If an operator does not restrict the modes to which it applies then it applies to all modes.
                 const phaseFlags = typeof op.phases === 'number' ? op.phases : MODE_FLAGS_ALL;
                 for (const phase of MODE_SEQUENCE) {
                     if (phaseFlags & phase) {

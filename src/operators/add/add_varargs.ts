@@ -1,6 +1,7 @@
 import { compare_terms } from '../../calculators/compare/compare_terms';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
+import { render_as_infix } from '../../print/print';
 import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -58,7 +59,8 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         }
         else if ($.isExpanding()) {
             // console.lg("EXPANDING", render_as_infix(expr, $));
-            const terms = foo_terms(expr, $);
+            const terms = make_term_association_implicit(expr, $);
+            // TODO: Handling of zero and one term.
             const sorted = items_to_cons(expr.head, ...terms.sort(make_term_comparator($)));
             if (sorted.equals(expr)) {
                 return [TFLAG_NONE, hook('D', expr)];
@@ -75,7 +77,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-function foo_terms(expr: Cons, $: ExtensionEnv): U[] {
+function make_term_association_implicit(expr: Cons, $: ExtensionEnv): U[] {
     const terms = expr.tail();
     if ($.isAssociationImplicit()) {
         if (terms.some((term => is_cons(term) && is_add(term)))) {

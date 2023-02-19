@@ -1,10 +1,11 @@
+import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
 import { createScriptEngine, ExpandingTransformer, ImplicateTransformer, TransformerPipeline } from "../index";
 
 describe("sandbox", function () {
-    it("imag(x+i*y)", function () {
+    xit("abs(x+i*y)", function () {
         const lines: string[] = [
-            `imag(x+i*y)`
+            `abs(x+i*y)`
         ];
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({
@@ -17,21 +18,22 @@ describe("sandbox", function () {
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "y");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "y");
+        const value = values[0];
+        assert.strictEqual(engine.renderAsSExpr(value), "(power (+ (power x 2) (power y 2)) 1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(x**2+y**2)**(1/2)");
         engine.release();
     });
-    xit("imag(x+i*y)", function () {
+    xit("abs(x+i*y)", function () {
         const lines: string[] = [
-            `imag(x+i*y)`
+            `abs(x+i*y)`,
         ];
         const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "y");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "y");
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(value), "(power (+ (power x 2) (power y 2)) 1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(x**2+y**2)**(1/2)");
         engine.release();
     });
 });

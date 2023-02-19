@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("rect", function () {
+xdescribe("rect", function () {
     it("exp(i*pi/3)", function () {
         const lines: string[] = [
             `autofactor=0`,

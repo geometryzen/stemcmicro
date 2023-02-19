@@ -56,6 +56,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
+        // console.lg(this.name, render_as_infix(expr, $));
+        const hook = (where: string, retval: U): U => {
+            // console.log(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            return retval;
+        };
+
         const sign = compare_terms(lhs, rhs, $);
         // console.lg(`add_2_any_any sign=${sign}`);
         switch (sign) {
@@ -71,7 +77,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
                     return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_MUL, two, lhs))];
                 }
                 else {
-                    return [TFLAG_NONE, expr];
+                    return [TFLAG_NONE, hook('C', expr)];
                 }
             }
             default: {

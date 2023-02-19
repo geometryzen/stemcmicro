@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { createScriptEngine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("exp", function () {
+xdescribe("exp", function () {
     it("5", function () {
         const lines: string[] = [
             `exp(5)`

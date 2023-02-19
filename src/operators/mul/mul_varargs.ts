@@ -17,6 +17,10 @@ const make_factor_comparator = function ($: ExtensionEnv) {
     };
 };
 
+function args_contain_association_explicit(factors: U[]): boolean {
+    return factors.some((factor => is_cons(factor) && is_mul(factor)));
+}
+
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
         return new Op($);
@@ -41,30 +45,36 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             const args = expr.tail();
             if (args.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
-                return [TFLAG_DIFF, one];
+                return [TFLAG_DIFF, hook('A',one)];
             }
             if (args.length === 1) {
                 // We simplify the unary case. (* a) => a
-                return [TFLAG_DIFF, args[0]];
+                return [TFLAG_DIFF, hook('B', args[0])];
             }
             if (args.length === 2) {
-                // We don't do the binary case, leave that to specific matchers.
-                return [TFLAG_NONE, expr];
+                if ($.isAssociationImplicit() && args_contain_association_explicit(args)) {
+                    const retval = items_to_cons(expr.head, ...make_factor_association_implicit(args));
+                    return [TFLAG_DIFF, hook('C', retval)];
+                }
+                else {
+                    // We don't do the binary case, leave that to specific matchers.
+                    return [TFLAG_NONE, hook('D',expr)];
+                }
             }
             if (args.some(is_add)) {
                 // Distributive Law.
                 const product = multiply_factors(expr, $);
                 if (product.equals(expr)) {
-                    return [TFLAG_NONE, hook('A', expr)];
+                    return [TFLAG_NONE, hook('E', expr)];
                 }
                 else {
-                    return [TFLAG_DIFF, hook('B', product)];
+                    return [TFLAG_DIFF, hook('F', product)];
                 }
             }
             else {
                 if ($.isAssociationImplicit()) {
                     const factors = expr.tail();
-                    if (factors.some((factor => is_cons(factor) && is_mul(factor)))) {
+                    if (args_contain_association_explicit(factors)) {
                         const args: U[] = [];
                         for (const factor of factors) {
                             if (is_cons(factor) && is_mul(factor)) {
@@ -77,7 +87,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                         args.sort(make_factor_comparator($));
                         multiply_factor_pairs(args, $);
                         const retval = items_to_cons(expr.head, ...args);
-                        return [TFLAG_DIFF, hook('C', retval)];
+                        return [TFLAG_DIFF, hook('G', retval)];
                     }
                     else {
                         // No possibility of flattening but sorting is possible.
@@ -89,22 +99,36 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                         multiply_factor_pairs(args, $);
                         const retval = items_to_cons(expr.head, ...args);
                         const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
-                        return [flag, hook('D', retval)];
+                        return [flag, hook('H', retval)];
                     }
                 }
                 else {
-                    return [TFLAG_NONE, hook('E', expr)];
+                    return [TFLAG_NONE, hook('I', expr)];
                 }
             }
         }
         else if ($.isImplicating()) {
-            return [TFLAG_NONE, hook('F', expr)];
+            return [TFLAG_NONE, hook('J', expr)];
         }
         else {
-            return [TFLAG_NONE, hook('G', expr)];
+            return [TFLAG_NONE, hook('K', expr)];
         }
     }
 }
+
+function make_factor_association_implicit(factors: U[]): U[] {
+    const args: U[] = [];
+    for (const factor of factors) {
+        if (is_cons(factor) && is_mul(factor)) {
+            args.push(...factor.tail());
+        }
+        else {
+            args.push(factor);
+        }
+    }
+    return args;
+}
+
 function multiply_factor_pairs(args: U[], $: ExtensionEnv): void {
     if (args.length > 2) {
         let i = 0;

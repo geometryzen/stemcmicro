@@ -104,6 +104,7 @@
         "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-print": "mocha 'units/print.spec.ts'",
         "unit-product": "mocha 'units/product.spec.ts'",
+        "unit-QQ": "mocha 'units/QQ.spec.ts'",
         "unit-rank": "mocha 'units/rank.spec.ts'",
         "unit-real": "mocha 'units/real.spec.ts'",
         "unit-rect": "mocha 'units/rect.spec.ts'",

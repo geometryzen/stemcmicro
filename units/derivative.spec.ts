@@ -160,6 +160,7 @@ describe("derivative", function () {
         engine.release();
     });
 });
+
 describe("derivative", function () {
     it("a*d(b,x)+a*d(b,y)", function () {
         const lines: string[] = [

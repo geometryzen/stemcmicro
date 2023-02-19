@@ -2,23 +2,6 @@ import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("abs-sandbox", function () {
-    it("", function () {
-        const lines: string[] = [
-            `implicate=0`,
-            `autofactor=1`,
-            `abs(exp(x))`,
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Imu'],
-            useDefinitions: true
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "exp(x)");
-        engine.release();
-    });
-});
-
 describe("abs", function () {
     it("abs(x)", function () {
         const lines: string[] = [

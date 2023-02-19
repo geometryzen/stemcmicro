@@ -5,7 +5,7 @@ import { MULTIPLY } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { cadr, cddr } from "../../tree/helpers";
-import { zero } from "../../tree/rat/Rat";
+import { one, zero } from "../../tree/rat/Rat";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_mul } from "./is_mul";
@@ -31,13 +31,27 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
+        // console.lg(this.name, render_as_sexpr(expr, $));
         const hook = (where: string, retval: U): U => {
             // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
         // The problem we have here is that we are driving an implicit association to an explicit one.
         if ($.isExpanding()) {
-            if (expr.tail().some(is_add)) {
+            const args = expr.tail();
+            if (args.length === 0) {
+                // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
+                return [TFLAG_DIFF, one];
+            }
+            if (args.length === 1) {
+                // We simplify the unary case. (* a) => a
+                return [TFLAG_DIFF, args[0]];
+            }
+            if (args.length === 2) {
+                // We don't do the binary case, leave that to specific matchers.
+                return [TFLAG_NONE, expr];
+            }
+            if (args.some(is_add)) {
                 // Distributive Law.
                 const product = multiply_factors(expr, $);
                 if (product.equals(expr)) {
@@ -63,10 +77,19 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                         args.sort(make_factor_comparator($));
                         multiply_factor_pairs(args, $);
                         const retval = items_to_cons(expr.head, ...args);
-                        return [TFLAG_NONE, hook('C', retval)];
+                        return [TFLAG_DIFF, hook('C', retval)];
                     }
                     else {
-                        return [TFLAG_NONE, hook('D', expr)];
+                        // No possibility of flattening but sorting is possible.
+                        const args = expr.tail();
+                        args.sort(make_factor_comparator($));
+                        if (items_to_cons(expr.head, ...args).equals(expr)) {
+                            // 
+                        }
+                        multiply_factor_pairs(args, $);
+                        const retval = items_to_cons(expr.head, ...args);
+                        const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
+                        return [flag, hook('D', retval)];
                     }
                 }
                 else {
@@ -82,18 +105,28 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         }
     }
 }
-function multiply_factor_pairs(retval: U[], $: ExtensionEnv): void {
-    let i = 0;
-    while (i < retval.length - 1) {
-        const lhs = retval[i];
-        const rhs = retval[i + 1];
-        const s = $.valueOf(multiply(lhs, rhs, $));
-        if (is_factor_pair_changed(s, lhs, rhs)) {
-            retval.splice(i, 2, s);
+function multiply_factor_pairs(args: U[], $: ExtensionEnv): void {
+    if (args.length > 2) {
+        let i = 0;
+        while (i < args.length - 1) {
+            const lhs = args[i];
+            const rhs = args[i + 1];
+            // console.lg("lhs", render_as_infix(lhs, $));
+            // console.lg("rhs", render_as_infix(rhs, $));
+            const p = multiply(lhs, rhs, $);
+            const s = $.valueOf(p);
+            if (is_factor_pair_changed(s, lhs, rhs)) {
+                args.splice(i, 2, s);
+            }
+            else {
+                i++;
+            }
         }
-        else {
-            i++;
-        }
+    }
+    else {
+        // It's not our job to perform binary multiplication.
+        // Doing so will cause infinite loops.
+        return;
     }
 }
 
@@ -129,7 +162,7 @@ function multiply_factors(expr: Cons, $: ExtensionEnv): U {
 function multiply(argL: U, argR: U, $: ExtensionEnv): U {
     // console.lg("argL", render_as_infix(argL, $));
     // console.lg("argR", render_as_infix(argR, $));
-    // console.lg(decodePhase($.getFocus()));
+    // console.lg(decodeMode($.getMode()));
     // Handle distributive law for *,+ (but only when expanding).
     if ($.isExpanding()) {
         if (is_add(argL)) {
@@ -143,8 +176,8 @@ function multiply(argL: U, argR: U, $: ExtensionEnv): U {
                 .reduce((a: U, b: U) => $.add(a, multiply(argL, b, $)), zero);
         }
     }
-    // console.lg("argL", render_as_infix(argL, $));
-    // console.lg("argR", render_as_infix(argR, $));
+    // console.lg("argL", render_as_sexpr(argL, $));
+    // console.lg("argR", render_as_sexpr(argR, $));
     return $.valueOf(items_to_cons(MATH_MUL, argL, argR));
 }
 

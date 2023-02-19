@@ -106,9 +106,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     const assocs: { [key: string]: Assoc } = {};
 
     /**
-     * TODO: Eventually, we want the default to be false so that parentheses are omitted where possible.
+     * The best default is the one that requires the fewest parentheses. i.e. explicit equals false, implicit equals true.
      */
-    let is_association_explicit = true;
+    let is_association_explicit = false;
 
     let current_mode: number = MODE_EXPANDING;
 

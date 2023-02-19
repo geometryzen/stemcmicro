@@ -396,24 +396,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.setAssocL(MATH_LCO, true);
     $.setAssocL(MATH_RCO, true);
     $.setAssocL(MATH_OUTER, true);
-    /*
-    if (options) {
-        if (Array.isArray(options.assocs)) {
-            for (const assoc of options.assocs) {
-                switch (assoc.dir) {
-                    case 'L': {
-                        $.setAssocL(assoc.sym, true);
-                        break;
-                    }
-                    case 'R': {
-                        $.setAssocR(assoc.sym, true);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    */
+
     $.defineOperator(mul_rhs_distrib_over_add_expand);
     $.defineOperator(mul_lhs_distrib_over_add_expand);
 

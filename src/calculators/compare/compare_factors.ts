@@ -1,4 +1,6 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { compare_blade_blade } from "../../operators/blade/BladeExtension";
+import { is_blade } from "../../operators/blade/is_blade";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
@@ -15,6 +17,9 @@ import { compare_sym_sym } from "./compare_sym_sym";
 import { group } from "./group";
 
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    if (lhs.equals(rhs)) {
+        return SIGN_EQ;
+    }
     // console.lg(`ENTERING compare_factors ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     // Numeric factors in lhs term have no effect on ordering.
     if (is_cons(lhs) && is_mul_2_any_any(lhs)) {
@@ -104,6 +109,9 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
     else if (is_num(lhs) && is_num(rhs)) {
         return compare_num_num(lhs, rhs);
+    }
+    else if (is_blade(lhs) && is_blade(rhs)) {
+        return compare_blade_blade(lhs, rhs);
     }
     else {
         throw new Error(`lhs = ${render_as_infix(lhs, $)}, rhs = ${render_as_infix(rhs, $)}`);

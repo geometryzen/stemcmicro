@@ -12,6 +12,7 @@ import { add_2_add_2_any_mul_2_rat_sym_mul_2_rat_sym } from '../operators/add/ad
 import { add_2_add_2_any_mul_2_rat_sym } from '../operators/add/add_2_add_2_any_sym_mul_2_rat_sym';
 import { add_2_add_2_sym_sym_sym } from '../operators/add/add_2_add_2_sym_sym_sym';
 import { add_2_add_2_sym_xxx_xxx } from '../operators/add/add_2_add_2_sym_xxx_xxx';
+import { add_2_add_any } from '../operators/add/add_2_add_any';
 import { add_2_any_add } from '../operators/add/add_2_any_add';
 import { add_2_any_add_2_any_any } from '../operators/add/add_2_any_add_2_any_any';
 import { add_2_any_any } from '../operators/add/add_2_any_any';
@@ -53,6 +54,7 @@ import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
 import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
 import { add_2_zzz_mul_2_rat_aaa } from '../operators/add/add_2_zzz_mul_2_rat_aaa';
+import { add_varargs } from '../operators/add/add_varargs';
 import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { and_varargs } from '../operators/and/and_varargs';
@@ -198,7 +200,6 @@ import { canonicalize_mul_2_sym_mul_2_sym_sym } from '../operators/mul/canonical
 import { implicate_mul_2_mul_2_any_any_any } from '../operators/mul/implicate_mul_2_mul_2_any_any_any';
 import { implicate_mul_2_mul_2_sym_sym_sym } from '../operators/mul/implicate_mul_2_mul_2_sym_sym_sym';
 import { implicate_mul_2_sym_mul_2_sym_sym } from '../operators/mul/implicate_mul_2_sym_mul_2_sym_sym';
-import { mul_varargs } from '../operators/mul/mul';
 import { mul_2_any_any } from '../operators/mul/mul_2_any_any';
 import { mul_2_any_mul } from '../operators/mul/mul_2_any_mul';
 import { mul_2_any_mul_2_any_any } from '../operators/mul/mul_2_any_mul_2_any_any';
@@ -267,6 +268,7 @@ import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
 import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
+import { mul_varargs } from '../operators/mul/mul_varargs';
 import { nilExtensionBuilder } from '../operators/nil/NilExtension';
 import { not_fn } from '../operators/not/not_fn';
 import { nroots_varargs } from '../operators/nroots/nroots_varargs';
@@ -462,6 +464,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_assoc_rhs_canonical_ordering);
     $.defineOperator(add_2_assoc_lhs_factorize_blades);
     $.defineOperator(add_2_add_2_any_any_any);
+    $.defineOperator(add_2_add_any);
 
     $.defineOperator(add_2_mul_2_rat_X_mul_2_rat_X);
     $.defineOperator(add_2_mul_2_rat_anX_anX);
@@ -494,6 +497,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_any_any_zero_sum);
     $.defineOperator(add_2_any_any_factorize_rhs);
     $.defineOperator(add_2_any_any);
+    $.defineOperator(add_varargs);
 
     $.defineAssociative(MATH_ADD, zero);
     $.defineAssociative(MATH_MUL, one);

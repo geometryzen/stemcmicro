@@ -181,9 +181,10 @@ export class Cons implements U {
         }
     }
     /**
-     * Provides an iterator over the Cons.
+     * Provides an iterator over the Cons, returning the items is the list.
      * The first element returned will be car(cons).
      * The subsequent elements are obtained from walking the cdr's.
+     * Using the ... operator inside [] returns all the items in the list.
      */
     public *[Symbol.iterator]() {
         // eslint-disable-next-line @typescript-eslint/no-this-alias

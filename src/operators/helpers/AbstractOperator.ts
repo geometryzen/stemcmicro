@@ -1,12 +1,11 @@
 import { cadnr } from "../../calculators/cadnr";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
-import { makeList } from "../../makeList";
 import { render_as_infix } from "../../print/print";
 import { render_as_latex } from "../../print/render_as_latex";
 import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { SystemError } from "../../runtime/SystemError";
+import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { subst } from "../subst/subst";
-import { is_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 
 /**
@@ -48,13 +47,13 @@ export abstract class AbstractOperator {
                     return expr;
                 }
                 else {
-                    return makeList(opr, subst_lhs, subst_rhs);
+                    return items_to_cons(opr, subst_lhs, subst_rhs);
                 }
             }
             else {
                 const lhs = cadnr(expr, 1);
                 const rhs = cadnr(expr, 2);
-                return makeList(subst_opr, subst(lhs, oldExpr, newExpr, $), subst(rhs, oldExpr, newExpr, $));
+                return items_to_cons(subst_opr, subst(lhs, oldExpr, newExpr, $), subst(rhs, oldExpr, newExpr, $));
             }
         }
         if (is_sym(expr)) {

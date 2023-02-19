@@ -64,9 +64,9 @@ export function transform_script(sourceText: string, transformer: TreeTransforme
     }
     const values: U[] = [];
     const prints: string[] = [];
-    // console.log(`trees.length = ${trees.length}`);
+    // console.lg(`trees.length = ${trees.length}`);
     for (const tree of trees) {
-        // console.log(`tree = ${render_as_sexpr(tree, $)}`);
+        // console.lg(`tree = ${render_as_sexpr(tree, $)}`);
         values.push(transformer.transform(tree, $));
         // prints must be collected by setting a PrintHandler.
         // errors must be collected from exceptions?

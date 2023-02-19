@@ -12,6 +12,7 @@ export { is_tensor } from './src/operators/tensor/is_tensor';
 export { is_uom } from './src/operators/uom/is_uom';
 export { createScriptEngine, ScriptEngine, ScriptEngineOptions } from './src/runtime/symengine';
 export { parseScript, ParseScriptOptions } from './src/scanner/parse_script';
+export { ExpandingTransformer } from './src/transform/ExpandingTransformer';
 export { ExplicateTransformer } from './src/transform/ExplicateTransformer';
 export { ImplicateTransformer } from './src/transform/ImplicateTransformer';
 export { NoopTransformer } from './src/transform/NoopTransformer';

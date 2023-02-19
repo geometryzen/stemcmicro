@@ -33,7 +33,8 @@ class Op extends Function2<Cons, Sym> implements Operator<Cons> {
             return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
         }
         else {
-            // console.lg(`TFLAG_NONE Cons * Sym ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+            // const focus = $.getFocus();
+            // console.lg(`TFLAG_NONE Cons * Sym ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} (focus=${JSON.stringify(decodePhase(focus))})`);
             return [TFLAG_NONE, expr];
         }
     }

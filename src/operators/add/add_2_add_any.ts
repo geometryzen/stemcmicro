@@ -1,5 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
+import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
@@ -14,30 +14,27 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-/**
- * (+ a (+ b1 b2 b3 ...)) => (+ a b1 b2 b3 ...) 
- */
-class Op extends Function2<U, Cons> implements Operator<Cons> {
-    readonly name = 'add_2_any_add';
+class Op extends Function2<Cons, U> implements Operator<Cons> {
     readonly hash: string;
     readonly phases = PHASE_IMPLICATE | PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
-        super('add_2_any_add', MATH_ADD, is_any, and(is_cons, is_add), $);
-        this.hash = hash_binop_atom_cons(MATH_ADD, HASH_ANY, MATH_ADD);
+        super('add_2_add_any', MATH_ADD, and(is_cons, is_add), is_any, $);
+        this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
     }
-    transform2(opr: Sym, lhs: U, rhs: Cons, expr: Cons): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Cons, rhs: U, expr: Cons): [TFLAGS, U] {
         const $ = this.$;
         if ($.isImplicating()) {
-            return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, lhs, ...rhs.tail()))];
-        }
-        else if ($.isAssociationImplicit()) {
-            return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, lhs, ...rhs.tail()))];
-
+            return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, ...lhs.tail(), rhs))];
         }
         else {
-            return [TFLAG_NONE, expr];
+            if ($.isAssociationImplicit()) {
+                return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, ...lhs.tail(), rhs))];
+            }
+            else {
+                return [TFLAG_NONE, expr];
+            }
         }
     }
 }
 
-export const add_2_any_add = new Builder();
+export const add_2_add_any = new Builder();

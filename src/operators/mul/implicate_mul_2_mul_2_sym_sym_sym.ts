@@ -1,9 +1,8 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
@@ -25,7 +24,7 @@ class Builder implements OperatorBuilder<Cons> {
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_IMPLICATE;
+    readonly phases = PHASE_IMPLICATE | PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('implicate_mul_2_mul_2_sym_sym_sym', MATH_MUL, and(is_cons, is_mul_2_sym_sym), is_sym, $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
@@ -34,13 +33,36 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // RHS is a symbol and so can only be a real or a vector over the reals.
         return this.$.isImag(expr.lhs);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const a = lhs.lhs;
-        const b = lhs.rhs;
-        const c = rhs;
-        const abc = $.valueOf(makeList(MATH_MUL, a, b, c));
-        return [TFLAG_DIFF, abc];
+        if (shouldImplicate($)) {
+            const a = lhs.lhs;
+            const b = lhs.rhs;
+            const c = rhs;
+            const abc = $.valueOf(items_to_cons(MATH_MUL, a, b, c));
+            return [TFLAG_DIFF, abc];
+        }
+        else {
+            return [TFLAG_NONE, expr];
+        }
+    }
+}
+
+function shouldImplicate($: ExtensionEnv): boolean {
+    if ($.isImplicating()) {
+        return true;
+    }
+    else if ($.isExpanding()) {
+        if ($.isAssociationImplicit()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        throw new Error();
     }
 }
 

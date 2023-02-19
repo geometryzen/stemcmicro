@@ -34,7 +34,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { diffFlag, ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -102,7 +102,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     for (const phase of PHASE_SEQUENCE) {
         ops_by_phase[phase] = {};
     }
+
     const assocs: { [key: string]: Assoc } = {};
+
+    /**
+     * TODO: Eventually, we want the default to be true so that parentheses are omitted where possible.
+     */
+    let is_association_explicit = true;
 
     let current_focus: number = PHASE_EXPANDING;
 
@@ -355,6 +361,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return binop(MATH_POW, expr, negOne, $);
             }
         },
+        isAssociationExplicit(): boolean {
+            return is_association_explicit;
+        },
+        isAssociationImplicit(): boolean {
+            return !this.isAssociationExplicit();
+        },
         isAssocL(opr: Sym): boolean {
             const entry = assocs[opr.key()];
             if (entry) {
@@ -426,7 +438,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return lhs.equals(rhs);
         },
         factorize(p: U, x: U): U {
-            // console.lg(`factorize p=${print_expr(p, $)} in variable ${print_expr(x, $)}`);
+            // console.lg(`factorize p=${render_as_infix(p, $)} in variable ${render_as_infix(x, $)}`);
             if (!p.contains(x)) {
                 return p;
             }
@@ -554,6 +566,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         remove(varName: Sym): void {
             symTab.remove(varName);
         },
+        setAssociationImplicit(): void {
+            is_association_explicit = false;
+        },
         setAssocL(opr: Sym, assocL: boolean): void {
             const assoc = assocs[opr.key()];
             if (assoc) {
@@ -633,12 +648,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
-                        // console.log(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                        // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                         // Determine whether there are operators in the bucket.
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
-                                if (diffFlag(flags)) {
+                                // console.lg(`TRY  ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                if (!newExpr.equals(curExpr)) {
                                     // By logging here we can see all the transformations that make changes.
                                     // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                     outFlags |= TFLAG_DIFF;
@@ -658,13 +674,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     break;
                                 }
                                 else if (haltFlag(flags)) {
-                                    // console.lg(`.... HALT: ${op.name} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    // console.lg(`.... HALT: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                     // TODO: We also need to break out of the loop on keys
                                     doneWithCurExpr = true;
                                     break;
                                 }
                                 else {
-                                    // // console.lg(`NOFLAGS..: op.name=${op.name} op.hash=${op.hash} oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                    // console.lg(`NOFLAGS..: op.name=${op.name} op.hash=${op.hash} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                 }
                             }
                         }
@@ -677,7 +693,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     if (!is_nil(binding)) {
                                         if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
                                             const newExpr = Eval_user_function(curExpr, $);
-                                            // // console.lg(`USER FUNC oldExpr: ${print_expr(curExpr, $)} newExpr: ${print_expr(newExpr, $)}`);
+                                            // // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                             return [TFLAG_DIFF, newExpr];
                                         }
                                     }

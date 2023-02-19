@@ -117,6 +117,14 @@ export interface ExtensionEnv {
     buildOperators(): void;
     inner(lhs: U, rhs: U): U;
     inverse(expr: U): U;
+    /**
+     * Determines how the system behaves when not in the EXPLICATE or IMPLICATE modes. e.g. EXPANDING.
+     */
+    isAssociationExplicit(): boolean;
+    /**
+     * Determines how the system behaves when not in the EXPLICATE or IMPLICATE modes. e.g. EXPANDING.
+     */
+    isAssociationImplicit(): boolean;
     isAssocL(opr: Sym): boolean;
     isAssocR(opr: Sym): boolean;
     isExplicating(): boolean;
@@ -150,6 +158,7 @@ export interface ExtensionEnv {
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
     resetSymTab(): void;
+    setAssociationImplicit(): void;
     setAssocL(opr: Sym, value: boolean): void;
     setAssocR(opr: Sym, value: boolean): void;
     setBinding(sym: Sym, binding: U): void;

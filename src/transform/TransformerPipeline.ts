@@ -4,14 +4,19 @@ import { U } from "../tree/tree";
 import { TreeTransformer } from "./Transformer";
 
 export class TransformerPipeline implements TreeTransformer {
-    readonly ts: TreeTransformer[] = [];
+    readonly #transformers: TreeTransformer[] = [];
     transform(tree: U, $: ExtensionEnv): U {
         const box = new Box(tree);
-        for (let i = 0; i < this.ts.length; i++) {
-            const t = this.ts[i];
+        for (let i = 0; i < this.#transformers.length; i++) {
+            const t = this.#transformers[i];
             box.push(t.transform(box.pop(), $));
         }
         return box.pop();
     }
-
+    addHead(transformer: TreeTransformer): void {
+        this.#transformers.unshift(transformer);
+    }
+    addTail(transformer: TreeTransformer): void {
+        this.#transformers.push(transformer);
+    }
 }

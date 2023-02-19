@@ -1,59 +1,90 @@
 import { assert } from "chai";
-import { createScriptEngine, ImplicateTransformer, NoopTransformer } from "../index";
-import { assert_one_value_execute } from "./assert_one_value_execute";
+import { createScriptEngine, ExpandingTransformer, ImplicateTransformer, TransformerPipeline } from "../index";
 
 describe("sandbox", function () {
-    it("foo(1/a), NoopTransformer", function () {
-        // BUG: Wrapping a reciprocal expression in a function causes an extra multiplication.
+    xit("16*x", function () {
         const lines: string[] = [
-            `foo(1/a)`
+            `16*x`
         ];
+        const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new NoopTransformer());
+        const pipeline = new TransformerPipeline();
+        pipeline.addTail(new ImplicateTransformer());
+        pipeline.addTail(new ExpandingTransformer());
+        const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        // We're using a NoopTransformer so it would appear to be the result of parsing.
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (power a -1))");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "foo(1/a)");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* 16 x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "16*x");
         engine.release();
     });
-    xit("foo(1/a), NoopTransformer", function () {
-        // BUG: Wrapping a reciprocal expression in a function causes an extra multiplication.
+    xit("hermite(x,4)", function () {
         const lines: string[] = [
-            `foo(1/a)`
+            `hermite(x,4)`
         ];
+        const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new NoopTransformer());
+        const pipeline = new TransformerPipeline();
+        pipeline.addTail(new ImplicateTransformer());
+        // pipeline.addTail(new ExpandingTransformer());
+        const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        // We're using a NoopTransformer so it would appear to be the result of parsing.
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (* 1 (power a -1)))"); // WRONG
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (power a -1))"); // RIGHT
-        assert.strictEqual(engine.renderAsInfix(values[0]), "foo(1/a)");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(hermite x 4)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "hermite(x,4)");
         engine.release();
     });
-    xit("foo(1/a)", function () {
-        // BUG: Wrapping a reciprocal expression in a function causes an extra multiplication.
+    it("hermite(x,4)", function () {
         const lines: string[] = [
-            `foo(1/a)`
+            `hermite(x,4)`
         ];
+        const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const pipeline = new TransformerPipeline();
+        pipeline.addTail(new ImplicateTransformer());
+        pipeline.addTail(new ExpandingTransformer());
+        engine.setAssociationImplicit();
+        const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (* 1 (power a -1)))"); // WRONG
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (power a -1))"); // RIGHT
-        assert.strictEqual(engine.renderAsInfix(values[0]), "foo(1/a)");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 16 x x x x) (* -48 x x) 12)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "16*x*x*x*x-48*x*x+12");
         engine.release();
     });
-    xit("rationalize(1/a+1/b+1/c)", function () {
+    xit("hermite(x,4)", function () {
         const lines: string[] = [
-            `rationalize(1/a+1/b+1/c)`
+            `hermite(x,4)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(actual), "");
-        assert.strictEqual(engine.renderAsInfix(actual), "(a*b+a*c+b*c)/(a*b*c)");
+        const engine = createScriptEngine({
+            disable: ['factorize']
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 16 x x x x) (* -48 x x) 12)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "16*x*x*x*x-48*x*x+12");
+        engine.release();
+    });
+    xit("", function () {
+        const lines: string[] = [
+            `(24*x)*x`
+        ];
+        const engine = createScriptEngine({
+            disable: ['factorize']
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* 24 x x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "24*x*x");
+        engine.release();
+    });
+    xit("", function () {
+        const lines: string[] = [
+            `(-24*x)*x`
+        ];
+        const engine = createScriptEngine({
+            disable: ['factorize']
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* -24 x x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-24*x*x");
         engine.release();
     });
 });

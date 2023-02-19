@@ -1,8 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 import { and } from "./and";
 import { BCons } from "./BCons";
@@ -45,9 +44,11 @@ class Implicator extends Function2<LHS, RHS> implements Operator<EXP> {
         super(name, opr, and(is_cons, is_opr(opr)), is_any, $);
         this.hash = hash_binop_cons_atom(opr, opr, HASH_ANY);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        return [TFLAG_DIFF, $.valueOf(makeList(this.opr, ...lhs.tail(), rhs))];
+        // console.lg(`${this.name} ${this.hash}`, render_as_infix(expr, this.$));
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(this.opr, ...lhs.tail(), rhs))];
     }
 }
 

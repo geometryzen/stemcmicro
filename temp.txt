@@ -1,0 +1,71 @@
+
+> symbolic-math@0.9.80 unit-sandbox
+> mocha 'units/sandbox.spec.ts'
+
+
+expr a*(b+c)
+item a
+item b+c
+true
+implicate * (* (*) U) (a*(b+c))*d
+expr a*(b+c)*d
+item a
+item b+c
+item d
+true
+expr a*(b+c)*d
+item a
+item b+c
+item d
+true
+expr a*(b+c)*d
+item a
+item b+c
+item d
+true
+argL a
+argR b+c
+expanding
+argL a
+argR b
+expanding
+argL a
+argR c
+expanding
+argL a*b+a*c
+argR d
+expanding
+argL a*b
+argR d
+expanding
+expr (a*b)*d
+item a*b
+item d
+false
+argL a*c
+argR d
+expanding
+expr (a*c)*d
+item a*c
+item d
+false
+
+  !
+
+  0 passing (54ms)
+  1 failing
+
+  1) sandbox
+       ???:
+
+      AssertionError: expected '(a*b)*d+(a*c)*d' to equal 'a*b*d+a*c*d'
+      + expected - actual
+
+      -(a*b)*d+(a*c)*d
+      +a*b*d+a*c*d
+      
+      at Context.<anonymous> (units/sandbox.spec.ts:18:16)
+      at processImmediate (node:internal/timers:476:21)
+
+
+

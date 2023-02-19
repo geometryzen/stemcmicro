@@ -34,7 +34,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_EXPLICATE, PHASE_FACTORING, PHASE_FLAGS_ALL, PHASE_IMPLICATE, PHASE_SEQUENCE, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { ExtensionEnv, FEATURE, haltFlag, MODE, Operator, OperatorBuilder, MODE_EXPANDING, MODE_EXPLICATE, MODE_FACTORING, MODE_FLAGS_ALL, MODE_IMPLICATE, MODE_SEQUENCE, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -98,19 +98,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     /**
      * The operators in buckets that are determined by the phase and operator.
      */
-    const ops_by_phase: { [key: string]: Operator<U>[] }[] = [];
-    for (const phase of PHASE_SEQUENCE) {
-        ops_by_phase[phase] = {};
+    const ops_by_mode: { [key: string]: Operator<U>[] }[] = [];
+    for (const mode of MODE_SEQUENCE) {
+        ops_by_mode[mode] = {};
     }
 
     const assocs: { [key: string]: Assoc } = {};
 
     /**
-     * TODO: Eventually, we want the default to be true so that parentheses are omitted where possible.
+     * TODO: Eventually, we want the default to be false so that parentheses are omitted where possible.
      */
     let is_association_explicit = true;
 
-    let current_focus: number = PHASE_EXPANDING;
+    let current_mode: number = MODE_EXPANDING;
 
     let fieldKind: 'R' | undefined = 'R';
 
@@ -126,14 +126,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     const sym_token: { [key: string]: string } = {};
 
     function currentOps(): { [key: string]: Operator<U>[] } {
-        switch (current_focus) {
-            case PHASE_EXPLICATE:
-            case PHASE_EXPANDING:
-            case PHASE_FACTORING:
-            case PHASE_IMPLICATE: {
-                const ops = ops_by_phase[current_focus];
+        switch (current_mode) {
+            case MODE_EXPLICATE:
+            case MODE_EXPANDING:
+            case MODE_FACTORING:
+            case MODE_IMPLICATE: {
+                const ops = ops_by_mode[current_mode];
                 if (typeof ops === 'undefined') {
-                    throw new Error(`currentOps(${current_focus})`);
+                    throw new Error(`currentOps(${current_mode})`);
                 }
                 return ops;
             }
@@ -164,7 +164,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for key ${key}`);
         }
         else {
-            throw new SystemError(`No operators for key ${key} in phase ${current_focus}`);
+            throw new SystemError(`No operators for key ${key} in mode ${current_mode}`);
         }
     }
 
@@ -235,8 +235,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         clearOperators(): void {
             builders.length = 0;
-            for (const phase of PHASE_SEQUENCE) {
-                const ops = ops_by_phase[phase];
+            for (const phase of MODE_SEQUENCE) {
+                const ops = ops_by_mode[phase];
                 for (const key in ops) {
                     ops[key] = [];
                 }
@@ -296,8 +296,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getBindings() {
             return symTab.getBindings();
         },
-        getFocus(): number {
-            return current_focus;
+        getMode(): number {
+            return current_mode;
         },
         buildOperators(): void {
             for (const builder of builders) {
@@ -310,10 +310,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     continue;
                 }
                 // If an operator does not restrict the phases to which it applies then it applies to all phases.
-                const phaseFlags = typeof op.phases === 'number' ? op.phases : PHASE_FLAGS_ALL;
-                for (const phase of PHASE_SEQUENCE) {
+                const phaseFlags = typeof op.phases === 'number' ? op.phases : MODE_FLAGS_ALL;
+                for (const phase of MODE_SEQUENCE) {
                     if (phaseFlags & phase) {
-                        const ops = ops_by_phase[phase];
+                        const ops = ops_by_mode[phase];
                         if (op.hash) {
                             if (!Array.isArray(ops[op.hash])) {
                                 ops[op.hash] = [op];
@@ -386,22 +386,22 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         isExplicating(): boolean {
-            return current_focus == PHASE_EXPLICATE;
+            return current_mode == MODE_EXPLICATE;
         },
         isExpanding(): boolean {
-            return current_focus == PHASE_EXPANDING;
+            return current_mode == MODE_EXPANDING;
         },
         isFactoring(): boolean {
-            return current_focus === PHASE_FACTORING;
+            return current_mode === MODE_FACTORING;
         },
         isImplicating(): boolean {
-            return current_focus == PHASE_IMPLICATE;
+            return current_mode == MODE_IMPLICATE;
         },
         get explicateMode(): boolean {
-            return current_focus === PHASE_EXPLICATE;
+            return current_mode === MODE_EXPLICATE;
         },
         get implicateMode(): boolean {
-            return current_focus === PHASE_IMPLICATE;
+            return current_mode === MODE_IMPLICATE;
         },
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
@@ -598,7 +598,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         setFocus(focus: number): void {
             // console.lg(`ExtensionEnv.setFocus(focus=${decodePhase(focus)})`);
-            current_focus = focus;
+            current_mode = focus;
         },
         setModeFlag(mode: MODE, value: boolean): void {
             mode_flag[mode] = value;

@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, PHASE_IMPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, MODE_IMPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -24,7 +24,7 @@ class Builder implements OperatorBuilder<Cons> {
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_IMPLICATE | PHASE_EXPANDING;
+    readonly phases = MODE_IMPLICATE | MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('implicate_mul_2_mul_2_sym_sym_sym', MATH_MUL, and(is_cons, is_mul_2_sym_sym), is_sym, $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);

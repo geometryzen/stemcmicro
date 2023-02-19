@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
+import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_cons } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { is_rat } from "../rat/is_rat";
@@ -32,7 +32,7 @@ const guardA: GUARD<U, ARG> = and(is_cons, is_opr_2_lhs_rhs(MATH_MUL, is_rat, is
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_EXPANDING;
+    readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('st_mul_2_rat_any', MATH_STANDARD_PART, guardA, $);
         this.hash = hash_unaop_cons(MATH_STANDARD_PART, MATH_MUL);

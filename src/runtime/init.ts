@@ -1,4 +1,4 @@
-import { ExtensionEnv, PHASE_EXPANDING } from "../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
 import { useCaretForExponentiation } from "../modes/modes";
 import { clear_patterns } from '../pattern';
 import { scan } from '../scanner/scan';
@@ -97,7 +97,7 @@ export function execute_std_definitions($: ExtensionEnv): void {
             try {
                 if (scanned > 0) {
                     // Evaluating the tree for the side-effect which is to establish a binding.
-                    $.setFocus(PHASE_EXPANDING);
+                    $.setFocus(MODE_EXPANDING);
                     $.valueOf(tree);
                 }
             }

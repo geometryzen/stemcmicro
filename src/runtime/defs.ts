@@ -2,7 +2,7 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
-import { ExtensionEnv, PHASE_EXPANDING, PHASE_FACTORING } from "../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING, MODE_FACTORING } from "../env/ExtensionEnv";
 import { evaluatingAsFloat } from "../modes/modes";
 import { Flt, negOneAsDouble, piAsDouble } from "../tree/flt/Flt";
 import { negOne, Rat } from "../tree/rat/Rat";
@@ -166,8 +166,8 @@ export function hard_reset() {
 }
 
 export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const phase = $.getFocus();
-    $.setFocus(PHASE_FACTORING);
+    const phase = $.getMode();
+    $.setFocus(MODE_FACTORING);
     try {
         return func(arg, $);
     }
@@ -177,8 +177,8 @@ export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv
 }
 
 export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const phase = $.getFocus();
-    $.setFocus(PHASE_FACTORING);
+    const phase = $.getMode();
+    $.setFocus(MODE_FACTORING);
     try {
         return func(lhs, rhs, $);
     }
@@ -188,8 +188,8 @@ export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: Ext
 }
 
 export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const phase = $.getFocus();
-    $.setFocus(PHASE_EXPANDING);
+    const phase = $.getMode();
+    $.setFocus(MODE_EXPANDING);
     try {
         return func(arg, $);
     }
@@ -199,8 +199,8 @@ export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv
 }
 
 export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const phase = $.getFocus();
-    $.setFocus(PHASE_EXPANDING);
+    const phase = $.getMode();
+    $.setFocus(MODE_EXPANDING);
     try {
         return func(lhs, rhs, $);
     }

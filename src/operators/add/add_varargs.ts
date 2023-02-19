@@ -38,7 +38,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         // console.lg(this.name, render_as_infix(expr, this.$));
         const $ = this.$;
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodePhase($.getFocus()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
         };
         if ($.isExplicating()) {

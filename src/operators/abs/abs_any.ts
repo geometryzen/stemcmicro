@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -23,7 +23,7 @@ type EXP = UCons<Sym, ARG>;
  * It should work for real numbers, complex numbers, blades, tensors and scalars.
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly phases = PHASE_EXPANDING;
+    readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('abs_any', MATH_ABS, is_any, $);
     }

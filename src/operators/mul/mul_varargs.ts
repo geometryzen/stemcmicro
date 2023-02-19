@@ -32,7 +32,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodePhase($.getFocus()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
         };
         // The problem we have here is that we are driving an implicit association to an explicit one.

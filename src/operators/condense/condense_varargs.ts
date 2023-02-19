@@ -1,5 +1,5 @@
 import { Eval_condense } from "../../condense";
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAG_DIFF, TFLAG_HALT, TFLAG_KEEP } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT, TFLAG_KEEP } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { CONDENSE } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
@@ -13,7 +13,7 @@ class Builder implements OperatorBuilder<U> {
 
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
-    readonly phases = PHASE_EXPANDING;
+    readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('condense', CONDENSE, $);
         this.hash = hash_nonop_cons(this.opr);

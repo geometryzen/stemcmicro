@@ -1,5 +1,5 @@
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { is_negative } from "../../predicates/is_negative";
 import { Sym } from "../../tree/sym/Sym";
@@ -60,7 +60,7 @@ function cross($: ExtensionEnv) {
 
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FACTORING;
+    readonly phases = MODE_FACTORING;
     constructor(public readonly name: string, op1: Sym, op2: Sym, $: ExtensionEnv) {
         super(name, op2, and(is_cons, is_opr_2_any_any(op1)), and(is_cons, is_opr_2_any_any(op1)), cross($), $);
         this.hash = hash_binop_cons_cons(op2, op1, op1);

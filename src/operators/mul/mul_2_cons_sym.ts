@@ -29,12 +29,9 @@ class Op extends Function2<Cons, Sym> implements Operator<Cons> {
         const $ = this.$;
         const oprLHS = lhs.opr;
         if (is_sym(oprLHS) && oprLHS.equalsSym(MATH_DERIVATIVE) && $.isScalar(rhs)) {
-            // console.lg(`TFLAG_DIFF Cons * Sym ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
             return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
         }
         else {
-            // const focus = $.getFocus();
-            // console.lg(`TFLAG_NONE Cons * Sym ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} (focus=${JSON.stringify(decodePhase(focus))})`);
             return [TFLAG_NONE, expr];
         }
     }

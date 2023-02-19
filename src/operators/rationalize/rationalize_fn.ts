@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, PHASE_FLAGS_ALL, PHASE_IMPLICATE, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPLICATE, MODE_FLAGS_ALL, MODE_IMPLICATE, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { RATIONALIZE } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
@@ -14,15 +14,15 @@ class Builder implements OperatorBuilder<U> {
 
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
-    readonly phases = PHASE_FLAGS_ALL & (~PHASE_EXPLICATE);
+    readonly phases = MODE_FLAGS_ALL & (~MODE_EXPLICATE);
     constructor($: ExtensionEnv) {
         super('rationalize', RATIONALIZE, $);
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        switch ($.getFocus()) {
-            case PHASE_IMPLICATE:
+        switch ($.getMode()) {
+            case MODE_IMPLICATE:
                 {
                     const arg = cadr(expr);
                     // console.lg("arg", render_as_infix(arg, $));

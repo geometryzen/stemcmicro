@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -31,7 +31,7 @@ function is_real($: ExtensionEnv) {
  * X | Y => X * (1 | Y), when X is real.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly phases = PHASE_EXPANDING;
+    readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('inner_2_real_any', MATH_INNER, is_real($), is_any, $);
     }

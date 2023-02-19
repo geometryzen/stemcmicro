@@ -133,7 +133,6 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                 }
             }
             if ($.isFactoring()) {
-                // console.lg(`${this.name} FACTORING focus=${$.getFocus()}`);
                 return [TFLAG_DIFF, items_to_cons(MATH_EXP, expo)];
             }
         }

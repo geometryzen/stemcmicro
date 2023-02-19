@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
 import { MATH_POW } from "../../runtime/ns_math";
@@ -32,7 +32,7 @@ const guardR = is_rat;
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    readonly phases = PHASE_FACTORING;
+    readonly phases = MODE_FACTORING;
     constructor($: ExtensionEnv) {
         super('abs_factorize', MATH_POW, guardL, guardR, $);
         this.hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);

@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, PHASE_EXPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
@@ -28,7 +28,7 @@ export function is_opr(sym: Sym, expr: Cons): expr is Cons {
  * (op t1 t2 t3 t4 ...) => (op (op (op t1 t2) t3) t4) ...
  */
 class Explicator extends FunctionVarArgs implements Operator<Cons> {
-    readonly phases = PHASE_EXPLICATE;
+    readonly phases = MODE_EXPLICATE;
     /**
      * 
      * @param name 

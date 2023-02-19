@@ -851,8 +851,12 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            if (engine.isAssociationImplicit()) {
+                assert.strictEqual(engine.renderAsInfix(actual), "-a-b+c");
+            }
+            else {
+                assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            }
 
             engine.release();
         });
@@ -862,8 +866,12 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            if (engine.isAssociationImplicit()) {
+                assert.strictEqual(engine.renderAsInfix(actual), "-a-b+c");
+            }
+            else {
+                assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            }
 
             engine.release();
         });
@@ -941,8 +949,12 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            if (engine.isAssociationImplicit()) {
+                assert.strictEqual(engine.renderAsInfix(actual), "-a-b+c");
+            }
+            else {
+                assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            }
 
             engine.release();
         });
@@ -985,9 +997,12 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
-
+            if (engine.isAssociationImplicit()) {
+                assert.strictEqual(engine.renderAsInfix(actual), "-a-b+c");
+            }
+            else {
+                assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            }
             engine.release();
         });
         it("(c-a)-b", function () {
@@ -996,9 +1011,12 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* -1 a) (* -1 b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
-
+            if (engine.isAssociationImplicit()) {
+                assert.strictEqual(engine.renderAsInfix(actual), "-a-b+c");
+            }
+            else {
+                assert.strictEqual(engine.renderAsInfix(actual), "-(a+b)+c");
+            }
             engine.release();
         });
     });
@@ -1011,7 +1029,6 @@ describe("C bootstrap", function () {
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b c d)");
             assert.strictEqual(engine.renderAsInfix(actual), "a+b+c+d");
-
             engine.release();
         });
         it("a+b+c+d+e", function () {
@@ -1033,7 +1050,6 @@ describe("C bootstrap", function () {
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "1");
             assert.strictEqual(engine.renderAsInfix(actual), "1");
-
             engine.release();
         });
     });
@@ -1046,7 +1062,6 @@ describe("C bootstrap", function () {
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "x");
             assert.strictEqual(engine.renderAsInfix(actual), "x");
-
             engine.release();
         });
         it("1*x", function () {
@@ -1057,7 +1072,6 @@ describe("C bootstrap", function () {
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "x");
             assert.strictEqual(engine.renderAsInfix(actual), "x");
-
             engine.release();
         });
         it("2*x", function () {
@@ -1068,7 +1082,6 @@ describe("C bootstrap", function () {
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* 2 x)");
             assert.strictEqual(engine.renderAsInfix(actual), "2*x");
-
             engine.release();
         });
         it("-2*x", function () {
@@ -1079,7 +1092,6 @@ describe("C bootstrap", function () {
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(* -2 x)");
             assert.strictEqual(engine.renderAsInfix(actual), "-2*x");
-
             engine.release();
         });
         it("a*a", function () {

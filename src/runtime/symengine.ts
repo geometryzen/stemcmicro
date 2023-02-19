@@ -76,6 +76,7 @@ export interface ScriptEngine {
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
     renderAsSExpr(expr: U): string;
+    isAssociationExplicit(): boolean;
     isAssociationImplicit(): boolean;
     setAssociationImplicit(): void;
     setAssocL(opr: Sym, value: boolean): void;
@@ -152,6 +153,9 @@ export function createScriptEngine(options?: ScriptEngineOptions): ScriptEngine 
         },
         renderAsSExpr(expr: U): string {
             return render_as_sexpr(expr, $);
+        },
+        isAssociationExplicit(): boolean {
+            return $.isAssociationExplicit();
         },
         isAssociationImplicit(): boolean {
             return $.isAssociationImplicit();

@@ -14,8 +14,12 @@ describe("canon", function () {
                 useDefinitions: true
             });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(engine.renderAsSExpr(expr), '(+ (* (| a c) b) (* (| a b) c))');
-            assert.strictEqual(engine.renderAsInfix(expr), '((2*π)*x)*i');
+            if (engine.isAssociationImplicit()) {
+                assert.strictEqual(engine.renderAsInfix(expr), '2*π*x*i');
+            }
+            else {
+                assert.strictEqual(engine.renderAsInfix(expr), '((2*π)*x)*i');
+            }
             engine.release();
         });
     });

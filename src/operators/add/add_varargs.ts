@@ -1,6 +1,6 @@
 import { add_num_num } from '../../calculators/add/add_num_num';
 import { compare_terms } from '../../calculators/compare/compare_terms';
-import { canonical_factor_lhs, canonical_factor_rhs } from '../../calculators/factorize/canonical_factor';
+import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ADD } from "../../runtime/constants";
@@ -125,8 +125,8 @@ function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): U[] {
     while (i < retval.length - 1) {
         const lhs = retval[i];
         const rhs = retval[i + 1];
-        const lhsRem = $.valueOf(canonical_factor_rhs(lhs, $));
-        const rhsRem = $.valueOf(canonical_factor_rhs(rhs, $));
+        const lhsRem = $.valueOf(canonical_factor_num_rhs(lhs));
+        const rhsRem = $.valueOf(canonical_factor_num_rhs(rhs));
         // console.lg("lhs", render_as_sexpr(lhs, $));
         // console.lg("lhsNum", render_as_infix(lhsNum, $));
         // console.lg("lhsRem", render_as_sexpr(lhsRem, $));
@@ -134,14 +134,14 @@ function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): U[] {
         // console.lg("rhsNum", render_as_infix(rhsNum, $));
         // console.lg("rhsRem", render_as_sexpr(rhsRem, $));
         if (lhsRem.equals(rhsRem)) {
-            const lhsNum = canonical_factor_lhs(lhs, $);
-            const rhsNum = canonical_factor_lhs(rhs, $);
+            const lhsNum = canonical_factor_num_lhs(lhs);
+            const rhsNum = canonical_factor_num_lhs(rhs);
             const s = $.multiply(add_num_num(lhsNum, rhsNum), lhsRem);
             retval.splice(i, 2, s);
         }
         else {
-            const lhsNum = canonical_factor_lhs(lhs, $);
-            const rhsNum = canonical_factor_lhs(rhs, $);
+            const lhsNum = canonical_factor_num_lhs(lhs);
+            const rhsNum = canonical_factor_num_lhs(rhs);
             // console.lg("lhsNum", render_as_infix(lhsNum, $));
             // console.lg("rhsNum", render_as_infix(rhsNum, $));
             if (lhsNum.equals(rhsNum)) {

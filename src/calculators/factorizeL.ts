@@ -15,6 +15,9 @@ function is_pow_2_any_positive_integer(expr: Cons): expr is BCons<Sym, U, Rat> {
     return false;
 }
 
+/**
+ * WARNING: This will not work for n-ary multiplication with n > 2.
+ */
 export function factorizeL(expr: U): [lhs: U, rhs: U, split: boolean] {
 
     let s = expr;

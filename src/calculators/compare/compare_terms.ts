@@ -14,10 +14,11 @@ import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_pow_2_sym_rat } from "../../operators/pow/is_pow_2_sym_rat";
 import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
+import { render_as_infix } from "../../print/print";
 import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { one, zero } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
-import { canonical_factor_rhs } from "../factorize/canonical_factor";
+import { canonical_factor_num_rhs } from "../factorize/canonical_factor";
 import { factorizeL } from "../factorizeL";
 import { compare_cons_cons } from "./compare_cons_cons";
 import { compare_num_num } from "./compare_num_num";
@@ -26,17 +27,17 @@ import { compare_vars_vars } from "./compare_vars_vars";
 import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.lg(`ENTERING compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
-    lhs = canonical_factor_rhs(lhs, $);
-    rhs = canonical_factor_rhs(rhs, $);
+    console.log(`ENTERING compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
+    lhs = canonical_factor_num_rhs(lhs);
+    rhs = canonical_factor_num_rhs(rhs);
     // eslint-disable-next-line no-console
-    // console.lg(`MUNGED   compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
+    console.log(`MUNGED   compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: Sign, description: string): Sign {
-        // console.lg(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
+        console.log(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
         return retval;
     };
-    // console.lg(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+    console.log(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     if (lhs.equals(rhs)) {
         return hook(SIGN_EQ, "A");
     }
@@ -45,9 +46,10 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
     if (is_cons(lhs)) {
         if (is_mul_2_num_any(lhs)) {
+            throw new Error("This should be dead code now");
             // A factor of a number on the lhs has no effect.
             // Note that this only catches the case when lhs = (* Num X).
-            return hook(compare_terms(lhs.rhs, rhs, $), "C");
+            // return hook(compare_terms(lhs.rhs, rhs, $), "C");
         }
         if (is_mul_2_any_any(lhs)) {
             const [a, b] = factorizeL(lhs);
@@ -58,9 +60,10 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
     if (is_cons(rhs)) {
         if (is_mul_2_num_any(rhs)) {
+            throw new Error("This should be dead code now");
             // A factor of a number on the rhs has no effect.
             // Note that this only catches the case when rhs = (* Num X).
-            return hook(compare_terms(lhs, rhs.rhs, $), "E");
+            // return hook(compare_terms(lhs, rhs.rhs, $), "E");
         }
         if (is_mul_2_any_any(rhs)) {
             const [a, b] = factorizeL(rhs);
@@ -283,6 +286,7 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if ($.isReal(lhs) && $.isImag(rhs)) {
         return SIGN_LT;
     }
+    // TODO: We should never have to end up here.
     const lvars = free_vars(lhs, $);
     const rvars = free_vars(rhs, $);
     // console.lg(`C. compare_vars_vars lhs=${lhs} rhs=${rhs}`);

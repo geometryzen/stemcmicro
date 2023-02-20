@@ -3,9 +3,9 @@ import { assert } from "chai";
 import { createScriptEngine, ExpandingTransformer, ImplicateTransformer, TransformerPipeline } from "../index";
 
 describe("sandbox", function () {
-    it("a+b+b+a I", function () {
+    xit("???", function () {
         const lines: string[] = [
-            `a+b+b+a`
+            `Az*Bx+Ax*By`
         ];
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
@@ -15,20 +15,24 @@ describe("sandbox", function () {
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsSExpr(values[0]), '(* a b)');
-        assert.strictEqual(engine.renderAsInfix(values[0]), "a*b");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), '(+ (* Ax By) (* Az Bx))');
+        assert.strictEqual(engine.renderAsInfix(values[0]), "Ax*By+Az*Bx");
         engine.release();
     });
-    xit("2*a*b-a*b II", function () {
+    it("???", function () {
         const lines: string[] = [
-            `implicate=0`,
-            `2*a*b-a*b`,
+            `Az*Bx*Cy+Ax*By*Cz`
         ];
-        const engine = createScriptEngine({});
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), '(* a b)');
-        assert.strictEqual(engine.renderAsInfix(actual), 'a*b');
+        const sourceText = lines.join('\n');
+        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const pipeline = new TransformerPipeline();
+        pipeline.addTail(new ImplicateTransformer());
+        pipeline.addTail(new ExpandingTransformer());
+        const { values } = engine.transformScript(sourceText, pipeline);
+        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsSExpr(values[0]), '(+ (* Ax By Cz) (* Az Bx Cy))');
+        //assert.strictEqual(engine.renderAsInfix(values[0]), "a*b");
         engine.release();
     });
-
 });

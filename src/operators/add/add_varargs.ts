@@ -1,6 +1,6 @@
 import { add_num_num } from '../../calculators/add/add_num_num';
 import { compare_terms } from '../../calculators/compare/compare_terms';
-import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor';
+import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ADD } from "../../runtime/constants";
@@ -39,7 +39,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        // console.log(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
+        // console.lg(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
         const hook = (where: string, retval: U): U => {
             // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;

@@ -31,7 +31,6 @@ import { add_2_flt_rat } from '../operators/add/add_2_flt_rat';
 import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
 import { add_2_imag_real } from '../operators/add/add_2_imag_real';
 import { add_2_imu_flt } from '../operators/add/add_2_imu_flt';
-import { add_2_mul_2_any_blade_mul_2_any_blade } from '../operators/add/add_2_mul_2_any_blade_mul_2_any_blade';
 import { add_2_mul_2_any_imu_sym } from '../operators/add/add_2_mul_2_any_imu_sym';
 import { add_2_mul_2_any_vector_mul_2_any_vector } from '../operators/add/add_2_mul_2_any_vector_mul_2_any_vector';
 import { add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_inner_sym_sym_sym_mul_2_sym_outer_2_sym_sym';
@@ -464,7 +463,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_ordering);
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring);
     $.defineOperator(add_2_mul_2_rat_cos_sin_mul_2_mul_2_cos_sin_factoring);
-    $.defineOperator(add_2_mul_2_any_blade_mul_2_any_blade);
+    // Generalizethe following...
+    // $.defineOperator(add_2_mul_2_any_blade_mul_2_any_blade);
     $.defineOperator(add_2_mul_2_any_vector_mul_2_any_vector);
     $.defineOperator(add_2_pow_2_cos_rat_pow_2_sin_rat);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);

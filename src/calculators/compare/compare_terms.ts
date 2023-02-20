@@ -5,6 +5,7 @@ import { is_blade } from "../../operators/blade/is_blade";
 import { MATH_DERIVATIVE } from "../../operators/derivative/MATH_DERIVATIVE";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";
+import { is_mul } from "../../operators/mul/is_mul";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
@@ -14,11 +15,11 @@ import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_pow_2_sym_rat } from "../../operators/pow/is_pow_2_sym_rat";
 import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
-import { render_as_infix } from "../../print/print";
-import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { one, zero } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
-import { canonical_factor_num_rhs } from "../factorize/canonical_factor";
+import { canonical_factor_lhs, canonical_factor_rhs } from "../factorize/canonical_factor";
+import { canonical_factor_blade_rhs } from "../factorize/canonical_factor_blade";
+import { canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { factorizeL } from "../factorizeL";
 import { compare_cons_cons } from "./compare_cons_cons";
 import { compare_num_num } from "./compare_num_num";
@@ -27,17 +28,17 @@ import { compare_vars_vars } from "./compare_vars_vars";
 import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    console.log(`ENTERING compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
+    // console.lg(`ENTERING compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
     lhs = canonical_factor_num_rhs(lhs);
     rhs = canonical_factor_num_rhs(rhs);
     // eslint-disable-next-line no-console
-    console.log(`MUNGED   compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
+    // console.lg(`MUNGED   compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: Sign, description: string): Sign {
-        console.log(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
+        // console.lg(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
         return retval;
     };
-    console.log(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+    // console.lg(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     if (lhs.equals(rhs)) {
         return hook(SIGN_EQ, "A");
     }
@@ -145,9 +146,42 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             }
         }
     }
+    if (is_blade(lhs) && is_blade(rhs)) {
+        return hook(compare_blade_blade(lhs, rhs), "T");
+    }
     if (is_blade(lhs)) {
-        if (is_blade(rhs)) {
-            return hook(compare_blade_blade(lhs, rhs), "T");
+        return hook(SIGN_GT, "T");
+    }
+    if (is_blade(rhs)) {
+        return hook(SIGN_LT, "T");
+    }
+    const lhsB = canonical_factor_blade_rhs(lhs);
+    const rhsB = canonical_factor_blade_rhs(rhs);
+    switch (compare_terms(lhsB, rhsB, $)) {
+        case SIGN_GT: {
+            return hook(SIGN_GT, "MM1");
+        }
+        case SIGN_LT: {
+            return hook(SIGN_LT, "MM2");
+        }
+        case SIGN_EQ: {
+            if (is_cons(lhs) && is_mul(lhs) && is_cons(rhs) && is_mul(rhs)) {
+                const lhsL = canonical_factor_lhs(lhs);
+                const rhsL = canonical_factor_lhs(rhs);
+                switch (compare_terms(lhsL, rhsL, $)) {
+                    case SIGN_GT: {
+                        return hook(SIGN_GT, "MM1");
+                    }
+                    case SIGN_LT: {
+                        return hook(SIGN_LT, "MM2");
+                    }
+                    case SIGN_EQ: {
+                        const lhsR = canonical_factor_rhs(lhs);
+                        const rhsR = canonical_factor_rhs(rhs);
+                        return hook(compare_terms(lhsR, rhsR, $), "MM3");
+                    }
+                }
+            }
         }
     }
     if (is_cons(lhs) && is_cons(rhs)) {

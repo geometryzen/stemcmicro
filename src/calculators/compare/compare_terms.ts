@@ -16,6 +16,7 @@ import { is_rat } from "../../operators/rat/RatExtension";
 import { is_sym } from "../../operators/sym/is_sym";
 import { one, zero } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
+import { canonical_factor_rhs } from "../factorize/canonical_factor";
 import { factorizeL } from "../factorizeL";
 import { compare_cons_cons } from "./compare_cons_cons";
 import { compare_num_num } from "./compare_num_num";
@@ -24,6 +25,8 @@ import { compare_vars_vars } from "./compare_vars_vars";
 import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    lhs = canonical_factor_rhs(lhs, $);
+    rhs = canonical_factor_rhs(rhs, $);
     // eslint-disable-next-line no-console
     // console.lg(`ENTERING compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

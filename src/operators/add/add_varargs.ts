@@ -7,6 +7,7 @@ import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { cadr, cddr } from "../../tree/helpers";
+import { zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_add_2_any_any } from './is_add_2_any_any';
@@ -38,9 +39,9 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        // console.lg(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
+        // console.log(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
         const hook = (where: string, retval: U): U => {
-            // // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
         };
         if ($.isExplicating()) {
@@ -62,6 +63,14 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             // console.lg("EXPANDING", render_as_infix(expr, $));
             const terms = make_term_association_implicit(expr, $);
             // TODO: Handling of zero and one term.
+            if (terms.length === 0) {
+                // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
+                return [TFLAG_DIFF, hook('A', zero)];
+            }
+            if (terms.length === 1) {
+                // We simplify the unary case. (* a) => a
+                return [TFLAG_DIFF, hook('B', terms[0])];
+            }
             const sorted = items_to_cons(expr.head, ...terms.sort(make_term_comparator($)));
             if (sorted.equals(expr)) {
                 // We have to try to add them together, but there is potential for infinite loop

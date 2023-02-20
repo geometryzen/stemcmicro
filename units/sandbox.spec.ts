@@ -3,9 +3,9 @@ import { assert } from "chai";
 import { createScriptEngine, ExpandingTransformer, ImplicateTransformer, TransformerPipeline } from "../index";
 
 describe("sandbox", function () {
-    it("b*c+a", function () {
+    it("2*a*b-a*b I", function () {
         const lines: string[] = [
-            `b*c+a`
+            `2*a*b-a*b`
         ];
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
@@ -15,18 +15,20 @@ describe("sandbox", function () {
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        // assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "a+b*c");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), '(* a b)');
+        assert.strictEqual(engine.renderAsInfix(values[0]), "a*b");
         engine.release();
     });
-    it("???", function () {
+    it("2*a*b-a*b II", function () {
         const lines: string[] = [
-            `b*c+a`
+            `implicate=0`,
+            `2*a*b-a*b`,
         ];
-        const engine = createScriptEngine();
+        const engine = createScriptEngine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "a+b*c");
-
+        assert.strictEqual(engine.renderAsSExpr(actual), '(* a b)');
+        assert.strictEqual(engine.renderAsInfix(actual), 'a*b');
         engine.release();
     });
+
 });

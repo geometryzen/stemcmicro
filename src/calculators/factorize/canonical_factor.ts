@@ -28,7 +28,7 @@ export function canonical_factor_lhs(expr: U, $: ExtensionEnv): Num {
             }
         }
         else {
-            throw new Error(render_as_sexpr(expr, $));
+            return one;
         }
     }
     else {
@@ -58,7 +58,7 @@ export function canonical_factor_rhs(expr: U, $: ExtensionEnv): U {
             }
         }
         else {
-            throw new Error(render_as_sexpr(expr, $));
+            return expr;
         }
     }
     else {

@@ -1,7 +1,8 @@
+import { add_num_num } from '../../calculators/add/add_num_num';
 import { compare_terms } from '../../calculators/compare/compare_terms';
+import { canonical_factor_lhs, canonical_factor_rhs } from '../../calculators/factorize/canonical_factor';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { render_as_infix } from '../../print/print';
 import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -36,10 +37,10 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
-        // console.lg(this.name, render_as_infix(expr, this.$));
         const $ = this.$;
+        // console.lg(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
         };
         if ($.isExplicating()) {
@@ -63,10 +64,13 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             // TODO: Handling of zero and one term.
             const sorted = items_to_cons(expr.head, ...terms.sort(make_term_comparator($)));
             if (sorted.equals(expr)) {
-                return [TFLAG_NONE, hook('D', expr)];
+                // We have to try to add them together, but there is potential for infinite loop
+                const terms = add_term_pairs(sorted.tail(), expr, $);
+                const retval = items_to_cons(expr.head, ...terms);
+                return [TFLAG_DIFF, hook('D', retval)];
             }
             else {
-                const terms = add_term_pairs(sorted.tail(), $);
+                const terms = add_term_pairs(sorted.tail(), expr, $);
                 return [TFLAG_DIFF, hook('E', items_to_cons(expr.head, ...terms))];
             }
         }
@@ -99,23 +103,65 @@ function make_term_association_implicit(expr: Cons, $: ExtensionEnv): U[] {
     return terms;
 }
 
-function add_term_pairs(terms: U[], $: ExtensionEnv): U[] {
+/**
+ * 
+ * @param terms 
+ * @param original Use to prevent infinite recursion. 
+ * @param $ 
+ * @returns 
+ */
+function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): U[] {
     const retval: U[] = [...terms];
     let i = 0;
     while (i < retval.length - 1) {
         const lhs = retval[i];
         const rhs = retval[i + 1];
-        const s = $.valueOf(add(lhs, rhs, $));
-        if (is_term_pair_changed(s, lhs, rhs)) {
+        const lhsRem = $.valueOf(canonical_factor_rhs(lhs, $));
+        const rhsRem = $.valueOf(canonical_factor_rhs(rhs, $));
+        // console.lg("lhs", render_as_sexpr(lhs, $));
+        // console.lg("lhsNum", render_as_infix(lhsNum, $));
+        // console.lg("lhsRem", render_as_sexpr(lhsRem, $));
+        // console.lg("rhs", render_as_sexpr(rhs, $));
+        // console.lg("rhsNum", render_as_infix(rhsNum, $));
+        // console.lg("rhsRem", render_as_sexpr(rhsRem, $));
+        if (lhsRem.equals(rhsRem)) {
+            const lhsNum = canonical_factor_lhs(lhs, $);
+            const rhsNum = canonical_factor_lhs(rhs, $);
+            const s = $.multiply(add_num_num(lhsNum, rhsNum), lhsRem);
             retval.splice(i, 2, s);
         }
         else {
-            i++;
+            const lhsNum = canonical_factor_lhs(lhs, $);
+            const rhsNum = canonical_factor_lhs(rhs, $);
+            // console.lg("lhsNum", render_as_infix(lhsNum, $));
+            // console.lg("rhsNum", render_as_infix(rhsNum, $));
+            if (lhsNum.equals(rhsNum)) {
+                // We try to recruit some other pattern matcher to transform the addition.
+                // The problem is that we end up finding ourself and end up in an infinite loop.
+                const candidate = items_to_cons(MATH_ADD, lhsRem, rhsRem);
+                if (candidate.equals(original)) {
+                    // Attempting to evaluate the expression would lead to infinite recursion.
+                    i++;
+                }
+                else {
+                    const s = $.valueOf(candidate);
+                    if (is_term_pair_changed(s, lhsRem, rhsRem)) {
+                        // console.lg(`CHANGE`);
+                        retval.splice(i, 2, $.multiply(lhsNum, s));
+                    }
+                    else {
+                        // console.lg(`SAME`);
+                        i++;
+                    }
+                }
+            }
+            else {
+                i++;
+            }
         }
     }
     return retval;
 }
-
 
 function is_term_pair_changed(s: U, lhs: U, rhs: U): boolean {
     if (is_cons(s) && is_add_2_any_any(s)) {

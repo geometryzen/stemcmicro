@@ -212,7 +212,6 @@ export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTO
 export interface Operator<T extends U> {
     readonly key?: string;
     readonly name: string;
-    readonly breaker?: boolean;
     readonly hash?: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
@@ -238,7 +237,6 @@ export interface Operator<T extends U> {
 export interface Extension<T extends U> {
     readonly key?: string;
     readonly name: string;
-    readonly breaker?: boolean;
     readonly hash?: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];

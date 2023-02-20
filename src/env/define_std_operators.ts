@@ -470,7 +470,10 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
     $.defineOperator(add_2_any_add_2_any_any);
     $.defineOperator(add_2_any_add);
+
     $.defineOperator(add_2_sym_sym);
+    // $.defineOperator(add_2_any_sym);
+
     $.defineOperator(add_2_sym_mul_2_sym_rat);
     $.defineOperator(add_2_blade_blade);
     $.defineOperator(add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym);

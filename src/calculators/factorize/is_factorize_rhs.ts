@@ -3,6 +3,7 @@ import { is_num } from "../../operators/num/is_num";
 import { is_cons, U } from "../../tree/tree";
 
 /**
+ * WARNING: Depends on binary multiplication.
  * Determines whether two expressions have a common factor on the right.
  * @param lhs 
  * @param rhs 

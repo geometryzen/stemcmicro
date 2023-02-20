@@ -13,7 +13,6 @@ export class UnknownOperator implements Operator<U> {
         this.name = "unknown";
     }
     key?: string | undefined;
-    breaker?: boolean | undefined;
     hash?: string | undefined;
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;

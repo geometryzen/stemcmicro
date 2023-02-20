@@ -58,7 +58,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         // console.lg(this.name, render_as_infix(expr, $));
         const hook = (where: string, retval: U): U => {
-            // console.log(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
 

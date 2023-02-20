@@ -656,7 +656,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                 // console.lg(`TRY  ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                 if (!newExpr.equals(curExpr)) {
                                     // By logging here we can see all the transformations that make changes.
-                                    // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                    // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_sexpr(curExpr, $)} newExpr: ${render_as_sexpr(newExpr, $)}`);
                                     outFlags |= TFLAG_DIFF;
                                     doneWithCurExpr = true;
                                     if (haltFlag(flags)) {

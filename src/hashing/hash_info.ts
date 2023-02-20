@@ -12,10 +12,10 @@ import { is_uom } from "../operators/uom/is_uom";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";
 
-const NIL = 0;
-const CONS = 1;
-const ATOM = 2;
-type KIND = typeof NIL | typeof CONS | typeof ATOM;
+const KIND_NIL = 0;
+const KIND_CONS = 1;
+const KIND_ATOM = 2;
+type KIND = typeof KIND_NIL | typeof KIND_CONS | typeof KIND_ATOM;
 type INFO = { kind: KIND, parts: string[] };
 
 export const HASH_BLADE = 'Blade';
@@ -65,16 +65,16 @@ export function hash_info(expr: U): string[] {
     const info = hash_info_at_level(expr, 0);
     protos.push(compress(info));
     switch (info.kind) {
-        case CONS: {
+        case KIND_CONS: {
             if (info.parts.length === 3) {
-                protos.push(compress({ kind: CONS, parts: [info.parts[0], info.parts[1], HASH_ANY] }));
-                protos.push(compress({ kind: CONS, parts: [info.parts[0], HASH_ANY, info.parts[2]] }));
-                protos.push(compress({ kind: CONS, parts: [info.parts[0], HASH_ANY, HASH_ANY] }));
-                protos.push(compress({ kind: CONS, parts: [info.parts[0]] }));
+                protos.push(compress({ kind: KIND_CONS, parts: [info.parts[0], info.parts[1], HASH_ANY] }));
+                protos.push(compress({ kind: KIND_CONS, parts: [info.parts[0], HASH_ANY, info.parts[2]] }));
+                protos.push(compress({ kind: KIND_CONS, parts: [info.parts[0], HASH_ANY, HASH_ANY] }));
+                protos.push(compress({ kind: KIND_CONS, parts: [info.parts[0]] }));
             }
             if (info.parts.length === 2) {
-                protos.push(compress({ kind: CONS, parts: [info.parts[0], HASH_ANY] }));
-                protos.push(compress({ kind: CONS, parts: [info.parts[0]] }));
+                protos.push(compress({ kind: KIND_CONS, parts: [info.parts[0], HASH_ANY] }));
+                protos.push(compress({ kind: KIND_CONS, parts: [info.parts[0]] }));
             }
             break;
         }
@@ -87,10 +87,10 @@ export function hash_info(expr: U): string[] {
 
 function compress(info: INFO): string {
     switch (info.kind) {
-        case CONS: {
+        case KIND_CONS: {
             return `(${info.parts.join(' ')})`;
         }
-        case ATOM: {
+        case KIND_ATOM: {
             return info.parts[0];
         }
         default: {
@@ -106,59 +106,59 @@ function hash_info_at_level(expr: U, level: number): INFO {
                 const opr = expr.opr;
                 const lhs = expr.lhs;
                 const rhs = expr.rhs;
-                return { kind: CONS, parts: [hash_opr(opr), compress(hash_info_at_level(lhs, level + 1)), compress(hash_info_at_level(rhs, level + 1))] };
+                return { kind: KIND_CONS, parts: [hash_opr(opr), compress(hash_info_at_level(lhs, level + 1)), compress(hash_info_at_level(rhs, level + 1))] };
             }
             if (expr.length === 2) {
                 const opr = expr.opr;
                 const arg = expr.arg;
-                return { kind: CONS, parts: [hash_opr(opr), compress(hash_info_at_level(arg, level + 1))] };
+                return { kind: KIND_CONS, parts: [hash_opr(opr), compress(hash_info_at_level(arg, level + 1))] };
             }
             if (is_sym(expr.opr)) {
-                return { kind: CONS, parts: [hash_opr(expr.opr)] };
+                return { kind: KIND_CONS, parts: [hash_opr(expr.opr)] };
             }
             else {
                 throw new Error(`${expr}`);
             }
         }
         else {
-            return { kind: CONS, parts: [hash_opr(expr.opr)] };
+            return { kind: KIND_CONS, parts: [hash_opr(expr.opr)] };
         }
     }
     if (is_sym(expr)) {
-        return { kind: ATOM, parts: [HASH_SYM] };
+        return { kind: KIND_ATOM, parts: [HASH_SYM] };
     }
     if (is_rat(expr)) {
-        return { kind: ATOM, parts: [HASH_RAT] };
+        return { kind: KIND_ATOM, parts: [HASH_RAT] };
     }
     if (is_blade(expr)) {
-        return { kind: ATOM, parts: [HASH_BLADE] };
+        return { kind: KIND_ATOM, parts: [HASH_BLADE] };
     }
     if (is_imu(expr)) {
-        return { kind: ATOM, parts: [HASH_IMU] };
+        return { kind: KIND_ATOM, parts: [HASH_IMU] };
     }
     if (is_tensor(expr)) {
-        return { kind: ATOM, parts: [HASH_TENSOR] };
+        return { kind: KIND_ATOM, parts: [HASH_TENSOR] };
     }
     if (is_uom(expr)) {
-        return { kind: ATOM, parts: [HASH_UOM] };
+        return { kind: KIND_ATOM, parts: [HASH_UOM] };
     }
     if (is_flt(expr)) {
-        return { kind: ATOM, parts: [HASH_FLT] };
+        return { kind: KIND_ATOM, parts: [HASH_FLT] };
     }
     if (is_nil(expr)) {
-        return { kind: NIL, parts: [HASH_NIL] };
+        return { kind: KIND_NIL, parts: [HASH_NIL] };
     }
     if (is_str(expr)) {
-        return { kind: ATOM, parts: [HASH_STR] };
+        return { kind: KIND_ATOM, parts: [HASH_STR] };
     }
     if (is_boo(expr)) {
-        return { kind: ATOM, parts: [HASH_BOO] };
+        return { kind: KIND_ATOM, parts: [HASH_BOO] };
     }
     if (is_hyp(expr)) {
-        return { kind: ATOM, parts: [HASH_HYP] };
+        return { kind: KIND_ATOM, parts: [HASH_HYP] };
     }
     if (is_err(expr)) {
-        return { kind: ATOM, parts: [HASH_ERR] };
+        return { kind: KIND_ATOM, parts: [HASH_ERR] };
     }
     throw new Error(`hash_string(${expr})`);
 }

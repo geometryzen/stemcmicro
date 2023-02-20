@@ -65,27 +65,27 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             // TODO: Handling of zero and one term.
             if (terms.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
-                return [TFLAG_DIFF, hook('A', zero)];
+                return [TFLAG_DIFF, hook('D', zero)];
             }
             if (terms.length === 1) {
                 // We simplify the unary case. (* a) => a
-                return [TFLAG_DIFF, hook('B', terms[0])];
+                return [TFLAG_DIFF, hook('E', terms[0])];
             }
             const sorted = items_to_cons(expr.head, ...terms.sort(make_term_comparator($)));
             if (sorted.equals(expr)) {
                 // We have to try to add them together, but there is potential for infinite loop
                 const terms = add_term_pairs(sorted.tail(), expr, $);
                 const retval = items_to_cons(expr.head, ...terms);
-                return [TFLAG_DIFF, hook('D', retval)];
+                return [TFLAG_DIFF, hook('F', retval)];
             }
             else {
                 const terms = add_term_pairs(sorted.tail(), expr, $);
-                return [TFLAG_DIFF, hook('E', items_to_cons(expr.head, ...terms))];
+                return [TFLAG_DIFF, hook('G', items_to_cons(expr.head, ...terms))];
             }
         }
         else {
             // console.lg("ADD", render_as_infix(expr, $));
-            return [TFLAG_NONE, hook('F', expr)];
+            return [TFLAG_NONE, hook('H', expr)];
         }
     }
 }

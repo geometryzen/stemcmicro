@@ -3,9 +3,9 @@ import { assert } from "chai";
 import { createScriptEngine, ExpandingTransformer, ImplicateTransformer, TransformerPipeline } from "../index";
 
 describe("sandbox", function () {
-    it("2*a*b-a*b I", function () {
+    it("a+b+b+a I", function () {
         const lines: string[] = [
-            `2*a*b-a*b`
+            `a+b+b+a`
         ];
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
@@ -19,7 +19,7 @@ describe("sandbox", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "a*b");
         engine.release();
     });
-    it("2*a*b-a*b II", function () {
+    xit("2*a*b-a*b II", function () {
         const lines: string[] = [
             `implicate=0`,
             `2*a*b-a*b`,

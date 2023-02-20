@@ -363,7 +363,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
     let n = 0;
     let d = 0;
 
-    let p1 = p.cdr;
+    let p1: U = p.cdr;
     let p2 = car(p1);
 
     if (is_rat(p2)) {

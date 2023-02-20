@@ -1,19 +1,18 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_integer } from '../../is_rat_integer';
-import { makeList } from '../../makeList';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
 import { wrap_as_flt } from '../../tree/flt/Flt';
-import { is_flt } from '../flt/is_flt';
-import { is_rat } from '../rat/is_rat';
 import { one, Rat, two, zero } from '../../tree/rat/Rat';
-import { is_str } from '../str/is_str';
-import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { cons, Cons, U } from '../../tree/tree';
-import { is_uom } from '../uom/is_uom';
+import { cons, Cons, items_to_cons, U } from '../../tree/tree';
 import { Adapter, SumTerm } from '../../tree/vec/Adapter';
 import { algebra, is_blade } from '../../tree/vec/Algebra';
 import { Blade } from '../../tree/vec/Blade';
+import { is_flt } from '../flt/is_flt';
+import { is_rat } from '../rat/is_rat';
+import { is_str } from '../str/is_str';
+import { is_tensor } from '../tensor/is_tensor';
+import { is_uom } from '../uom/is_uom';
 import { extract_grade } from './extract_grade';
 
 function blade_times_weight(blade: Blade, weight: U, $: ExtensionEnv): Cons | Blade {
@@ -21,7 +20,7 @@ function blade_times_weight(blade: Blade, weight: U, $: ExtensionEnv): Cons | Bl
         return blade;
     }
     else {
-        return cons(MATH_MUL, makeList(blade, weight));
+        return cons(MATH_MUL, items_to_cons(blade, weight));
     }
 }
 
@@ -169,13 +168,13 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
                     return weight;
                 }
                 else {
-                    return cons(MATH_MUL, makeList(blade, weight));
+                    return cons(MATH_MUL, items_to_cons(blade, weight));
                     // throw new Error(`sum of Num weight ${term.weight} and blade ${term.blade} terms Method not implemented.`);
                 }
             }
             else {
                 if (is_uom(weight)) {
-                    return cons(MATH_MUL, makeList(blade, weight));
+                    return cons(MATH_MUL, items_to_cons(blade, weight));
                 }
                 else {
                     throw new Error(`sum of weight and blade is not defined.`);
@@ -186,7 +185,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
             const a = blade_times_weight(terms[0].blade, terms[0].weight, this.$);
             const b = blade_times_weight(terms[1].blade, terms[1].weight, this.$);
             // TODO: Why don't we use add terms?
-            return cons(MATH_ADD, makeList(a, b));
+            return cons(MATH_ADD, items_to_cons(a, b));
         }
         else {
             // We may get more than two terms when we consider general metrics.

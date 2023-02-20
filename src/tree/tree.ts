@@ -109,9 +109,14 @@ export class Cons implements U {
     /**
      * Returns the cdr property if it is defined, otherwise NIL.
      */
-    get cdr(): U {
+    get cdr(): Cons {
         if (this.#cdr) {
-            return this.#cdr;
+            if (this.#cdr instanceof Cons) {
+                return this.#cdr;
+            }
+            else {
+                throw new Error();
+            }
         }
         else {
             return nil;
@@ -120,7 +125,7 @@ export class Cons implements U {
     /**
      * Exactly the same as the cdr property. Used for code-as-documentation.
      */
-    get argList(): U {
+    get argList(): Cons {
         return this.cdr;
     }
     contains(needle: U): boolean {
@@ -295,7 +300,12 @@ export class Cons implements U {
 }
 
 export function cons(car: U, cdr: U): Cons {
-    return new Cons(0, car, cdr);
+    if (cdr instanceof Cons) {
+        return new Cons(0, car, cdr);
+    }
+    else {
+        throw new Error();
+    }
 }
 
 export function items_to_cons(...items: U[]): Cons {

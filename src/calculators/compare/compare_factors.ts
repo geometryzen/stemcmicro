@@ -1,5 +1,4 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { compare_blade_blade } from "../../operators/blade/BladeExtension";
 import { is_blade } from "../../operators/blade/is_blade";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_imu } from "../../operators/imu/is_imu";
@@ -111,7 +110,8 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         return compare_num_num(lhs, rhs);
     }
     else if (is_blade(lhs) && is_blade(rhs)) {
-        return compare_blade_blade(lhs, rhs);
+        // It's not OK to change blade factors because multiplication is not commutative.
+        return SIGN_EQ;
     }
     else {
         throw new Error(`lhs = ${render_as_infix(lhs, $)}, rhs = ${render_as_infix(rhs, $)}`);

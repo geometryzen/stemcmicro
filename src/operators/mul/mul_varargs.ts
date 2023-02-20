@@ -37,7 +37,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         // console.lg(this.name, render_as_sexpr(expr, $));
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
         };
         // The problem we have here is that we are driving an implicit association to an explicit one.
@@ -95,9 +95,6 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                     // No possibility of flattening but sorting is possible.
                     const args = expr.tail();
                     args.sort(make_factor_comparator($));
-                    if (items_to_cons(expr.head, ...args).equals(expr)) {
-                        // 
-                    }
                     multiply_factor_pairs(args, $);
                     const retval = items_to_cons(expr.head, ...args);
                     const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;

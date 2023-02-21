@@ -1,15 +1,19 @@
 import { add_num_num } from '../../calculators/add/add_num_num';
+import { canonicalize_mul } from '../../calculators/canonicalize/canonicalize_unary_mul';
 import { compare_terms } from '../../calculators/compare/compare_terms';
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
+import { render_as_infix } from '../../print/print';
+import { render_as_sexpr } from '../../print/render_as_sexpr';
 import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
-import { MATH_ADD } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { cadr, cddr } from "../../tree/helpers";
 import { zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { is_mul } from '../mul/is_mul';
 import { is_add_2_any_any } from './is_add_2_any_any';
 
 const make_term_comparator = function ($: ExtensionEnv) {
@@ -39,7 +43,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        // console.lg(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
+        // console.lg(this.name, decodeMode($.getMode()), render_as_infix(expr, this.$));
         const hook = (where: string, retval: U): U => {
             // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
@@ -56,12 +60,17 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
 
         }
         else if ($.isImplicating()) {
+            const terms = make_term_association_implicit(expr.tail(), $);
+            terms.sort(make_term_comparator($));
+            const retval = items_to_cons(expr.head, ...terms);
+            const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
+            return [flag, hook('C', retval)];
             // console.lg("IMPLICATING", render_as_infix(expr, $));
-            return [TFLAG_NONE, hook('C', expr)];
+            // return [TFLAG_NONE, hook('C', expr)];
         }
         else if ($.isExpanding()) {
             // console.lg("EXPANDING", render_as_infix(expr, $));
-            const terms = make_term_association_implicit(expr, $);
+            const terms = make_term_association_implicit(expr.tail(), $);
             // TODO: Handling of zero and one term.
             if (terms.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
@@ -71,27 +80,33 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                 // We simplify the unary case. (* a) => a
                 return [TFLAG_DIFF, hook('E', terms[0])];
             }
-            const sorted = items_to_cons(expr.head, ...terms.sort(make_term_comparator($)));
+            terms.sort(make_term_comparator($));
+            const sorted = items_to_cons(expr.head, ...terms);
             if (sorted.equals(expr)) {
                 // We have to try to add them together, but there is potential for infinite loop
-                const terms = add_term_pairs(sorted.tail(), expr, $);
+                add_term_pairs(terms, expr, $);
                 const retval = items_to_cons(expr.head, ...terms);
                 return [TFLAG_DIFF, hook('F', retval)];
             }
             else {
-                const terms = add_term_pairs(sorted.tail(), expr, $);
+                add_term_pairs(terms, expr, $);
                 return [TFLAG_DIFF, hook('G', items_to_cons(expr.head, ...terms))];
             }
         }
+        else if ($.isFactoring()) {
+            const terms = expr.tail();
+            factorize_term_pairs(terms, $);
+            const retval = items_to_cons(expr.head, ...terms);
+            const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
+            return [flag, hook('H', retval)];
+        }
         else {
-            // console.lg("ADD", render_as_infix(expr, $));
-            return [TFLAG_NONE, hook('H', expr)];
+            return [TFLAG_NONE, hook('I', expr)];
         }
     }
 }
 
-function make_term_association_implicit(expr: Cons, $: ExtensionEnv): U[] {
-    const terms = expr.tail();
+function make_term_association_implicit(terms: U[], $: ExtensionEnv): U[] {
     if ($.isAssociationImplicit()) {
         if (terms.some((term => is_cons(term) && is_add(term)))) {
             const args: U[] = [];
@@ -119,25 +134,24 @@ function make_term_association_implicit(expr: Cons, $: ExtensionEnv): U[] {
  * @param $ 
  * @returns 
  */
-function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): U[] {
-    const retval: U[] = [...terms];
+function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): void {
     let i = 0;
-    while (i < retval.length - 1) {
-        const lhs = retval[i];
-        const rhs = retval[i + 1];
+    while (i < terms.length - 1) {
+        const lhs = terms[i];
+        const rhs = terms[i + 1];
         const lhsRem = $.valueOf(canonical_factor_num_rhs(lhs));
         const rhsRem = $.valueOf(canonical_factor_num_rhs(rhs));
-        // console.lg("lhs", render_as_sexpr(lhs, $));
+        // console.lg("lhs", render_as_infix(lhs, $));
         // console.lg("lhsNum", render_as_infix(lhsNum, $));
         // console.lg("lhsRem", render_as_sexpr(lhsRem, $));
-        // console.lg("rhs", render_as_sexpr(rhs, $));
+        // console.lg("rhs", render_as_infix(rhs, $));
         // console.lg("rhsNum", render_as_infix(rhsNum, $));
         // console.lg("rhsRem", render_as_sexpr(rhsRem, $));
         if (lhsRem.equals(rhsRem)) {
             const lhsNum = canonical_factor_num_lhs(lhs);
             const rhsNum = canonical_factor_num_lhs(rhs);
             const s = $.multiply(add_num_num(lhsNum, rhsNum), lhsRem);
-            retval.splice(i, 2, s);
+            terms.splice(i, 2, s);
         }
         else {
             const lhsNum = canonical_factor_num_lhs(lhs);
@@ -156,7 +170,7 @@ function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): U[] {
                     const s = $.valueOf(candidate);
                     if (is_term_pair_changed(s, lhsRem, rhsRem)) {
                         // console.lg(`CHANGE`);
-                        retval.splice(i, 2, $.multiply(lhsNum, s));
+                        terms.splice(i, 2, $.multiply(lhsNum, s));
                     }
                     else {
                         // console.lg(`SAME`);
@@ -169,7 +183,6 @@ function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): U[] {
             }
         }
     }
-    return retval;
 }
 
 function is_term_pair_changed(s: U, lhs: U, rhs: U): boolean {
@@ -212,6 +225,53 @@ function add(argL: U, argR: U, $: ExtensionEnv): U {
         }
     }
     return items_to_cons(MATH_ADD, argL, argR);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function factorize_term_pairs(terms: U[], $: ExtensionEnv): void {
+    let i = 0;
+    while (i < terms.length - 1) {
+        const lhs = terms[i];
+        const rhs = terms[i + 1];
+        if (is_cons(lhs) && is_mul(lhs) && is_cons(rhs) && is_mul(rhs)) {
+            const tailL = lhs.tail();
+            const tailR = rhs.tail();
+            const common: U[] = [];
+            let done = false;
+            while (!done) {
+                if (tailL.length > 0 && tailR.length > 0) {
+                    const a = tailL[tailL.length - 1];
+                    const b = tailR[tailR.length - 1];
+                    if (a.equals(b)) {
+                        common.push(a);
+                        tailL.splice(tailL.length - 1, 1);
+                        tailR.splice(tailR.length - 1, 1);
+                    }
+                    else {
+                        done = true;
+                    }
+                }
+                else {
+                    done = true;
+                }
+            }
+            if (common.length > 0) {
+                const L = canonicalize_mul(items_to_cons(MATH_MUL, ...tailL));
+                const R = canonicalize_mul(items_to_cons(MATH_MUL, ...tailR));
+                const S = items_to_cons(MATH_ADD, ...make_term_association_implicit([L, R], $));
+                const T = canonicalize_mul(items_to_cons(MATH_MUL, ...common.reverse()));
+                const U = (items_to_cons(MATH_MUL, S, T));
+                terms.splice(i, 2, U);
+            }
+            else {
+                i++;
+            }
+        }
+        else {
+            i++;
+        }
+        // terms.splice(i, 2, $.multiply(lhsNum, s));
+    }
 }
 
 export const add_varargs = new Builder();

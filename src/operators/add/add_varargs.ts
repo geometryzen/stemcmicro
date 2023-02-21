@@ -4,8 +4,6 @@ import { compare_terms } from '../../calculators/compare/compare_terms';
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { render_as_infix } from '../../print/print';
-import { render_as_sexpr } from '../../print/render_as_sexpr';
 import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -138,48 +136,53 @@ function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): void {
     let i = 0;
     while (i < terms.length - 1) {
         const lhs = terms[i];
-        const rhs = terms[i + 1];
-        const lhsRem = $.valueOf(canonical_factor_num_rhs(lhs));
-        const rhsRem = $.valueOf(canonical_factor_num_rhs(rhs));
-        // console.lg("lhs", render_as_infix(lhs, $));
-        // console.lg("lhsNum", render_as_infix(lhsNum, $));
-        // console.lg("lhsRem", render_as_sexpr(lhsRem, $));
-        // console.lg("rhs", render_as_infix(rhs, $));
-        // console.lg("rhsNum", render_as_infix(rhsNum, $));
-        // console.lg("rhsRem", render_as_sexpr(rhsRem, $));
-        if (lhsRem.equals(rhsRem)) {
-            const lhsNum = canonical_factor_num_lhs(lhs);
-            const rhsNum = canonical_factor_num_lhs(rhs);
-            const s = $.multiply(add_num_num(lhsNum, rhsNum), lhsRem);
-            terms.splice(i, 2, s);
+        if ($.isZero(lhs)) {
+            terms.splice(i, 1);
         }
         else {
-            const lhsNum = canonical_factor_num_lhs(lhs);
-            const rhsNum = canonical_factor_num_lhs(rhs);
+            const rhs = terms[i + 1];
+            const lhsRem = $.valueOf(canonical_factor_num_rhs(lhs));
+            const rhsRem = $.valueOf(canonical_factor_num_rhs(rhs));
+            // console.lg("lhs", render_as_infix(lhs, $));
             // console.lg("lhsNum", render_as_infix(lhsNum, $));
+            // console.lg("lhsRem", render_as_sexpr(lhsRem, $));
+            // console.lg("rhs", render_as_infix(rhs, $));
             // console.lg("rhsNum", render_as_infix(rhsNum, $));
-            if (lhsNum.equals(rhsNum)) {
-                // We try to recruit some other pattern matcher to transform the addition.
-                // The problem is that we end up finding ourself and end up in an infinite loop.
-                const candidate = items_to_cons(MATH_ADD, lhsRem, rhsRem);
-                if (candidate.equals(original)) {
-                    // Attempting to evaluate the expression would lead to infinite recursion.
-                    i++;
-                }
-                else {
-                    const s = $.valueOf(candidate);
-                    if (is_term_pair_changed(s, lhsRem, rhsRem)) {
-                        // console.lg(`CHANGE`);
-                        terms.splice(i, 2, $.multiply(lhsNum, s));
-                    }
-                    else {
-                        // console.lg(`SAME`);
-                        i++;
-                    }
-                }
+            // console.lg("rhsRem", render_as_sexpr(rhsRem, $));
+            if (lhsRem.equals(rhsRem)) {
+                const lhsNum = canonical_factor_num_lhs(lhs);
+                const rhsNum = canonical_factor_num_lhs(rhs);
+                const s = $.multiply(add_num_num(lhsNum, rhsNum), lhsRem);
+                terms.splice(i, 2, s);
             }
             else {
-                i++;
+                const lhsNum = canonical_factor_num_lhs(lhs);
+                const rhsNum = canonical_factor_num_lhs(rhs);
+                // console.lg("lhsNum", render_as_infix(lhsNum, $));
+                // console.lg("rhsNum", render_as_infix(rhsNum, $));
+                if (lhsNum.equals(rhsNum)) {
+                    // We try to recruit some other pattern matcher to transform the addition.
+                    // The problem is that we end up finding ourself and end up in an infinite loop.
+                    const candidate = items_to_cons(MATH_ADD, lhsRem, rhsRem);
+                    if (candidate.equals(original)) {
+                        // Attempting to evaluate the expression would lead to infinite recursion.
+                        i++;
+                    }
+                    else {
+                        const s = $.valueOf(candidate);
+                        if (is_term_pair_changed(s, lhsRem, rhsRem)) {
+                            // console.lg(`CHANGE`);
+                            terms.splice(i, 2, $.multiply(lhsNum, s));
+                        }
+                        else {
+                            // console.lg(`SAME`);
+                            i++;
+                        }
+                    }
+                }
+                else {
+                    i++;
+                }
             }
         }
     }

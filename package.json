@@ -62,6 +62,7 @@
         "unit-do": "mocha 'units/do.spec.ts'",
         "unit-eigen": "mocha 'units/eigen.spec.ts'",
         "unit-env": "mocha 'units/env.spec.ts'",
+        "unit-euler": "mocha 'units/euler.spec.ts'",
         "unit-eval": "mocha 'units/eval.spec.ts'",
         "unit-example": "mocha 'units/example.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",

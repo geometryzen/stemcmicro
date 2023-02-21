@@ -1,6 +1,6 @@
 import { is_mul } from "../../operators/mul/is_mul";
 import { cons, is_cons, U } from "../../tree/tree";
-import { canonicalize_mul } from "../canonicalize/canonicalize_unary_mul";
+import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 
 export function canonical_factor_lhs(expr: U): U {
     const L0 = expr;

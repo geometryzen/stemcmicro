@@ -3,7 +3,7 @@ import { is_mul } from "../../operators/mul/is_mul";
 import { one, Rat } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { canonicalize_mul } from "../canonicalize/canonicalize_unary_mul";
+import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 /*
 export function canonical_factor_blade_lhs(expr: U): U {
     if (is_blade(expr)) {

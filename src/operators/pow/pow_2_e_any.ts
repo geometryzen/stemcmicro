@@ -1,10 +1,12 @@
+import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { ExtensionEnv, keepFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { evaluatingTrigAsExp } from "../../modes/modes";
+import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { MATH_ADD, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
-import { negOne } from "../../tree/rat/Rat";
+import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
@@ -14,6 +16,7 @@ import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
 import { is_imu } from "../imu/is_imu";
+import { is_mul } from "../mul/is_mul";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_rat } from "../rat/RatExtension";
 import { is_sym } from "../sym/is_sym";
@@ -80,6 +83,16 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         else {
             // Conversion of (power e to trigonometric form, when expanding.
             if ($.isExpanding()) {
+                // TODO: We could also consider the case of blades whose square is -1.
+                if (is_imu(expo)) {
+                    const c = items_to_cons(MATH_COS, one);
+                    const s = items_to_cons(MATH_SIN, one);
+                    const i_times_s = items_to_cons(MATH_MUL, imu, s);
+                    return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, i_times_s)];
+                }
+                // The following block of code is not very general because it assumes that the exponent
+                // involves only binary multiplication. This would only occur in simple cases
+                // or when the association of multiplication is explicit.
                 if (is_cons(expo) && is_mul_2_any_any(expo)) {
                     const expo_lhs = expo.lhs;
                     const expo_rhs = expo.rhs;
@@ -131,6 +144,13 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                         return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, s_times_i)];
                     }
                 }
+                if (is_cons(expo) && is_mul(expo)) {
+                    const N = count_imu_factors(expo);
+                    if (N === 1) {
+                        const x = divide_by_imu(expo, $);
+                        return [TFLAG_DIFF, euler_formula(x)];
+                    }
+                }
             }
             if ($.isFactoring()) {
                 return [TFLAG_DIFF, items_to_cons(MATH_EXP, expo)];
@@ -138,6 +158,14 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         }
         return [TFLAG_NONE, expr];
     }
+}
+
+function euler_formula(x: U): U {
+    const c = items_to_cons(MATH_COS, x);
+    const s = items_to_cons(MATH_SIN, x);
+    const i_times_s = items_to_cons(MATH_MUL, imu, s);
+    return items_to_cons(MATH_ADD, c, i_times_s);
+
 }
 
 export const pow_2_e_any = new Builder();

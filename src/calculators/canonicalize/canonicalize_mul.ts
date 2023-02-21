@@ -2,6 +2,15 @@ import { is_mul } from "../../operators/mul/is_mul";
 import { one } from "../../tree/rat/Rat";
 import { Cons, is_nil, U } from "../../tree/tree";
 
+/**
+ * Converts 0-ary and 1-ary multiplicative expressions to canonical form.
+ * 
+ * 0-ary: (*)   => 1,
+ * 
+ * 1-ary: (* x) => x,
+ * 
+ * otherwise unchanged.
+ */
 export function canonicalize_mul(expr: Cons): U {
     const L0 = expr;
     if (is_mul(L0)) {

@@ -1,5 +1,5 @@
 import { add_num_num } from '../../calculators/add/add_num_num';
-import { canonicalize_mul } from '../../calculators/canonicalize/canonicalize_unary_mul';
+import { canonicalize_mul } from '../../calculators/canonicalize/canonicalize_mul';
 import { compare_terms } from '../../calculators/compare/compare_terms';
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";

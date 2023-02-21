@@ -3,7 +3,7 @@ import { is_num } from "../../operators/num/is_num";
 import { Num } from "../../tree/num/Num";
 import { one } from "../../tree/rat/Rat";
 import { cons, is_cons, is_nil, U } from "../../tree/tree";
-import { canonicalize_mul } from "../canonicalize/canonicalize_unary_mul";
+import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 
 /**
  * expr = canonical_factor_num_lhs(expr) * canonical_factor_num_rhs(expr)

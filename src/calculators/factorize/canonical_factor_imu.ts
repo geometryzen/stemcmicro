@@ -3,7 +3,7 @@ import { is_mul } from "../../operators/mul/is_mul";
 import { Imu } from "../../tree/imu/ImaginaryUnit";
 import { one, Rat } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
-import { canonicalize_mul } from "../canonicalize/canonicalize_unary_mul";
+import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 
 export function canonical_factor_imu_rhs(expr: U): Rat | Imu {
     if (is_imu(expr)) {

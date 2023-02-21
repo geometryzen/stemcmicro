@@ -19,7 +19,7 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }
-    // console.lg(`ENTERING compare_factors ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
+    // console.log(`compare_factors lhs => ${render_as_sexpr(lhs, $)} rhs=> ${render_as_sexpr(rhs, $)}`);
     // Numeric factors in lhs term have no effect on ordering.
     if (is_cons(lhs) && is_mul_2_any_any(lhs)) {
         const [a, b] = factorizeL(lhs);

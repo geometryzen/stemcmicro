@@ -3,7 +3,7 @@ import { zero } from "../../tree/rat/Rat";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_blade } from "../blade/is_blade";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 
 export function extract_grade(arg: U, grade: number, $: ExtensionEnv): U {
     if (is_blade(arg)) {

@@ -9,7 +9,7 @@ import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_pow_2_any_rat } from "../pow/is_pow_2_any_rat";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { MATH_ABS } from "./MATH_ABS";
 
 class Builder implements OperatorBuilder<Cons> {

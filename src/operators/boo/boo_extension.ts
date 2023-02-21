@@ -82,6 +82,6 @@ export class BooExtension implements Extension<Boo> {
     }
 }
 
-export const boo = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const boo_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new BooExtension($);
 });

@@ -116,4 +116,24 @@ describe("Exponentiation", function () {
         assert.strictEqual(engine.renderAsInfix(actual), '-2*2**(1/2)*i');
         engine.release();
     });
+    it("test E", function () {
+        const lines: string[] = [
+            `a*a`
+        ];
+        const engine = createScriptEngine({ useDefinitions: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), '(power a 2)');
+        assert.strictEqual(engine.renderAsInfix(actual), 'a**2');
+        engine.release();
+    });
+    it("test F", function () {
+        const lines: string[] = [
+            `a*a*a`
+        ];
+        const engine = createScriptEngine({ useDefinitions: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), '(power a 3)');
+        assert.strictEqual(engine.renderAsInfix(actual), 'a**3');
+        engine.release();
+    });
 });

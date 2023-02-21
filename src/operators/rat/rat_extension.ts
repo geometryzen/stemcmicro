@@ -89,6 +89,6 @@ class RatExtension implements Extension<Rat> {
     }
 }
 
-export const rat = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const rat_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new RatExtension($);
 });

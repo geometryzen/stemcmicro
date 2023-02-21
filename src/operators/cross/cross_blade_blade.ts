@@ -9,7 +9,7 @@ import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_blade_rat } from "../mul/is_mul_2_blade_rat";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { MATH_VECTOR_CROSS_PRODUCT } from "./MATH_VECTOR_CROSS_PRODUCT";
 
 class Builder implements OperatorBuilder<U> {

@@ -7,7 +7,7 @@ import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { is_mul_2_sym_sym } from "./is_mul_2_sym_sym";
 
 class Builder implements OperatorBuilder<Cons> {

@@ -18,7 +18,7 @@ import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
 import { is_imu } from "../imu/is_imu";
 import { is_mul } from "../mul/is_mul";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { is_sym } from "../sym/is_sym";
 
 class Builder implements OperatorBuilder<Cons> {

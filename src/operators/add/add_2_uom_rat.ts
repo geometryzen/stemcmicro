@@ -9,7 +9,7 @@ import { Cons, U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
-import { is_uom } from "../uom/UomExtension";
+import { is_uom } from "../uom/uom_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

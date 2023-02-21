@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { render_as_sexpr } from "../print/render_as_sexpr";
 import { U } from "../tree/tree";
 import { ExtensionEnv, FEATURE, Operator } from "./ExtensionEnv";
 
@@ -42,7 +43,8 @@ export class UnknownOperator implements Operator<U> {
         throw new Error("UnknownOperator.isVector Method not implemented.");
     }
     isZero(expr: U): boolean {
-        throw new Error("UnknownOperator.isZero Method not implemented.");
+        const repr = render_as_sexpr(expr, this.$);
+        throw new Error(`UnknownOperator.isZero ${repr} Method not implemented.`);
     }
     subst(expr: U, oldExpr: U, newExpr: U): U {
         throw new Error("UnknownOperator.subst Method not implemented.");

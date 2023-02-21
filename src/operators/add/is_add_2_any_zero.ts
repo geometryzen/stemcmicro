@@ -1,5 +1,5 @@
 import { Cons } from "../../tree/tree";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { is_add_2_any_any } from "./is_add_2_any_any";
 
 export function is_add_2_any_zero(expr: Cons): boolean {

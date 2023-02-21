@@ -5,7 +5,7 @@ import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { compare_blade_blade } from "../blade/BladeExtension";
+import { compare_blade_blade } from "../blade/blade_extension";
 import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";

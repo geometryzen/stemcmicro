@@ -8,7 +8,7 @@ import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { is_pow_2_any_rat } from "./is_pow_2_any_rat";
 
 class Builder implements OperatorBuilder<Cons> {

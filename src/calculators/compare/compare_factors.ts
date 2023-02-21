@@ -4,12 +4,14 @@ import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_num } from "../../operators/num/is_num";
+import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_rat } from "../../operators/rat/is_rat";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { render_as_infix } from "../../print/print";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
+import { flip_sign } from "../flip_sign";
 import { compare } from "./compare";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
@@ -19,7 +21,27 @@ export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }
-    // console.log(`compare_factors lhs => ${render_as_sexpr(lhs, $)} rhs=> ${render_as_sexpr(rhs, $)}`);
+    // When comparing power expressions, the expressions should sort first according to the base,
+    // and if that is the same than
+    if (is_cons(lhs) && is_pow_2_any_any(lhs) && is_cons(rhs) && is_pow_2_any_any(rhs)) {
+        const baseL = lhs.lhs;
+        const baseR = rhs.lhs;
+        switch (compare_factors(baseL, baseR, $)) {
+            case SIGN_GT: {
+                return SIGN_GT;
+            }
+            case SIGN_LT: {
+                return SIGN_LT;
+            }
+            default: {
+                const expoL = lhs.rhs;
+                const expoR = rhs.rhs;
+                // We want higher powers on the LHS, so we flip the signs.
+                return flip_sign(compare_factors(expoL, expoR, $));
+            }
+        }
+    }
+    // console.lg(`compare_factors lhs => ${render_as_sexpr(lhs, $)} rhs=> ${render_as_sexpr(rhs, $)}`);
     // Numeric factors in lhs term have no effect on ordering.
     if (is_cons(lhs) && is_mul_2_any_any(lhs)) {
         const [a, b] = factorizeL(lhs);

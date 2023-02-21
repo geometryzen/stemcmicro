@@ -4,7 +4,7 @@ import { Str } from "../../tree/str/Str";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_str } from "../str/StrExtension";
+import { is_str } from "../str/str_extension";
 import { uom } from "./uom";
 
 class Builder implements OperatorBuilder<U> {

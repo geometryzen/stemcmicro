@@ -392,6 +392,6 @@ function Eval_stop() {
     throw new Error('user stop');
 }
 
-export const cons = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const cons_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new ConsExtension($);
 });

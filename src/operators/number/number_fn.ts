@@ -4,9 +4,9 @@ import { NUMBER } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
 import { one, Rat, zero } from "../../tree/rat/Rat";
 import { Cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/FltExtension";
+import { is_flt } from "../flt/flt_extension";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

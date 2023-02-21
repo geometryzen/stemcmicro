@@ -3,9 +3,9 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from 
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { MULTIPLY } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { cadr, cddr } from "../../tree/helpers";
-import { one, zero } from "../../tree/rat/Rat";
+import { one, two, zero } from "../../tree/rat/Rat";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_mul } from "./is_mul";
@@ -37,8 +37,8 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         // console.lg(this.name, render_as_sexpr(expr, $));
         const hook = (where: string, retval: U): U => {
-            // console.log(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
-            // console.log(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
         // The problem we have here is that we are driving an implicit association to an explicit one.
@@ -56,10 +56,10 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                 // Distributive Law.
                 const product = multiply_factors(expr, $);
                 if (product.equals(expr)) {
-                    return [TFLAG_NONE, hook('E', expr)];
+                    return [TFLAG_NONE, hook('C', expr)];
                 }
                 else {
-                    return [TFLAG_DIFF, hook('F', product)];
+                    return [TFLAG_DIFF, hook('D', product)];
                 }
             }
             else {
@@ -68,11 +68,16 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             if (args.length === 2) {
                 if ($.isAssociationImplicit() && args_contain_association_explicit(args)) {
                     const retval = items_to_cons(expr.head, ...make_factor_association_implicit(args));
-                    return [TFLAG_DIFF, hook('C', retval)];
+                    return [TFLAG_DIFF, hook('E', retval)];
                 }
                 else {
                     // We don't do the binary case, leave that to specific matchers.
-                    return [TFLAG_NONE, hook('D', expr)];
+                    if (expr.lhs.equals(expr.rhs)) {
+                        return [TFLAG_DIFF, items_to_cons(MATH_POW, expr.lhs, two)];
+                    }
+                    else {
+                        return [TFLAG_NONE, hook('F', expr)];
+                    }
                 }
             }
             if ($.isAssociationImplicit()) {

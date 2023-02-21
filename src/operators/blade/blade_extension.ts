@@ -111,6 +111,6 @@ class BladeExtension implements Extension<Blade> {
     }
 }
 
-export const bladeExtensionBuilder = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const blade_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new BladeExtension($);
 });

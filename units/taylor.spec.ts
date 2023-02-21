@@ -35,8 +35,8 @@ describe("taylor", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1/9 (* 2/81 x x))");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "1/9+2/81*x*x");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1/9 (* 2/81 (power x 2)))");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/9+2/81*x**2");
         engine.release();
     });
     xit("taylor(1/(5+4*cos(x)),x,6,0)", function () {

@@ -92,4 +92,4 @@ class NilExtension implements Operator<Cons> {
     }
 }
 
-export const nilExtensionBuilder = new Builder();
+export const nil_extension = new Builder();

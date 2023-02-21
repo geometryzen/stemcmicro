@@ -1,6 +1,6 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
-import { compare_blade_blade } from "../../operators/blade/BladeExtension";
+import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_blade } from "../../operators/blade/is_blade";
 import { MATH_DERIVATIVE } from "../../operators/derivative/MATH_DERIVATIVE";
 import { is_unaop } from "../../operators/helpers/is_unaop";
@@ -13,22 +13,40 @@ import { is_mul_2_sym_sym } from "../../operators/mul/is_mul_2_sym_sym";
 import { is_num } from "../../operators/num/is_num";
 import { is_pow_2_any_any } from "../../operators/pow/is_pow_2_any_any";
 import { is_pow_2_sym_rat } from "../../operators/pow/is_pow_2_sym_rat";
-import { is_rat } from "../../operators/rat/RatExtension";
+import { is_rat } from "../../operators/rat/rat_extension";
 import { is_sym } from "../../operators/sym/is_sym";
 import { one, zero } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
 import { canonical_factor_lhs, canonical_factor_rhs } from "../factorize/canonical_factor";
 import { canonical_factor_blade_rhs } from "../factorize/canonical_factor_blade";
 import { canonical_factor_imu_rhs } from "../factorize/canonical_factor_imu";
-import { canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
+import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { factorizeL } from "../factorizeL";
 import { compare_cons_cons } from "./compare_cons_cons";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
-import { compare_vars_vars } from "./compare_vars_vars";
-import { free_vars } from "./free_vars";
 
 export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    const lhsR = canonical_factor_num_rhs(lhs);
+    const rhsR = canonical_factor_num_rhs(rhs);
+    switch (compare_terms_core(lhsR, rhsR, $)) {
+        case SIGN_GT: {
+            return SIGN_GT;
+        }
+        case SIGN_LT: {
+            return SIGN_LT;
+        }
+        case SIGN_EQ: {
+            // If two terms, apart from numeric factors, are equal then it really does not matter too much
+            // how they are sorted because they are destined to be combined through addition.
+            const lhsL = canonical_factor_num_lhs(lhs);
+            const rhsL = canonical_factor_num_lhs(rhs);
+            return compare_num_num(lhsL, rhsL);
+        }
+    }
+}
+
+function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // console.lg(`ENTERING compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
     lhs = canonical_factor_num_rhs(lhs);
     rhs = canonical_factor_num_rhs(rhs);
@@ -36,13 +54,33 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // console.lg(`MUNGED   compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: Sign, description: string): Sign {
-        // console.lg(`LEAVING  compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
+        // console.lg(`LEAVING  compare_terms_core ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
         return retval;
     };
     // console.lg(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);
     if (lhs.equals(rhs)) {
         return hook(SIGN_EQ, "A");
     }
+    if (is_cons(lhs) && is_pow_2_any_any(lhs) && is_cons(rhs) && is_pow_2_any_any(rhs)) {
+        const baseL = lhs.lhs;
+        const baseR = rhs.lhs;
+        switch (compare_terms(baseL, baseR, $)) {
+            case SIGN_GT: {
+                return SIGN_GT;
+            }
+            case SIGN_LT: {
+                return SIGN_LT;
+            }
+            default: {
+                const expoL = lhs.rhs;
+                const expoR = rhs.rhs;
+                // We want higher powers on the LHS, so we flip the signs.
+                return compare_terms(expoL, expoR, $);
+                // return flip_sign(compare_terms(expoL, expoR, $));
+            }
+        }
+    }
+
     if (is_sym(lhs) && is_sym(rhs)) {
         return hook(compare_sym_sym(lhs, rhs), "B");
     }
@@ -92,11 +130,7 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                 }
             }
         }
-        const lvars = free_vars(lhs, $);
-        const rvars = free_vars(rhs, $);
-        // console.lg(`A. compare_vars_vars lvars=${lvars} rvars=${rvars}`);
-        const retval = compare_vars_vars(lvars, rvars);
-        return hook(retval, "J");
+        return SIGN_EQ;
     }
     if (is_sym(rhs)) {
         if ($.isImag(lhs)) {
@@ -115,11 +149,10 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                 }
             }
         }
-        const lvars = free_vars(lhs, $);
-        const rvars = free_vars(rhs, $);
-        // console.lg(`B. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
-        const retval = compare_vars_vars(lvars, rvars);
-        return hook(retval, "N");
+        return SIGN_EQ;
+    }
+    if (is_num(lhs) && is_num(rhs)) {
+        return compare_num_num(lhs, rhs);
     }
     if (is_num(lhs)) {
         if ($.isImag(rhs)) {
@@ -335,13 +368,5 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if ($.isReal(lhs) && $.isImag(rhs)) {
         return SIGN_LT;
     }
-    // TODO: We should never have to end up here.
-    const lvars = free_vars(lhs, $);
-    const rvars = free_vars(rhs, $);
-    // console.lg(`C. compare_vars_vars lhs=${lhs} rhs=${rhs}`);
-    const retval = compare_vars_vars(lvars, rvars);
-    return hook(retval, "Z");
-
-    // // console.lg(`UNDECIDED compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
-    // return SIGN_EQ;
+    return SIGN_EQ;
 }

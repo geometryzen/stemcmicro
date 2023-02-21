@@ -1,6 +1,6 @@
 import { Rat } from "../../tree/rat/Rat";
 import { Cons, is_cons, U } from "../../tree/tree";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 
 export function match_mul_2_rat_rat(expr: U): { expr: Cons, lhs: Rat, rhs: Rat } | undefined {

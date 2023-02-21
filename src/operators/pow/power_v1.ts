@@ -28,7 +28,7 @@ import { is_rat } from "../rat/is_rat";
 import { rect } from "../rect/rect";
 import { sin } from "../sin/sine";
 import { is_tensor } from "../tensor/is_tensor";
-import { is_uom } from "../uom/UomExtension";
+import { is_uom } from "../uom/uom_extension";
 import { dpow } from "./dpow";
 
 /**

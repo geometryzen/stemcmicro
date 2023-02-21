@@ -2,15 +2,19 @@ import { assert } from "chai";
 import { createScriptEngine } from "../index";
 
 describe("sandbox", function () {
-    it("exp(-i*x)", function () {
+    it("(e1, e1)", function () {
         const lines: string[] = [
-            `exp(-i*x)`
+            `G11 = algebra([1, 1], ["L1", "L2"])`,
+            `b1 = G11[1]`,
+            `b2 = G11[2]`,
+            `X = b1 + b1`,
+            `X`
         ];
         const engine = createScriptEngine({
-            useDefinitions: true
+            dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)-sin(x)*i");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "2*L1");
         engine.release();
     });
 });

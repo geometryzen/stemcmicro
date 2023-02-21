@@ -10,7 +10,7 @@ import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
 import { is_mul_2_rat_sym } from "../mul/is_mul_2_rat_sym";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

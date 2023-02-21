@@ -14,8 +14,6 @@ import { add_2_add_2_sym_sym_sym } from '../operators/add/add_2_add_2_sym_sym_sy
 import { add_2_add_2_sym_xxx_xxx } from '../operators/add/add_2_add_2_sym_xxx_xxx';
 import { add_2_add_any } from '../operators/add/add_2_add_any';
 import { add_2_any_add } from '../operators/add/add_2_any_add';
-import { add_2_any_add_2_any_any } from '../operators/add/add_2_any_add_2_any_any';
-import { add_2_any_any } from '../operators/add/add_2_any_any';
 import { add_2_any_any_factorize_rhs } from '../operators/add/add_2_any_any_factorize_rhs';
 import { add_2_any_any_zero_sum } from '../operators/add/add_2_any_any_zero_sum';
 import { add_2_any_mul_2_rat_any } from '../operators/add/add_2_any_mul_2_rat_any';
@@ -69,9 +67,9 @@ import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
 import { bessely_varargs } from '../operators/bessely/bessely_varargs';
 import { binomial_varargs } from '../operators/binomial/binomial_varargs';
-import { bladeExtensionBuilder } from '../operators/blade/BladeExtension';
+import { blade_extension } from '../operators/blade/blade_extension';
 import { is_blade } from '../operators/blade/is_blade';
-import { boo } from '../operators/boo/BooExtension';
+import { boo_extension } from '../operators/boo/boo_extension';
 import { ceiling_any } from '../operators/ceiling/ceiling_any';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
@@ -89,7 +87,7 @@ import { conj_inner } from '../operators/conj/conj_inner';
 import { conj_mul_2_any_any } from '../operators/conj/conj_mul_2_any_any';
 import { conj_rat } from '../operators/conj/conj_rat';
 import { conj_sym } from '../operators/conj/conj_sym';
-import { cons } from '../operators/cons/ConsExtension';
+import { cons_extension } from '../operators/cons/cons_extension';
 import { contract_varargs } from '../operators/contract/contract_varargs';
 import { cos_add_2_any_any } from '../operators/cos/cos_add_2_any_any';
 import { cos_any } from '../operators/cos/cos_any';
@@ -130,7 +128,7 @@ import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
 import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
-import { errExtensionBuilder } from '../operators/err/ErrExtension';
+import { err_extension } from '../operators/err/err_extension';
 import { eval_varargs } from '../operators/eval/eval_varargs';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
@@ -151,7 +149,7 @@ import { float_rat } from '../operators/float/float_rat';
 import { float_sym } from '../operators/float/float_sym';
 import { float_sym_pi } from '../operators/float/float_sym_pi';
 import { floor_varargs } from '../operators/floor/floor_varargs';
-import { is_flt, op_flt } from '../operators/flt/FltExtension';
+import { flt_extension, is_flt } from '../operators/flt/flt_extension';
 import { for_varargs } from '../operators/for/for_varargs';
 import { gamma_varargs } from '../operators/gamma/gamma_varargs';
 import { gcd_varargs } from '../operators/gcd/gcd_varargs';
@@ -159,9 +157,9 @@ import { heterogenous_canonical_order } from '../operators/helpers/heterogenous_
 import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/heterogenous_canonical_order_lhs_assoc';
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
-import { hypExtensionBuilder } from '../operators/hyp/HypExtension';
+import { hyp_extension } from '../operators/hyp/hyp_extension';
 import { imag_any } from '../operators/imag/imag_any';
-import { imuExtensionBuilder } from '../operators/imu/ImuExtension';
+import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner } from '../operators/inner/inner';
 import { inner_2_any_any } from '../operators/inner/inner_2_any_any';
@@ -268,7 +266,7 @@ import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
 import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
 import { mul_varargs } from '../operators/mul/mul_varargs';
-import { nilExtensionBuilder } from '../operators/nil/NilExtension';
+import { nil_extension } from '../operators/nil/nil_extension';
 import { not_fn } from '../operators/not/not_fn';
 import { nroots_varargs } from '../operators/nroots/nroots_varargs';
 import { number_fn } from '../operators/number/number_fn';
@@ -303,7 +301,7 @@ import { printlist_keyword } from '../operators/printlist/printlist_keyword';
 import { product_varargs } from '../operators/product/product_varargs';
 import { quote_varargs } from '../operators/quote/quote_varargs';
 import { rank_varargs } from '../operators/rank/rank_varargs';
-import { is_rat, rat } from '../operators/rat/RatExtension';
+import { is_rat, rat_extension } from '../operators/rat/rat_extension';
 import { rationalize_fn } from '../operators/rationalize/rationalize_fn';
 import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
@@ -335,13 +333,13 @@ import { st_any } from '../operators/st/st_any';
 import { st_mul_2_rat_any } from '../operators/st/st_mul_2_rat_any';
 import { st_rat } from '../operators/st/st_rat';
 import { st_sym } from '../operators/st/st_sym';
-import { str } from '../operators/str/StrExtension';
+import { str_extension } from '../operators/str/str_extension';
 import { subst_varargs } from '../operators/subst/subst_varargs';
 import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
 import { sum_varargs } from '../operators/sum/sum_varargs';
 import { is_sym } from '../operators/sym/is_sym';
-import { symExtensionBuilder } from '../operators/sym/SymExtension';
+import { sym_extension } from '../operators/sym/sym_extension';
 import { sym_math_add } from '../operators/sym/sym_math_add';
 import { sym_math_mul } from '../operators/sym/sym_math_mul';
 import { sym_math_pi } from '../operators/sym/sym_math_pi';
@@ -350,7 +348,7 @@ import { tan_varargs } from '../operators/tan/tan_varargs';
 import { tanh_varargs } from '../operators/tanh/tanh_varargs';
 import { tau } from '../operators/tau/tau';
 import { taylor_varargs } from '../operators/taylor/taylor_varargs';
-import { tensorExtensionBuilder } from '../operators/tensor/TensorExtension';
+import { tensor_extension } from '../operators/tensor/tensor_extension';
 import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
 import { testgt_mul_2_any_any_rat } from '../operators/testgt/testgt_mul_2_any_any_rat';
 import { testgt_rat_rat } from '../operators/testgt/testgt_rat_rat';
@@ -377,8 +375,8 @@ import { typeof_any } from '../operators/typeof/typeof_any';
 import { typeof_blade } from '../operators/typeof/typeof_blade';
 import { typeof_tensor } from '../operators/typeof/typeof_tensor';
 import { unit_any } from '../operators/unit/unit_any';
-import { is_uom, uomExtensionBuilder } from '../operators/uom/UomExtension';
 import { uom_1_str } from '../operators/uom/uom_1_str';
+import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { one, zero } from '../tree/rat/Rat';
@@ -468,7 +466,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_mul_2_any_vector_mul_2_any_vector);
     $.defineOperator(add_2_pow_2_cos_rat_pow_2_sin_rat);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
-    $.defineOperator(add_2_any_add_2_any_any);
+    // $.defineOperator(add_2_any_add_2_any_any);
     $.defineOperator(add_2_any_add);
 
     $.defineOperator(add_2_sym_sym);
@@ -482,7 +480,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_imu_flt);
     $.defineOperator(add_2_any_any_zero_sum);
     $.defineOperator(add_2_any_any_factorize_rhs);
-    $.defineOperator(add_2_any_any);
+    // $.defineOperator(add_2_any_any);
     $.defineOperator(add_varargs);
 
     $.defineAssociative(MATH_ADD, zero);
@@ -687,10 +685,10 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(rco_2_any_mul_2_scalar_any);
     $.defineOperator(rco_2_any_any);
 
-    $.defineOperator(boo);
-    $.defineOperator(rat);
-    $.defineOperator(op_flt);
-    $.defineOperator(str);
+    $.defineOperator(boo_extension);
+    $.defineOperator(rat_extension);
+    $.defineOperator(flt_extension);
+    $.defineOperator(str_extension);
 
     $.defineOperator(abs_rat);
     $.defineOperator(abs_sym_real);
@@ -881,13 +879,13 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(sym_math_pow);
     $.defineOperator(sym_math_pi);
 
-    $.defineOperator(symExtensionBuilder);
-    $.defineOperator(tensorExtensionBuilder);
-    $.defineOperator(bladeExtensionBuilder);
-    $.defineOperator(uomExtensionBuilder);
-    $.defineOperator(hypExtensionBuilder);
-    $.defineOperator(errExtensionBuilder);
-    $.defineOperator(imuExtensionBuilder);
+    $.defineOperator(sym_extension);
+    $.defineOperator(tensor_extension);
+    $.defineOperator(blade_extension);
+    $.defineOperator(uom_extension);
+    $.defineOperator(hyp_extension);
+    $.defineOperator(err_extension);
+    $.defineOperator(imu_extension);
 
     $.defineOperator(unit_any);
 
@@ -896,8 +894,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(zero_varargs);
 
     // NIL is implemented as an empty Cons, so it has to be defined before the generic Cons operator.
-    $.defineOperator(nilExtensionBuilder);
+    $.defineOperator(nil_extension);
 
     // There is no fallback. We migrate everything.
-    $.defineOperator(cons);
+    $.defineOperator(cons_extension);
 }

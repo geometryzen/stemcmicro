@@ -8,7 +8,7 @@ import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_tensor } from "../tensor/is_tensor";
-import { add_tensor_tensor } from "../tensor/TensorExtension";
+import { add_tensor_tensor } from "../tensor/tensor_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

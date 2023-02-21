@@ -6,7 +6,7 @@ import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
-import { compare_blade_blade } from "../blade/BladeExtension";
+import { compare_blade_blade } from "../blade/blade_extension";
 import { is_blade } from "../blade/is_blade";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";

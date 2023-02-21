@@ -1,10 +1,9 @@
 import { compare_terms } from "../../calculators/compare/compare_terms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
@@ -47,16 +46,21 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         super('add_2_assoc_rhs_canonical_ordering', MATH_ADD, is_any, and(is_cons, is_add_2_any_any), cross($), $);
         this.hash = hash_binop_atom_cons(MATH_ADD, HASH_ANY, MATH_ADD);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
+        // console.lg(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
+        const hook = (where: string, retval: U): U => {
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            return retval;
+        };
+        // console.lg(this.name, render_as_infix(exp, $));
         const a = rhs.lhs;
         const X = rhs.rhs;
         const z = lhs;
-        const p1 = makeList(MATH_ADD, z, X);
-        const p2 = $.valueOf(p1);
-        const p3 = makeList(MATH_ADD, a, p2);
-        const p4 = $.valueOf(p3);
-        return [TFLAG_DIFF, p4];
+        const p1 = items_to_cons(MATH_ADD, z, X);
+        const p3 = items_to_cons(MATH_ADD, a, p1);
+        return [TFLAG_DIFF, hook('A', p3)];
     }
 }
 

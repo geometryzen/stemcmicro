@@ -34,7 +34,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_EXPLICATE, MODE_FACTORING, MODE_FLAGS_ALL, MODE_IMPLICATE, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { decodeMode, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_EXPLICATE, MODE_FACTORING, MODE_FLAGS_ALL, MODE_IMPLICATE, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -164,7 +164,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for key ${key}`);
         }
         else {
-            throw new SystemError(`No operators for key ${key} in mode ${current_mode}`);
+            throw new SystemError(`No operators for key ${key} in mode ${JSON.stringify(decodeMode(current_mode))}`);
         }
     }
 
@@ -653,7 +653,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
-                                // console.lo\g(`TRY  ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                // console.lg(`TRY  ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                 if (!newExpr.equals(curExpr)) {
                                     // By logging here we can see all the transformations that make changes.
                                     // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);

@@ -88,6 +88,6 @@ export class FltExtension implements Extension<Flt> {
     }
 }
 
-export const op_flt = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const flt_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new FltExtension($);
 });

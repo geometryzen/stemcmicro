@@ -5,9 +5,9 @@ import { wrap_as_flt, Flt } from "../../tree/flt/Flt";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/FltExtension";
+import { is_flt } from "../flt/flt_extension";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

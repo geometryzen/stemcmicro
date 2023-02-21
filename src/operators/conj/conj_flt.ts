@@ -2,7 +2,7 @@ import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { is_flt } from "../flt/FltExtension";
+import { is_flt } from "../flt/flt_extension";
 import { Function1 } from "../helpers/Function1";
 import { MATH_CONJ } from "./MATH_CONJ";
 

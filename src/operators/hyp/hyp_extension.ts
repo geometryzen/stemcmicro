@@ -83,6 +83,6 @@ class HypExtension implements Extension<Hyp> {
 /**
  * The hyperreal Extension.
  */
-export const hypExtensionBuilder = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const hyp_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new HypExtension($);
 });

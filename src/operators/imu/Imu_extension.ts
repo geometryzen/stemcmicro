@@ -94,4 +94,4 @@ class ImuExtension implements Operator<Cons> {
     }
 }
 
-export const imuExtensionBuilder = new Builder();
+export const imu_extension = new Builder();

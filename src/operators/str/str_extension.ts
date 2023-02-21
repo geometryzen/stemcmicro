@@ -94,6 +94,6 @@ class StrExtension implements Extension<Str> {
     }
 }
 
-export const str = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
+export const str_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new StrExtension($);
 });

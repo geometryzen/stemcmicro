@@ -7,7 +7,7 @@ import { Flt } from "../../tree/flt/Flt";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/FltExtension";
+import { is_flt } from "../flt/flt_extension";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 

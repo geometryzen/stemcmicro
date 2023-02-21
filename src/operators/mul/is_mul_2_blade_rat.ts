@@ -4,7 +4,7 @@ import { Cons } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
 import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 
 export function is_mul_2_blade_rat(expr: Cons): expr is BCons<Sym, Blade, Rat> {

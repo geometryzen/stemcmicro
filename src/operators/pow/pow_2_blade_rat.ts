@@ -7,7 +7,7 @@ import { Cons, items_to_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
 import { is_blade } from "../blade/is_blade";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/RatExtension";
+import { is_rat } from "../rat/rat_extension";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

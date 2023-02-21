@@ -161,6 +161,18 @@ describe("gibbs", function () {
             `Ax**2*(By*By)`
         ];
         const engine = createScriptEngine({
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) By By)");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By*By");
+        engine.release();
+    });
+    it("Handling of Powers: Part II", function () {
+        const lines: string[] = [
+            `Ax**2*(By*By)`
+        ];
+        const engine = createScriptEngine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -169,7 +181,7 @@ describe("gibbs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By*By");
         engine.release();
     });
-    it("Handling of Powers: Part II", function () {
+    it("Handling of Powers: Part III", function () {
         const lines: string[] = [
             `Ax**2*By*By`
         ];
@@ -270,8 +282,8 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* Ax Ax)");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax");
+        assert.strictEqual(engine.renderAsSExpr(value), "(power Ax 2)");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2");
         engine.release();
     });
     it("A*A should be equal to A|A (Geometric Algebra)", function () {
@@ -292,8 +304,8 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (* Ax Ax) (* Ay Ay))");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax+Ay*Ay");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (power Ax 2) (power Ay 2))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2");
         engine.release();
     });
     it("A*A should be equal to A|A (Geometric Algebra)", function () {

@@ -19,6 +19,7 @@ import { one, zero } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
 import { canonical_factor_lhs, canonical_factor_rhs } from "../factorize/canonical_factor";
 import { canonical_factor_blade_rhs } from "../factorize/canonical_factor_blade";
+import { canonical_factor_imu_rhs } from "../factorize/canonical_factor_imu";
 import { canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { factorizeL } from "../factorizeL";
 import { compare_cons_cons } from "./compare_cons_cons";
@@ -155,9 +156,9 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (is_blade(rhs)) {
         return hook(SIGN_LT, "T");
     }
-    const lhsB = canonical_factor_blade_rhs(lhs);
-    const rhsB = canonical_factor_blade_rhs(rhs);
-    switch (compare_terms(lhsB, rhsB, $)) {
+    const lhsI = canonical_factor_imu_rhs(lhs);
+    const rhsI = canonical_factor_imu_rhs(rhs);
+    switch (compare_terms(lhsI, rhsI, $)) {
         case SIGN_GT: {
             return hook(SIGN_GT, "MM1");
         }
@@ -166,9 +167,9 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
         case SIGN_EQ: {
             if (is_cons(lhs) && is_mul(lhs) && is_cons(rhs) && is_mul(rhs)) {
-                const lhsL = canonical_factor_lhs(lhs);
-                const rhsL = canonical_factor_lhs(rhs);
-                switch (compare_terms(lhsL, rhsL, $)) {
+                const lhsB = canonical_factor_blade_rhs(lhs);
+                const rhsB = canonical_factor_blade_rhs(rhs);
+                switch (compare_terms(lhsB, rhsB, $)) {
                     case SIGN_GT: {
                         return hook(SIGN_GT, "MM1");
                     }
@@ -176,9 +177,23 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                         return hook(SIGN_LT, "MM2");
                     }
                     case SIGN_EQ: {
-                        const lhsR = canonical_factor_rhs(lhs);
-                        const rhsR = canonical_factor_rhs(rhs);
-                        return hook(compare_terms(lhsR, rhsR, $), "MM3");
+                        if (is_cons(lhs) && is_mul(lhs) && is_cons(rhs) && is_mul(rhs)) {
+                            const lhsL = canonical_factor_lhs(lhs);
+                            const rhsL = canonical_factor_lhs(rhs);
+                            switch (compare_terms(lhsL, rhsL, $)) {
+                                case SIGN_GT: {
+                                    return hook(SIGN_GT, "MM1");
+                                }
+                                case SIGN_LT: {
+                                    return hook(SIGN_LT, "MM2");
+                                }
+                                case SIGN_EQ: {
+                                    const lhsR = canonical_factor_rhs(lhs);
+                                    const rhsR = canonical_factor_rhs(rhs);
+                                    return hook(compare_terms(lhsR, rhsR, $), "MM3");
+                                }
+                            }
+                        }
                     }
                 }
             }

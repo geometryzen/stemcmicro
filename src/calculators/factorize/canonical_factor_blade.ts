@@ -1,10 +1,10 @@
 import { is_blade } from "../../operators/blade/is_blade";
 import { is_mul } from "../../operators/mul/is_mul";
 import { one, Rat } from "../../tree/rat/Rat";
-import { is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
 import { canonicalize_mul } from "../canonicalize/canonicalize_unary_mul";
-
+/*
 export function canonical_factor_blade_lhs(expr: U): U {
     if (is_blade(expr)) {
         return one;
@@ -31,6 +31,7 @@ export function canonical_factor_blade_lhs(expr: U): U {
         return expr;
     }
 }
+*/
 
 export function canonical_factor_blade_rhs(expr: U): Rat | Blade {
     if (is_blade(expr)) {

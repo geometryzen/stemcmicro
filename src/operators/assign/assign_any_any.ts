@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE
 import { ASSIGN, SYM_MATH_COMPONENT } from "../../runtime/constants";
 import { caadr } from "../../tree/helpers";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, nil, U } from "../../tree/tree";
+import { is_cons, NIL, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -51,7 +51,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
     // case of function definition
     if (is_cons(lhs)) {
         define_user_function(expr, $);
-        return nil;
+        return NIL;
     }
 
     if (!is_sym(lhs)) {
@@ -67,7 +67,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
     // where an assignment does return the
     // assigned value.
     // TODO Could be changed.
-    return nil;
+    return NIL;
 }
 
 /**

@@ -15,7 +15,7 @@ import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
 import { eight, four, half, wrap_as_int, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
-import { car, Cons, nil, U } from './tree/tree';
+import { car, Cons, NIL, U } from './tree/tree';
 
 // define POLY p1
 // define X p2
@@ -45,7 +45,7 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     // 2nd arg, x
     const arg2 = $.valueOf(caddr(expr));
 
-    const x = nil === arg2 ? guess(poly) : arg2;
+    const x = NIL === arg2 ? guess(poly) : arg2;
 
     // console.lg(`poly=${print_expr(poly, $)}`);
     // console.lg(`var =${print_expr(x, $)}`);
@@ -340,7 +340,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
     let C_CHECKED_AS_NOT_ZERO = false;
     let flipSignOFQSoCIsNotZero = false;
 
-    let R_C: U = nil;
+    let R_C: U = NIL;
     // C will go as denominator, we have to check that is not zero
     while (!C_CHECKED_AS_NOT_ZERO) {
         const arg1 = flipSignOFQSoCIsNotZero ? $.negate(R_Q) : R_Q;
@@ -510,7 +510,7 @@ function _solveDegree4ZeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] 
     const resolventCubicSolutions = roots(arg1, SECRETX, $);
     // log.dbg(`resolventCubicSolutions: ${toInfixString(resolventCubicSolutions)}`);
 
-    let R_m: U = nil;
+    let R_m: U = NIL;
     //R_m = resolventCubicSolutions.elem[1]
     for (const sol of resolventCubicSolutions.copyElements()) {
         // log.dbg(`examining solution: ${toInfixString(sol)}`);

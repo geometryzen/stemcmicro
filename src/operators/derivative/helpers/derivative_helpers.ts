@@ -33,7 +33,7 @@ import { is_abs, is_add } from '../../../runtime/helpers';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
-import { car, Cons, is_cons, items_to_cons, nil, U } from '../../../tree/tree';
+import { car, Cons, is_cons, items_to_cons, NIL, U } from '../../../tree/tree';
 import { besselj } from '../../besselj/besselj';
 import { bessely } from '../../bessely/bessely';
 import { cos } from '../../cos/cosine';
@@ -214,7 +214,7 @@ function dfunction(F: Cons, X: Sym, $: ExtensionEnv): U {
     // console.lg(`dfunction F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
     const argList = F.argList;
 
-    if (nil === argList || argList.contains(X)) {
+    if (NIL === argList || argList.contains(X)) {
         return items_to_cons(MATH_DERIVATIVE, F, X);
     }
     else {

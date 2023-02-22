@@ -4,7 +4,7 @@ import { EVAL, FUNCTION } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { caadr, caddr, cadr, cdadr } from '../../tree/helpers';
 import { Sym } from '../../tree/sym/Sym';
-import { car, nil, U } from '../../tree/tree';
+import { car, NIL, U } from '../../tree/tree';
 import { BCons } from '../helpers/BCons';
 import { is_sym } from '../sym/is_sym';
 
@@ -91,5 +91,5 @@ export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
 
     $.setBinding(F, B);
 
-    return nil;
+    return NIL;
 }

@@ -5,7 +5,7 @@ import { LAGUERRE, SECRETX } from '../../runtime/constants';
 import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
-import { nil, U } from '../../tree/tree';
+import { NIL, U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 
 /*
@@ -37,7 +37,7 @@ export function Eval_laguerre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
-    const K = nil === p2 ? zero : p2;
+    const K = NIL === p2 ? zero : p2;
 
     return laguerre(X, N, K, $);
 }

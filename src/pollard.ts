@@ -9,7 +9,7 @@ import { mprime } from './operators/isprime/mprime';
 import { MEQUAL, MULTIPLY, POWER, primetab } from './runtime/constants';
 import { mcmp } from './runtime/mcmp';
 import { negOne, Rat } from './tree/rat/Rat';
-import { cons, nil, U } from './tree/tree';
+import { cons, NIL, U } from './tree/tree';
 
 // Factor using the Pollard rho method
 
@@ -32,7 +32,7 @@ export function factor_number(p1: Rat): U {
     if (factors.length > 1) {
         return cons(MULTIPLY, makeList(...factors));
     }
-    return nil;
+    return NIL;
 }
 
 // factor using table look-up, then switch to rho method if necessary

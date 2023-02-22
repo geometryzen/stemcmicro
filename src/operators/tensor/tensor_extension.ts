@@ -3,7 +3,7 @@ import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
 import { Tensor } from "../../tree/tensor/Tensor";
-import { Cons, nil, U } from "../../tree/tree";
+import { Cons, NIL, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { subst } from "../subst/subst";
 import { is_tensor } from "./is_tensor";
@@ -49,7 +49,7 @@ export function equal_mat_mat(p1: Tensor, p2: Tensor, $: ExtensionEnv): boolean 
 
 export function add_tensor_tensor(A: Tensor, B: Tensor, $: ExtensionEnv): Cons | Tensor {
     if (!A.sameDimensions(B)) {
-        return nil;
+        return NIL;
     }
     return A.map(function (a, i) {
         return $.add(a, B.elem(i));

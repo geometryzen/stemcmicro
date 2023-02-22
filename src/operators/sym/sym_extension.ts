@@ -4,7 +4,7 @@ import { evaluatingAsFloat } from "../../modes/modes";
 import { PI } from "../../runtime/constants";
 import { piAsDouble } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
-import { nil, U } from "../../tree/tree";
+import { NIL, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { get_binding } from "./get_binding";
 import { is_sym } from "./is_sym";
@@ -36,7 +36,7 @@ class SymExtension implements Extension<Sym> {
 
         // console.lg(`binding ${$.toInfixString(sym)} => ${$.toInfixString(binding)}`);
 
-        if (nil === binding) {
+        if (NIL === binding) {
             return sym;
         }
 

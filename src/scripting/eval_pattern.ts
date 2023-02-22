@@ -5,7 +5,7 @@ import { PATTERN } from "../runtime/constants";
 import { defs, halt } from "../runtime/defs";
 import { stack_pop, stack_push } from "../runtime/stack";
 import { Str } from "../tree/str/Str";
-import { car, cdr, is_cons, nil, U } from "../tree/tree";
+import { car, cdr, is_cons, NIL, U } from "../tree/tree";
 
 /*
   Add a pattern i.e. a substitution rule.
@@ -21,7 +21,7 @@ import { car, cdr, is_cons, nil, U } from "../tree/tree";
 export function Eval_silentpattern(p1: U, $: ExtensionEnv): void {
     Eval_pattern(p1, $);
     stack_pop();
-    stack_push(nil);
+    stack_push(NIL);
 }
 
 export function Eval_pattern(p1: U, $: ExtensionEnv): void {
@@ -32,12 +32,12 @@ export function Eval_pattern(p1: U, $: ExtensionEnv): void {
     }
     const arg1 = car(cdr(p1));
     const arg2 = car(cdr(cdr(p1)));
-    if (nil === arg2) {
+    if (NIL === arg2) {
         halt('pattern needs at least a template and a transformed version');
     }
     // third argument is optional and contains the tests
     if (!is_cons(cdr(cdr(p1)))) {
-        arg3 = nil;
+        arg3 = NIL;
     }
     else {
         arg3 = car(cdr(cdr(cdr(p1))));
@@ -80,7 +80,7 @@ export function Eval_clearpatterns() {
     clear_patterns();
 
     // return nothing
-    stack_push(nil);
+    stack_push(NIL);
 }
 
 export function Eval_patternsinfo() {
@@ -89,6 +89,6 @@ export function Eval_patternsinfo() {
         stack_push(new Str(pinfo));
     }
     else {
-        stack_push(nil);
+        stack_push(NIL);
     }
 }

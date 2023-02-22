@@ -10,7 +10,7 @@ import { square } from '../../square';
 import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { half, one, wrap_as_int, zero } from '../../tree/rat/Rat';
-import { car, nil, U } from '../../tree/tree';
+import { car, NIL, U } from '../../tree/tree';
 
 /*
  Legendre function
@@ -45,7 +45,7 @@ export function Eval_legendre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
-    const M = nil === p2 ? zero : p2;
+    const M = NIL === p2 ? zero : p2;
 
     return legendre(X, N, M, $);
 }

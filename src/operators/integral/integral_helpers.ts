@@ -16,7 +16,7 @@ import { wrap_as_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
-import { car, cdr, Cons, is_cons, nil, U } from '../../tree/tree';
+import { car, cdr, Cons, is_cons, NIL, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';
 import { is_sym } from '../sym/is_sym';
 
@@ -404,9 +404,9 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
     p1 = cdr(p1);
 
     const p2 = $.valueOf(car(p1));
-    if (nil === p2) {
+    if (NIL === p2) {
         X = guess(F);
-        N = nil;
+        N = NIL;
     }
     else if (is_num(p2)) {
         X = guess(F);
@@ -451,7 +451,7 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         F = temp;
 
         // if N is NIL then arglist is exhausted
-        if (nil === N) {
+        if (NIL === N) {
             break;
         }
 
@@ -468,7 +468,7 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         if (is_num(N)) {
             p1 = cdr(p1);
             N = $.valueOf(car(p1));
-            if (nil === N) {
+            if (NIL === N) {
                 break; // arglist exhausted
             }
             if (!is_num(N)) {
@@ -535,7 +535,7 @@ function integral_of_form(F: U, X: U, $: ExtensionEnv): U {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [p3, _] = transform(F, X, tab, false, $);
-    if (nil === p3) {
+    if (NIL === p3) {
         return makeList(INTEGRAL, F, X);
     }
     return p3;

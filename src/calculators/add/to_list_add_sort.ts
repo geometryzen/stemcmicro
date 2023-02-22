@@ -6,7 +6,7 @@ import { is_multiply } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
-import { car, cdr, cons, is_cons, nil, U } from "../../tree/tree";
+import { car, cdr, cons, is_cons, NIL, U } from "../../tree/tree";
 import { sort_terms } from "../compare/sort_terms";
 import { multiply_num_num } from "../mul/multiply_num_num";
 import { add_num_num } from "./add_num_num";
@@ -35,7 +35,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
         if (is_tensor(a) && is_tensor(b)) {
             const sum = $.add(a, b);
             // TODO: Why don't we handle zero like we do for Num below?
-            if (nil !== sum) {
+            if (NIL !== sum) {
                 // console.lg(`A. splice(${sum34})`);
                 terms.splice(i, 2, sum);
                 i--;
@@ -167,7 +167,7 @@ function decompose_multiply_num_times(expr: U): { denorm: boolean, lhs: Num, rhs
              * (a3 a4 ...) or NIL
              */
             const cdddr_expr = cdr(cddr_expr);
-            if (nil === cdddr_expr) {
+            if (NIL === cdddr_expr) {
                 // (multiply a1: Num a2)
                 /**
                  * a2 = caddr_expr

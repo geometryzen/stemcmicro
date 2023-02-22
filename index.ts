@@ -28,7 +28,7 @@ export { Rat, wrap_as_int } from './src/tree/rat/Rat';
 export { Str } from './src/tree/str/Str';
 export { Sym } from './src/tree/sym/Sym';
 export { Tensor } from './src/tree/tensor/Tensor';
-export { Cons, is_cons, is_nil, items_to_cons, nil, U } from './src/tree/tree';
+export { Cons, is_cons, is_nil, items_to_cons, NIL as nil, U } from './src/tree/tree';
 export { Uom } from './src/tree/uom/Uom';
 export { BasisBlade } from './src/tree/vec/BasisBlade';
 export { Blade } from './src/tree/vec/Blade';

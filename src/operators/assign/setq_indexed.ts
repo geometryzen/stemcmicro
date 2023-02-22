@@ -26,7 +26,7 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { defs } from "../../runtime/defs";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
 import { cadadr, caddr, cdadr } from "../../tree/helpers";
-import { is_cons, nil, U } from "../../tree/tree";
+import { is_cons, NIL, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 
 //-----------------------------------------------------------------------------
@@ -58,5 +58,5 @@ export function setq_indexed(p1: U, $: ExtensionEnv): U {
     set_component(defs.tos - h);
     const p3 = stack_pop();
     $.setBinding(p4, p3);
-    return nil;
+    return NIL;
 }

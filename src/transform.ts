@@ -9,7 +9,7 @@ import { DEBUG, use_factoring_with_unary_function } from './runtime/defs';
 import { scan_meta } from './scanner/scan';
 import { caddr, cadr, cdddr, cddr } from './tree/helpers';
 import { one } from './tree/rat/Rat';
-import { car, cdr, is_cons, nil, U } from './tree/tree';
+import { car, cdr, is_cons, NIL, U } from './tree/tree';
 
 /*
 Transform an expression using a pattern. The
@@ -73,7 +73,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
     }
 
     let transformationSuccessful = false;
-    let B: U = nil;
+    let B: U = NIL;
     if (generalTransform) {
         // "general tranform" mode is supposed to be more generic than
         // "integrals" mode.
@@ -150,7 +150,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                     }
                     const [t, success] = transform(
                         secondTerm,
-                        nil,
+                        NIL,
                         s,
                         generalTransform,
                         $
@@ -202,7 +202,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
         }
     }
 
-    const temp = transformationSuccessful ? $.valueOf(B) : generalTransform ? F : nil;
+    const temp = transformationSuccessful ? $.valueOf(B) : generalTransform ? F : NIL;
 
     restoreMetaBindings(state, $);
 

@@ -1,7 +1,7 @@
 
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
-import { Cons, nil, U } from "../../tree/tree";
+import { Cons, NIL, U } from "../../tree/tree";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -14,7 +14,7 @@ class NilExtension implements Operator<Cons> {
         // Nothing to see here.
     }
     get key(): string {
-        return nil.name;
+        return NIL.name;
     }
     get hash(): string {
         return HASH_NIL;
@@ -28,7 +28,7 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(expr: U): boolean {
-        return nil.equals(expr);
+        return NIL.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isMinusOne(expr: Cons): boolean {
@@ -79,8 +79,8 @@ class NilExtension implements Operator<Cons> {
         return '()';
     }
     transform(expr: U): [TFLAGS, U] {
-        if (nil.equals(expr)) {
-            return [TFLAG_HALT, nil];
+        if (NIL.equals(expr)) {
+            return [TFLAG_HALT, NIL];
         }
         else {
             return [TFLAG_NONE, expr];
@@ -88,7 +88,7 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Cons): U {
-        return nil;
+        return NIL;
     }
 }
 

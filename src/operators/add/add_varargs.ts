@@ -2,8 +2,9 @@ import { add_num_num } from '../../calculators/add/add_num_num';
 import { canonicalize_mul } from '../../calculators/canonicalize/canonicalize_mul';
 import { compare_terms } from '../../calculators/compare/compare_terms';
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { decodeMode, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
+import { render_as_infix } from '../../print/print';
 import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -43,7 +44,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         // console.lg(this.name, decodeMode($.getMode()), render_as_infix(expr, this.$));
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            console.log(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
         };
         if ($.isExplicating()) {

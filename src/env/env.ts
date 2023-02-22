@@ -653,10 +653,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (Array.isArray(ops)) {
                             for (const op of ops) {
                                 const [flags, newExpr] = op.transform(curExpr);
-                                // console.lg(`TRY  ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                // console.log(`TRY  ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                 if (!newExpr.equals(curExpr)) {
                                     // By logging here we can see all the transformations that make changes.
-                                    // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                    // console.log(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                     outFlags |= TFLAG_DIFF;
                                     doneWithCurExpr = true;
                                     if (haltFlag(flags)) {

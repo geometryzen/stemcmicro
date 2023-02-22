@@ -11,7 +11,7 @@ import { ExplicateTransformer } from "../transform/ExplicateTransformer";
 import { ImplicateTransformer } from "../transform/ImplicateTransformer";
 import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
-import { is_nil, nil, U } from '../tree/tree';
+import { is_nil, NIL, U } from '../tree/tree';
 import { Box } from "./Box";
 import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
@@ -170,7 +170,7 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
     // TODO: Does it make sense to remove this condition?
     // We should not have to treat NIL as something special.
-    if (nil !== transformed) {
+    if (NIL !== transformed) {
         // console.lg(`tranned   : ${print_expr(transformed, $)}`);
         // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
         box.push(transformed);
@@ -193,7 +193,7 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
         post_processing_complex_numbers(tree, box.peek(), box, $);
     }
     else {
-        box.push(nil);
+        box.push(NIL);
     }
     store_in_script_last(box.peek(), $);
     return box.pop();

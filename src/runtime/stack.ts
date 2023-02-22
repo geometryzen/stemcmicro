@@ -1,4 +1,4 @@
-import { cons, nil, U } from '../tree/tree';
+import { cons, NIL, U } from '../tree/tree';
 import { defs } from './defs';
 import { SystemError } from './SystemError';
 
@@ -102,7 +102,7 @@ export function stack_pop_items(n: number): U[] {
  * @param $ the environment is required to provide the NIL symbol.
  */
 export function stack_list(n: number): void {
-    stack_push(nil);
+    stack_push(NIL);
     for (let i = 0; i < n; i++) {
         const arg2 = stack_pop();
         const arg1 = stack_pop();

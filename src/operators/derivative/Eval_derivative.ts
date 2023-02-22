@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
 import { nativeInt } from '../../nativeInt';
 import { Err } from '../../tree/err/Err';
-import { car, cdr, Cons, nil, U } from '../../tree/tree';
+import { car, cdr, Cons, NIL, U } from '../../tree/tree';
 import { integral } from '../integral/integral_helpers';
 import { is_num } from '../num/is_num';
 import { derivative } from './derivative';
@@ -28,9 +28,9 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
 
     let X: U, N: U;
     const p2 = $.valueOf(car(p1));
-    if (nil.equals(p2)) {
+    if (NIL.equals(p2)) {
         X = guess(F);
-        N = nil;
+        N = NIL;
     }
     else if (is_num(p2)) {
         X = guess(F);
@@ -77,7 +77,7 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
         F = temp;
 
         // if p5 (N) is NIL then arglist is exhausted
-        if (nil === N) {
+        if (NIL === N) {
             break;
         }
 
@@ -96,7 +96,7 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
         if (is_num(N)) {
             p1 = cdr(p1);
             N = $.valueOf(car(p1));
-            if (nil === N) {
+            if (NIL === N) {
                 break; // arglist exhausted
             }
             if (!is_num(N)) {

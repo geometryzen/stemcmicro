@@ -2,7 +2,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_sym } from './operators/sym/is_sym';
 import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
-import { car, Cons, is_cons, nil } from './tree/tree';
+import { car, Cons, is_cons, NIL } from './tree/tree';
 
 // now this might be a little confusing, so a
 // clarification is in order.
@@ -131,7 +131,7 @@ export function Eval_lookup(expr: Cons, $: ExtensionEnv): void {
             stack_push(binding);
         }
         else {
-            stack_push(nil);
+            stack_push(NIL);
         }
     }
     else {

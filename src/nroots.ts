@@ -13,7 +13,7 @@ import { wrap_as_flt } from './tree/flt/Flt';
 import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
-import { nil, U } from './tree/tree';
+import { NIL, U } from './tree/tree';
 
 // find the roots of a polynomial numerically
 const NROOTS_YMAX = 101;
@@ -55,7 +55,7 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): U {
     let p2: U = $.valueOf(caddr(p1));
     p1 = $.valueOf(cadr(p1));
 
-    p2 = nil === p2 ? guess(p1) : p2;
+    p2 = NIL === p2 ? guess(p1) : p2;
 
     if (!is_poly_expanded_form(p1, p2, $)) {
         halt('nroots: polynomial?');

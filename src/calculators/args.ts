@@ -1,7 +1,7 @@
 
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { is_sym } from "../operators/sym/is_sym";
-import { Cons, is_cons, nil, U } from "../tree/tree";
+import { Cons, is_cons, NIL, U } from "../tree/tree";
 
 /**
  * Unpacks a Cons expression into an array.
@@ -18,7 +18,7 @@ export function args(expr: Cons, $: ExtensionEnv): U[] {
         if (is_cons(cdr_expr)) {
             return [car_expr, ...args(cdr_expr, $)];
         }
-        else if (nil === cdr_expr) {
+        else if (NIL === cdr_expr) {
             return [car_expr];
         }
         throw new Error();
@@ -28,7 +28,7 @@ export function args(expr: Cons, $: ExtensionEnv): U[] {
         if (is_cons(cdr_expr)) {
             return [car_expr, ...args(cdr_expr, $)];
         }
-        else if (nil === cdr_expr) {
+        else if (NIL === cdr_expr) {
             return [car_expr];
         }
     }
@@ -38,7 +38,7 @@ export function args(expr: Cons, $: ExtensionEnv): U[] {
         if (is_cons(cdr_expr)) {
             return [car_expr, ...args(cdr_expr, $)];
         }
-        else if (nil === cdr_expr) {
+        else if (NIL === cdr_expr) {
             return [car_expr];
         }
     }

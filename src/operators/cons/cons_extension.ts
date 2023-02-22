@@ -27,7 +27,7 @@ import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_tes
 import { Err } from "../../tree/err/Err";
 import { cadr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
-import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
+import { car, cdr, Cons, is_cons, is_nil, NIL, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_rat } from "../rat/is_rat";
@@ -123,7 +123,7 @@ class ConsExtension implements Extension<Cons> {
             str += $.toSExprString(expr.car);
             expr = expr.cdr;
         }
-        if (expr !== nil) {
+        if (expr !== NIL) {
             str += ' . ';
             str += $.toSExprString(expr);
         }

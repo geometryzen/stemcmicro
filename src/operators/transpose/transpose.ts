@@ -10,7 +10,7 @@ import { is_add, is_identity_matrix, is_inner_or_dot, is_multiply, is_transpose 
 import { cadddr, caddr, cadr, cddr } from '../../tree/helpers';
 import { one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { car, cdr, is_cons, nil, U } from '../../tree/tree';
+import { car, cdr, is_cons, NIL, U } from '../../tree/tree';
 
 
 // Transpose tensor indices
@@ -18,7 +18,7 @@ export function Eval_transpose(p1: U, $: ExtensionEnv): U {
     const arg1 = $.valueOf(cadr(p1));
     let arg2: U = one;
     let arg3: U = two;
-    if (nil !== cddr(p1)) {
+    if (NIL !== cddr(p1)) {
         arg2 = $.valueOf(caddr(p1));
         arg3 = $.valueOf(cadddr(p1));
     }
@@ -56,8 +56,8 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
         if (
             ($.equals(innerTranspSwitch1, p3) && $.equals(innerTranspSwitch2, p2)) ||
             ($.equals(innerTranspSwitch2, p3) && $.equals(innerTranspSwitch1, p2)) ||
-            ($.equals(innerTranspSwitch1, nil) &&
-                $.equals(innerTranspSwitch2, nil) &&
+            ($.equals(innerTranspSwitch1, NIL) &&
+                $.equals(innerTranspSwitch2, NIL) &&
                 (($.isOne(p3) && is_num_and_eq_two(p2)) || ($.isOne(p2) && is_num_and_eq_two(p3))))
         ) {
             return car(cdr(p1));

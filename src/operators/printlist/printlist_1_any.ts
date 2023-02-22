@@ -3,7 +3,7 @@ import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { print_in_mode } from "../../print/print";
 import { PRINTMODE_SEXPR } from "../../runtime/defs";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, nil, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, NIL, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { FNAME_PRINTLIST } from "./FNAME_PRINTLIST";
@@ -31,7 +31,7 @@ class PrintList extends Function1<U> implements Operator<Cons> {
             const printHandler = this.$.getPrintHandler();
             printHandler.print(...texts);
         }
-        return [TFLAG_DIFF, nil];
+        return [TFLAG_DIFF, NIL];
     }
 }
 

@@ -6,7 +6,7 @@ import { SYMBOL_X } from '../../runtime/constants';
 import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { one, zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, nil, U } from '../../tree/tree';
+import { Cons, is_cons, NIL, U } from '../../tree/tree';
 import { is_mul_2_any_any } from '../mul/is_mul_2_any_any';
 
 /* coeff =====================================================================
@@ -29,7 +29,7 @@ export function Eval_coeff(p1: U, $: ExtensionEnv): U {
     let x = $.valueOf(caddr(p1));
     let n = $.valueOf(cadddr(p1));
 
-    if (nil.equals(n)) {
+    if (NIL.equals(n)) {
         // only 2 args?
         n = x;
         x = SYMBOL_X;

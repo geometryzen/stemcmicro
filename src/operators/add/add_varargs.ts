@@ -1,10 +1,9 @@
 import { add_num_num } from '../../calculators/add/add_num_num';
 import { canonicalize_mul } from '../../calculators/canonicalize/canonicalize_mul';
-import { compare_terms } from '../../calculators/compare/compare_terms';
+import { cmp_terms } from '../../calculators/compare/cmp_terms';
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
-import { decodeMode, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, Sign, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { render_as_infix } from '../../print/print';
 import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -17,7 +16,9 @@ import { is_add_2_any_any } from './is_add_2_any_any';
 
 const make_term_comparator = function ($: ExtensionEnv) {
     return function (a: U, b: U) {
-        return compare_terms(a, b, $);
+        const sign: Sign = cmp_terms(a, b, $);
+        // console.lg("cmp_terms", "lhs", render_as_infix(a, $), "rhs", render_as_infix(b, $), " => ", sign);
+        return sign;
     };
 };
 
@@ -44,7 +45,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         // console.lg(this.name, decodeMode($.getMode()), render_as_infix(expr, this.$));
         const hook = (where: string, retval: U): U => {
-            console.log(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
             return retval;
         };
         if ($.isExplicating()) {
@@ -70,7 +71,6 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         else if ($.isExpanding()) {
             // console.lg("EXPANDING", render_as_infix(expr, $));
             const terms = make_term_association_implicit(expr.tail(), $);
-            // TODO: Handling of zero and one term.
             if (terms.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
                 return [TFLAG_DIFF, hook('D', zero)];

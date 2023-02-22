@@ -1,4 +1,3 @@
-
 /**
  * It's incredibly painful to program the symbolic code with only unknown types.
  * We require any type that works with the tree to implement an interface.
@@ -189,7 +188,7 @@ export class Cons implements U {
      * Provides an iterator over the Cons, returning the items is the list.
      * The first element returned will be car(cons).
      * The subsequent elements are obtained from walking the cdr's.
-     * Using the ... operator inside [] returns all the items in the list.
+     * Hint: Using the ... operator inside [] returns all the items in the list.
      */
     public *[Symbol.iterator]() {
         // eslint-disable-next-line @typescript-eslint/no-this-alias

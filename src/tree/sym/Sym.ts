@@ -23,7 +23,8 @@ export class Sym extends Atom {
         super('Sym', pos, end);
     }
     compare(other: Sym): 1 | -1 | 0 {
-        // TODO: Incorporate the namespace.
+        // TODO: Incorporate the namespace?
+        // console.lg("compare", "this", this.ln, "other", other.ln);
         return strcmp(this.ln, other.ln);
     }
     contains(needle: U): boolean {

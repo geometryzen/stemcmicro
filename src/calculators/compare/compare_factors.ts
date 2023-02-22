@@ -12,12 +12,18 @@ import { render_as_infix } from "../../print/print";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 import { flip_sign } from "../flip_sign";
+import { cmp_expr } from "./cmp_expr";
 import { compare } from "./compare";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { group } from "./group";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    return cmp_expr(lhs, rhs, $);
+}
+
+export function compare_factors_complicated(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }

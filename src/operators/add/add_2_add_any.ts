@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, MODE_IMPLICATE, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING, MODE_IMPLICATE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -24,11 +24,11 @@ class Op extends Function2<Cons, U> implements Operator<Cons> {
     transform2(opr: Sym, lhs: Cons, rhs: U, expr: Cons): [TFLAGS, U] {
         const $ = this.$;
         if ($.isImplicating()) {
-            return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, ...lhs.tail(), rhs))];
+            return [TFLAG_DIFF, items_to_cons(opr, ...lhs.tail(), rhs)];
         }
         else {
             if ($.isAssociationImplicit()) {
-                return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, ...lhs.tail(), rhs))];
+                return [TFLAG_DIFF, items_to_cons(opr, ...lhs.tail(), rhs)];
             }
             else {
                 return [TFLAG_NONE, expr];

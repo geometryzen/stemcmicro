@@ -10,7 +10,7 @@ import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { is_mul } from '../mul/is_mul';
+import { is_cons_opr_eq_mul } from '../mul/is_cons_opr_eq_mul';
 import { is_add_2_any_any } from './is_add_2_any_any';
 
 const make_term_comparator = function ($: ExtensionEnv) {
@@ -190,7 +190,7 @@ function factorize_term_pairs(terms: U[], $: ExtensionEnv): void {
     while (i < terms.length - 1) {
         const lhs = terms[i];
         const rhs = terms[i + 1];
-        if (is_cons(lhs) && is_mul(lhs) && is_cons(rhs) && is_mul(rhs)) {
+        if (is_cons(lhs) && is_cons_opr_eq_mul(lhs) && is_cons(rhs) && is_cons_opr_eq_mul(rhs)) {
             const tailL = lhs.tail();
             const tailR = rhs.tail();
             const common: U[] = [];

@@ -5,7 +5,7 @@ import { is_blade } from "../../operators/blade/is_blade";
 import { MATH_DERIVATIVE } from "../../operators/derivative/MATH_DERIVATIVE";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";
-import { is_mul } from "../../operators/mul/is_mul";
+import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "../../operators/mul/is_mul_2_any_any";
 import { is_mul_2_any_blade } from "../../operators/mul/is_mul_2_any_blade";
 import { is_mul_2_num_any } from "../../operators/mul/is_mul_2_num_any";
@@ -198,7 +198,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             return hook(SIGN_LT, "MM2");
         }
         case SIGN_EQ: {
-            if (is_cons(lhs) && is_mul(lhs) && is_cons(rhs) && is_mul(rhs)) {
+            if (is_cons(lhs) && is_cons_opr_eq_mul(lhs) && is_cons(rhs) && is_cons_opr_eq_mul(rhs)) {
                 const lhsB = canonical_factor_blade_rhs(lhs);
                 const rhsB = canonical_factor_blade_rhs(rhs);
                 switch (compare_terms(lhsB, rhsB, $)) {
@@ -209,7 +209,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                         return hook(SIGN_LT, "MM2");
                     }
                     case SIGN_EQ: {
-                        if (is_cons(lhs) && is_mul(lhs) && is_cons(rhs) && is_mul(rhs)) {
+                        if (is_cons(lhs) && is_cons_opr_eq_mul(lhs) && is_cons(rhs) && is_cons_opr_eq_mul(rhs)) {
                             const lhsL = canonical_factor_lhs(lhs);
                             const rhsL = canonical_factor_lhs(rhs);
                             switch (compare_terms(lhsL, rhsL, $)) {

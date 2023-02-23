@@ -22,7 +22,6 @@ import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_uom } from "../operators/uom/is_uom";
 import { render_as_infix } from "../print/print";
-import { render_as_sexpr } from "../print/render_as_sexpr";
 import { FUNCTION } from "../runtime/constants";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";

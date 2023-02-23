@@ -1,8 +1,8 @@
-import { is_mul } from "../operators/mul/is_mul";
+import { is_cons_opr_eq_mul } from "../operators/mul/is_cons_opr_eq_mul";
 import { Cons, is_nil, U } from "../tree/tree";
 
 export function count_factors(expr: Cons, predicate: (factor: U) => boolean): number {
-    if (is_mul(expr)) {
+    if (is_cons_opr_eq_mul(expr)) {
         return count_factors_recursive(expr.argList, predicate);
     }
     else {

@@ -1,4 +1,4 @@
-import { is_mul } from "../../operators/mul/is_mul";
+import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { one } from "../../tree/rat/Rat";
 import { Cons, is_nil, U } from "../../tree/tree";
 
@@ -13,7 +13,7 @@ import { Cons, is_nil, U } from "../../tree/tree";
  */
 export function canonicalize_mul(expr: Cons): U {
     const L0 = expr;
-    if (is_mul(L0)) {
+    if (is_cons_opr_eq_mul(L0)) {
         const L1 = L0.cdr;
         if (is_nil(L1)) {
             return one;

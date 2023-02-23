@@ -1,5 +1,5 @@
 import { is_blade } from "../../operators/blade/is_blade";
-import { is_mul } from "../../operators/mul/is_mul";
+import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { one, Rat } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
@@ -37,7 +37,7 @@ export function canonical_factor_blade_rhs(expr: U): Rat | Blade {
     if (is_blade(expr)) {
         return expr;
     }
-    else if (is_cons(expr) && is_mul(expr)) {
+    else if (is_cons(expr) && is_cons_opr_eq_mul(expr)) {
         expr = canonicalize_mul(expr);
         if (is_cons(expr)) {
             const L0 = expr;

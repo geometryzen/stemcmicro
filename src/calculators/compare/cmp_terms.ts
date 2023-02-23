@@ -2,17 +2,16 @@ import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/Extensi
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_blade } from "../../operators/blade/is_blade";
 import { is_imu } from "../../operators/imu/is_imu";
-import { is_mul } from "../../operators/mul/is_mul";
+import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_num } from "../../operators/num/is_num";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
 import { count_factors } from "../count_factors";
 import { canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { remove_factors } from "../remove_factors";
 import { cmp_expr } from "./cmp_expr";
-
-const not_is_blade = (expr: U) => !is_blade(expr);
+import { contains_single_blade } from "./contains_single_blade";
+import { extract_single_blade } from "./extract_single_blade";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function cmp_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
@@ -90,41 +89,11 @@ export function cmp_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
 }
 
-function contains_single_blade(expr: U): boolean {
-    if (is_blade(expr)) {
-        return true;
-    }
-    else if (is_cons(expr) && is_mul(expr) && count_factors(expr, is_blade) === 1) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-function extract_single_blade(expr: U): Blade {
-    if (is_blade(expr)) {
-        return expr;
-    }
-    else if (is_cons(expr) && is_mul(expr) && count_factors(expr, is_blade) === 1) {
-        const candidate = remove_factors(expr, not_is_blade);
-        if (is_blade(candidate)) {
-            return candidate;
-        }
-        else {
-            throw new Error();
-        }
-    }
-    else {
-        throw new Error();
-    }
-}
-
 function contains_single_imu(expr: U): boolean {
     if (is_imu(expr)) {
         return true;
     }
-    else if (is_cons(expr) && is_mul(expr) && count_factors(expr, is_imu) === 1) {
+    else if (is_cons(expr) && is_cons_opr_eq_mul(expr) && count_factors(expr, is_imu) === 1) {
         return true;
     }
     else {

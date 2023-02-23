@@ -1,6 +1,7 @@
 import { compare_factors } from '../../calculators/compare/compare_factors';
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { decodeMode, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
+import { render_as_sexpr } from '../../print/render_as_sexpr';
 import { MULTIPLY } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -8,7 +9,7 @@ import { cadr, cddr } from "../../tree/helpers";
 import { one, two, zero } from "../../tree/rat/Rat";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
-import { is_mul } from "./is_mul";
+import { is_cons_opr_eq_mul } from "./is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 
 const make_factor_comparator = function ($: ExtensionEnv) {
@@ -20,7 +21,7 @@ const make_factor_comparator = function ($: ExtensionEnv) {
 };
 
 function args_contain_association_explicit(factors: U[]): boolean {
-    return factors.some((factor => is_cons(factor) && is_mul(factor)));
+    return factors.some((factor => is_cons(factor) && is_cons_opr_eq_mul(factor)));
 }
 
 class Builder implements OperatorBuilder<U> {
@@ -45,7 +46,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         };
         // The problem we have here is that we are driving an implicit association to an explicit one.
         if ($.isExpanding()) {
-            const args = expr.tail();
+            const args = expr.tail().map((arg) => $.valueOf(arg));
             if (args.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
                 return [TFLAG_DIFF, hook('A', one)];
@@ -56,6 +57,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             }
             if (args.some(is_add)) {
                 // Distributive Law.
+                // TODO: Do this elsewhere.
                 const product = multiply_factors(expr, $);
                 if (product.equals(expr)) {
                     return [TFLAG_NONE, hook('C', expr)];
@@ -73,12 +75,14 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                     return [TFLAG_DIFF, hook('E', retval)];
                 }
                 else {
+                    const lhs = args[0];
+                    const rhs = args[1];
                     // We don't do the binary case, leave that to specific matchers.
-                    if (expr.lhs.equals(expr.rhs)) {
+                    if (lhs.equals(rhs)) {
                         return [TFLAG_DIFF, items_to_cons(MATH_POW, expr.lhs, two)];
                     }
                     else {
-                        return [TFLAG_NONE, hook('F', expr)];
+                        return [TFLAG_NONE, hook('F', items_to_cons(MATH_MUL, lhs, rhs))];
                     }
                 }
             }
@@ -86,7 +90,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             if (args_contain_association_explicit(factors)) {
                 const args: U[] = [];
                 for (const factor of factors) {
-                    if (is_cons(factor) && is_mul(factor)) {
+                    if (is_cons(factor) && is_cons_opr_eq_mul(factor)) {
                         args.push(...factor.tail());
                     }
                     else {
@@ -117,7 +121,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
 function make_factor_association_implicit(factors: U[]): U[] {
     const args: U[] = [];
     for (const factor of factors) {
-        if (is_cons(factor) && is_mul(factor)) {
+        if (is_cons(factor) && is_cons_opr_eq_mul(factor)) {
             args.push(...factor.tail());
         }
         else {

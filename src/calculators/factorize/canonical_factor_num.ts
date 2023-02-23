@@ -1,4 +1,4 @@
-import { is_mul } from "../../operators/mul/is_mul";
+import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_num } from "../../operators/num/is_num";
 import { Num } from "../../tree/num/Num";
 import { one } from "../../tree/rat/Rat";
@@ -11,7 +11,7 @@ import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 export function canonical_factor_num_lhs(expr: U): Num {
     if (is_cons(expr)) {
         const L0 = expr;
-        if (is_mul(L0)) {
+        if (is_cons_opr_eq_mul(L0)) {
             const L1 = L0.cdr;
             if (is_nil(L1)) {
                 return one;
@@ -41,7 +41,7 @@ export function canonical_factor_num_lhs(expr: U): Num {
 export function canonical_factor_num_rhs(expr: U): U {
     if (is_cons(expr)) {
         const L0 = expr;
-        if (is_mul(L0)) {
+        if (is_cons_opr_eq_mul(L0)) {
             const L1 = L0.cdr;
             if (is_nil(L1)) {
                 return one;

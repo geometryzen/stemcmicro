@@ -3,30 +3,25 @@ import { createScriptEngine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    xit("1", function () {
+    it("A^B+B^A", function () {
         const lines: string[] = [
-            `i|(j+k)`,
+            `G = algebra([1,1,1],["i","j","k"])`,
+            `i=G[1]`,
+            `j=G[2]`,
+            `k=G[3]`,
+            `A = i * Ax + j * Ay + k * Az`,
+            `B = i * Bx + j * By + k * Bz`,
+            `A^B+B^A`
         ];
         const engine = createScriptEngine({
-            treatAsVectors: ['i', 'j', 'k'],
-            useCaretForExponentiation: false
+            dependencies: ['Blade']
         });
+        // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(value), "???");
-        assert.strictEqual(engine.renderAsInfix(value), "i|j+i|k");
-        engine.release();
-    });
-    it("1", function () {
-        const lines: string[] = [
-            `(i+j)|k`,
-        ];
-        const engine = createScriptEngine({
-            treatAsVectors: ['i', 'j', 'k'],
-            useCaretForExponentiation: false
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (| i k) (| j k))");
-        assert.strictEqual(engine.renderAsInfix(value), "i|k+j|k");
+        // const elapsedTime = new Date().getTime() - startTime;
+        // console.lg(`A^B+B^A elapsedTime = ${elapsedTime} ms`);
+        // TODO: Factorization should group the terms based upon the blade.
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
 });

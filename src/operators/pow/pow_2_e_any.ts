@@ -16,7 +16,7 @@ import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
 import { is_imu } from "../imu/is_imu";
-import { is_mul } from "../mul/is_mul";
+import { is_cons_opr_eq_mul } from "../mul/is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_rat } from "../rat/rat_extension";
 import { is_sym } from "../sym/is_sym";
@@ -143,7 +143,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                         return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, s_times_i)];
                     }
                 }
-                if (is_cons(expo) && is_mul(expo)) {
+                if (is_cons(expo) && is_cons_opr_eq_mul(expo)) {
                     const N = count_imu_factors(expo);
                     if (N === 1) {
                         const x = divide_by_imu(expo, $);

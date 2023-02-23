@@ -88,12 +88,11 @@ import { cos_mul_2_any_imu } from '../operators/cos/cos_mul_2_any_imu';
 import { cos_sym } from '../operators/cos/cos_sym';
 import { cosh_sym } from '../operators/cosh/cosh_sym';
 import { cosh_varargs } from '../operators/cosh/cosh_varargs';
-import { cross_add_2_any_any_any } from '../operators/cross/cross_add_2_any_any_any';
-import { cross_any_add_2_any_any } from '../operators/cross/cross_any_add_2_any_any';
 import { cross_any_any } from '../operators/cross/cross_any_any';
 import { cross_any_mul_2_scalar_any } from '../operators/cross/cross_any_mul_2_scalar_any';
 import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
 import { cross_mul_2_scalar_any_any } from '../operators/cross/cross_mul_2_scalar_any_any';
+import { MATH_VECTOR_CROSS_PRODUCT } from '../operators/cross/MATH_VECTOR_CROSS_PRODUCT';
 import { defint } from '../operators/defint/defint';
 import { degree_varargs } from '../operators/degree/degree_varargs';
 import { denominator_fn } from '../operators/denominator/denominator_fn';
@@ -111,8 +110,6 @@ import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../ope
 import { mul_lhs_distrib_over_add_expand } from '../operators/distrib/mul_lhs_distrib_over_add_expand';
 import { mul_rhs_distrib_over_add_expand } from '../operators/distrib/mul_rhs_distrib_over_add_expand';
 import { mul_rhs_distrib_over_add_factor } from '../operators/distrib/mul_rhs_distrib_over_add_factor';
-import { outer_2_add_2_any_any_any } from '../operators/distrib/outer_2_add_2_any_any_any';
-import { outer_2_any_add_2_any_any } from '../operators/distrib/outer_2_any_add_2_any_any';
 import { rco_2_add_2_any_any_any } from '../operators/distrib/rco_2_add_2_any_any_any';
 import { rco_2_any_add_2_any_any } from '../operators/distrib/rco_2_any_add_2_any_any';
 import { divisors_varargs } from '../operators/divisors/divisors_varargs';
@@ -155,18 +152,16 @@ import { index_varargs } from '../operators/index/index_varargs';
 import { inner_extension } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
 import { inner_2_any_real } from '../operators/inner/inner_2_any_real';
+import { inner_2_blade_blade } from '../operators/inner/inner_2_blade_blade';
 import { inner_2_imu_any } from '../operators/inner/inner_2_imu_any';
 import { inner_2_imu_imu } from '../operators/inner/inner_2_imu_imu';
 import { inner_2_imu_rat } from '../operators/inner/inner_2_imu_rat';
-import { inner_2_mul_2_scalar_vector_vector } from '../operators/inner/inner_2_mul_2_scalar_vector_vector';
 import { inner_2_num_num } from '../operators/inner/inner_2_num_num';
 import { inner_2_rat_imu } from '../operators/inner/inner_2_rat_imu';
 import { inner_2_rat_sym } from '../operators/inner/inner_2_rat_sym';
 import { inner_2_real_any } from '../operators/inner/inner_2_real_any';
 import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
-import { inner_2_vector_mul_2_scalar_vector } from '../operators/inner/inner_2_vector_mul_2_scalar_vector';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
-import { inner_2_vec_vec } from '../operators/inner/inner_2_vec_vec';
 import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
@@ -181,9 +176,6 @@ import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_
 import { legendre_varargs } from '../operators/legendre/legendre_varargs';
 import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
-import { associate_right_mul_2_mul_2_any_any_any } from '../operators/mul/associate_right_mul_2_mul_2_any_any_any';
-import { canonicalize_mul_2_mul_2_sym_sym_sym } from '../operators/mul/canonicalize_mul_2_mul_2_sym_sym_sym';
-import { implicate_mul_2_mul_2_sym_sym_sym } from '../operators/mul/implicate_mul_2_mul_2_sym_sym_sym';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
@@ -206,7 +198,6 @@ import { mul_2_mul_2_any_imu_sym } from '../operators/mul/mul_2_mul_2_any_imu_sy
 import { mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_mul_2_any_sym_imu } from '../operators/mul/mul_2_mul_2_any_sym_imu';
 import { mul_2_mul_2_any_sym_mul_2_imu_sym } from '../operators/mul/mul_2_mul_2_any_sym_mul_2_imu_sym';
-import { mul_2_mul_2_any_sym_sym } from '../operators/mul/mul_2_mul_2_any_sym_sym';
 import { mul_2_mul_2_any_X_pow_2_X_rat } from '../operators/mul/mul_2_mul_2_any_X_pow_2_X_rat';
 import { mul_2_mul_2_any_Z_pow_2_A_any } from '../operators/mul/mul_2_mul_2_any_Z_pow_2_A_any';
 import { mul_2_mul_2_num_any_rat } from '../operators/mul/mul_2_mul_2_num_any_rat';
@@ -379,7 +370,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(factorize_lhs_distrib('factorize LHS distrib (*,+)', MATH_MUL, MATH_ADD));
 
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD)); // MATH_VECTOR_CROSS_PRODUCT
     $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
 
     $.defineOperator(factorize_geometric_product_add);
@@ -495,8 +486,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(simplify_mul_2_blade_mul_2_blade_any);
 
     $.defineOperator(mul_2_mul_2_aaa_bbb_bbb);
-    $.defineOperator(canonicalize_mul_2_mul_2_sym_sym_sym);
-    $.defineOperator(implicate_mul_2_mul_2_sym_sym_sym);
 
     // The following is only used for right-associating.
     $.defineOperator(mul_2_mul_2_rat_sym_sym);
@@ -509,7 +498,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_mul_2_any_blade_blade);
     $.defineOperator(mul_2_mul_2_any_cons_sym);
     $.defineOperator(mul_2_mul_2_any_sym_imu);
-    $.defineOperator(mul_2_mul_2_any_sym_sym);
     $.defineOperator(mul_2_mul_2_any_sym_mul_2_imu_sym);
     // Notice how we need three operators in order to provide canonical ordering.
     // TODO: DRY the duplication of hash specification and matching guard functions.
@@ -518,7 +506,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Sym * Blade', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_blade));
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Sym * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_uom));
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Blade * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_BLADE), MATH_MUL, is_blade, is_uom));
-    $.defineOperator(associate_right_mul_2_mul_2_any_any_any);
     $.defineOperator(mul_2_pow_2_xxx_rat_xxx);
     // $.defineOperator(mul_2_outer_2_sym_sym_sym);
     $.defineOperator(mul_2_zzz_pow_2_aaa_rat);
@@ -596,9 +583,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inner_2_imu_any);
     $.defineOperator(inner_2_sym_sym);
     $.defineOperator(inner_2_vec_scalar);
-    $.defineOperator(inner_2_vec_vec);
-    $.defineOperator(inner_2_mul_2_scalar_vector_vector);
-    $.defineOperator(inner_2_vector_mul_2_scalar_vector);
+    $.defineOperator(inner_2_blade_blade);
     $.defineOperator(inner_2_real_any);
     $.defineOperator(inner_2_any_real);
     $.defineOperator(inner_2_any_imu);
@@ -621,14 +606,14 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mod_varargs);
 
     $.defineOperator(outer_2_blade_blade);
-    $.defineOperator(outer_2_add_2_any_any_any);
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_OUTER, MATH_ADD));
     $.defineOperator(outer_2_mul_2_scalar_any_any);
     // $.defineOperator(outer_2_sym_sym_vector_antisymmetry);
     // $.defineOperator(outer_2_sym_sym_vector_to_geometric);
     $.defineOperator(outer_2_sym_sym);
     $.defineOperator(outer_2_tensor_tensor);
     $.defineOperator(outer_2_sym_outer_2_sym_sym);
-    $.defineOperator(outer_2_any_add_2_any_any);
     $.defineOperator(outer_2_any_mul_2_scalar_any);
     $.defineOperator(outer_2_any_any);
 
@@ -695,8 +680,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(cross_mul_2_scalar_any_any);
     $.defineOperator(cross_any_mul_2_scalar_any);
     // Distribution Laws of cross over addition.
-    $.defineOperator(cross_add_2_any_any_any);
-    $.defineOperator(cross_any_add_2_any_any);
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineOperator(cross_any_any);
 
     $.defineOperator(defint);

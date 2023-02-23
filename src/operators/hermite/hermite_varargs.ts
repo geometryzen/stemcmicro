@@ -1,7 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { HERMITE } from "../../runtime/constants";
-import { Cons, items_to_cons, U } from "../../tree/tree";
+import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { Eval_hermite } from "./eval_hermite";
 
@@ -23,12 +23,6 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             const retval = Eval_hermite(expr, $);
             const changed = !retval.equals(expr);
             return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
-        }
-        else if ($.isImplicating()) {
-            const args = expr.tail().map($.valueOf);
-            const retval = items_to_cons(expr.head, ...args);
-            const flags = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
-            return [flags, retval];
         }
         else {
             return [TFLAG_NONE, expr];

@@ -1,7 +1,6 @@
 import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/symengine";
 import { ExpandingTransformer } from "../src/transform/ExpandingTransformer";
-import { ImplicateTransformer } from "../src/transform/ImplicateTransformer";
 import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -26,7 +25,6 @@ describe("mul", function () {
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
-        pipeline.addTail(new ImplicateTransformer());
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));

@@ -54,25 +54,13 @@ class Op extends Function2X<BCons<Sym, U, Sym>, Sym> implements Operator<BCons<S
                         return [TFLAG_DIFF, Xaz];
                     }
                     case SIGN_EQ: {
-                        // console.lg(`X=>${render_as_infix(X, $)}`);
-                        // console.lg(`z=>${render_as_infix(z, $)}`);
-                        // console.lg(`a=>${render_as_infix(a, $)}`);
-                        // console.lg(`isExplicating=>${$.isExplicating()}`);
-                        // console.lg(`isExpanding=>${$.isExpanding()}`);
-                        // console.lg(`isImplicating=>${$.isImplicating()}`);
-                        if ($.isExplicating()) {
-                            return [TFLAG_NONE, orig];
-                        }
-                        else if ($.isExpanding()) {
+                        if ($.isExpanding()) {
                             return [TFLAG_NONE, orig];
                         }
                         else if ($.isFactoring()) {
                             const a_times_a = $.valueOf(items_to_cons(MATH_POW, a, two));
                             const Xaa = $.valueOf(items_to_cons(MATH_MUL, X, a_times_a));
                             return [TFLAG_DIFF, Xaa];
-                        }
-                        else if ($.isImplicating()) {
-                            return [TFLAG_NONE, orig];
                         }
                         else {
                             return [TFLAG_NONE, orig];

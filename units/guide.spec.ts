@@ -32,14 +32,6 @@ describe("guide", function () {
         assert.strictEqual(engine.renderAsSExpr(treeTwo), "(sin z)");
         assert.strictEqual(engine.renderAsInfix(treeTwo), "sin(z)");
 
-        // We are in expanding mode, by default.
-        // $.setFocus(0);
-        // assert.strictEqual($.explicateMode, false, 'isExplicating');
-        // assert.strictEqual($.isExpanding(), false, 'isExpanding');
-        // assert.strictEqual($.isFactoring(), false, 'isFactoring');
-        // assert.strictEqual($.implicateMode, false, 'isImplicating');
-
-        // $.setFocus(PHASE_EXPANDING);
         const valueTwo = engine.transform(treeTwo);
 
         assert.strictEqual(engine.renderAsSExpr(valueTwo), "(+ (* (cos x) (sin (* i y))) (* (cos (* i y)) (sin x)))");
@@ -76,14 +68,6 @@ describe("guide", function () {
         assert.strictEqual(engine.renderAsSExpr(treeTwo), "(sin z)");
         assert.strictEqual(engine.renderAsInfix(treeTwo), "sin(z)");
 
-        // We are in expanding mode, by default.
-        // $.setFocus(0);
-        // assert.strictEqual($.explicateMode, false, 'isExplicating');
-        // assert.strictEqual($.isExpanding(), false, 'isExpanding');
-        // assert.strictEqual($.isFactoring(), false, 'isFactoring');
-        // assert.strictEqual($.implicateMode, false, 'isImplicating');
-
-        // $.setFocus(PHASE_EXPANDING);
         const valueTwo = engine.transform(treeTwo);
 
         // The ordering isn't very predictable.

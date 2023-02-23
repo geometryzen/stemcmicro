@@ -73,14 +73,6 @@ export interface ExtensionEnv {
     treatAsScalar(sym: Sym): boolean;
     treatAsVector(sym: Sym): boolean;
     /**
-     * Making associativity explicit in the tree structure.
-     */
-    readonly explicateMode: boolean;
-    /**
-     * Making associativity implicit in the tree structure.
-     */
-    readonly implicateMode: boolean;
-    /**
      * 
      * @param lhs 
      * @param rhs 
@@ -95,7 +87,6 @@ export interface ExtensionEnv {
      * Uses the configuration disable array: disable: ['factorize']
      */
     canFactorize(): boolean;
-    canImplicate(): boolean;
     clearBindings(): void;
     clearOperators(): void;
     clearRenamed(): void;
@@ -118,20 +109,10 @@ export interface ExtensionEnv {
     buildOperators(): void;
     inner(lhs: U, rhs: U): U;
     inverse(expr: U): U;
-    /**
-     * Determines how the system behaves when not in the EXPLICATE or IMPLICATE modes. e.g. EXPANDING.
-     */
-    isAssociationExplicit(): boolean;
-    /**
-     * Determines how the system behaves when not in the EXPLICATE or IMPLICATE modes. e.g. EXPANDING.
-     */
-    isAssociationImplicit(): boolean;
     isAssocL(opr: Sym): boolean;
     isAssocR(opr: Sym): boolean;
-    isExplicating(): boolean;
     isExpanding(): boolean;
     isFactoring(): boolean;
-    isImplicating(): boolean;
     /**
      * Meaning is imaginary valued. i.e. evaluates to i times a real number.
      */
@@ -159,7 +140,6 @@ export interface ExtensionEnv {
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
     resetSymTab(): void;
-    setAssociationImplicit(): void;
     setAssocL(opr: Sym, value: boolean): void;
     setAssocR(opr: Sym, value: boolean): void;
     setBinding(sym: Sym, binding: U): void;
@@ -187,27 +167,23 @@ export interface OperatorBuilder<T extends U> {
     create($: ExtensionEnv, config: Readonly<EnvConfig>): Operator<T>;
 }
 
-export const MODE_EXPLICATE = 1;
-export const MODE_EXPANDING = 2;
-export const MODE_FACTORING = 4;
-export const MODE_IMPLICATE = 8;
+export const MODE_EXPANDING = 1;
+export const MODE_FACTORING = 2;
 
 export function decodeMode(mode: number): string {
     switch (mode) {
-        case MODE_EXPLICATE: return 'explicate';
         case MODE_EXPANDING: return 'expanding';
         case MODE_FACTORING: return 'factoring';
-        case MODE_IMPLICATE: return 'implicate';
         default: {
             return `${mode}`;
         }
     }
 }
 
-export const MODE_SEQUENCE = [MODE_EXPLICATE, MODE_EXPANDING, MODE_FACTORING, MODE_IMPLICATE];
+export const MODE_SEQUENCE = [MODE_EXPANDING, MODE_FACTORING];
 
 export const MODE_FLAGS_NONE = 0;
-export const MODE_FLAGS_ALL = MODE_EXPLICATE | MODE_EXPANDING | MODE_FACTORING | MODE_IMPLICATE;
+export const MODE_FLAGS_ALL = MODE_EXPANDING | MODE_FACTORING;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTORING;
 
 export interface Operator<T extends U> {

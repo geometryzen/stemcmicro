@@ -3,20 +3,16 @@ import { abs_any } from '../operators/abs/abs_any';
 import { abs_factorize } from '../operators/abs/abs_factorize';
 import { abs_rat } from '../operators/abs/abs_rat';
 import { abs_sym_real } from '../operators/abs/abs_sym_real';
-import { add_2_add_2_any_any_any } from '../operators/add/add_2_add_2_any_any_any';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
 import { add_2_add_2_any_imag_imag } from '../operators/add/add_2_add_2_any_imag_imag';
 import { add_2_add_2_any_imag_real } from '../operators/add/add_2_add_2_any_imag_real';
 import { add_2_add_2_rat_mul_2_rat_any_add_2_rat_any } from '../operators/add/add_2_add_2_any_mul_2_rat_any_add_2_rat_any';
 import { add_2_add_2_any_mul_2_rat_sym_mul_2_rat_sym } from '../operators/add/add_2_add_2_any_mul_2_rat_sym_mul_2_rat_sym';
 import { add_2_add_2_any_mul_2_rat_sym } from '../operators/add/add_2_add_2_any_sym_mul_2_rat_sym';
-import { add_2_add_2_sym_sym_sym } from '../operators/add/add_2_add_2_sym_sym_sym';
 import { add_2_add_2_sym_xxx_xxx } from '../operators/add/add_2_add_2_sym_xxx_xxx';
-import { add_2_any_add } from '../operators/add/add_2_any_add';
 import { add_2_any_any_factorize_rhs } from '../operators/add/add_2_any_any_factorize_rhs';
 import { add_2_any_any_zero_sum } from '../operators/add/add_2_any_any_zero_sum';
 import { add_2_any_mul_2_rat_any } from '../operators/add/add_2_any_mul_2_rat_any';
-import { add_2_assoc_lhs_canonical_ordering } from '../operators/add/add_2_assoc_lhs_canonical_ordering';
 import { add_2_assoc_lhs_factorize_blades } from '../operators/add/add_2_assoc_lhs_factorize_blades';
 import { add_2_assoc_rhs_canonical_ordering } from '../operators/add/add_2_assoc_rhs_canonical_ordering';
 import { add_2_blade_blade } from '../operators/add/add_2_blade_blade';
@@ -41,7 +37,6 @@ import { add_2_rat_flt } from '../operators/add/add_2_rat_flt';
 import { add_2_rat_rat } from '../operators/add/add_2_rat_rat';
 import { add_2_rat_sym } from '../operators/add/add_2_rat_sym';
 import { add_2_rat_uom } from '../operators/add/add_2_rat_uom';
-import { add_2_sym_mul_2_sym_rat } from '../operators/add/add_2_sym_mul_2_sym_rat';
 import { add_2_sym_rat } from '../operators/add/add_2_sym_rat';
 import { add_2_sym_sym } from '../operators/add/add_2_sym_sym';
 import { add_2_tensor_tensor } from '../operators/add/add_2_tensor_tensor';
@@ -191,13 +186,8 @@ import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
 import { associate_right_mul_2_mul_2_any_any_any } from '../operators/mul/associate_right_mul_2_mul_2_any_any_any';
 import { canonicalize_mul_2_mul_2_sym_sym_sym } from '../operators/mul/canonicalize_mul_2_mul_2_sym_sym_sym';
-import { canonicalize_mul_2_sym_mul_2_sym_sym } from '../operators/mul/canonicalize_mul_2_sym_mul_2_sym_sym';
-import { implicate_mul_2_mul_2_any_any_any } from '../operators/mul/implicate_mul_2_mul_2_any_any_any';
 import { implicate_mul_2_mul_2_sym_sym_sym } from '../operators/mul/implicate_mul_2_mul_2_sym_sym_sym';
-import { implicate_mul_2_sym_mul_2_sym_sym } from '../operators/mul/implicate_mul_2_sym_mul_2_sym_sym';
 import { mul_2_any_any } from '../operators/mul/mul_2_any_any';
-import { mul_2_any_mul } from '../operators/mul/mul_2_any_mul';
-import { mul_2_any_mul_2_any_any } from '../operators/mul/mul_2_any_mul_2_any_any';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
@@ -236,12 +226,10 @@ import { mul_2_pow_2_zzz_rat_aaa } from '../operators/mul/mul_2_pow_2_zzz_rat_aa
 import { mul_2_rat_any } from '../operators/mul/mul_2_rat_any';
 import { mul_2_rat_blade } from '../operators/mul/mul_2_rat_blade';
 import { mul_2_rat_flt } from '../operators/mul/mul_2_rat_flt';
-import { mul_2_rat_mul_2_sym_sym } from '../operators/mul/mul_2_rat_mul_2_sym_sym';
 import { mul_2_rat_rat } from '../operators/mul/mul_2_rat_rat';
 import { mul_2_rat_sym } from '../operators/mul/mul_2_rat_sym';
 import { mul_2_rat_tensor } from '../operators/mul/mul_2_rat_tensor';
 import { mul_2_scalar_blade } from '../operators/mul/mul_2_scalar_blade';
-import { mul_2_scalar_mul_2_scalar_any } from '../operators/mul/mul_2_scalar_mul_2_scalar_any';
 import { mul_2_sym_add_2_sym_sym } from '../operators/mul/mul_2_sym_add_2_sym_sym';
 import { mul_2_sym_blade } from '../operators/mul/mul_2_sym_blade';
 import { mul_2_sym_flt } from '../operators/mul/mul_2_sym_flt';
@@ -431,19 +419,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_blade_mul_2_rat_blade);
     $.defineOperator(add_2_zzz_mul_2_rat_aaa);
     $.defineOperator(add_2_add_2_sym_xxx_xxx);
-    $.defineOperator(add_2_add_2_sym_sym_sym);
     $.defineOperator(add_2_add_2_any_imag_real);
     $.defineOperator(add_2_add_2_any_imag_imag);
     // $.defineOperator(add_2_canonical_ordering);
     $.defineOperator(add_2_add_2_any_any_any_factorize_rhs);
-    if ($.isAssociationExplicit()) {
-        $.defineOperator(add_2_assoc_lhs_canonical_ordering);
-    }
     $.defineOperator(add_2_assoc_rhs_canonical_ordering);
     $.defineOperator(add_2_assoc_lhs_factorize_blades);
-    if ($.isAssociationExplicit()) {
-        $.defineOperator(add_2_add_2_any_any_any);
-    }
 
     // Not needed because it only works for binary expressions.
     // $.defineOperator(add_2_add_any);
@@ -468,13 +449,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_mul_2_any_vector_mul_2_any_vector);
     $.defineOperator(add_2_pow_2_cos_rat_pow_2_sin_rat);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
-    // $.defineOperator(add_2_any_add_2_any_any);
-    $.defineOperator(add_2_any_add);
 
     $.defineOperator(add_2_sym_sym);
-    // $.defineOperator(add_2_any_sym);
 
-    $.defineOperator(add_2_sym_mul_2_sym_rat);
     $.defineOperator(add_2_blade_blade);
     $.defineOperator(add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym);
     $.defineOperator(add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym);
@@ -482,7 +459,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_imu_flt);
     $.defineOperator(add_2_any_any_zero_sum);
     $.defineOperator(add_2_any_any_factorize_rhs);
-    // $.defineOperator(add_2_any_any);
     $.defineOperator(add_varargs);
 
     $.defineAssociative(MATH_ADD, zero);
@@ -520,12 +496,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_rat_rat);
     $.defineOperator(mul_2_rat_sym);
     $.defineOperator(mul_2_rat_tensor);
-    $.defineOperator(mul_2_rat_mul_2_sym_sym);
     $.defineOperator(mul_2_rat_any);
     $.defineOperator(mul_2_mul_2_rat_any_mul_2_rat_any);
-    if ($.isAssociationExplicit()) {
-        $.defineOperator(mul_2_scalar_mul_2_scalar_any);
-    }
 
     $.defineOperator(simplify_mul_2_blade_mul_2_blade_any);
 
@@ -554,17 +526,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Sym * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_uom));
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Blade * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_BLADE), MATH_MUL, is_blade, is_uom));
     $.defineOperator(associate_right_mul_2_mul_2_any_any_any);
-    $.defineOperator(implicate_mul_2_mul_2_any_any_any);
     $.defineOperator(mul_2_pow_2_xxx_rat_xxx);
     // $.defineOperator(mul_2_outer_2_sym_sym_sym);
     $.defineOperator(mul_2_zzz_pow_2_aaa_rat);
     $.defineOperator(mul_2_X_pow_2_X_rat);
     $.defineOperator(mul_2_sym_add_2_sym_sym);
     $.defineOperator(mul_2_sym_inner_2_sym_sym);
-    // Disable because it is a very strong canonicalizer.
-    // $.defineOperator(mul_2_sym_outer_2_sym_sym);
-    $.defineOperator(canonicalize_mul_2_sym_mul_2_sym_sym);
-    $.defineOperator(implicate_mul_2_sym_mul_2_sym_sym);
     $.defineOperator(mul_2_sym_mul_2_rat_any);
     $.defineOperator(mul_2_sym_pow_2_sym_two);
     $.defineOperator(mul_2_sym_flt);
@@ -587,11 +554,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_pow_2_xxx_any_pow_2_xxx_any);
     // $.defineOperator(mul_2_pow_2_sym_any_pow_2_sym_any);
     $.defineOperator(mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any);
-
-    if ($.isAssociationExplicit()) {
-        $.defineOperator(mul_2_any_mul_2_any_any);
-    }
-    $.defineOperator(mul_2_any_mul);
 
     $.defineOperator(mul_2_hyp_sym);
 

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { ExpandingTransformer, createScriptEngine, ImplicateTransformer } from "../index";
+import { createScriptEngine, ExpandingTransformer } from "../index";
 import { NoopTransformer } from "../src/transform/NoopTransformer";
 import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 
@@ -45,7 +45,7 @@ describe("transform", function () {
             `a`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "a");
@@ -57,7 +57,7 @@ describe("transform", function () {
             `a+b`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
@@ -69,7 +69,7 @@ describe("transform", function () {
             `a+b+c`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b c)");
@@ -81,7 +81,7 @@ describe("transform", function () {
             `1/a+1/b+1/c`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (power a -1) (power b -1) (power c -1))");
@@ -93,7 +93,7 @@ describe("transform", function () {
             `1/a`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(power a -1)");
@@ -106,7 +106,7 @@ describe("transform", function () {
             `foo(1/a)`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (power a -1))");
@@ -118,7 +118,7 @@ describe("transform", function () {
             `rationalize(1/a)`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(rationalize (power a -1))");
@@ -130,7 +130,7 @@ describe("transform", function () {
             `rationalize(1/a+1/b)`
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(lines.join('\n'), new ImplicateTransformer());
+        const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(rationalize (+ (power a -1) (power b -1)))");
@@ -143,7 +143,7 @@ describe("transform", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const { values } = engine.transformScript(sourceText, new ImplicateTransformer());
+        const { values } = engine.transformScript(sourceText, new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(rationalize (+ (power a -1) (power b -1) (power c -1)))");
@@ -171,7 +171,7 @@ describe("transform", function () {
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
-        pipeline.addTail(new ImplicateTransformer());
+        pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -186,9 +186,7 @@ describe("transform", function () {
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
-        pipeline.addTail(new ImplicateTransformer());
         pipeline.addTail(new ExpandingTransformer());
-        engine.setAssociationImplicit();
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);

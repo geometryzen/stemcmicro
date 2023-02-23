@@ -13,8 +13,6 @@ export { is_uom } from './src/operators/uom/is_uom';
 export { createScriptEngine, ScriptEngine, ScriptEngineOptions } from './src/runtime/symengine';
 export { parseScript, ParseScriptOptions } from './src/scanner/parse_script';
 export { ExpandingTransformer } from './src/transform/ExpandingTransformer';
-export { ExplicateTransformer } from './src/transform/ExplicateTransformer';
-export { ImplicateTransformer } from './src/transform/ImplicateTransformer';
 export { NoopTransformer } from './src/transform/NoopTransformer';
 export { TreeTransformer } from './src/transform/Transformer';
 export { TransformerPipeline } from './src/transform/TransformerPipeline';

@@ -68,7 +68,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                 // Fall through.
             }
             if (args.length === 2) {
-                if ($.isAssociationImplicit() && args_contain_association_explicit(args)) {
+                if (args_contain_association_explicit(args)) {
                     const retval = items_to_cons(expr.head, ...make_factor_association_implicit(args));
                     return [TFLAG_DIFF, hook('E', retval)];
                 }
@@ -82,51 +82,30 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                     }
                 }
             }
-            if ($.isAssociationImplicit()) {
-                const factors = expr.tail();
-                if (args_contain_association_explicit(factors)) {
-                    const args: U[] = [];
-                    for (const factor of factors) {
-                        if (is_cons(factor) && is_mul(factor)) {
-                            args.push(...factor.tail());
-                        }
-                        else {
-                            args.push(factor);
-                        }
+            const factors = expr.tail();
+            if (args_contain_association_explicit(factors)) {
+                const args: U[] = [];
+                for (const factor of factors) {
+                    if (is_cons(factor) && is_mul(factor)) {
+                        args.push(...factor.tail());
                     }
-                    args.sort(make_factor_comparator($));
-                    multiply_factor_pairs(args, $);
-                    const retval = items_to_cons(expr.head, ...args);
-                    return [TFLAG_DIFF, hook('G', retval)];
+                    else {
+                        args.push(factor);
+                    }
                 }
-                else {
-                    // No possibility of flattening but sorting is possible.
-                    const args = expr.tail();
-                    args.sort(make_factor_comparator($));
-                    multiply_factor_pairs(args, $);
-                    const retval = items_to_cons(expr.head, ...args);
-                    const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
-                    return [flag, hook('H', retval)];
-                }
+                args.sort(make_factor_comparator($));
+                multiply_factor_pairs(args, $);
+                const retval = items_to_cons(expr.head, ...args);
+                return [TFLAG_DIFF, hook('G', retval)];
             }
             else {
-                return [TFLAG_NONE, hook('I', expr)];
-            }
-        }
-        else if ($.isImplicating()) {
-            const args = expr.tail();
-            if (args.some(is_add)) {
-                // Distributive Law.
-                const product = multiply_factors(expr, $);
-                if (product.equals(expr)) {
-                    return [TFLAG_NONE, hook('J', expr)];
-                }
-                else {
-                    return [TFLAG_DIFF, hook('K', product)];
-                }
-            }
-            else {
-                return [TFLAG_NONE, hook('L', expr)];
+                // No possibility of flattening but sorting is possible.
+                const args = expr.tail();
+                args.sort(make_factor_comparator($));
+                multiply_factor_pairs(args, $);
+                const retval = items_to_cons(expr.head, ...args);
+                const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
+                return [flag, hook('H', retval)];
             }
         }
         else {

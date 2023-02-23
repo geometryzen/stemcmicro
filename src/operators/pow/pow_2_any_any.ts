@@ -32,19 +32,11 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        if ($.isExplicating()) {
-            // TODO: We should allow the parts to explicate.
-            return [TFLAG_NONE, expr];
-        }
-        else if ($.isExpanding()) {
+        if ($.isExpanding()) {
             const newExpr = power_v1(base, expo, expr, this.$);
             return [!newExpr.equals(expr) ? TFLAG_DIFF : TFLAG_NONE, newExpr];
         }
         else if ($.isFactoring()) {
-            return [TFLAG_NONE, expr];
-        }
-        else if ($.isImplicating()) {
-            // TODO: We should allow the parts to implicate.
             return [TFLAG_NONE, expr];
         }
         else {

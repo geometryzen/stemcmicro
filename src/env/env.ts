@@ -11,8 +11,6 @@ import { denominator } from "../operators/denominator/denominator";
 import { derivative } from "../operators/derivative/derivative";
 import { is_err } from "../operators/err/is_err";
 import { is_flt } from "../operators/flt/is_flt";
-import { associative_explicator } from "../operators/helpers/associative_explicator";
-import { associative_implicator } from "../operators/helpers/associative_implicator";
 import { value_of } from "../operators/helpers/valueOf";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
@@ -25,7 +23,6 @@ import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_uom } from "../operators/uom/is_uom";
 import { render_as_infix } from "../print/print";
 import { FUNCTION } from "../runtime/constants";
-import { implicate } from "../runtime/execute";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
@@ -33,7 +30,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { decodeMode, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_EXPLICATE, MODE_FACTORING, MODE_FLAGS_ALL, MODE_IMPLICATE, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { decodeMode, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -108,11 +105,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const assocs: { [key: string]: Assoc } = {};
 
-    /**
-     * The best default is the one that requires the fewest parentheses. i.e. explicit equals false, implicit equals true.
-     */
-    let is_association_explicit = false;
-
     let current_mode: number = MODE_EXPANDING;
 
     let fieldKind: 'R' | undefined = 'R';
@@ -130,10 +122,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     function currentOps(): { [key: string]: Operator<U>[] } {
         switch (current_mode) {
-            case MODE_EXPLICATE:
             case MODE_EXPANDING:
-            case MODE_FACTORING:
-            case MODE_IMPLICATE: {
+            case MODE_FACTORING: {
                 const ops = ops_by_mode[current_mode];
                 if (typeof ops === 'undefined') {
                     throw new Error(`currentOps(${current_mode})`);
@@ -253,19 +243,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineAssociative(opr: Sym, id: Rat): void {
-            // These operators should only be needed for the initial phase to
-            // get expressions into either Left- or Right-Associated form.
-            // The expressions from the scanner should be in the associated
-            // form. However, we implicate expressions prior to pretty.
-            // With a smarter serializer this would not be needed.
-            $.defineOperator(associative_explicator(opr, id));
-            $.defineOperator(associative_implicator(opr));
+            // Do nothing.
         },
         canFactorize(): boolean {
             return config.disable.indexOf('factorize') < 0;
-        },
-        canImplicate(): boolean {
-            return config.disable.indexOf('implicate') < 0;
         },
         clearBindings(): void {
             symTab.clearBindings();
@@ -364,12 +345,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return binop(MATH_POW, expr, negOne, $);
             }
         },
-        isAssociationExplicit(): boolean {
-            return is_association_explicit;
-        },
-        isAssociationImplicit(): boolean {
-            return !this.isAssociationExplicit();
-        },
         isAssocL(opr: Sym): boolean {
             const entry = assocs[opr.key()];
             if (entry) {
@@ -388,23 +363,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 throw new SystemError(`isAssocR(${opr})`);
             }
         },
-        isExplicating(): boolean {
-            return current_mode == MODE_EXPLICATE;
-        },
         isExpanding(): boolean {
             return current_mode == MODE_EXPANDING;
         },
         isFactoring(): boolean {
             return current_mode === MODE_FACTORING;
-        },
-        isImplicating(): boolean {
-            return current_mode == MODE_IMPLICATE;
-        },
-        get explicateMode(): boolean {
-            return current_mode === MODE_EXPLICATE;
-        },
-        get implicateMode(): boolean {
-            return current_mode === MODE_IMPLICATE;
         },
         isImag(expr: U): boolean {
             const op = $.operatorFor(expr);
@@ -446,7 +409,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return p;
             }
 
-            if (!is_poly_expanded_form(implicate(p, $), x, $)) {
+            if (!is_poly_expanded_form(p, x, $)) {
                 // console.lg(`Giving up b/c the polynomial is not in expanded form.`);
                 return p;
             }
@@ -568,9 +531,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         remove(varName: Sym): void {
             symTab.remove(varName);
-        },
-        setAssociationImplicit(): void {
-            is_association_explicit = false;
         },
         setAssocL(opr: Sym, assocL: boolean): void {
             const assoc = assocs[opr.key()];

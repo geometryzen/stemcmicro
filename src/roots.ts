@@ -1,19 +1,18 @@
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
-import { coeff } from './operators/coeff/coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
 import { is_complex_number, is_poly_expanded_form, is_positive_integer } from './is';
 import { sort } from './misc';
+import { coeff } from './operators/coeff/coeff';
 import { simplify } from './operators/simplify/simplify';
 import { ASSIGN, SECRETX, TESTEQ } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
-import { implicate } from './runtime/execute';
 import { is_multiply, is_power } from './runtime/helpers';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
-import { eight, four, half, wrap_as_int, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';
+import { eight, four, half, negFour, negOne, nine, one, third, three, two, wrap_as_int } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, Cons, NIL, U } from './tree/tree';
 
@@ -50,7 +49,7 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`poly=${print_expr(poly, $)}`);
     // console.lg(`var =${print_expr(x, $)}`);
 
-    const p = implicate(poly, $);
+    const p = poly;
 
     if (is_poly_expanded_form(p, x, $)) {
         return roots(poly, x, $);

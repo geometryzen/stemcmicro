@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine, ExpandingTransformer, ImplicateTransformer } from "../index";
+import { createScriptEngine, ExpandingTransformer } from "../index";
 import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 
 describe("expand", function () {
@@ -10,7 +10,6 @@ describe("expand", function () {
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
-        pipeline.addTail(new ImplicateTransformer());
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
@@ -26,10 +25,7 @@ describe("expand", function () {
         const sourceText = lines.join('\n');
         const engine = createScriptEngine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
-        pipeline.addTail(new ImplicateTransformer());
         pipeline.addTail(new ExpandingTransformer());
-        engine.setAssociationImplicit();
-        // engine.setAssociationImplicit();
         const { values } = engine.transformScript(sourceText, pipeline);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);

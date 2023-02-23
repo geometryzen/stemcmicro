@@ -17,14 +17,8 @@ describe("assoc", function () {
             });
             engine.setAssocR(MATH_ADD, true);
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            if (engine.isAssociationImplicit()) {
-                assert.strictEqual(engine.renderAsSExpr(value), '(+ a b c d)');
-                assert.strictEqual(engine.renderAsInfix(value), 'a+b+c+d');
-            }
-            else {
-                assert.strictEqual(engine.renderAsSExpr(value), '(+ a (+ b (+ c d)))');
-                assert.strictEqual(engine.renderAsInfix(value), 'a+(b+(c+d))');
-            }
+            assert.strictEqual(engine.renderAsSExpr(value), '(+ a b c d)');
+            assert.strictEqual(engine.renderAsInfix(value), 'a+b+c+d');
             engine.release();
         });
         it("B", function () {
@@ -34,14 +28,8 @@ describe("assoc", function () {
             ];
             const engine = createScriptEngine({ useCaretForExponentiation: true });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            if (engine.isAssociationImplicit()) {
-                assert.strictEqual(engine.renderAsSExpr(value), '(+ a b c d)');
-                assert.strictEqual(engine.renderAsInfix(value), 'a+b+c+d');
-            }
-            else {
-                assert.strictEqual(engine.renderAsSExpr(value), '(+ (+ (+ a b) c) d)');
-                assert.strictEqual(engine.renderAsInfix(value), '((a+b)+c)+d');
-            }
+            assert.strictEqual(engine.renderAsSExpr(value), '(+ a b c d)');
+            assert.strictEqual(engine.renderAsInfix(value), 'a+b+c+d');
             engine.release();
         });
         it("C", function () {
@@ -82,14 +70,8 @@ describe("assoc", function () {
             });
             engine.setAssocR(MATH_MUL, true);
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            if (engine.isAssociationImplicit()) {
-                assert.strictEqual(engine.renderAsSExpr(value), '(* a b c d)');
-                assert.strictEqual(engine.renderAsInfix(value), 'a*b*c*d');
-            }
-            else {
-                assert.strictEqual(engine.renderAsSExpr(value), '(* a (* b (* c d)))');
-                assert.strictEqual(engine.renderAsInfix(value), 'a*(b*(c*d))');
-            }
+            assert.strictEqual(engine.renderAsSExpr(value), '(* a b c d)');
+            assert.strictEqual(engine.renderAsInfix(value), 'a*b*c*d');
             engine.release();
         });
         it("B", function () {
@@ -99,14 +81,8 @@ describe("assoc", function () {
             ];
             const engine = createScriptEngine({ useCaretForExponentiation: true });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            if (engine.isAssociationImplicit()) {
-                assert.strictEqual(engine.renderAsSExpr(value), '(* a b c d)');
-                assert.strictEqual(engine.renderAsInfix(value), 'a*b*c*d');
-            }
-            else {
-                assert.strictEqual(engine.renderAsSExpr(value), '(* (* (* a b) c) d)');
-                assert.strictEqual(engine.renderAsInfix(value), '((a*b)*c)*d');
-            }
+            assert.strictEqual(engine.renderAsSExpr(value), '(* a b c d)');
+            assert.strictEqual(engine.renderAsInfix(value), 'a*b*c*d');
             engine.release();
         });
         it("C", function () {

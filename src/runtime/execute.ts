@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, MODE_EXPANDING, MODE_FACTORING, MODE_IMPLICATE, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING, MODE_FACTORING, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
@@ -7,13 +7,11 @@ import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
 import { parseScript } from '../scanner/parse_script';
 import { ScanOptions } from '../scanner/scan';
-import { ExplicateTransformer } from "../transform/ExplicateTransformer";
-import { ImplicateTransformer } from "../transform/ImplicateTransformer";
 import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, NIL, U } from '../tree/tree';
 import { Box } from "./Box";
-import { AUTOEXPAND, AUTOFACTOR, BAKE, EXPLICATE, IMPLICATE, SYMBOL_I, SYMBOL_J } from './constants';
+import { AUTOEXPAND, AUTOFACTOR, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { defs, move_top_of_stack } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
@@ -103,7 +101,6 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
     finally {
         $.setPrintHandler(originalPrintHandler);
     }
-
 }
 
 /**
@@ -130,20 +127,6 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     const box = new Box(tree);
 
     defs.trigmode = 0;
-
-    // console.lg();
-    // console.lg(`scanned : ${scanned}`);
-    // // console.lg(`scanned : ${print_expr(scanned, $)}`);
-    // console.lg(`scanned : ${print_list(scanned, $)}`);
-
-    // $.setAssocL(MATH_ADD, true);
-    // $.setAssocL(MATH_MUL, true);
-
-    if (isNotDisabled(EXPLICATE, $)) {
-        const transformer = new ExplicateTransformer();
-        const expr = transformer.transform(box.pop(), $);
-        box.push(expr);
-    }
 
     // AUTOEXPAND, by default is unbound. i.e. only bound to it's own symbol.
     // isZero operating on Sym returns false. Therefore expanding will be true.
@@ -183,13 +166,6 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
             box.push(expr);
         }
 
-        if ($.canImplicate()) {
-            if (isNotDisabled(IMPLICATE, $)) {
-                const transformer = new ImplicateTransformer();
-                const expr = transformer.transform(box.pop(), $);
-                box.push(expr);
-            }
-        }
         post_processing_complex_numbers(tree, box.peek(), box, $);
     }
     else {
@@ -263,16 +239,5 @@ function post_processing_complex_numbers(input: U, output: U, box: Box<U>, $: Ex
             box.push(B);
             return;
         }
-    }
-}
-
-export function implicate(input: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
-    $.setFocus(MODE_IMPLICATE);
-    try {
-        return transform_with_reason(input, $, 'implicate');
-    }
-    finally {
-        $.setFocus(phase);
     }
 }

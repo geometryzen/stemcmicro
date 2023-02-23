@@ -52,7 +52,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(Ax*Ax+Ay*Ay+Az*Az)**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(Ax**2+Ay**2+Az**2)**(1/2)");
         engine.release();
     });
     it("Show how to find A, given u=A+B and v=A-B", function () {
@@ -164,8 +164,8 @@ describe("gibbs", function () {
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) By By)");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By*By");
+        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) (power By 2))");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
         engine.release();
     });
     it("Handling of Powers: Part II", function () {
@@ -215,7 +215,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax*By*By+Ax*Ax*Bz*Bz-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz+Ay*Ay*Bx*Bx+Ay*Ay*Bz*Bz-2*Ay*Az*By*Bz+Az*Az*Bx*Bx+Az*Az*By*By");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2+Ax**2*Bz**2-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz+Ay**2*Bx**2+Ay**2*Bz**2-2*Ay*Az*By*Bz+Az**2*Bx**2+Az**2*By**2");
         engine.release();
     });
     it("cross(A,B)|cross(A,B)", function () {

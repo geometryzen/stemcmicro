@@ -1,33 +1,23 @@
-import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
-import { createScriptEngine, ExpandingTransformer, ImplicateTransformer, TransformerPipeline } from "../index";
+import { createScriptEngine } from "../index";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    xit("c-(a-b)", function () {
+    it("curl of cross product: Part I", function () {
         const lines: string[] = [
-            `c-(a-b)`
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `Bz*e3*d(Az,z)`
         ];
-        const engine = createScriptEngine();
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b c)");
-        assert.strictEqual(engine.renderAsInfix(actual), "-a+b+c");
-
-        engine.release();
-    });
-    it("c-(a-b)", function () {
-        const lines: string[] = [
-            `c-(a-b)`
-        ];
-        const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
-        const pipeline = new TransformerPipeline();
-        pipeline.addTail(new ImplicateTransformer());
-        pipeline.addTail(new ExpandingTransformer());
-        const { values } = engine.transformScript(sourceText, pipeline);
-        assert.isTrue(Array.isArray(values));
-        assert.strictEqual(values.length, 1);
-        // assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-a+b+c");
+        const engine = createScriptEngine({
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(value), "(* Bz (derivative Az z) e3)");
+        assert.strictEqual(engine.renderAsInfix(value), "Bz*d(Az,z)*e3");
         engine.release();
     });
 });

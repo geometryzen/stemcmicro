@@ -20,6 +20,7 @@ import { group } from "./group";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // If comparing blades they should be stable.
     return cmp_expr(lhs, rhs, $);
 }
 

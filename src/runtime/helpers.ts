@@ -1,55 +1,56 @@
 import { MATH_ABS } from "../operators/abs/MATH_ABS";
+import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
 import { is_num } from "../operators/num/is_num";
 import { is_tensor } from "../operators/tensor/is_tensor";
-import { is_opr_eq } from "../predicates/is_opr_eq";
+import { is_cons_opr_eq_sym } from "../predicates/is_cons_opr_eq_sym";
 import { Num } from "../tree/num/Num";
 import { Sym } from "../tree/sym/Sym";
 import { Tensor } from "../tree/tensor/Tensor";
 import { Cons, is_cons, U } from "../tree/tree";
 import { DOT, INV, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "./constants";
-import { MATH_ADD, MATH_FACTORIAL, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SIN } from "./ns_math";
+import { MATH_FACTORIAL, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SIN } from "./ns_math";
 
 export function is_abs(expr: U): expr is Cons & { __ts_sym: 'MATH_ABS' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_ABS);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_ABS);
 }
 
 /**
  * is_cons && is_opr_eq(..., MATH_ADD)
  */
-export function is_add(expr: U): expr is Cons & { __ts_sym: 'MATH_ADD' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_ADD);
+export function is_add(expr: U): expr is Cons & { __ts_sym: '+' } {
+    return is_cons(expr) && is_cons_opr_eq_add(expr);
 }
 
 export function is_multiply(expr: U): expr is Cons & { __ts_sym: 'MATH_MUL' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_MUL);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_MUL);
 }
 
 export function is_power(expr: U): expr is Cons & { __ts_sym: 'MATH_POW' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_POW);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_POW);
 }
 
 export function is_factorial(expr: U): expr is Cons & { __ts_sym: 'MATH_FACTORIAL' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_FACTORIAL);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_FACTORIAL);
 }
 
 export function is_outer(expr: U): expr is Cons & { __ts_sym: 'MATH_OUTER' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_OUTER);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_OUTER);
 }
 
 export function is_lco(expr: U): expr is Cons & { __ts_sym: 'MATH_LCO' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_LCO);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_LCO);
 }
 
 export function is_rco(expr: U): expr is Cons & { __ts_sym: 'MATH_RCO' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_RCO);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_RCO);
 }
 
 export function is_inner_or_dot(expr: U): boolean {
     if (is_cons(expr)) {
-        if (is_opr_eq(expr, MATH_INNER)) {
+        if (is_cons_opr_eq_sym(expr, MATH_INNER)) {
             return true;
         }
-        if (is_opr_eq(expr, DOT)) {
+        if (is_cons_opr_eq_sym(expr, DOT)) {
             return true;
         }
         return false;
@@ -60,11 +61,11 @@ export function is_inner_or_dot(expr: U): boolean {
 }
 
 export function is_transpose(expr: U): boolean {
-    return is_cons(expr) && is_opr_eq(expr, TRANSPOSE);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, TRANSPOSE);
 }
 
 export function is_inv(expr: Cons): boolean {
-    return is_cons(expr) && is_opr_eq(expr, INV);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, INV);
 }
 
 /**
@@ -94,5 +95,5 @@ export function is_identity_matrix(p: U): p is Sym & { identity: true } {
 }
 
 export function is_sin(expr: U): expr is Cons & { __ts_sym: 'MATH_SIN' } {
-    return is_cons(expr) && is_opr_eq(expr, MATH_SIN);
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_SIN);
 }

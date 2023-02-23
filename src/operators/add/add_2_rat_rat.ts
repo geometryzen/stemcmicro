@@ -18,7 +18,6 @@ class Builder implements OperatorBuilder<Cons> {
  * Rat + Rat => Rat
  */
 class Op extends Function2<Rat, Rat> implements Operator<Cons> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_rat_rat', MATH_ADD, is_rat, is_rat, $);

@@ -23,7 +23,6 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Tensor + Tensor => Tensor
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_tensor_tensor', MATH_ADD, is_tensor, is_tensor, $);

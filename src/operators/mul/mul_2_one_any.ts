@@ -28,7 +28,6 @@ function cross(lhs: Num, rhs: U): boolean {
 // 1 * x => x
 //
 class Op extends Function2X<Num, U> implements Operator<BCons<Sym, Num, U>> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_one_any', MATH_MUL, is_num, is_any, cross, $);

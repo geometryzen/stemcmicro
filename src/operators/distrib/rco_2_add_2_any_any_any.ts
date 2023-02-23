@@ -19,7 +19,6 @@ class Builder implements OperatorBuilder<Cons> {
  * (a + b) >> c => (a >> c) + (b >> c)
  */
 class Op extends Function2<BCons<Sym, U, U>, U> implements Operator<Cons> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('rco_2_add_2_any_any_any', MATH_RCO, and(is_cons, is_opr_2_any_any(MATH_ADD)), is_any, $);

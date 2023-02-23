@@ -26,7 +26,6 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Blade * Rat => Rat * Blade
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {

@@ -35,7 +35,6 @@ function cross($: ExtensionEnv) {
  * (k * a) * (b^c) => k * (a * (b^c))
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
-    readonly breaker = true;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_rat_sym_outer_2_sym_sym', MATH_MUL, and(is_cons, is_mul_2_rat_sym), and(is_cons, is_outer_2_sym_sym), cross($), $);
     }

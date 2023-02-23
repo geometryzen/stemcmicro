@@ -26,7 +26,6 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Blade * Flt => Flt * Blade
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_blade_flt', MATH_MUL, is_blade, is_flt, $);

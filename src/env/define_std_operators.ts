@@ -21,7 +21,6 @@ import { add_2_cons_rat } from '../operators/add/add_2_cons_rat';
 import { add_2_flt_flt } from '../operators/add/add_2_flt_flt';
 import { add_2_flt_rat } from '../operators/add/add_2_flt_rat';
 import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
-import { add_2_imag_real } from '../operators/add/add_2_imag_real';
 import { add_2_imu_flt } from '../operators/add/add_2_imu_flt';
 import { add_2_mul_2_any_imu_sym } from '../operators/add/add_2_mul_2_any_imu_sym';
 import { add_2_mul_2_any_vector_mul_2_any_vector } from '../operators/add/add_2_mul_2_any_vector_mul_2_any_vector';
@@ -106,10 +105,9 @@ import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
 import { dim_varargs } from '../operators/dim/dim_varargs';
 import { factorize_lhs_distrib } from '../operators/distrib/factorize_lhs_distrib';
-import { inner_lhs_distrib_over_add_expand } from '../operators/distrib/inner_lhs_distrib_over_add_expand';
-import { inner_rhs_distrib_over_add_expand } from '../operators/distrib/inner_rhs_distrib_over_add_expand';
 import { lco_2_add_2_any_any_any } from '../operators/distrib/lco_2_add_2_any_any_any';
 import { lco_2_any_add_2_any_any } from '../operators/distrib/lco_2_any_add_2_any_any';
+import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
 import { mul_lhs_distrib_over_add_expand } from '../operators/distrib/mul_lhs_distrib_over_add_expand';
 import { mul_rhs_distrib_over_add_expand } from '../operators/distrib/mul_rhs_distrib_over_add_expand';
 import { mul_rhs_distrib_over_add_factor } from '../operators/distrib/mul_rhs_distrib_over_add_factor';
@@ -154,8 +152,7 @@ import { hyp_extension } from '../operators/hyp/hyp_extension';
 import { imag_any } from '../operators/imag/imag_any';
 import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
-import { inner } from '../operators/inner/inner';
-import { inner_2_any_any } from '../operators/inner/inner_2_any_any';
+import { inner_extension } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
 import { inner_2_any_real } from '../operators/inner/inner_2_any_real';
 import { inner_2_imu_any } from '../operators/inner/inner_2_imu_any';
@@ -187,13 +184,10 @@ import { mod_varargs } from '../operators/mod/mod_varargs';
 import { associate_right_mul_2_mul_2_any_any_any } from '../operators/mul/associate_right_mul_2_mul_2_any_any_any';
 import { canonicalize_mul_2_mul_2_sym_sym_sym } from '../operators/mul/canonicalize_mul_2_mul_2_sym_sym_sym';
 import { implicate_mul_2_mul_2_sym_sym_sym } from '../operators/mul/implicate_mul_2_mul_2_sym_sym_sym';
-import { mul_2_any_any } from '../operators/mul/mul_2_any_any';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
 import { mul_2_blade_sym } from '../operators/mul/mul_2_blade_sym';
-import { mul_2_cons_rat } from '../operators/mul/mul_2_cons_rat';
-import { mul_2_cons_sym } from '../operators/mul/mul_2_cons_sym';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
 import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
 import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_any';
@@ -362,7 +356,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { MATH_ADD, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
+import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 
@@ -385,8 +379,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(factorize_lhs_distrib('factorize LHS distrib (*,+)', MATH_MUL, MATH_ADD));
 
-    $.defineOperator(inner_rhs_distrib_over_add_expand);
-    $.defineOperator(inner_lhs_distrib_over_add_expand);
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
 
     $.defineOperator(factorize_geometric_product_add);
     $.defineOperator(factorize_geometric_product_sub);
@@ -455,7 +449,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_blade_blade);
     $.defineOperator(add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym);
     $.defineOperator(add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym);
-    $.defineOperator(add_2_imag_real);
     $.defineOperator(add_2_imu_flt);
     $.defineOperator(add_2_any_any_zero_sum);
     $.defineOperator(add_2_any_any_factorize_rhs);
@@ -573,9 +566,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_blade_blade);
     $.defineOperator(mul_2_scalar_blade);
     $.defineOperator(mul_2_sin_cos);
-    $.defineOperator(mul_2_any_any);
-    $.defineOperator(mul_2_cons_rat);
-    $.defineOperator(mul_2_cons_sym);
     $.defineOperator(mul_varargs);
 
     $.defineOperator(binomial_varargs);
@@ -612,8 +602,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inner_2_real_any);
     $.defineOperator(inner_2_any_real);
     $.defineOperator(inner_2_any_imu);
-    $.defineOperator(inner_2_any_any);
-    $.defineOperator(inner);
+    $.defineOperator(inner_extension);
 
     $.defineOperator(laguerre_varargs);
 

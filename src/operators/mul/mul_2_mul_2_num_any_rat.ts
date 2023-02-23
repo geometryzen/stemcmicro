@@ -33,7 +33,6 @@ type EXP = BCons<Sym, LHS, RHS>;
  * (Rat1 * X) * Rat2 => Rat1 * (X * Rat2) => Rat1 * (Rat2 * X) => (Rat1 * Rat2) * X
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_num_any_rat', MATH_MUL, and(is_cons, is_mul_2_num_any), is_rat, $);

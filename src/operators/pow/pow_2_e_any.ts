@@ -52,7 +52,6 @@ type EXP = BCons<Sym, LHS, RHS>;
  * (power e X) is equivalent to exp(X)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_e_any', MATH_POW, is_sym, is_any, cross, $);

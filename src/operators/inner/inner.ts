@@ -1,11 +1,9 @@
 
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { hash_nonop_cons } from "../../hashing/hash_info";
 import { MATH_INNER } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
-import { Function2 } from "../helpers/Function2";
-import { is_any } from "../helpers/is_any";
+import { Cons, U } from "../../tree/tree";
+import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -13,18 +11,30 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-/**
- * This is currently implemented as a non-mangling operator.
- * 
- * TODO: This appears to be the same as inner_2_any_any?
- */
-class Inner extends Function2<U, U> implements Operator<U> {
+class Inner extends FunctionVarArgs implements Operator<Cons> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('inner', MATH_INNER, is_any, is_any, $);
+        super('inner_extension', MATH_INNER, $);
+        this.hash = hash_nonop_cons(this.opr);
     }
-    transform2(opr: Sym, lhs: U, rhs: U, expr: BCons<Sym, U, U>): [TFLAGS, U] {
-        return [TFLAG_NONE, expr];
+    transform(expr: Cons): [number, U] {
+        const $ = this.$;
+        // console.lg(this.name, render_as_sexpr(expr, $));
+        const hook = (where: string, retval: U): U => {
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            return retval;
+        };
+        if ($.isExpanding()) {
+            return [TFLAG_NONE, hook('A', expr)];
+        }
+        else if ($.isFactoring()) {
+            return [TFLAG_NONE, hook('B', expr)];
+        }
+        else {
+            throw new Error();
+        }
     }
 }
 
-export const inner = new Builder();
+export const inner_extension = new Builder();

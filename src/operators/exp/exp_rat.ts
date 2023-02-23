@@ -13,7 +13,6 @@ class ExpRatBuilder implements OperatorBuilder<U> {
 }
 
 class ExpRat extends Function1<Rat> implements Operator<U> {
-    readonly breaker = true;
     constructor($: ExtensionEnv) {
         super('exp_rat', new Sym('exp'), is_rat, $);
     }

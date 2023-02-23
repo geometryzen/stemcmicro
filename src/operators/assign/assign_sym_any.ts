@@ -19,7 +19,6 @@ type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('assign_sym_any', ASSIGN, is_sym, is_any, $);

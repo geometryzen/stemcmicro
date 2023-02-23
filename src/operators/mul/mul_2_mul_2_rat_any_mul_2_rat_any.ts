@@ -23,7 +23,6 @@ type EXPR = BCons<Sym, LHS, RHS>;
  * (n * X) * (m * Y) => (n * m) * (X * Y) 
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_rat_any_mul_2_rat_any', MATH_MUL, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), $);

@@ -28,7 +28,6 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * x + (-1 * x) => 0, where 
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_xxx_mul_2_rm1_xxx', MATH_ADD, is_sym, and(is_cons, is_mul_2_rat_sym), cross, $);

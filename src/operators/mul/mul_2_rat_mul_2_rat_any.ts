@@ -25,7 +25,6 @@ class Builder implements OperatorBuilder<Cons> {
  * Transform is redundant because it can be replaced by change of association and Rat + Rat.
  */
 class Op extends Function2<Rat, BCons<Sym, Rat, U>> implements Operator<Cons> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_mul_2_rat_any', MATH_MUL, is_rat, and(is_cons, is_mul_2_rat_any), $);

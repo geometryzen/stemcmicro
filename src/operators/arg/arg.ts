@@ -7,7 +7,7 @@ import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../../predicates/is_negative';
 import { is_negative_number } from '../../predicates/is_negative_number';
-import { is_opr_eq } from '../../predicates/is_opr_eq';
+import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
 import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -143,7 +143,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     }
 
     // (exp X) => imag(X)
-    if (is_cons(expr) && is_unaop(expr) && is_opr_eq(expr, MATH_EXP)) {
+    if (is_cons(expr) && is_unaop(expr) && is_cons_opr_eq_sym(expr, MATH_EXP)) {
         const arg = imag(expr.arg, $);
         return arg;
     }

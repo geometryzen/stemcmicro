@@ -3,21 +3,30 @@ import { createScriptEngine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("curl of cross product: Part I", function () {
+    xit("1", function () {
         const lines: string[] = [
-            `G30=algebra([1,1,1],["e1","e2","e3"])`,
-            `e1=G30[1]`,
-            `e2=G30[2]`,
-            `e3=G30[3]`,
-            `Bz*e3*d(Az,z)`
+            `i|(j+k)`,
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disable: ['factorize']
+            treatAsVectors: ['i', 'j', 'k'],
+            useCaretForExponentiation: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* Bz (derivative Az z) e3)");
-        assert.strictEqual(engine.renderAsInfix(value), "Bz*d(Az,z)*e3");
+        // assert.strictEqual(engine.renderAsSExpr(value), "???");
+        assert.strictEqual(engine.renderAsInfix(value), "i|j+i|k");
+        engine.release();
+    });
+    it("1", function () {
+        const lines: string[] = [
+            `(i+j)|k`,
+        ];
+        const engine = createScriptEngine({
+            treatAsVectors: ['i', 'j', 'k'],
+            useCaretForExponentiation: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (| i k) (| j k))");
+        assert.strictEqual(engine.renderAsInfix(value), "i|k+j|k");
         engine.release();
     });
 });

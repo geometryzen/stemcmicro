@@ -37,7 +37,6 @@ type RHS = Sym;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly breaker = true;
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['~Vector'];
     readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;

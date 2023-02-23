@@ -8,7 +8,7 @@ import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
-import { is_add } from "./is_add";
+import { is_cons_opr_eq_add } from "./is_cons_opr_eq_add";
 import { is_add_2_any_any } from "./is_add_2_any_any";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -26,7 +26,7 @@ type EXP = BCons<Sym, LHS, RHS>;
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
         // If the left hand side is an addition then the ordering will be indeterminate.
-        if (is_cons(lhs) && is_add(lhs)) {
+        if (is_cons(lhs) && is_cons_opr_eq_add(lhs)) {
             return false;
         }
         else {

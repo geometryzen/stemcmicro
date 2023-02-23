@@ -5,18 +5,18 @@ import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCSIN, ARCTAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
+import { is_add } from '../../runtime/helpers';
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from "../../tree/helpers";
 import { half, negOne, one, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { car, cdr, Cons, is_cons, U } from "../../tree/tree";
-import { is_add } from '../add/is_add';
 import { cos } from '../cos/cosine';
 import { is_flt } from '../flt/is_flt';
 import { sin } from './sine';
 
 export function transform_sin(x: U, origExpr: U, $: ExtensionEnv): [TFLAGS, U] {
     // console.lg(`transform_sin x=${x}, origExpr=${origExpr}`);
-    if (is_cons(x) && is_add(x)) {
+    if (is_add(x)) {
         // sin of a sum can be further decomposed into
         //sin(alpha+beta) = sin(alpha)*cos(beta)+sin(beta)*cos(alpha)
         return sine_of_angle_sum(x, origExpr, $);

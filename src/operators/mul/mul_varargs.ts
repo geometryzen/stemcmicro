@@ -192,8 +192,6 @@ function multiply(argL: U, argR: U, $: ExtensionEnv): U {
             .tail()
             .reduce((a: U, b: U) => $.add(a, multiply(argL, b, $)), zero);
     }
-    // console.lg("argL", render_as_sexpr(argL, $));
-    // console.lg("argR", render_as_sexpr(argR, $));
     return $.valueOf(items_to_cons(MATH_MUL, argL, argR));
 }
 

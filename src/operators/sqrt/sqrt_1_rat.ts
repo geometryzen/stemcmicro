@@ -19,7 +19,6 @@ class Builder implements OperatorBuilder<U> {
  * sqrt(x: Rat) => (power x 1/2)
  */
 class SqrtRat extends Function1<Rat> implements Operator<Cons> {
-    readonly breaker = true;
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('sqrt_1_rat', MATH_SQRT, is_rat, $);

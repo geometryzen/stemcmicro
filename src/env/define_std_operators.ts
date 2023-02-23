@@ -104,14 +104,8 @@ import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
 import { dim_varargs } from '../operators/dim/dim_varargs';
 import { factorize_lhs_distrib } from '../operators/distrib/factorize_lhs_distrib';
-import { lco_2_add_2_any_any_any } from '../operators/distrib/lco_2_add_2_any_any_any';
-import { lco_2_any_add_2_any_any } from '../operators/distrib/lco_2_any_add_2_any_any';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
-import { mul_lhs_distrib_over_add_expand } from '../operators/distrib/mul_lhs_distrib_over_add_expand';
-import { mul_rhs_distrib_over_add_expand } from '../operators/distrib/mul_rhs_distrib_over_add_expand';
 import { mul_rhs_distrib_over_add_factor } from '../operators/distrib/mul_rhs_distrib_over_add_factor';
-import { rco_2_add_2_any_any_any } from '../operators/distrib/rco_2_add_2_any_any_any';
-import { rco_2_any_add_2_any_any } from '../operators/distrib/rco_2_any_add_2_any_any';
 import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
@@ -215,7 +209,6 @@ import { mul_2_rat_rat } from '../operators/mul/mul_2_rat_rat';
 import { mul_2_rat_sym } from '../operators/mul/mul_2_rat_sym';
 import { mul_2_rat_tensor } from '../operators/mul/mul_2_rat_tensor';
 import { mul_2_scalar_blade } from '../operators/mul/mul_2_scalar_blade';
-import { mul_2_sym_add_2_sym_sym } from '../operators/mul/mul_2_sym_add_2_sym_sym';
 import { mul_2_sym_blade } from '../operators/mul/mul_2_sym_blade';
 import { mul_2_sym_flt } from '../operators/mul/mul_2_sym_flt';
 import { mul_2_sym_imu } from '../operators/mul/mul_2_sym_imu';
@@ -363,14 +356,14 @@ export function define_std_operators($: ExtensionEnv) {
     $.setAssocL(MATH_RCO, true);
     $.setAssocL(MATH_OUTER, true);
 
-    $.defineOperator(mul_rhs_distrib_over_add_expand);
-    $.defineOperator(mul_lhs_distrib_over_add_expand);
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
 
     $.defineOperator(mul_rhs_distrib_over_add_factor);
 
     $.defineOperator(factorize_lhs_distrib('factorize LHS distrib (*,+)', MATH_MUL, MATH_ADD));
 
-    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD)); // MATH_VECTOR_CROSS_PRODUCT
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
 
     $.defineOperator(factorize_geometric_product_add);
@@ -510,7 +503,6 @@ export function define_std_operators($: ExtensionEnv) {
     // $.defineOperator(mul_2_outer_2_sym_sym_sym);
     $.defineOperator(mul_2_zzz_pow_2_aaa_rat);
     $.defineOperator(mul_2_X_pow_2_X_rat);
-    $.defineOperator(mul_2_sym_add_2_sym_sym);
     $.defineOperator(mul_2_sym_inner_2_sym_sym);
     $.defineOperator(mul_2_sym_mul_2_rat_any);
     $.defineOperator(mul_2_sym_pow_2_sym_two);
@@ -594,9 +586,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(lcm_varargs);
 
     $.defineOperator(lco_2_blade_blade);
-    $.defineOperator(lco_2_add_2_any_any_any);
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_LCO, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_LCO, MATH_ADD));
     $.defineOperator(lco_2_mul_2_scalar_any_any);
-    $.defineOperator(lco_2_any_add_2_any_any);
     $.defineOperator(lco_2_any_mul_2_scalar_any);
     $.defineOperator(lco_2_any_any);
 
@@ -620,9 +612,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(rank_varargs);
 
     $.defineOperator(rco_2_blade_blade);
-    $.defineOperator(rco_2_add_2_any_any_any);
+    $.defineOperator(make_lhs_distrib_expand_law(MATH_RCO, MATH_ADD));
+    $.defineOperator(make_rhs_distrib_expand_law(MATH_RCO, MATH_ADD));
     $.defineOperator(rco_2_mul_2_scalar_any_any);
-    $.defineOperator(rco_2_any_add_2_any_any);
     $.defineOperator(rco_2_any_mul_2_scalar_any);
     $.defineOperator(rco_2_any_any);
 

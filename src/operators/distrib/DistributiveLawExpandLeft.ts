@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, Operator, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING, Operator, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -23,6 +23,7 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
  */
 export class DistributiveLawExpandLeft extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
+    readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv, upper: Sym, lower: Sym) {
         super(`${upper} left-distributive over ${lower}`, upper, is_any, make_is_cons_and_opr_eq_sym(lower), $);
         this.hash = hash_binop_atom_cons(upper, HASH_ANY, lower);

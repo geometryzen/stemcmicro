@@ -8,9 +8,9 @@ import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 /**
  * expr = canonical_factor_num_lhs(expr) * canonical_factor_num_rhs(expr)
  */
- export function canonical_factor_num_lhs(expr: U): Num {
-    const L0 = expr;
-    if (is_cons(L0)) {
+export function canonical_factor_num_lhs(expr: U): Num {
+    if (is_cons(expr)) {
+        const L0 = expr;
         if (is_mul(L0)) {
             const L1 = L0.cdr;
             if (is_nil(L1)) {
@@ -39,8 +39,8 @@ import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
  * expr = canonical_factor_num_lhs(expr) * canonical_factor_num_rhs(expr)
  */
 export function canonical_factor_num_rhs(expr: U): U {
-    const L0 = expr;
-    if (is_cons(L0)) {
+    if (is_cons(expr)) {
+        const L0 = expr;
         if (is_mul(L0)) {
             const L1 = L0.cdr;
             if (is_nil(L1)) {
@@ -62,6 +62,6 @@ export function canonical_factor_num_rhs(expr: U): U {
         }
     }
     else {
-        return L0;
+        return expr;
     }
 }

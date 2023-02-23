@@ -1,6 +1,7 @@
 import { Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
+import { EnvConfig } from "./env";
 
 export type Sign = -1 | 0 | 1;
 export const SIGN_LT = -1;
@@ -183,7 +184,7 @@ export interface ExtensionEnv {
  * it determines the possible dynamic types for T.
  */
 export interface OperatorBuilder<T extends U> {
-    create($: ExtensionEnv): Operator<T>;
+    create($: ExtensionEnv, config: Readonly<EnvConfig>): Operator<T>;
 }
 
 export const MODE_EXPLICATE = 1;

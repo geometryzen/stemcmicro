@@ -26,7 +26,10 @@ import { compare_cons_cons } from "./compare_cons_cons";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 
-export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+/**
+ * Dead code for reference only.
+ */
+function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     const lhsR = canonical_factor_num_rhs(lhs);
     const rhsR = canonical_factor_num_rhs(rhs);
     switch (compare_terms_core(lhsR, rhsR, $)) {
@@ -47,14 +50,10 @@ export function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
 }
 
 function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.lg(`ENTERING compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
     lhs = canonical_factor_num_rhs(lhs);
     rhs = canonical_factor_num_rhs(rhs);
-    // eslint-disable-next-line no-console
-    // console.lg(`MUNGED   compare_terms ${render_as_sexpr(lhs, $)} ${render_as_sexpr(rhs, $)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: Sign, description: string): Sign {
-        // console.lg(`LEAVING  compare_terms_core ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)} => ${retval} @ ${description}`);
         return retval;
     };
     // console.lg(`compare_terms ${render_as_infix(lhs, $)} ${render_as_infix(rhs, $)}`);

@@ -1,4 +1,4 @@
-import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
@@ -29,8 +29,8 @@ export abstract class Function1<T extends U> extends FunctionVarArgs {
         const m = this.match(expr);
         if (m) {
             const $ = this.$;
-            const [flags, arg] = $.transform(m.arg);
-            if (diffFlag(flags)) {
+            const arg = $.valueOf(m.arg);
+            if (!arg.equals(m.arg)) {
                 return [TFLAG_DIFF, $.valueOf(items_to_cons(m.opr, arg))];
             }
             else {

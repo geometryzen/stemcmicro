@@ -1,4 +1,7 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { compare_blade_blade } from "../../operators/blade/blade_extension";
+import { is_blade } from "../../operators/blade/is_blade";
+import { is_imu } from "../../operators/imu/is_imu";
 import { is_num } from "../../operators/num/is_num";
 import { is_str } from "../../operators/str/is_str";
 import { strcmp } from "../../operators/str/str_extension";
@@ -10,7 +13,7 @@ import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
 
 export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.lg("cmp_expr", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
+    // console.lg("ENTERING cmp_expr", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
     let n: Sign = SIGN_EQ;
 
     if (lhs === rhs) {
@@ -50,7 +53,12 @@ export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
 
     if (is_sym(lhs) && is_sym(rhs)) {
-        return compare_sym_sym(lhs, rhs);
+        if ($.treatAsVector(lhs) && $.treatAsVector(rhs)) {
+            return SIGN_EQ;
+        }
+        else {
+            return compare_sym_sym(lhs, rhs);
+        }
     }
 
     if (is_sym(lhs)) {
@@ -88,6 +96,30 @@ export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
 
     if (is_cons(lhs)) {
+        return SIGN_GT;
+    }
+
+    if (is_blade(lhs) && is_blade(rhs)) {
+        return compare_blade_blade(lhs, rhs);
+    }
+
+    if (is_blade(lhs)) {
+        return SIGN_LT;
+    }
+
+    if (is_blade(rhs)) {
+        return SIGN_GT;
+    }
+
+    if (is_imu(lhs) && is_imu(rhs)) {
+        return SIGN_EQ;
+    }
+
+    if (is_imu(lhs)) {
+        return SIGN_LT;
+    }
+
+    if (is_imu(rhs)) {
         return SIGN_GT;
     }
 

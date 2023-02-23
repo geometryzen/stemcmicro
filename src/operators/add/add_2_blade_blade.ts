@@ -1,4 +1,6 @@
-import { ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { cmp_terms } from "../../calculators/compare/cmp_terms";
+import { EnvConfig } from "../../env/env";
+import { ExtensionEnv, Operator, OperatorBuilder, Sign, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
@@ -14,9 +16,24 @@ type LHS = Blade;
 type RHS = Blade;
 type EXP = BCons<Sym, LHS, RHS>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function compare_blade_blade_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    if (is_blade(lhs) && is_blade(rhs)) {
+        return compare_blade_blade(lhs, rhs);
+    }
+    else {
+        throw new Error();
+    }
+}
+
 class Builder implements OperatorBuilder<Cons> {
-    create($: ExtensionEnv): Operator<Cons> {
-        return new Op($);
+    create($: ExtensionEnv, config: EnvConfig): Operator<Cons> {
+        if (config.noOptimize) {
+            return new Op($, cmp_terms);
+        }
+        else {
+            return new Op($, compare_blade_blade_terms);
+        }
     }
 }
 
@@ -30,14 +47,14 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
-    constructor($: ExtensionEnv) {
+    constructor($: ExtensionEnv, private readonly comparator: (lhs: U, rhs: U, $: ExtensionEnv) => Sign) {
         super('add_2_blade_blade', MATH_ADD, is_blade, is_blade, cross, $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_BLADE, HASH_BLADE);
     }
     transform2(opr: Sym, lhs: LHS, rhs: LHS, expr: EXP): [TFLAGS, U] {
-        // const $ = this.$;
+        const $ = this.$;
         // console.lg(this.name, decodeMode($.getMode()), render_as_infix(expr, $));
-        switch (compare_blade_blade(lhs, rhs)) {
+        switch (this.comparator(lhs, rhs, $)) {
             case SIGN_GT: {
                 return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];
             }

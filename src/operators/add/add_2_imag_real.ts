@@ -1,4 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { cmp_terms } from "../../calculators/compare/cmp_terms";
+import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, SIGN_GT } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -19,7 +20,16 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
-        return $.isImag(lhs) && $.isReal(rhs);
+        switch(cmp_terms(lhs, rhs,$)) {
+            case SIGN_GT: {
+                return true;
+            }
+            default: {
+                return false;
+            }
+        }
+        // The problem here is that this could conflict with term comparison.
+        // return $.isImag(lhs) && $.isReal(rhs);
     };
 }
 

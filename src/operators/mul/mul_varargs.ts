@@ -112,10 +112,23 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             }
         }
         else if ($.isImplicating()) {
-            return [TFLAG_NONE, hook('J', expr)];
+            const args = expr.tail();
+            if (args.some(is_add)) {
+                // Distributive Law.
+                const product = multiply_factors(expr, $);
+                if (product.equals(expr)) {
+                    return [TFLAG_NONE, hook('J', expr)];
+                }
+                else {
+                    return [TFLAG_DIFF, hook('K', product)];
+                }
+            }
+            else {
+                return [TFLAG_NONE, hook('L', expr)];
+            }
         }
         else {
-            return [TFLAG_NONE, hook('K', expr)];
+            return [TFLAG_NONE, hook('M', expr)];
         }
     }
 }
@@ -188,21 +201,15 @@ function multiply_factors(expr: Cons, $: ExtensionEnv): U {
 }
 
 function multiply(argL: U, argR: U, $: ExtensionEnv): U {
-    // console.lg("argL", render_as_infix(argL, $));
-    // console.lg("argR", render_as_infix(argR, $));
-    // console.lg(decodeMode($.getMode()));
-    // Handle distributive law for *,+ (but only when expanding).
-    if ($.isExpanding()) {
-        if (is_add(argL)) {
-            return argL
-                .tail()
-                .reduce((a: U, b: U) => $.add(a, multiply(b, argR, $)), zero);
-        }
-        if (is_add(argR)) {
-            return argR
-                .tail()
-                .reduce((a: U, b: U) => $.add(a, multiply(argL, b, $)), zero);
-        }
+    if (is_add(argL)) {
+        return argL
+            .tail()
+            .reduce((a: U, b: U) => $.add(a, multiply(b, argR, $)), zero);
+    }
+    if (is_add(argR)) {
+        return argR
+            .tail()
+            .reduce((a: U, b: U) => $.add(a, multiply(argL, b, $)), zero);
     }
     // console.lg("argL", render_as_sexpr(argL, $));
     // console.lg("argR", render_as_sexpr(argR, $));

@@ -31,11 +31,17 @@ const make_add_reduce_callback = function ($: ExtensionEnv) {
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+        return new AddOperator($);
     }
 }
 
-class Op extends FunctionVarArgs implements Operator<Cons> {
+/**
+ * (+)
+ * (+ a)
+ * (+ a b)
+ * (+ a b c ...)
+ */
+class AddOperator extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('add_varargs', ADD, $);
@@ -43,9 +49,10 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
-        // console.lg(this.name, decodeMode($.getMode()), render_as_infix(expr, this.$));
+        // console.lg("ENTERING", this.name, decodeMode($.getMode()), render_as_infix(expr, this.$));
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg("LEAVING", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg("LEAVING", this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
         if ($.isExplicating()) {
@@ -60,7 +67,8 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
 
         }
         else if ($.isImplicating()) {
-            const terms = make_term_association_implicit(expr.tail(), $);
+            const values = expr.tail().map((arg) => $.valueOf(arg));
+            const terms = make_term_association_implicit(values, $);
             terms.sort(make_term_comparator($));
             const retval = items_to_cons(expr.head, ...terms);
             const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;
@@ -69,8 +77,8 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             // return [TFLAG_NONE, hook('C', expr)];
         }
         else if ($.isExpanding()) {
-            // console.lg("EXPANDING", render_as_infix(expr, $));
-            const terms = make_term_association_implicit(expr.tail(), $);
+            const values = expr.tail().map((arg) => $.valueOf(arg));
+            const terms = make_term_association_implicit(values, $);
             if (terms.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
                 return [TFLAG_DIFF, hook('D', zero)];
@@ -170,6 +178,7 @@ function add_term_pairs(terms: U[], original: U, $: ExtensionEnv): void {
                         i++;
                     }
                     else {
+                        // TODO: Bothersome because we could get recursion.
                         const s = $.valueOf(candidate);
                         if (is_term_pair_changed(s, lhsRem, rhsRem)) {
                             // console.lg(`CHANGE`);

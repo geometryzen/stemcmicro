@@ -1,5 +1,5 @@
 
-import { compare_terms } from "../../calculators/compare/compare_terms";
+import { cmp_terms } from "../../calculators/compare/cmp_terms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
@@ -40,7 +40,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         else {
             const $ = this.$;
             // Prevent looping by making the reordering conditional. 
-            const sign = compare_terms(lhs, rhs, $);
+            const sign = cmp_terms(lhs, rhs, $);
             if (sign > 0) {
                 return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
             }

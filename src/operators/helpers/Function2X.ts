@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, diffFlag, ExtensionEnv, TFLAG_NONE, TFLAGS } from "../../env/ExtensionEnv";
+import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { items_to_cons, U } from "../../tree/tree";
 import { BCons } from "./BCons";
@@ -9,7 +9,7 @@ import { GUARD } from "./GUARD";
  * In addition to predicates for left and right, provided a cross predicate.
  */
 export abstract class Function2X<L extends U, R extends U> extends Function2<L, R> {
-    constructor(name: string, opr: Sym, guardL: GUARD<U, L>, guardR: GUARD<U, R>, private readonly cross: (lhs: L, rhs: R, expr: BCons<Sym, L, R>) => boolean, $: ExtensionEnv) {
+    constructor(name: string, opr: Sym, guardL: GUARD<U, L>, guardR: GUARD<U, R>, private readonly cross: (lhs: L, rhs: R, expr: BCons<Sym, L, R>) => boolean, protected readonly $: ExtensionEnv) {
         super(name, opr, guardL, guardR, $);
     }
     match(expr: U): BCons<Sym, L, R> | undefined {

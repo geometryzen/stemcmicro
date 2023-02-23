@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { U } from "../../tree/tree";
-import { compare_terms } from "./compare_terms";
+import { cmp_terms } from "./cmp_terms";
 
 /**
  * Sorts an array of terms. Assumes that terms can commute under addition. 
@@ -9,12 +9,12 @@ import { compare_terms } from "./compare_terms";
  * @returns A new array containing the sorted factors.
  */
 export function sort_terms(terms: U[], $: ExtensionEnv): U[] {
-    // We don't use the index yet but it could be used to make the sort stable (see corresponding factors code).I
+    // We don't use the index yet but it could be used to make the sort stable (see corresponding factors code).
     const sortable = terms.map(function (value, index) {
         return { value, index };
     });
     sortable.sort(function (x, y) {
-        return compare_terms(x.value, y.value, $);
+        return cmp_terms(x.value, y.value, $);
     });
     const sorted = sortable.map(function (elem) {
         return elem.value;

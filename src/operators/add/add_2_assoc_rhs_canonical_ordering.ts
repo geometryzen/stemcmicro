@@ -1,4 +1,4 @@
-import { compare_terms } from "../../calculators/compare/compare_terms";
+import { cmp_terms } from "../../calculators/compare/cmp_terms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
@@ -30,7 +30,7 @@ function cross($: ExtensionEnv) {
             return false;
         }
         else {
-            const sign = compare_terms(lhs, rhs.lhs, $);
+            const sign = cmp_terms(lhs, rhs.lhs, $);
             // console.lg(`add_2_assoc_rhs_canonical_ordering lhs=${render_as_infix(lhs, $)} rhs.lhs=${render_as_infix(rhs.lhs, $)} sign=${sign}`);
             return sign > 0;
         }
@@ -48,7 +48,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
+        // const $ = this.$;
         // console.lg(this.name, decodeMode($.getMode()), render_as_sexpr(expr, this.$));
         const hook = (where: string, retval: U): U => {
             // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));

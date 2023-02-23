@@ -3,7 +3,6 @@ import { binop } from "../calculators/binop";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
-import { makeList } from "../makeList";
 import { useCaretForExponentiation } from "../modes/modes";
 import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/is_blade";
@@ -42,15 +41,17 @@ export interface EnvOptions {
     assocs?: { sym: Sym, dir: 'L' | 'R' }[];
     dependencies?: FEATURE[];
     disable: ('factorize' | 'implicate')[];
+    noOptimize?: boolean;
     treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
 }
 
-interface EnvConfig {
+export interface EnvConfig {
     assocs: { sym: Sym, dir: 'L' | 'R' }[];
     dependencies: FEATURE[];
     disable: ('factorize' | 'implicate')[];
+    noOptimize: boolean;
     treatAsVectors: string[]
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
@@ -62,6 +63,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             disable: Array.isArray(options.disable) ? options.disable : [],
+            noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
@@ -73,6 +75,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             assocs: [],
             dependencies: [],
             disable: [],
+            noOptimize: false,
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false
@@ -88,7 +91,7 @@ interface Assoc {
 
 export function create_env(options?: EnvOptions): ExtensionEnv {
 
-    const config = config_from_options(options);
+    const config: EnvConfig = config_from_options(options);
 
     // console.lg(`config: ${JSON.stringify(config, null, 2)}`);
 
@@ -301,7 +304,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         buildOperators(): void {
             for (const builder of builders) {
-                const op = builder.create($);
+                const op = builder.create($, config);
                 if (dependencies_satisfied(op.dependencies, config.dependencies)) {
                     // No problem.
                 }
@@ -464,7 +467,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
             const value_lhs = $.valueOf(lhs);
             const value_rhs = $.valueOf(rhs);
-            const inner_lhs_rhs = makeList(MATH_INNER, value_lhs, value_rhs);
+            const inner_lhs_rhs = items_to_cons(MATH_INNER, value_lhs, value_rhs);
             const value_inner_lhs_rhs = $.valueOf(inner_lhs_rhs);
             return value_inner_lhs_rhs;
         },
@@ -657,6 +660,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                 if (!newExpr.equals(curExpr)) {
                                     // By logging here we can see all the transformations that make changes.
                                     // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                    // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_sexpr(curExpr, $)} newExpr: ${render_as_sexpr(newExpr, $)}`);
                                     outFlags |= TFLAG_DIFF;
                                     doneWithCurExpr = true;
                                     if (haltFlag(flags)) {

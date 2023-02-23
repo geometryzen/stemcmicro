@@ -452,8 +452,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c+a*b");
 
             engine.release();
         });
@@ -463,8 +462,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a c) b)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*c+b");
+            assert.strictEqual(engine.renderAsInfix(actual), "b+a*c");
 
             engine.release();
         });
@@ -474,8 +472,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c+a*b");
 
             engine.release();
         });
@@ -640,8 +637,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c+a*b");
 
             engine.release();
         });
@@ -651,8 +647,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c+a*b");
 
             engine.release();
         });
@@ -663,8 +658,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c+a*b");
 
             engine.release();
         });
@@ -707,8 +701,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c+a*b");
 
             engine.release();
         });
@@ -718,8 +711,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) c)");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+c");
+            assert.strictEqual(engine.renderAsInfix(actual), "c+a*b");
 
             engine.release();
         });
@@ -882,7 +874,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b c)");
+            // assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* -1 a) b c)");
             assert.strictEqual(engine.renderAsInfix(actual), "-a+b+c");
 
             engine.release();

@@ -29,6 +29,10 @@ export interface ScriptEngineOptions {
      */
     disable?: ('factorize' | 'implicate')[];
     /**
+     * Primarily used for testing.
+     */
+    noOptimize?: boolean;
+    /**
      * Determines which symbols should be treated as vectors as opposed to real numbers.
      */
     treatAsVectors?: string[];
@@ -100,6 +104,7 @@ function env_options_from_engine_options(options: ScriptEngineOptions | undefine
             assocs: Array.isArray(options.assocs) ? options.assocs : [],
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             disable: Array.isArray(options.disable) ? options.disable : [],
+            noOptimize: options.noOptimize,
             treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions
@@ -111,6 +116,7 @@ function env_options_from_engine_options(options: ScriptEngineOptions | undefine
             assocs: [],
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             disable: [],
+            noOptimize: false,
             treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false

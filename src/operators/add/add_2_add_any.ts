@@ -14,6 +14,11 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
+/**
+ * (+ (+ ...) X) => (+ ... X) when Implicating
+ * 
+ * This only works when the starting expression is binary. YAGNI
+ */
 class Op extends Function2<Cons, U> implements Operator<Cons> {
     readonly hash: string;
     readonly phases = MODE_IMPLICATE | MODE_EXPANDING;

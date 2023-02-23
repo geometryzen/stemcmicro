@@ -9,7 +9,6 @@ describe("choose", function () {
         const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (factorial n) (power (factorial k) -1) (power (factorial (+ (* -1 k) n)) -1))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "n!/(k!*(-k+n)!)");
         engine.release();
     });

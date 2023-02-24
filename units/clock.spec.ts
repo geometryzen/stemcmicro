@@ -5,8 +5,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("clock", function () {
     xit("i", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `clock(i)`,
         ];
         const engine = createScriptEngine({
@@ -20,8 +18,6 @@ describe("clock", function () {
     });
     xit("(1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i)", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
             `(1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i)`,
         ];
         const engine = createScriptEngine({
@@ -35,8 +31,6 @@ describe("clock", function () {
     });
     xit("((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
             `((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i`,
         ];
         const engine = createScriptEngine({
@@ -50,8 +44,6 @@ describe("clock", function () {
     });
     xit("-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
             `-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i`,
         ];
         const engine = createScriptEngine({
@@ -65,8 +57,6 @@ describe("clock", function () {
     });
     xit("(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
             `(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2`,
         ];
         const engine = createScriptEngine({
@@ -80,8 +70,6 @@ describe("clock", function () {
     });
     xit("1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
             `1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2`,
         ];
         const engine = createScriptEngine({
@@ -95,8 +83,6 @@ describe("clock", function () {
     });
     xit("(1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2)**(1/2)", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `(1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2)**(1/2)`,
         ];
         const engine = createScriptEngine({
@@ -110,8 +96,6 @@ describe("clock", function () {
     });
     xit("exp(i*pi/3)", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
             `exp(i*pi/3)`,
         ];
         const engine = createScriptEngine({
@@ -125,8 +109,6 @@ describe("clock", function () {
     });
     xit("clock(exp(i*pi/3))", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=0`,
             `clock(exp(i*pi/3))`,
         ];
         const engine = createScriptEngine({

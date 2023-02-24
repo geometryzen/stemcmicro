@@ -135,7 +135,6 @@ describe("is_rat_times", function () {
 describe("factorizeR", function () {
     it("2 * X - X", function () {
         const lines: string[] = [
-            `implicate=0`,
             `2*a*b-a*b`,
         ];
         const engine = createScriptEngine({});
@@ -146,7 +145,6 @@ describe("factorizeR", function () {
     });
     it("2 * X + X", function () {
         const lines: string[] = [
-            `implicate=1`,
             `2*a*b+a*b`,
         ];
         const engine = createScriptEngine({});
@@ -157,7 +155,6 @@ describe("factorizeR", function () {
     });
     it("X + 2 * X", function () {
         const lines: string[] = [
-            `implicate=1`,
             `a*b+2*a*b`,
         ];
         const engine = createScriptEngine({});
@@ -168,7 +165,6 @@ describe("factorizeR", function () {
     });
     it("-2 * X + X", function () {
         const lines: string[] = [
-            `implicate=1`,
             `-2*a*b+a*b`,
         ];
         const engine = createScriptEngine({});
@@ -182,7 +178,6 @@ describe("factorizeR", function () {
 describe("", function () {
     it("(X + 2 * A) + 3 * A", function () {
         const lines: string[] = [
-            `implicate=1`,
             `(X + 2 * A) + 3 * A`,
         ];
         const engine = createScriptEngine({});
@@ -193,7 +188,6 @@ describe("", function () {
     });
     it("(X + 2 * A) + A", function () {
         const lines: string[] = [
-            `implicate=1`,
             `(X + 2 * A) + A`,
         ];
         const engine = createScriptEngine({});
@@ -204,7 +198,6 @@ describe("", function () {
     });
     it("(X + A) + 2 * A", function () {
         const lines: string[] = [
-            `implicate=1`,
             `(X + A) + 2*A`,
         ];
         const engine = createScriptEngine({});
@@ -215,7 +208,6 @@ describe("", function () {
     });
     it("(X + 2 * A * B) + 3 * A * B", function () {
         const lines: string[] = [
-            `implicate=1`,
             `(X + 2 * A * B) + 3 * A * B`,
         ];
         const engine = createScriptEngine({});
@@ -226,7 +218,6 @@ describe("", function () {
     });
     it("(X + 2 * A * B) + A * B", function () {
         const lines: string[] = [
-            `implicate=1`,
             `(X + 2 * A * B) + A * B`,
         ];
         const engine = createScriptEngine({});
@@ -237,7 +228,6 @@ describe("", function () {
     });
     it("(X + A * B) + 2 * A * B", function () {
         const lines: string[] = [
-            `implicate=1`,
             `(X + A * B) + 2 * A * B`,
         ];
         const engine = createScriptEngine({});

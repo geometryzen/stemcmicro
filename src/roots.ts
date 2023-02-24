@@ -187,7 +187,6 @@ function roots2(poly: U, X: U, $: ExtensionEnv): U[] {
     if (!hasImaginaryCoeff(ks)) {
         poly = $.factorize(poly, X);
     }
-    // TODO; This won't work unless the ploynomial is in implicated form.
     if (is_multiply(poly)) {
         // scan through all the factors and find the roots of each of them
         const mapped = poly.tail().map((p) => roots3(p, X, $));

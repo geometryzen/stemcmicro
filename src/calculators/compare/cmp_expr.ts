@@ -13,6 +13,9 @@ import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
 
+/**
+ * NIL, Num, Str, Sym, Tensor, Cons, Blade, Imu, Hyp, Uom
+ */
 export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // console.lg("ENTERING cmp_expr", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
     let n: Sign = SIGN_EQ;
@@ -58,12 +61,7 @@ export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
 
     if (is_sym(lhs) && is_sym(rhs)) {
-        if ($.treatAsVector(lhs) && $.treatAsVector(rhs)) {
-            return SIGN_EQ;
-        }
-        else {
-            return compare_sym_sym(lhs, rhs);
-        }
+        return compare_sym_sym(lhs, rhs);
     }
 
     if (is_sym(lhs)) {

@@ -64,7 +64,6 @@ describe("cos", function () {
     });
     it("cos(a+b)", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `cos(a+b)`
         ];
         const engine = createScriptEngine({
@@ -75,7 +74,6 @@ describe("cos", function () {
     });
     it("cos(a+b)", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `cos(a+b)`
         ];
         const engine = createScriptEngine({
@@ -86,7 +84,6 @@ describe("cos", function () {
     });
     it("cos(b+a)", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `cos(b+a)`
         ];
         const engine = createScriptEngine({
@@ -97,7 +94,6 @@ describe("cos", function () {
     });
     it("cos(b+a)", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `cos(b+a)`
         ];
         const engine = createScriptEngine({
@@ -108,7 +104,6 @@ describe("cos", function () {
     });
     it("cos(a-b)", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `cos(a-b)`
         ];
         const engine = createScriptEngine({
@@ -119,7 +114,6 @@ describe("cos", function () {
     });
     it("cos(a-b)", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `cos(a-b)`
         ];
         const engine = createScriptEngine({
@@ -130,7 +124,6 @@ describe("cos", function () {
     });
     it("cos(b-a)", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `cos(b-a)`
         ];
         const engine = createScriptEngine({
@@ -141,7 +134,6 @@ describe("cos", function () {
     });
     it("cos(b-a)", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `cos(b-a)`
         ];
         const engine = createScriptEngine({

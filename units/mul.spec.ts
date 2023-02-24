@@ -7,8 +7,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("mul", function () {
     it("(x*x)/x", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `(x*x)/x`
         ];
         const engine = createScriptEngine();

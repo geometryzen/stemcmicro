@@ -1,3 +1,4 @@
+import { compare_sym_sym } from '../calculators/compare/compare_sym_sym';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_factorize } from '../operators/abs/abs_factorize';
@@ -23,8 +24,6 @@ import { add_2_flt_rat } from '../operators/add/add_2_flt_rat';
 import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
 import { add_2_imu_flt } from '../operators/add/add_2_imu_flt';
 import { add_2_mul_2_any_imu_sym } from '../operators/add/add_2_mul_2_any_imu_sym';
-import { add_2_mul_2_any_vector_mul_2_any_vector } from '../operators/add/add_2_mul_2_any_vector_mul_2_any_vector';
-import { add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_inner_sym_sym_sym_mul_2_sym_outer_2_sym_sym';
 import { add_2_mul_2_rat_anX_anX } from '../operators/add/add_2_mul_2_rat_anX_anX';
 import { add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym } from '../operators/add/add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym';
 import { add_2_mul_2_rat_X_mul_2_rat_X } from '../operators/add/add_2_mul_2_rat_X_mul_2_rat_X';
@@ -42,7 +41,6 @@ import { add_2_tensor_tensor } from '../operators/add/add_2_tensor_tensor';
 import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
 import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
-import { add_2_zzz_mul_2_rat_aaa } from '../operators/add/add_2_zzz_mul_2_rat_aaa';
 import { add_varargs } from '../operators/add/add_varargs';
 import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
@@ -101,9 +99,7 @@ import { derivative_fn } from '../operators/derivative/derivative_fn';
 import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
 import { dim_varargs } from '../operators/dim/dim_varargs';
-import { factorize_lhs_distrib } from '../operators/distrib/factorize_lhs_distrib';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
-import { mul_rhs_distrib_over_add_factor } from '../operators/distrib/mul_rhs_distrib_over_add_factor';
 import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
@@ -117,10 +113,7 @@ import { expcos_varargs } from '../operators/expcos/expcos_varargs';
 import { expsin_varargs } from '../operators/expsin/expsin_varargs';
 import { factor_varargs } from '../operators/factor/factor_varargs';
 import { factorial_varargs } from '../operators/factorial/factorial_varargs';
-import { factorize_ab_minus_two_a_dot_b } from '../operators/factorize/factorize_ab_minus_two_a_dot_b';
-import { factorize_geometric_product_add } from '../operators/factorize/factorize_geometric_product_add';
 import { factorize_geometric_product_lhs_assoc } from '../operators/factorize/factorize_geometric_product_lhs_assoc';
-import { factorize_geometric_product_sub } from '../operators/factorize/factorize_geometric_product_sub';
 import { float_cons } from '../operators/float/float_cons';
 import { float_flt } from '../operators/float/float_flt';
 import { float_imu } from '../operators/float/float_imu';
@@ -140,6 +133,7 @@ import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp_extension } from '../operators/hyp/hyp_extension';
 import { imag_any } from '../operators/imag/imag_any';
 import { imu_extension } from '../operators/imu/Imu_extension';
+import { is_imu } from '../operators/imu/is_imu';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner_extension } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
@@ -181,7 +175,6 @@ import { mul_2_flt_rat } from '../operators/mul/mul_2_flt_rat';
 import { mul_2_flt_uom } from '../operators/mul/mul_2_flt_uom';
 import { mul_2_hyp_rat } from '../operators/mul/mul_2_hyp_rat';
 import { mul_2_hyp_sym } from '../operators/mul/mul_2_hyp_sym';
-import { mul_2_imu_any } from '../operators/mul/mul_2_imu_any';
 import { mul_2_imu_imu } from '../operators/mul/mul_2_imu_imu';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_blade_blade } from '../operators/mul/mul_2_mul_2_any_blade_blade';
@@ -201,7 +194,6 @@ import { mul_2_mul_2_sym_imu_sym } from '../operators/mul/mul_2_mul_2_sym_imu_sy
 import { mul_2_one_any } from '../operators/mul/mul_2_one_any';
 import { mul_2_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_pow_2_xxx_rat_xxx } from '../operators/mul/mul_2_pow_2_xxx_rat_xxx';
-import { mul_2_pow_2_zzz_rat_aaa } from '../operators/mul/mul_2_pow_2_zzz_rat_aaa';
 import { mul_2_rat_any } from '../operators/mul/mul_2_rat_any';
 import { mul_2_rat_blade } from '../operators/mul/mul_2_rat_blade';
 import { mul_2_rat_flt } from '../operators/mul/mul_2_rat_flt';
@@ -212,10 +204,8 @@ import { mul_2_scalar_blade } from '../operators/mul/mul_2_scalar_blade';
 import { mul_2_sym_blade } from '../operators/mul/mul_2_sym_blade';
 import { mul_2_sym_flt } from '../operators/mul/mul_2_sym_flt';
 import { mul_2_sym_imu } from '../operators/mul/mul_2_sym_imu';
-import { mul_2_sym_inner_2_sym_sym } from '../operators/mul/mul_2_sym_inner_2_sym_sym';
 import { mul_2_sym_mul_2_rat_any } from '../operators/mul/mul_2_sym_mul_2_rat_any';
 import { mul_2_sym_num } from '../operators/mul/mul_2_sym_num';
-import { mul_2_sym_pow_2_sym_two } from '../operators/mul/mul_2_sym_pow_2_sym_two';
 import { mul_2_sym_rat } from '../operators/mul/mul_2_sym_rat';
 import { mul_2_sym_sym } from '../operators/mul/mul_2_sym_sym';
 import { mul_2_sym_sym_general } from '../operators/mul/mul_2_sym_sym_general';
@@ -227,7 +217,6 @@ import { mul_2_uom_flt } from '../operators/mul/mul_2_uom_flt';
 import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
-import { mul_2_zzz_pow_2_aaa_rat } from '../operators/mul/mul_2_zzz_pow_2_aaa_rat';
 import { mul_varargs } from '../operators/mul/mul_varargs';
 import { nil_extension } from '../operators/nil/nil_extension';
 import { not_fn } from '../operators/not/not_fn';
@@ -239,7 +228,6 @@ import { outer_2_any_any } from '../operators/outer/outer_2_any_any';
 import { outer_2_any_mul_2_scalar_any } from '../operators/outer/outer_2_any_mul_2_scalar_any';
 import { outer_2_blade_blade } from '../operators/outer/outer_2_blade_blade';
 import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_scalar_any_any';
-import { outer_2_sym_outer_2_sym_sym } from '../operators/outer/outer_2_sym_outer_2_sym_sym';
 import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { polar_varargs } from '../operators/polar/polar_varargs';
@@ -341,8 +329,62 @@ import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
-import { one, zero } from '../tree/rat/Rat';
-import { ExtensionEnv } from "./ExtensionEnv";
+import { Imu } from '../tree/imu/ImaginaryUnit';
+import { one, Rat, zero } from '../tree/rat/Rat';
+import { Sym } from '../tree/sym/Sym';
+import { Cons, is_cons, is_nil, U } from '../tree/tree';
+import { ExprOrdering, ExtensionEnv, Sign, SIGN_EQ } from "./ExtensionEnv";
+
+class NilOrdering implements ExprOrdering<Cons> {
+    is(expr: U): expr is Cons {
+        return is_nil(expr);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compare(lhs: Cons, rhs: Cons): Sign {
+        return SIGN_EQ;
+    }
+}
+
+class ImuOrdering implements ExprOrdering<Imu> {
+    is(expr: U): expr is Imu {
+        return is_imu(expr);
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compare(lhs: Imu, rhs: Imu, $: ExtensionEnv): Sign {
+        return SIGN_EQ;
+    }
+}
+
+class RatOrdering implements ExprOrdering<Rat> {
+    is(expr: U): expr is Rat {
+        return is_rat(expr);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compare(lhs: Rat, rhs: Rat, $: ExtensionEnv): Sign {
+        return lhs.compare(rhs);
+    }
+}
+
+class SymOrdering implements ExprOrdering<Sym> {
+    is(expr: U): expr is Sym {
+        return is_sym(expr);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compare(lhs: Sym, rhs: Sym, $: ExtensionEnv): Sign {
+        return compare_sym_sym(lhs, rhs);
+    }
+}
+
+class ConsOrdering implements ExprOrdering<Cons> {
+    is(expr: U): expr is Cons {
+        return is_cons(expr);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compare(lhs: Cons, rhs: Cons, $: ExtensionEnv): Sign {
+        return SIGN_EQ;
+    }
+}
 
 
 /**
@@ -356,19 +398,15 @@ export function define_std_operators($: ExtensionEnv) {
     $.setAssocL(MATH_RCO, true);
     $.setAssocL(MATH_OUTER, true);
 
+    $.setSymbolOrder(MATH_ADD, [new NilOrdering(), new RatOrdering(), new SymOrdering(), new ImuOrdering()]);
+    $.setSymbolOrder(MATH_MUL, [new NilOrdering(), new RatOrdering(), new SymOrdering(), new ImuOrdering()]);
+
     $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
-
-    $.defineOperator(mul_rhs_distrib_over_add_factor);
-
-    $.defineOperator(factorize_lhs_distrib('factorize LHS distrib (*,+)', MATH_MUL, MATH_ADD));
 
     $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
 
-    $.defineOperator(factorize_geometric_product_add);
-    $.defineOperator(factorize_geometric_product_sub);
-    $.defineOperator(factorize_ab_minus_two_a_dot_b);
     $.defineOperator(factorize_geometric_product_lhs_assoc);
 
     $.defineOperator(add_2_add_2_rat_mul_2_rat_any_add_2_rat_any);
@@ -395,7 +433,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_xxx_mul_2_rm1_xxx);
     $.defineOperator(add_2_any_mul_2_rat_any);
     $.defineOperator(add_2_blade_mul_2_rat_blade);
-    $.defineOperator(add_2_zzz_mul_2_rat_aaa);
     $.defineOperator(add_2_add_2_sym_xxx_xxx);
     $.defineOperator(add_2_add_2_any_imag_real);
     $.defineOperator(add_2_add_2_any_imag_imag);
@@ -422,9 +459,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_ordering);
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring);
     $.defineOperator(add_2_mul_2_rat_cos_sin_mul_2_mul_2_cos_sin_factoring);
-    // Generalizethe following...
-    // $.defineOperator(add_2_mul_2_any_blade_mul_2_any_blade);
-    $.defineOperator(add_2_mul_2_any_vector_mul_2_any_vector);
     $.defineOperator(add_2_pow_2_cos_rat_pow_2_sin_rat);
     $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
 
@@ -432,7 +466,6 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(add_2_blade_blade);
     $.defineOperator(add_2_mul_2_rat_inner_2_sym_sym_outer_2_sym_sym);
-    $.defineOperator(add_2_mul_2_inner_2_sym_sym_sym_mul_2_sym_outer_2_sym_sym);
     $.defineOperator(add_2_imu_flt);
     $.defineOperator(add_2_any_any_zero_sum);
     $.defineOperator(add_2_any_any_factorize_rhs);
@@ -467,7 +500,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_flt_uom);
     $.defineOperator(mul_2_flt_mul_2_flt_any);
     $.defineOperator(mul_2_imu_imu);
-    $.defineOperator(mul_2_imu_any);
 
     $.defineOperator(mul_2_rat_blade);
     $.defineOperator(mul_2_rat_flt);
@@ -501,12 +533,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Sym * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM), MATH_MUL, is_sym, is_uom));
     $.defineOperator(heterogenous_canonical_order_lhs_assoc('HCOLA Blade * Uom', hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_BLADE), MATH_MUL, is_blade, is_uom));
     $.defineOperator(mul_2_pow_2_xxx_rat_xxx);
-    // $.defineOperator(mul_2_outer_2_sym_sym_sym);
-    $.defineOperator(mul_2_zzz_pow_2_aaa_rat);
     $.defineOperator(mul_2_X_pow_2_X_rat);
-    $.defineOperator(mul_2_sym_inner_2_sym_sym);
     $.defineOperator(mul_2_sym_mul_2_rat_any);
-    $.defineOperator(mul_2_sym_pow_2_sym_two);
     $.defineOperator(mul_2_sym_flt);
     $.defineOperator(mul_2_hyp_rat);
     $.defineOperator(mul_2_sym_rat);
@@ -518,7 +546,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_tensor_sym);
     $.defineOperator(mul_2_tensor_any);
     $.defineOperator(mul_2_tensor_tensor);
-    $.defineOperator(mul_2_pow_2_zzz_rat_aaa);
     $.defineOperator(mul_2_mul_2_any_X_pow_2_X_rat);
     $.defineOperator(mul_2_mul_2_any_Z_pow_2_A_any);
 
@@ -607,7 +634,6 @@ export function define_std_operators($: ExtensionEnv) {
     // $.defineOperator(outer_2_sym_sym_vector_to_geometric);
     $.defineOperator(outer_2_sym_sym);
     $.defineOperator(outer_2_tensor_tensor);
-    $.defineOperator(outer_2_sym_outer_2_sym_sym);
     $.defineOperator(outer_2_any_mul_2_scalar_any);
     $.defineOperator(outer_2_any_any);
 

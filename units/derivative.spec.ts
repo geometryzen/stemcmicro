@@ -5,8 +5,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("derivative-sandbox", function () {
     it("d(cos(x),x)", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `d(cos(x),x)`
         ];
         const engine = createScriptEngine();
@@ -112,8 +110,6 @@ describe("derivative", function () {
     });
     it("d(x*x,x)", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `d(x*x,x)`
         ];
         const engine = createScriptEngine();
@@ -124,8 +120,6 @@ describe("derivative", function () {
     });
     it("d(sin(x),x)", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `d(sin(x),x)`
         ];
         const engine = createScriptEngine();
@@ -136,8 +130,6 @@ describe("derivative", function () {
     });
     it("d(cos(x),x)", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `d(cos(x),x)`
         ];
         const engine = createScriptEngine();
@@ -148,8 +140,6 @@ describe("derivative", function () {
     });
     it("d(1/(5+4*cos(x)),x)", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=1`,
             `d(1/(5+4*cos(x)),x)`
         ];
         const engine = createScriptEngine();

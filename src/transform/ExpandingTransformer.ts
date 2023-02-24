@@ -6,13 +6,13 @@ import { TreeTransformer } from './Transformer';
 export class ExpandingTransformer implements TreeTransformer {
     transform(tree: U, $: ExtensionEnv): U {
         const phase = $.getMode();
-        $.setFocus(MODE_EXPANDING);
+        $.setMode(MODE_EXPANDING);
         try {
 
             return transform(tree, $);
         }
         finally {
-            $.setFocus(phase);
+            $.setMode(phase);
         }
     }
 }

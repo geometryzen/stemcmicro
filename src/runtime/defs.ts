@@ -167,45 +167,45 @@ export function hard_reset() {
 
 export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
     const phase = $.getMode();
-    $.setFocus(MODE_FACTORING);
+    $.setMode(MODE_FACTORING);
     try {
         return func(arg, $);
     }
     finally {
-        $.setFocus(phase);
+        $.setMode(phase);
     }
 }
 
 export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
     const phase = $.getMode();
-    $.setFocus(MODE_FACTORING);
+    $.setMode(MODE_FACTORING);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setFocus(phase);
+        $.setMode(phase);
     }
 }
 
 export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
     const phase = $.getMode();
-    $.setFocus(MODE_EXPANDING);
+    $.setMode(MODE_EXPANDING);
     try {
         return func(arg, $);
     }
     finally {
-        $.setFocus(phase);
+        $.setMode(phase);
     }
 }
 
 export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
     const phase = $.getMode();
-    $.setFocus(MODE_EXPANDING);
+    $.setMode(MODE_EXPANDING);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setFocus(phase);
+        $.setMode(phase);
     }
 }
 

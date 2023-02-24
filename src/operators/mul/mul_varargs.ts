@@ -1,6 +1,7 @@
 import { compare_factors } from '../../calculators/compare/compare_factors';
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { decodeMode, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
+import { render_as_infix } from '../../print/print';
 import { MULTIPLY } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -39,13 +40,18 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         // console.lg(this.name, render_as_sexpr(expr, $));
         const hook = (where: string, retval: U): U => {
-            // console.lg(this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
-            // console.lg(this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
         // The problem we have here is that we are driving an implicit association to an explicit one.
         if ($.isExpanding()) {
             const args = expr.tail().map((arg) => $.valueOf(arg));
+            if (args_contain_association_explicit(args)) {
+                const retval = items_to_cons(expr.head, ...make_factor_association_implicit(args));
+                return [TFLAG_DIFF, hook('A1', retval)];
+            }
+            args.sort(make_factor_comparator($));
             if (args.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
                 return [TFLAG_DIFF, hook('A', one)];

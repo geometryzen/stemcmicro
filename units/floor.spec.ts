@@ -4,8 +4,6 @@ import { createScriptEngine } from "../src/runtime/symengine";
 describe("floor", function () {
     it("3/2", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `floor(3/2)`,
         ];
         const engine = createScriptEngine({

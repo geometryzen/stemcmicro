@@ -2,73 +2,6 @@ import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("A bootstrap", function () {
-    it("a*b", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `a*b`
-        ];
-        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "a*b");
-
-        engine.release();
-    });
-    it("a*b expanding only", function () {
-        const lines: string[] = [
-            `autofactor=0`,
-            `a*b`
-        ];
-        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "a*b");
-
-        engine.release();
-    });
-    it("b*a expanding only", function () {
-        const lines: string[] = [
-            `autofactor=0`,
-            `b*a`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Vector'],
-            treatAsVectors: ['a', 'b']
-        });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "b*a");
-
-        engine.release();
-    });
-    it("a|b+a^b expanding only", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `a|b+a^b`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Vector'],
-            treatAsVectors: ['a', 'b']
-        });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "a*b");
-
-        engine.release();
-    });
-    it("a|b-a^b expanding only", function () {
-        const lines: string[] = [
-            `autofactor=1`,
-            `a|b-a^b`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Vector'],
-            treatAsVectors: ['a', 'b']
-        });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "b*a");
-
-        engine.release();
-    });
-});
-
 describe("B bootstrap", function () {
     it("2*0", function () {
         const lines: string[] = [
@@ -150,19 +83,6 @@ describe("C bootstrap", function () {
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a*b");
-        engine.release();
-    });
-    it("b*a does not commute when a and b are treated as vectors.", function () {
-        const lines: string[] = [
-            `b*a`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Vector'],
-            treatAsVectors: ['a', 'b']
-        });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(* b a)");
-        assert.strictEqual(engine.renderAsInfix(actual), "b*a");
         engine.release();
     });
     it("Sym - Sym", function () {
@@ -516,9 +436,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
-            // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*(b+c)");
+            assert.strictEqual(engine.renderAsInfix(actual), "a*b+a*c");
 
             engine.release();
         });
@@ -528,9 +446,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
-            // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*(b+c)");
+            assert.strictEqual(engine.renderAsInfix(actual), "a*b+a*c");
 
             engine.release();
         });
@@ -549,7 +465,6 @@ describe("C bootstrap", function () {
         // THis could be factorized to the left or right with appropriate conditions on a,b,c.
         it("b*(c+a)", function () {
             const lines: string[] = [
-                `autofactor=1`,
                 `b*(c+a)`
             ];
             const engine = createScriptEngine();
@@ -560,16 +475,13 @@ describe("C bootstrap", function () {
 
             engine.release();
         });
-        // c*(b+a) => c*(a+b) => (c*a)+(c*b) => (a*c)+(b*c) => (a+b)*c 
         it("c*(b+a)", function () {
             const lines: string[] = [
                 `c*(b+a)`
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* a c) (* b c))");
-            // assert.strictEqual(print_expr(actual, $), "a*c+b*c");
-            assert.strictEqual(engine.renderAsInfix(actual), "(a+b)*c");
+            assert.strictEqual(engine.renderAsInfix(actual), "a*c+b*c");
 
             engine.release();
         });
@@ -579,9 +491,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* a c) (* b c))");
-            // assert.strictEqual(print_expr(actual, $), "a*c+b*c");
-            assert.strictEqual(engine.renderAsInfix(actual), "(a+b)*c");
+            assert.strictEqual(engine.renderAsInfix(actual), "a*c+b*c");
 
             engine.release();
         });
@@ -716,18 +626,6 @@ describe("C bootstrap", function () {
             engine.release();
         });
         // Force grouping on LHS
-        // (c+a)*b => (a+c)*b => a*b+c*b => a*b+b*c
-        it("(c+a)*b", function () {
-            const lines: string[] = [
-                `(c+a)*b`
-            ];
-            const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
-            const actual = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) (* b c))");
-            assert.strictEqual(engine.renderAsInfix(actual), "a*b+b*c");
-
-            engine.release();
-        });
         it("(a+c)*b", function () {
             const lines: string[] = [
                 `(a+c)*b`
@@ -745,24 +643,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* a c) (* b c))");
-            // assert.strictEqual(print_expr(actual, $), "a*c+b*c");
-            // With factorization is a step...
-            assert.strictEqual(engine.renderAsInfix(actual), "(a+b)*c");
-
-            engine.release();
-        });
-        it("(b+c)*a", function () {
-            const lines: string[] = [
-                `(b+c)*a`
-            ];
-            const engine = createScriptEngine({ treatAsVectors: ['b', 'c'] });
-            const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
-            // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
-            // With factorization is a step...
-            assert.strictEqual(engine.renderAsInfix(actual), "a*(b+c)");
-
+            assert.strictEqual(engine.renderAsInfix(actual), "a*c+b*c");
             engine.release();
         });
         it("(c+b)*a", function () {
@@ -771,10 +652,7 @@ describe("C bootstrap", function () {
             ];
             const engine = createScriptEngine({});
             const actual = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
-            // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
-            // With factorization is a step...
-            assert.strictEqual(engine.renderAsInfix(actual), "a*(b+c)");
+            assert.strictEqual(engine.renderAsInfix(actual), "a*b+a*c");
 
             engine.release();
         });
@@ -786,9 +664,6 @@ describe("C bootstrap", function () {
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a b) (* b c))");
             assert.strictEqual(engine.renderAsInfix(actual), "a*b+b*c");
-            // TODO. Since c is a scalar, the second term could be reversed and the expression would factor out b on RHS.
-            // Should we order Sym factors according to whether they are scalars?
-            // Note that this would not work if a and b were scalars.
             engine.release();
         });
     });

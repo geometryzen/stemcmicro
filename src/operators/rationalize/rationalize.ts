@@ -20,12 +20,12 @@ export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
     const phase = $.getMode();
-    $.setFocus(MODE_FACTORING);
+    $.setMode(MODE_FACTORING);
     try {
         return yyrationalize(argList, $);
     }
     finally {
-        $.setFocus(phase);
+        $.setMode(phase);
     }
 }
 

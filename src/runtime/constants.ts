@@ -163,7 +163,6 @@ export const LAST_LIST_PRINT = new Sym('lastlistprint');
 export const LAST_HUMAN_PRINT = new Sym('lastplainprint');
 
 export const AUTOEXPAND = new Sym('autoexpand');
-export const AUTOFACTOR = new Sym('autofactor');
 export const BAKE = new Sym('bake');
 export const ASSUME_REAL_VARIABLES = new Sym('assumeRealVariables');
 export const TRACE = new Sym('trace');

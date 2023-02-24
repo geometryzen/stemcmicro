@@ -57,7 +57,6 @@ const defn_strings = [
     'e=exp(1)',
     'i=sqrt(-1)',
     'autoexpand=1',
-    'autofactor=1',
     // TODO: Is setting this to zero really respected?
     'assumeRealVariables=1',
     'pi=tau(1)/2',
@@ -97,7 +96,7 @@ export function execute_std_definitions($: ExtensionEnv): void {
             try {
                 if (scanned > 0) {
                     // Evaluating the tree for the side-effect which is to establish a binding.
-                    $.setFocus(MODE_EXPANDING);
+                    $.setMode(MODE_EXPANDING);
                     $.valueOf(tree);
                 }
             }

@@ -1,4 +1,4 @@
-import { ExtensionEnv, MODE_FLAGS_ALL, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, MODE_FLAGS_ALL, Operator, OperatorBuilder, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { RATIONALIZE } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
@@ -22,7 +22,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         const retval = Eval_rationalize(expr, $);
         // console.lg(`rationalize() => ${print_expr(retval, $)}`);
-        const flags = TFLAG_HALT | (!retval.equals(expr) ? TFLAG_DIFF : TFLAG_NONE);
+        const flags = retval.equals(expr) ? TFLAG_NONE : TFLAG_HALT;
         return [flags, retval];
     }
 }

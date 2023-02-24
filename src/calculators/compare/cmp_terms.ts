@@ -5,18 +5,55 @@ import { is_imu } from "../../operators/imu/is_imu";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_num } from "../../operators/num/is_num";
 import { is_tensor } from "../../operators/tensor/is_tensor";
+import { MATH_ADD } from "../../runtime/ns_math";
 import { is_cons, U } from "../../tree/tree";
 import { count_factors } from "../count_factors";
-import { canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
+import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { remove_factors } from "../remove_factors";
 import { cmp_expr } from "./cmp_expr";
+import { compare_num_num } from "./compare_num_num";
 import { contains_single_blade } from "./contains_single_blade";
 import { extract_single_blade } from "./extract_single_blade";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function cmp_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    const lhsR = canonical_factor_num_rhs(lhs);
+    const rhsR = canonical_factor_num_rhs(rhs);
+    switch (cmp_terms_core(lhsR, rhsR, $)) {
+        case SIGN_GT: {
+            return SIGN_GT;
+        }
+        case SIGN_LT: {
+            return SIGN_LT;
+        }
+        case SIGN_EQ: {
+            // If two terms, apart from numeric factors, are equal then it really does not matter too much
+            // how they are sorted because they are destined to be combined through addition.
+            const lhsL = canonical_factor_num_lhs(lhs);
+            const rhsL = canonical_factor_num_lhs(rhs);
+            return compare_num_num(lhsL, rhsL);
+        }
+    }
+}
+
+export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // console.lg("ENTERING", "cmp_terms", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
     // numbers can be combined
+    if (lhs.equals(rhs)) {
+        return SIGN_EQ;
+    }
+
+    const orderings = $.getSymbolOrder(MATH_ADD);
+    for (const ordering of orderings) {
+        if (ordering.is(lhs, $) && ordering.is(rhs, $)) {
+            return ordering.compare(lhs, rhs, $);
+        }
+        if (ordering.is(lhs, $)) {
+            return SIGN_LT;
+        }
+        if (ordering.is(rhs, $)) {
+            return SIGN_GT;
+        }
+    }
 
     if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
         const bladeL = extract_single_blade(lhs);

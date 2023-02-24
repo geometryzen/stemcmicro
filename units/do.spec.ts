@@ -4,8 +4,6 @@ import { createScriptEngine } from "../src/runtime/symengine";
 describe("current", function () {
     it("d(1/(5+4*cos(x)),x)", function () {
         const lines: string[] = [
-            `autofactor=1`,
-            `implicate=1`,
             `d(1/(5+4*cos(x)),x)`
         ];
         const engine = createScriptEngine({

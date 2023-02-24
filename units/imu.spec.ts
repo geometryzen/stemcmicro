@@ -5,7 +5,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("imu", function () {
     it("((-2.0*(-1)**(1/2))*2.0)*(-1)**(1/2)", function () {
         const lines: string[] = [
-            `implicate=0`,
             `((-2.0*(-1)**(1/2))*2.0)*(-1)**(1/2)`
         ];
         const engine = createScriptEngine({

@@ -149,6 +149,7 @@
         "test-add": "mocha 'tests/add.ts'",
         "test-bootstrap": "mocha 'tests/bootstrap.ts'",
         "test-ceiling": "mocha 'tests/ceiling.ts'",
+        "test-circexp": "mocha 'tests/circexp.ts'",
         "test-coeff": "mocha 'tests/coeff.ts'",
         "test-condense": "mocha 'tests/condense.ts'",
         "test-cofactor": "mocha 'tests/cofactor.ts'",

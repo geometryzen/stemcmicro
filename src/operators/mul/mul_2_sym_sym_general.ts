@@ -57,6 +57,9 @@ type LHS = Sym;
 type RHS = Sym;
 type EXP = BCons<Sym, LHS, RHS>;
 
+/**
+ * TODO: This is suspect. Ordering may conflict with canonical ordering of factors.
+ */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['Vector'];
@@ -98,41 +101,12 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             if ($.treatAsScalar(rhs)) {
                 return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
             }
-            else if ($.treatAsVector(rhs)) {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-            else {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-        }
-        else if ($.treatAsVector(lhs)) {
-            if ($.treatAsScalar(rhs)) {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-            else if ($.treatAsVector(rhs)) {
-                // TODO: We should have a better way to determine when to replace a * b => a | b + a ^ b
-                /*
-                if ($.isExpanding()) {
-                    // a * b => (a | b) + (a ^ b), when a and b are vectors and we are expanding. 
-                    const a = lhs;
-                    const b = rhs;
-                    const innerAB = $.valueOf(makeList(MATH_INNER, a, b));
-                    const outerAB = $.valueOf(makeList(MATH_OUTER, a, b));
-                    const sumIntExt = $.valueOf(makeList(MATH_ADD, innerAB, outerAB));
-                    return [CHANGED, sumIntExt];
-                }
-                */
-                return [TFLAG_HALT, expr];
-            }
             else {
                 return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
             }
         }
         else {
             if ($.treatAsScalar(rhs)) {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-            else if ($.treatAsVector(rhs)) {
                 return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
             }
             else {

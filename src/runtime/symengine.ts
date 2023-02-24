@@ -33,10 +33,6 @@ export interface ScriptEngineOptions {
      */
     noOptimize?: boolean;
     /**
-     * Determines which symbols should be treated as vectors as opposed to real numbers.
-     */
-    treatAsVectors?: string[];
-    /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
      * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
      * in applications using Geometric Algebra. The default value is false.
@@ -102,7 +98,6 @@ function env_options_from_engine_options(options: ScriptEngineOptions | undefine
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             disable: Array.isArray(options.disable) ? options.disable : [],
             noOptimize: options.noOptimize,
-            treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions
         };
@@ -114,7 +109,6 @@ function env_options_from_engine_options(options: ScriptEngineOptions | undefine
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             disable: [],
             noOptimize: false,
-            treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false
         };

@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ExtensionEnv, MODE_EXPANDING, MODE_FACTORING, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
@@ -11,7 +11,7 @@ import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, NIL, U } from '../tree/tree';
 import { Box } from "./Box";
-import { AUTOEXPAND, AUTOFACTOR, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
+import { AUTOEXPAND, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { defs, move_top_of_stack } from './defs';
 import { NAME_SCRIPT_LAST } from './ns_script';
@@ -132,17 +132,14 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!
     if (isNotDisabled(AUTOEXPAND, $)) {
-        $.setFocus(MODE_EXPANDING);
-        // console.lg("Expanding...");
-        box.push(transform_with_reason(box.pop(), $, 'expanding'));
-    }
-
-    if ($.canFactorize()) {
-        if (isNotDisabled(AUTOFACTOR, $)) {
-            $.setFocus(MODE_FACTORING);
-            // console.lg("Factoring...");
-            box.push(transform_with_reason(box.pop(), $, 'factoring'));
-            // console.lg(`tranned (L) : ${print_expr(stack[0], $)}`);
+        const mode = $.getMode();
+        try {
+            $.setMode(MODE_EXPANDING);
+            // console.lg("Expanding...");
+            box.push(transform_with_reason(box.pop(), $, 'expanding'));
+        }
+        finally {
+            $.setMode(mode);
         }
     }
 
@@ -188,7 +185,7 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  * @returns 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'implicate' | 'bake     ' | 'cosmetics'): U {
+function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'bake     ' | 'cosmetics'): U {
     // console.lg(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)}`);
 
     const outExpr = transform(inExpr, $);

@@ -26,7 +26,6 @@ describe("laguerre", function () {
     });
     xit("laguerre(x,2)", function () {
         const lines: string[] = [
-            `implicate=1`,
             `laguerre(x,2)`
         ];
         const engine = createScriptEngine({

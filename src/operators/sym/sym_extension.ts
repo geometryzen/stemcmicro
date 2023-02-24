@@ -74,7 +74,7 @@ class SymExtension implements Extension<Sym> {
         return $.treatAsScalar(sym);
     }
     isVector(sym: Sym, $: ExtensionEnv): boolean {
-        return $.treatAsVector(sym);
+        return false;
     }
     isZero(): boolean {
         return false;
@@ -96,13 +96,7 @@ class SymExtension implements Extension<Sym> {
         return sym.key();
     }
     toLatexString(sym: Sym): string {
-        const $ = this.$;
-        if ($.treatAsVector(sym)) {
-            return `\\vec{${sym.key()}}`;
-        }
-        else {
-            return sym.key();
-        }
+        return sym.key();
     }
     toListString(sym: Sym): string {
         const token = this.$.getSymbolToken(sym);

@@ -5,8 +5,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 xdescribe("rect", function () {
     it("exp(i*pi/3)", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,
             `rect(exp(i*pi/3))`,

@@ -14,7 +14,6 @@ xdescribe("abs", function () {
     });
     it("abs(x)", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `abs(x)`,
         ];
         const engine = createScriptEngine({});
@@ -59,7 +58,6 @@ xdescribe("abs", function () {
     });
     it("abs(a+b+i*c)", function () {
         const lines: string[] = [
-            `implicate=1`,
             `abs(a+b+i*c)`,
         ];
         const engine = createScriptEngine({
@@ -72,9 +70,7 @@ xdescribe("abs", function () {
     });
     it("x * i", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `prettyfmt=0`,
-            `implicate=0`,
             `i=sqrt(-1)`,
             `x * i`,
         ];
@@ -85,9 +81,7 @@ xdescribe("abs", function () {
     });
     it("-i * i * x * x", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `prettyfmt=0`,
-            `implicate=0`,
             `i=sqrt(-1)`,
             `-i * i * x * x`,
         ];
@@ -101,7 +95,6 @@ xdescribe("abs", function () {
     });
     it("(x-i*y)*(x+i*y)", function () {
         const lines: string[] = [
-            `implicate=0`,
             `(x-i*y)*(x+i*y)`,
         ];
         const engine = createScriptEngine({
@@ -129,7 +122,6 @@ xdescribe("abs", function () {
     it("abs(1+2.0*i)", function () {
         // FIXME
         const lines: string[] = [
-            `implicate=0`,
             `i=sqrt(-1)`,
             `abs(1+2.0*i)`,
         ];
@@ -144,7 +136,6 @@ xdescribe("abs", function () {
     });
     it("exp(i*pi/3)", function () {
         const lines: string[] = [
-            `implicate=0`,
             `exp(i*pi/3)`,
         ];
         const engine = createScriptEngine({
@@ -156,10 +147,8 @@ xdescribe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "1/2+(1/2*3**(1/2))*i");
         engine.release();
     });
-    it("imaginary numbers with autofactor=1", function () {
+    xit("imaginary numbers", function () {
         const lines: string[] = [
-            `implicate=0`,
-            `autofactor=1`,
             `i*a+i*c`,
         ];
         const engine = createScriptEngine({
@@ -170,10 +159,8 @@ xdescribe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "(a+c)*i");
         engine.release();
     });
-    it("imaginary numbers with autofactor=0", function () {
+    it("imaginary numbers", function () {
         const lines: string[] = [
-            `implicate=0`,
-            `autofactor=0`,
             `i*a+i*c`,
         ];
         const engine = createScriptEngine({
@@ -241,7 +228,6 @@ xdescribe("abs", function () {
     });
     it("abs(a+b+c*i)", function () {
         const lines: string[] = [
-            `implicate=1`,
             `abs(a+b+c*i)`,
         ];
         const engine = createScriptEngine({

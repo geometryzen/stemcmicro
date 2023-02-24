@@ -43,12 +43,17 @@ class AddOperator extends FunctionVarArgs implements Operator<Cons> {
         const $ = this.$;
         // console.lg("ENTERING", this.name, decodeMode($.getMode()), render_as_infix(expr, this.$));
         const hook = (where: string, retval: U): U => {
-            // console.lg("LEAVING", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
-            // console.lg("LEAVING", this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+            // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(expr, this.$), "=>", render_as_infix(retval, $));
+            // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
             return retval;
         };
         if ($.isExpanding()) {
             const values = expr.tail().map((arg) => $.valueOf(arg));
+            /*
+            for (const value of values) {
+                console.lg("value",render_as_infix(value,$));
+            }
+            */
             const terms = make_term_association_implicit(values, $);
             if (terms.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)

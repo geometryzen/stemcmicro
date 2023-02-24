@@ -3,7 +3,7 @@ import { createScriptEngine } from "../src/runtime/symengine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cross", function () {
-    it("cross(A,cross(B,C))", function () {
+    it("Ax(BxC)", function () {
         // The vector-valued triple product with two cross products.
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -22,7 +22,7 @@ describe("cross", function () {
         // eslint-disable-next-line no-console
         // console.lg(`double cross elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(engine.renderAsInfix(value), "Ay*Bx*Cy*i-Ay*By*Cx*i+Az*Bx*Cz*i-Az*Bz*Cx*i-Ax*Bx*Cy*j+Ax*By*Cx*j+Az*By*Cz*j-Az*Bz*Cy*j-Ax*Bx*Cz*k+Ax*Bz*Cx*k-Ay*By*Cz*k+Ay*Bz*Cy*k");
         engine.release();
     });
 });
@@ -254,9 +254,8 @@ describe("cross", function () {
         assert.strictEqual(engine.renderAsInfix(value), "-i+j");
         engine.release();
     });
-    it("k+j+i+k+j+i => 2*(i+j+k)", function () {
+    it("k+j+i+k+j+i", function () {
         const lines: string[] = [
-            `implicate=1`,
             `G = algebra([1,1,1],["i","j","k"])`,
             `i=G[1]`,
             `j=G[2]`,
@@ -269,10 +268,10 @@ describe("cross", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Factorization should group the terms based upon the blade.
         // TODO: Canonical ordering should order the terms by the vector.
-        assert.strictEqual(engine.renderAsInfix(value), "2*(i+j+k)");
+        assert.strictEqual(engine.renderAsInfix(value), "2*i+2*j+2*k");
         engine.release();
     });
-    it("cross(A,B)", function () {
+    it("AxB", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `i=G[1]`,
@@ -290,13 +289,11 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.lg(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
+        assert.strictEqual(engine.renderAsInfix(value), "Ay*Bz*i-Az*By*i-Ax*Bz*j+Az*Bx*j+Ax*By*k-Ay*Bx*k");
         engine.release();
     });
     it("cross(A,B)+cross(B,A)", function () {
         const lines: string[] = [
-            `implicate=0`,
-            `autofactor=0`,
             `G = algebra([1,1,1],["i","j","k"])`,
             `i=G[1]`,
             `j=G[2]`,
@@ -334,7 +331,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.lg(`A^B elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(engine.renderAsInfix(value), "(Ax*By-Ay*Bx)*i^j+(Ax*Bz-Az*Bx)*i^k+(Ay*Bz-Az*By)*j^k");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax*By*i^j-Ay*Bx*i^j+Ax*Bz*i^k-Az*Bx*i^k+Ay*Bz*j^k-Az*By*j^k");
         engine.release();
     });
     it("A^B+B^A", function () {
@@ -375,8 +372,7 @@ describe("cross", function () {
         assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
-    // SLOW
-    it("cross(A,cross(B,C))", function () {
+    it("Ax(BxC)", function () {
         // The vector-valued triple product with two cross products.
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -392,12 +388,10 @@ describe("cross", function () {
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(engine.renderAsInfix(value), "Ay*Bx*Cy*i-Ay*By*Cx*i+Az*Bx*Cz*i-Az*Bz*Cx*i-Ax*Bx*Cy*j+Ax*By*Cx*j+Az*By*Cz*j-Az*Bz*Cy*j-Ax*Bx*Cz*k+Ax*Bz*Cx*k-Ay*By*Cz*k+Ay*Bz*Cy*k");
         engine.release();
     });
-    // SLOW
-    it("cross(A,cross(B,C))-B*(A|C)+C*(A|B)", function () {
+    it("Ax(BxC)-B*(A|C)+C*(A|B)", function () {
         // The vector-valued triple product with two cross products.
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -462,7 +456,7 @@ describe("cross", function () {
         engine.release();
     });
     // SLOW
-    it("cross(A,cross(B,C))-A|(B^C)", function () {
+    it("Ax(BxC)-A|(B^C)", function () {
         // FIXME:
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -482,8 +476,7 @@ describe("cross", function () {
         assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
-    // SLOW
-    it("cross(A,cross(B,C))", function () {
+    it("Ax(BxC)", function () {
         // The vector-valued triple product with two cross products.
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
@@ -502,7 +495,7 @@ describe("cross", function () {
         // eslint-disable-next-line no-console
         // console.lg(`double cross elapsedTime = ${elapsedTime} ms`);
         // assert.strictEqual($.toListString(value), "");
-        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bx*Cy-Ay*By*Cx+Az*Bx*Cz-Az*Bz*Cx)*i+(-Ax*Bx*Cy+Ax*By*Cx+Az*By*Cz-Az*Bz*Cy)*j+(-Ax*Bx*Cz+Ax*Bz*Cx-Ay*By*Cz+Ay*Bz*Cy)*k");
+        assert.strictEqual(engine.renderAsInfix(value), "Ay*Bx*Cy*i-Ay*By*Cx*i+Az*Bx*Cz*i-Az*Bz*Cx*i-Ax*Bx*Cy*j+Ax*By*Cx*j+Az*By*Cz*j-Az*Bz*Cy*j-Ax*Bx*Cz*k+Ax*Bz*Cx*k-Ay*By*Cz*k+Ay*Bz*Cy*k");
         engine.release();
     });
     it("A", function () {
@@ -519,7 +512,7 @@ describe("cross", function () {
         assert.strictEqual(engine.renderAsInfix(value), "Ax*i");
         engine.release();
     });
-    it("cross(A,B)", function () {
+    it("AxB", function () {
         const lines: string[] = [
             `G = algebra([1,1,1],["i","j","k"])`,
             `i=G[1]`,
@@ -537,7 +530,7 @@ describe("cross", function () {
         // const elapsedTime = new Date().getTime() - startTime;
         // console.lg(`cross(A,B) elapsedTime = ${elapsedTime} ms`);
         // TODO: Factorization should group the terms based upon the blade.
-        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bz-Az*By)*i+(-Ax*Bz+Az*Bx)*j+(Ax*By-Ay*Bx)*k");
+        assert.strictEqual(engine.renderAsInfix(value), "Ay*Bz*i-Az*By*i-Ax*Bz*j+Az*Bx*j+Ax*By*k-Ay*Bx*k");
         engine.release();
     });
 });

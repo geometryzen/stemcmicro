@@ -102,15 +102,12 @@ describe("guide", function () {
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        // Setting autofactor=0 has no impact because we don't have anything to match cosh and sinh.
-        // In any case, how would we know to replace cosh(y) with cos(y*i)?
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* (sin x) (cosh y)) (* (cos x) (sinh y) i))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "sin(x)*cosh(y)+cos(x)*sinh(y)*i");
         engine.release();
     });
     it("Experiment 005", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `z = x + i * y`,
             `sin(z)`
         ];

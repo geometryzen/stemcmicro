@@ -9,6 +9,7 @@ import { is_rat } from "../../operators/rat/is_rat";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { render_as_infix } from "../../print/print";
+import { MATH_MUL } from "../../runtime/ns_math";
 import { is_cons, U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
 import { flip_sign } from "../flip_sign";
@@ -21,6 +22,25 @@ import { group } from "./group";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // console.lg("ENTERING :", "cmp_factors", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
+
+    if (lhs.equals(rhs)) {
+        return SIGN_EQ;
+    }
+
+    const orderings = $.getSymbolOrder(MATH_MUL);
+    for (const ordering of orderings) {
+        if (ordering.is(lhs, $) && ordering.is(rhs, $)) {
+            return ordering.compare(lhs, rhs, $);
+        }
+        if (ordering.is(lhs, $)) {
+            return SIGN_LT;
+        }
+        if (ordering.is(rhs, $)) {
+            return SIGN_GT;
+        }
+    }
+
     if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
         return SIGN_EQ;
     }
@@ -80,9 +100,6 @@ export function compare_factors_complicated(lhs: U, rhs: U, $: ExtensionEnv): Si
     // console.lg(`compare_factors lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
     if (is_sym(lhs)) {
         if (is_sym(rhs)) {
-            if ($.treatAsVector(lhs) && $.treatAsVector(rhs)) {
-                return SIGN_EQ;
-            }
             return compare_sym_sym(lhs, rhs);
         }
         else {

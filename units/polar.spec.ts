@@ -7,8 +7,6 @@ describe("polar", function () {
     // We could rebuild z using a complex_from_polar function.
     xit("1+i", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,
             `polar(1+i)`,

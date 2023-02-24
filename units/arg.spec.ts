@@ -5,7 +5,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("arg", function () {
     it("arg(exp(i*pi/3))", function () {
         const lines: string[] = [
-            `implicate=0`,
             `arg(exp(i*pi/3))`,
         ];
         const engine = createScriptEngine({

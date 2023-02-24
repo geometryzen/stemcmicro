@@ -158,20 +158,6 @@ describe("tsparse", function () {
         // assert.strictEqual(print_expr(value,$), "a*b");
         engine.release();
     });
-    it("should be able to parse an inner product (|) expression", function () {
-        const lines: string[] = [
-            `a|b`
-        ];
-
-        const engine = createScriptEngine({ treatAsVectors: ['a', 'b'] });
-
-        const tree = ts_parse('foo.ts', lines.join('\n'));
-        assert.isDefined(tree);
-        assert.strictEqual(engine.renderAsSExpr(tree), "(| a b)");
-        const value = assert_one_value(engine.evaluate(tree));
-        assert.strictEqual(engine.renderAsInfix(value), "a|b");
-        engine.release();
-    });
     it("should be able to parse an outer product (^) expression", function () {
         const lines: string[] = [
             `a^b`

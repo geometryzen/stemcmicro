@@ -5,8 +5,6 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("sin", function () {
     it("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
         const lines: string[] = [
-            `autofactor=0`,
-            `implicate=0`,
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
         ];
         const engine = createScriptEngine({
@@ -70,7 +68,6 @@ describe("sin", function () {
         // cos(a)*sin(b)+cos(b)*sin(a)
         // Actually, the angle addition and subtraction theorems universally put sin before cos.
         const lines: string[] = [
-            `autofactor=0`,
             `sin(a+b)`
         ];
         const engine = createScriptEngine({
@@ -81,7 +78,6 @@ describe("sin", function () {
     });
     it("sin(a+b) with factoring", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `sin(a+b)`
         ];
         const engine = createScriptEngine({
@@ -92,7 +88,6 @@ describe("sin", function () {
     });
     it("sin(a-b) without factoring", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `sin(a-b)`
         ];
         const engine = createScriptEngine({
@@ -103,7 +98,6 @@ describe("sin", function () {
     });
     it("sin(a-b) with factoring", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `sin(a-b)`
         ];
         const engine = createScriptEngine({
@@ -114,7 +108,6 @@ describe("sin", function () {
     });
     it("sin(b+a) without factoring", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `sin(b+a)`
         ];
         const engine = createScriptEngine({
@@ -125,7 +118,6 @@ describe("sin", function () {
     });
     it("sin(b+a) with factoring", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `sin(b+a)`
         ];
         const engine = createScriptEngine({
@@ -136,7 +128,6 @@ describe("sin", function () {
     });
     it("sin(b-a) without factoring", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `sin(b-a)`
         ];
         const engine = createScriptEngine({
@@ -147,7 +138,6 @@ describe("sin", function () {
     });
     it("sin(b-a) with factoring", function () {
         const lines: string[] = [
-            `autofactor=1`,
             `sin(b-a)`
         ];
         const engine = createScriptEngine({
@@ -170,7 +160,6 @@ describe("sin", function () {
     });
     it("sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))`
         ];
         const engine = createScriptEngine({
@@ -181,7 +170,6 @@ describe("sin", function () {
     });
     it("sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b) without factoring", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
         ];
         const engine = createScriptEngine({
@@ -192,7 +180,6 @@ describe("sin", function () {
     });
     it("cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)", function () {
         const lines: string[] = [
-            `autofactor=0`,
             `cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)`
         ];
         const engine = createScriptEngine({

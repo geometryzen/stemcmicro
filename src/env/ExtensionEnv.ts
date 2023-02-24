@@ -65,13 +65,17 @@ export interface PrintHandler {
     print(...items: string[]): void;
 }
 
+export interface ExprOrdering<T extends U> {
+    is(expr: U, $: ExtensionEnv): expr is T;
+    compare(lhs: T, rhs: T, $: ExtensionEnv): Sign;
+}
+
 export interface ExtensionEnv {
     getPrintHandler(): PrintHandler;
     setField(kind: 'R' | undefined): void;
     setPrintHandler(handler: PrintHandler): void;
     treatAsReal(sym: Sym): boolean;
     treatAsScalar(sym: Sym): boolean;
-    treatAsVector(sym: Sym): boolean;
     /**
      * 
      * @param lhs 
@@ -83,10 +87,6 @@ export interface ExtensionEnv {
      */
     arg(expr: U): U;
     beginSpecial(): void;
-    /**
-     * Uses the configuration disable array: disable: ['factorize']
-     */
-    canFactorize(): boolean;
     clearBindings(): void;
     clearOperators(): void;
     clearRenamed(): void;
@@ -102,6 +102,7 @@ export interface ExtensionEnv {
     getBindings(): { sym: Sym, binding: U | undefined }[];
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
+    getSymbolOrder(sym: Sym): ExprOrdering<U>[];
     getSymbolToken(sym: Sym): string;
     /**
      * Used to make the environment ready after all operator builders have been added.
@@ -143,8 +144,9 @@ export interface ExtensionEnv {
     setAssocL(opr: Sym, value: boolean): void;
     setAssocR(opr: Sym, value: boolean): void;
     setBinding(sym: Sym, binding: U): void;
-    setFocus(focus: number): void;
+    setMode(mode: number): void;
     setModeFlag(mode: MODE, value: boolean): void;
+    setSymbolOrder(sym: Sym, order: ExprOrdering<U>[]): void;
     setSymbolToken(sym: Sym, token: string): void;
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;

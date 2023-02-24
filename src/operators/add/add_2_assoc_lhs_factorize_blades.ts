@@ -25,11 +25,6 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
-        /*
-        if ($.implicateMode) {
-            return false;
-        }
-        */
         if ($.isFactoring()) {
             const blade1 = lhs.rhs.rhs;
             const blade2 = rhs.rhs;

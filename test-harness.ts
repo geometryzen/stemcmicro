@@ -239,7 +239,6 @@ type DEPENDENCY = 'Flt' | 'Imu';
 
 export interface TestOptions {
     dependencies?: DEPENDENCY[];
-    treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
     verbose?: boolean;
@@ -248,7 +247,6 @@ export interface TestOptions {
 
 interface TestConfig {
     dependencies: DEPENDENCY[];
-    treatAsVectors: string[];
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
     verbose: boolean;
@@ -258,7 +256,6 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     if (options) {
         const config: TestConfig = {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
-            treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
@@ -268,7 +265,6 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     else {
         const config: TestConfig = {
             dependencies: [],
-            treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false,
             verbose: false
@@ -281,7 +277,6 @@ function harness_options_to_engine_options(options: TestOptions | undefined): Sc
     if (options) {
         return {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
         };
@@ -289,7 +284,6 @@ function harness_options_to_engine_options(options: TestOptions | undefined): Sc
     else {
         return {
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false
         };

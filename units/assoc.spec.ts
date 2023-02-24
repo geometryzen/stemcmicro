@@ -8,7 +8,6 @@ describe("assoc", function () {
         it("A", function () {
             const lines: string[] = [
                 `bake=0`,
-                `implicate=0`,
                 `a+b+c+d`,
             ];
             const engine: ScriptEngine = createScriptEngine({
@@ -23,7 +22,6 @@ describe("assoc", function () {
         });
         it("B", function () {
             const lines: string[] = [
-                `implicate=0`,
                 `a+b+c+d`,
             ];
             const engine = createScriptEngine({ useCaretForExponentiation: true });
@@ -34,7 +32,6 @@ describe("assoc", function () {
         });
         it("C", function () {
             const lines: string[] = [
-                `implicate=1`,
                 `a+b+c+d`,
             ];
             const engine = createScriptEngine({ useCaretForExponentiation: true });
@@ -45,7 +42,6 @@ describe("assoc", function () {
         });
         it("D", function () {
             const lines: string[] = [
-                `implicate=1`,
                 `a+b+c+d`,
             ];
             const engine = createScriptEngine({
@@ -61,7 +57,6 @@ describe("assoc", function () {
     describe("Multiply", function () {
         it("A", function () {
             const lines: string[] = [
-                `implicate=0`,
                 `a*b*c*d`,
             ];
             const engine = createScriptEngine({
@@ -76,7 +71,6 @@ describe("assoc", function () {
         });
         it("B", function () {
             const lines: string[] = [
-                `implicate=0`,
                 `a*b*c*d`,
             ];
             const engine = createScriptEngine({ useCaretForExponentiation: true });
@@ -87,7 +81,6 @@ describe("assoc", function () {
         });
         it("C", function () {
             const lines: string[] = [
-                `implicate=1`,
                 `a*b*c*d`,
             ];
             const engine = createScriptEngine({ useCaretForExponentiation: true });
@@ -98,7 +91,6 @@ describe("assoc", function () {
         });
         it("D", function () {
             const lines: string[] = [
-                `implicate=1`,
                 `a*b*c*d`,
             ];
             const engine = createScriptEngine({

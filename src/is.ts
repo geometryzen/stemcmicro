@@ -155,7 +155,6 @@ function ispolyfactoredorexpandedform_power(p: U, x: U, $: ExtensionEnv): boolea
 /**
  * Determines whether the expression, p, is a polynomial in the variable, x.
  * 
- * FIXME: The implementation assumes that the expression is in the implicated form, which is no longer the case.
  * @param p 
  * @param x 
  * @returns 

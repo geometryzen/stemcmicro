@@ -22,6 +22,7 @@ import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_uom } from "../operators/uom/is_uom";
 import { render_as_infix } from "../print/print";
+import { render_as_sexpr } from "../print/render_as_sexpr";
 import { FUNCTION } from "../runtime/constants";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
@@ -30,7 +31,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { decodeMode, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { decodeMode, ExprOrdering, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -39,7 +40,6 @@ export interface EnvOptions {
     dependencies?: FEATURE[];
     disable: ('factorize' | 'implicate')[];
     noOptimize?: boolean;
-    treatAsVectors?: string[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
 }
@@ -49,7 +49,6 @@ export interface EnvConfig {
     dependencies: FEATURE[];
     disable: ('factorize' | 'implicate')[];
     noOptimize: boolean;
-    treatAsVectors: string[]
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
 }
@@ -61,7 +60,6 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             disable: Array.isArray(options.disable) ? options.disable : [],
             noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
-            treatAsVectors: Array.isArray(options.treatAsVectors) ? options.treatAsVectors : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
         };
@@ -73,7 +71,6 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             dependencies: [],
             disable: [],
             noOptimize: false,
-            treatAsVectors: [],
             useCaretForExponentiation: false,
             useDefinitions: false
         };
@@ -119,6 +116,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * Override tokens for symbols used during rendering.
      */
     const sym_token: { [key: string]: string } = {};
+
+    const sym_order: { [key: string]: ExprOrdering<U>[] } = {};
 
     function currentOps(): { [key: string]: Operator<U>[] } {
         switch (current_mode) {
@@ -181,9 +180,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         treatAsReal(sym: Sym): boolean {
-            if ($.treatAsVector(sym)) {
-                return false;
-            }
             if (fieldKind === 'R') {
                 return true;
             }
@@ -193,11 +189,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         treatAsScalar(sym: Sym): boolean {
             // console.lg(`treatAsScalar ${sym}`);
-            return !$.treatAsVector(sym);
-        },
-        treatAsVector(sym: Sym): boolean {
-            // TODO: In a strict debugging mode we might check that the symbol has no binding.
-            return config.treatAsVectors.indexOf(sym.ln) >= 0;
+            return true;
         },
         add(lhs: U, rhs: U): U {
             if (is_num(lhs)) {
@@ -244,9 +236,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineAssociative(opr: Sym, id: Rat): void {
             // Do nothing.
-        },
-        canFactorize(): boolean {
-            return config.disable.indexOf('factorize') < 0;
         },
         clearBindings(): void {
             symTab.clearBindings();
@@ -423,6 +412,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getModeFlag(mode: MODE): boolean {
             return !!mode_flag[mode];
         },
+        getSymbolOrder(sym: Sym): ExprOrdering<U>[] {
+            const order = sym_order[sym.key()];
+            if (Array.isArray(order)) {
+                return order;
+            }
+            else {
+                return [];
+            }
+        },
         getSymbolToken(sym: Sym): string {
             return sym_token[sym.key()];
         },
@@ -559,12 +557,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setBinding(sym: Sym, binding: U): void {
             symTab.setBinding(sym, binding);
         },
-        setFocus(focus: number): void {
+        setMode(focus: number): void {
             // console.lg(`ExtensionEnv.setFocus(focus=${decodePhase(focus)})`);
             current_mode = focus;
         },
         setModeFlag(mode: MODE, value: boolean): void {
             mode_flag[mode] = value;
+        },
+        setSymbolOrder(sym: Sym, order: ExprOrdering<U>[]): void {
+            sym_order[sym.key()] = order;
         },
         setSymbolToken(sym: Sym, token: string): void {
             sym_token[sym.key()] = token;

@@ -16,11 +16,14 @@ import { cmp_expr } from "./cmp_expr";
 import { compare } from "./compare";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
+import { contains_single_blade } from "./contains_single_blade";
 import { group } from "./group";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // If comparing blades they should be stable.
+    if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
+        return SIGN_EQ;
+    }
     return cmp_expr(lhs, rhs, $);
 }
 

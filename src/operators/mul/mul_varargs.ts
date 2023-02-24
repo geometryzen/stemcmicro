@@ -14,7 +14,7 @@ import { is_mul_2_any_any } from "./is_mul_2_any_any";
 const make_factor_comparator = function ($: ExtensionEnv) {
     return function (a: U, b: U) {
         const sign = compare_factors(a, b, $);
-        // console.lg("a", render_as_infix(a, $), "b", render_as_infix(b, $), sign);
+        // console.lg("compare_factors", "LHS", render_as_infix(a, $), "RHS", render_as_infix(b, $), sign);
         return sign;
     };
 };

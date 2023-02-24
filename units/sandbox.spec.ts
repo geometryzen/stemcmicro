@@ -3,37 +3,20 @@ import { createScriptEngine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    xit("A|cross(B,C) ", function () {
-        // The scalar-valued triple product.
+    it("A*A should be equal to A|A (Geometric Algebra)", function () {
         const lines: string[] = [
-            `1|(-1*a*b)`
+            `G30=algebra([1,1,1],["i","j","k"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `cross(e1,a*b*e2)`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+            disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(engine.renderAsInfix(value), "???");
-        engine.release();
-    });
-    it("A|cross(B,C) ", function () {
-        // The scalar-valued triple product.
-        const lines: string[] = [
-            `G = algebra([1,1,1],["i","j","k"])`,
-            `e1=G[1]`,
-            `e2=G[2]`,
-            `e3=G[3]`,
-            `A = e1 * Ax + e2 * Ay + e3 * Az`,
-            `B = e1 * Bx + e2 * By + e3 * Bz`,
-            `C = e1 * Cx + e2 * Cy + e3 * Cz`,
-            `A|cross(B,C)`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value,$), "");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax*By*Cz-Ax*Bz*Cy-Ay*Bx*Cz+Ay*Bz*Cx+Az*Bx*Cy-Az*By*Cx");
+        assert.strictEqual(engine.renderAsInfix(value), "k");
         engine.release();
     });
 });

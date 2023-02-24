@@ -89,9 +89,7 @@ import { cos_sym } from '../operators/cos/cos_sym';
 import { cosh_sym } from '../operators/cosh/cosh_sym';
 import { cosh_varargs } from '../operators/cosh/cosh_varargs';
 import { cross_any_any } from '../operators/cross/cross_any_any';
-import { cross_any_mul_2_scalar_any } from '../operators/cross/cross_any_mul_2_scalar_any';
 import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
-import { cross_mul_2_scalar_any_any } from '../operators/cross/cross_mul_2_scalar_any_any';
 import { MATH_VECTOR_CROSS_PRODUCT } from '../operators/cross/MATH_VECTOR_CROSS_PRODUCT';
 import { defint } from '../operators/defint/defint';
 import { degree_varargs } from '../operators/degree/degree_varargs';
@@ -171,6 +169,7 @@ import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_
 import { legendre_varargs } from '../operators/legendre/legendre_varargs';
 import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
+import { mul_2_any_rat } from '../operators/mul/mul_2_any_rat';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
@@ -461,6 +460,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_one_any);
     // $.defineOperator(mul_cons_sym);
 
+    $.defineOperator(mul_2_any_rat);
     $.defineOperator(mul_2_flt_flt);
     $.defineOperator(mul_2_flt_rat);
     $.defineOperator(mul_2_flt_imu);
@@ -670,10 +670,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(cosh_varargs);
 
     $.defineOperator(cross_blade_blade);
-    // Linearity Laws
-    $.defineOperator(cross_mul_2_scalar_any_any);
-    $.defineOperator(cross_any_mul_2_scalar_any);
-    // Distribution Laws of cross over addition.
     $.defineOperator(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineOperator(cross_any_any);

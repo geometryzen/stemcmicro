@@ -39,6 +39,14 @@ export function cmp_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
     }
 
+    if (contains_single_blade(lhs)) {
+        return SIGN_GT;
+    }
+
+    if (contains_single_blade(rhs)) {
+        return SIGN_LT;
+    }
+
     if (contains_single_imu(lhs) && contains_single_imu(rhs)) {
         return cmp_terms(remove_factors(lhs, is_imu), remove_factors(rhs, is_imu), $);
     }

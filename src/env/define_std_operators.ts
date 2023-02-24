@@ -151,6 +151,7 @@ import { inner_2_imu_any } from '../operators/inner/inner_2_imu_any';
 import { inner_2_imu_imu } from '../operators/inner/inner_2_imu_imu';
 import { inner_2_imu_rat } from '../operators/inner/inner_2_imu_rat';
 import { inner_2_num_num } from '../operators/inner/inner_2_num_num';
+import { inner_2_rat_any } from '../operators/inner/inner_2_rat_any';
 import { inner_2_rat_imu } from '../operators/inner/inner_2_rat_imu';
 import { inner_2_rat_sym } from '../operators/inner/inner_2_rat_sym';
 import { inner_2_real_any } from '../operators/inner/inner_2_real_any';
@@ -570,6 +571,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inner_2_num_num);
     $.defineOperator(inner_2_rat_imu);
     $.defineOperator(inner_2_rat_sym);
+    $.defineOperator(inner_2_rat_any);
     $.defineOperator(inner_2_imu_rat);
     $.defineOperator(inner_2_imu_imu);
     $.defineOperator(inner_2_imu_any);

@@ -1,5 +1,6 @@
 import { compare_sym_sym } from "../../calculators/compare/compare_sym_sym";
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
+import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -34,8 +35,10 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Sym | Sym
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('inner_2_sym_sym', MATH_INNER, is_sym, is_sym, $);
+        this.hash = hash_binop_atom_atom(MATH_INNER, HASH_SYM, HASH_SYM);
     }
     isScalar(): boolean {
         return true;

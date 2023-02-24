@@ -3,16 +3,26 @@ import { createScriptEngine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("a*(b+c)", function () {
+    xit("cos(-x*y)", function () {
         const lines: string[] = [
-            `a*(b+c)`
+            `-1*(-1*(x*y))`
         ];
-        const engine = createScriptEngine();
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(actual, $), "(+ (* a b) (* a c))");
-        // assert.strictEqual(print_expr(actual, $), "a*b+a*c");
-        assert.strictEqual(engine.renderAsInfix(actual), "a*(b+c)");
-
-        engine.release();
+        const engine = createScriptEngine({
+            dependencies: []
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(value), '(* x y)');
+        assert.strictEqual(engine.renderAsInfix(value), 'x*y');
+    });
+    it("cos(-x*y)", function () {
+        const lines: string[] = [
+            `cos(-x*y)`
+        ];
+        const engine = createScriptEngine({
+            dependencies: []
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(value), '(cos (* x y))');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(x*y)');
     });
 });

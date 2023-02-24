@@ -1,10 +1,7 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { MATH_LT } from "../../runtime/ns_math";
-import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { items_to_cons, U } from "../../tree/tree";
-import { is_boo } from "../boo/is_boo";
+import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
@@ -26,22 +23,13 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         super('cos_any', MATH_COS, is_any, $);
         this.hash = hash_unaop_atom(MATH_COS, HASH_ANY);
     }
-    transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
-        // console.lg(`${this.name} arg=${render_as_infix(arg, this.$)}`);
-        const $ = this.$;
-        const arg_LT_0 = $.valueOf(items_to_cons(MATH_LT, arg, zero));
-        // console.lg(`${this.name} arg=${render_as_infix(arg_LT_0, this.$)}`);
-        if (is_boo(arg_LT_0)) {
-            if (arg_LT_0.isTrue()) {
-                const A = $.negate(arg);
-                const B = $.valueOf(items_to_cons(MATH_COS, A));
-                return [TFLAG_DIFF, B];
-            }
-            else {
-                return transform_cos(arg, oldExpr, $);
-            }
+    transform1(opr: Sym, arg: ARG, orig: EXP): [TFLAGS, U] {
+        if (this.$.isExpanding()) {
+            return transform_cos(arg, orig, this.$);
         }
-        return [TFLAG_HALT, oldExpr];
+        else {
+            return [TFLAG_NONE, orig];
+        }
     }
 }
 

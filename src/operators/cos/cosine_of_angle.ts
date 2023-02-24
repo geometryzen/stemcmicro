@@ -3,12 +3,12 @@ import { rational } from '../../bignum';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
-import { ARCCOS, ARCTAN } from '../../runtime/constants';
+import { ARCCOS, ARCTAN, COS } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { half, negOne, one, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
-import { car, U } from '../../tree/tree';
+import { car, items_to_cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 
 
@@ -29,9 +29,8 @@ export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] 
 
     // cosine function is symmetric, cos(-x) = cos(x)
 
-    // TODO: The question we should be asking is whether the symbol contains a factor that is negative?
     if (is_negative(x)) {
-        x = $.negate(x);
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(COS, $.negate(x)))];
     }
 
     // cos(arctan(x)) = 1 / sqrt(1 + x^2)

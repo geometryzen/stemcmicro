@@ -12,8 +12,8 @@ run_test([
     '1',
 
     'exp(1)',
-    'math.e',
-], { verbose: true });
+    'e',
+]);
 
 xrun_test([
     'exp(0)',

@@ -43,7 +43,7 @@ describe("euler", function () {
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(1)+sin(1)*i");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(1)+i*sin(1)");
         engine.release();
     });
     it("exp(-i)", function () {
@@ -54,7 +54,7 @@ describe("euler", function () {
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(1)-sin(1)*i");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(1)-i*sin(1)");
         engine.release();
     });
     it("exp(i*x)", function () {
@@ -65,7 +65,7 @@ describe("euler", function () {
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)+sin(x)*i");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)+i*sin(x)");
         engine.release();
     });
     it("exp(-i*x)", function () {
@@ -76,7 +76,7 @@ describe("euler", function () {
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)-sin(x)*i");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)-i*sin(x)");
         engine.release();
     });
 });

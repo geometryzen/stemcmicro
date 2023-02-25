@@ -120,6 +120,7 @@
         "unit-sym": "mocha 'units/Sym.spec.ts'",
         "unit-scalars": "mocha 'units/scalars.spec.ts'",
         "unit-scan": "mocha 'units/scan.spec.ts'",
+        "unit-scheme": "mocha 'units/scheme.spec.ts'",
         "unit-scriptlast": "mocha 'units/scriptlast.spec.ts'",
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",

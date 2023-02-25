@@ -1,4 +1,4 @@
-import { cmp_terms } from './calculators/compare/cmp_terms';
+import { cmp_terms } from './calculators/compare/comparator_add';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_str } from './operators/str/is_str';
 import { defs } from './runtime/defs';

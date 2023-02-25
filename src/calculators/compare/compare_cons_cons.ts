@@ -1,6 +1,6 @@
 import { ExtensionEnv, Sign, SIGN_EQ } from "../../env/ExtensionEnv";
 import { Cons } from "../../tree/tree";
-import { cmp_terms } from "./cmp_terms";
+import { cmp_terms } from "./comparator_add";
 
 export function compare_cons_cons(lhs: Cons, rhs: Cons, $: ExtensionEnv): Sign {
     return compare_cons_cons_args(lhs, rhs, $, 0);

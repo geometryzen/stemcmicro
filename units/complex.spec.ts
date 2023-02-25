@@ -5,14 +5,14 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 describe("complex", function () {
     it("C", function () {
         const lines: string[] = [
-            `i*y+x`,
+            `y*i+x`,
         ];
         const engine = createScriptEngine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "x+y*i");
+        assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
     });
 });
@@ -45,7 +45,7 @@ describe("complex", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "x+y*i");
+        assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
     });
     it("D", function () {
@@ -54,7 +54,7 @@ describe("complex", function () {
         ];
         const engine = createScriptEngine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "x+y*i");
+        assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
     });
     it("E", function () {
@@ -95,21 +95,21 @@ describe("complex", function () {
     });
     it("I", function () {
         const lines: string[] = [
-            `y*x*i*2*a`,
+            `y*x*k*j*i*a*2`,
         ];
         const engine = createScriptEngine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "2*a*x*y*i");
+        assert.strictEqual(engine.renderAsInfix(value), "2*i*a*j*k*x*y");
         engine.release();
     });
     it("J", function () {
         // We're not using definitions in this test and so i is just any ordinaty symbol.
         const lines: string[] = [
-            `y*x*i*2*a`,
+            `y*x*k*j*i*2*a`,
         ];
         const engine = createScriptEngine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "2*a*i*x*y");
+        assert.strictEqual(engine.renderAsInfix(value), "2*a*i*j*k*x*y");
         engine.release();
     });
 });

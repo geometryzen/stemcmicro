@@ -6,14 +6,14 @@ describe("canon", function () {
     describe("Ordering", function () {
         it("...", function () {
             const lines: string[] = [
-                `i * x * pi * 2`
+                `x*pi*i*2`
             ];
             const engine = createScriptEngine({
                 dependencies: ['Imu'],
                 useDefinitions: true
             });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(expr), '2*pi*x*i');
+            assert.strictEqual(engine.renderAsInfix(expr), '2*i*pi*x');
             engine.release();
         });
     });

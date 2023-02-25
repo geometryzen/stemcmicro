@@ -1,4 +1,4 @@
-import { cmp_terms } from "../../calculators/compare/cmp_terms";
+import { cmp_terms } from "../../calculators/compare/comparator_add";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";

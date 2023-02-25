@@ -57,7 +57,7 @@ describe("exp", function () {
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)+sin(x)*i");
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)+i*sin(x)");
         engine.release();
     });
     it("exp(-i*x)", function () {
@@ -69,7 +69,7 @@ describe("exp", function () {
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)-sin(x)*i");
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)-i*sin(x)");
         engine.release();
     });
     it("exp(x*i)+exp(-x*i)", function () {
@@ -105,7 +105,7 @@ describe("exp", function () {
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "2*sin(x)*i");
+        assert.strictEqual(engine.renderAsInfix(actual), "2*i*sin(x)");
         engine.release();
     });
     it("exp(-x*i)-exp(x*i)", function () {
@@ -117,7 +117,7 @@ describe("exp", function () {
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "-2*sin(x)*i");
+        assert.strictEqual(engine.renderAsInfix(actual), "-2*i*sin(x)");
         engine.release();
     });
     it("exp(-3/4*i*pi)", function () {
@@ -129,7 +129,7 @@ describe("exp", function () {
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2**(1/2)-1/2*2**(1/2)*i");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2**(1/2)-1/2*i*2**(1/2)");
         engine.release();
     });
 });

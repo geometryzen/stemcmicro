@@ -2,19 +2,6 @@ import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("sandbox", function () {
-    it("test D", function () {
-        const lines: string[] = [
-            `(-2)**(3/2)`
-        ];
-        const engine = createScriptEngine({ useDefinitions: true });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
-        assert.strictEqual(engine.renderAsInfix(actual), '-2*2**(1/2)*i');
-        engine.release();
-    });
-});
-
 describe("Exponentiation", function () {
     it("a**b should parse", function () {
         const lines: string[] = [
@@ -112,8 +99,7 @@ describe("Exponentiation", function () {
         ];
         const engine = createScriptEngine({ useDefinitions: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(actual,$), '(power 2 1/2)');
-        assert.strictEqual(engine.renderAsInfix(actual), '-2*2**(1/2)*i');
+        assert.strictEqual(engine.renderAsInfix(actual), '-2*i*2**(1/2)');
         engine.release();
     });
     it("test E", function () {

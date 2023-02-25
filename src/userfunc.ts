@@ -1,14 +1,14 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
 import { Eval_derivative } from './operators/derivative/Eval_derivative';
-import { is_sym } from './operators/sym/is_sym';
 import { is_num } from './operators/num/is_num';
+import { is_str } from './operators/str/is_str';
+import { is_sym } from './operators/sym/is_sym';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { EVAL, FUNCTION, SYMBOL_D } from './runtime/constants';
 import { DEBUG, defs, halt } from './runtime/defs';
 import { stack_list, stack_pop, stack_push } from './runtime/stack';
 import { cadr, cddr } from './tree/helpers';
-import { is_str } from './operators/str/is_str';
-import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
@@ -47,7 +47,7 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
         // eslint-disable-next-line no-console
         // console.lg(`Eval_user_function evaluating: ${car(expr)}`);
     }
-    if (car(expr) === SYMBOL_D && $.getBinding(SYMBOL_D) === SYMBOL_D) {
+    if (car(expr).equals(SYMBOL_D) && $.getBinding(SYMBOL_D).equals(SYMBOL_D)) {
         const retval = Eval_derivative(expr, $);
         return retval;
     }

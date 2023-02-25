@@ -1,4 +1,4 @@
-import { AddComparator } from '../calculators/compare/cmp_terms';
+import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { abs_any } from '../operators/abs/abs_any';

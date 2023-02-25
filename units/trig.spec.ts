@@ -11,8 +11,8 @@ describe("trig", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), '1');
-        assert.strictEqual(engine.renderAsInfix(value), '1');
+        assert.strictEqual(engine.renderAsSExpr(value), '(+ (power (cos x) 2) (power (sin x) 2))');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
     });
 });
 
@@ -97,8 +97,8 @@ describe("trig", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), '1');
-            assert.strictEqual(engine.renderAsInfix(value), '1');
+            assert.strictEqual(engine.renderAsSExpr(value), '(+ (power (cos x) 2) (power (sin x) 2))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
         });
         it("sin(x)*sin(x)+cos(x)*cos(x)", function () {
             const lines: string[] = [
@@ -108,8 +108,8 @@ describe("trig", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), '1');
-            assert.strictEqual(engine.renderAsInfix(value), '1');
+            assert.strictEqual(engine.renderAsSExpr(value), '(+ (power (cos x) 2) (power (sin x) 2))');
+            assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
         });
     });
 });

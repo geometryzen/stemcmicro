@@ -21,7 +21,7 @@ describe("divisors", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "[1,3,1+x,3*(1+x)]");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[1,3,1+x,3+3*x]");
         engine.release();
     });
 });

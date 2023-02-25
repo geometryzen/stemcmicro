@@ -51,7 +51,7 @@ class AddOperator extends FunctionVarArgs implements Operator<Cons> {
             const values = expr.tail().map((arg) => $.valueOf(arg));
             /*
             for (const value of values) {
-                console.lg("value",render_as_infix(value,$));
+                console.log("value",render_as_infix(value,$));
             }
             */
             const terms = make_term_association_implicit(values, $);

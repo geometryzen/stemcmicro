@@ -35,7 +35,7 @@ describe("gibbs", function () {
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(Ay*Bz-Az*By)*e1+(-Ax*Bz+Az*Bx)*e2+(Ax*By-Ay*Bx)*e3");
+        assert.strictEqual(engine.renderAsInfix(value), "Ay*Bz*e1-Az*By*e1-Ax*Bz*e2+Az*Bx*e2+Ax*By*e3-Ay*Bx*e3");
         engine.release();
     });
     it("Magnitude of a Vector", function () {
@@ -177,8 +177,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) By By)");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By*By");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
         engine.release();
     });
     it("Handling of Powers: Part III", function () {
@@ -190,8 +189,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(* (power Ax 2) By By)");
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By*By");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
         engine.release();
     });
     it("cross(A,B)|cross(A,B)", function () {
@@ -215,7 +213,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2+Ax**2*Bz**2-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz+Ay**2*Bx**2+Ay**2*Bz**2-2*Ay*Az*By*Bz+Az**2*Bx**2+Az**2*By**2");
+        assert.strictEqual(engine.renderAsInfix(value), "-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz-2*Ay*Az*By*Bz+Ax**2*By**2+Ax**2*Bz**2+Ay**2*Bx**2+Ay**2*Bz**2+Az**2*Bx**2+Az**2*By**2");
         engine.release();
     });
     it("cross(A,B)|cross(A,B)", function () {
@@ -238,7 +236,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax*By*By+Ax*Ax*Bz*Bz-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz+Ay*Ay*Bx*Bx+Ay*Ay*Bz*Bz-2*Ay*Az*By*Bz+Az*Az*Bx*Bx+Az*Az*By*By");
+        assert.strictEqual(engine.renderAsInfix(value), "-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz-2*Ay*Az*By*Bz+Ax**2*By**2+Ax**2*Bz**2+Ay**2*Bx**2+Ay**2*Bz**2+Az**2*Bx**2+Az**2*By**2");
         engine.release();
     });
     it("A|A", function () {
@@ -261,7 +259,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax+Ay*Ay+Az*Az");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2+Az**2");
         engine.release();
     });
     it("A*A should be equal to A|A (Geometric Algebra)", function () {
@@ -322,7 +320,7 @@ describe("gibbs", function () {
             disable: ['factorize']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "Ax*Ax+Ay*Ay+Az*Az");
+        assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2+Az**2");
         engine.release();
     });
     it("(Ax*e1)*(By*e2)", function () {

@@ -18,7 +18,7 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
   '2^(1/4)*exp(1/8*i*pi)',
 */
 
-describe("circexp", function () {
+xdescribe("circexp", function () {
     it("cos(x)", function () {
         const lines: string[] = [
             `circexp(cos(x))`

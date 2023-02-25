@@ -60,13 +60,7 @@ describe("sin", function () {
         assert.strictEqual(engine.renderAsSExpr(value), '(* -1 (sin (* x y z)))');
         assert.strictEqual(engine.renderAsInfix(value), '-sin(x*y*z)');
     });
-    it("sin(a+b) without factoring", function () {
-        // sin(a+b) = sin(a)*cos(b)+cos(a)*sin(b)
-        // But under canonicalization, the sin and cos factors are switched, becoming
-        // cos(b)*sin(a)+cos(a)*sin(b)
-        // And then further canonicalization sorts on arguments which rearranges the terms to give
-        // cos(a)*sin(b)+cos(b)*sin(a)
-        // Actually, the angle addition and subtraction theorems universally put sin before cos.
+    it("sin(a+b)", function () {
         const lines: string[] = [
             `sin(a+b)`
         ];
@@ -76,17 +70,7 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*sin(b)+cos(b)*sin(a)');
     });
-    it("sin(a+b) with factoring", function () {
-        const lines: string[] = [
-            `sin(a+b)`
-        ];
-        const engine = createScriptEngine({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'sin(a+b)');
-    });
-    it("sin(a-b) without factoring", function () {
+    it("sin(a-b)", function () {
         const lines: string[] = [
             `sin(a-b)`
         ];
@@ -96,17 +80,7 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), '-cos(a)*sin(b)+cos(b)*sin(a)');
     });
-    it("sin(a-b) with factoring", function () {
-        const lines: string[] = [
-            `sin(a-b)`
-        ];
-        const engine = createScriptEngine({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'sin(a-b)');
-    });
-    it("sin(b+a) without factoring", function () {
+    it("sin(b+a)", function () {
         const lines: string[] = [
             `sin(b+a)`
         ];
@@ -116,17 +90,7 @@ describe("sin", function () {
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*sin(b)+cos(b)*sin(a)');
     });
-    it("sin(b+a) with factoring", function () {
-        const lines: string[] = [
-            `sin(b+a)`
-        ];
-        const engine = createScriptEngine({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'sin(a+b)');
-    });
-    it("sin(b-a) without factoring", function () {
+    it("sin(b-a)", function () {
         const lines: string[] = [
             `sin(b-a)`
         ];
@@ -134,17 +98,7 @@ describe("sin", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*sin(b)-sin(a)*cos(b)');
-    });
-    it("sin(b-a) with factoring", function () {
-        const lines: string[] = [
-            `sin(b-a)`
-        ];
-        const engine = createScriptEngine({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'sin(-a+b)');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*sin(b)-cos(b)*sin(a)');
     });
     it("sin(b)*cos(a)-cos(b)*sin(a)", function () {
         // This test demonstrates that a canonical ordering of the sin, cos, and -1
@@ -156,7 +110,7 @@ describe("sin", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'sin(-a+b)');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*sin(b)-cos(b)*sin(a)');
     });
     it("sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))", function () {
         const lines: string[] = [

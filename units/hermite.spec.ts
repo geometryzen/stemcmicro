@@ -20,7 +20,6 @@ describe("hermite", function () {
         const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* 2 x)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "2*x");
         engine.release();
     });
@@ -32,8 +31,7 @@ describe("hermite", function () {
             disable: ['factorize']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 4 x x) -2)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "4*x*x-2");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-2+4*x**2");
         engine.release();
     });
     it("hermite(x,3)", function () {
@@ -44,8 +42,7 @@ describe("hermite", function () {
             disable: ['factorize']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 8 x x x) (* -12 x))");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "8*x*x*x-12*x");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-12*x+8*x**3");
         engine.release();
     });
     it("hermite(x,4)", function () {
@@ -56,8 +53,7 @@ describe("hermite", function () {
             disable: ['factorize']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (* 16 x x x x) (* -48 x x) 12)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "16*x*x*x*x-48*x*x+12");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "12-48*x**2+16*x**4");
         engine.release();
     });
 });

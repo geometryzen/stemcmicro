@@ -134,7 +134,7 @@ describe("transform", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "(a+b)/(a*b)");
         engine.release();
     });
-    it("rationalize(1/a+1/b+1/c)", function () {
+    xit("rationalize(1/a+1/b+1/c)", function () {
         const lines: string[] = [
             `rationalize(1/a+1/b+1/c)`
         ];

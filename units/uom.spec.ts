@@ -316,7 +316,7 @@ describe("uom", function () {
                 dependencies: ['Flt', 'Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Uom, Flt) is not supported.");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Flt, Uom) is not supported.");
             engine.release();
         });
         it("(Rat, Uom)", function () {

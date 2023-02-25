@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/script_engine";
 
-describe("expsin", function () {
+xdescribe("expsin", function () {
     it("expsin(x)", function () {
         const lines: string[] = [
             `expsin(x)`

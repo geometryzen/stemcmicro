@@ -185,7 +185,7 @@ describe("tensor", function () {
                 useCaretForExponentiation: false
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "[[s*a,s*b],[s*c,s*d]]");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "[[a*s,b*s],[c*s,d*s]]");
             engine.release();
         });
         it("[[a,b],[c,d]]*s", function () {
@@ -258,7 +258,7 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = createScriptEngine();
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[[d/(a*d+(-b)*c),(-b)/(a*d+(-b)*c)],[(-c)/(a*d+(-b)*c),a/(a*d+(-b)*c)]]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[[d/(a*d-b*c),-b/(a*d-b*c)],[-c/(a*d-b*c),a/(a*d-b*c)]]");
         engine.release();
     });
     it("inv-adj/det", function () {

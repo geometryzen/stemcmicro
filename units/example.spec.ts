@@ -22,9 +22,9 @@ describe("example", function () {
         });
         const { values } = eng.executeScript(lines.join('\n'));
         // TODO: It would be nice to factor the common x out the lhs or rhs.
-        assert.strictEqual(eng.renderAsInfix(values[0]), "4*x-x*x");
-        assert.strictEqual(eng.renderAsSExpr(values[0]), "(+ (* 4 x) (* -1 x x))");
-        assert.strictEqual(eng.renderAsLaTeX(values[0]), "4x-xx");
+        assert.strictEqual(eng.renderAsInfix(values[0]), "4*x-x**2");
+        assert.strictEqual(eng.renderAsSExpr(values[0]), "(+ (* 4 x) (* -1 (power x 2)))");
+        assert.strictEqual(eng.renderAsLaTeX(values[0]), "4x-x^2");
         eng.release();
     });
 });

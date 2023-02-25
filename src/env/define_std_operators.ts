@@ -137,6 +137,7 @@ import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner_extension } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
+import { inner_2_any_rat } from '../operators/inner/inner_2_any_rat';
 import { inner_2_any_real } from '../operators/inner/inner_2_any_real';
 import { inner_2_blade_blade } from '../operators/inner/inner_2_blade_blade';
 import { inner_2_imu_any } from '../operators/inner/inner_2_imu_any';
@@ -550,6 +551,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inner_2_blade_blade);
     $.defineOperator(inner_2_real_any);
     $.defineOperator(inner_2_any_real);
+    $.defineOperator(inner_2_any_rat);
     $.defineOperator(inner_2_any_imu);
     $.defineOperator(inner_extension);
 

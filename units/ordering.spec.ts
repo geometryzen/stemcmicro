@@ -293,7 +293,7 @@ describe("ordering", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(value), "(p+q)*d(a,b)");
+            assert.strictEqual(engine.renderAsInfix(value), "p*d(a,b)+q*d(a,b)");
             engine.release();
         });
         it("Sum", function () {
@@ -304,7 +304,7 @@ describe("ordering", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(value), "(p+q)*d(a,b)");
+            assert.strictEqual(engine.renderAsInfix(value), "p*d(a,b)+q*d(a,b)");
             engine.release();
         });
         it("Sum", function () {
@@ -315,7 +315,7 @@ describe("ordering", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(value), "p*(d(a,q)+d(b,q))");
+            assert.strictEqual(engine.renderAsInfix(value), "p*d(a,q)+p*d(b,q)");
             engine.release();
         });
         it("Sum", function () {
@@ -337,7 +337,7 @@ describe("ordering", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(value), "p*(d(a,q)+d(b,q))");
+            assert.strictEqual(engine.renderAsInfix(value), "p*d(a,q)+p*d(b,q)");
             engine.release();
         });
         it("Sum", function () {
@@ -348,7 +348,7 @@ describe("ordering", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(value), "a*(d(b,p)+d(b,q))");
+            assert.strictEqual(engine.renderAsInfix(value), "a*d(b,p)+a*d(b,q)");
             engine.release();
         });
     });
@@ -374,8 +374,7 @@ describe("ordering", function () {
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), "(* a (+ (derivative b x) (derivative b y)))");
-            assert.strictEqual(engine.renderAsInfix(value), "a*(d(b,x)+d(b,y))");
+            assert.strictEqual(engine.renderAsInfix(value), "a*d(b,x)+a*d(b,y)");
             engine.release();
         });
         it("a*(d(b,x)+d(b,y))", function () {
@@ -386,8 +385,7 @@ describe("ordering", function () {
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), "(* a (+ (derivative b x) (derivative b y)))");
-            assert.strictEqual(engine.renderAsInfix(value), "a*(d(b,x)+d(b,y))");
+            assert.strictEqual(engine.renderAsInfix(value), "a*d(b,x)+a*d(b,y)");
             engine.release();
         });
         it("d(b,y)+d(b,x)", function () {
@@ -410,8 +408,7 @@ describe("ordering", function () {
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), "(* a (+ (derivative b x) (derivative b y)))");
-            assert.strictEqual(engine.renderAsInfix(value), "a*(d(b,x)+d(b,y))");
+            assert.strictEqual(engine.renderAsInfix(value), "a*d(b,x)+a*d(b,y)");
             engine.release();
         });
     });    

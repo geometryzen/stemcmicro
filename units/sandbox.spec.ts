@@ -3,88 +3,28 @@ import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    it("A", function () {
+    it("Determining the magnitude of A x B", function () {
         const lines: string[] = [
-            `G = algebra([1,1,1],["e1","e2","e3"])`,
-            `e1=G[1]`,
-            `kg = uom("kilogram")`,
-            `5.0 * e1 * kg`
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
+            `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
+            `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
+            `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+            `A = Ax * e1 + Ay * e2 + Az * e3`,
+            `B = Bx * e1 + By * e2 + Bz * e3`,
+            `C = Cx * e1 + Cy * e2 + Cz * e3`,
+            `LHS=cross(A,B)|cross(A,B)`,
+            `RHS=(A|A)*(B|B)-(A|B)**2`,
+            `LHS-RHS`
         ];
         const engine = createScriptEngine({
-            dependencies: ['Blade', 'Flt', 'Uom']
+            dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "5.0*e1*kg");
-        engine.release();
-    });
-    it("B", function () {
-        const lines: string[] = [
-            `G = algebra([1,1,1],["i","j","k"])`,
-            `i=G[1]`,
-            `kg = uom("kilogram")`,
-            `5.0 * kg * i`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Flt', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "5.0*i*kg");
-        engine.release();
-    });
-    it("C", function () {
-        const lines: string[] = [
-            `G = algebra([1,1,1],["i","j","k"])`,
-            `i=G[1]`,
-            `kg = uom("kilogram")`,
-            `kg * 5.0 * i`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Flt', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "5.0*i*kg");
-        engine.release();
-    });
-    it("D", function () {
-        const lines: string[] = [
-            `G = algebra([1,1,1],["i","j","k"])`,
-            `i=G[1]`,
-            `kg = uom("kilogram")`,
-            `kg * i * 5.0`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Flt', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "5.0*i*kg");
-        engine.release();
-    });
-    it("E", function () {
-        const lines: string[] = [
-            `G = algebra([1,1,1],["i","j","k"])`,
-            `i=G[1]`,
-            `kg = uom("kilogram")`,
-            `i * kg * 5.0`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Flt', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "5.0*i*kg");
-        engine.release();
-    });
-    it("F", function () {
-        const lines: string[] = [
-            `G = algebra([1,1,1],["i","j","k"])`,
-            `i=G[1]`,
-            `kg = uom("kilogram")`,
-            `i * 5.0 * kg`
-        ];
-        const engine = createScriptEngine({
-            dependencies: ['Blade', 'Flt', 'Uom']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "5.0*i*kg");
+        assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
 });

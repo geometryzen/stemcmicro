@@ -44,7 +44,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
     const lhs = expr.lhs;
 
     // case of tensor
-    if (caadr(expr) === SYM_MATH_COMPONENT) {
+    if (caadr(expr).equals(SYM_MATH_COMPONENT)) {
         return setq_indexed(expr, $);
     }
 

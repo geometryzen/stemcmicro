@@ -707,7 +707,7 @@ function emit_denominator(p: U, n: number, $: ExtensionEnv) {
 }
 
 function emit_function(p: U, $: ExtensionEnv) {
-    if (car(p) === SYM_MATH_COMPONENT && is_sym(cadr(p))) {
+    if (car(p).equals(SYM_MATH_COMPONENT) && is_sym(cadr(p))) {
         emit_index_function(p, $);
         return;
     }
@@ -717,7 +717,7 @@ function emit_function(p: U, $: ExtensionEnv) {
         return;
     }
 
-    if (car(p) === MATH_DERIVATIVE) {
+    if (car(p).equals(MATH_DERIVATIVE)) {
         __emit_char('d');
     }
     else {

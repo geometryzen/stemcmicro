@@ -160,7 +160,7 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     if (opr.equals(BESSELY)) {
         return dbessely(F, X, $);
     }
-    if (car(F) === INTEGRAL && caddr(F) === X) {
+    if (car(F).equals(INTEGRAL) && caddr(F).equals(X)) {
         return derivative_of_integral(F);
     }
     return dfunction(F, X, $);
@@ -191,7 +191,7 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
     // d(f(x,y),x)
     const p3 = derivative(cadr(p1), p2, $);
 
-    if (car(p3) === MATH_DERIVATIVE) {
+    if (car(p3).equals(MATH_DERIVATIVE)) {
         // handle dx terms
         const caddr_p3 = caddr(p3);
         const caddr_p1 = caddr(p1);

@@ -95,9 +95,9 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
 
     // first check is whether we don't obtain a function
     if (
-        car(bodyAndFormalArguments) !== FUNCTION ||
+        !car(bodyAndFormalArguments).equals(FUNCTION) ||
         // next check is whether evaluation did nothing, so the function is undefined
-        bodyAndFormalArguments === car(expr)
+        bodyAndFormalArguments.equals(car(expr))
     ) {
         // leave everything as it was and return
         const h = defs.tos;

@@ -53,7 +53,7 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
         // TODO: The fact that we have to special case the "for" suggests that the handlers
         // of operators should be called so that the system is generic.
     }
-    else if (is_cons(expr) && car(expr) !== FOR) {
+    else if (is_cons(expr) && !car(expr).equals(FOR)) {
         const bakeList = makeList(car(expr), ...expr.tail().map(function (x) {
             return bake(x, $);
         }));

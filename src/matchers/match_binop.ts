@@ -5,7 +5,7 @@ import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, U } from "../tree/tree";
 
 /**
- * matches expr: Cons(Sym, Cons(*, *)) and car(exp) === symbol(num)
+ * matches expr: Cons(Sym, Cons(*, *)) and car(exp) equals symbol(num)
  * TODO: Change the type of expr to Cons so that consumers don't accidentally try to test other things.
  * They can then do is_cons(expr) ? match(..) : void 0
  */

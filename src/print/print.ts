@@ -1805,7 +1805,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     //    return
     //  }
 
-    if (car(expr) === FUNCTION) {
+    if (car(expr).equals(FUNCTION)) {
         let str = '';
         const fbody = cadr(expr);
 
@@ -1820,7 +1820,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         return str;
     }
 
-    if (car(expr) === PATTERN) {
+    if (car(expr).equals(PATTERN)) {
         let str = '';
         str += render_as_infix(caadr(expr), $);
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1839,7 +1839,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         return str;
     }
 
-    if (car(expr) === SYM_MATH_COMPONENT && is_sym(cadr(expr))) {
+    if (car(expr).equals(SYM_MATH_COMPONENT) && is_sym(cadr(expr))) {
         let str = '';
         str += print_index_function(expr, $);
         return str;
@@ -1853,7 +1853,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     else if (is_cons(expr) && is_abs(expr) && defs.printMode === PRINTMODE_LATEX) {
         return print_ABS_latex(expr, $);
     }
-    else if (car(expr) === SQRT && defs.printMode === PRINTMODE_LATEX) {
+    else if (car(expr).equals(SQRT) && defs.printMode === PRINTMODE_LATEX) {
         let str = '';
         str += print_SQRT_latex(expr, $);
         return str;
@@ -1871,7 +1871,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return str;
         }
     }
-    else if (car(expr) === UNIT) {
+    else if (car(expr).equals(UNIT)) {
         if (defs.codeGen) {
             let str = '';
             str += print_UNIT_codegen(expr, $);
@@ -1890,12 +1890,12 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return str;
         }
     }
-    else if (car(expr) === BINOMIAL && defs.printMode === PRINTMODE_LATEX) {
+    else if (car(expr).equals(BINOMIAL) && defs.printMode === PRINTMODE_LATEX) {
         let str = '';
         str += print_BINOMIAL_latex(expr, $);
         return str;
     }
-    else if (car(expr) === DEFINT && defs.printMode === PRINTMODE_LATEX) {
+    else if (car(expr).equals(DEFINT) && defs.printMode === PRINTMODE_LATEX) {
         let str = '';
         str += print_DEFINT_latex(expr, $);
         return str;

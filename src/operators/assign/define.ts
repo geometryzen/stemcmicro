@@ -71,7 +71,7 @@ export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
 
     // evaluate function body (maybe)
 
-    if (car(B) === EVAL) {
+    if (car(B).equals(EVAL)) {
         B = $.valueOf(cadr(B));
     }
 

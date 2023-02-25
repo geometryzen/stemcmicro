@@ -155,7 +155,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // TODO: This code will be extracted into special handlers (all code should be?).
 
     // e^log(...)
-    if (is_base_of_natural_logarithm(base) && car(expo) === LOG) {
+    if (is_base_of_natural_logarithm(base) && car(expo).equals(LOG)) {
         const result = cadr(expo);
         return hook(result, "M");
     }

@@ -119,7 +119,7 @@ function remove_negative_exponents(p2: U, p3: U, p9: U, $: ExtensionEnv): [U, U]
         if (!is_power(p1)) {
             continue;
         }
-        if (cadr(p1) !== p9) {
+        if (!cadr(p1).equals(p9)) {
             continue;
         }
         const k = nativeInt(caddr(p1));

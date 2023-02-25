@@ -3,9 +3,9 @@ import { assert } from "chai";
 import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    it("???", function () {
+    it("1+x+x^2", function () {
         const lines: string[] = [
-            `arctan(tan(x))`
+            `1+x+x^2`
         ];
         const engine = createScriptEngine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
@@ -13,12 +13,12 @@ describe("sandbox", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "x");
+        assert.strictEqual(engine.renderAsInfix(value), "x^2+x+1");
         engine.release();
     });
-    xit("???", function () {
+    it("1+a+a^2", function () {
         const lines: string[] = [
-            `abs(a+i*b)`
+            `1+a+a^2`
         ];
         const engine = createScriptEngine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
@@ -26,7 +26,7 @@ describe("sandbox", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(a^2+b^2)^(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "1+a+a^2");
         engine.release();
     });
 });

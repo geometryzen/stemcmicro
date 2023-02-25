@@ -43,7 +43,7 @@ function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
     // a function, so we resolve all variables
     // indirections and we simplify everything
     // we can given the current assignments.
-    if (defs.codeGen && car(expr) === FUNCTION) {
+    if (defs.codeGen && car(expr).equals(FUNCTION)) {
         const fbody = cadr(expr);
         // let's simplify the body so we give it a
         // compact form
@@ -199,7 +199,7 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
     if (carp1.equals(MULTIPLY) || is_inner_or_dot(p1)) {
         // both operands a transpose?
 
-        if (car(car(cdr(p1))) === TRANSPOSE && car(car(cdr(cdr(p1)))) === TRANSPOSE) {
+        if (car(car(cdr(p1))).equals(TRANSPOSE) && car(car(cdr(cdr(p1)))).equals(TRANSPOSE)) {
             if (DEBUG) {
                 // eslint-disable-next-line no-console
                 // console.lg(`maybe collecting a transpose ${p1}`);
@@ -482,7 +482,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     // console.lg("possible double radical base: " + base)
     // console.lg("possible double radical exponent: " + exponent)
 
-    if ((is_num(expo) && expo.isMinusOne()) || car(base) !== ADD || !(is_rat(expo) && expo.isFraction()) || (!equalq(expo, 1, 3) && !equalq(expo, 1, 2))) {
+    if ((is_num(expo) && expo.isMinusOne()) || !car(base).equals(ADD) || !(is_rat(expo) && expo.isFraction()) || (!equalq(expo, 1, 3) && !equalq(expo, 1, 2))) {
         return [p1, TFLAG_NONE];
     }
 

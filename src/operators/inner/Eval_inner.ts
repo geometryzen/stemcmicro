@@ -132,7 +132,7 @@ export function Eval_inner(p1: U, $: ExtensionEnv): void {
     let refinedOperands: U[] = [];
     // removing all identity matrices
     for (let i = 0; i < operands.length; i++) {
-        if (operands[i] !== SYMBOL_IDENTITY_MATRIX) {
+        if (!operands[i].equals(SYMBOL_IDENTITY_MATRIX)) {
             refinedOperands.push(operands[i]);
         }
     }

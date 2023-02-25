@@ -1,8 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
-import { yyfloat } from '../float/float';
-import { is_flt } from '../flt/is_flt';
-import { is_tensor } from '../tensor/is_tensor';
 import { print_str } from '../../print/print';
 import { EIGEN, EIGENVAL, EIGENVEC } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
@@ -12,6 +9,9 @@ import { cadr } from '../../tree/helpers';
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { NIL, U } from '../../tree/tree';
+import { yyfloat } from '../float/float';
+import { is_flt } from '../flt/is_flt';
+import { is_tensor } from '../tensor/is_tensor';
 
 /* eigen =====================================================================
 
@@ -280,7 +280,7 @@ function eigen(op: Sym, p1: Tensor<Flt>): [D: Tensor, Q: Tensor] {
 
     const Ddims = p1.copyDimensions();
     const Delems = p1.copyElements();
-    if (op === EIGEN || op === EIGENVAL) {
+    if (op.equals(EIGEN) || op.equals(EIGENVAL)) {
         for (let i = 0; i < EIG_N; i++) {
             for (let j = 0; j < EIG_N; j++) {
                 Delems[EIG_N * i + j] = wrap_as_flt(EIG_yydd[EIG_N * i + j]);
@@ -290,7 +290,7 @@ function eigen(op: Sym, p1: Tensor<Flt>): [D: Tensor, Q: Tensor] {
 
     const Qdims = p1.copyDimensions();
     const Qelems = p1.copyElements();
-    if (op === EIGEN || op === EIGENVEC) {
+    if (op.equals(EIGEN) || op.equals(EIGENVEC)) {
         for (let i = 0; i < EIG_N; i++) {
             for (let j = 0; j < EIG_N; j++) {
                 Qelems[EIG_N * i + j] = wrap_as_flt(EIG_yyqq[EIG_N * i + j]);

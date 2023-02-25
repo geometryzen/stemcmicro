@@ -1711,7 +1711,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     }
 
     if (is_boo(expr)) {
-        return expr.equals(booT) ? 'True' : 'False';
+        return expr.equals(booT) ? 'true' : 'false';
     }
 
     if (is_str(expr)) {

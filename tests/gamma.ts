@@ -1,21 +1,21 @@
 import { run_test } from '../test-harness';
 
 run_test([
-  'Gamma(a)',
-  'Gamma(a)',
+  'gamma(a)',
+  'gamma(a)',
 
   //  "float(gamma(10))",
   //  "362880",
 
-  'Gamma(x+1)',
-  'x*Gamma(x)',
+  'gamma(x+1)',
+  'x*gamma(x)',
 
-  'Gamma(1/2)',
+  'gamma(1/2)',
   'pi^(1/2)',
 
-  'Gamma(x-1)-Gamma(x)/(-1+x)',
+  'gamma(x-1)-gamma(x)/(-1+x)',
   '0',
 
-  'Gamma(-x)',
-  '-pi/(x*Gamma(x)*sin(pi*x))',
+  'gamma(-x)',
+  '-pi/(x*gamma(x)*sin(pi*x))',
 ]);

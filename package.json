@@ -173,6 +173,7 @@
         "test-factorpoly": "mocha 'tests/factorpoly.ts'",
         "test-fixme": "mocha 'tests/fixme.ts'",
         "test-float": "mocha 'tests/float.ts'",
+        "test-gamma": "mocha 'tests/gamma.ts'",
         "test-isprime": "mocha 'tests/isprime.ts'",
         "test-kernel-0": "mocha 'tests/kernel-0.ts'",
         "test-kernel-1": "mocha 'tests/kernel-1.ts'",

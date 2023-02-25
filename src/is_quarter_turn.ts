@@ -11,7 +11,7 @@ import { imu } from "./env/imu";
 import { length_of_cons_otherwise_zero } from "./length_of_cons_or_zero";
 import { nativeInt } from "./nativeInt";
 import { is_num } from "./operators/num/is_num";
-import { PI } from "./runtime/constants";
+import { is_pi } from './operators/pi/is_pi';
 import { is_multiply } from "./runtime/helpers";
 import { cadddr, caddr, cadr } from "./tree/helpers";
 import { two } from "./tree/rat/Rat";
@@ -26,7 +26,7 @@ export function is_quarter_turn(p: U, $: ExtensionEnv): 0 | 1 | 2 | 3 | 4 {
     }
 
     if ($.equals(cadr(p), imu)) {
-        if (!caddr(p).equals(PI)) {
+        if (!is_pi(caddr(p))) {
             return 0;
         }
 
@@ -45,7 +45,7 @@ export function is_quarter_turn(p: U, $: ExtensionEnv): 0 | 1 | 2 | 3 | 4 {
         return 0;
     }
 
-    if (!cadddr(p).equals(PI)) {
+    if (!is_pi(cadddr(p))) {
         return 0;
     }
 

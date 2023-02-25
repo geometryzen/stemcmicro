@@ -13,6 +13,7 @@ import { is_hyp } from '../operators/hyp/is_hyp';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_num } from '../operators/num/is_num';
 import { numerator } from '../operators/numerator/numerator';
+import { is_pi } from '../operators/pi/is_pi';
 import { is_rat } from '../operators/rat/is_rat';
 import { is_str } from '../operators/str/is_str';
 import { is_sym } from '../operators/sym/is_sym';
@@ -2173,7 +2174,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             }
         }
     }
-    else if (MATH_PI.equals(expr)) {
+    else if (is_pi(expr)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             return print_str('\\pi');
         }

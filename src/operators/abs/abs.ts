@@ -7,7 +7,6 @@ import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../../predicates/is_negative';
 import { is_negative_number } from '../../predicates/is_negative_number';
-import { PI } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { oneAsDouble } from '../../tree/flt/Flt';
@@ -17,6 +16,7 @@ import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, items_to_cons, U } from '../../tree/tree';
 import { imag } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
+import { is_pi } from '../pi/is_pi';
 import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { simplify, simplify_trig } from '../simplify/simplify';
@@ -125,7 +125,7 @@ export function abs(x: U, $: ExtensionEnv): U {
         return hook(expr, "D");
     }
 
-    if (PI.equals(expr)) {
+    if (is_pi(expr)) {
         return hook(expr, "E1");
     }
 

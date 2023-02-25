@@ -123,12 +123,12 @@ run_test([
     '(* a b)',
 
     'b*a',
-    'b*a',
+    'a*b',
 
     // In version 1.x the symbols are allowed to commute.
     // They are ordered lexically.
     'printlist',
-    '(* b a)',
+    '(* a b)',
 
     // In version 1.x, the caret (circumflex) symbol is used for exponentiation.
     'a*a',

@@ -8,8 +8,8 @@ import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
-import { is_cons_opr_eq_add } from "./is_cons_opr_eq_add";
 import { is_add_2_any_any } from "./is_add_2_any_any";
+import { is_cons_opr_eq_add } from "./is_cons_opr_eq_add";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {

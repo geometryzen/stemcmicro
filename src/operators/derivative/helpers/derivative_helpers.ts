@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
-import { cmp_terms } from '../../../calculators/compare/cmp_terms';
 import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
 import { exp } from '../../../exp';
@@ -30,6 +29,7 @@ import {
 } from '../../../runtime/constants';
 import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
+import { MATH_ADD } from '../../../runtime/ns_math';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
@@ -197,7 +197,7 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
         const caddr_p1 = caddr(p1);
         const cadr_p3 = cadr(p3);
         // Determine whether we should be comparing as terms or factors. I think it is as terms.
-        if (cmp_terms(caddr_p3, caddr_p1, $) < 0) {
+        if ($.getSymbolOrder(MATH_ADD).compare(caddr_p3, caddr_p1, $) < 0) {
             return makeList(MATH_DERIVATIVE, makeList(MATH_DERIVATIVE, cadr_p3, caddr_p3), caddr_p1);
         }
         else {

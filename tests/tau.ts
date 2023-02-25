@@ -2,15 +2,15 @@ import { run_test } from '../test-harness';
 
 run_test([
     'tau(1)',
-    '2*π',
+    '2*pi',
 ], { verbose: true });
 
 run_test([
     'tau(1)/2',
-    'π'
+    'pi'
 ], { verbose: true });
 
 run_test([
     'float(tau(1)/2)',
-    'π'
+    '3.141593...'
 ], { verbose: true });

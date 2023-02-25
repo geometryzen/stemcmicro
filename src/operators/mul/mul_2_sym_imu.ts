@@ -1,13 +1,12 @@
-import { compare_factors } from "../../calculators/compare/compare_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
-import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { is_sym } from "../sym/is_sym";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -47,7 +46,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
-        switch (compare_factors(lhs, rhs, $)) {
+        switch ($.getSymbolOrder(opr).compare(lhs, rhs, $)) {
             case SIGN_GT: {
                 return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
             }

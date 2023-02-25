@@ -1,5 +1,5 @@
-import { Sign, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { MATH_PI } from "../../runtime/ns_math";
+import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { is_pi } from "../../operators/pi/is_pi";
 import { Sym } from "../../tree/sym/Sym";
 
 /**
@@ -8,11 +8,16 @@ import { Sym } from "../../tree/sym/Sym";
  * It takes no account of whether the symbols should be treated as vectors.
  */
 export function compare_sym_sym(lhs: Sym, rhs: Sym): Sign {
-    if (MATH_PI.equalsSym(lhs)) {
+    if (is_pi(lhs) && is_pi(rhs)) {
+        return SIGN_EQ;
+    }
+    else if (is_pi(lhs)) {
         return SIGN_LT;
     }
-    if (MATH_PI.equalsSym(rhs)) {
+    else if (is_pi(rhs)) {
         return SIGN_GT;
     }
-    return lhs.compare(rhs);
+    else {
+        return lhs.compare(rhs);
+    }
 }

@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { MATH_ADD } from "../../runtime/ns_math";
 import { U } from "../../tree/tree";
-import { cmp_terms } from "./cmp_terms";
 
 /**
  * Sorts an array of terms. Assumes that terms can commute under addition. 
@@ -14,7 +14,7 @@ export function sort_terms(terms: U[], $: ExtensionEnv): U[] {
         return { value, index };
     });
     sortable.sort(function (x, y) {
-        return cmp_terms(x.value, y.value, $);
+        return $.getSymbolOrder(MATH_ADD).compare(x.value, y.value, $);
     });
     const sorted = sortable.map(function (elem) {
         return elem.value;

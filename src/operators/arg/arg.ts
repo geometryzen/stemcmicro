@@ -23,6 +23,7 @@ import { is_imu } from '../imu/is_imu';
 import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { is_sym } from '../sym/is_sym';
+import { is_pi } from '../pi/is_pi';
 
 /* arg =====================================================================
 
@@ -104,7 +105,7 @@ export function Eval_arg(expr: Cons, $: ExtensionEnv): U {
 export function yyarg(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyarg expr=${expr}`);
     // case of plain number
-    if (is_num_and_gt_zero(expr) || PI.equals(expr)) {
+    if (is_num_and_gt_zero(expr) || is_pi(expr)) {
         return is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? zeroAsDouble : zero;
     }
 

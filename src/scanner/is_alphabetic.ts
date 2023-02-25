@@ -1,4 +1,7 @@
 
+/**
+ * A ... Z or a ... z
+ */
 export function is_alphabetic(str: string): boolean {
     if (str == null) {
         return false;

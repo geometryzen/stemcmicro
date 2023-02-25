@@ -1,5 +1,4 @@
-import { compare_factors } from "../../calculators/compare/compare_factors";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -32,7 +31,7 @@ function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
         const Z = lhs.rhs;
         const A = rhs.lhs;
-        return is_sym(Z) && is_sym(A) && compare_factors(Z, A, $) > 0;
+        return is_sym(Z) && is_sym(A) && $.getSymbolOrder(MATH_MUL).compare(Z, A, $) > 0;
     };
 }
 

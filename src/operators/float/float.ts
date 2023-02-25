@@ -3,12 +3,12 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { PI } from '../../runtime/constants';
 import { stack_push } from '../../runtime/stack';
 import { eAsDouble, Flt, piAsDouble } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, is_cons, U } from '../../tree/tree';
+import { is_pi } from '../pi/is_pi';
 import { is_rat } from '../rat/is_rat';
 import { is_tensor } from '../tensor/is_tensor';
 
@@ -91,7 +91,7 @@ function yyfloat_(expr: U, $: ExtensionEnv): Flt | Cons | Tensor | U {
     if (is_rat(expr)) {
         return rat_to_flt(expr);
     }
-    if (PI.equals(expr)) {
+    if (is_pi(expr)) {
         return piAsDouble;
     }
     if (is_base_of_natural_logarithm(expr)) {

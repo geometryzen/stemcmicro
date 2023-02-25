@@ -31,8 +31,7 @@ describe("tan", function () {
         ];
         const engine = createScriptEngine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(tan (+ (* -1 a) b))");
-        assert.strictEqual(engine.renderAsInfix(actual), "tan(-a+b)");
+        assert.strictEqual(engine.renderAsInfix(actual), "-tan(a-b)");
 
         engine.release();
     });

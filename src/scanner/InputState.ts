@@ -224,7 +224,8 @@ export class InputState {
      * '**' or "**" T_STAR_STAR
      */
     private get_token(): void {
-        // console.lg(`get_token(start = ${JSON.stringify(this.token)})`);
+        // eslint-disable-next-line no-console
+        // console.lg(`get_token(start = ${JSON.stringify(this.#token)})`);
 
         // skip spaces
         while (is_space(this.curr)) {

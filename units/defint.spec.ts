@@ -9,8 +9,8 @@ describe("defint", function () {
         ];
         const engine = createScriptEngine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(* 1/8 π)");
-        assert.strictEqual(engine.renderAsInfix(actual), "1/8*π");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(* 1/8 pi)");
+        assert.strictEqual(engine.renderAsInfix(actual), "1/8*pi");
 
         engine.release();
     });

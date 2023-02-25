@@ -5,7 +5,7 @@ import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_inf
 import { evaluatingTrigAsExp } from "../../modes/modes";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { MATH_ADD, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
+import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
@@ -18,6 +18,7 @@ import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
 import { is_imu } from "../imu/is_imu";
 import { is_cons_opr_eq_mul } from "../mul/is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
+import { is_pi } from "../pi/is_pi";
 import { is_rat } from "../rat/rat_extension";
 import { is_sym } from "../sym/is_sym";
 
@@ -98,7 +99,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                     // Euler's identity exp(i * pi), but may not work because of canonical ordering.
                     // TODO: Shouldn't need this since it is a special case of Euler's formula.
                     if (is_imu(expo_lhs)) {
-                        if (MATH_PI.equals(expo_rhs)) {
+                        if (is_pi(expo_rhs)) {
                             // Euler's identity.
                             // console.lg(`Euler 1`);
                             return [TFLAG_DIFF, negOne];

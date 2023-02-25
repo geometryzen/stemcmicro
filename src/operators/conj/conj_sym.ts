@@ -18,7 +18,6 @@ class ConjSym extends Function1<Sym> implements Operator<U> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Sym, expr: UCons<Sym, Sym>): [TFLAGS, U] {
-        const $ = this.$;
         // TODO: Strictly speaking we need the symbol to be a real number.
         return [TFLAG_DIFF, arg];
     }

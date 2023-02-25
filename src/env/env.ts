@@ -386,7 +386,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.operatorFor(expr).isScalar(expr);
         },
         isVector(expr: U): boolean {
-            // console.lg(`isVector ${expr}`);
             return $.operatorFor(expr).isVector(expr);
         },
         isZero(expr: U): boolean {
@@ -735,7 +734,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolToken(MATH_OUTER, '^');
 
     $.setSymbolToken(MATH_E, 'e');
-    $.setSymbolToken(MATH_PI, 'π');
+    $.setSymbolToken(MATH_PI, 'pi');
     $.setSymbolToken(MATH_NIL, '()');
     $.setSymbolToken(MATH_IMU, 'i');
 

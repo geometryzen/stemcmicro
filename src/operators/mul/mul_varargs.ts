@@ -1,7 +1,5 @@
-import { compare_factors } from '../../calculators/compare/compare_factors';
-import { decodeMode, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { render_as_infix } from '../../print/print';
 import { MULTIPLY } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -14,7 +12,7 @@ import { is_mul_2_any_any } from "./is_mul_2_any_any";
 
 const make_factor_comparator = function ($: ExtensionEnv) {
     return function (a: U, b: U) {
-        const sign = compare_factors(a, b, $);
+        const sign = $.getSymbolOrder(MATH_MUL).compare(a, b, $);
         // console.lg("compare_factors", "LHS", render_as_infix(a, $), "RHS", render_as_infix(b, $), sign);
         return sign;
     };

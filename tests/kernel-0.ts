@@ -6,7 +6,7 @@ run_test([
 
     'printlist',
     '5',
-]);
+], { name: "Rat parse" });
 
 run_test([
     '2.0',

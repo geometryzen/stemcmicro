@@ -1,7 +1,5 @@
-import { compare_factors } from "../../calculators/compare/compare_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
@@ -9,6 +7,7 @@ import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
+import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { is_sym } from "../sym/is_sym";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -37,7 +36,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const a = lhs.lhs;
         const i = lhs.rhs;
         const b = rhs;
-        switch (compare_factors(i, b, $)) {
+        switch ($.getSymbolOrder(opr).compare(i, b, $)) {
             case SIGN_GT: {
                 const ab = $.valueOf(items_to_cons(opr, a, b));
                 const abi = $.valueOf(items_to_cons(MATH_MUL, ab, i));

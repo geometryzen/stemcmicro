@@ -22,7 +22,6 @@ class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
         this.hash = hash_binop_atom_atom(MATH_OUTER, HASH_SYM, HASH_SYM);
     }
     transform2(opr: Sym, lhs: Sym, rhs: Sym, expr: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
-        const $ = this.$;
         return [TFLAG_HALT, expr];
     }
 }

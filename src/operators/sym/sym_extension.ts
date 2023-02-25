@@ -1,11 +1,11 @@
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { evaluatingAsFloat } from "../../modes/modes";
-import { PI } from "../../runtime/constants";
 import { piAsDouble } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { NIL, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { is_pi } from "../pi/is_pi";
 import { get_binding } from "./get_binding";
 import { is_sym } from "./is_sym";
 import { TYPE_NAME_SYM } from "./TYPE_NAME_SYM";
@@ -27,7 +27,7 @@ class SymExtension implements Extension<Sym> {
     valueOf(sym: Sym, $: ExtensionEnv): U {
         // Doing the dirty work for PI. Why do we need a special case?
         // What about E from the math namespace?
-        if (PI.equals(sym) && $.getModeFlag(evaluatingAsFloat)) {
+        if (is_pi(sym) && $.getModeFlag(evaluatingAsFloat)) {
             return piAsDouble;
         }
 
@@ -70,9 +70,11 @@ class SymExtension implements Extension<Sym> {
     isReal(sym: Sym, $: ExtensionEnv): boolean {
         return $.treatAsReal(sym);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(sym: Sym, $: ExtensionEnv): boolean {
         return true;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isVector(sym: Sym, $: ExtensionEnv): boolean {
         return false;
     }

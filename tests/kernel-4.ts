@@ -9,7 +9,7 @@ run_test([
 
     'printlist',
     '(power z 3)',
-]);
+], { useCaretForExponentiation: false });
 
 // MULTIPLY 01
 run_test([
@@ -18,7 +18,7 @@ run_test([
 
     'printlist',
     '(power a 3)',
-]);
+], { useCaretForExponentiation: false });
 // MULTIPLY 02
 run_test([
     'a * a * b',
@@ -178,7 +178,7 @@ run_test([
 
     'printlist',
     '(* a (power c 2))'
-], {});
+], { useCaretForExponentiation: false });
 // MULTIPLY 22
 run_test([
     'c * b * a',
@@ -194,7 +194,7 @@ run_test([
 
     'printlist',
     '(* (power b 2) c)'
-]);
+], { useCaretForExponentiation: false });
 // MULTIPLY 24
 run_test([
     'c * b * c',
@@ -202,7 +202,7 @@ run_test([
 
     'printlist',
     '(* b (power c 2))'
-], {});
+], { useCaretForExponentiation: false });
 // MULTIPLY 25
 run_test([
     'c * c * a',
@@ -210,7 +210,7 @@ run_test([
 
     'printlist',
     '(* a (power c 2))'
-]);
+], { useCaretForExponentiation: false });
 // MULTIPLY 26
 run_test([
     'c * c * b',
@@ -218,7 +218,7 @@ run_test([
 
     'printlist',
     '(* b (power c 2))'
-]);
+], { useCaretForExponentiation: false });
 // ADD 27
 run_test([
     'c * c * c',
@@ -226,4 +226,4 @@ run_test([
 
     'printlist',
     '(power c 3)'
-]);
+], { useCaretForExponentiation: false });

@@ -14,9 +14,6 @@ xdescribe("rect", function () {
             useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
-        // assert.strictEqual(print_expr(value, $), "cos(1/3*π)+sin(1/3*π)*i");
-        // The following is what you get wuthout applying (rect ...)
         assert.strictEqual(engine.renderAsInfix(value), "1/2+(1/2*3**(1/2))*i");
         engine.release();
     });

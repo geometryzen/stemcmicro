@@ -20,8 +20,8 @@ describe("gamma", function () {
         const engine = createScriptEngine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(power π 1/2)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "π**(1/2)");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(power pi 1/2)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "pi**(1/2)");
         engine.release();
     });
 });

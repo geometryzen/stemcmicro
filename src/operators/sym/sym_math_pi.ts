@@ -3,8 +3,8 @@ import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_PI } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
+import { is_pi } from "../pi/is_pi";
 import { assert_sym } from "./assert_sym";
-import { is_sym } from "./is_sym";
 import { TYPE_NAME_SYM } from "./TYPE_NAME_SYM";
 
 class Builder implements OperatorBuilder<Sym> {
@@ -36,7 +36,7 @@ class SymMathPi implements Operator<Sym> {
         return false;
     }
     isKind(expr: U): boolean {
-        return is_sym(expr) && MATH_PI.equals(expr);
+        return is_pi(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isMinusOne(expr: Sym): boolean {

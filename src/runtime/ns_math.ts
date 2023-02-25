@@ -67,7 +67,7 @@ export const MATH_E = new Sym('e');
 /**
  * Approximately 3.14159.
  */
-export const MATH_PI = new Sym('π');
+export const MATH_PI = new Sym('pi');
 /**
  * arg
  */
@@ -113,7 +113,7 @@ export const MATH_EQ = new Sym('==');
  */
 export const MATH_HAS_TYPE = new Sym(':');
 /**
-* tau(x) = 2 * π * x
+* tau(x) = 2 * pi * x
 */
 export const MATH_TAU = new Sym('tau');
 /**

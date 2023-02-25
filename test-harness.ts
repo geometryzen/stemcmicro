@@ -4,7 +4,7 @@ import fs from 'fs';
 import process from 'process';
 import { clear_patterns } from './src/pattern';
 import { defs } from './src/runtime/defs';
-import { createScriptEngine, ScriptEngine, ScriptEngineOptions } from './src/runtime/symengine';
+import { createScriptEngine, ScriptEngine, ScriptEngineOptions } from './src/runtime/script_engine';
 import { U } from './src/tree/tree';
 
 const shardCount = Number(process.env['TEST_TOTAL_SHARDS']) || 1;
@@ -30,6 +30,7 @@ process.on('exit', () => {
     }
 });
 
+/*
 function filter_stack_trace(trace: string) {
     const filtered: string[] = [];
     for (const line of trace.split('\n')) {
@@ -40,6 +41,7 @@ function filter_stack_trace(trace: string) {
     }
     return filtered.join('\n');
 }
+*/
 
 function safeToString(x: boolean | number | string | string[] | U): string {
     if (typeof x === 'string') {
@@ -63,7 +65,7 @@ class Asserts {
         // eslint-disable-next-line no-console
         msg && console.log(msg);
         // eslint-disable-next-line no-console
-        console.log('Expected: ', safeToString(expect));
+        console.log('Expect:   ', safeToString(expect));
         // eslint-disable-next-line no-console
         console.log('Actual:   ', safeToString(actual));
         throw new Error('Failed');
@@ -110,7 +112,7 @@ function _runTest<T extends unknown[]>(
     // console.time(name);
     try {
         // eslint-disable-next-line no-console
-        console.log(name);
+        // console.log("name:", name);
         f(new Asserts(), ...args);
     }
     finally {
@@ -131,7 +133,7 @@ function test<T extends unknown[]>(
         _runTest(name, f, ...args);
         passedTests++;
         // eslint-disable-next-line no-console
-        console.log('OK');
+        // console.log('OK');
         process.stdout.write('.');
     }
     catch (e) {
@@ -139,7 +141,7 @@ function test<T extends unknown[]>(
         if (e instanceof Error) {
             if (e.stack) {
                 // eslint-disable-next-line no-console
-                console.log(filter_stack_trace(e.stack));
+                // console.log(filter_stack_trace(e.stack));
             }
             else {
                 // eslint-disable-next-line no-console
@@ -172,6 +174,7 @@ test.failing = function failing<T extends unknown[]>(name: string, f: (t: Assert
     }
     if (finished) {
         // eslint-disable-next-line no-console
+        console.log();
         console.log('FAIL: test marked as failing but passed');
         failedTests++;
     }
@@ -256,7 +259,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     if (options) {
         const config: TestConfig = {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
@@ -265,8 +268,8 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     else {
         const config: TestConfig = {
             dependencies: [],
-            useCaretForExponentiation: false,
-            useDefinitions: false,
+            useCaretForExponentiation: true,
+            useDefinitions: true,
             verbose: false
         };
         return config;
@@ -277,15 +280,15 @@ function harness_options_to_engine_options(options: TestOptions | undefined): Sc
     if (options) {
         return {
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
+            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true
         };
     }
     else {
         return {
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            useCaretForExponentiation: false,
-            useDefinitions: false
+            useCaretForExponentiation: true,
+            useDefinitions: true
         };
     }
 }
@@ -323,9 +326,9 @@ export function run_test(s: string[], options?: TestOptions): void {
                     }
                     try {
                         const A = engine.executeScript(sourceText);
-                        console.log(`values => ${A.values}`);
-                        console.log(`errors => ${A.errors}`);
-                        console.log(`prints => ${JSON.stringify(A.prints)}`);
+                        // console.lg(`values => ${A.values}`);
+                        // console.lg(`errors => ${A.errors}`);
+                        // console.lg(`prints => ${JSON.stringify(A.prints)}`);
                         if (A.errors.length > 0) {
                             const B = A.errors[0];
                             const C = B.message;
@@ -347,8 +350,9 @@ export function run_test(s: string[], options?: TestOptions): void {
                     }
                     catch (e) {
                         if (e instanceof Error) {
-                            console.log(sourceText);
-                            console.log(e.stack);
+                            console.log('Source:   ', sourceText);
+                            // console.log(e.stack);
+                            throw e;
                         }
                     }
                 }

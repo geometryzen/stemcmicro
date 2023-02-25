@@ -1,6 +1,5 @@
 import { add_num_num } from '../../calculators/add/add_num_num';
 import { canonicalize_mul } from '../../calculators/canonicalize/canonicalize_mul';
-import { cmp_terms } from '../../calculators/compare/cmp_terms';
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
 import { ExtensionEnv, Operator, OperatorBuilder, Sign, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
@@ -15,7 +14,7 @@ import { is_add_2_any_any } from './is_add_2_any_any';
 
 const make_term_comparator = function ($: ExtensionEnv) {
     return function (a: U, b: U) {
-        const sign: Sign = cmp_terms(a, b, $);
+        const sign: Sign = $.getSymbolOrder(MATH_ADD).compare(a, b, $);
         // console.lg("cmp_terms", "lhs", render_as_infix(a, $), "rhs", render_as_infix(b, $), " => ", sign);
         return sign;
     };
@@ -49,11 +48,6 @@ class AddOperator extends FunctionVarArgs implements Operator<Cons> {
         };
         if ($.isExpanding()) {
             const values = expr.tail().map((arg) => $.valueOf(arg));
-            /*
-            for (const value of values) {
-                console.log("value",render_as_infix(value,$));
-            }
-            */
             const terms = make_term_association_implicit(values, $);
             if (terms.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)

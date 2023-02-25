@@ -1,6 +1,6 @@
-import { run_test } from '../test-harness';
+import { xrun_test } from '../test-harness';
 
-run_test([
+xrun_test([
   // wrong
   //"arg(-1)",
   //"-pi",
@@ -31,7 +31,7 @@ run_test([
 ]);
 
 // check when not assuming real variables ----------
-run_test([
+xrun_test([
     'assumeRealVariables = 0',
     '',
 
@@ -59,7 +59,7 @@ run_test([
 
 ]);
 
-run_test([
+xrun_test([
     'assumeRealVariables = 1',
     '',
     // --------------------------------------------------

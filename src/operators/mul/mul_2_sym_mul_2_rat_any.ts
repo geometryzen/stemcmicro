@@ -1,4 +1,3 @@
-import { compare_factors } from "../../calculators/compare/compare_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_SYM } from "../../hashing/hash_info";
 import { makeList } from "../../makeList";
@@ -38,7 +37,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const a = lhs;
         const n = rhs.lhs;
         const X = rhs.rhs;
-        switch (compare_factors(a, n, $)) {
+        switch ($.getSymbolOrder(opr).compare(a, n, $)) {
             case SIGN_GT: {
                 const aX = $.valueOf(makeList(rhs.opr, a, X));
                 const naX = $.valueOf(makeList(opr, n, aX));

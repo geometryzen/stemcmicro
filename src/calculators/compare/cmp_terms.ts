@@ -37,6 +37,9 @@ export class AddComparator implements ExprComparator {
     }
 }
 
+/**
+ * @deprecated
+ */
 export function cmp_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     return $.getSymbolOrder(MATH_ADD).compare(lhs, rhs, $);
 }

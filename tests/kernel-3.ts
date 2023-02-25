@@ -9,7 +9,7 @@ run_test([
     '3*a',
 
     'printlist',
-    '(multiply 3 a)',
+    '(* 3 a)',
 ], {});
 // ADD 02
 run_test([
@@ -17,7 +17,7 @@ run_test([
     '2*a+b',
 
     'printlist',
-    '(add (multiply 2 a) b)'
+    '(+ (* 2 a) b)'
 ], {});
 // ADD 03
 run_test([
@@ -25,7 +25,7 @@ run_test([
     '2*a+c',
 
     'printlist',
-    '(add (multiply 2 a) c)'
+    '(+ (* 2 a) c)'
 ], {});
 // ADD 04
 run_test([
@@ -33,7 +33,7 @@ run_test([
     '2*a+b',
 
     'printlist',
-    '(add (multiply 2 a) b)'
+    '(+ (* 2 a) b)'
 ], {});
 // ADD 05
 run_test([
@@ -41,7 +41,7 @@ run_test([
     'a+2*b',
 
     'printlist',
-    '(add a (multiply 2 b))'
+    '(+ a (* 2 b))'
 ], {});
 // ADD 06
 run_test([
@@ -49,7 +49,7 @@ run_test([
     'a+b+c',
 
     'printlist',
-    '(add a b c)',
+    '(+ a b c)',
 ], {});
 // ADD 07
 run_test([
@@ -57,7 +57,7 @@ run_test([
     '2*a+c',
 
     'printlist',
-    '(add (multiply 2 a) c)'
+    '(+ (* 2 a) c)'
 ], {});
 // ADD 08
 run_test([
@@ -65,7 +65,7 @@ run_test([
     'a+b+c',
 
     'printlist',
-    '(add a b c)'
+    '(+ a b c)'
 ], {});
 // ADD 09
 run_test([
@@ -73,7 +73,7 @@ run_test([
     'a+2*c',
 
     'printlist',
-    '(add a (multiply 2 c))'
+    '(+ a (* 2 c))'
 ], {});
 // ADD 10
 run_test([
@@ -81,7 +81,7 @@ run_test([
     '2*a+b',
 
     'printlist',
-    '(add (multiply 2 a) b)'
+    '(+ (* 2 a) b)'
 ], {});
 // ADD 11
 run_test([
@@ -89,7 +89,7 @@ run_test([
     'a+2*b',
 
     'printlist',
-    '(add a (multiply 2 b))'
+    '(+ a (* 2 b))'
 ], {});
 // ADD 12
 run_test([
@@ -97,7 +97,7 @@ run_test([
     'a+b+c',
 
     'printlist',
-    '(add a b c)'
+    '(+ a b c)'
 ], {});
 // ADD 13
 run_test([
@@ -105,7 +105,7 @@ run_test([
     'a+2*b',
 
     'printlist',
-    '(add a (multiply 2 b))'
+    '(+ a (* 2 b))'
 ], {});
 // ADD 14
 run_test([
@@ -113,7 +113,7 @@ run_test([
     '3*b',
 
     'printlist',
-    '(multiply 3 b)'
+    '(* 3 b)'
 ], {});
 // ADD 15
 run_test([
@@ -121,7 +121,7 @@ run_test([
     '2*b+c',
 
     'printlist',
-    '(add (multiply 2 b) c)'
+    '(+ (* 2 b) c)'
 ], {});
 // ADD 16
 run_test([
@@ -129,7 +129,7 @@ run_test([
     'a+b+c',
 
     'printlist',
-    '(add a b c)'
+    '(+ a b c)'
 ], {});
 // ADD 17
 run_test([
@@ -137,7 +137,7 @@ run_test([
     '2*b+c',
 
     'printlist',
-    '(add (multiply 2 b) c)'
+    '(+ (* 2 b) c)'
 ], {});
 // ADD 18
 run_test([
@@ -145,7 +145,7 @@ run_test([
     'b+2*c',
 
     'printlist',
-    '(add b (multiply 2 c))'
+    '(+ b (* 2 c))'
 ], {});
 // ADD 19
 run_test([
@@ -153,7 +153,7 @@ run_test([
     '2*a+c',
 
     'printlist',
-    '(add (multiply 2 a) c)'
+    '(+ (* 2 a) c)'
 ], {});
 // ADD 20
 run_test([
@@ -161,7 +161,7 @@ run_test([
     'a+b+c',
 
     'printlist',
-    '(add a b c)'
+    '(+ a b c)'
 ], {});
 // ADD 21
 run_test([
@@ -169,7 +169,7 @@ run_test([
     'a+2*c',
 
     'printlist',
-    '(add a (multiply 2 c))'
+    '(+ a (* 2 c))'
 ], {});
 // ADD 22
 run_test([
@@ -177,7 +177,7 @@ run_test([
     'a+b+c',
 
     'printlist',
-    '(add a b c)'
+    '(+ a b c)'
 ], {});
 // ADD 23
 run_test([
@@ -185,7 +185,7 @@ run_test([
     '2*b+c',
 
     'printlist',
-    '(add (multiply 2 b) c)'
+    '(+ (* 2 b) c)'
 ], {});
 // ADD 24
 run_test([
@@ -193,7 +193,7 @@ run_test([
     'b+2*c',
 
     'printlist',
-    '(add b (multiply 2 c))'
+    '(+ b (* 2 c))'
 ], {});
 // ADD 25
 run_test([
@@ -201,7 +201,7 @@ run_test([
     'a+2*c',
 
     'printlist',
-    '(add a (multiply 2 c))'
+    '(+ a (* 2 c))'
 ], {});
 // ADD 26
 run_test([
@@ -209,7 +209,7 @@ run_test([
     'b+2*c',
 
     'printlist',
-    '(add b (multiply 2 c))'
+    '(+ b (* 2 c))'
 ], {});
 // ADD 27
 run_test([
@@ -217,5 +217,5 @@ run_test([
     '3*c',
 
     'printlist',
-    '(multiply 3 c)'
+    '(* 3 c)'
 ], {});

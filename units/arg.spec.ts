@@ -12,7 +12,7 @@ describe("arg", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "1/3*π");
+        assert.strictEqual(engine.renderAsInfix(value), "1/3*pi");
         engine.release();
     });
 });

@@ -249,6 +249,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         clearRenamed(): void {
             symTab.clearRenamed();
         },
+        compareFn(sym: Sym): CompareFn {
+            const order = sym_order[sym.key()];
+            if (order) {
+                // TODO: Cache
+                return function (lhs: U, rhs: U): Sign {
+                    return order.compare(lhs, rhs, $);
+                };
+            }
+            else {
+                return function (lhs: U, rhs: U): Sign {
+                    return new StableExprComparator(sym).compare(lhs, rhs, $);
+                };
+            }
+        },
         defineKey(sym: Sym): Sym {
             return symTab.defineKey(sym);
         },
@@ -416,20 +430,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         getModeFlag(mode: MODE): boolean {
             return !!mode_flag[mode];
-        },
-        compareFn(sym: Sym): CompareFn {
-            const order = sym_order[sym.key()];
-            if (order) {
-                // TODO: Cache
-                return function (lhs: U, rhs: U): Sign {
-                    return order.compare(lhs, rhs, $);
-                };
-            }
-            else {
-                return function (lhs: U, rhs: U): Sign {
-                    return new StableExprComparator(sym).compare(lhs, rhs, $);
-                };
-            }
         },
         getSymbolToken(sym: Sym): string {
             return sym_token[sym.key()];

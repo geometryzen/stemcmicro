@@ -90,6 +90,7 @@ export interface ExtensionEnv {
     clearBindings(): void;
     clearOperators(): void;
     clearRenamed(): void;
+    compareFn(sym: Sym): CompareFn;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     defineKey(sym: Sym): Sym;
@@ -102,7 +103,6 @@ export interface ExtensionEnv {
     getBindings(): { sym: Sym, binding: U | undefined }[];
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
-    compareFn(sym: Sym): CompareFn;
     getSymbolToken(sym: Sym): string;
     /**
      * Used to make the environment ready after all operator builders have been added.

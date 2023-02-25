@@ -46,7 +46,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
-        switch ($.getSymbolOrder(opr).compare(lhs, rhs, $)) {
+        switch ($.compareFn(opr)(lhs, rhs)) {
             case SIGN_GT: {
                 return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
             }

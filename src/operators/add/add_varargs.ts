@@ -1,7 +1,7 @@
 import { add_num_num } from '../../calculators/add/add_num_num';
 import { canonicalize_mul } from '../../calculators/canonicalize/canonicalize_mul';
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from '../../calculators/factorize/canonical_factor_num';
-import { ExtensionEnv, Operator, OperatorBuilder, Sign, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ADD } from "../../runtime/constants";
 import { is_add } from "../../runtime/helpers";
@@ -11,14 +11,6 @@ import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_cons_opr_eq_mul } from '../mul/is_cons_opr_eq_mul';
 import { is_add_2_any_any } from './is_add_2_any_any';
-
-const make_term_comparator = function ($: ExtensionEnv) {
-    return function (a: U, b: U) {
-        const sign: Sign = $.getSymbolOrder(MATH_ADD).compare(a, b, $);
-        // console.lg("cmp_terms", "lhs", render_as_infix(a, $), "rhs", render_as_infix(b, $), " => ", sign);
-        return sign;
-    };
-};
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -57,7 +49,7 @@ class AddOperator extends FunctionVarArgs implements Operator<Cons> {
                 // We simplify the unary case. (* a) => a
                 return [TFLAG_DIFF, hook('E', terms[0])];
             }
-            terms.sort(make_term_comparator($));
+            terms.sort($.compareFn(MATH_ADD));
             const sorted = items_to_cons(expr.head, ...terms);
             if (sorted.equals(expr)) {
                 // We have to try to add them together, but there is potential for infinite loop

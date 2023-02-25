@@ -197,7 +197,7 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
         const caddr_p1 = caddr(p1);
         const cadr_p3 = cadr(p3);
         // Determine whether we should be comparing as terms or factors. I think it is as terms.
-        if ($.getSymbolOrder(MATH_ADD).compare(caddr_p3, caddr_p1, $) < 0) {
+        if ($.compareFn(MATH_ADD)(caddr_p3, caddr_p1) < 0) {
             return makeList(MATH_DERIVATIVE, makeList(MATH_DERIVATIVE, cadr_p3, caddr_p3), caddr_p1);
         }
         else {

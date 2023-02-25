@@ -37,7 +37,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const a = lhs;
         const n = rhs.lhs;
         const X = rhs.rhs;
-        switch ($.getSymbolOrder(opr).compare(a, n, $)) {
+        switch ($.compareFn(opr)(a, n)) {
             case SIGN_GT: {
                 const aX = $.valueOf(makeList(rhs.opr, a, X));
                 const naX = $.valueOf(makeList(opr, n, aX));

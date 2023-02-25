@@ -10,14 +10,6 @@ import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_cons_opr_eq_mul } from "./is_cons_opr_eq_mul";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 
-const make_factor_comparator = function ($: ExtensionEnv) {
-    return function (a: U, b: U) {
-        const sign = $.getSymbolOrder(MATH_MUL).compare(a, b, $);
-        // console.lg("compare_factors", "LHS", render_as_infix(a, $), "RHS", render_as_infix(b, $), sign);
-        return sign;
-    };
-};
-
 function args_contain_association_explicit(factors: U[]): boolean {
     return factors.some((factor => is_cons(factor) && is_cons_opr_eq_mul(factor)));
 }
@@ -49,7 +41,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                 const retval = items_to_cons(expr.head, ...make_factor_association_implicit(args));
                 return [TFLAG_DIFF, hook('A1', retval)];
             }
-            args.sort(make_factor_comparator($));
+            args.sort($.compareFn(MATH_MUL));
             if (args.length === 0) {
                 // We simplify the nonary case. (*) => 1 (the identity element for multiplication)
                 return [TFLAG_DIFF, hook('A', one)];
@@ -100,7 +92,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
                         args.push(factor);
                     }
                 }
-                args.sort(make_factor_comparator($));
+                args.sort($.compareFn(MATH_MUL));
                 multiply_factor_pairs(args, $);
                 const retval = items_to_cons(expr.head, ...args);
                 return [TFLAG_DIFF, hook('G', retval)];
@@ -108,7 +100,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
             else {
                 // No possibility of flattening but sorting is possible.
                 const args = expr.tail();
-                args.sort(make_factor_comparator($));
+                args.sort($.compareFn(MATH_MUL));
                 multiply_factor_pairs(args, $);
                 const retval = items_to_cons(expr.head, ...args);
                 const flag = retval.equals(expr) ? TFLAG_NONE : TFLAG_DIFF;

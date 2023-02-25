@@ -31,7 +31,7 @@ function cross($: ExtensionEnv) {
     return function (lhs: LHS, rhs: RHS): boolean {
         const Z = lhs.rhs;
         const A = rhs.lhs;
-        return is_sym(Z) && is_sym(A) && $.getSymbolOrder(MATH_MUL).compare(Z, A, $) > 0;
+        return is_sym(Z) && is_sym(A) && $.compareFn(MATH_MUL)(Z, A) > 0;
     };
 }
 

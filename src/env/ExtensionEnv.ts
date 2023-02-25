@@ -65,6 +65,8 @@ export interface PrintHandler {
     print(...items: string[]): void;
 }
 
+export type CompareFn = (lhs: U, rhs: U) => Sign;
+
 export interface ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign;
 }
@@ -100,7 +102,7 @@ export interface ExtensionEnv {
     getBindings(): { sym: Sym, binding: U | undefined }[];
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
-    getSymbolOrder(sym: Sym): ExprComparator;
+    compareFn(sym: Sym): CompareFn;
     getSymbolToken(sym: Sym): string;
     /**
      * Used to make the environment ready after all operator builders have been added.

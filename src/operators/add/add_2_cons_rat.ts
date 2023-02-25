@@ -39,7 +39,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         else {
             const $ = this.$;
             // Prevent looping by making the reordering conditional. 
-            const sign = $.getSymbolOrder(opr).compare(lhs, rhs, $);
+            const sign = $.compareFn(opr)(lhs, rhs);
             if (sign > 0) {
                 return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
             }

@@ -40,7 +40,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const X = lhs.lhs;
         const i = lhs.rhs;
         const a = rhs;
-        switch ($.getSymbolOrder(opr).compare(i, a, $)) {
+        switch ($.compareFn(opr)(i, a)) {
             case SIGN_GT: {
                 const Xa = $.valueOf(items_to_cons(opr, X, a));
                 const Xai = $.valueOf(items_to_cons(MATH_MUL, Xa, i));

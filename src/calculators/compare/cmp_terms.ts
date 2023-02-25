@@ -41,7 +41,7 @@ export class AddComparator implements ExprComparator {
  * @deprecated
  */
 export function cmp_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    return $.getSymbolOrder(MATH_ADD).compare(lhs, rhs, $);
+    return $.compareFn(MATH_ADD)(lhs, rhs);
 }
 
 export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {

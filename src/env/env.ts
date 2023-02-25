@@ -30,7 +30,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { decodeMode, ExprComparator, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -417,14 +417,18 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getModeFlag(mode: MODE): boolean {
             return !!mode_flag[mode];
         },
-        getSymbolOrder(sym: Sym): ExprComparator {
+        compareFn(sym: Sym): CompareFn {
             const order = sym_order[sym.key()];
             if (order) {
-                return order;
+                // TODO: Cache
+                return function (lhs: U, rhs: U): Sign {
+                    return order.compare(lhs, rhs, $);
+                };
             }
             else {
-                // A singleton would do here.
-                return new StableExprComparator(sym);
+                return function (lhs: U, rhs: U): Sign {
+                    return new StableExprComparator(sym).compare(lhs, rhs, $);
+                };
             }
         },
         getSymbolToken(sym: Sym): string {

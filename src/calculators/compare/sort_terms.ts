@@ -13,8 +13,9 @@ export function sort_terms(terms: U[], $: ExtensionEnv): U[] {
     const sortable = terms.map(function (value, index) {
         return { value, index };
     });
+    const compareFn = $.compareFn(MATH_ADD);
     sortable.sort(function (x, y) {
-        return $.getSymbolOrder(MATH_ADD).compare(x.value, y.value, $);
+        return compareFn(x.value, y.value);
     });
     const sorted = sortable.map(function (elem) {
         return elem.value;

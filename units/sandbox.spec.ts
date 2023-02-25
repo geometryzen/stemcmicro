@@ -13,7 +13,7 @@ describe("sandbox", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "x^2+x+1");
+        assert.strictEqual(engine.renderAsInfix(value), "1+x+x^2");
         engine.release();
     });
     it("1+a+a^2", function () {

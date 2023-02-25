@@ -1,11 +1,10 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
-import { is_flt } from '../flt/is_flt';
 import { ARCCOSH, COSH } from '../../runtime/constants';
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
-import { car, U } from '../../tree/tree';
+import { car, items_to_cons, U } from '../../tree/tree';
+import { is_flt } from '../flt/is_flt';
 
 /* cosh =====================================================================
 
@@ -33,7 +32,7 @@ export function Eval_cosh(p1: U, $: ExtensionEnv): U {
 }
 
 export function ycosh(p1: U, $: ExtensionEnv): U {
-    if (car(p1) === ARCCOSH) {
+    if (car(p1).equals(ARCCOSH)) {
         return cadr(p1);
     }
     if (is_flt(p1)) {
@@ -46,5 +45,5 @@ export function ycosh(p1: U, $: ExtensionEnv): U {
     if ($.isZero(p1)) {
         return one;
     }
-    return makeList(COSH, p1);
+    return items_to_cons(COSH, p1);
 }

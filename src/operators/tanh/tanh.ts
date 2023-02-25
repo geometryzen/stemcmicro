@@ -1,11 +1,10 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
-import { is_flt } from '../flt/is_flt';
 import { ARCTANH, TANH } from '../../runtime/constants';
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
-import { car, U } from '../../tree/tree';
+import { car, items_to_cons, U } from '../../tree/tree';
+import { is_flt } from '../flt/is_flt';
 
 //             exp(2 x) - 1
 //  tanh(x) = --------------
@@ -15,7 +14,7 @@ export function Eval_tanh(p1: U, $: ExtensionEnv): U {
 }
 
 function tanh(p1: U, $: ExtensionEnv): U {
-    if (car(p1) === ARCTANH) {
+    if (car(p1).equals(ARCTANH)) {
         return cadr(p1);
     }
     if (is_flt(p1)) {
@@ -28,5 +27,5 @@ function tanh(p1: U, $: ExtensionEnv): U {
     if ($.isZero(p1)) {
         return zero;
     }
-    return makeList(TANH, p1);
+    return items_to_cons(TANH, p1);
 }

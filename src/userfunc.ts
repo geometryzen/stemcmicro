@@ -161,7 +161,7 @@ function rewrite_args($: ExtensionEnv) {
 
     if (is_cons(p1)) {
         const h = defs.tos;
-        if (car(p1) === car(p2)) {
+        if (car(p1).equals(car(p2))) {
             // rewrite a function in
             // the body with the one
             // passed from the paramaters

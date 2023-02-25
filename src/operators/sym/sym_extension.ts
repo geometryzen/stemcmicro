@@ -71,7 +71,7 @@ class SymExtension implements Extension<Sym> {
         return $.treatAsReal(sym);
     }
     isScalar(sym: Sym, $: ExtensionEnv): boolean {
-        return $.treatAsScalar(sym);
+        return true;
     }
     isVector(sym: Sym, $: ExtensionEnv): boolean {
         return false;

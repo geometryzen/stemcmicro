@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("arctanh", function () {
     it("arctanh(0)", function () {

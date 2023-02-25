@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("taylor", function () {
     it("taylor(1/(5+4*cos(x)),x,0,0)", function () {

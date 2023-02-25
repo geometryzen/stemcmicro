@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("factor", function () {
     xit("factor(4)", function () {

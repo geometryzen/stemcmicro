@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("ceiling", function () {
     it("ceiling(4/2.0)", function () {

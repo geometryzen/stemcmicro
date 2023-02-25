@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("current", function () {
     it("numerator(1/(x-1)/(x-2))", function () {

@@ -1,4 +1,5 @@
-import { compare_sym_sym } from '../calculators/compare/compare_sym_sym';
+import { AddComparator } from '../calculators/compare/cmp_terms';
+import { MulComparator } from '../calculators/compare/compare_factors';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_factorize } from '../operators/abs/abs_factorize';
@@ -133,7 +134,6 @@ import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp_extension } from '../operators/hyp/hyp_extension';
 import { imag_any } from '../operators/imag/imag_any';
 import { imu_extension } from '../operators/imu/Imu_extension';
-import { is_imu } from '../operators/imu/is_imu';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner_extension } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
@@ -165,7 +165,6 @@ import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
 import { mul_2_any_rat } from '../operators/mul/mul_2_any_rat';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
-import { mul_2_blade_flt } from '../operators/mul/mul_2_blade_flt';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
 import { mul_2_blade_sym } from '../operators/mul/mul_2_blade_sym';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
@@ -329,63 +328,8 @@ import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
-import { Imu } from '../tree/imu/ImaginaryUnit';
-import { one, Rat, zero } from '../tree/rat/Rat';
-import { Sym } from '../tree/sym/Sym';
-import { Cons, is_cons, is_nil, U } from '../tree/tree';
-import { ExprOrdering, ExtensionEnv, Sign, SIGN_EQ } from "./ExtensionEnv";
-
-class NilOrdering implements ExprOrdering<Cons> {
-    is(expr: U): expr is Cons {
-        return is_nil(expr);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compare(lhs: Cons, rhs: Cons): Sign {
-        return SIGN_EQ;
-    }
-}
-
-class ImuOrdering implements ExprOrdering<Imu> {
-    is(expr: U): expr is Imu {
-        return is_imu(expr);
-        throw new Error('Method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compare(lhs: Imu, rhs: Imu, $: ExtensionEnv): Sign {
-        return SIGN_EQ;
-    }
-}
-
-class RatOrdering implements ExprOrdering<Rat> {
-    is(expr: U): expr is Rat {
-        return is_rat(expr);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compare(lhs: Rat, rhs: Rat, $: ExtensionEnv): Sign {
-        return lhs.compare(rhs);
-    }
-}
-
-class SymOrdering implements ExprOrdering<Sym> {
-    is(expr: U): expr is Sym {
-        return is_sym(expr);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compare(lhs: Sym, rhs: Sym, $: ExtensionEnv): Sign {
-        return compare_sym_sym(lhs, rhs);
-    }
-}
-
-class ConsOrdering implements ExprOrdering<Cons> {
-    is(expr: U): expr is Cons {
-        return is_cons(expr);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compare(lhs: Cons, rhs: Cons, $: ExtensionEnv): Sign {
-        return SIGN_EQ;
-    }
-}
-
+import { one, zero } from '../tree/rat/Rat';
+import { ExtensionEnv } from "./ExtensionEnv";
 
 /**
  * Registers the Operator extension(s) with the environment.
@@ -398,8 +342,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.setAssocL(MATH_RCO, true);
     $.setAssocL(MATH_OUTER, true);
 
-    $.setSymbolOrder(MATH_ADD, [new NilOrdering(), new RatOrdering(), new SymOrdering(), new ImuOrdering()]);
-    $.setSymbolOrder(MATH_MUL, [new NilOrdering(), new RatOrdering(), new SymOrdering(), new ImuOrdering()]);
+    $.setSymbolOrder(MATH_ADD, new AddComparator());
+    $.setSymbolOrder(MATH_MUL, new MulComparator());
 
     $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
@@ -567,7 +511,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_uom_flt);
     $.defineOperator(mul_2_uom_uom);
 
-    $.defineOperator(mul_2_blade_flt);
     $.defineOperator(mul_2_blade_rat);
     $.defineOperator(mul_2_blade_sym);
     $.defineOperator(mul_2_blade_blade);

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("coeff", function () {
     it("coeff(40*x^3+30*x^2+20*x+10,3)", function () {

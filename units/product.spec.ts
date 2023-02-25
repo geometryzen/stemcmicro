@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("product", function () {
     it("2*product(float((4*k^2)/(4*k^2-1)),k,1,100)", function () {

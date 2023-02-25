@@ -65,9 +65,8 @@ export interface PrintHandler {
     print(...items: string[]): void;
 }
 
-export interface ExprOrdering<T extends U> {
-    is(expr: U, $: ExtensionEnv): expr is T;
-    compare(lhs: T, rhs: T, $: ExtensionEnv): Sign;
+export interface ExprComparator {
+    compare(lhs: U, rhs: U, $: ExtensionEnv): Sign;
 }
 
 export interface ExtensionEnv {
@@ -75,7 +74,6 @@ export interface ExtensionEnv {
     setField(kind: 'R' | undefined): void;
     setPrintHandler(handler: PrintHandler): void;
     treatAsReal(sym: Sym): boolean;
-    treatAsScalar(sym: Sym): boolean;
     /**
      * 
      * @param lhs 
@@ -102,7 +100,7 @@ export interface ExtensionEnv {
     getBindings(): { sym: Sym, binding: U | undefined }[];
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
-    getSymbolOrder(sym: Sym): ExprOrdering<U>[];
+    getSymbolOrder(sym: Sym): ExprComparator;
     getSymbolToken(sym: Sym): string;
     /**
      * Used to make the environment ready after all operator builders have been added.
@@ -146,7 +144,7 @@ export interface ExtensionEnv {
     setBinding(sym: Sym, binding: U): void;
     setMode(mode: number): void;
     setModeFlag(mode: MODE, value: boolean): void;
-    setSymbolOrder(sym: Sym, order: ExprOrdering<U>[]): void;
+    setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolToken(sym: Sym, token: string): void;
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;

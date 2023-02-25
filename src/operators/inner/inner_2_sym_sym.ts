@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -38,29 +38,10 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // It actually could be zero.
         return false;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        if ($.treatAsScalar(lhs)) {
-            if ($.treatAsScalar(rhs)) {
-                // TODO: This is incorrect because 
-                // scalar | scalar
-                return [TFLAG_DIFF, value_of(items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
-            }
-            else {
-                // scalar | something
-                return [TFLAG_HALT, expr];
-            }
-        }
-        else {
-            if ($.treatAsScalar(rhs)) {
-                // something | scalar
-                return [TFLAG_DIFF, value_of(items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
-            }
-            else {
-                // something | something
-                return [TFLAG_HALT, expr];
-            }
-        }
+        return [TFLAG_DIFF, value_of(items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
     }
 }
 

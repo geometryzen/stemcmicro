@@ -31,19 +31,13 @@ function canoncal_reorder_factors_sym_sym(opr: Sym, lhs: Sym, rhs: Sym, orig: Co
             return [TFLAG_NONE, orig];
         }
     }
-    if ($.treatAsScalar(lhs) || $.treatAsScalar(rhs)) {
-        switch (compare_sym_sym(lhs, rhs)) {
-            case SIGN_GT: {
-                return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
-            }
-            default: {
-                return [TFLAG_HALT, orig];
-            }
+    switch (compare_sym_sym(lhs, rhs)) {
+        case SIGN_GT: {
+            return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
         }
-    }
-    else {
-        // We can't be sure that the symbols commute under multiplication.
-        return [TFLAG_HALT, orig];
+        default: {
+            return [TFLAG_HALT, orig];
+        }
     }
 }
 
@@ -97,22 +91,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         }
         // console.lg(`${this.name} lhs: ${render_as_infix(lhs, $)} rhs: ${render_as_infix(rhs, $)}`);
 
-        if ($.treatAsScalar(lhs)) {
-            if ($.treatAsScalar(rhs)) {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-            else {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-        }
-        else {
-            if ($.treatAsScalar(rhs)) {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-            else {
-                return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
-            }
-        }
+        return canoncal_reorder_factors_sym_sym(opr, lhs, rhs, expr, $);
     }
 }
 

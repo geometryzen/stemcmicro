@@ -5,7 +5,7 @@ import { ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { transform_script, transform_tree } from "../runtime/execute";
+import { transform_script, transform_tree } from "./execute";
 import { TreeTransformer } from "../transform/Transformer";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
@@ -86,7 +86,7 @@ export interface ScriptEngine {
     release(): void;
 }
 
-function env_options_from_engine_options(options: ScriptEngineOptions | undefined): EnvOptions {
+export function env_options_from_engine_options(options: ScriptEngineOptions | undefined): EnvOptions {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: EnvOptions, description: string): EnvOptions {
         // console.lg(`env_options_from_engine_options(${JSON.stringify(options)}) => ${JSON.stringify(retval)} @ ${description}`);

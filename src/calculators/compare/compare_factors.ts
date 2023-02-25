@@ -1,4 +1,4 @@
-import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_blade } from "../../operators/blade/is_blade";
 import { is_hyp } from "../../operators/hyp/is_hyp";
 import { is_imu } from "../../operators/imu/is_imu";
@@ -20,31 +20,26 @@ import { compare_sym_sym } from "./compare_sym_sym";
 import { contains_single_blade } from "./contains_single_blade";
 import { group } from "./group";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export class MulComparator implements ExprComparator {
+    compare(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+        // console.lg("ENTERING :", "cmp_factors", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
+
+        if (lhs.equals(rhs)) {
+            return SIGN_EQ;
+        }
+
+        if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
+            return SIGN_EQ;
+        }
+        return cmp_expr(lhs, rhs, $);
+    }
+}
+
+/**
+ * @deprecated Use $.getSymbolOrder(MATH_MUL).compare(...)
+ */
 export function compare_factors(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.lg("ENTERING :", "cmp_factors", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
-
-    if (lhs.equals(rhs)) {
-        return SIGN_EQ;
-    }
-
-    const orderings = $.getSymbolOrder(MATH_MUL);
-    for (const ordering of orderings) {
-        if (ordering.is(lhs, $) && ordering.is(rhs, $)) {
-            return ordering.compare(lhs, rhs, $);
-        }
-        if (ordering.is(lhs, $)) {
-            return SIGN_LT;
-        }
-        if (ordering.is(rhs, $)) {
-            return SIGN_GT;
-        }
-    }
-
-    if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
-        return SIGN_EQ;
-    }
-    return cmp_expr(lhs, rhs, $);
+    return $.getSymbolOrder(MATH_MUL).compare(lhs, rhs, $);
 }
 
 export function compare_factors_complicated(lhs: U, rhs: U, $: ExtensionEnv): Sign {

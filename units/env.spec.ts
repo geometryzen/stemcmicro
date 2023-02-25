@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { create_env } from "../src/env/env";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_MUL, MATH_POW } from "../src/runtime/ns_math";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("env", function () {
     describe("constructor", function () {

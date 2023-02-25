@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -16,15 +16,11 @@ class ConjSym extends Function1<Sym> implements Operator<U> {
     constructor($: ExtensionEnv) {
         super('conj_sym', MATH_CONJ, is_sym, $);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Sym, expr: UCons<Sym, Sym>): [TFLAGS, U] {
         const $ = this.$;
         // TODO: Strictly speaking we need the symbol to be a real number.
-        if ($.treatAsScalar(arg)) {
-            return [TFLAG_DIFF, arg];
-        }
-        else {
-            return [TFLAG_NONE, expr];
-        }
+        return [TFLAG_DIFF, arg];
     }
 }
 

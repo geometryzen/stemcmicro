@@ -23,26 +23,7 @@ class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
     }
     transform2(opr: Sym, lhs: Sym, rhs: Sym, expr: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         const $ = this.$;
-        if ($.treatAsScalar(lhs)) {
-            if ($.treatAsScalar(rhs)) {
-                // scalar ^ scalar
-                return [TFLAG_HALT, expr];
-            }
-            else {
-                // scalar ^ other
-                return [TFLAG_HALT, expr];
-            }
-        }
-        else {
-            if ($.treatAsScalar(rhs)) {
-                // other ^ scalar
-                return [TFLAG_HALT, expr];
-            }
-            else {
-                // other ^ other
-                return [TFLAG_HALT, expr];
-            }
-        }
+        return [TFLAG_HALT, expr];
     }
 }
 

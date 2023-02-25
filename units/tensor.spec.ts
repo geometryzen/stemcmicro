@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 import { Sym } from "../src/tree/sym/Sym";
 import { Tensor } from "../src/tree/tensor/Tensor";
 import { assert_one_value_execute } from "./assert_one_value_execute";

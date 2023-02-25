@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { MATH_ADD, MATH_MUL } from "../src/runtime/ns_math";
-import { createScriptEngine, ScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine, ScriptEngine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("assoc", function () {

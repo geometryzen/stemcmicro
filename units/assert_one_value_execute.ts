@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { Engine } from "../src/runtime/symengine";
+import { Engine } from "../src/runtime/script_engine";
 import { U } from "../src/tree/tree";
 import { assert_one_value } from "./assert_one_value";
 

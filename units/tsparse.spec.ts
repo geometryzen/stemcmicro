@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_str } from "../src/operators/str/is_str";
 import { ts_parse } from "../src/parser/ts_parse";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 import { assert_one_value } from "./assert_one_value";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 

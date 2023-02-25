@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/symengine";
+import { createScriptEngine } from "../src/runtime/script_engine";
 
 describe("sum", function () {
     it("4*sum(float((-1)^k*(1/(2*k+1))),k,0,100)", function () {

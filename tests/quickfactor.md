@@ -1,9 +1,8 @@
-import { equal } from '../src/misc';
-import { multiply_all } from '../src/oracle/multiply_v1';
-import { quickfactor, quickpower } from '../src/quickfactor';
-import { primetab } from '../src/runtime/constants';
-import { integer } from '../src/tree/rat/Rat';
-import { U } from '../src/tree/tree';
+import { equal } from '../sources/misc';
+import { defs, primetab, U } from '../runtime/defs';
+import { integer } from '../sources/bignum';
+import { multiply_all } from '../sources/multiply';
+import { quickfactor, quickpower } from '../sources/quickfactor';
 import { test } from '../test-harness';
 
 test('quickfactor', t => {

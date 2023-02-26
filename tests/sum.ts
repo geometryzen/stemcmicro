@@ -12,7 +12,7 @@ run_test([
   'eval(f,a,-1/2)',
   '341/512',
 
-  // Leibniz formula for Pi as a series
+  // Leibniz formula for π as a series
   'sum(float((-1)^k * (1/(2*k + 1))),k,0,100)*4',
   '3.151493...',
 

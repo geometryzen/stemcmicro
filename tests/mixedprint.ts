@@ -126,10 +126,10 @@ run_test([
     '-\\frac{\\sqrt{2}}{2}',
 
     'printlist',
-    '(* -1/2 (power 2 1/2))',
+    '(multiply -1/2 (power 2 1/2))',
 
     'printlist(a+b)\nprintlist(c+d)',
-    '(+ a b)(+ c d)',
+    '(add a b)(add c d)',
 
     'print2dascii',
     '   1   1/2\n- --- 2\n   2',

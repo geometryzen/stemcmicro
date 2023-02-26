@@ -311,7 +311,7 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
  * 3. engine.release(); 
  */
 export function run_test(s: string[], options?: TestOptions): void {
-    const config = test_config_from_options(options);
+    // const config = test_config_from_options(options);
     const engcfg = harness_options_to_engine_options(options);
     const engine = createScriptEngine(engcfg);
     try {
@@ -320,7 +320,8 @@ export function run_test(s: string[], options?: TestOptions): void {
                 for (let i = 0; i < s.length; i += 2) {
                     defs.out_count = 0;
                     const sourceText = s[i];
-                    if (config.verbose) {
+                    // eslint-disable-next-line no-constant-condition
+                    if (true/*config.verbose*/) {
                         console.log('=========================================');
                         console.log(`Executing Script: ${JSON.stringify(sourceText)}`);
                     }
@@ -367,32 +368,4 @@ export function run_test(s: string[], options?: TestOptions): void {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function xrun_test(s: string[], options?: TestOptions): void {
     skippedTests++;
-}
-
-/*
-export function run_test(s: string[], engine: SymEngine, name?: string) {
-  setup_test(() => {
-    test(name || `${testIndex}`, t => {
-      for (let i = 0; i < s.length; i += 2) {
-        defs.out_count = 0;
-
-        t.is(s[i + 1], engine.run(s[i]), `${i}: ${s[i]}`);
-      }
-    });
-  }, engine);
-}
-*/
-
-/**
- * This appears to be dead code.
- */
-export function ava_run(t: Asserts, input: string, expected: string) {
-    const engcfg: ScriptEngineOptions = {};
-    const engine = createScriptEngine(engcfg);
-    try {
-        setup_test(() => t.is(expected, engine.renderAsInfix(engine.executeScript(input).values[0])), engine, engcfg);
-    }
-    finally {
-        engine.release();
-    }
 }

@@ -18,7 +18,15 @@
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf ./dist",
         "coverage": "nyc mocha 'units/**/*.spec.ts'",
+        "docs": "npm run docs:typedoc && open-cli docs/index.html",
+        "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
+        "pages": "npm run docs:typedoc && gh-pages -d docs",
+        "pretest": "npm run build",
+        "prepublishOnly": "npm run units",
+        "release": "release-it",
+        "test": "npm run units && npm run tests",
         "lint": "eslint . --ext .ts",
+        "tests": "mocha 'tests/**/*.ts' --sort",
         "units": "mocha 'units/**/*.spec.ts' --sort",
         "unit-0": "mocha 'units/0.spec.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
@@ -146,7 +154,6 @@
         "unit-variables": "mocha 'units/variables.spec.ts'",
         "unit-vectors": "mocha 'units/vectors.spec.ts'",
         "unit-zero": "mocha 'units/zero.spec.ts'",
-        "tests": "mocha 'tests/**/*.ts' --sort",
         "test-abs": "mocha 'tests/abs.ts'",
         "test-adj": "mocha 'tests/adj.ts'",
         "test-approxratio": "mocha 'tests/approxratio.ts'",
@@ -198,14 +205,7 @@
         "test-test": "mocha 'tests/test.ts'",
         "test-transpose": "mocha 'tests/transpose.ts'",
         "test-typeof": "mocha 'tests/typeof.ts'",
-        "test-zero": "mocha 'tests/zero.ts'",
-        "docs": "npm run docs:typedoc && open-cli docs/index.html",
-        "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
-        "pages": "npm run docs:typedoc && gh-pages -d docs",
-        "pretest": "npm run build",
-        "prepublishOnly": "npm run units",
-        "release": "release-it",
-        "test": "npm run units && npm run tests"
+        "test-zero": "mocha 'tests/zero.ts'"
     },
     "repository": {
         "type": "git",
@@ -246,7 +246,7 @@
         "@rollup/plugin-typescript": "^11.0.0",
         "@types/chai": "^4.3.4",
         "@types/mocha": "^10.0.1",
-        "@types/node": "^18.14.1",
+        "@types/node": "^18.14.2",
         "@types/rollup-plugin-peer-deps-external": "^2.2.1",
         "@typescript-eslint/eslint-plugin": "^5.53.0",
         "@typescript-eslint/parser": "^5.53.0",
@@ -260,7 +260,7 @@
         "rollup-plugin-dts": "^5.2.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.1",
-        "typedoc": "^0.23.25",
+        "typedoc": "^0.23.26",
         "typescript": "^4.9.5"
     }
 }

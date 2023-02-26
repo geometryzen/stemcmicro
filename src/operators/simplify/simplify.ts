@@ -12,7 +12,7 @@ import { is_negative_number } from '../../predicates/is_negative_number';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';
-import { DEBUG, defs, use_factoring_with_unary_function } from '../../runtime/defs';
+import { DEBUG, defs, noexpand_unary } from '../../runtime/defs';
 import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/helpers';
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
@@ -439,7 +439,7 @@ function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
     //   17/2+3/2*5^(1/2) into 1/2*(17+3*5^(1/2))
     // so what we do is we count the powers and we check
     // which version has the least number of them.
-    const simplificationWithCondense = use_factoring_with_unary_function(yycondense, simplificationWithoutCondense, $);
+    const simplificationWithCondense = noexpand_unary(yycondense, simplificationWithoutCondense, $);
 
     // console.lg("occurrences of powers in " + simplificationWithoutCondense + " :" + countOccurrencesOfSymbol(POWER,simplificationWithoutCondense))
     // console.lg("occurrences of powers in " + simplificationWithCondense + " :" + countOccurrencesOfSymbol(POWER,simplificationWithCondense))

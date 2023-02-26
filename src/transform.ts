@@ -5,7 +5,7 @@ import { makeList } from './makeList';
 import { is_num } from './operators/num/is_num';
 import { subst } from './operators/subst/subst';
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
-import { DEBUG, use_factoring_with_unary_function } from './runtime/defs';
+import { DEBUG, noexpand_unary } from './runtime/defs';
 import { scan_meta } from './scanner/scan';
 import { caddr, cadr, cdddr, cddr } from './tree/helpers';
 import { one } from './tree/rat/Rat';
@@ -250,7 +250,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
                 // conditions are not met, skip to the next binding of metas
                 continue;
             }
-            const arg2 = generalTransform ? use_factoring_with_unary_function(function (x) {
+            const arg2 = generalTransform ? noexpand_unary(function (x) {
                 return $.valueOf(x);
             }, A, $) : $.valueOf(A);
 

@@ -29,6 +29,8 @@ export class AddComparator implements ExprComparator {
             case SIGN_EQ: {
                 // If two terms, apart from numeric factors, are equal then it really does not matter too much
                 // how they are sorted because they are destined to be combined through addition.
+                // TODO: When tests are passing, try removing this code and returning SIGN_EQ.
+                // In other words do we ever have sums where adjacent terms differ only in numerical factors?
                 const lhsL = canonical_factor_num_lhs(lhs);
                 const rhsL = canonical_factor_num_lhs(rhs);
                 return compare_num_num(lhsL, rhsL);

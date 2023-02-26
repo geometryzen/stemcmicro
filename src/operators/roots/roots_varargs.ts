@@ -14,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('integral_varargs', ROOTS, $);
+        super('roots_varargs', ROOTS, $);
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {

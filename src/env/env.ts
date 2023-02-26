@@ -414,6 +414,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         factorize(p: U, x: U): U {
             // console.lg(`factorize p=${render_as_infix(p, $)} in variable ${render_as_infix(x, $)}`);
             if (!p.contains(x)) {
+                // console.lg(`Giving up b/c the polynomial does not contain the variable.`);
                 return p;
             }
 
@@ -422,11 +423,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return p;
             }
 
-            if (!is_sym(x)) {
+            if (is_sym(x)) {
+                return yyfactorpoly(p, x, $);
+            }
+            else {
+                // console.lg(`Giving up b/c the variable is not a symbol.`);
                 return p;
             }
-
-            return yyfactorpoly(p, x, $);
         },
         getModeFlag(mode: MODE): boolean {
             return !!mode_flag[mode];

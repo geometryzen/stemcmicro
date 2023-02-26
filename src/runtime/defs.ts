@@ -165,47 +165,47 @@ export function hard_reset() {
     move_top_of_stack(0);
 }
 
-export function use_factoring_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
+export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
+    const mode = $.getMode();
     $.setMode(MODE_FACTORING);
     try {
         return func(arg, $);
     }
     finally {
-        $.setMode(phase);
+        $.setMode(mode);
     }
 }
 
-export function use_factoring_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
+export function noexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
+    const mode = $.getMode();
     $.setMode(MODE_FACTORING);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setMode(phase);
+        $.setMode(mode);
     }
 }
 
-export function use_expanding_with_unary_function(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
+export function doexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
+    const mode = $.getMode();
     $.setMode(MODE_EXPANDING);
     try {
         return func(arg, $);
     }
     finally {
-        $.setMode(phase);
+        $.setMode(mode);
     }
 }
 
-export function use_expanding_with_binary_function(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
+export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
+    const mode = $.getMode();
     $.setMode(MODE_EXPANDING);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setMode(phase);
+        $.setMode(mode);
     }
 }
 

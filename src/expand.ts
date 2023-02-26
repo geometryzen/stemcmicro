@@ -1,4 +1,3 @@
-import { degree } from './operators/degree/degree';
 import { divide_expand } from './divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factors } from './factors';
@@ -8,15 +7,16 @@ import { inv } from './inv';
 import { is_plus_or_minus_one, is_poly_expanded_form } from './is';
 import { multiply, multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';
+import { degree } from './operators/degree/degree';
 import { denominator } from './operators/denominator/denominator';
 import { numerator } from './operators/numerator/numerator';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { divpoly } from './quotient';
-import { use_expanding_with_binary_function, use_expanding_with_unary_function } from './runtime/defs';
+import { doexpand_binary, doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
-import { wrap_as_int, one, zero } from './tree/rat/Rat';
-import { is_tensor } from './operators/tensor/is_tensor';
+import { one, wrap_as_int, zero } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { NIL, U } from './tree/tree';
 
@@ -94,7 +94,7 @@ function expand(F: U, X: U, $: ExtensionEnv): U {
 
     let result: U;
     if (is_tensor(C)) {
-        const inverse = use_expanding_with_unary_function(inv, C, $);
+        const inverse = doexpand_unary(inv, C, $);
         result = $.inner($.inner(inverse, B), A);
     }
     else {
@@ -304,7 +304,7 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     if (!p5.contains(p9)) {
         return [];
     }
-    const p8 = use_expanding_with_binary_function(trivial_divide, p2, p5, $);
+    const p8 = doexpand_binary(trivial_divide, p2, p5, $);
     if (is_power(p5)) {
         n = nativeInt(caddr(p5));
         p6 = cadr(p5);
@@ -318,9 +318,9 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < d; j++) {
             const arg6 = $.power(p6, wrap_as_int(i));
-            const arg8 = use_expanding_with_binary_function(multiply, p8, arg6, $);
+            const arg8 = doexpand_binary(multiply, p8, arg6, $);
             const arg9 = $.power(p9, wrap_as_int(j));
-            const multiplied = use_expanding_with_binary_function(multiply, arg8, arg9, $);
+            const multiplied = doexpand_binary(multiply, arg8, arg9, $);
             stack.push(multiplied);
         }
     }

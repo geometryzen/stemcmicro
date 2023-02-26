@@ -1,12 +1,13 @@
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
+import { cmp_expr } from './calculators/compare/cmp_expr';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
 import { is_complex_number, is_poly_expanded_form, is_positive_integer } from './is';
-import { sort } from './misc';
 import { coeff } from './operators/coeff/coeff';
 import { simplify } from './operators/simplify/simplify';
+import { render_as_infix } from './print/print';
 import { ASSIGN, SECRETX, TESTEQ } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
@@ -59,17 +60,15 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-function hasImaginaryCoeff(k: U[]): boolean {
-    return k.some((c) => is_complex_number(c));
+function is_some_coeff_complex_number(coefficients: U[]): boolean {
+    return coefficients.some((c) => is_complex_number(c));
 }
 
 /**
  * If the normalized coefficients are sufficiently simple then the polynomial is considered simple.
  * k[0]      Coefficient of x^0
  * k[n-1]    Coefficient of x^(n-1)
- * @param ks 
- * @param $ 
- * @returns 
+ * @param ks The coefficients of the polynomial. ks[i] is the coefficient of x^i
  */
 function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
     if (ks.length <= 2) {
@@ -86,12 +85,14 @@ function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
  * The coefficients are returned in the order [c0, c1, c2, ..., 1] where c0 is the constant coefficient.
  */
 function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
-    // console.lg(`normalized_coeff ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
+    // console.lg(`normalized_coeff ${render_as_infix(poly, $)} in variable ${render_as_infix(x, $)}`);
 
-    const coes = coeff(poly, x, $);
-    // console.lg(`coes=${coes}`);
-    const divideBy = coes[coes.length - 1];
-    return coes.map((coe) => $.divide(coe, divideBy));
+    const coefficients = coeff(poly, x, $);
+    coefficients.forEach(function (coefficient) {
+        // console.lg("coefficient", render_as_infix(coefficient, $));
+    });
+    const divideBy = coefficients[coefficients.length - 1];
+    return coefficients.map((coe) => $.divide(coe, divideBy));
 }
 
 /**
@@ -101,7 +102,8 @@ function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
  * @returns 
  */
 export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
-    // console.lg(`roots ${print_expr(poly, $)} in variable ${print_expr(x, $)}`);
+    // eslint-disable-next-line no-console
+    // console.lg(`roots ${render_as_infix(poly, $)} in variable ${render_as_infix(x, $)}`);
     // the simplification of nested radicals uses "roots", which in turn uses
     // simplification of nested radicals. Usually there is no problem, one level
     // of recursion does the job. Beyond that, we probably got stuck in a
@@ -114,8 +116,9 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
     // log.dbg(`checking if ${top()} is a case of simple roots`);
 
     const ks = normalized_coeff(poly, x, $);
-
-    // console.lg(`ks=${ks}`);
+    ks.forEach(function (k) {
+        // console.lg("k", render_as_infix(k, $));
+    });
 
     const results = [];
     if (is_simple_root(ks, $)) {
@@ -138,7 +141,11 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
     if (n === 1) {
         return new Tensor([1], results);
     }
-    sort(results, $);
+    results.sort(function (a: U, b: U) {
+        // TODO: Make the comparitor for sorting the roots configurable?
+        return cmp_expr(a, b, $);
+    });
+
     const dims = [n];
     return new Tensor(dims, results);
 }
@@ -152,6 +159,7 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
 // leadingCoeff    Coefficient of x^0
 // lastCoeff       Coefficient of x^(n-1)
 function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEnv): U[] {
+    // console.lg(`getSimpleRoots(n=${n}, leading=${render_as_infix(leadingCoeff, $)}, last=${render_as_infix(lastCoeff, $)})`);
     // log.dbg('getSimpleRoots');
 
     n = n - 1;
@@ -181,31 +189,41 @@ function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEn
     return results;
 }
 
-function roots2(poly: U, X: U, $: ExtensionEnv): U[] {
-    // console.lg(`roots2 ${print_expr(poly, $)} in variable ${print_expr(X, $)}`);
-    const ks = normalized_coeff(poly, X, $);
-    if (!hasImaginaryCoeff(ks)) {
-        poly = $.factorize(poly, X);
+function roots2(P: U, X: U, $: ExtensionEnv): U[] {
+    // console.lg(`roots2 ${render_as_infix(P, $)} in variable ${render_as_infix(X, $)}`);
+    const ks = normalized_coeff(P, X, $);
+    if (!is_some_coeff_complex_number(ks)) {
+        const factorized = $.factorize(P, X);
+        // console.lg("factorized", render_as_infix(factorized, $));
+        if (is_multiply(factorized)) {
+            // scan through all the factors and find the roots of each of them
+            const mapped = factorized.tail().map((p) => roots3(p, X, $));
+            return mapped.flat();
+        }
+        return roots3(factorized, X, $);
     }
-    if (is_multiply(poly)) {
-        // scan through all the factors and find the roots of each of them
-        const mapped = poly.tail().map((p) => roots3(p, X, $));
-        return mapped.flat();
+    else {
+        if (is_multiply(P)) {
+            // scan through all the factors and find the roots of each of them
+            const mapped = P.tail().map((factor) => roots3(factor, X, $));
+            return mapped.flat();
+        }
+        return roots3(P, X, $);
     }
-    return roots3(poly, X, $);
 }
 
-function roots3(POLY: U, X: U, $: ExtensionEnv): U[] {
+function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
+    // console.lg(`roots3 ${render_as_infix(poly, $)} in variable ${render_as_infix(X, $)}`);
     if (
-        is_power(POLY) &&
-        is_poly_expanded_form(cadr(POLY), X, $) &&
-        is_positive_integer(caddr(POLY))
+        is_power(poly) &&
+        is_poly_expanded_form(cadr(poly), X, $) &&
+        is_positive_integer(caddr(poly))
     ) {
-        const n = normalized_coeff(cadr(POLY), X, $);
+        const n = normalized_coeff(cadr(poly), X, $);
         return mini_solve(n, $);
     }
-    if (is_poly_expanded_form(POLY, X, $)) {
-        const n = normalized_coeff(POLY, X, $);
+    if (is_poly_expanded_form(poly, X, $)) {
+        const n = normalized_coeff(poly, X, $);
         return mini_solve(n, $);
     }
     return [];
@@ -216,6 +234,10 @@ function roots3(POLY: U, X: U, $: ExtensionEnv): U[] {
 // since there is a chance we factored the polynomial and in so
 // doing we found some solutions and lowered the degree.
 function mini_solve(coefficients: U[], $: ExtensionEnv): U[] {
+    // console.lg("mini_solve");
+    coefficients.forEach(function (coefficient) {
+        // console.lg("coefficient", render_as_infix(coefficient, $));
+    });
     const n = coefficients.length;
 
     // AX + B, X = -B/A

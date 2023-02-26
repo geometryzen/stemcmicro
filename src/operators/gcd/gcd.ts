@@ -3,15 +3,15 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { isunivarpolyfactoredorexpandedform } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { makeList } from '../../makeList';
-import { is_num } from '../num/is_num';
-import { is_rat } from '../rat/is_rat';
 import { is_negative_number } from '../../predicates/is_negative_number';
 import { MULTIPLY } from '../../runtime/constants';
-import { use_expanding_with_binary_function } from '../../runtime/defs';
+import { doexpand_binary } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
 import { car, cdr, is_cons, U } from '../../tree/tree';
+import { is_num } from '../num/is_num';
+import { is_rat } from '../rat/is_rat';
 
 // Greatest common denominator
 // can also be run on polynomials, however
@@ -28,7 +28,7 @@ export function Eval_gcd(p1: U, $: ExtensionEnv): U {
 }
 
 export function gcd(p1: U, p2: U, $: ExtensionEnv): U {
-    return use_expanding_with_binary_function(gcd_main, p1, p2, $);
+    return doexpand_binary(gcd_main, p1, p2, $);
 }
 
 function gcd_main(p1: U, p2: U, $: ExtensionEnv): U {

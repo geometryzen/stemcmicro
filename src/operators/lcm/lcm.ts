@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { gcd } from '../gcd/gcd';
-import { use_expanding_with_binary_function } from '../../runtime/defs';
+import { doexpand_binary } from '../../runtime/defs';
 import { car, cdr, is_cons, U } from '../../tree/tree';
+import { gcd } from '../gcd/gcd';
 
 // Find the least common multiple of two expressions.
 export function Eval_lcm(p1: U, $: ExtensionEnv): U {
@@ -14,7 +14,7 @@ export function Eval_lcm(p1: U, $: ExtensionEnv): U {
 }
 
 export function lcm(p1: U, p2: U, $: ExtensionEnv): U {
-    return use_expanding_with_binary_function(yylcm, p1, p2, $);
+    return doexpand_binary(yylcm, p1, p2, $);
 }
 
 function yylcm(p1: U, p2: U, $: ExtensionEnv): U {

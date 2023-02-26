@@ -3,10 +3,10 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { FACTORIAL } from '../../runtime/constants';
-import { defs, move_top_of_stack, use_factoring_with_unary_function } from '../../runtime/defs';
+import { defs, move_top_of_stack, noexpand_unary } from '../../runtime/defs';
 import { is_add, is_factorial, is_multiply, is_power } from '../../runtime/helpers';
 import { stack_pop, stack_push } from '../../runtime/stack';
-import { doexpand_eval } from '../../scripting/doexpand_eval';
+import { doexpand_value_of } from '../../scripting/doexpand_eval';
 import { caddr, cadr } from '../../tree/helpers';
 import { wrap_as_int, one, zero } from '../../tree/rat/Rat';
 import { is_cons, NIL, U } from '../../tree/tree';
@@ -39,7 +39,7 @@ export function factorial(p1: U): U {
 // all these simplifications
 // do happen automatically via simplify
 function simplifyfactorials(p1: U, $: ExtensionEnv): U {
-    return use_factoring_with_unary_function(simplifyfactorials_, p1, $);
+    return noexpand_unary(simplifyfactorials_, p1, $);
 }
 
 function simplifyfactorials_(p1: U, $: ExtensionEnv): U {
@@ -121,14 +121,14 @@ function sfac_product_f(s: number, a: number, b: number, $: ExtensionEnv) {
     }
 
     if (is_factorial(p1) && is_factorial(p2)) {
-        let n = nativeInt(doexpand_eval($.add(p3, p4), $));
+        let n = nativeInt(doexpand_value_of($.add(p3, p4), $));
         if (n !== 0) {
             return;
         }
 
         // Find the difference between the two factorial args.
         // For example, the difference between (a + 2)! and a! is 2.
-        n = nativeInt(doexpand_eval($.subtract(cadr(p1), cadr(p2)), $)); // to simplify
+        n = nativeInt(doexpand_value_of($.subtract(cadr(p1), cadr(p2)), $)); // to simplify
         if (n === 0 || isNaN(n)) {
             return;
         }

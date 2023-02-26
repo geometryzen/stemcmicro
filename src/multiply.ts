@@ -1,6 +1,6 @@
 import { binop } from './calculators/binop';
 import { ExtensionEnv, MODE_FACTORING } from './env/ExtensionEnv';
-import { use_factoring_with_unary_function, use_factoring_with_binary_function } from './runtime/defs';
+import { noexpand_unary, noexpand_binary } from './runtime/defs';
 import { MATH_MUL } from './runtime/ns_math';
 import { one } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -19,7 +19,7 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
 // and you want to divide by (x+1) , i.e. you multiply by (x-1)^-1,
 // then there is no need to expand.
 export function multiply_noexpand(arg1: U, arg2: U, $: ExtensionEnv): U {
-    return use_factoring_with_binary_function(multiply, arg1, arg2, $);
+    return noexpand_binary(multiply, arg1, arg2, $);
 }
 
 /**
@@ -62,7 +62,7 @@ export function negate_noexpand(p1: U, $: ExtensionEnv): U {
     const negate = function (x: U, $: ExtensionEnv): U {
         return $.negate(x);
     };
-    return use_factoring_with_unary_function(negate, p1, $);
+    return noexpand_unary(negate, p1, $);
 }
 
 //-----------------------------------------------------------------------------

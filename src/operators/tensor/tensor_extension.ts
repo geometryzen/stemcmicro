@@ -19,7 +19,7 @@ function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
     return true;
 }
 
-export function equal_mat_mat(p1: Tensor, p2: Tensor, $: ExtensionEnv): boolean {
+export function equal_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): boolean {
     if (p1.rank < p2.rank) {
         return false;
     }

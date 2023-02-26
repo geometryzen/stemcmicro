@@ -343,6 +343,10 @@ export function is_nil(expr: U): boolean {
     return expr.equals(NIL);
 }
 
+export function is_cons_not_nil(expr: Cons): boolean {
+    return !expr.equals(NIL);
+}
+
 /**
  * Returns the car property of the tree node if it is a Cons.
  * Otherwise, returns NIL.

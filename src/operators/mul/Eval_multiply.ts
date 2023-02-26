@@ -2,16 +2,16 @@ import { contains_single_blade } from "../../calculators/compare/contains_single
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
-import { ExtensionEnv, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_zero_num } from "../../is_zero_rational_or_double";
 import { render_as_infix } from "../../print/print";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { caar, caddr, cadr, cdar, cdddr, cddr } from "../../tree/helpers";
+import { caddr, cadr, cdddr, cddr } from "../../tree/helpers";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
-import { car, cons, Cons, is_cons, is_cons_not_nil, is_nil, items_to_cons, U } from "../../tree/tree";
+import { car, cdr, cons, Cons, is_cons, is_cons_not_nil, is_nil, items_to_cons, U } from "../../tree/tree";
 import { is_blade } from "../blade/is_blade";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
@@ -110,56 +110,56 @@ function yymultiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         factors.push(one);
     }
 
-    let [baseL, powerL] = base_and_power(p1);
-    let [baseR, powerR] = base_and_power(p2);
-
     while (is_cons_not_nil(p1) && is_cons_not_nil(p2)) {
-        if (caar(p1).equals(OPERATOR) && caar(p2).equals(OPERATOR)) {
-            factors.push(cons(OPERATOR, append(cdar(p1), cdar(p2))));
+        const head1 = p1.car;
+        const head2 = p2.car;
+        const [baseL, powerL] = base_and_power(head1);
+        const [baseR, powerR] = base_and_power(head2);
+        if (car(head1).equals(OPERATOR) && car(head2).equals(OPERATOR)) {
+            factors.push(cons(OPERATOR, append(cdr(head1), cdr(head2))));
             p1 = p1.cdr;
             p2 = p2.cdr;
-            [baseL, powerL] = base_and_power(p1);
-            [baseR, powerR] = base_and_power(p2);
             continue;
         }
 
         // We can get the ordering wrong here. e.g. lhs = (power 2 1/2), rhs = imu
         // We end up comparing 2 and i and the 2 gets pushed first and the i waits
         // for the next loop iteration.
+        // console.lg("head1", render_as_infix(head1, $));
+        // console.lg("head2", render_as_infix(head2, $));
         // console.lg("baseL", render_as_infix(baseL, $));
         // console.lg("baseR", render_as_infix(baseR, $));
-        switch (compareFactors(baseL, baseR)) {
-            case SIGN_LT: {
-                factors.push(car(p1));
-                p1 = p1.cdr;
-                [baseL, powerL] = base_and_power(p1);
-                break;
-            }
-            case SIGN_GT: {
-                factors.push(car(p2));
-                p2 = p2.cdr;
-                [baseR, powerR] = base_and_power(p2);
-                break;
-            }
-            case SIGN_EQ: {
-                // Equality here means stable sorting.
-                // It may not be the case that baseL and baseR are equal.
-                // This can happen for non-commuting elements. e.g. Blade(s), Tensor(s).
-                if (baseL.equals(baseR)) {
-                    combine_factors(factors, baseR, powerL, powerR, $);
+        // console.lg("powerL", render_as_infix(powerL, $));
+        // console.lg("powerR", render_as_infix(powerR, $));
+
+        // If the head elements are the same then the bases will be the same.
+        // On the other hand, the heads can be different but the bases the same.
+        // e.g. head1 = x, head2 = 1/x = (power x -1)
+        if (baseL.equals(baseR)) {
+            combine_factors(factors, baseR, powerL, powerR, $);
+            p1 = p1.cdr;
+            p2 = p2.cdr;
+        }
+        else {
+            switch (compareFactors(head1, head2)) {
+                case SIGN_LT: {
+                    factors.push(head1);
                     p1 = p1.cdr;
-                    p2 = p2.cdr;
-                    [baseL, powerL] = base_and_power(p1);
-                    [baseR, powerR] = base_and_power(p2);
+                    break;
                 }
-                else {
-                    // Remove factors that don't commute earlier?
+                case SIGN_GT: {
+                    factors.push(head2);
+                    p2 = p2.cdr;
+                    break;
+                }
+                default: {
+                    // Equality here means stable sorting of the head elements.
+                    // If we end up here then we already know that the bases are different.
+                    // So we definitely can't combine assuming base equality.
+                    // This can happen for non-commuting elements. e.g. Blade(s), Tensor(s).
+                    // Remove factors that don't commute earlier? Or do we handle them here?
                     throw new Error(`${render_as_infix(baseL, $)} ${render_as_infix(powerL, $)} ${render_as_infix(baseR, $)} ${render_as_infix(powerR, $)}`);
                 }
-                break;
-            }
-            default: {
-                throw new Error();
             }
         }
     }
@@ -208,16 +208,15 @@ function yymultiply(lhs: U, rhs: U, $: ExtensionEnv): U {
 }
 
 /**
- * Extracts the head item in the list and decomposes it into a base and power.
+ * Decomposes an expression into a base and power (power may be one).
  */
-function base_and_power(expr: Cons): [base: U, power: U] {
-    const head: U = car(expr);
-    if (is_power(head)) {
-        const argList = head.cdr;
+function base_and_power(expr: U): [base: U, power: U] {
+    if (is_power(expr)) {
+        const argList = expr.cdr;
         return [car(argList), cadr(argList)];
     }
     else {
-        return [head, one];
+        return [expr, one];
     }
 }
 

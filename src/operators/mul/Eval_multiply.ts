@@ -11,7 +11,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { caddr, cadr, cdddr, cddr } from "../../tree/helpers";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
-import { car, cdr, cons, Cons, is_cons, is_cons_not_nil, is_nil, items_to_cons, U } from "../../tree/tree";
+import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { is_blade } from "../blade/is_blade";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
@@ -26,30 +26,26 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     }
     return temp;
 }
-export function multiply(arg1: U, arg2: U, $: ExtensionEnv): U {
-    if (is_num(arg1) && is_num(arg2)) {
-        return multiply_num_num(arg1, arg2);
-    }
-    return yymultiply(arg1, arg2, $);
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function yymultiply(lhs: U, rhs: U, $: ExtensionEnv): U {
-
+export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     // console.lg("lhs", render_as_infix(lhs, $));
     // console.lg("rhs", render_as_infix(rhs, $));
-    // is either operand zero?
+    // TODO: Optimize handling of numbers, 0, 1.
+    if (is_num(lhs) && is_num(rhs)) {
+        return multiply_num_num(lhs, rhs);
+    }
+
     if (is_zero_num(lhs) || is_zero_num(rhs)) {
         return zero;
     }
 
-    // is either operand a sum?
+    // Distributive Law  (x1 + x2 + ...) * R => x1 * R + x2 * R + ...
     if ($.isExpanding() && is_add(lhs)) {
         return lhs
             .tail()
             .reduce((a: U, b: U) => $.add(a, multiply(b, rhs, $)), zero);
     }
 
+    // Distributive Law  L * (x1 + x2 + ...) => L * x1 + L * x2 + ...
     if ($.isExpanding() && is_add(rhs)) {
         return rhs
             .tail()
@@ -68,6 +64,7 @@ function yymultiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         return $.multiply($.multiply(residueL, residueR), blade);
     }
 
+    // Units of Measure shortcut.
     if (is_uom(lhs) && is_uom(rhs)) {
         return lhs.mul(rhs);
     }
@@ -91,19 +88,20 @@ function yymultiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     const factors: U[] = [];
 
     // handle numerical coefficients
-    if (is_num(car(p1)) && is_num(car(p2))) {
-        const arg1 = car(p1) as Num;
-        const arg2 = car(p2) as Num;
-        factors.push(multiply_num_num(arg1, arg2));
+    // Note that this block guarantees the the first entry starts out as a Num.
+    const c1 = car(p1);
+    const c2 = car(p2);
+    if (is_num(c1) && is_num(c2)) {
+        factors.push(multiply_num_num(c1, c2));
         p1 = p1.cdr;
         p2 = p2.cdr;
     }
-    else if (is_num(car(p1))) {
-        factors.push(car(p1));
+    else if (is_num(c1)) {
+        factors.push(c1);
         p1 = p1.cdr;
     }
-    else if (is_num(car(p2))) {
-        factors.push(car(p2));
+    else if (is_num(c2)) {
+        factors.push(c2);
         p2 = p2.cdr;
     }
     else {

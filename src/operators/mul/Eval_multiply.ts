@@ -110,7 +110,7 @@ function yymultiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         factors.push(one);
     }
 
-    while (is_cons_not_nil(p1) && is_cons_not_nil(p2)) {
+    while (is_cons(p1) && is_cons(p2)) {
         const head1 = p1.car;
         const head2 = p2.car;
         const [baseL, powerL] = base_and_power(head1);

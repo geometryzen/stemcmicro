@@ -1,41 +1,21 @@
-import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
+import { ExpandingTransformer } from "../src/transform/ExpandingTransformer";
+import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 
 describe("sandbox", function () {
-    it("A|B-B|A", function () {
+    it("a*0.0", function () {
         const lines: string[] = [
-            `-Ax*By*Cz+Ax*By*Cz`
+            `a*b*0.0`
         ];
-        const engine = create_script_engine({
-            dependencies: ['Blade']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "0");
-        engine.release();
-    });
-    xit("A|B-B|A", function () {
-        const lines: string[] = [
-            `G = algebra([1,1,1],["i","j","k"])`,
-            `i=G[1]`,
-            `j=G[2]`,
-            `k=G[3]`,
-            `-Ax*By*i^j+Ax*By*i^j`
-        ];
-        const engine = create_script_engine({
-            dependencies: ['Blade']
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "0");
-        engine.release();
-    });
-    xit("roots(a*x^2+b*x+c)", function () {
-        const lines: string[] = [
-            `roots(a*x^2+b*x+c)`
-        ];
+        const sourceText = lines.join('\n');
         const engine = create_script_engine({ useCaretForExponentiation: true });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[-1/2*(b^2/(a^2)-4*c/a)^(1/2)-b/(2*a),1/2*(b^2/(a^2)-4*c/a)^(1/2)-b/(2*a)]");
+        const pipeline = new TransformerPipeline();
+        pipeline.addTail(new ExpandingTransformer());
+        const { values } = engine.transformScript(sourceText, pipeline);
+        assert.isTrue(Array.isArray(values));
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0.0");
         engine.release();
     });
 });

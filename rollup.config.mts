@@ -37,7 +37,12 @@ const options: RollupOptions[] = [
                 format: 'system',
                 sourcemap: true,
                 plugins: [terser()]
-            }
+            },
+            {
+                banner,
+                file: './dist/commonjs/index.js',
+                format: 'commonjs'
+            },
         ],
         plugins: [
             // Allows us to consume the 'big-integer' library, which is CommonJS :(

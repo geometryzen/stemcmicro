@@ -3,7 +3,6 @@ import { extract_single_blade } from "../../calculators/compare/extract_single_b
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { is_zero_num } from "../../is_zero_rational_or_double";
 import { render_as_infix } from "../../print/print";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
@@ -13,6 +12,7 @@ import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { is_blade } from "../blade/is_blade";
+import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
 import { is_tensor } from "../tensor/is_tensor";
@@ -34,8 +34,25 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         return multiply_num_num(lhs, rhs);
     }
 
-    if (is_zero_num(lhs) || is_zero_num(rhs)) {
-        return zero;
+    if (is_flt(lhs)) {
+        if (lhs.isZero()) {
+            return lhs;
+        }
+    }
+    if (is_flt(rhs)) {
+        if (rhs.isZero()) {
+            return rhs;
+        }
+    }
+    if (is_rat(lhs)) {
+        if (lhs.isZero()) {
+            return lhs;
+        }
+    }
+    if (is_rat(rhs)) {
+        if (rhs.isZero()) {
+            return rhs;
+        }
     }
 
     // Distributive Law  (x1 + x2 + ...) * R => x1 * R + x2 * R + ...

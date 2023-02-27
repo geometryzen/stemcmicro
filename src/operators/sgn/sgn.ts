@@ -11,14 +11,6 @@ import { abs } from '../abs/abs';
 import { is_flt } from '../flt/is_flt';
 import { is_rat } from '../rat/is_rat';
 
-//-----------------------------------------------------------------------------
-//s
-//  Author : philippe.billet@noos.fr
-//
-//  sgn sign function
-//
-//
-//-----------------------------------------------------------------------------
 export function Eval_sgn(p1: U, $: ExtensionEnv): U {
     return sgn($.valueOf(cadr(p1)), $);
 }

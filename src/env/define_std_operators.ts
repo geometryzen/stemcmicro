@@ -100,6 +100,7 @@ import { derivative_fn } from '../operators/derivative/derivative_fn';
 import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
 import { dim_varargs } from '../operators/dim/dim_varargs';
+import { dirac_varargs } from '../operators/dirac/dirac_varargs';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
 import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
@@ -254,6 +255,7 @@ import { printlist_1_any } from '../operators/printlist/printlist_1_any';
 import { printlist_keyword } from '../operators/printlist/printlist_keyword';
 import { product_varargs } from '../operators/product/product_varargs';
 import { quote_varargs } from '../operators/quote/quote_varargs';
+import { quotient_varargs } from '../operators/quotient/quotient_varargs';
 import { rank_varargs } from '../operators/rank/rank_varargs';
 import { is_rat, rat_extension } from '../operators/rat/rat_extension';
 import { rationalize_fn } from '../operators/rationalize/rationalize_fn';
@@ -660,6 +662,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(det_any);
 
     $.defineOperator(dim_varargs);
+    $.defineOperator(dirac_varargs);
     $.defineOperator(divisors_varargs);
 
     $.defineOperator(do_varargs);
@@ -722,6 +725,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(product_varargs);
 
     $.defineOperator(quote_varargs);
+    $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
     $.defineOperator(real_any);
     $.defineOperator(rect_varargs);

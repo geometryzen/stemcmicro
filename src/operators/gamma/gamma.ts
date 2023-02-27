@@ -10,13 +10,6 @@ import { cadr } from '../../tree/helpers';
 import { half, negOne, Rat } from '../../tree/rat/Rat';
 import { car, cdr, U } from '../../tree/tree';
 
-//-----------------------------------------------------------------------------
-//
-//  Author : philippe.billet@noos.fr
-//
-//  Gamma function gamma(x)
-//
-//-----------------------------------------------------------------------------
 export function Eval_gamma(p1: U, $: ExtensionEnv): U {
     return gamma($.valueOf(cadr(p1)), $);
 }

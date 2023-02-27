@@ -1,21 +1,20 @@
-import { coeff } from './operators/coeff/coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { coeff } from './operators/coeff/coeff';
 import { SYMBOL_X } from './runtime/constants';
-import { stack_push } from './runtime/stack';
 import { cadddr, caddr, cadr } from './tree/helpers';
 import { wrap_as_int, zero } from './tree/rat/Rat';
-import { nil, U } from './tree/tree';
+import { is_nil, U } from './tree/tree';
 
 // Divide polynomials
-export function Eval_quotient(p1: U, $: ExtensionEnv): void {
+export function Eval_quotient(p1: U, $: ExtensionEnv): U {
     const DIVIDEND = $.valueOf(cadr(p1)); // 1st arg, p(x)
     const DIVISOR = $.valueOf(caddr(p1)); // 2nd arg, q(x)
     const X = $.valueOf(cadddr(p1)); // 3rd arg, x, default x
-    if (nil !== X) {
-        stack_push(divpoly(DIVIDEND, DIVISOR, X, $));
+    if (!is_nil(X)) {
+        return divpoly(DIVIDEND, DIVISOR, X, $);
     }
     else {
-        stack_push(divpoly(DIVIDEND, DIVISOR, SYMBOL_X, $));
+        return divpoly(DIVIDEND, DIVISOR, SYMBOL_X, $);
     }
 }
 

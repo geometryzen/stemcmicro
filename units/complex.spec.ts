@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("complex", function () {
@@ -7,7 +7,7 @@ describe("complex", function () {
         const lines: string[] = [
             `y*i+x`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -22,7 +22,7 @@ describe("complex", function () {
         const lines: string[] = [
             `x+i*y`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
@@ -31,7 +31,7 @@ describe("complex", function () {
         const lines: string[] = [
             `x+y*i`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
@@ -40,7 +40,7 @@ describe("complex", function () {
         const lines: string[] = [
             `i*y+x`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -52,7 +52,7 @@ describe("complex", function () {
         const lines: string[] = [
             `y*i+x`,
         ];
-        const engine = createScriptEngine({ useDefinitions: true });
+        const engine = create_script_engine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
@@ -61,7 +61,7 @@ describe("complex", function () {
         const lines: string[] = [
             `i*i`,
         ];
-        const engine = createScriptEngine({ useDefinitions: true });
+        const engine = create_script_engine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "-1");
         engine.release();
@@ -70,7 +70,7 @@ describe("complex", function () {
         const lines: string[] = [
             `(-i)*i`,
         ];
-        const engine = createScriptEngine({ useDefinitions: true });
+        const engine = create_script_engine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();
@@ -79,7 +79,7 @@ describe("complex", function () {
         const lines: string[] = [
             `(-i)+i`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
@@ -88,7 +88,7 @@ describe("complex", function () {
         const lines: string[] = [
             `i+(-i)`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
@@ -97,7 +97,7 @@ describe("complex", function () {
         const lines: string[] = [
             `y*x*k*j*i*a*2`,
         ];
-        const engine = createScriptEngine({ useDefinitions: true });
+        const engine = create_script_engine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "2*i*a*j*k*x*y");
         engine.release();
@@ -107,7 +107,7 @@ describe("complex", function () {
         const lines: string[] = [
             `y*x*k*j*i*2*a`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = create_script_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "2*a*i*j*k*x*y");
         engine.release();

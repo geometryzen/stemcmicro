@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { ExpandingTransformer } from "../src/transform/ExpandingTransformer";
 import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -10,7 +10,7 @@ describe("add", function () {
         const lines: string[] = [
             `2.0+3`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -23,7 +23,7 @@ describe("add", function () {
         const lines: string[] = [
             `2+3.0`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -36,7 +36,7 @@ describe("add", function () {
             `a+b`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
@@ -51,7 +51,7 @@ describe("add", function () {
             `b+a`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
@@ -66,7 +66,7 @@ describe("add", function () {
             `a+b+c`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
@@ -81,7 +81,7 @@ describe("add", function () {
             `b+a+c`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
@@ -96,7 +96,7 @@ describe("add", function () {
             `a+b+b+a`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
@@ -111,7 +111,7 @@ describe("add", function () {
             `a+b+c+c+b+a`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);

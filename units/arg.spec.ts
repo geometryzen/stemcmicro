@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("arg", function () {
@@ -7,7 +7,7 @@ describe("arg", function () {
         const lines: string[] = [
             `arg(exp(i*pi/3))`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });

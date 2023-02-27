@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../index";
+import { create_script_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("ordering", function () {
@@ -8,7 +8,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*d(b,c)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -19,7 +19,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*d(c,b)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -30,7 +30,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `b*d(a,c)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -41,7 +41,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `b*d(c,a)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -52,7 +52,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `c*d(a,b)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -63,7 +63,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `c*d(b,a)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -74,7 +74,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(a,b)*c`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -85,7 +85,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(a,c)*b`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -96,7 +96,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(b,a)*c`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -107,7 +107,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(b,c)*a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -118,7 +118,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(c,a)*b`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -129,7 +129,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(c,b)*a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -142,7 +142,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-a*d(b,c)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -153,7 +153,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-a*d(c,b)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -164,7 +164,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-b*d(a,c)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -175,7 +175,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-b*d(c,a)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -186,7 +186,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-c*d(a,b)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -197,7 +197,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-c*d(b,a)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -208,7 +208,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-d(a,b)*c`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -220,7 +220,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-d(a,c)*b`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -231,7 +231,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-d(b,a)*c`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -242,7 +242,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-d(b,c)*a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -253,7 +253,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-d(c,a)*b`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -264,7 +264,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `-d(c,b)*a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -278,7 +278,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*d(b,c)+a*d(b,c)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -289,7 +289,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `p*d(a,b)+q*d(a,b)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -300,7 +300,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `q*d(a,b)+p*d(a,b)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -311,7 +311,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `p*d(a,q)+p*d(b,q)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -322,7 +322,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(b,q)+d(a,q)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -333,7 +333,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `p*d(b,q)+p*d(a,q)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -344,7 +344,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*d(b,p)+a*d(b,q)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -357,7 +357,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*d(b,c)-a*d(b,c)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -370,7 +370,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*d(b,x)+a*d(b,y)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -381,7 +381,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*(d(b,x)+d(b,y))`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -392,7 +392,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `d(b,y)+d(b,x)`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -404,7 +404,7 @@ describe("ordering", function () {
             const lines: string[] = [
                 `a*(d(b,y)+d(b,x))`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

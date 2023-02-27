@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { ExpandingTransformer } from "../src/transform/ExpandingTransformer";
 import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -9,7 +9,7 @@ describe("mul", function () {
         const lines: string[] = [
             `(x*x)/x`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "x");
         assert.strictEqual(engine.renderAsInfix(actual), "x");
@@ -21,7 +21,7 @@ describe("mul", function () {
             `(a*b)*c`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);

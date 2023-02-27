@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 xdescribe("rect", function () {
@@ -9,7 +9,7 @@ xdescribe("rect", function () {
             `pi=tau(1/2)`,
             `rect(exp(i*pi/3))`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: false
         });

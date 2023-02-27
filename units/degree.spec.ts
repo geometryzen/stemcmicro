@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 // degree does not appear to be implemented in Algebrite either.
 describe("degree", function () {
@@ -7,7 +7,7 @@ describe("degree", function () {
         const lines: string[] = [
             `degree(x)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -18,7 +18,7 @@ describe("degree", function () {
         const lines: string[] = [
             `degree(x*x)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -29,7 +29,7 @@ describe("degree", function () {
         const lines: string[] = [
             `degree(x**2)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

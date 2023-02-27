@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("round", function () {
     it("3/2", function () {
         const lines: string[] = [
             `round(3/2)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });

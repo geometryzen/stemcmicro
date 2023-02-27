@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("gamma", function () {
     it("gamma(x+1)", function () {
         const lines: string[] = [
             `gamma(x+1)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(* x (gamma x))");
@@ -17,7 +17,7 @@ describe("gamma", function () {
         const lines: string[] = [
             `gamma(1/2)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(power pi 1/2)");

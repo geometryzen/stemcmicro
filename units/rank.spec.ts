@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("rank", function () {
     it("rank(a)", function () {
         const lines: string[] = [
             `rank(a)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
@@ -17,7 +17,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([a,b,c])`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -28,7 +28,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([[a,b,c]])`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "2");
@@ -39,7 +39,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([[a],[b],[c]])`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "2");

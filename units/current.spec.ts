@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("current", function () {
     it("numerator(1/(x-1)/(x-2))", function () {
         const lines: string[] = [
             `numerator(1/(x-1)/(x-2))`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: [],
             useDefinitions: false,
             useCaretForExponentiation: false

@@ -10,7 +10,7 @@ import { is_sym } from '../src/operators/sym/is_sym';
 import { is_tensor } from '../src/operators/tensor/is_tensor';
 import { ASSIGN, QUOTE } from '../src/runtime/constants';
 import { MATH_ADD, MATH_COMPONENT, MATH_EQ, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
-import { parseScript, ParseScriptOptions } from '../src/scanner/parse_script';
+import { ParseScriptOptions, parse_script } from '../src/scanner/parse_script';
 import { Boo } from '../src/tree/boo/Boo';
 import { Flt } from '../src/tree/flt/Flt';
 import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
@@ -423,13 +423,13 @@ describe("scan", function () {
         }
     });
     it("multiline", function () {
-        const { trees } = parseScript("A=1\nB=2\nC=3");
+        const { trees } = parse_script("A=1\nB=2\nC=3");
         assert.strictEqual(trees.length, 3);
     });
 });
 
 function expect_one_tree(sourceText: string, options?: ParseScriptOptions): U {
-    const { trees, errors } = parseScript(sourceText, options);
+    const { trees, errors } = parse_script(sourceText, options);
     // console.lg(`tree => ${tree}`);
     // console.lg(`errors => ${JSON.stringify(errors)}`);
     if (errors.length > 0) {

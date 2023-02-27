@@ -4,7 +4,7 @@ import fs from 'fs';
 import process from 'process';
 import { clear_patterns } from './src/pattern';
 import { defs } from './src/runtime/defs';
-import { createScriptEngine, ScriptEngine, ScriptEngineOptions } from './src/runtime/script_engine';
+import { create_script_engine, ScriptEngine, ScriptEngineOptions } from './src/runtime/script_engine';
 import { U } from './src/tree/tree';
 
 const shardCount = Number(process.env['TEST_TOTAL_SHARDS']) || 1;
@@ -222,7 +222,7 @@ function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOp
  */
 export function run_shardable_test(s: string[], prefix = '') {
     const options: ScriptEngineOptions = {};
-    const engine = createScriptEngine(options);
+    const engine = create_script_engine(options);
     try {
         setup_test(() => {
             for (let i = 0; i < s.length; i += 2) {
@@ -313,7 +313,7 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
 export function run_test(s: string[], options?: TestOptions): void {
     // const config = test_config_from_options(options);
     const engcfg = harness_options_to_engine_options(options);
-    const engine = createScriptEngine(engcfg);
+    const engine = create_script_engine(engcfg);
     try {
         setup_test(() => {
             test(name_from_harness_options(options) || `${testIndex}`, t => {

@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("nroots", function () {
     xit("nroots((1+i)*x^2+1)", function () {
         const lines: string[] = [
             `nroots((1+i)*x^2+1)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: true,
             useDefinitions: true
         });

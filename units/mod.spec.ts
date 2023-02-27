@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("mod", function () {
     it("mod", function () {
         const lines: string[] = [
             `mod(2.0,3.0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));

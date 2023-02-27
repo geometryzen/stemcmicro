@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("factorial", function () {
     it("factorial(6)", function () {
         const lines: string[] = [
             `factorial(6)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -17,7 +17,7 @@ describe("factorial", function () {
         const lines: string[] = [
             `factorial(k)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

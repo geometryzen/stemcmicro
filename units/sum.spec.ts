@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("sum", function () {
     it("4*sum(float((-1)^k*(1/(2*k+1))),k,0,100)", function () {
         const lines: string[] = [
             `4*sum(float((-1)^k*(1/(2*k+1))),k,0,100)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

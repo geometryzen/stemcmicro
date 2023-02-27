@@ -30,7 +30,7 @@ function config_from_options(options: ParseScriptOptions | undefined): ScanConfi
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the parsing behaves.
  */
-export function parseScript(sourceText: string, options?: ParseScriptOptions): { trees: U[], errors: Error[] } {
+export function parse_script(sourceText: string, options?: ParseScriptOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config = config_from_options(options);

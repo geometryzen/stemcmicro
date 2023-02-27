@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { createScriptEngine, ExpandingTransformer } from "../index";
+import { create_script_engine } from "../index";
+import { ExpandingTransformer } from "../src/transform/ExpandingTransformer";
 import { NoopTransformer } from "../src/transform/NoopTransformer";
 
 describe("transform", function () {
@@ -7,7 +8,7 @@ describe("transform", function () {
         const lines: string[] = [
             `a`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new NoopTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -19,7 +20,7 @@ describe("transform", function () {
         const lines: string[] = [
             `a+b`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new NoopTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -31,7 +32,7 @@ describe("transform", function () {
         const lines: string[] = [
             `a+b+c`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new NoopTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -43,7 +44,7 @@ describe("transform", function () {
         const lines: string[] = [
             `a`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -55,7 +56,7 @@ describe("transform", function () {
         const lines: string[] = [
             `a+b`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -67,7 +68,7 @@ describe("transform", function () {
         const lines: string[] = [
             `a+b+c`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -79,7 +80,7 @@ describe("transform", function () {
         const lines: string[] = [
             `1/a+1/b+1/c`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -91,7 +92,7 @@ describe("transform", function () {
         const lines: string[] = [
             `1/a`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -104,7 +105,7 @@ describe("transform", function () {
         const lines: string[] = [
             `foo(1/a)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -116,7 +117,7 @@ describe("transform", function () {
         const lines: string[] = [
             `rationalize(1/a)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -127,7 +128,7 @@ describe("transform", function () {
         const lines: string[] = [
             `rationalize(1/a+1/b)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(lines.join('\n'), new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -139,7 +140,7 @@ describe("transform", function () {
             `rationalize(1/a+1/b+1/c)`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const { values } = engine.transformScript(sourceText, new ExpandingTransformer());
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);

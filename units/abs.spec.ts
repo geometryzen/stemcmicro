@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 xdescribe("abs", function () {
@@ -7,7 +7,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(x)`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
         engine.release();
@@ -16,7 +16,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(x)`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(x**2)**(1/2)");
         engine.release();
@@ -25,7 +25,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(i*y)`,
         ];
-        const engine = createScriptEngine({ useDefinitions: true });
+        const engine = create_script_engine({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "abs(y)");
         engine.release();
@@ -34,7 +34,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(x+i*y)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -47,7 +47,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(a+i*b)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -60,7 +60,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(a+b+i*c)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -74,7 +74,7 @@ xdescribe("abs", function () {
             `i=sqrt(-1)`,
             `x * i`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = create_script_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x*i");
         engine.release();
@@ -85,7 +85,7 @@ xdescribe("abs", function () {
             `i=sqrt(-1)`,
             `-i * i * x * x`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             disable: ['factorize'],
             useDefinitions: false
         });
@@ -97,7 +97,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `(x-i*y)*(x+i*y)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             disable: ['factorize'],
             useDefinitions: true
         });
@@ -110,7 +110,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `(x-i*y)*(x+i*y)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             disable: ['factorize'],
             useDefinitions: true
         });
@@ -125,7 +125,7 @@ xdescribe("abs", function () {
             `i=sqrt(-1)`,
             `abs(1+2.0*i)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             // FIXME: The absence of Imu causes this expression to loop.
             dependencies: ['Flt', 'Imu']
         });
@@ -138,7 +138,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `exp(i*pi/3)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -151,7 +151,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `i*a+i*c`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -163,7 +163,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `i*a+i*c`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -175,7 +175,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(x)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true,
             useCaretForExponentiation: false
@@ -189,7 +189,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(x*y)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true,
             useCaretForExponentiation: false
@@ -203,7 +203,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(x)*abs(x)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true,
             useCaretForExponentiation: false
@@ -216,7 +216,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(x*i)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true,
             useCaretForExponentiation: false
@@ -230,7 +230,7 @@ xdescribe("abs", function () {
         const lines: string[] = [
             `abs(a+b+c*i)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });

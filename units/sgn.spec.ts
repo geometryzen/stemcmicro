@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("sgn", function () {
     it("sgn(-3)", function () {
         const lines: string[] = [
             `sgn(-3)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "-1");
@@ -17,7 +17,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
@@ -28,7 +28,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(3)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");

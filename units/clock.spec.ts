@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("clock", function () {
@@ -7,7 +7,7 @@ describe("clock", function () {
         const lines: string[] = [
             `clock(i)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -20,7 +20,7 @@ describe("clock", function () {
         const lines: string[] = [
             `(1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -33,7 +33,7 @@ describe("clock", function () {
         const lines: string[] = [
             `((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -46,7 +46,7 @@ describe("clock", function () {
         const lines: string[] = [
             `-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -59,7 +59,7 @@ describe("clock", function () {
         const lines: string[] = [
             `(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -72,7 +72,7 @@ describe("clock", function () {
         const lines: string[] = [
             `1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -85,7 +85,7 @@ describe("clock", function () {
         const lines: string[] = [
             `(1/4+(-1/2*((1/2+(1/2*3**(1/2))*i)-(1/2+(-1/2*3**(1/2))*i))*i)**2)**(1/2)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -98,7 +98,7 @@ describe("clock", function () {
         const lines: string[] = [
             `exp(i*pi/3)`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -111,7 +111,7 @@ describe("clock", function () {
         const lines: string[] = [
             `clock(exp(i*pi/3))`,
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });

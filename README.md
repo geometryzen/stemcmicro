@@ -7,20 +7,40 @@ symbolic-math is a Javascript (Typescript) library for symbolic mathematics.
 ## Example
 
 ```typescript
-import { createScriptEngine } from "symbolic-math";
+import { assert } from "chai";
+import { create_script_engine, ScriptEngineOptions } from "symbolic-math";
 
-const lines: string[] = [
-    `a/b`
-];
-
-const eng = createScriptEngine();
-
-const { values } = eng.executeScript(lines.join('\n'));
-assert.strictEqual(eng.renderAsInfix(values[0]), "a/b");
-assert.strictEqual(eng.renderAsSExpr(values[0]), "(* a (power b -1))");
-assert.strictEqual(eng.renderAsLaTeX(values[0]), "\\frac{a}{b}");
-
-eng.release();
+describe("example", function () {
+    it("Geometric Algebra", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["i","j","k"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
+            `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
+            `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
+            `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+            `A = Ax * e1 + Ay * e2 + Az * e3`,
+            `B = Bx * e1 + By * e2 + Bz * e3`,
+            `C = Cx * e1 + Cy * e2 + Cz * e3`,
+            `cross(A,B)`,
+            `A|B`,
+            `A^B`
+        ];
+        const sourceText = lines.join('\n');
+        const options: ScriptEngineOptions = {
+            useCaretForExponentiation: false,
+            useDefinitions: false
+        };
+        const engine = create_script_engine(options);
+        const { values } = engine.executeScript(sourceText);
+        assert.strictEqual(engine.renderAsInfix(values[0]), "Ay*Bz*i-Az*By*i-Ax*Bz*j+Az*Bx*j+Ax*By*k-Ay*Bx*k");
+        assert.strictEqual(engine.renderAsInfix(values[1]), "Ax*Bx+Ay*By+Az*Bz");
+        assert.strictEqual(engine.renderAsInfix(values[2]), "Ax*By*i^j-Ay*Bx*i^j+Ax*Bz*i^k-Az*Bx*i^k+Ay*Bz*j^k-Az*By*j^k");
+        engine.release();
+    });
+});
 ```
 
 ## Features

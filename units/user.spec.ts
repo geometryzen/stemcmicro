@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("user", function () {
@@ -8,7 +8,7 @@ describe("user", function () {
             `f(x,y)=2*x+y`,
             `f(1,2)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "4");
@@ -20,7 +20,7 @@ describe("user", function () {
             `f(a,x)=1+sin(float(a/360*2*pi))-float(x)+sin(a/360*2*pi)-x`,
             `f(0,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -34,7 +34,7 @@ describe("user", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(0,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -48,7 +48,7 @@ describe("user", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(180,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });

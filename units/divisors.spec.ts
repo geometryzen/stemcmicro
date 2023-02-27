@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("divisors", function () {
     it("divisors(12)", function () {
         const lines: string[] = [
             `divisors(12)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -17,7 +17,7 @@ describe("divisors", function () {
         const lines: string[] = [
             `divisors(3*x+3)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

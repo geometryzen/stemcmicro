@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("taylor", function () {
     it("taylor(1/(5+4*cos(x)),x,0,0)", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,0,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -18,7 +18,7 @@ describe("taylor", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,1,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -30,7 +30,7 @@ describe("taylor", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,2,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             disable: ['factorize'],
             useCaretForExponentiation: false
         });
@@ -43,7 +43,7 @@ describe("taylor", function () {
         const lines: string[] = [
             `taylor(1/(5+4*cos(x)),x,6,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

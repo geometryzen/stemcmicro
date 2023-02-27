@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../index";
+import { create_script_engine } from "../index";
 
 describe("guide", function () {
     it("Experiment 001", function () {
@@ -7,7 +7,7 @@ describe("guide", function () {
             `z=x+i*y`,
             `sin(z)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: [],
             useDefinitions: false
         });
@@ -21,7 +21,7 @@ describe("guide", function () {
             `sin(z)`
         ];
         // The problem is that we need the imaginary unit dependency.
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });

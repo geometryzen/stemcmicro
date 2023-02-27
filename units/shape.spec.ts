@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("shape", function () {
     it("shape([a,b,c])", function () {
         const lines: string[] = [
             `shape([a,b,c])`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[3]");
@@ -17,7 +17,7 @@ describe("shape", function () {
         const lines: string[] = [
             `shape([[a,b,c]])`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[1,3]");
@@ -28,7 +28,7 @@ describe("shape", function () {
         const lines: string[] = [
             `shape([[a],[b],[c]])`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[3,1]");

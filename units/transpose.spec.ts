@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("transpose", function () {
     it("transpose([[1,2,3,4]])", function () {
         const lines: string[] = [
             `transpose([[1,2,3,4]])`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1],[2],[3],[4]]");

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../index";
+import { create_script_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("exp", function () {
@@ -7,7 +7,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(5)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(power e 5)");
         assert.strictEqual(engine.renderAsInfix(actual), "e**5");
@@ -18,7 +18,7 @@ describe("exp", function () {
             `e=exp(1)`,
             `exp(1)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "e");
         assert.strictEqual(engine.renderAsInfix(actual), "e");
@@ -28,7 +28,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(i*pi)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -40,7 +40,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(pi*i)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -52,7 +52,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(i*x)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -64,7 +64,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-i*x)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -76,7 +76,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(x*i)+exp(-x*i)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -88,7 +88,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-x*i)+exp(x*i)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -100,7 +100,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(x*i)-exp(-x*i)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -112,7 +112,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-x*i)-exp(x*i)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });
@@ -124,7 +124,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-3/4*i*pi)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Imu'],
             useDefinitions: true
         });

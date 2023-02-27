@@ -77,7 +77,7 @@ export class Dimensions {
      * @param amount The amount component of the dimensions object.
      * @param intensity The intensity component of the dimensions object.
      */
-    constructor(public M: QQ, public L: QQ, public T: QQ, public Q: QQ, public temperature: QQ, public amount: QQ, public intensity: QQ) {
+    constructor(public readonly M: QQ, public readonly L: QQ, public readonly T: QQ, public readonly Q: QQ, public readonly temperature: QQ, public readonly amount: QQ, public readonly intensity: QQ) {
         assertArgRational('M', M);
         assertArgRational('L', L);
         assertArgRational('T', T);

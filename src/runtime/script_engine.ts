@@ -120,7 +120,7 @@ export function env_options_from_engine_options(options: ScriptEngineOptions | u
  * Creates an engine for executing scripts.
  * The returned engine is reference counted and should be released when no longer needed.
  */
-export function createScriptEngine(options?: ScriptEngineOptions): ScriptEngine {
+export function create_script_engine(options?: ScriptEngineOptions): ScriptEngine {
     let ref_count = 1;
     const envOptions: EnvOptions = env_options_from_engine_options(options);
     const $ = create_env(envOptions);

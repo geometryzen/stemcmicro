@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("physics", function () {
@@ -11,7 +11,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * 5 * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -30,7 +30,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `a * i * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -44,7 +44,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `a * kg * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -58,7 +58,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * a * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -72,7 +72,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * i * a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -86,7 +86,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * kg * a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -100,7 +100,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * a * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -116,7 +116,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * i * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -130,7 +130,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * kg * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -144,7 +144,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * 5 * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -158,7 +158,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * i * 5`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -172,7 +172,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * kg * 5`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -186,7 +186,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * 5 * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -202,7 +202,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5.0 * i * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Flt', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -216,7 +216,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5.0 * kg * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Flt', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -230,7 +230,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * 5.0 * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Flt', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -244,7 +244,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * i * 5.0`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Flt', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -258,7 +258,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * kg * 5.0`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Flt', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -272,7 +272,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * 5.0 * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Flt', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -288,7 +288,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `a * i * 5`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -302,7 +302,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `a * 5 * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -316,7 +316,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * a * i`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -330,7 +330,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * i * a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -344,7 +344,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * 5 * a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -358,7 +358,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `i * a * 5`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -374,7 +374,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `a * 5 * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -388,7 +388,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `a * kg * 5`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -402,7 +402,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * a * 5`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -416,7 +416,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `kg * 5 * a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -430,7 +430,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * kg * a`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -444,7 +444,7 @@ describe("physics", function () {
                 `kg = uom("kilogram")`,
                 `5 * a * kg`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

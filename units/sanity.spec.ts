@@ -1,16 +1,16 @@
 import { assert } from "chai";
-import { createScriptEngine, is_cons, nil } from "../index";
+import { create_script_engine, is_cons, NIL } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sanity", function () {
     it("is_cons(nil) evaluates to false even though nil is implemented as a Cons", function () {
-        assert.isFalse(is_cons(nil));
+        assert.isFalse(is_cons(NIL));
     });
     it("engine", function () {
         const lines: string[] = [
             `float(i)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt', 'Imu'],
             useCaretForExponentiation: true,
             useDefinitions: true

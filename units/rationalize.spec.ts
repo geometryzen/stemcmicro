@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("rationalize", function () {
@@ -7,7 +7,7 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(1/a)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(power a -1)");
         assert.strictEqual(engine.renderAsInfix(actual), "1/a");
@@ -17,7 +17,7 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(1/a+1/b)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ a b) (power (* a b) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a+b)/(a*b)");
@@ -27,7 +27,7 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(1/a+1/b+1/c)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsSExpr(actual), "");
         assert.strictEqual(engine.renderAsInfix(actual), "(a*b+a*c+b*c)/(a*b*c)");
@@ -37,7 +37,7 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(a/b+c/d)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (* a d) (* b c)) (power (* b d) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a*d+b*c)/(b*d)");
@@ -47,7 +47,7 @@ describe("rationalize", function () {
         const lines: string[] = [
             `rationalize(a/b+b/a)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             disable: ['factorize'],
             useCaretForExponentiation: true
         });

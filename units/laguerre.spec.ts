@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("laguerre", function () {
     it("laguerre(x,0)", function () {
         const lines: string[] = [
             `laguerre(x,0)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -17,7 +17,7 @@ describe("laguerre", function () {
         const lines: string[] = [
             `laguerre(x,1)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1 (* -1 x))");
@@ -28,7 +28,7 @@ describe("laguerre", function () {
         const lines: string[] = [
             `laguerre(x,2)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             disable: ['factorize']
         });
         const { values } = engine.executeScript(lines.join('\n'));

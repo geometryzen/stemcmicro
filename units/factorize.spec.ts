@@ -4,7 +4,7 @@ import { imu } from "../src/env/imu";
 import { makeList } from "../src/makeList";
 import { is_rat } from "../src/operators/rat/is_rat";
 import { MATH_MUL } from "../src/runtime/ns_math";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { negOne, one, Rat, two } from "../src/tree/rat/Rat";
 import { Sym } from "../src/tree/sym/Sym";
 import { U } from "../src/tree/tree";
@@ -53,7 +53,7 @@ xdescribe("factorize Rat", function () {
         const lines: string[] = [
             `k*x+k*y`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = create_script_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "k*(x+y)");
         engine.release();
@@ -62,7 +62,7 @@ xdescribe("factorize Rat", function () {
         const lines: string[] = [
             `k*x-k*y`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = create_script_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "k*(x-y)");
         engine.release();
@@ -137,7 +137,7 @@ xdescribe("factorizeR", function () {
         const lines: string[] = [
             `2*a*b-a*b`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(* a b)');
         assert.strictEqual(engine.renderAsInfix(actual), 'a*b');
@@ -147,7 +147,7 @@ xdescribe("factorizeR", function () {
         const lines: string[] = [
             `2*a*b+a*b`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(* 3 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '3*a*b');
@@ -157,7 +157,7 @@ xdescribe("factorizeR", function () {
         const lines: string[] = [
             `a*b+2*a*b`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(* 3 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '3*a*b');
@@ -167,7 +167,7 @@ xdescribe("factorizeR", function () {
         const lines: string[] = [
             `-2*a*b+a*b`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(* -1 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '-a*b');
@@ -180,7 +180,7 @@ xdescribe("", function () {
         const lines: string[] = [
             `(X + 2 * A) + 3 * A`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '5*A+X');
@@ -190,7 +190,7 @@ xdescribe("", function () {
         const lines: string[] = [
             `(X + 2 * A) + A`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '3*A+X');
@@ -200,7 +200,7 @@ xdescribe("", function () {
         const lines: string[] = [
             `(X + A) + 2*A`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '3*A+X');
@@ -210,7 +210,7 @@ xdescribe("", function () {
         const lines: string[] = [
             `(X + 2 * A * B) + 3 * A * B`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '5*A*B+X');
@@ -220,7 +220,7 @@ xdescribe("", function () {
         const lines: string[] = [
             `(X + 2 * A * B) + A * B`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '3*A*B+X');
@@ -230,7 +230,7 @@ xdescribe("", function () {
         const lines: string[] = [
             `(X + A * B) + 2 * A * B`,
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual,$), '(* -1 a b)');
         assert.strictEqual(engine.renderAsInfix(actual), '3*A*B+X');
@@ -243,7 +243,7 @@ xdescribe("factorize right", function () {
         const lines: string[] = [
             `a*b+b`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = create_script_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
         assert.strictEqual(engine.renderAsInfix(value), "(1+a)*b");
@@ -253,7 +253,7 @@ xdescribe("factorize right", function () {
         const lines: string[] = [
             `a*b*c+c`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = create_script_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
         assert.strictEqual(engine.renderAsInfix(value), "(a*b+1)*c");
@@ -263,7 +263,7 @@ xdescribe("factorize right", function () {
         const lines: string[] = [
             `a*b*c*d*e+c*d*e`,
         ];
-        const engine = createScriptEngine({ useDefinitions: false });
+        const engine = create_script_engine({ useDefinitions: false });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
         assert.strictEqual(engine.renderAsInfix(value), "(a*b+1)*c*d*e");
@@ -277,7 +277,7 @@ describe("factorize", function () {
             const lines: string[] = [
                 `x*x`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
                 disable: ['factorize']
             });
@@ -289,7 +289,7 @@ describe("factorize", function () {
             const lines: string[] = [
                 `x*x`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

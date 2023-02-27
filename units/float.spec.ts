@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../index";
+import { create_script_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("float", function () {
@@ -7,7 +7,7 @@ describe("float", function () {
         const lines: string[] = [
             `float(tau(1/2))`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -19,7 +19,7 @@ describe("float", function () {
         const lines: string[] = [
             `1+i`
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ 1 i)");
         assert.strictEqual(engine.renderAsInfix(actual), "1+i");
@@ -29,7 +29,7 @@ describe("float", function () {
         const lines: string[] = [
             `1+2*i`
         ];
-        const engine = createScriptEngine({});
+        const engine = create_script_engine({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ 1 (* 2 i))");
         assert.strictEqual(engine.renderAsInfix(actual), "1+2*i");
@@ -39,7 +39,7 @@ describe("float", function () {
         const lines: string[] = [
             `(1+2*i)^(1/2)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(power (+ 1 (* 2 i)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(actual), "(1+2*i)^(1/2)");
@@ -49,7 +49,7 @@ describe("float", function () {
         const lines: string[] = [
             `float((1+2*i)^(1/2))`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt'],
             useCaretForExponentiation: true
         });
@@ -62,7 +62,7 @@ describe("float", function () {
         const lines: string[] = [
             `float(x)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -75,7 +75,7 @@ describe("float", function () {
         const lines: string[] = [
             `float(pi)`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Flt'],
             useDefinitions: true
         });

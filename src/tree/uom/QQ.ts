@@ -1,4 +1,3 @@
-import { DivisionRingOperators } from './DivisionRingOperators';
 import { mustBeInteger } from './mustBeInteger';
 import { readOnly } from './readOnly';
 
@@ -13,18 +12,19 @@ const magicCode = Math.random();
  *
  * Construct new instances using the static <code>valueOf</code> method.
  */
-export class QQ implements DivisionRingOperators<QQ, number> {
+export class QQ {
     /**
      *
      */
-    private _numer: number;
+    readonly #numer: number;
     /**
      *
      */
-    private _denom: number;
+    readonly #denom: number;
 
     /**
      * Intentionally undocumented.
+     * @hidden
      */
     constructor(n: number, d: number, code: number) {
         if (code !== magicCode) {
@@ -74,8 +74,8 @@ export class QQ implements DivisionRingOperators<QQ, number> {
             n = -n;
             d = -d;
         }
-        this._numer = n / g;
-        this._denom = d / g;
+        this.#numer = n / g;
+        this.#denom = d / g;
     }
 
     /**
@@ -83,7 +83,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @readOnly
      */
     get numer(): number {
-        return this._numer;
+        return this.#numer;
     }
     set numer(unused: number) {
         throw new Error(readOnly('numer').message);
@@ -94,7 +94,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @readOnly
      */
     get denom(): number {
-        return this._denom;
+        return this.#denom;
     }
     set denom(unused: number) {
         throw new Error(readOnly('denom').message);
@@ -105,7 +105,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     add(rhs: QQ): QQ {
-        return QQ.valueOf(this._numer * rhs._denom + this._denom * rhs._numer, this._denom * rhs._denom);
+        return QQ.valueOf(this.#numer * rhs.#denom + this.#denom * rhs.#numer, this.#denom * rhs.#denom);
     }
 
     /**
@@ -113,7 +113,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     sub(rhs: QQ): QQ {
-        return QQ.valueOf(this._numer * rhs._denom - this._denom * rhs._numer, this._denom * rhs._denom);
+        return QQ.valueOf(this.#numer * rhs.#denom - this.#denom * rhs.#numer, this.#denom * rhs.#denom);
     }
 
     /**
@@ -121,7 +121,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     mul(rhs: QQ): QQ {
-        return QQ.valueOf(this._numer * rhs._numer, this._denom * rhs._denom);
+        return QQ.valueOf(this.#numer * rhs.#numer, this.#denom * rhs.#denom);
     }
 
     /**
@@ -129,8 +129,8 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     div(rhs: QQ): QQ {
-        const numer = this._numer * rhs._denom;
-        const denom = this._denom * rhs._numer;
+        const numer = this.#numer * rhs.#denom;
+        const denom = this.#denom * rhs.#numer;
         if (numer === 0) {
             if (denom === 0) {
                 // How do we handle undefined?
@@ -155,14 +155,14 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     isOne(): boolean {
-        return this._numer === 1 && this._denom === 1;
+        return this.#numer === 1 && this.#denom === 1;
     }
 
     /**
      * @returns
      */
     isZero(): boolean {
-        return this._numer === 0 && this._denom === 1;
+        return this.#numer === 0 && this.#denom === 1;
     }
 
     /**
@@ -178,7 +178,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     inv(): QQ {
-        return QQ.valueOf(this._denom, this._numer);
+        return QQ.valueOf(this.#denom, this.#numer);
     }
 
     /**
@@ -187,7 +187,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     neg(): QQ {
-        return QQ.valueOf(-this._numer, this._denom);
+        return QQ.valueOf(-this.#numer, this.#denom);
     }
 
     /**
@@ -198,7 +198,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      */
     equals(other: QQ): boolean {
         if (other instanceof QQ) {
-            return this._numer * other._denom === this._denom * other._numer;
+            return this.#numer * other.#denom === this.#denom * other.#numer;
         }
         else {
             return false;
@@ -211,7 +211,7 @@ export class QQ implements DivisionRingOperators<QQ, number> {
      * @returns
      */
     toString(): string {
-        return "" + this._numer + "/" + this._denom + "";
+        return "" + this.#numer + "/" + this.#denom + "";
     }
 
     /**

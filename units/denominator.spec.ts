@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("denominator", function () {
@@ -7,7 +7,7 @@ describe("denominator", function () {
         const lines: string[] = [
             `denominator(2/3)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "3");
         assert.strictEqual(engine.renderAsInfix(actual), "3");
@@ -18,7 +18,7 @@ describe("denominator", function () {
         const lines: string[] = [
             `denominator(x)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "1");
         assert.strictEqual(engine.renderAsInfix(actual), "1");
@@ -29,7 +29,7 @@ describe("denominator", function () {
         const lines: string[] = [
             `denominator(1/x)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "x");
         assert.strictEqual(engine.renderAsInfix(actual), "x");
@@ -40,7 +40,7 @@ describe("denominator", function () {
         const lines: string[] = [
             `denominator(a+b)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "1");
         assert.strictEqual(engine.renderAsInfix(actual), "1");
@@ -51,7 +51,7 @@ describe("denominator", function () {
         const lines: string[] = [
             `denominator(1/(1/a))`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "1");
         assert.strictEqual(engine.renderAsInfix(actual), "1");
@@ -62,7 +62,7 @@ describe("denominator", function () {
         const lines: string[] = [
             `denominator(1/a+1/b)`
         ];
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "a*b");

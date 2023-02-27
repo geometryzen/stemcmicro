@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../index";
+import { create_script_engine } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("derivative-sandbox", function () {
@@ -7,7 +7,7 @@ describe("derivative-sandbox", function () {
         const lines: string[] = [
             `d(cos(x),x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* -1 (sin x))");
         assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
@@ -20,7 +20,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(a+b,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ (derivative a x) (derivative b x))");
         assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)+d(b,x)");
@@ -30,7 +30,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(b+a,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ (derivative a x) (derivative b x))");
         assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)+d(b,x)");
@@ -40,7 +40,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(b,x)+d(a,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ (derivative a x) (derivative b x))");
         assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)+d(b,x)");
@@ -53,7 +53,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(a,b)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(derivative a b)");
         assert.strictEqual(engine.renderAsInfix(actual), "d(a,b)");
@@ -67,7 +67,7 @@ describe("derivative", function () {
             `d=foo`,
             `d(f,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(d f x)");
         assert.strictEqual(engine.renderAsInfix(actual), "d(f,x)");
@@ -78,7 +78,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(a,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(derivative a x)");
         assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)");
@@ -89,7 +89,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(x,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "1");
         assert.strictEqual(engine.renderAsInfix(actual), "1");
@@ -101,7 +101,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(x**2,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* 2 x)");
         assert.strictEqual(engine.renderAsInfix(actual), "2*x");
@@ -112,7 +112,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(x*x,x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(actual, $), "(* 2 x)");
         assert.strictEqual(engine.renderAsInfix(actual), "2*x");
@@ -122,7 +122,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(sin(x),x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(cos x)");
         assert.strictEqual(engine.renderAsInfix(actual), "cos(x)");
@@ -132,7 +132,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(cos(x),x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* -1 (sin x))");
         assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
@@ -142,7 +142,7 @@ describe("derivative", function () {
         const lines: string[] = [
             `d(1/(5+4*cos(x)),x)`
         ];
-        const engine = createScriptEngine();
+        const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "4*sin(x)/((5+4*cos(x))**2)");
         engine.release();

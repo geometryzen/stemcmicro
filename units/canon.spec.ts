@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { createScriptEngine } from "../src/runtime/script_engine";
+import { create_script_engine } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("canon", function () {
@@ -8,7 +8,7 @@ describe("canon", function () {
             const lines: string[] = [
                 `x*pi*i*2`
             ];
-            const engine = createScriptEngine({
+            const engine = create_script_engine({
                 dependencies: ['Imu'],
                 useDefinitions: true
             });
@@ -21,7 +21,7 @@ describe("canon", function () {
         const lines: string[] = [
             `1/x^2+1/x+1+x+x^2+x^3`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             useCaretForExponentiation: true,
             useDefinitions: true
@@ -34,7 +34,7 @@ describe("canon", function () {
         const lines: string[] = [
             `1+a+a^2`
         ];
-        const engine = createScriptEngine({
+        const engine = create_script_engine({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             useCaretForExponentiation: true,
             useDefinitions: true

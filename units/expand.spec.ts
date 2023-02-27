@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { createScriptEngine, ExpandingTransformer } from "../index";
+import { create_script_engine } from "../index";
+import { ExpandingTransformer } from "../src/transform/ExpandingTransformer";
 import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 
 describe("expand", function () {
@@ -8,7 +9,7 @@ describe("expand", function () {
             `(a+b)*c`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);
@@ -23,7 +24,7 @@ describe("expand", function () {
             `(a+b+c)*d`
         ];
         const sourceText = lines.join('\n');
-        const engine = createScriptEngine({ useCaretForExponentiation: true });
+        const engine = create_script_engine({ useCaretForExponentiation: true });
         const pipeline = new TransformerPipeline();
         pipeline.addTail(new ExpandingTransformer());
         const { values } = engine.transformScript(sourceText, pipeline);

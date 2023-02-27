@@ -1,14 +1,12 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
 import { print_str } from '../../print/print';
 import { EIGEN, EIGENVAL, EIGENVEC } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
-import { stack_push } from '../../runtime/stack';
 import { Flt, wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { nil, U } from '../../tree/tree';
+import { items_to_cons, nil, U } from '../../tree/tree';
 import { yyfloat } from '../float/float';
 import { is_flt } from '../flt/is_flt';
 import { is_tensor } from '../tensor/is_tensor';
@@ -100,7 +98,7 @@ let EIG_N = 0;
 const EIG_yydd: number[] = [];
 const EIG_yyqq: number[] = [];
 
-export function Eval_eigen(expr: U, $: ExtensionEnv): void {
+export function Eval_eigen(expr: U, $: ExtensionEnv): U {
     const { arg } = EIG_check_arg(expr, $);
     if (!arg) {
         halt('eigen: argument is not a square matrix');
@@ -115,7 +113,7 @@ export function Eval_eigen(expr: U, $: ExtensionEnv): void {
     const symQ = $.defineKey(new Sym('Q'));
     $.setBinding(symQ, Q);
 
-    stack_push(nil);
+    return nil;
 }
 
 /* eigenval =====================================================================
@@ -140,7 +138,7 @@ export function Eval_eigenval(p1: U, $: ExtensionEnv): U {
 function _eigenval(p1: U, $: ExtensionEnv): U {
     const { arg, invalid } = EIG_check_arg(p1, $);
     if (invalid) {
-        return makeList(EIGENVAL, invalid);
+        return items_to_cons(EIGENVAL, invalid);
     }
     // TODO: Refactor to eliminate the cast.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -171,7 +169,7 @@ export function Eval_eigenvec(p1: U, $: ExtensionEnv): U {
 function _eigenvec(p1: U, $: ExtensionEnv): U {
     const { arg, invalid } = EIG_check_arg(p1, $);
     if (invalid) {
-        return makeList(EIGENVEC, invalid);
+        return items_to_cons(EIGENVEC, invalid);
     }
     // TODO: Refactor to eliminate the cast.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

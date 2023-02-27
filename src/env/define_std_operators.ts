@@ -105,6 +105,7 @@ import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
 import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
+import { eigen_varargs } from '../operators/eigen/eigen_varargs';
 import { erf_varargs } from '../operators/erf/erf_varargs';
 import { erfc_varargs } from '../operators/erfc/erfc_varargs';
 import { err_extension } from '../operators/err/err_extension';
@@ -663,6 +664,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(do_varargs);
 
+    $.defineOperator(eigen_varargs);
     $.defineOperator(eigenval_varargs);
     $.defineOperator(eigenvec_varargs);
 

@@ -5,6 +5,7 @@ import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
 import { exp } from '../../../exp';
 import { makeList } from '../../../makeList';
+import { render_as_infix } from '../../../print/print';
 import {
     ARCCOS,
     ARCCOSH,
@@ -29,7 +30,7 @@ import {
 } from '../../../runtime/constants';
 import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
-import { MATH_ADD } from '../../../runtime/ns_math';
+import { MATH_ADD, MATH_E, MATH_PI } from '../../../runtime/ns_math';
 import { caddr, cadr } from '../../../tree/helpers';
 import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
@@ -65,18 +66,25 @@ export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
 
 function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     // console.lg(`d_scalar_scalar_1 F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
-    // d(x,x)?
+    // d(x,x)
     if (F.equals(X)) {
         return one;
     }
 
     // console.lg(`f=>${render_as_infix(F, $)} is_sym(F)=>${is_sym(F)}`);
 
+    // d(a,x)?
     if (is_sym(F)) {
+        if (F.equals(MATH_E)) {
+            return zero;
+        }
+        if (F.equals(MATH_PI)) {
+            return zero;
+        }
+        // For all other symbolic constants that we don't know what they represent...
         return items_to_cons(MATH_DERIVATIVE, F, X);
     }
 
-    // d(a,x)?
     // TODO: Better to check for types explicitly (extensibility required).
     // We are really checking for constantness here.
     if (!is_cons(F)) {

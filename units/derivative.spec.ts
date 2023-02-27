@@ -16,6 +16,15 @@ describe("derivative-sandbox", function () {
 });
 
 describe("derivative", function () {
+    it("d(exp(x),x)", function () {
+        const lines: string[] = [
+            `d(exp(x),x)`
+        ];
+        const engine = create_script_engine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "e**x");
+        engine.release();
+    });
     it("d(a+b,x)", function () {
         const lines: string[] = [
             `d(a+b,x)`
@@ -80,8 +89,37 @@ describe("derivative", function () {
         ];
         const engine = create_script_engine();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(derivative a x)");
         assert.strictEqual(engine.renderAsInfix(actual), "d(a,x)");
+
+        engine.release();
+    });
+    it("d(a^x,x)", function () {
+        const lines: string[] = [
+            `d(a^x,x)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "x*d(a,x)/(a^(1-x))+a^x*log(a)");
+
+        engine.release();
+    });
+    it("d(3^x,x)", function () {
+        const lines: string[] = [
+            `d(3^x,x)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "3^x*log(3)");
+
+        engine.release();
+    });
+    it("d(a**x,x)", function () {
+        const lines: string[] = [
+            `d(a**x,x)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: false });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "x*d(a,x)/(a**(1-x))+a**x*log(a)");
 
         engine.release();
     });

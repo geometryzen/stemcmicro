@@ -1,15 +1,13 @@
 import bigInt from 'big-integer';
 import { mint, setSignTo } from './bignum';
 import { equaln } from './is';
-import { madd, msub } from './madd';
-import { makeList } from './makeList';
 import { mgcd } from './mgcd';
 import { mdiv, mdivrem, mmod, mmul } from './mmul';
 import { mprime } from './operators/isprime/mprime';
-import { MEQUAL, MULTIPLY, POWER, primetab } from './runtime/constants';
+import { MULTIPLY, POWER, primetab } from './runtime/constants';
 import { mcmp } from './runtime/mcmp';
 import { negOne, Rat } from './tree/rat/Rat';
-import { cons, nil, U } from './tree/tree';
+import { cons, items_to_cons, nil, U } from './tree/tree';
 
 // Factor using the Pollard rho method
 
@@ -30,7 +28,7 @@ export function factor_number(p1: Rat): U {
         return factors[0];
     }
     if (factors.length > 1) {
-        return cons(MULTIPLY, makeList(...factors));
+        return cons(MULTIPLY, items_to_cons(...factors));
     }
     return nil;
 }
@@ -120,11 +118,11 @@ function factor_b(): U[] {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             // g = gcd(x' - x, n_factor_number)
-            let t = msub(xprime, x);
+            let t = xprime.subtract(x);
             t = setSignTo(t, 1);
             const g = mgcd(t, n_factor_number);
 
-            if (MEQUAL(g, 1)) {
+            if (g.equals(1)) {
                 if (--k === 0) {
                     xprime = x;
                     l *= 2;
@@ -133,7 +131,7 @@ function factor_b(): U[] {
 
                 // x = (x ^ 2 + 1) mod n_factor_number
                 t = mmul(x, x);
-                x = madd(t, bigint_one);
+                x = t.add(bigint_one);
                 t = mmod(x, n_factor_number);
                 x = t;
 
@@ -166,7 +164,7 @@ function factor_b(): U[] {
 function _factor(d: bigInt.BigInteger, count: number): U {
     let factor: U = new Rat(d, bigInt.one);
     if (count > 1) {
-        factor = makeList(POWER, factor, new Rat(mint(count), bigInt.one));
+        factor = items_to_cons(POWER, factor, new Rat(mint(count), bigInt.one));
     }
     return factor;
 }

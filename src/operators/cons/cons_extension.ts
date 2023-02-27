@@ -2,8 +2,6 @@ import { Eval_approxratio } from "../../approxratio";
 import { Eval_clear, Eval_clearall } from "../../clear";
 import { Eval_dirac } from "../../dirac";
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Eval_erf } from "../../erf";
-import { Eval_erfc } from "../../erfc";
 import { Eval_expand } from "../../expand";
 import { Eval_filter } from "../../filter";
 import { invg } from "../../inv";
@@ -15,7 +13,7 @@ import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { Eval_quotient } from "../../quotient";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DIRAC, ERF, ERFC, EXPAND, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, DIRAC, EXPAND, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, QUOTIENT, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -189,12 +187,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case DIRAC:
                 Eval_dirac(expr, $);
-                return stack_pop();
-            case ERF:
-                Eval_erf(expr, $);
-                return stack_pop();
-            case ERFC:
-                Eval_erfc(expr, $);
                 return stack_pop();
             case EXPAND:
                 Eval_expand(expr, $);

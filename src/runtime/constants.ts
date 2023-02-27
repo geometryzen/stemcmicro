@@ -293,6 +293,7 @@ export function MSIGN(p: bigInt.BigInteger): 1 | -1 | 0 {
 }
 
 /**
+ * p.equals(n)
  * @deprecated Find a way to do it through the Rat, encapsulating the BigInteger.
  */
 export function MEQUAL(p: bigInt.BigInteger, n: number): boolean {

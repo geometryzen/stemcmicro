@@ -11,7 +11,6 @@ import { ydivisors } from './operators/divisors/divisors';
 import { lcm } from './operators/lcm/lcm';
 import { rect } from './operators/rect/rect';
 import { is_negative } from './predicates/is_negative';
-import { render_as_infix } from './print/print';
 import { divpoly } from './quotient';
 import { defs, halt, move_top_of_stack, noexpand_unary } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
@@ -45,6 +44,7 @@ export function yyfactorpoly(P: U, X: Sym, $: ExtensionEnv): U {
     }
 
     const coefficients = coeff(P, X, $);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     coefficients.forEach(function (coefficient) {
         // console.lg("coefficient", render_as_infix(coefficient, $));
     });
@@ -56,6 +56,7 @@ export function yyfactorpoly(P: U, X: Sym, $: ExtensionEnv): U {
     */
     let factorized = rationalize_coefficients(coefficients, $);
     // console.lg("factorization", render_as_infix(factorized, $));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     coefficients.forEach(function (coefficient) {
         // console.lg("coefficient", render_as_infix(coefficient, $));
     });

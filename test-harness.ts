@@ -255,6 +255,7 @@ interface TestConfig {
     verbose: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function test_config_from_options(options: TestOptions | undefined): TestConfig {
     if (options) {
         const config: TestConfig = {

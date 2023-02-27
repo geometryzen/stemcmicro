@@ -4,8 +4,6 @@ import { add_terms } from '../../../calculators/add/add_terms';
 import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
 import { exp } from '../../../exp';
-import { makeList } from '../../../makeList';
-import { render_as_infix } from '../../../print/print';
 import {
     ARCCOS,
     ARCCOSH,
@@ -206,10 +204,10 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
         const cadr_p3 = cadr(p3);
         // Determine whether we should be comparing as terms or factors. I think it is as terms.
         if ($.compareFn(MATH_ADD)(caddr_p3, caddr_p1) < 0) {
-            return makeList(MATH_DERIVATIVE, makeList(MATH_DERIVATIVE, cadr_p3, caddr_p3), caddr_p1);
+            return items_to_cons(MATH_DERIVATIVE, items_to_cons(MATH_DERIVATIVE, cadr_p3, caddr_p3), caddr_p1);
         }
         else {
-            return makeList(MATH_DERIVATIVE, makeList(MATH_DERIVATIVE, cadr_p3, caddr_p1), caddr_p3);
+            return items_to_cons(MATH_DERIVATIVE, items_to_cons(MATH_DERIVATIVE, cadr_p3, caddr_p1), caddr_p3);
         }
     }
 

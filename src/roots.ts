@@ -7,7 +7,6 @@ import { guess } from './guess';
 import { is_complex_number, is_poly_expanded_form, is_positive_integer } from './is';
 import { coeff } from './operators/coeff/coeff';
 import { simplify } from './operators/simplify/simplify';
-import { render_as_infix } from './print/print';
 import { ASSIGN, SECRETX, TESTEQ } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
@@ -88,6 +87,7 @@ function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
     // console.lg(`normalized_coeff ${render_as_infix(poly, $)} in variable ${render_as_infix(x, $)}`);
 
     const coefficients = coeff(poly, x, $);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     coefficients.forEach(function (coefficient) {
         // console.lg("coefficient", render_as_infix(coefficient, $));
     });
@@ -116,6 +116,7 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
     // log.dbg(`checking if ${top()} is a case of simple roots`);
 
     const ks = normalized_coeff(poly, x, $);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ks.forEach(function (k) {
         // console.lg("k", render_as_infix(k, $));
     });
@@ -235,6 +236,7 @@ function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
 // doing we found some solutions and lowered the degree.
 function mini_solve(coefficients: U[], $: ExtensionEnv): U[] {
     // console.lg("mini_solve");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     coefficients.forEach(function (coefficient) {
         // console.lg("coefficient", render_as_infix(coefficient, $));
     });

@@ -1,45 +1,45 @@
 import { run_test } from '../test-harness';
 
-const gcdTests = [];
+const gcdTests: string[] = [];
 
 const GCD_TESTS_DONT_TEST_FACTOR = 1;
 
-function addGcdTest(arg1, arg2, result, dontTestFactor?: any) {
-  gcdTests.push('gcd(' + arg1 + ',' + arg2 + ')');
-  gcdTests.push(result);
-
-  gcdTests.push('gcd(' + arg2 + ',' + arg1 + ')');
-  gcdTests.push(result);
-
-  if (dontTestFactor == null) {
-    gcdTests.push('gcd(factor(' + arg1 + '),' + arg2 + ')');
+function addGcdTest(arg1: string, arg2: string, result: string, dontTestFactor?: number) {
+    gcdTests.push('gcd(' + arg1 + ',' + arg2 + ')');
     gcdTests.push(result);
-  }
 
-  if (dontTestFactor == null) {
-    gcdTests.push('gcd(factor(' + arg2 + '),' + arg1 + ')');
+    gcdTests.push('gcd(' + arg2 + ',' + arg1 + ')');
     gcdTests.push(result);
-  }
 
-  if (dontTestFactor == null) {
-    gcdTests.push('gcd(' + arg1 + ',factor(' + arg2 + '))');
-    gcdTests.push(result);
-  }
+    if (dontTestFactor == null) {
+        gcdTests.push('gcd(factor(' + arg1 + '),' + arg2 + ')');
+        gcdTests.push(result);
+    }
 
-  if (dontTestFactor == null) {
-    gcdTests.push('gcd(' + arg2 + ',factor(' + arg1 + '))');
-    gcdTests.push(result);
-  }
+    if (dontTestFactor == null) {
+        gcdTests.push('gcd(factor(' + arg2 + '),' + arg1 + ')');
+        gcdTests.push(result);
+    }
 
-  if (dontTestFactor == null) {
-    gcdTests.push('gcd(factor(' + arg1 + '),factor(' + arg2 + '))');
-    gcdTests.push(result);
-  }
+    if (dontTestFactor == null) {
+        gcdTests.push('gcd(' + arg1 + ',factor(' + arg2 + '))');
+        gcdTests.push(result);
+    }
 
-  if (dontTestFactor == null) {
-    gcdTests.push('gcd(factor(' + arg2 + '),factor(' + arg1 + '))');
-    return gcdTests.push(result);
-  }
+    if (dontTestFactor == null) {
+        gcdTests.push('gcd(' + arg2 + ',factor(' + arg1 + '))');
+        gcdTests.push(result);
+    }
+
+    if (dontTestFactor == null) {
+        gcdTests.push('gcd(factor(' + arg1 + '),factor(' + arg2 + '))');
+        gcdTests.push(result);
+    }
+
+    if (dontTestFactor == null) {
+        gcdTests.push('gcd(factor(' + arg2 + '),factor(' + arg1 + '))');
+        return gcdTests.push(result);
+    }
 }
 
 addGcdTest('30', '42', '6');

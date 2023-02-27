@@ -22,7 +22,9 @@ type RHS = Sym;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
- * (derivative (multiply F G) X)
+ * (derivative F X) where F is (* f g)
+ * 
+ * TODO: This should now be covered elsewhere.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;

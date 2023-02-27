@@ -1,14 +1,12 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { gcd } from './operators/gcd/gcd';
 import { multiply_noexpand } from './multiply';
+import { gcd } from './operators/gcd/gcd';
 import { noexpand_unary } from './runtime/defs';
 import { is_add } from './runtime/helpers';
 import { doexpand_value_of } from './scripting/doexpand_eval';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
-import { render_as_infix } from './print/print';
-import { render_as_sexpr } from './print/render_as_sexpr';
 
 // Condense an expression by factoring common terms.
 

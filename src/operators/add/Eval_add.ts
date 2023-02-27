@@ -4,7 +4,6 @@ import { extract_single_blade } from "../../calculators/compare/extract_single_b
 import { canonical_factor_num_rhs } from "../../calculators/factorize/canonical_factor_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { render_as_infix } from "../../print/print";
 import { is_add, is_multiply } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
@@ -42,6 +41,7 @@ function push_terms(terms: U[], term: U): void {
 
 function add_terms(terms: U[], $: ExtensionEnv): U {
     // console.lg("add_terms");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     terms.forEach(function (term) {
         // console.lg("term", render_as_infix(term, $));
     });

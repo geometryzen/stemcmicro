@@ -8,26 +8,32 @@ import { derivative } from "../derivative";
 /**
  * TODO: This function allows the product to be of more than two expressions.
  * In our associated implementation we only really need a product of two expressions.
- * @param p1 
- * @param p2 
+ * @param F = (* a1 a2 a3 ...)
+ * @param X 
  * @param $ 
  * @returns 
  */
-export function dproduct(p1: U, p2: U, $: ExtensionEnv): U {
-    const n = length_of_cons_otherwise_zero(p1) - 1;
-    const toAdd: U[] = [];
+export function dproduct(F: U, X: U, $: ExtensionEnv): U {
+    const n = length_of_cons_otherwise_zero(F) - 1;
+    const terms: U[] = [];
     for (let i = 0; i < n; i++) {
-        const arr: U[] = [];
-        let p3 = cdr(p1);
+        const factors: U[] = [];
+        // We'll chomp through each argument in F
+        let argList = cdr(F);
+        // Using this inner loop like this ensures that we don't accidentally commute the factors.
+        // Of course, the sorting of factors may be inclined to move the derivative around.
         for (let j = 0; j < n; j++) {
-            let temp = car(p3);
+            const a = car(argList);
             if (i === j) {
-                temp = derivative(temp, p2, $);
+                factors.push(derivative(a, X, $));
             }
-            arr.push(temp);
-            p3 = cdr(p3);
+            else {
+                factors.push(a);
+            }
+            argList = cdr(argList);
         }
-        toAdd.push(multiply_items(arr, $));
+        // We are assuming here
+        terms.push(multiply_items(factors, $));
     }
-    return add_terms(toAdd, $);
+    return add_terms(terms, $);
 }

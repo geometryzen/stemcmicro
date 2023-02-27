@@ -1049,14 +1049,14 @@ function emit_tensor(p: Tensor<U>, $: ExtensionEnv) {
     let dx = 0;
     let dy = 0;
 
-    if (p.rank > 2) {
+    if (p.ndim > 2) {
         emit_flat_tensor(p, $);
         return;
     }
 
     const nrow = p.dim(0);
 
-    if (p.rank === 2) {
+    if (p.ndim === 2) {
         ncol = p.dim(1);
     }
     else {
@@ -1187,7 +1187,7 @@ function emit_flat_tensor(p: Tensor<U>, $: ExtensionEnv) {
 function emit_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv) {
     __emit_char('(');
     for (let i = 0; i < p.dim(j); i++) {
-        if (j + 1 === p.rank) {
+        if (j + 1 === p.ndim) {
             emit_expr(p.elem(k), $);
             k = k + 1;
         }

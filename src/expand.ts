@@ -14,7 +14,6 @@ import { is_tensor } from './operators/tensor/is_tensor';
 import { divpoly } from './quotient';
 import { doexpand_binary, doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
 import { one, wrap_as_int, zero } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
@@ -30,12 +29,12 @@ import { nil, U } from './tree/tree';
 //      ---- - --- + -------
 //        2     x     x + 1
 //       x
-export function Eval_expand(p1: U, $: ExtensionEnv): void {
+export function Eval_expand(p1: U, $: ExtensionEnv): U {
     const top = $.valueOf(cadr(p1));
     const p2 = $.valueOf(caddr(p1));
     const X = nil === p2 ? guess(top) : p2;
     const F = top;
-    stack_push(expand(F, X, $));
+    return expand(F, X, $);
 }
 
 //define A p2

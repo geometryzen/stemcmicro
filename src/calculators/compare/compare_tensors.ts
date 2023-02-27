@@ -3,17 +3,17 @@ import { Tensor } from "../../tree/tensor/Tensor";
 import { cmp_expr } from "./cmp_expr";
 
 export function compare_tensors(p1: Tensor, p2: Tensor, $: ExtensionEnv): Sign {
-    if (p1.rank < p2.rank) {
+    if (p1.ndim < p2.ndim) {
         return SIGN_LT;
     }
 
-    if (p1.rank > p2.rank) {
+    if (p1.ndim > p2.ndim) {
         return SIGN_GT;
     }
 
-    const rank = p1.rank;
+    const ndim = p1.ndim;
 
-    for (let i = 0; i < rank; i++) {
+    for (let i = 0; i < ndim; i++) {
         if (p1.dim(i) < p2.dim(i)) {
             return SIGN_LT;
         }

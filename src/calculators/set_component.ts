@@ -41,7 +41,7 @@ export function set_component(n: number): void {
 
     const m = n - 2;
 
-    if (m > lhs.rank) {
+    if (m > lhs.ndim) {
         halt('error in indexed assign');
     }
 
@@ -54,7 +54,7 @@ export function set_component(n: number): void {
         k = k * lhs.dim(i) + t - 1;
     }
 
-    for (let i = m; i < lhs.rank; i++) {
+    for (let i = m; i < lhs.ndim; i++) {
         k = k * lhs.dim(i) + 0;
     }
 
@@ -62,7 +62,7 @@ export function set_component(n: number): void {
     const elems = lhs.copyElements();
 
 
-    if (lhs.rank === m) {
+    if (lhs.ndim === m) {
         if (is_tensor(RVALUE)) {
             halt('error in indexed assign');
         }
@@ -78,11 +78,11 @@ export function set_component(n: number): void {
         halt('error in indexed assign');
     }
 
-    if (lhs.rank - m !== RVALUE.rank) {
+    if (lhs.ndim - m !== RVALUE.ndim) {
         halt('error in indexed assign');
     }
 
-    for (let i = 0; i < RVALUE.rank; i++) {
+    for (let i = 0; i < RVALUE.ndim; i++) {
         if (dims[m + i] !== RVALUE.dim(i)) {
             halt('error in indexed assign');
         }

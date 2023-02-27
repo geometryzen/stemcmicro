@@ -1,3 +1,4 @@
+import { is_tensor } from "../../operators/tensor/is_tensor";
 import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
@@ -36,23 +37,30 @@ function equals_U_arrays(arrL: U[], arrR: U[]): boolean {
  * this makes things easier in the case when a Tensor is used as a square matrix.
  */
 export class Tensor<T extends U = U> extends Atom {
+    readonly #dims: number[];
+    readonly #elems: T[];
     /**
      * @param dims The lengths of each dimension.
      * @param elems The elements containing all the data.
      */
-    constructor(private readonly dims: number[], private readonly elems: T[], pos?: number, end?: number) {
+    constructor(dims: number[], elems: T[], pos?: number, end?: number) {
         super('Tensor', pos, end);
+        this.#dims = dims;
+        this.#elems = elems;
     }
-    /**
-     * The number of indexing steps required to get to the lowest level.
-     * This is what we call the rank of the tensor.
-     * It is the length of the dimensions array.
-     */
-    public get rank() {
-        return this.dims.length;
+    public get rank(): number {
+        for (const elem of this.#elems) {
+            if (is_tensor(elem)) {
+                return this.#dims.length + elem.rank;
+            }
+        }
+        return this.#dims.length;
     }
-    public get nelem() {
-        return this.elems.length;
+    public get ndim(): number {
+        return this.#dims.length;
+    }
+    public get nelem(): number {
+        return this.#elems.length;
     }
     contains(needle: U): boolean {
         if (this.equals(needle)) {
@@ -63,13 +71,13 @@ export class Tensor<T extends U = U> extends Atom {
         });
     }
     copyDimensions(): number[] {
-        return [...this.dims];
+        return [...this.#dims];
     }
     /**
      * Returns a copy of the data in this tensor.
      */
     copyElements(): T[] {
-        return [...this.elems];
+        return [...this.#elems];
     }
     /**
      * Returns the size of the specified dimension.
@@ -80,18 +88,18 @@ export class Tensor<T extends U = U> extends Atom {
         if (n < 0) {
             throw new Error(`n must be greater than or equal to zero.`);
         }
-        if (n > this.dims.length - 1) {
+        if (n > this.#dims.length - 1) {
             throw new Error(`n + 1 must be less than ndim.`);
         }
-        return this.dims[n];
+        return this.#dims[n];
     }
     elem(index: number): T {
-        return this.elems[index];
+        return this.#elems[index];
     }
     equals(other: U): boolean {
         if (other instanceof Tensor) {
-            if (equals_number_arrays(this.dims, other.dims)) {
-                if (equals_U_arrays(this.elems, other.elems)) {
+            if (equals_number_arrays(this.#dims, other.#dims)) {
+                if (equals_U_arrays(this.#elems, other.#elems)) {
                     return true;
                 }
             }
@@ -104,16 +112,16 @@ export class Tensor<T extends U = U> extends Atom {
      * @returns true if every element satisfies the predicate.
      */
     everyElement(predicate: (element: T) => boolean): boolean {
-        return this.elems.every(predicate);
+        return this.#elems.every(predicate);
     }
     filterElements(callbackfn: (value: T, index: number, array: T[]) => boolean): U[] {
-        return this.elems.filter(callbackfn);
+        return this.#elems.filter(callbackfn);
     }
     map<X extends U>(callbackfn: (value: T, index: number, array: T[]) => X): Tensor<X> {
-        return this.withElements(this.elems.map(callbackfn));
+        return this.withElements(this.#elems.map(callbackfn));
     }
     mapElements<X>(callbackfn: (value: T, index: number, array: T[]) => X): X[] {
-        return this.elems.map(callbackfn);
+        return this.#elems.map(callbackfn);
     }
     isCons(): boolean {
         return false;
@@ -125,16 +133,16 @@ export class Tensor<T extends U = U> extends Atom {
         return false;
     }
     sameDimensions(other: Tensor): boolean {
-        if (this.rank !== other.rank) {
+        if (this.ndim !== other.ndim) {
             return false;
         }
-        return this.dims.every((size, i) => size === other.dim(i));
+        return this.#dims.every((size, i) => size === other.dim(i));
     }
     sliceDimensions(start?: number, end?: number): number[] {
-        return this.dims.slice(start, end);
+        return this.#dims.slice(start, end);
     }
     someElements(callbackfn: (value: T, index: number, array: T[]) => boolean): boolean {
-        return this.elems.some(callbackfn);
+        return this.#elems.some(callbackfn);
     }
     toInfixString(): string {
         return '<tensor>';
@@ -143,7 +151,7 @@ export class Tensor<T extends U = U> extends Atom {
         return '<tensor>';
     }
     toString(): string {
-        return `${this.name}(ndim=${this.rank}, dim=[${this.dims}], elems=[${this.elems.map(function (elem) {
+        return `${this.name}(ndim=${this.ndim}, dim=[${this.#dims}], elems=[${this.#elems.map(function (elem) {
             return `${elem}`;
         }).join(',')}])`;
     }
@@ -152,6 +160,6 @@ export class Tensor<T extends U = U> extends Atom {
      * This element avoids the copy of the dims array.
      */
     withElements<X extends U>(elems: X[]): Tensor<X> {
-        return new Tensor(this.dims, elems);
+        return new Tensor(this.#dims, elems);
     }
 }

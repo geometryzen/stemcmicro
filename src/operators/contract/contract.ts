@@ -54,7 +54,7 @@ function contract(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
     let l = nativeInt(p2);
     let m = nativeInt(p3);
 
-    const { rank: ndim } = p1;
+    const { ndim: ndim } = p1;
 
     if (
         l < 1 ||

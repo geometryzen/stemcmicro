@@ -102,14 +102,14 @@ export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // congruent tensors can be combined
 
     if (is_tensor(lhs) && is_tensor(rhs)) {
-        if (lhs.rank < rhs.rank) {
+        if (lhs.ndim < rhs.ndim) {
             return SIGN_LT;
         }
-        if (lhs.rank > rhs.rank) {
+        if (lhs.ndim > rhs.ndim) {
             return SIGN_GT;
         }
-        const rank = lhs.rank;
-        for (let i = 0; i < rank; i++) {
+        const ndim = lhs.ndim;
+        for (let i = 0; i < ndim; i++) {
             if (lhs.dim(i) < rhs.dim(i)) {
                 return SIGN_LT;
             }

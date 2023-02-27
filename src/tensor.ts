@@ -41,7 +41,7 @@ export function is_square_matrix(expr: U): expr is Tensor & { ndim: 2; square: t
 }
 
 export function is_square_matrix_tensor(tensor: Tensor): tensor is Tensor & { ndim: 2; square: true } {
-    return tensor.rank === 2 && tensor.dim(0) === tensor.dim(1);
+    return tensor.ndim === 2 && tensor.dim(0) === tensor.dim(1);
 }
 
 /**
@@ -62,7 +62,7 @@ export function assert_square_matrix_tensor(tensor: Tensor, $: ExtensionEnv): nu
         return tensor.dim(0);
     }
     else {
-        throw new Error(`tensor => ${$.toInfixString(tensor)} MUST be a square matrix. ${tensor} ndim=${tensor.rank}`);
+        throw new Error(`tensor => ${$.toInfixString(tensor)} MUST be a square matrix. ${tensor} ndim=${tensor.ndim}`);
     }
 }
 
@@ -73,7 +73,7 @@ export function assert_square_matrix_tensor(tensor: Tensor, $: ExtensionEnv): nu
 //-----------------------------------------------------------------------------
 export function d_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
 
-    if (p1.rank + 1 >= MAXDIM) {
+    if (p1.ndim + 1 >= MAXDIM) {
         return makeList(MATH_DERIVATIVE, p1, p2);
     }
 
@@ -124,7 +124,7 @@ export function d_tensor_scalar(p1: Tensor, p2: U, $: ExtensionEnv): U {
 //-----------------------------------------------------------------------------
 export function power_tensor(p1: Tensor, p2: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
     // first and last dims must be equal
-    const k = p1.rank - 1;
+    const k = p1.ndim - 1;
 
     if (p1.dim(0) !== p1.dim(k)) {
         return makeList(POWER, p1, p2);
@@ -137,7 +137,7 @@ export function power_tensor(p1: Tensor, p2: U, $: ExtensionEnv): Cons | Sym | T
     }
 
     if (n === 0) {
-        if (p1.rank !== 2) {
+        if (p1.ndim !== 2) {
             throw new Error('power(tensor,0) with tensor rank not equal to 2');
         }
         n = p1.dim(0);
@@ -181,7 +181,7 @@ export function promote_tensor(p1: U): U {
         return p1;
     }
 
-    const ndim = p1.rank + p2.rank;
+    const ndim = p1.ndim + p2.ndim;
     if (ndim > MAXDIM) {
         throw new Error('tensor rank > ' + MAXDIM);
     }
@@ -209,11 +209,11 @@ function compatible(p: U, q: U): boolean {
         return false;
     }
 
-    if (p.rank !== q.rank) {
+    if (p.ndim !== q.ndim) {
         return false;
     }
 
-    for (let i = 0; i < p.rank; i++) {
+    for (let i = 0; i < p.ndim; i++) {
         if (p.dim(i) !== q.dim(i)) {
             return false;
         }

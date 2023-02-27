@@ -960,7 +960,7 @@ function create_tensor(elements: U[]): Tensor {
                     // Does this tensor have the same dimesions as the previous one?
                 }
                 else {
-                    for (let j = 0; j < M.rank; j++) {
+                    for (let j = 0; j < M.ndim; j++) {
                         dims[j + 1] = M.dim(j);
                     }
                     seenTensor = true;

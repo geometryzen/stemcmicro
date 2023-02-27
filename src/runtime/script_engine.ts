@@ -52,7 +52,11 @@ export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
 
     $.clearOperators();
 
+    $.beginSpecial();
+
     define_std_operators($);
+
+    $.endSpecial();
 
     $.buildOperators();
 

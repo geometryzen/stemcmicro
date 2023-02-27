@@ -4,7 +4,7 @@ run_test([
   'condense(a/(a+b)+b/(a+b))',
   '1',
 
-  'psi(n) = exp(-r/n) * laguerre(2r/n,n-1,1)',
+  'psi(n) = exp(-r/n)*laguerre(2*r/n,n-1,1)',
   '',
 
   'psi(3)',

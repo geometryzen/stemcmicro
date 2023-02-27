@@ -73,7 +73,7 @@ export function createSymTab(): SymTab {
 
     const theTab: SymTab = {
         clearBindings(): void {
-            // console.lg(`SymTab.clearBindings()`);
+            // console.lg(`SymTab.clearBindings() begin_bindings_index=${JSON.stringify(begin_bindings_index)}`);
             if (typeof begin_bindings_index === 'number') {
                 syms.length = begin_bindings_index;
                 bnds.length = begin_bindings_index;
@@ -115,10 +115,12 @@ export function createSymTab(): SymTab {
             throw new Error(`symbol table overflow in symtab_define_key(key = ${JSON.stringify(key)})`);
         },
         beginSpecial(): void {
+            // console.lg("SymTab.beginSpecial()");
             begin_bindings_index = syms.length;
         },
         endSpecial(): void {
             // Do nothing.
+            // console.lg("SymTab.endSpecial()");
         },
         getBinding(sym: Sym): U {
             const i = idxs[sym.key()];
@@ -142,6 +144,7 @@ export function createSymTab(): SymTab {
             // console.lg(`SymTab.setBinding ${sym} ${binding}`);
             const i = idxs[sym.key()];
             if (typeof i === 'number') {
+                // console.lg("The symbol was found, updating the binding.");
                 // TODO: If the binding is a Sym, we should reference count it.
                 bnds[i] = binding;
                 recs[i] = false;
@@ -149,7 +152,10 @@ export function createSymTab(): SymTab {
             else {
                 // The symbol must be in the cache because it exists.
                 // It's just not an entry in the symbol table.
-                theTab.setBinding(theTab.defineKey(sym), binding);
+                const key = theTab.defineKey(sym); 
+                const i = idxs[key.key()];
+                bnds[i] = binding;
+                recs[i] = false;
             }
         },
         getBindings(): { sym: Sym, binding: U | undefined }[] {

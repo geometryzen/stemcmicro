@@ -9,7 +9,7 @@ export function index_function(tensor: Tensor, indices: U[]): U {
     // syntactic (nested) representation. What is surprising is that does not seem to align with the scanning
     // procedure.
     // console.lg(`index_function tensor=${tensor} indices=${indices}`);
-    const { rank: ndim } = tensor;
+    const ndim = tensor.ndim;
 
     const m = indices.length;
 

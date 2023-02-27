@@ -66,6 +66,7 @@ import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
 import { choose_varargs } from '../operators/choose/choose_varargs';
 import { circexp_any } from '../operators/circexp/circexp_any';
+import { clearall_extension } from '../operators/clearall/clearall_extension';
 import { clock_any } from '../operators/clock/clock_any';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
@@ -114,6 +115,7 @@ import { eval_varargs } from '../operators/eval/eval_varargs';
 import { exp_any } from '../operators/exp/exp_any';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_rat } from '../operators/exp/exp_rat';
+import { expand_extension } from '../operators/expand/expand_extension';
 import { expcos_varargs } from '../operators/expcos/expcos_varargs';
 import { expsin_varargs } from '../operators/expsin/expsin_varargs';
 import { factor_varargs } from '../operators/factor/factor_varargs';
@@ -524,6 +526,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(binomial_varargs);
     $.defineOperator(choose_varargs);
+    $.defineOperator(clearall_extension);
 
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);
@@ -678,6 +681,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(exp_rat);
     $.defineOperator(exp_any);
 
+    $.defineOperator(expand_extension);
     $.defineOperator(expcos_varargs);
     $.defineOperator(expsin_varargs);
 

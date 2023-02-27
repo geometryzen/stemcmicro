@@ -1,7 +1,6 @@
 import { Eval_approxratio } from "../../approxratio";
-import { Eval_clear, Eval_clearall } from "../../clear";
+import { Eval_clear } from "../../clear";
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Eval_expand } from "../../expand";
 import { Eval_filter } from "../../filter";
 import { invg } from "../../inv";
 import { is_rat_integer } from "../../is_rat_integer";
@@ -11,7 +10,7 @@ import { makeList } from "../../makeList";
 import { Eval_prime } from "../../prime";
 import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARALL, CLEARPATTERNS, EXPAND, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -176,15 +175,8 @@ class ConsExtension implements Extension<Cons> {
             case CLEAR:
                 Eval_clear(expr, $);
                 return stack_pop();
-            case CLEARALL: {
-                Eval_clearall($);
-                return stack_pop();
-            }
             case CLEARPATTERNS:
                 Eval_clearpatterns();
-                return stack_pop();
-            case EXPAND:
-                Eval_expand(expr, $);
                 return stack_pop();
             case FACTORPOLY:
                 Eval_factorpoly(expr, $);

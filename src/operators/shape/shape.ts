@@ -20,7 +20,7 @@ function shape(M: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    const { rank } = M;
+    const { ndim: rank } = M;
 
     const elems = new Array<U>(rank);
 

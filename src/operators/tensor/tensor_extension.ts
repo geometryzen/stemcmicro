@@ -20,15 +20,15 @@ function equal_elements(as: U[], bs: U[], $: ExtensionEnv): boolean {
 }
 
 export function equal_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): boolean {
-    if (p1.rank < p2.rank) {
+    if (p1.ndim < p2.ndim) {
         return false;
     }
 
-    if (p1.rank > p2.rank) {
+    if (p1.ndim > p2.ndim) {
         return false;
     }
 
-    for (let i = 0; i < p1.rank; i++) {
+    for (let i = 0; i < p1.ndim; i++) {
         if (p1.dim(i) < p2.dim(i)) {
             return false;
         }
@@ -57,7 +57,7 @@ export function add_tensor_tensor(A: Tensor, B: Tensor, $: ExtensionEnv): Cons |
 }
 
 export function outer_tensor_tensor(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): Tensor {
-    const ndim = lhs.rank + rhs.rank;
+    const ndim = lhs.ndim + rhs.ndim;
     if (ndim > MAXDIM) {
         throw new Error('outer: rank of result exceeds maximum');
     }

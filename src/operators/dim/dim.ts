@@ -27,7 +27,7 @@ export function Eval_dim(p1: U, $: ExtensionEnv): U {
     if (!is_tensor(p2)) {
         return one; // dim of scalar is 1
     }
-    else if (n < 1 || n > p2.rank) {
+    else if (n < 1 || n > p2.ndim) {
         return p1;
     }
     else {

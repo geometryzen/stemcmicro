@@ -109,7 +109,7 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    const { rank: ndim, nelem: nelem } = p1;
+    const { ndim: ndim, nelem: nelem } = p1;
 
     // is it a vector?
     // so here it's something curious - note how vectors are

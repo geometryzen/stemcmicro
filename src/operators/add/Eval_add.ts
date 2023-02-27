@@ -71,13 +71,13 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
             const lhs = canonical_factor_num_rhs(rawL);
             const rhs = canonical_factor_num_rhs(rawR);
             if (is_tensor(lhs) && is_tensor(rhs)) {
-                if (lhs.rank < rhs.rank) {
+                if (lhs.ndim < rhs.ndim) {
                     return SIGN_LT;
                 }
-                if (lhs.rank > rhs.rank) {
+                if (lhs.ndim > rhs.ndim) {
                     return SIGN_GT;
                 }
-                const rank = lhs.rank;
+                const rank = lhs.ndim;
                 for (let i = 0; i < rank; i++) {
                     if (lhs.dim(i) < rhs.dim(i)) {
                         return SIGN_LT;

@@ -1,21 +1,27 @@
 import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
-import { ExpandingTransformer } from "../src/transform/ExpandingTransformer";
-import { TransformerPipeline } from "../src/transform/TransformerPipeline";
 
 describe("sandbox", function () {
-    it("a*0.0", function () {
+    it("rank([a,b,c])", function () {
         const lines: string[] = [
-            `a*b*0.0`
+            `a=[[1],[2]]`,
+            `b=[[3],[4]]`,
+            `c=[[5],[6]]`,
+            `T=[a,b,c]`,
+            `T[1]`,
+            `T[2]`,
+            `T[3]`,
+            `T[1][1]`,
+            `rank(T)`
         ];
-        const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
-        const pipeline = new TransformerPipeline();
-        pipeline.addTail(new ExpandingTransformer());
-        const { values } = engine.transformScript(sourceText, pipeline);
-        assert.isTrue(Array.isArray(values));
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0.0");
+        const engine = create_script_engine({
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[[1],[2]]");
+        assert.strictEqual(engine.renderAsInfix(values[1]), "[[3],[4]]");
+        assert.strictEqual(engine.renderAsInfix(values[2]), "[[5],[6]]");
+        assert.strictEqual(engine.renderAsInfix(values[3]), "[1]");
+        assert.strictEqual(engine.renderAsInfix(values[4]), "3");
         engine.release();
     });
 });

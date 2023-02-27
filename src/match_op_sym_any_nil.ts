@@ -1,6 +1,6 @@
 import { is_sym } from "./operators/sym/is_sym";
 import { Sym } from "./tree/sym/Sym";
-import { is_cons, NIL, U } from "./tree/tree";
+import { is_cons, nil, U } from "./tree/tree";
 
 /**
  * (Sym (Sym (U NIL)))
@@ -23,7 +23,7 @@ export function match_op_sym_any_nil(expr: U, op: (sym: Sym) => boolean, lhs: (c
                                     if (rhs(car_arg_arg)) {
                                         const cdr_arg_arg = arg_arg.cdr;
                                         if (is_cons(cdr_arg_arg)) {
-                                            if (NIL === cdr_arg_arg) {
+                                            if (nil === cdr_arg_arg) {
                                                 return [sym, car_arg, car_arg_arg];
                                             }
                                         }

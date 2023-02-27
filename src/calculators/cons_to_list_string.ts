@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { Cons, is_cons, NIL } from "../tree/tree";
+import { Cons, is_cons, nil } from "../tree/tree";
 import { to_list_string } from "./to_list_string";
 
 export function cons_to_list_string(cons: Cons, $: ExtensionEnv): string {
@@ -12,7 +12,7 @@ export function cons_to_list_string(cons: Cons, $: ExtensionEnv): string {
         str += to_list_string(expr.car, $);
         expr = expr.cdr;
     }
-    if (expr !== NIL) {
+    if (expr !== nil) {
         str += ' . ';
         str += to_list_string(expr, $);
     }

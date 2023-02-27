@@ -2,7 +2,7 @@ import { Boo } from "../tree/boo/Boo";
 import { Flt } from "../tree/flt/Flt";
 import { Str } from "../tree/str/Str";
 import { Sym } from "../tree/sym/Sym";
-import { cons, items_to_cons, NIL, U } from "../tree/tree";
+import { cons, items_to_cons, nil, U } from "../tree/tree";
 import { Char } from "./char";
 import { CommentMarker } from "./CommentMarker";
 import { EOS } from "./EOS";
@@ -52,7 +52,7 @@ class Parser {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     #consumeList(t: '(' | '[' | '{'): U {
-        let list: Pair = NIL;
+        let list: Pair = nil;
         let prev: Pair = list;
         while (this.#tokenIdx < this.#tokens.length) {
 
@@ -65,13 +65,13 @@ class Parser {
             if (this.#tokens[this.#tokenIdx] === '.') {
                 this.#tokenIdx++;
                 const o = this.#consumeObject();
-                if (o !== endOfString && list !== NIL) {
+                if (o !== endOfString && list !== nil) {
                     prev.cdr = o;
                 }
             }
             else {
-                const cur = new Pair(this.#consumeObject(), NIL);
-                if (list === NIL) {
+                const cur = new Pair(this.#consumeObject(), nil);
+                if (list === nil) {
                     list = cur;
                 }
                 else {
@@ -100,7 +100,7 @@ class Parser {
                     t == ",@" ? 'unquote-splicing' : false;
 
         if (s || t == '(' || t == '#(' || t == '[' || t == '#[' || t == '{' || t == '#{') {
-            return s ? new Pair(new Sym(s), new Pair(this.#consumeObject(), NIL))
+            return s ? new Pair(new Sym(s), new Pair(this.#consumeObject(), nil))
                 : (t == '(' || t == '[' || t == '{') ? this.#consumeList(t) : this.#consumeVector(t);
         }
         else {

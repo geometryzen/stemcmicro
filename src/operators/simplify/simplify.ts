@@ -21,7 +21,7 @@ import { caddr, cadr } from '../../tree/helpers';
 import { half, one, third, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { car, cdr, is_cons, NIL, U } from '../../tree/tree';
+import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 import { clockform } from '../clock/clock';
 import { denominator } from "../denominator/denominator";
 import { yyfloat } from '../float/float';
@@ -494,7 +494,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
 
     let numberOfTerms = 0;
     let countingTerms = base;
-    while (NIL !== cdr(countingTerms)) {
+    while (nil !== cdr(countingTerms)) {
         numberOfTerms++;
         countingTerms = cdr(countingTerms);
     }
@@ -513,7 +513,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     const C = commonBases.reduce($.multiply, one);
     const B = termsThatAreNotPowers.reduce($.multiply, one);
 
-    let temp: U = NIL;
+    let temp: U = nil;
     if (equalq(expo, 1, 3)) {
         const checkSize1 = $.divide($.multiply($.negate(A), C), B); // 4th coeff
         const result1 = nativeDouble(yyfloat(real(checkSize1, $), $));
@@ -643,7 +643,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         return [result, TFLAG_DIFF];
     }
 
-    return [NIL, TFLAG_DIFF]; // Do we need this?
+    return [nil, TFLAG_DIFF]; // Do we need this?
     // return [null, true];
 }
 

@@ -8,7 +8,7 @@ import { Flt, wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { NIL, U } from '../../tree/tree';
+import { nil, U } from '../../tree/tree';
 import { yyfloat } from '../float/float';
 import { is_flt } from '../flt/is_flt';
 import { is_tensor } from '../tensor/is_tensor';
@@ -115,7 +115,7 @@ export function Eval_eigen(expr: U, $: ExtensionEnv): void {
     const symQ = $.defineKey(new Sym('Q'));
     $.setBinding(symQ, Q);
 
-    stack_push(NIL);
+    stack_push(nil);
 }
 
 /* eigenval =====================================================================

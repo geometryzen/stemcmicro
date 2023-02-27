@@ -6,7 +6,7 @@ import { multiply_items } from './multiply';
 import { is_add, is_multiply } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
-import { car, cdr, Cons, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 
 // this function extract parts subtrees from a tree.
 // It is used in two
@@ -25,9 +25,9 @@ export function Eval_decomp(p1: U, $: ExtensionEnv): void {
     const arg = $.valueOf(cadr(p1));
     p1 = $.valueOf(caddr(p1));
 
-    const variable = NIL.equals(p1) ? guess(arg) : p1;
+    const variable = nil.equals(p1) ? guess(arg) : p1;
     const result = decomp(false, arg, variable, $);
-    stack_push(makeList(NIL, ...result));
+    stack_push(makeList(nil, ...result));
 }
 
 function pushTryNotToDuplicateLocal(localStack: U[], item: U) {

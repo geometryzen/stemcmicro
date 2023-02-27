@@ -5,7 +5,7 @@ import { halt } from './runtime/defs';
 import { execute_script } from './runtime/execute';
 import { execute_std_definitions } from './runtime/init';
 import { stack_push } from './runtime/stack';
-import { car, cdr, Cons, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 
 /* clearall =====================================================================
 
@@ -27,7 +27,7 @@ export function Eval_clearall($: ExtensionEnv) {
     // We need to redo these...
     execute_std_definitions($);
 
-    stack_push(NIL);
+    stack_push(nil);
 }
 
 // clearall from application GUI code
@@ -67,5 +67,5 @@ export function Eval_clear(expr: Cons, $: ExtensionEnv): void {
         p2 = cdr(p2);
     }
 
-    stack_push(NIL);
+    stack_push(nil);
 }

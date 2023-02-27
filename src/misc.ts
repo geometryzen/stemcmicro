@@ -5,7 +5,7 @@ import { defs } from './runtime/defs';
 import { zero } from './tree/rat/Rat';
 import { create_tensor_elements } from './tree/tensor/create_tensor_elements';
 import { Tensor } from './tree/tensor/Tensor';
-import { car, cdr, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 // both ints
 export function zero_matrix(i: number, j: number): Tensor<U> {
@@ -15,11 +15,11 @@ export function zero_matrix(i: number, j: number): Tensor<U> {
 }
 
 export function unique(p: U) {
-    let p1 = NIL;
-    const p2 = NIL;
+    let p1 = nil;
+    const p2 = nil;
     unique_f(p, p1, p2);
-    if (NIL !== p2) {
-        p1 = NIL;
+    if (nil !== p2) {
+        p1 = nil;
     }
     p = p1;
     return p;
@@ -27,7 +27,7 @@ export function unique(p: U) {
 
 function unique_f(p: U, p1: U, p2: U) {
     if (is_str(p)) {
-        if (NIL === p1) {
+        if (nil === p1) {
             p1 = p;
         }
         else if (p !== p1) {
@@ -37,7 +37,7 @@ function unique_f(p: U, p1: U, p2: U) {
     }
     while (is_cons(p)) {
         unique_f(car(p), p1, p2);
-        if (NIL !== p2) {
+        if (nil !== p2) {
             return;
         }
         p = cdr(p);

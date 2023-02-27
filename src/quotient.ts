@@ -4,14 +4,14 @@ import { SYMBOL_X } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { cadddr, caddr, cadr } from './tree/helpers';
 import { wrap_as_int, zero } from './tree/rat/Rat';
-import { NIL, U } from './tree/tree';
+import { nil, U } from './tree/tree';
 
 // Divide polynomials
 export function Eval_quotient(p1: U, $: ExtensionEnv): void {
     const DIVIDEND = $.valueOf(cadr(p1)); // 1st arg, p(x)
     const DIVISOR = $.valueOf(caddr(p1)); // 2nd arg, q(x)
     const X = $.valueOf(cadddr(p1)); // 3rd arg, x, default x
-    if (NIL !== X) {
+    if (nil !== X) {
         stack_push(divpoly(DIVIDEND, DIVISOR, X, $));
     }
     else {

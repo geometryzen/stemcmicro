@@ -3,7 +3,7 @@ import { HASH_SYM } from "../../hashing/hash_info";
 import { evaluatingAsFloat } from "../../modes/modes";
 import { piAsDouble } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
-import { NIL, U } from "../../tree/tree";
+import { nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_pi } from "../pi/is_pi";
 import { get_binding } from "./get_binding";
@@ -36,7 +36,7 @@ class SymExtension implements Extension<Sym> {
 
         // console.lg(`binding ${$.toInfixString(sym)} => ${$.toInfixString(binding)}`);
 
-        if (NIL === binding) {
+        if (nil === binding) {
             return sym;
         }
 

@@ -2,7 +2,7 @@ import { diffFlag, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, 
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { ASSIGN } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
-import { items_to_cons, NIL, U } from "../../tree/tree";
+import { items_to_cons, nil, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -46,7 +46,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // Assignments return NIL to prevent them from being printed.
         // That's a bit unfortunate for chained assignments.
         // The kernel of the problem is the printing of expressions by default in the REPL.
-        return [TFLAG_DIFF, NIL];
+        return [TFLAG_DIFF, nil];
     }
 }
 

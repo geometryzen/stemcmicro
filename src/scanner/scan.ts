@@ -13,7 +13,7 @@ import { MATH_ADD, MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, M
 import { Boo } from '../tree/boo/Boo';
 import { Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
-import { items_to_cons, NIL, U } from '../tree/tree';
+import { items_to_cons, nil, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
 import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
@@ -48,7 +48,7 @@ export function scan(sourceText: string, options: ScanOptions): [scanned: number
 
     state.advance();
     if (state.code === T_END) {
-        return [0, NIL];
+        return [0, nil];
     }
     const expr = scan_stmt(state);
     if (!state.assignmentFound) {
@@ -62,7 +62,7 @@ export function scan_meta(sourceText: string): U {
     state.meta_mode = true;
     state.advance();
     if (state.code === T_END) {
-        return NIL;
+        return nil;
     }
     return scan_stmt(state);
 }

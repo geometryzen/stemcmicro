@@ -9,7 +9,7 @@ import { stack_pop, stack_push } from '../../runtime/stack';
 import { doexpand_value_of } from '../../scripting/doexpand_eval';
 import { caddr, cadr } from '../../tree/helpers';
 import { wrap_as_int, one, zero } from '../../tree/rat/Rat';
-import { is_cons, NIL, U } from '../../tree/tree';
+import { is_cons, nil, U } from '../../tree/tree';
 
 export function factorial(p1: U): U {
     const n = nativeInt(p1);
@@ -70,11 +70,11 @@ function sfac_product(p1: U, $: ExtensionEnv): U {
     }
 
     for (let i = 0; i < n - 1; i++) {
-        if (NIL === defs.stack[s + i]) {
+        if (nil === defs.stack[s + i]) {
             continue;
         }
         for (let j = i + 1; j < n; j++) {
-            if (NIL === defs.stack[s + j]) {
+            if (nil === defs.stack[s + j]) {
                 continue;
             }
             sfac_product_f(s, i, j, $);
@@ -84,7 +84,7 @@ function sfac_product(p1: U, $: ExtensionEnv): U {
     stack_push(one);
 
     for (let i = 0; i < n; i++) {
-        if (NIL === defs.stack[s + i]) {
+        if (nil === defs.stack[s + i]) {
             continue;
         }
         const arg1 = stack_pop();
@@ -148,6 +148,6 @@ function sfac_product_f(s: number, a: number, b: number, $: ExtensionEnv) {
             temp3 = $.multiply(temp3, $.power($.add(cadr(p2), wrap_as_int(i)), p3));
         }
         defs.stack[s + a] = temp3;
-        defs.stack[s + b] = NIL;
+        defs.stack[s + b] = nil;
     }
 }

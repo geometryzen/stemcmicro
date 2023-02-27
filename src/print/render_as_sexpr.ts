@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { car, cdr, is_cons, NIL, U } from "../tree/tree";
+import { car, cdr, is_cons, nil, U } from "../tree/tree";
 
 /**
  * The standard way of serializing to s-expr format.
@@ -17,7 +17,7 @@ export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
             str += render_as_sexpr(car(expr), $);
             expr = cdr(expr);
         }
-        if (expr !== NIL) {
+        if (expr !== nil) {
             str += ' . ';
             str += render_as_sexpr(expr, $);
         }

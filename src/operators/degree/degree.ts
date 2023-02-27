@@ -6,7 +6,7 @@ import { is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { Num } from '../../tree/num/Num';
 import { one, zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, NIL, U } from '../../tree/tree';
+import { Cons, is_cons, nil, U } from '../../tree/tree';
 
 /* deg =====================================================================
 
@@ -26,7 +26,7 @@ Returns the degree of polynomial p(x).
 export function Eval_degree(degreeInvoke: Cons, $: ExtensionEnv): U {
     const p1 = $.valueOf(caddr(degreeInvoke));
     const top = $.valueOf(cadr(p1));
-    const variable = NIL.equals(p1) ? guess(top) : p1;
+    const variable = nil.equals(p1) ? guess(top) : p1;
     return degree(top, variable, $);
 }
 

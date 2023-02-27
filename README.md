@@ -1,5 +1,3 @@
-## symbolic-math
-
 [![npm version](https://badge.fury.io/js/symbolic-math.svg)](https://badge.fury.io/js/symbolic-math)
 
 symbolic-math is a Javascript (Typescript) library for symbolic mathematics.

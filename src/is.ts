@@ -13,7 +13,7 @@ import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
 import { Num } from './tree/num/Num';
 import { Rat } from './tree/rat/Rat';
-import { car, cdr, is_cons, NIL, U } from './tree/tree';
+import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 //
 // TODO: In order not to torture our future selves, these should be documented and have coverage unit testing.
@@ -111,7 +111,7 @@ export function isunivarpolyfactoredorexpandedform(p: U, x: U | null, $: Extensi
         return x;
     }
     else {
-        return NIL;
+        return nil;
     }
 }
 

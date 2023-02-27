@@ -74,7 +74,7 @@ import { negOne, one, Rat, zero } from '../tree/rat/Rat';
 import { assert_str } from '../tree/str/assert_str';
 import { Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, Cons, is_cons, is_nil, NIL, U } from '../tree/tree';
+import { car, cdr, Cons, is_cons, is_nil, nil, U } from '../tree/tree';
 import { is_blade } from '../tree/vec/Algebra';
 import { print2dascii } from './print2d';
 import { print_number } from './print_number';
@@ -1166,7 +1166,7 @@ function print_TEST_latex(p: U, $: ExtensionEnv): string {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (NIL === cdr(p)) {
+        if (nil === cdr(p)) {
             accumulator += '{';
             accumulator += render_as_infix(car(p), $);
             accumulator += '} & otherwise ';
@@ -1197,7 +1197,7 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (NIL === cdr(p)) {
+        if (nil === cdr(p)) {
             accumulator += 'else {';
             accumulator += 'return (' + render_as_infix(car(p), $) + ');,$';
             accumulator += '}';
@@ -2123,7 +2123,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         let str = '';
         str += print_factor(expr.car, false, false, $);
         expr = expr.cdr;
-        if (NIL === expr) {
+        if (nil === expr) {
             return str;
         }
         else {

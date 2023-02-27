@@ -32,12 +32,12 @@ export function reset_meta_flag(current: number, which: number): number {
  * @returns 
  */
 export function is_singleton(expr: Cons): boolean {
-    if (NIL === expr) {
+    if (nil === expr) {
         // Nope, it's the empty list.
         return false;
     }
     const cdr_expr = expr.cdr;
-    if (NIL === cdr_expr) {
+    if (nil === cdr_expr) {
         return true;
     }
     else {
@@ -102,7 +102,7 @@ export class Cons implements U {
             return this.#car;
         }
         else {
-            return NIL;
+            return nil;
         }
     }
     /**
@@ -118,7 +118,7 @@ export class Cons implements U {
             }
         }
         else {
-            return NIL;
+            return nil;
         }
     }
     /**
@@ -208,7 +208,7 @@ export class Cons implements U {
      * Return everything except the first item in the list.
      */
     tail(): U[] {
-        if (this !== NIL) {
+        if (this !== nil) {
             const cdr = this.#cdr;
             if (cdr && is_cons(cdr)) {
                 return [...cdr];
@@ -223,20 +223,20 @@ export class Cons implements U {
      * Maps the elements of the list using a mapping function.
      */
     map(f: (a: U) => U): Cons {
-        if (this !== NIL) {
+        if (this !== nil) {
             const a = this.car;
             const b = this.cdr;
             return new Cons(0, f(a), is_cons(b) ? b.map(f) : b);
         }
         else {
-            return NIL;
+            return nil;
         }
     }
     /**
      * Returns the length of the list.
      */
     get length(): number {
-        if (this !== NIL) {
+        if (this !== nil) {
             const argList = this.argList;
             if (is_cons(argList)) {
                 return argList.length + 1;
@@ -283,7 +283,7 @@ export class Cons implements U {
      * (item0 item1 item2 ...)
      */
     item(index: number): U {
-        if (index >= 0 && this !== NIL) {
+        if (index >= 0 && this !== nil) {
             if (index === 0) {
                 return this.car;
             }
@@ -308,7 +308,7 @@ export function cons(car: U, cdr: U): Cons {
 }
 
 export function items_to_cons(...items: U[]): Cons {
-    let node: Cons = NIL;
+    let node: Cons = nil;
     // Iterate in reverse order so that we build up a NIL-terminated list from the right (NIL).
     for (let i = items.length - 1; i >= 0; i--) {
         node = new Cons(0, items[i], node);
@@ -319,7 +319,7 @@ export function items_to_cons(...items: U[]): Cons {
 /**
  * The empty list.
  */
-export const NIL = new Cons(0, void 0, void 0);
+export const nil = new Cons(0, void 0, void 0);
 
 /**
  * Returns true if arg is a Cons and is not NIL.
@@ -340,11 +340,11 @@ export function is_cons(expr: U): expr is Cons {
 }
 
 export function is_nil(expr: U): boolean {
-    return expr.equals(NIL);
+    return expr.equals(nil);
 }
 
 export function is_cons_not_nil(expr: Cons): boolean {
-    return !expr.equals(NIL);
+    return !expr.equals(nil);
 }
 
 /**
@@ -356,7 +356,7 @@ export function car(node: U): U {
         return node.car;
     }
     else {
-        return NIL;
+        return nil;
     }
 }
 
@@ -369,7 +369,7 @@ export function cdr(node: U): U {
         return node.cdr;
     }
     else {
-        return NIL;
+        return nil;
     }
 }
 

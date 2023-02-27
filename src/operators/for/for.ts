@@ -3,7 +3,7 @@ import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
 import { wrap_as_int } from '../../tree/rat/Rat';
-import { NIL, U } from '../../tree/tree';
+import { nil, U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 
 // 'for' function
@@ -58,5 +58,5 @@ export function Eval_for(p1: U, $: ExtensionEnv): U {
     }
 
     // return value
-    return NIL;
+    return nil;
 }

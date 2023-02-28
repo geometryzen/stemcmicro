@@ -1,6 +1,6 @@
 {
     "name": "symbolic-math",
-    "version": "0.9.84",
+    "version": "0.9.85",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
         ".": {

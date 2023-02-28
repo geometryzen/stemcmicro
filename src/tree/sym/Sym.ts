@@ -13,17 +13,19 @@ function strcmp(str1: string, str2: string): 0 | 1 | -1 {
     }
 }
 
+export function create_sym(ln: string, pos?: number, end?: number): Sym {
+    return new Sym(ln, pos, end);
+}
+
 export class Sym extends Atom {
     /**
      * 
      * @param ln The local part of the qualified name.
-     * @param ns The namespace part of the qualified name.
      */
-    constructor(public readonly ln: string, public readonly ns?: Sym, pos?: number, end?: number) {
+    constructor(public readonly ln: string, pos?: number, end?: number) {
         super('Sym', pos, end);
     }
     compare(other: Sym): 1 | -1 | 0 {
-        // TODO: Incorporate the namespace?
         // console.lg("compare", "this", this.ln, "other", other.ln);
         return strcmp(this.ln, other.ln);
     }
@@ -41,12 +43,7 @@ export class Sym extends Atom {
             return true;
         }
         else {
-            if (other.ns) {
-                return this.contains(other.ns);
-            }
-            else {
-                return false;
-            }
+            return false;
         }
     }
     /**
@@ -56,7 +53,7 @@ export class Sym extends Atom {
      * @param end The end position of the symbol in the source text.
      */
     clone(pos: number | undefined, end: number | undefined): Sym {
-        return new Sym(this.ln, this.ns, pos, end);
+        return new Sym(this.ln, pos, end);
     }
     equals(other: U): boolean {
         if (other instanceof Sym) {
@@ -68,21 +65,8 @@ export class Sym extends Atom {
         if (this === other) {
             return true;
         }
-        if (this.ns) {
-            if (other.ns) {
-                return this.ns.equalsSym(other.ns) && this.ln === other.ln;
-            }
-            else {
-                return false;
-            }
-        }
         else {
-            if (other.ns) {
-                return false;
-            }
-            else {
-                return this.ln === other.ln;
-            }
+            return this.ln === other.ln;
         }
     }
     /**
@@ -90,12 +74,7 @@ export class Sym extends Atom {
      */
     key(): string {
         // TOOD: This could be cached, improving performance.
-        if (this.ns) {
-            return `${this.ns.key()}.${this.ln}`;
-        }
-        else {
-            return this.ln;
-        }
+        return this.ln;
     }
     toString(): string {
         return this.key();

@@ -1,3 +1,3 @@
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym } from "../../tree/sym/Sym";
 
-export const FNAME_PRINTLIST = new Sym('printlist', new Sym('script'));
+export const FNAME_PRINTLIST = create_sym('printlist');

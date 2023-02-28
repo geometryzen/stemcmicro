@@ -1,5 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { create_sym, Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_sym } from "../sym/is_sym";
@@ -46,4 +46,4 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export const d_to_derivative = new Builder(`d_to_derivative`, new Sym('d'), MATH_DERIVATIVE); 
+export const d_to_derivative = new Builder(`d_to_derivative`, create_sym('d'), MATH_DERIVATIVE); 

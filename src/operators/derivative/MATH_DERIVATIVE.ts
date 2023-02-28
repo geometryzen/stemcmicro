@@ -1,3 +1,3 @@
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym } from "../../tree/sym/Sym";
 
-export const MATH_DERIVATIVE = new Sym('derivative');
+export const MATH_DERIVATIVE = create_sym('derivative');

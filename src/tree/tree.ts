@@ -10,6 +10,9 @@
  * name that indicates the universal type. 
  */
 export interface U {
+    /**
+     * Contains the name of the type.
+     */
     readonly name: string;
     meta: number;
     contains(needle: U): boolean;

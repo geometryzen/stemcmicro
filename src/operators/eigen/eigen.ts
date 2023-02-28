@@ -4,7 +4,7 @@ import { EIGEN, EIGENVAL, EIGENVEC } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { Flt, wrap_as_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { Sym } from '../../tree/sym/Sym';
+import { create_sym, Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../../tree/tree';
 import { yyfloat } from '../float/float';
@@ -108,8 +108,8 @@ export function Eval_eigen(expr: U, $: ExtensionEnv): U {
 
     // TODO: Who consumes these? Should we use a special namespace?
     // Better to return a Tensor.
-    $.setBinding(new Sym('D'), D);
-    $.setBinding(new Sym('Q'), Q);
+    $.setBinding(create_sym('D'), D);
+    $.setBinding(create_sym('Q'), Q);
 
     return nil;
 }

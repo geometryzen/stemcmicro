@@ -1,3 +1,3 @@
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym } from "../../tree/sym/Sym";
 
-export const TYPE_NAME_STR = new Sym('Str');
+export const TYPE_NAME_STR = create_sym('Str');

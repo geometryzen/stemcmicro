@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
-import { Sym } from "../src/tree/sym/Sym";
+import { create_sym } from "../src/tree/sym/Sym";
 import { Tensor } from "../src/tree/tensor/Tensor";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -21,12 +21,12 @@ describe("tensor-sandbox", function () {
 describe("tensor", function () {
     it("sanity-check", function () {
         // const engine = create_script_engine();
-        const a = new Sym('a');
-        const b = new Sym('b');
-        const c = new Sym('c');
-        const d = new Sym('d');
-        const e = new Sym('e');
-        const f = new Sym('f');
+        const a = create_sym('a');
+        const b = create_sym('b');
+        const c = create_sym('c');
+        const d = create_sym('d');
+        const e = create_sym('e');
+        const f = create_sym('f');
         // const ab = new Tensor([2], [a, b]);
         // const cd = new Tensor([2], [c, d]);
         // const ef = new Tensor([2], [e, f]);

@@ -1,7 +1,7 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_E } from "../../runtime/ns_math";
 import { one, Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym, Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/rat_extension";
@@ -14,7 +14,7 @@ class ExpRatBuilder implements OperatorBuilder<U> {
 
 class ExpRat extends Function1<Rat> implements Operator<U> {
     constructor($: ExtensionEnv) {
-        super('exp_rat', new Sym('exp'), is_rat, $);
+        super('exp_rat', create_sym('exp'), is_rat, $);
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
         if (arg.isZero()) {

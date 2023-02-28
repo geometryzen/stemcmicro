@@ -23,7 +23,7 @@ import { MATH_ADD, MATH_DIV, MATH_HAS_TYPE, MATH_INNER, MATH_LCO, MATH_MUL, MATH
 import { stack_pop, stack_push } from '../runtime/stack';
 import { Flt } from '../tree/flt/Flt';
 import { Str } from '../tree/str/Str';
-import { Sym } from '../tree/sym/Sym';
+import { create_sym } from '../tree/sym/Sym';
 import { items_to_cons, U } from '../tree/tree';
 
 /**
@@ -124,7 +124,7 @@ export function ts_parse(fileName: string, sourceText: string): U {
                 // TODO: We could use range {pos, end}?
                 // eslint-disable-next-line no-console
                 // console.lg(`push_usr_symbol(${text})`);
-                stack_push(new Sym(printname));
+                stack_push(create_sym(printname));
                 ident.forEachChild(function (child) {
                     visitNode(child, cbNode);
                 });

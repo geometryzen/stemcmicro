@@ -1,10 +1,10 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_TENSOR } from "../../hashing/hash_info";
-import { Sym } from "../../tree/sym/Sym";
-import { is_tensor } from "../tensor/is_tensor";
+import { create_sym, Sym } from "../../tree/sym/Sym";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
+import { is_tensor } from "../tensor/is_tensor";
 import { algebraAsTensor, convertLabelsToNative, convertMetricToNative } from "./algebra";
 
 class Builder implements OperatorBuilder<U> {
@@ -23,8 +23,8 @@ class Op extends Function2<Tensor, Tensor> implements Operator<U> {
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
-        super('algebra_2_tensor_tensor', new Sym('algebra'), is_tensor, is_tensor, $);
-        this.hash = hash_binop_atom_atom(new Sym('algebra'), HASH_TENSOR, HASH_TENSOR);
+        super('algebra_2_tensor_tensor', create_sym('algebra'), is_tensor, is_tensor, $);
+        this.hash = hash_binop_atom_atom(create_sym('algebra'), HASH_TENSOR, HASH_TENSOR);
     }
     transform2(opr: Sym, lhs: Tensor<U>, rhs: Tensor<U>): [TFLAGS, U] {
         const $ = this.$;

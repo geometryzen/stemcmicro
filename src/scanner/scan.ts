@@ -11,7 +11,7 @@ import {
 import { defs } from '../runtime/defs';
 import { MATH_ADD, MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Boo } from '../tree/boo/Boo';
-import { Sym } from '../tree/sym/Sym';
+import { create_sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
@@ -871,7 +871,7 @@ function scan_function_call_with_function_name(state: InputState): U {
         state.functionInvokationsScanningStack.pop();
     }
 
-    if (PATTERN.equals(new Sym(functionName))) {
+    if (PATTERN.equals(create_sym(functionName))) {
         defs.patternHasBeenFound = true;
     }
 

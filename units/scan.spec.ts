@@ -15,17 +15,17 @@ import { Boo } from '../src/tree/boo/Boo';
 import { Flt } from '../src/tree/flt/Flt';
 import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
 import { Str } from '../src/tree/str/Str';
-import { Sym } from '../src/tree/sym/Sym';
+import { create_sym, Sym } from '../src/tree/sym/Sym';
 import { Cons, is_cons, U } from '../src/tree/tree';
 
-const NAME_A = new Sym('a');
-const NAME_B = new Sym('b');
-const NAME_C = new Sym('c');
-const NAME_D = new Sym('d');
-const NAME_E = new Sym('e');
-const NAME_F = new Sym('f');
-const NAME_ABC = new Sym('abc');
-const NAME_FOO = new Sym('foo');
+const NAME_A = create_sym('a');
+const NAME_B = create_sym('b');
+const NAME_C = create_sym('c');
+const NAME_D = create_sym('d');
+const NAME_E = create_sym('e');
+const NAME_F = create_sym('f');
+const NAME_ABC = create_sym('abc');
+const NAME_FOO = create_sym('foo');
 
 function add(lhs: U, rhs: U): U {
     return makeList(MATH_ADD, lhs, rhs);

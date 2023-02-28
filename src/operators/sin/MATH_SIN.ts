@@ -1,6 +1,6 @@
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym } from "../../tree/sym/Sym";
 
 /**
  * sin(x) = ...
  */
-export const MATH_SIN = new Sym('sin');
+export const MATH_SIN = create_sym('sin');

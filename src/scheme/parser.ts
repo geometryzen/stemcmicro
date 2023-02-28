@@ -1,7 +1,7 @@
 import { Boo } from "../tree/boo/Boo";
 import { Flt } from "../tree/flt/Flt";
 import { Str } from "../tree/str/Str";
-import { Sym } from "../tree/sym/Sym";
+import { create_sym, Sym } from "../tree/sym/Sym";
 import { cons, items_to_cons, nil, U } from "../tree/tree";
 import { Char } from "./char";
 import { CommentMarker } from "./CommentMarker";
@@ -100,7 +100,7 @@ class Parser {
                     t == ",@" ? 'unquote-splicing' : false;
 
         if (s || t == '(' || t == '#(' || t == '[' || t == '#[' || t == '{' || t == '#{') {
-            return s ? new Pair(new Sym(s), new Pair(this.#consumeObject(), nil))
+            return s ? new Pair(create_sym(s), new Pair(this.#consumeObject(), nil))
                 : (t == '(' || t == '[' || t == '{') ? this.#consumeList(t) : this.#consumeVector(t);
         }
         else {
@@ -164,7 +164,7 @@ class Parser {
                 });
                 return new Str(s);
             }
-            else return new Sym(t);
+            else return create_sym(t);
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

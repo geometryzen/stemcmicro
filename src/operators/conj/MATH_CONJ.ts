@@ -1,3 +1,3 @@
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym } from "../../tree/sym/Sym";
 
-export const MATH_CONJ = new Sym('conj');
+export const MATH_CONJ = create_sym('conj');

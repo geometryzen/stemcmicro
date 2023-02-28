@@ -72,7 +72,7 @@ import { booT } from '../tree/boo/Boo';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
 import { negOne, one, Rat, zero } from '../tree/rat/Rat';
 import { assert_str } from '../tree/str/assert_str';
-import { Sym } from '../tree/sym/Sym';
+import { create_sym, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from '../tree/tree';
 import { is_blade } from '../tree/vec/Algebra';
@@ -1376,7 +1376,7 @@ function print_PRODUCT_codegen(p: U, $: ExtensionEnv): string {
 
 function should_tweak_exponent_syntax(base: U, $: ExtensionEnv): boolean {
     if (is_sym(base)) {
-        if (base.equals(new Sym('x'))) {
+        if (base.equals(create_sym('x'))) {
             const sym = PRINT_LEAVE_X_ALONE;
             const binding = $.getBinding(sym);
             if (sym === binding) {
@@ -2190,7 +2190,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             if (defs.printMode === PRINTMODE_LATEX) {
                 return $.toLatexString(expr);
             }
-            return expr.ln;
+            return expr.text;
         }
         if (is_hyp(expr)) {
             return expr.printname;

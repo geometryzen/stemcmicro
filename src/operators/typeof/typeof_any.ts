@@ -1,6 +1,6 @@
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym, Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<U> {
 class TypeofAny extends Function1<U> implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('typeof_any', new Sym('typeof'), is_any, $);
+        super('typeof_any', create_sym('typeof'), is_any, $);
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {

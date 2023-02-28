@@ -13,21 +13,25 @@ function strcmp(str1: string, str2: string): 0 | 1 | -1 {
     }
 }
 
-export function create_sym(ln: string, pos?: number, end?: number): Sym {
-    return new Sym(ln, pos, end);
+const secretToEnforceUsingCreateSym: number = Math.random();
+
+export function create_sym(text: string, pos?: number, end?: number): Sym {
+    return new Sym(secretToEnforceUsingCreateSym, text, pos, end);
 }
 
 export class Sym extends Atom {
     /**
-     * 
-     * @param ln The local part of the qualified name.
+     * Use create_sym to create a new Sym instance.
      */
-    constructor(public readonly ln: string, pos?: number, end?: number) {
+    constructor(secret: number, public readonly text: string, pos?: number, end?: number) {
         super('Sym', pos, end);
+        if (secret !== secretToEnforceUsingCreateSym) {
+            throw new Error("Sym instances must be created using the create_sym function.");
+        }
     }
     compare(other: Sym): 1 | -1 | 0 {
         // console.lg("compare", "this", this.ln, "other", other.ln);
-        return strcmp(this.ln, other.ln);
+        return strcmp(this.text, other.text);
     }
     contains(needle: U): boolean {
         if (needle instanceof Sym) {
@@ -53,7 +57,7 @@ export class Sym extends Atom {
      * @param end The end position of the symbol in the source text.
      */
     clone(pos: number | undefined, end: number | undefined): Sym {
-        return new Sym(this.ln, pos, end);
+        return create_sym(this.text, pos, end);
     }
     equals(other: U): boolean {
         if (other instanceof Sym) {
@@ -66,26 +70,13 @@ export class Sym extends Atom {
             return true;
         }
         else {
-            return this.ln === other.ln;
+            return this.text === other.text;
         }
     }
-    /**
-     * Use this method when you want the QName as a string that can be used to index a map.
-     */
     key(): string {
-        // TOOD: This could be cached, improving performance.
-        return this.ln;
+        return this.text;
     }
     toString(): string {
         return this.key();
-        /*
-        if (this.ns) {
-            return `${this.name}(${JSON.stringify(this.ln)}, ${this.ns.toString()})`;
-
-        }
-        else {
-            return `${this.name}(${JSON.stringify(this.ln)})`;
-        }
-        */
     }
 }

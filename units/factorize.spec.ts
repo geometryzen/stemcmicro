@@ -6,17 +6,17 @@ import { is_rat } from "../src/operators/rat/is_rat";
 import { MATH_MUL } from "../src/runtime/ns_math";
 import { create_script_engine } from "../src/runtime/script_engine";
 import { negOne, one, Rat, two } from "../src/tree/rat/Rat";
-import { Sym } from "../src/tree/sym/Sym";
+import { create_sym } from "../src/tree/sym/Sym";
 import { U } from "../src/tree/tree";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-const a = new Sym('a');
-const b = new Sym('b');
-const c = new Sym('c');
-const d = new Sym('d');
+const a = create_sym('a');
+const b = create_sym('b');
+const c = create_sym('c');
+const d = create_sym('d');
 
-const x = new Sym('x');
-const y = new Sym('y');
+const x = create_sym('x');
+const y = create_sym('y');
 
 function check(actual: [U, U, boolean], expectL: U, expectR: U): void {
     if (!actual[0].equals(expectL)) {

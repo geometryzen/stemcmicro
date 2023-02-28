@@ -1,4 +1,4 @@
 
-import { Sym } from "../../tree/sym/Sym";
+import { create_sym } from "../../tree/sym/Sym";
 
-export const TYPE_NAME_FLT = new Sym('Flt');
+export const TYPE_NAME_FLT = create_sym('Flt');

@@ -51,7 +51,7 @@ export function keepFlag(flags: TFLAGS): boolean {
 /**
  * @hidden
  */
-export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector' | '~Vector';
+export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
 
 export type MODE =
     'evaluatingAsFloat' |

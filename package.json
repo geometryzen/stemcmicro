@@ -151,7 +151,6 @@
         "unit-unit": "mocha 'units/unit.spec.ts'",
         "unit-uom": "mocha 'units/uom.spec.ts'",
         "unit-user": "mocha 'units/user.spec.ts'",
-        "unit-variables": "mocha 'units/variables.spec.ts'",
         "unit-vectors": "mocha 'units/vectors.spec.ts'",
         "unit-zero": "mocha 'units/zero.spec.ts'",
         "test-abs": "mocha 'tests/abs.ts'",

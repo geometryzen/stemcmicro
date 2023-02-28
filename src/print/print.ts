@@ -1466,7 +1466,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         // that would be really confusing, one wants to
         // keep "e" as the base and the negative exponent
         if (!is_base_of_natural_logarithm(base)) {
-            if (is_num_and_eq_minus_one(expo)) {
+            if (is_num(expo) && expo.isMinusOne()) {
                 if (defs.printMode === PRINTMODE_LATEX) {
                     str += print_str('\\frac{1}{');
                 }

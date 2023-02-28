@@ -1,7 +1,6 @@
-import { free_vars } from "../calculators/compare/free_vars";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
+import { ExtensionEnv } from "../env/ExtensionEnv";
 import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
@@ -65,7 +64,6 @@ export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
 
 export function env_term($: ExtensionEnv) {
     $.clearOperators();
-
     $.resetSymTab();
 }
 
@@ -74,15 +72,9 @@ export interface ScriptEngine {
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
-    freeVariables(expr: U): Sym[];
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
     renderAsSExpr(expr: U): string;
-    setAssocL(opr: Sym, value: boolean): void;
-    setAssocR(opr: Sym, value: boolean): void;
-    setSymbolToken(sym: Sym, token: string): void;
-    transform(expr: U): U;
-    valueOf(expr: U): U;
     addRef(): void;
     release(): void;
 }
@@ -140,9 +132,6 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);
         },
-        freeVariables(expr: U): Sym[] {
-            return free_vars(expr, $);
-        },
         renderAsInfix(expr: U): string {
             return render_as_infix(expr, $);
         },
@@ -151,27 +140,6 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
         },
         renderAsSExpr(expr: U): string {
             return render_as_sexpr(expr, $);
-        },
-        setAssocL(opr: Sym, value: boolean): void {
-            $.setAssocL(opr, value);
-        },
-        setAssocR(opr: Sym, value: boolean): void {
-            $.setAssocR(opr, value);
-        },
-        setSymbolToken(sym: Sym, token: string): void {
-            $.setSymbolToken(sym, token);
-        },
-        transform(expr: U): U {
-            // This suggests that we should have a transformer here.
-            expr.reset(TFLAG_DIFF);
-            expr.reset(TFLAG_HALT);
-            // TODO
-            const [, outExpr] = $.transform(expr);
-            return outExpr;
-        },
-        valueOf(expr: U): U {
-            // What is the proposition for this API?
-            return $.transform(expr)[1];
         },
         addRef(): void {
             ref_count++;

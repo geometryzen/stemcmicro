@@ -173,7 +173,6 @@ import { mod_varargs } from '../operators/mod/mod_varargs';
 import { mul_2_any_rat } from '../operators/mul/mul_2_any_rat';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
-import { mul_2_blade_sym } from '../operators/mul/mul_2_blade_sym';
 import { mul_2_flt_flt } from '../operators/mul/mul_2_flt_flt';
 import { mul_2_flt_imu } from '../operators/mul/mul_2_flt_imu';
 import { mul_2_flt_mul_2_flt_any } from '../operators/mul/mul_2_flt_mul_2_flt_any';
@@ -212,7 +211,6 @@ import { mul_2_sym_imu } from '../operators/mul/mul_2_sym_imu';
 import { mul_2_sym_mul_2_rat_any } from '../operators/mul/mul_2_sym_mul_2_rat_any';
 import { mul_2_sym_num } from '../operators/mul/mul_2_sym_num';
 import { mul_2_sym_rat } from '../operators/mul/mul_2_sym_rat';
-import { mul_2_sym_sym } from '../operators/mul/mul_2_sym_sym';
 import { mul_2_sym_sym_general } from '../operators/mul/mul_2_sym_sym_general';
 import { mul_2_sym_tensor } from '../operators/mul/mul_2_sym_tensor';
 import { mul_2_tensor_any } from '../operators/mul/mul_2_tensor_any';
@@ -490,7 +488,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_sym_rat);
     $.defineOperator(mul_2_sym_num);
     $.defineOperator(mul_2_sym_sym_general);
-    $.defineOperator(mul_2_sym_sym);
     $.defineOperator(mul_2_sym_imu);
     $.defineOperator(mul_2_sym_tensor);
     $.defineOperator(mul_2_tensor_sym);
@@ -518,7 +515,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_uom_uom);
 
     $.defineOperator(mul_2_blade_rat);
-    $.defineOperator(mul_2_blade_sym);
     $.defineOperator(mul_2_blade_blade);
     $.defineOperator(mul_2_scalar_blade);
     $.defineOperator(mul_2_sin_cos);

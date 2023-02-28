@@ -1,24 +1,21 @@
-import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    it("log(exp(1))", function () {
+    xit("???", function () {
         const lines: string[] = [
-            `log(exp(1))`
+            `x = 5`
         ];
+        const sourceText = lines.join('\n');
         const engine = create_script_engine();
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "1");
-        engine.release();
-    });
-    it("log(exp(x))", function () {
-        const lines: string[] = [
-            `log(exp(x))`
-        ];
-        const engine = create_script_engine();
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "x");
+        const { values, errors } = engine.executeScript(sourceText);
+        for (const error of errors) {
+            // eslint-disable-next-line no-console
+            console.log("error", error);
+        }
+        for (const value of values) {
+            assert.strictEqual(engine.renderAsInfix(value), "1");
+        }
         engine.release();
     });
 });

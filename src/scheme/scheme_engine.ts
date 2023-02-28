@@ -4,10 +4,9 @@ import { TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { transform_script, transform_tree } from "../runtime/execute";
+import { transform_tree } from "../runtime/execute";
 import { execute_std_definitions } from "../runtime/init";
 import { env_options_from_engine_options, env_term, init_env, ScriptEngine } from "../runtime/script_engine";
-import { TreeTransformer } from "../transform/Transformer";
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, U } from "../tree/tree";
 import { parse_scheme } from "./parser";
@@ -85,9 +84,6 @@ export function createSchemeEngine(): ScriptEngine {
             // TODO
             const [, outExpr] = $.transform(expr);
             return outExpr;
-        },
-        transformScript(sourceText: string, transformer: TreeTransformer): { values: U[], prints: string[], errors: Error[] } {
-            return transform_script(sourceText, transformer, $);
         },
         valueOf(expr: U): U {
             // What is the proposition for this API?

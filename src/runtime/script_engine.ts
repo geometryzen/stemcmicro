@@ -5,12 +5,10 @@ import { ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { transform_script, transform_tree } from "./execute";
-import { TreeTransformer } from "../transform/Transformer";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
-import { execute_script } from "./execute";
+import { execute_script, transform_tree } from "./execute";
 import { execute_std_definitions } from "./init";
 
 export interface ScriptEngineOptions {
@@ -84,7 +82,6 @@ export interface ScriptEngine {
     setAssocR(opr: Sym, value: boolean): void;
     setSymbolToken(sym: Sym, token: string): void;
     transform(expr: U): U;
-    transformScript(sourceText: string, transformer: TreeTransformer): { values: U[], prints: string[], errors: Error[] };
     valueOf(expr: U): U;
     addRef(): void;
     release(): void;
@@ -171,9 +168,6 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
             // TODO
             const [, outExpr] = $.transform(expr);
             return outExpr;
-        },
-        transformScript(sourceText: string, transformer: TreeTransformer): { values: U[], prints: string[], errors: Error[] } {
-            return transform_script(sourceText, transformer, $);
         },
         valueOf(expr: U): U {
             // What is the proposition for this API?

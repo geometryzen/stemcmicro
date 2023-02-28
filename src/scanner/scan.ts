@@ -99,6 +99,7 @@ function is_assign(code: TokenCode): boolean {
  * ':=' | '='
  */
 function is_stmt(code: TokenCode): boolean {
+    // console.lg("is_stmt", code);
     return is_quote_assign(code) || is_assign(code);
 }
 
@@ -285,6 +286,7 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
             return true;
         }
         // TOOD: Not sure if this belongs here anymore.
+        // Probably used for juxtaposition as multiplication (implicit multiplication).
         // case T_LPAR:
         // case T_SYM:
         // case T_FUNCTION:
@@ -294,7 +296,7 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
         case T_STR: {
             if (newLine) {
                 return false;
-                // implicit mul can't cross line
+                // implicit multiplication can't cross line
                 // throw new Error("end <<<< pos");
                 // state.end = state.pos; // better error display
                 // return false;
@@ -540,7 +542,7 @@ function scan_first_factor(state: InputState): [is_num: boolean, expr: U] {
     else {
         // We were probably expecting something.
         // console.lg(`code=${JSON.stringify(code)}`);
-        state.scan_error('syntax error');
+        state.scan_error(`Unexpected token ${JSON.stringify(code.text)}`);
     }
 }
 
@@ -644,9 +646,7 @@ function addSymbolRightOfAssignment(state: InputState, theSymbol: string): void 
 
 function addSymbolLeftOfAssignment(state: InputState, theSymbol: string): void {
     if (
-        predefinedSymbolsInGlobalScope_doNotTrackInDependencies.indexOf(
-            theSymbol
-        ) === -1 &&
+        predefinedSymbolsInGlobalScope_doNotTrackInDependencies.indexOf(theSymbol) === -1 &&
         state.symbolsLeftOfAssignment.indexOf(theSymbol) === -1 &&
         state.symbolsLeftOfAssignment.indexOf("'" + theSymbol) === -1 &&
         !state.skipRootVariableToBeSolved
@@ -664,6 +664,7 @@ function addSymbolLeftOfAssignment(state: InputState, theSymbol: string): void {
     }
 }
 function scan_symbol(state: InputState): U {
+    // console.lg("scan_symbol()");
     state.expect(T_SYM);
     const sym = state.tokenToSym();
     // The text should be the same as  
@@ -724,96 +725,99 @@ function scan_function_call_with_function_name(state: InputState): U {
     state.advance(); // open parens
     state.advance(); // 1st parameter
     state.scanningParameters.push(true);
-    if (state.code !== T_RPAR) {
-        fcall.push(scan_stmt(state));
-        n++;
-        while (state.code === T_COMMA) {
-            state.advance();
-            // roots' disappearing variable, if there, is the second one
-            if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('roots') !== -1) {
-                state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                    (x) =>
-                        !new RegExp(
-                            'roots_' +
-                            (state.functionInvokationsScanningStack.length - 1) +
-                            '_' +
-                            state.text
-                        ).test(x)
-                );
-                state.skipRootVariableToBeSolved = true;
-            }
-            // sums' disappearing variable, is alsways the second one
-            if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('sum') !== -1) {
-                state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                    (x) =>
-                        !new RegExp(
-                            'sum_' +
-                            (state.functionInvokationsScanningStack.length - 1) +
-                            '_' +
-                            state.text
-                        ).test(x)
-                );
-                state.skipRootVariableToBeSolved = true;
-            }
-            // product's disappearing variable, is alsways the second one
-            if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('product') !== -1) {
-                state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                    (x) =>
-                        !new RegExp(
-                            'product_' +
-                            (state.functionInvokationsScanningStack.length - 1) +
-                            '_' +
-                            state.text
-                        ).test(x)
-                );
-                state.skipRootVariableToBeSolved = true;
-            }
-            // for's disappearing variable, is alsways the second one
-            if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('for') !== -1) {
-                state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                    (x) =>
-                        !new RegExp(
-                            'for_' +
-                            (state.functionInvokationsScanningStack.length - 1) +
-                            '_' +
-                            state.text
-                        ).test(x)
-                );
-                state.skipRootVariableToBeSolved = true;
-            }
-            // defint's disappearing variables can be in positions 2,5,8...
-            if (state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('defint') !== -1 && (n === 2 || (n > 2 && (n - 2) % 3 === 0))) {
-                state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                    (x) =>
-                        !new RegExp(
-                            'defint_' +
-                            (state.functionInvokationsScanningStack.length - 1) +
-                            '_' +
-                            state.text
-                        ).test(x)
-                );
-                state.skipRootVariableToBeSolved = true;
-            }
-
+    try {
+        if (state.code !== T_RPAR) {
             fcall.push(scan_stmt(state));
-            state.skipRootVariableToBeSolved = false;
             n++;
-        }
+            while (state.code === T_COMMA) {
+                state.advance();
+                // roots' disappearing variable, if there, is the second one
+                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('roots') !== -1) {
+                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
+                        (x) =>
+                            !new RegExp(
+                                'roots_' +
+                                (state.functionInvokationsScanningStack.length - 1) +
+                                '_' +
+                                state.text
+                            ).test(x)
+                    );
+                    state.skipRootVariableToBeSolved = true;
+                }
+                // sums' disappearing variable, is alsways the second one
+                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('sum') !== -1) {
+                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
+                        (x) =>
+                            !new RegExp(
+                                'sum_' +
+                                (state.functionInvokationsScanningStack.length - 1) +
+                                '_' +
+                                state.text
+                            ).test(x)
+                    );
+                    state.skipRootVariableToBeSolved = true;
+                }
+                // product's disappearing variable, is alsways the second one
+                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('product') !== -1) {
+                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
+                        (x) =>
+                            !new RegExp(
+                                'product_' +
+                                (state.functionInvokationsScanningStack.length - 1) +
+                                '_' +
+                                state.text
+                            ).test(x)
+                    );
+                    state.skipRootVariableToBeSolved = true;
+                }
+                // for's disappearing variable, is alsways the second one
+                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('for') !== -1) {
+                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
+                        (x) =>
+                            !new RegExp(
+                                'for_' +
+                                (state.functionInvokationsScanningStack.length - 1) +
+                                '_' +
+                                state.text
+                            ).test(x)
+                    );
+                    state.skipRootVariableToBeSolved = true;
+                }
+                // defint's disappearing variables can be in positions 2,5,8...
+                if (state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('defint') !== -1 && (n === 2 || (n > 2 && (n - 2) % 3 === 0))) {
+                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
+                        (x) =>
+                            !new RegExp(
+                                'defint_' +
+                                (state.functionInvokationsScanningStack.length - 1) +
+                                '_' +
+                                state.text
+                            ).test(x)
+                    );
+                    state.skipRootVariableToBeSolved = true;
+                }
 
-        // todo refactor this, there are two copies
-        // this catches the case where the "roots" variable is not specified
-        if (n === 2 &&
-            state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('roots') !== -1) {
-            state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                (x) =>
-                    !new RegExp(
-                        'roots_' + (state.functionInvokationsScanningStack.length - 1) + '_' + 'x'
-                    ).test(x)
-            );
+                fcall.push(scan_stmt(state));
+                state.skipRootVariableToBeSolved = false;
+                n++;
+            }
+
+            // todo refactor this, there are two copies
+            // this catches the case where the "roots" variable is not specified
+            if (n === 2 &&
+                state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('roots') !== -1) {
+                state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
+                    (x) =>
+                        !new RegExp(
+                            'roots_' + (state.functionInvokationsScanningStack.length - 1) + '_' + 'x'
+                        ).test(x)
+                );
+            }
         }
     }
-
-    state.scanningParameters.pop();
+    finally {
+        state.scanningParameters.pop();
+    }
 
     for (let i = 0; i <= state.symbolsRightOfAssignment.length; i++) {
         if (state.symbolsRightOfAssignment[i] != null) {

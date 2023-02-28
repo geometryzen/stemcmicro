@@ -8,7 +8,7 @@ import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { MATH_ADD, MATH_DIV, MATH_EQ, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NewLine, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NewLine, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
 import { is_digit } from "./is_digit";
@@ -80,6 +80,9 @@ export class InputState {
     symbolsRightOfAssignment: string[];
     symbolsLeftOfAssignment: string[];
     isSymbolLeftOfAssignment: boolean | null;
+    /**
+     * A stack that indicates when we are scanning parameters to a function.
+     */
     scanningParameters: boolean[];
     functionInvokationsScanningStack: string[];
     skipRootVariableToBeSolved: boolean;
@@ -169,7 +172,7 @@ export class InputState {
                 break;
             }
         }
-        // console.lg(`InputState.advance(token = ${JSON.stringify(this.token)})`);
+        // console.lg(`InputState.advance(token = ${JSON.stringify(this.#token)})`);
     }
     currEquals(thing: string): boolean {
         return this.curr === thing;
@@ -209,7 +212,7 @@ export class InputState {
         }
     }
     /**
-     * Sets the token variable to the next token.
+     * Sets the (private) token variable to the next token.
      * Skips whitespace.
      * Eats numbers giving T_DOUBLE (scientific notation) or T_INTEGER (otherwise).
      * Eats symbols giving T_SYMBOL or T_FUNCTION if Lpar detected.
@@ -239,7 +242,7 @@ export class InputState {
 
         this.#token.pos = this.#token.end;
 
-        // end of string?
+        // end of source text?
         if (this.#token.end === this.sourceText.length) {
             this.#token.txt = '';
             this.#token.code = T_END;
@@ -340,6 +343,12 @@ export class InputState {
                         this.#token.code = T_COLON_EQ;
                         this.#token.txt = ':=';
                         this.#token.end += 2;
+                        return;
+                    }
+                    default: {
+                        this.#token.code = T_COLON;
+                        this.#token.txt = ':';
+                        this.#token.end += 1;
                         return;
                     }
                 }

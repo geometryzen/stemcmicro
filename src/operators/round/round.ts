@@ -8,7 +8,7 @@ import { is_flt } from '../flt/is_flt';
 import { cadr } from '../../tree/helpers';
 import { wrap_as_int } from '../../tree/rat/Rat';
 import { Cons, U } from '../../tree/tree';
-import { yyfloat } from '../float/float';
+import { evaluate_as_float } from '../float/float';
 
 export function Eval_round(p1: Cons, $: ExtensionEnv): U {
     const result = yround($.valueOf(cadr(p1)), $);
@@ -29,7 +29,7 @@ function yround(expr: U, $: ExtensionEnv): U {
         return expr;
     }
 
-    const retval = yyfloat(expr, $);
+    const retval = evaluate_as_float(expr, $);
     if (is_flt(retval)) {
         return wrap_as_int(Math.round(retval.d));
     }

@@ -11,15 +11,25 @@ import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { compare_blade_blade } from "../blade/blade_extension";
 import { is_blade } from "../blade/is_blade";
+import { evaluate_as_float } from "../float/float";
+import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_tensor } from "../tensor/is_tensor";
 import { add_tensor_tensor } from "../tensor/tensor_extension";
 
 export function Eval_add(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_add", render_as_infix(expr, $));
     const terms: U[] = [];
     const argList = expr.argList;
-    for (const term of argList) {
-        push_terms(terms, $.valueOf(term));
+    const values = [...argList].map((term) => $.valueOf(term));
+    const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
+    for (const value of values) {
+        if (some_term_is_zero_float) {
+            push_terms(terms, evaluate_as_float(value, $));
+        }
+        else {
+            push_terms(terms, $.valueOf(value));
+        }
     }
     return add_terms(terms, $);
 }

@@ -7,7 +7,7 @@ import { cadr } from '../../tree/helpers';
 import { create_sym, Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../../tree/tree';
-import { yyfloat } from '../float/float';
+import { evaluate_as_float } from '../float/float';
 import { is_flt } from '../flt/is_flt';
 import { is_tensor } from '../tensor/is_tensor';
 
@@ -176,7 +176,7 @@ function _eigenvec(p1: U, $: ExtensionEnv): U {
 }
 
 function EIG_check_arg(p1: U, $: ExtensionEnv): | { arg: Tensor<Flt>; invalid?: undefined } | { arg?: undefined; invalid: U } {
-    p1 = $.valueOf(yyfloat($.valueOf(cadr(p1)), $));
+    p1 = $.valueOf(evaluate_as_float($.valueOf(cadr(p1)), $));
 
     if (!is_tensor(p1)) {
         return { invalid: p1 };

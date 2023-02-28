@@ -5,7 +5,7 @@ import { guess } from './guess';
 import { imag } from './operators/imag/imag';
 import { is_poly_expanded_form } from './is';
 import { sort_stack } from './misc';
-import { yyfloat } from './operators/float/float';
+import { evaluate_as_float } from './operators/float/float';
 import { real } from './operators/real/real';
 import { defs, halt, move_top_of_stack } from './runtime/defs';
 import { stack_pop, stack_push } from './runtime/stack';
@@ -73,8 +73,8 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): U {
 
     // convert the coefficients to real and imaginary doubles
     for (let i = 0; i < n; i++) {
-        p1 = $.valueOf(yyfloat(real(cs[i], $), $));
-        p2 = $.valueOf(yyfloat(imag(cs[i], $), $));
+        p1 = $.valueOf(evaluate_as_float(real(cs[i], $), $));
+        p2 = $.valueOf(evaluate_as_float(imag(cs[i], $), $));
         if (!is_flt(p1) || !is_flt(p2)) {
             halt('nroots: coefficients?');
         }

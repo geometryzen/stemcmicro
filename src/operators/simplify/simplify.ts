@@ -24,7 +24,7 @@ import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 import { clockform } from '../clock/clock';
 import { denominator } from "../denominator/denominator";
-import { yyfloat } from '../float/float';
+import { evaluate_as_float } from '../float/float';
 import { BCons } from '../helpers/BCons';
 import { is_imu } from '../imu/is_imu';
 import { is_num } from '../num/is_num';
@@ -516,20 +516,20 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     let temp: U = nil;
     if (equalq(expo, 1, 3)) {
         const checkSize1 = $.divide($.multiply($.negate(A), C), B); // 4th coeff
-        const result1 = nativeDouble(yyfloat(real(checkSize1, $), $));
+        const result1 = nativeDouble(evaluate_as_float(real(checkSize1, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
 
         const checkSize2 = $.multiply(three, C); // 3rd coeff
-        const result2 = nativeDouble(yyfloat(real(checkSize2, $), $));
+        const result2 = nativeDouble(evaluate_as_float(real(checkSize2, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
         const arg1b = $.multiply(checkSize2, SECRETX);
 
         const checkSize3 = $.divide($.multiply(wrap_as_int(-3), A), B); // 2nd coeff
-        const result3 = nativeDouble(yyfloat(real(checkSize3, $), $));
+        const result3 = nativeDouble(evaluate_as_float(real(checkSize3, $), $));
         if (Math.abs(result3) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
@@ -543,13 +543,13 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         temp = result;
     }
     else if (equalq(expo, 1, 2)) {
-        const result1 = nativeDouble(yyfloat(real(C, $), $));
+        const result1 = nativeDouble(evaluate_as_float(real(C, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
 
         const checkSize = $.divide($.multiply(wrap_as_int(-2), A), B);
-        const result2 = nativeDouble(yyfloat(real(checkSize, $), $));
+        const result2 = nativeDouble(evaluate_as_float(real(checkSize, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
         }
@@ -586,7 +586,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     const realOfpossibleRationalSolutions: number[] = [];
     // console.lg("checking the one with maximum real part ")
     for (const i of Array.from(possibleSolutions)) {
-        const result = nativeDouble(yyfloat(real(i, $), $));
+        const result = nativeDouble(evaluate_as_float(real(i, $), $));
         possibleRationalSolutions.push(i);
         realOfpossibleRationalSolutions.push(result);
     }
@@ -628,7 +628,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         const possibleNewExpression = simplify(
             $.add($.multiply(lowercase_b, $.power(C, half)), lowercase_a), $
         );
-        const possibleNewExpressionValue = yyfloat(real(possibleNewExpression, $), $);
+        const possibleNewExpressionValue = evaluate_as_float(real(possibleNewExpression, $), $);
         if (!is_negative_number(possibleNewExpressionValue)) {
             return [possibleNewExpression, TFLAG_DIFF];
         }

@@ -1,5 +1,5 @@
 import { ExtensionEnv, Sign, SIGN_EQ } from './env/ExtensionEnv';
-import { yyfloat } from './operators/float/float';
+import { evaluate_as_float } from './operators/float/float';
 import { simplify } from './operators/simplify/simplify';
 import { MSIGN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
@@ -324,7 +324,7 @@ function cmp_args(args: U, $: ExtensionEnv): Sign | null {
     // This will go recursive and you will think your values are being promoted.
     // Stay calm! Don't panic.
     if (!is_rat(diff) && !is_flt(diff)) {
-        diff = $.valueOf(yyfloat(diff, $));
+        diff = $.valueOf(evaluate_as_float(diff, $));
     }
 
     if ($.isZero(diff)) {

@@ -198,6 +198,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         add(lhs: U, rhs: U): U {
+            // If the number is a Flt type, the other term must be coerced to a float.
+            /*
             if (is_num(lhs)) {
                 if (lhs.isZero()) {
                     return rhs;
@@ -208,6 +210,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     return lhs;
                 }
             }
+            */
             return binop(MATH_ADD, lhs, rhs, $);
         },
         arg(expr: U): U {

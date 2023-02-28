@@ -1,6 +1,5 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
-import { equaln } from './is';
 import { makeList } from './makeList';
 import { denominator } from './operators/denominator/denominator';
 import { is_flt } from './operators/flt/is_flt';
@@ -11,7 +10,7 @@ import { is_negative_number } from './predicates/is_negative_number';
 import { LOG } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
-import { wrap_as_flt } from './tree/flt/Flt';
+import { wrap_as_flt, zeroAsDouble } from './tree/flt/Flt';
 import { caddr, cadr } from './tree/helpers';
 import { one, zero } from './tree/rat/Rat';
 import { Cons, U } from './tree/tree';
@@ -29,16 +28,23 @@ export function Eval_log(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function logarithm(expr: U, $: ExtensionEnv): U {
+    // console.lg("logarithm", render_as_infix(expr, $));
     if (is_base_of_natural_logarithm(expr)) {
         return one;
     }
 
-    if (equaln(expr, 1)) {
+    if (is_rat(expr) && expr.isOne()) {
         return zero;
     }
 
+    if (is_flt(expr) && expr.isOne()) {
+        return zeroAsDouble;
+    }
+
     if (is_negative_number(expr)) {
-        return $.add(logarithm($.negate(expr), $), $.multiply(imu, DynamicConstants.Pi($)));
+        const termRe = logarithm($.negate(expr), $);
+        const termIm = $.multiply(imu, DynamicConstants.Pi($));
+        return $.add(termRe, termIm);
     }
 
     if (is_flt(expr)) {

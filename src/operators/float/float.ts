@@ -26,7 +26,7 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): U {
         }
         const B = $.valueOf(A);
         // console.lg("B", render_as_infix(B, $));
-        const C = yyfloat(B, $);
+        const C = evaluate_as_float(B, $);
         // console.lg("C", render_as_infix(C, $));
         const D = $.valueOf(C);
         // console.lg("D", render_as_infix(D, $));
@@ -58,7 +58,7 @@ export function zzfloat(p1: U, $: ExtensionEnv): U {
     const mode = $.getModeFlag(evaluatingAsFloat);
     $.setModeFlag(evaluatingAsFloat, true);
     try {
-        return $.valueOf(yyfloat($.valueOf(p1), $));
+        return $.valueOf(evaluate_as_float($.valueOf(p1), $));
     }
     finally {
         $.setModeFlag(evaluatingAsFloat, mode);
@@ -71,7 +71,7 @@ export function zzfloat(p1: U, $: ExtensionEnv): U {
 // when that doesn't happen for those tests.
 // checkFloatHasWorkedOutCompletely(defs.stack[defs.tos-1],$)
 
-export function yyfloat(expr: U, $: ExtensionEnv): U {
+export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyfloat`, render_as_sexpr(expr, $));
     const mode = $.getModeFlag(evaluatingAsFloat);
     $.setModeFlag(evaluatingAsFloat, true);

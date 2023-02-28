@@ -25,6 +25,7 @@ class SymExtension implements Extension<Sym> {
         return 'SymExtension';
     }
     valueOf(sym: Sym, $: ExtensionEnv): U {
+        // console.lg("SymExtension.valueOf");
         // Doing the dirty work for PI. Why do we need a special case?
         // What about E from the math namespace?
         if (is_pi(sym) && $.getModeFlag(evaluatingAsFloat)) {
@@ -110,8 +111,11 @@ class SymExtension implements Extension<Sym> {
         }
     }
     transform(expr: U): [TFLAGS, U] {
+        // console.lg("SymExtension.transform", render_as_infix(expr, this.$));
         if (is_sym(expr)) {
-            return get_binding(expr, this.$);
+            const binding = get_binding(expr, this.$);
+            // console.lg("binding", render_as_infix(binding[1], this.$));
+            return binding;
         }
         return [TFLAG_NONE, expr];
     }

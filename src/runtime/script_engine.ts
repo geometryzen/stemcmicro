@@ -8,7 +8,7 @@ import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
-import { execute_std_definitions } from "./init";
+import { execute_definition, execute_std_definitions } from "./init";
 
 export interface ScriptEngineOptions {
     /**
@@ -45,15 +45,10 @@ export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
 
     hard_reset();
 
-    $.resetSymTab();
-
+    $.clearBindings();
     $.clearOperators();
 
-    $.beginSpecial();
-
     define_std_operators($);
-
-    $.endSpecial();
 
     $.buildOperators();
 
@@ -63,14 +58,15 @@ export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
 }
 
 export function env_term($: ExtensionEnv) {
+    $.clearBindings();
     $.clearOperators();
-    $.resetSymTab();
 }
 
 export interface ScriptEngine {
     clearBindings(): void;
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
+    executeDefinition(sourceText: string): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
@@ -128,6 +124,9 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
         },
         useStandardDefinitions(): void {
             execute_std_definitions($);
+        },
+        executeDefinition(sourceText: string): void {
+            execute_definition(sourceText, $);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);

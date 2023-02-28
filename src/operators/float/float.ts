@@ -1,31 +1,36 @@
 import { rat_to_flt } from '../../bignum';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
 import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { stack_push } from '../../runtime/stack';
 import { eAsDouble, Flt, piAsDouble } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { Cons, is_cons, U } from '../../tree/tree';
+import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { is_pi } from '../pi/is_pi';
 import { is_rat } from '../rat/is_rat';
 import { is_tensor } from '../tensor/is_tensor';
 
-export function Eval_float(expr: Cons, $: ExtensionEnv): void {
-    // console.lg(`Eval_floats ${$.toListString(expr)}`);
+export function Eval_float(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_float", render_as_infix(expr, $));
+    // console.lg("Eval_float", render_as_sexpr(expr, $));
     const mode = $.getModeFlag(evaluatingAsFloat);
     $.setModeFlag(evaluatingAsFloat, true);
     try {
         const A = cadr(expr);
-        // console.lg(`Eval_floats A => ${$.toListString(A)}`);
+        // console.lg("A", render_as_infix(A, $), JSON.stringify(A));
+        if (is_base_of_natural_logarithm(A)) {
+            // console.lg("A is the base of natural logs.");
+        }
+        if (is_pi(A)) {
+            // console.lg("A is pi");
+        }
         const B = $.valueOf(A);
-        // console.lg(`Eval_floats B => ${$.toListString(B)}`);
+        // console.lg("B", render_as_infix(B, $));
         const C = yyfloat(B, $);
-        // console.lg(`Eval_floats C => ${$.toListString(C)}`);
+        // console.lg("C", render_as_infix(C, $));
         const D = $.valueOf(C);
-        // console.lg(`Eval_floats D => ${$.toListString(D)}`);
-        stack_push(D);
+        // console.lg("D", render_as_infix(D, $));
+        return D;
     }
     finally {
         $.setModeFlag(evaluatingAsFloat, mode);
@@ -66,11 +71,12 @@ export function zzfloat(p1: U, $: ExtensionEnv): U {
 // when that doesn't happen for those tests.
 // checkFloatHasWorkedOutCompletely(defs.stack[defs.tos-1],$)
 
-export function yyfloat(p1: U, $: ExtensionEnv): U {
+export function yyfloat(expr: U, $: ExtensionEnv): U {
+    // console.lg(`yyfloat`, render_as_sexpr(expr, $));
     const mode = $.getModeFlag(evaluatingAsFloat);
     $.setModeFlag(evaluatingAsFloat, true);
     try {
-        return yyfloat_(p1, $);
+        return yyfloat_(expr, $);
     }
     finally {
         $.setModeFlag(evaluatingAsFloat, mode);
@@ -78,8 +84,9 @@ export function yyfloat(p1: U, $: ExtensionEnv): U {
 }
 
 function yyfloat_(expr: U, $: ExtensionEnv): Flt | Cons | Tensor | U {
+    // console.lg(`yyfloat_`, render_as_sexpr(expr, $));
     if (is_cons(expr)) {
-        return makeList(...expr.map(function (x) {
+        return items_to_cons(...expr.map(function (x) {
             return yyfloat_(x, $);
         }));
     }

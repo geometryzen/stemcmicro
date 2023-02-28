@@ -2,19 +2,20 @@ import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    xit("???", function () {
+    it("???", function () {
         const lines: string[] = [
-            `x = 5`
+            `float(exp(1))`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_engine({ useDefinitions: false });
         const { values, errors } = engine.executeScript(sourceText);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {
             // eslint-disable-next-line no-console
-            console.log("error", error);
+            // console.lg("error", error);
         }
         for (const value of values) {
-            assert.strictEqual(engine.renderAsInfix(value), "1");
+            assert.strictEqual(engine.renderAsInfix(value), "2.718282...");
         }
         engine.release();
     });

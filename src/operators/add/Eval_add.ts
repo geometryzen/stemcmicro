@@ -139,13 +139,19 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
     }
 
     switch (terms.length) {
-        case 0:
+        case 0: {
+            // We are assuming here that any zeros that were thrown away were Rat(s).
+            // But we may have thrown away a float.
+            // console.lg("terms are empty, returning a Rat");
             return zero;
-        case 1:
+        }
+        case 1: {
             return terms[0];
-        default:
+        }
+        default: {
             terms.unshift(MATH_ADD);
             return items_to_cons(...terms);
+        }
     }
 }
 
@@ -181,8 +187,17 @@ function combine_terms(terms: U[], $: ExtensionEnv): void {
 
         if (is_num(lhs) && is_num(rhs)) {
             const sum = add_num_num(lhs, rhs);
+            // console.lg("sum", render_as_infix(sum, $));
             if (is_num_or_tensor_and_zero(sum, $)) {
-                terms.splice(i, 2);
+                // At this point we are in danger of forgetting if the zero was a Flt (as opposed to a Rat).
+                // If there are exactly two terms, keep the sum as a zero with a particular type.
+                // console.lg("terms.length", terms.length);
+                if (terms.length === 2) {
+                    terms.splice(i, 2, sum);
+                }
+                else {
+                    terms.splice(i, 2);
+                }
             }
             else {
                 terms.splice(i, 2, sum);

@@ -86,21 +86,17 @@ export interface ExtensionEnv {
      *
      */
     arg(expr: U): U;
-    beginSpecial(): void;
     clearBindings(): void;
     clearOperators(): void;
-    clearRenamed(): void;
     compareFn(sym: Sym): CompareFn;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
-    defineKey(sym: Sym): Sym;
     derivative(expr: U, wrt: U): U;
     divide(lhs: U, rhs: U): U;
-    endSpecial(): void;
     equals(lhs: U, rhs: U): boolean;
     factorize(poly: U, x: U): U;
     getBinding(sym: Sym): U;
-    getBindings(): { sym: Sym, binding: U | undefined }[];
+    getBindings(): { sym: Sym, binding: U }[];
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
     getSymbolToken(sym: Sym): string;
@@ -140,7 +136,6 @@ export interface ExtensionEnv {
     outer(lhs: U, rhs: U): U;
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
-    resetSymTab(): void;
     setAssocL(opr: Sym, value: boolean): void;
     setAssocR(opr: Sym, value: boolean): void;
     setBinding(sym: Sym, binding: U): void;

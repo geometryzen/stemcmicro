@@ -107,11 +107,9 @@ export function Eval_eigen(expr: U, $: ExtensionEnv): U {
     const [D, Q] = eigen(EIGEN, arg);
 
     // TODO: Who consumes these? Should we use a special namespace?
-    const symD = $.defineKey(new Sym('D'));
-    $.setBinding(symD, D);
-
-    const symQ = $.defineKey(new Sym('Q'));
-    $.setBinding(symQ, Q);
+    // Better to return a Tensor.
+    $.setBinding(new Sym('D'), D);
+    $.setBinding(new Sym('Q'), Q);
 
     return nil;
 }

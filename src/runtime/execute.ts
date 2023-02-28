@@ -230,7 +230,7 @@ function post_processing_complex_numbers(input: U, output: U, box: Box<U>, $: Ex
     for (const entry of entries) {
         const sym = entry.sym;
         const binding = entry.binding;
-        if (binding && is_imu(binding)) {
+        if (is_imu(binding)) {
             const A = box.pop();
             const B = subst(A, imu, sym, $);
             box.push(B);

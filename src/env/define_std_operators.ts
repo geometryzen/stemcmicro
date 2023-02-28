@@ -121,13 +121,7 @@ import { expsin_varargs } from '../operators/expsin/expsin_varargs';
 import { factor_varargs } from '../operators/factor/factor_varargs';
 import { factorial_varargs } from '../operators/factorial/factorial_varargs';
 import { factorize_geometric_product_lhs_assoc } from '../operators/factorize/factorize_geometric_product_lhs_assoc';
-import { float_cons } from '../operators/float/float_cons';
-import { float_flt } from '../operators/float/float_flt';
-import { float_imu } from '../operators/float/float_imu';
-import { float_mul_2_flt_sym } from '../operators/float/float_mul_2_flt_sym';
-import { float_rat } from '../operators/float/float_rat';
-import { float_sym } from '../operators/float/float_sym';
-import { float_sym_pi } from '../operators/float/float_sym_pi';
+import { float_varargs } from '../operators/float/float_varargs';
 import { floor_varargs } from '../operators/floor/floor_varargs';
 import { flt_extension, is_flt } from '../operators/flt/flt_extension';
 import { for_varargs } from '../operators/for/for_varargs';
@@ -683,16 +677,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(factor_varargs);
     $.defineOperator(factorial_varargs);
-
-    $.defineOperator(float_mul_2_flt_sym);
-    $.defineOperator(float_cons);
-    $.defineOperator(float_sym_pi);
-    $.defineOperator(float_sym);
-    $.defineOperator(float_flt);
-    $.defineOperator(float_rat);
-    $.defineOperator(float_imu);
+    $.defineOperator(float_varargs);
     $.defineOperator(floor_varargs);
-
     $.defineOperator(for_varargs);
 
     $.defineOperator(hilbert_varargs);

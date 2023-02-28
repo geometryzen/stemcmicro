@@ -193,6 +193,10 @@ function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOp
     engine.clearBindings();
 
     if (options && options.useDefinitions) {
+        // TODO: Do away with the coarse useStandardDefinitions...
+        // engine.executeDefinition("e=exp(1)");
+        // engine.executeDefinition("i=sqrt(-1)");
+        // engine.executeDefinition("pi=tau(1)/2");
         engine.useStandardDefinitions();
     }
 

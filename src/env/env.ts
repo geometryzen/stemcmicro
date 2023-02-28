@@ -221,9 +221,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // console.lg(`arg_denom=${render_as_infix(D, $)}`);
             return $.subtract(C, D);
         },
-        beginSpecial(): void {
-            symTab.beginSpecial();
-        },
         clearOperators(): void {
             builders.length = 0;
             for (const phase of MODE_SEQUENCE) {
@@ -233,9 +230,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        resetSymTab(): void {
-            symTab.reset();
-        },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);
         },
@@ -244,10 +238,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // Do nothing.
         },
         clearBindings(): void {
-            symTab.clearBindings();
-        },
-        clearRenamed(): void {
-            symTab.clearRenamed();
+            symTab.clear();
         },
         compareFn(sym: Sym): CompareFn {
             const order = sym_order[sym.key()];
@@ -263,9 +254,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
-        defineKey(sym: Sym): Sym {
-            return symTab.defineKey(sym);
-        },
         derivative(expr: U, wrt: U): U {
             return derivative(expr, wrt, $);
         },
@@ -278,16 +266,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return $.multiply(lhs, inverse_rhs);
             }
         },
-        endSpecial(): void {
-            symTab.endSpecial();
-        },
         getBinding(sym: Sym): U {
-            const value = symTab.getBinding(sym);
-            // console.lg(`getBinding(sym = ${$.toInfixString(sym)}) => binding = ${$.toInfixString(value)})`);
+            const value = symTab.get(sym);
+            // console.lg(`ExtensionEnv.getBinding(sym = ${$.toInfixString(sym)}) => ${$.toInfixString(value)}`);
             return value;
         },
         getBindings() {
-            return symTab.getBindings();
+            return symTab.entries();
         },
         getMode(): number {
             return current_mode;
@@ -435,7 +420,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return !!mode_flag[mode];
         },
         getSymbolToken(sym: Sym): string {
-            return sym_token[sym.key()];
+            const token = sym_token[sym.key()];
+            // console.lg("getSymbolToken", JSON.stringify(sym), "=>", token);
+            return token;
         },
         inner(lhs: U, rhs: U): U {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
@@ -484,6 +471,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     if (Array.isArray(ops)) {
                         for (const op of ops) {
                             if (op.isKind(expr)) {
+                                // console.lg("op", render_as_infix(expr, $), op.name);
                                 return op;
                             }
                         }
@@ -541,7 +529,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return value_of(p, $);
         },
         remove(varName: Sym): void {
-            symTab.remove(varName);
+            symTab.delete(varName);
         },
         setAssocL(opr: Sym, assocL: boolean): void {
             const assoc = assocs[opr.key()];
@@ -568,7 +556,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         setBinding(sym: Sym, binding: U): void {
-            symTab.setBinding(sym, binding);
+            // console.lg("setBinding", render_as_infix(sym, $), "to", render_as_infix(binding, $));
+            symTab.set(sym, binding);
         },
         setMode(focus: number): void {
             // console.lg(`ExtensionEnv.setFocus(focus=${decodePhase(focus)})`);
@@ -601,6 +590,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return op.toListString(expr);
         },
         transform(expr: U): [TFLAGS, U] {
+            // console.lg("transform", render_as_sexpr(expr, $), "is_sym", is_sym(expr));
             // The legacy behaviour is to transform an expression once.
             // The modern behaviour is to transform until stability is achieved.
             const continueIfExprChanges = true;
@@ -694,7 +684,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return [TFLAG_NONE, expr];
             }
             else if (is_sym(expr)) {
-                const retval = $.operatorFor(expr).transform(expr);
+                const op = $.operatorFor(expr);
+                // console.lg("op", op.name);
+                const retval = op.transform(expr);
+                // console.lg("retval", JSON.stringify(retval));
                 return retval;
             }
             else if (is_blade(expr)) {

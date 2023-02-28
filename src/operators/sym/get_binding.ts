@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_nil, U } from "../../tree/tree";
 
@@ -11,6 +11,7 @@ import { is_nil, U } from "../../tree/tree";
  */
 export function get_binding(sym: Sym, $: ExtensionEnv): [changed: TFLAGS, retval: U] {
     const binding = $.getBinding(sym);
+    // console.lg("get_binding", render_as_infix(sym, $), "is", render_as_infix(binding, $));
 
     if (is_nil(binding)) {
         return [TFLAG_NONE, sym];

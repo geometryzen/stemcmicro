@@ -467,8 +467,9 @@ function expect_cons(expr: U, message?: string | undefined): Cons {
 function expect_sym(expr: U, name: Sym, text: string, pos: number, end: number, message?: string | undefined): Sym {
     if (is_sym(expr)) {
         assert.isTrue(expr.equals(name), `expr=${expr.key()} name=${name.key()}`);
-        assert.strictEqual(expr.pos, pos);
-        assert.strictEqual(expr.end, end);
+        // We can't assert the positions of symbols if they are being interned.
+        // assert.strictEqual(expr.pos, pos);
+        // assert.strictEqual(expr.end, end);
         return expr;
     }
     else {

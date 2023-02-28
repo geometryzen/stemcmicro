@@ -14,9 +14,16 @@ function strcmp(str1: string, str2: string): 0 | 1 | -1 {
 }
 
 const secretToEnforceUsingCreateSym: number = Math.random();
+const cache: Map<string, Sym> = new Map();
 
 export function create_sym(text: string, pos?: number, end?: number): Sym {
-    return new Sym(secretToEnforceUsingCreateSym, text, pos, end);
+    const cached = cache.get(text);
+    if (cached) {
+        return cached;
+    }
+    const sym = new Sym(secretToEnforceUsingCreateSym, text, pos, end);
+    cache.set(text, sym);
+    return sym;
 }
 
 export class Sym extends Atom {

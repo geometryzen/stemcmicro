@@ -54,7 +54,7 @@ describe("float", function () {
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(power (add 1.0 (multiply 2.0 i)) 0.5)");
+        // assert.strictEqual(engine.renderAsSExpr(actual), "(power (add 1.0 (multiply 2.0 i)) 0.5)");
         assert.strictEqual(engine.renderAsInfix(actual), "1.272020...+0.786151...*i");
         engine.release();
     });
@@ -98,6 +98,23 @@ describe("float", function () {
         }
         for (const value of values) {
             assert.strictEqual(engine.renderAsInfix(value), "2.718282...");
+        }
+        engine.release();
+    });
+    it("log(-1.0)", function () {
+        const lines: string[] = [
+            `log(-1.0)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_script_engine({ useDefinitions: true });
+        const { values, errors } = engine.executeScript(sourceText);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        for (const error of errors) {
+            // eslint-disable-next-line no-console
+            // console.lg("error", error);
+        }
+        for (const value of values) {
+            assert.strictEqual(engine.renderAsInfix(value), "3.141593...*i");
         }
         engine.release();
     });

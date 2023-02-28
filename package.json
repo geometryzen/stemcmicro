@@ -24,6 +24,7 @@
         "pretest": "npm run build",
         "prepublishOnly": "npm run units",
         "release": "release-it",
+        "repl": "node repl.mjs",
         "test": "npm run units && npm run tests",
         "lint": "eslint . --ext .ts",
         "tests": "mocha 'tests/**/*.ts' --sort",

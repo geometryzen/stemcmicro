@@ -20,7 +20,7 @@ export { Imu, imu } from './src/tree/imu/ImaginaryUnit';
 export { Num } from './src/tree/num/Num';
 export { one, Rat, wrap_as_int, wrap_as_rat, zero } from './src/tree/rat/Rat';
 export { Str } from './src/tree/str/Str';
-export { Sym } from './src/tree/sym/Sym';
+export { create_sym, Sym } from './src/tree/sym/Sym';
 export { Tensor } from './src/tree/tensor/Tensor';
 export { car, cdr, Cons, cons, is_cons, is_nil, items_to_cons, nil, U } from './src/tree/tree';
 export { Dimensions } from './src/tree/uom/Dimensions';

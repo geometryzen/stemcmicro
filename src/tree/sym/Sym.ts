@@ -20,35 +20,26 @@ export function create_sym(text: string, pos?: number, end?: number): Sym {
 }
 
 export class Sym extends Atom {
+    readonly #text: string;
     /**
      * Use create_sym to create a new Sym instance.
      */
-    constructor(secret: number, public readonly text: string, pos?: number, end?: number) {
+    constructor(secret: number, text: string, pos?: number, end?: number) {
         super('Sym', pos, end);
+        this.#text = text;
         if (secret !== secretToEnforceUsingCreateSym) {
             throw new Error("Sym instances must be created using the create_sym function.");
         }
     }
     compare(other: Sym): 1 | -1 | 0 {
         // console.lg("compare", "this", this.ln, "other", other.ln);
-        return strcmp(this.text, other.text);
+        return strcmp(this.#text, other.#text);
     }
     contains(needle: U): boolean {
         if (needle instanceof Sym) {
-            return this.containsSym(needle);
+            return this.equalsSym(needle);
         }
         return false;
-    }
-    /**
-     * Determines whether other lives in the namespace defined by this.
-     */
-    containsSym(other: Sym): boolean {
-        if (this.equalsSym(other)) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
     /**
      * Creates a new symbol with exactly the same local name and namespace as this symbol.
@@ -57,7 +48,7 @@ export class Sym extends Atom {
      * @param end The end position of the symbol in the source text.
      */
     clone(pos: number | undefined, end: number | undefined): Sym {
-        return create_sym(this.text, pos, end);
+        return create_sym(this.#text, pos, end);
     }
     equals(other: U): boolean {
         if (other instanceof Sym) {
@@ -70,13 +61,16 @@ export class Sym extends Atom {
             return true;
         }
         else {
-            return this.text === other.text;
+            return this.#text === other.#text;
         }
     }
     key(): string {
-        return this.text;
+        return this.#text;
+    }
+    get text(): string {
+        return this.#text;
     }
     toString(): string {
-        return this.key();
+        return this.#text;
     }
 }

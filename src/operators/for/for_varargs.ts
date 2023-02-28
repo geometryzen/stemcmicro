@@ -7,17 +7,18 @@ import { Eval_for } from "./for";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new Op($);
+        return new ForOperator($);
     }
 }
 
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class ForOperator extends FunctionVarArgs implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('for', FOR, $);
         this.hash = hash_nonop_cons(this.opr);
     }
     transform(expr: Cons): [number, U] {
+        // console.lg("ForOperator.transform", render_as_infix(expr, this.$));
         const $ = this.$;
         const retval = Eval_for(expr, $);
         const changed = !retval.equals(expr);

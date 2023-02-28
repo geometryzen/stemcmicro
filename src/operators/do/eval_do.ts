@@ -1,6 +1,5 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { stack_pop, stack_push } from "../../runtime/stack";
-import { car, cdr, is_cons, U } from "../../tree/tree";
+import { car, cdr, Cons, is_cons, U } from "../../tree/tree";
 
 /* do =====================================================================
  
@@ -17,16 +16,14 @@ General description
 Evaluates each argument from left to right. Returns the result of the last argument.
  
 */
-export function Eval_do(p1: U, $: ExtensionEnv): U {
-    stack_push(car(p1));
-    p1 = cdr(p1);
+export function Eval_do(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_do", render_as_infix(expr, $));
+    let result = car(expr);
+    let p1 = cdr(expr);
 
     while (is_cons(p1)) {
-        stack_pop();
-        stack_push($.valueOf(car(p1)));
+        result = $.valueOf(car(p1));
         p1 = cdr(p1);
     }
-
-    const retval = stack_pop();
-    return retval;
+    return result;
 }

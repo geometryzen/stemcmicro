@@ -18,7 +18,10 @@ import { NAME_SCRIPT_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
-        useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation)
+        useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
+        implicitAddition: false,
+        // For backwards compatibility, multiplication should be flattened by the parser to (* a1 a2 a3 ...), not left associative.
+        implicitMultiplication: true,
     };
 }
 

@@ -92,6 +92,14 @@ export class InputState {
      */
     useCaretForExponentiation = false;
     /**
+     * 
+     */
+    implicitAddition = false;
+    /**
+     * 
+     */
+    implicitMultiplication = true;
+    /**
      * @param sourceText The text that will be used for the scan.
      * @param end The zero-based starting position in the text. 
      */

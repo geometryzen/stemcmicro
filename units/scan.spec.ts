@@ -265,7 +265,7 @@ describe("scan", function () {
     });
     describe("*,*", function () {
         it("a*b*c => (* (* a b) c)", function () {
-            const expr = expect_cons(expect_one_tree(" a  *  b * c "));
+            const expr = expect_cons(expect_one_tree(" a  *  b * c ", { implicitAddition: false }));
             expect_sym(cadnr(expr, 0), MATH_MUL, '*', 9, 10);
             const abExpr = expect_cons(cadnr(expr, 1));
             expect_sym(cadnr(expr, 2), NAME_C, 'c', 11, 12);

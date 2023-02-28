@@ -1,3 +1,4 @@
+import { is_num } from '../operators/num/is_num';
 import { is_rat } from '../operators/rat/rat_extension';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
@@ -11,6 +12,7 @@ import {
 import { defs } from '../runtime/defs';
 import { MATH_ADD, MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Boo } from '../tree/boo/Boo';
+import { negOne, one } from '../tree/rat/Rat';
 import { create_sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../tree/tree';
@@ -24,6 +26,8 @@ import { TokenCode } from './Token';
 
 export interface ScanOptions {
     useCaretForExponentiation: boolean;
+    implicitAddition: boolean;
+    implicitMultiplication: boolean;
 }
 
 /**
@@ -45,6 +49,8 @@ export function scan(sourceText: string, options: ScanOptions): [scanned: number
     state.functionInvokationsScanningStack = [''];
     state.assignmentFound = false;
     state.useCaretForExponentiation = options.useCaretForExponentiation;
+    state.implicitAddition = options.implicitAddition;
+    state.implicitMultiplication = options.implicitMultiplication;
 
     state.advance();
     if (state.code === T_END) {
@@ -243,8 +249,58 @@ function is_additive(code: TokenCode, newLine: boolean): boolean {
         return false;
     }
 }
-
 function scan_additive_expr(state: InputState): U {
+    if (state.implicitAddition) {
+        return scan_additive_expr_implicit(state);
+    }
+    else {
+        return scan_additive_expr_explicit(state);
+    }
+}
+
+function scan_additive_expr_implicit(state: InputState): U {
+    const terms: U[] = [MATH_ADD];
+
+    switch (state.code) {
+        case T_PLUS:
+            state.advance();
+            terms.push(scan_multiplicative_expr(state));
+            break;
+        case T_MINUS:
+            state.advance();
+            terms.push(negate(scan_multiplicative_expr(state)));
+            break;
+        default:
+            terms.push(scan_multiplicative_expr(state));
+    }
+
+    while (state.newLine === false && (state.code === T_PLUS || state.code === T_MINUS)) {
+        if (state.code === T_PLUS) {
+            state.advance();
+            terms.push(scan_multiplicative_expr(state));
+        }
+        else {
+            state.advance();
+            terms.push(negate(scan_multiplicative_expr(state)));
+        }
+    }
+
+    if (terms.length === 2) {
+        return terms[1];
+    }
+    return items_to_cons(...terms);
+}
+
+function negate(expr: U): U {
+    if (is_num(expr)) {
+        return expr.neg();
+    }
+    else {
+        return items_to_cons(MATH_MUL, expr, negOne);
+    }
+}
+
+function scan_additive_expr_explicit(state: InputState): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_additive => ${retval} @ ${description}`);
@@ -309,11 +365,79 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
     }
     return false;
 }
+export function scan_multiplicative_expr(state: InputState): U {
+    if (state.implicitMultiplication) {
+        return scan_multiplicative_expr_implicit(state);
+    }
+    else {
+        return scan_multiplicative_expr_explicit(state);
+    }
+}
+
+export function scan_multiplicative_expr_implicit(state: InputState): U {
+    const results = [scan_outer_expr(state)];
+    /*
+    if (parse_time_simplifications) {
+        simplify_1_in_products(results);
+    }
+    */
+
+    while (is_multiplicative(state.code, state.newLine)) {
+        if (state.code === AsteriskToken) {
+            state.advance();
+            results.push(scan_outer_expr(state));
+        }
+        else if (state.code === T_FWDSLASH) {
+            // in case of 1/... then
+            // we scanned the 1, we get rid
+            // of it because otherwise it becomes
+            // an extra factor that wasn't there and
+            // things like
+            // 1/(2*a) become 1*(1/(2*a))
+            simplify_1_in_products(results);
+            state.advance();
+            results.push(inverse(scan_outer_expr(state)));
+        }
+        /*
+        else if (tokenCharCode() === dotprod_unicode) {
+            state.advance();
+            results.push(items_to_cons(symbol(INNER), results.pop(), scan_factor()));
+        }
+        */
+        else {
+            results.push(scan_outer_expr(state));
+        }
+        /*
+        if (parse_time_simplifications) {
+            multiply_consecutive_constants(results);
+            simplify_1_in_products(results);
+        }
+        */
+    }
+
+    if (results.length === 0) {
+        return one;
+    }
+    else if (results.length == 1) {
+        return results[0];
+    }
+    return items_to_cons(MATH_MUL, ...results);
+}
+
+function simplify_1_in_products(factors: U[]): void {
+    if (factors.length > 0) {
+        const factor = factors[factors.length - 1];
+        if (is_rat(factor) && factor.isOne()) {
+            factors.pop();
+        }
+    }
+}
+
 
 /**
  * Corresponds to scan_term
  */
-function scan_multiplicative_expr(state: InputState): U {
+export function scan_multiplicative_expr_explicit(state: InputState): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_multiplicative => ${retval} @ ${description}`);

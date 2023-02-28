@@ -60,7 +60,11 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
     const originalCodeGen = defs.codeGen;
     defs.codeGen = false;
     try {
-        const [scanned, tree] = scan(sourceText, { useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation) });
+        const [scanned, tree] = scan(sourceText, {
+            useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
+            implicitAddition: false,
+            implicitMultiplication: true
+        });
         try {
             if (scanned > 0) {
                 // Evaluating the tree for the side-effect which is to establish a binding.

@@ -3,7 +3,7 @@ import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
 import { wrap_as_int } from '../../tree/rat/Rat';
-import { nil, U } from '../../tree/tree';
+import { Cons, nil, U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 
 // 'for' function
@@ -27,7 +27,8 @@ B: 1...9
 // define B p4
 // define I p5
 // define X p6
-export function Eval_for(p1: U, $: ExtensionEnv): U {
+export function Eval_for(p1: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_for", render_as_sexpr(p1, $));
     const loopingVariable = caddr(p1);
     if (!is_sym(loopingVariable)) {
         halt('for: 2nd arg should be the variable to loop over');

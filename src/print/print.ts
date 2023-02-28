@@ -262,7 +262,11 @@ function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
     // It does not seem that reliable anyway given the simplistic escaping of the text.
     const sourceText = '"' + text + '"';
     // TOOD: Need a better routing to initialize the ScanOptions.
-    const [scanned, tree] = scan(sourceText, { useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation) });
+    const [scanned, tree] = scan(sourceText, {
+        useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
+        implicitAddition: false,
+        implicitMultiplication: true
+    });
     if (scanned === sourceText.length) {
         const str = assert_str(tree);
         $.setBinding(sym, str);

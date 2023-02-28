@@ -8,20 +8,30 @@ export interface ParseScriptOptions {
      * Determines whether the caret symbol '^' is used to denote exponentiation.
      */
     useCaretForExponentiation?: boolean;
+    implicitAddition?: boolean;
+    implicitMultiplication?: boolean;
 }
 
 interface ScanConfig {
     useCaretForExponentiation: boolean;
+    implicitAddition: boolean;
+    implicitMultiplication: boolean;
 }
 
 function config_from_options(options: ParseScriptOptions | undefined): ScanConfig {
     if (options) {
         return {
-            useCaretForExponentiation: !!options.useCaretForExponentiation
+            useCaretForExponentiation: !!options.useCaretForExponentiation,
+            implicitAddition: !!options.implicitAddition,
+            implicitMultiplication: !!options.implicitMultiplication
         };
     }
     else {
-        return { useCaretForExponentiation: false };
+        return {
+            useCaretForExponentiation: false,
+            implicitAddition: false,
+            implicitMultiplication: true
+        };
     }
 }
 
@@ -50,7 +60,11 @@ export function parse_script(sourceText: string, options?: ParseScriptOptions): 
         try {
             defs.errorMessage = '';
             // TODO: Will the scan ever not return zero?
-            [scanned, tree] = scan(normalizedScript.substring(index_of_part_remaining_to_be_parsed), { useCaretForExponentiation: config.useCaretForExponentiation });
+            [scanned, tree] = scan(normalizedScript.substring(index_of_part_remaining_to_be_parsed), {
+                useCaretForExponentiation: config.useCaretForExponentiation,
+                implicitAddition: config.implicitAddition,
+                implicitMultiplication: config.implicitMultiplication
+            });
             if (scanned > 0) {
                 trees.push(tree);
             }

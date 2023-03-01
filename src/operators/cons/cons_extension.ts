@@ -9,7 +9,7 @@ import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
 import { Eval_prime } from "../../prime";
 import { to_infix_string } from "../../print/to_infix_string";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTGE, TESTGT, TESTLE } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -17,7 +17,7 @@ import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern
 import { Eval_power } from "../../scripting/eval_power";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
-import { Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from "../../test";
+import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
 import { Err } from "../../tree/err/Err";
 import { cadr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
@@ -228,9 +228,6 @@ class ConsExtension implements Extension<Cons> {
             case TEST:
                 Eval_test(expr, $);
                 return stack_pop();
-            case TESTEQ:
-                Eval_testeq(expr, $);
-                return stack_pop();
             case TESTGE:
                 Eval_testge(expr, $);
                 return stack_pop();
@@ -239,9 +236,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case TESTLE:
                 Eval_testle(expr, $);
-                return stack_pop();
-            case TESTLT:
-                Eval_testlt(expr, $);
                 return stack_pop();
             default:
                 throw new Error();

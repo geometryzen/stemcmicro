@@ -1,12 +1,12 @@
 import { ExtensionEnv, Sign, SIGN_EQ } from './env/ExtensionEnv';
 import { evaluate_as_float } from './operators/float/float';
+import { is_flt } from './operators/flt/is_flt';
+import { is_rat } from './operators/rat/is_rat';
 import { simplify } from './operators/simplify/simplify';
 import { MSIGN } from './runtime/constants';
 import { stack_push } from './runtime/stack';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
-import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr, cddr } from './tree/helpers';
-import { is_rat } from './operators/rat/is_rat';
 import { one, zero } from './tree/rat/Rat';
 import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 
@@ -58,7 +58,7 @@ function _test(p1: U, $: ExtensionEnv): U {
 // If we get another NUMBER then we know they are different.
 // If we get something else, then we don't know and we return the
 // unaveluated test, which is the same as saying "maybe".
-export function Eval_testeq(p1: U, $: ExtensionEnv) {
+export function Eval_testeq(p1: Cons, $: ExtensionEnv): U {
     // first try without simplifyng both sides
     const orig = p1;
     let subtractionResult = $.subtract($.valueOf(cadr(p1)), $.valueOf(caddr(p1)));
@@ -72,12 +72,10 @@ export function Eval_testeq(p1: U, $: ExtensionEnv) {
     // that here and down below.
     let checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(subtractionResult, $);
     if (checkResult) {
-        stack_push(zero);
-        return;
+        return zero;
     }
     else if (checkResult != null && !checkResult) {
-        stack_push(one);
-        return;
+        return one;
     }
 
     // we didn't get a simple numeric result but
@@ -89,88 +87,82 @@ export function Eval_testeq(p1: U, $: ExtensionEnv) {
 
     checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(subtractionResult, $);
     if (checkResult) {
-        stack_push(zero);
-        return;
+        return zero;
     }
     else if (checkResult != null && !checkResult) {
-        stack_push(one);
-        return;
+        return one;
     }
 
     // if we didn't get to a number then we
     // don't know whether the quantities are
     // different so do nothing
-    stack_push(orig);
+    return orig;
 }
 
 // Relational operators expect a numeric result for operand difference.
-export function Eval_testge(p1: U, $: ExtensionEnv) {
+export function Eval_testge(p1: U, $: ExtensionEnv): U {
     const orig = p1;
     const comparison = cmp_args(p1, $);
 
     if (comparison == null) {
-        stack_push(orig);
-        return;
+        return orig;
     }
 
     if (comparison >= 0) {
-        stack_push(one);
+        return one;
     }
     else {
-        stack_push(zero);
+        return zero;
     }
 }
 
-export function Eval_testgt(p1: U, $: ExtensionEnv) {
+export function Eval_testgt(p1: Cons, $: ExtensionEnv): U {
     const orig = p1;
     const comparison = cmp_args(p1, $);
 
     if (comparison == null) {
-        stack_push(orig);
-        return;
+        return orig;
     }
 
     if (comparison > 0) {
-        stack_push(one);
+        return one;
     }
     else {
-        stack_push(zero);
+        return zero;
     }
 }
 
-export function Eval_testle(p1: U, $: ExtensionEnv) {
+export function Eval_testle(p1: Cons, $: ExtensionEnv): U {
     const orig = p1;
     const comparison = cmp_args(p1, $);
 
     if (comparison == null) {
-        stack_push(orig);
-        return;
+        return orig;
     }
 
     if (comparison <= 0) {
-        stack_push(one);
+        return one;
     }
     else {
-        stack_push(zero);
+        return zero;
     }
 }
 
-export function Eval_testlt(arg: U, $: ExtensionEnv) {
+export function Eval_testlt(arg: Cons, $: ExtensionEnv): U {
     const orig = arg;
     const comparison = cmp_args(arg, $);
     // console.lg(`comparison => ${comparison}`);
 
     if (comparison == null) {
         // I hope this is dead code.
-        stack_push(orig);
-        return;
+        return orig;
     }
 
     if (comparison < 0) {
-        stack_push(one);
+        return one;
     }
     else {
-        stack_push(zero);
+        return zero;
     }
 }
 

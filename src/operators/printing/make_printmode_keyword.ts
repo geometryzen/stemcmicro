@@ -11,7 +11,7 @@ import { is_sym } from "../sym/is_sym";
 import { TYPE_NAME_SYM } from "../sym/TYPE_NAME_SYM";
 
 export class PrintKeyword extends KeywordOperator {
-    constructor(keyword: string, private readonly printMode: PrintMode, $: ExtensionEnv) {
+    constructor(keyword: string, private readonly printMode: () => PrintMode, $: ExtensionEnv) {
         super(create_sym(keyword), $);
     }
     get key(): string {
@@ -27,16 +27,17 @@ export class PrintKeyword extends KeywordOperator {
         // Because of our hash, we are being matched with any symbol.
         if (is_sym(expr) && expr.equalsSym(this.keyword)) {
             const $ = this.$;
+            const printMode: PrintMode = this.printMode();
             const origPrintMode = defs.printMode;
-            defs.setPrintMode(this.printMode);
+            defs.setPrintMode(printMode);
             try {
                 const last = $.getBinding(RESERVED_KEYWORD_LAST);
-                const str = render_as_mode(last, this.printMode, $);
+                const str = render_as_mode(last, printMode, $);
 
                 const printHandler = this.$.getPrintHandler();
                 printHandler.print(str);
 
-                store_text_in_binding(str, get_last_print_mode_symbol(this.printMode), $);
+                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
 
                 return [TFLAG_DIFF, nil];
             }
@@ -49,7 +50,7 @@ export class PrintKeyword extends KeywordOperator {
 }
 
 class Builder implements OperatorBuilder<U> {
-    constructor(private readonly keyword: string, private readonly printMode: PrintMode) {
+    constructor(private readonly keyword: string, private readonly printMode: () => PrintMode) {
 
     }
     create($: ExtensionEnv): Operator<U> {
@@ -57,6 +58,6 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-export function make_printmode_keyword(keyword: string, printMode: PrintMode) {
+export function make_printmode_keyword(keyword: string, printMode: () => PrintMode) {
     return new Builder(keyword, printMode);
 }

@@ -62,7 +62,6 @@ import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRI
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
-import { SystemError } from '../runtime/SystemError';
 import { scan } from '../scanner/scan';
 import { booT } from '../tree/boo/Boo';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
@@ -151,6 +150,7 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
 export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
     // TODO: Not clear why we go to the trouble to scan the string when we'll just get a string.
     // It does not seem that reliable anyway given the simplistic escaping of the text.
+    // Fails when the text is aleady contains double quotes.
     const sourceText = '"' + text + '"';
     // TOOD: Need a better routing to initialize the ScanOptions.
     const [scanned, tree] = scan(sourceText, {
@@ -163,7 +163,8 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
         $.setBinding(sym, str);
     }
     else {
-        throw new SystemError();
+        // TODO
+        // throw new SystemError(`${JSON.stringify(text)}`);
     }
 }
 

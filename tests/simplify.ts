@@ -388,7 +388,7 @@ run_test([
   // simplifications
 
   'simplify(sqrt(-1/2 -1/2 * x))',
-  '(-1/2*x-1/2)^(1/2)',
+  '(-1/2-1/2*x)^(1/2)',
 
   'simplify(sqrt(x*y))',
   '(x*y)^(1/2)',

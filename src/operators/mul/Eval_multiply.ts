@@ -27,8 +27,8 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     return temp;
 }
 export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
-    // console.lg("lhs", render_as_infix(lhs, $));
-    // console.lg("rhs", render_as_infix(rhs, $));
+    // console.lg("lhs", render_as_sexpr(lhs, $));
+    // console.lg("rhs", render_as_sexpr(rhs, $));
     // TODO: Optimize handling of numbers, 0, 1.
     if (is_num(lhs) && is_num(rhs)) {
         return multiply_num_num(lhs, rhs);
@@ -105,7 +105,6 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     const factors: U[] = [];
 
     // handle numerical coefficients
-    // Note that this block guarantees the the first entry starts out as a Num.
     const c1 = car(p1);
     const c2 = car(p2);
     if (is_num(c1) && is_num(c2)) {
@@ -114,10 +113,12 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         p2 = p2.cdr;
     }
     else if (is_num(c1)) {
+        // console.lg("c1", render_as_sexpr(c1, $));
         factors.push(c1);
         p1 = p1.cdr;
     }
     else if (is_num(c2)) {
+        // console.lg("c2", render_as_sexpr(c2, $));
         factors.push(c2);
         p2 = p2.cdr;
     }
@@ -128,14 +129,15 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     while (is_cons(p1) && is_cons(p2)) {
         const head1 = p1.car;
         const head2 = p2.car;
-        const [baseL, powerL] = base_and_power(head1);
-        const [baseR, powerR] = base_and_power(head2);
         if (car(head1).equals(OPERATOR) && car(head2).equals(OPERATOR)) {
             factors.push(cons(OPERATOR, append(cdr(head1), cdr(head2))));
             p1 = p1.cdr;
             p2 = p2.cdr;
             continue;
         }
+
+        const [baseL, powerL] = base_and_power(head1, $);
+        const [baseR, powerR] = base_and_power(head2, $);
 
         // We can get the ordering wrong here. e.g. lhs = (power 2 1/2), rhs = imu
         // We end up comparing 2 and i and the 2 gets pushed first and the i waits
@@ -225,7 +227,9 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
 /**
  * Decomposes an expression into a base and power (power may be one).
  */
-function base_and_power(expr: U): [base: U, power: U] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function base_and_power(expr: U, $: ExtensionEnv): [base: U, power: U] {
+    // console.lg("base_and_power", render_as_infix(expr, $));
     if (is_power(expr)) {
         const argList = expr.cdr;
         return [car(argList), cadr(argList)];

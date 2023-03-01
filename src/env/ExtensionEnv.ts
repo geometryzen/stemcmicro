@@ -1,6 +1,6 @@
 import { Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
-import { U } from "../tree/tree";
+import { Cons, U } from "../tree/tree";
 import { EnvConfig } from "./env";
 
 export type Sign = -1 | 0 | 1;
@@ -89,6 +89,12 @@ export interface ExtensionEnv {
     clearBindings(): void;
     clearOperators(): void;
     compareFn(sym: Sym): CompareFn;
+    /**
+     * Defines the implementation of a function that is used to transform (name ...) expressions.
+     * @param name The name used to construct a symbol.
+     * @param evaluator The implementation of the function.
+     */
+    defineFunction(name: string, evaluator: (expr: Cons, $: ExtensionEnv) => U): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     derivative(expr: U, wrt: U): U;

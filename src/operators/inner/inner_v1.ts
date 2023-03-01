@@ -42,7 +42,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
     }
 
     // Check if one of the operands is the identity matrix
-    // we could maybe use Eval_testeq here but this seems to suffice?
+    // we could maybe use testeq here but this seems to suffice?
     if (SYMBOL_IDENTITY_MATRIX.equals(p1)) {
         return hook(p2, "A");
     }

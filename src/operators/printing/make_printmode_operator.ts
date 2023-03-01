@@ -9,7 +9,7 @@ import { is_any } from "../helpers/is_any";
 
 export class PrintModeOperator extends Function1<U> implements Operator<Cons> {
     readonly hash: string;
-    constructor(opr: string, private readonly printMode: PrintMode, $: ExtensionEnv) {
+    constructor(opr: string, private readonly printMode: () => PrintMode, $: ExtensionEnv) {
         super(opr, create_sym(opr), is_any, $);
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
@@ -17,7 +17,7 @@ export class PrintModeOperator extends Function1<U> implements Operator<Cons> {
         const $ = this.$;
         const argList = items_to_cons(arg);
         if (is_cons(argList)) {
-            const texts = print_in_mode(argList, this.printMode, $);
+            const texts = print_in_mode(argList, this.printMode(), $);
             const printHandler = this.$.getPrintHandler();
             printHandler.print(...texts);
         }
@@ -26,13 +26,13 @@ export class PrintModeOperator extends Function1<U> implements Operator<Cons> {
 }
 
 class Builder implements OperatorBuilder<U> {
-    constructor(private readonly opr: string, private readonly printMode: PrintMode) {
+    constructor(private readonly opr: string, private readonly printMode: () => PrintMode) {
     }
     create($: ExtensionEnv): Operator<U> {
         return new PrintModeOperator(this.opr, this.printMode, $);
     }
 }
 
-export function make_printmode_operator(opr: string, printMode: PrintMode) {
+export function make_printmode_operator(opr: string, printMode: () => PrintMode) {
     return new Builder(opr, printMode);
 }

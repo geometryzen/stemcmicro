@@ -8,9 +8,9 @@ describe("complex", function () {
             `y*i+x`,
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
+        engine.executeScript("i=sqrt(-1)");
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
@@ -41,7 +41,6 @@ describe("complex", function () {
             `i*y+x`,
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -97,7 +96,8 @@ describe("complex", function () {
         const lines: string[] = [
             `y*x*k*j*i*a*2`,
         ];
-        const engine = create_script_engine({ useDefinitions: true });
+        const engine = create_script_engine({});
+        engine.executeScript("i=sqrt(-1)");
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "2*i*a*j*k*x*y");
         engine.release();
@@ -107,7 +107,7 @@ describe("complex", function () {
         const lines: string[] = [
             `y*x*k*j*i*2*a`,
         ];
-        const engine = create_script_engine({ useDefinitions: false });
+        const engine = create_script_engine({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "2*a*i*j*k*x*y");
         engine.release();

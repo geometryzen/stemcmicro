@@ -8,6 +8,7 @@ describe("exp", function () {
             `exp(5)`
         ];
         const engine = create_script_engine();
+        engine.executeScript("e=exp(1)");
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(power e 5)");
         assert.strictEqual(engine.renderAsInfix(actual), "e**5");
@@ -29,7 +30,6 @@ describe("exp", function () {
             `exp(i*pi)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -41,7 +41,6 @@ describe("exp", function () {
             `exp(pi*i)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -53,7 +52,6 @@ describe("exp", function () {
             `exp(i*x)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -65,7 +63,6 @@ describe("exp", function () {
             `exp(-i*x)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -77,7 +74,6 @@ describe("exp", function () {
             `exp(x*i)+exp(-x*i)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -89,7 +85,6 @@ describe("exp", function () {
             `exp(-x*i)+exp(x*i)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -101,7 +96,6 @@ describe("exp", function () {
             `exp(x*i)-exp(-x*i)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -113,7 +107,6 @@ describe("exp", function () {
             `exp(-x*i)-exp(x*i)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -125,7 +118,6 @@ describe("exp", function () {
             `exp(-3/4*i*pi)`
         ];
         const engine = create_script_engine({
-            dependencies: ['Imu'],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);

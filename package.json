@@ -255,7 +255,7 @@
         "gh-pages": "^5.0.0",
         "mocha": "^10.2.0",
         "nyc": "^15.1.0",
-        "release-it": "^15.6.0",
+        "release-it": "^15.6.1",
         "rollup": "^3.17.3",
         "rollup-plugin-dts": "^5.2.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",

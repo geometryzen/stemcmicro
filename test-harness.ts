@@ -182,6 +182,7 @@ test.failing = function failing<T extends unknown[]>(name: string, f: (t: Assert
 
 export { test };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOptions) {
     // TODO: Some global issues to be addressed...
     // Inlining 'clearall' is illuminating.
@@ -192,13 +193,11 @@ function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOp
     // We need to redo these...
     engine.clearBindings();
 
-    if (options && options.useDefinitions) {
-        // TODO: Do away with the coarse useStandardDefinitions...
-        // engine.executeDefinition("e=exp(1)");
-        // engine.executeDefinition("i=sqrt(-1)");
-        // engine.executeDefinition("pi=tau(1)/2");
-        engine.useStandardDefinitions();
-    }
+    // TODO: Do away with the coarse useStandardDefinitions...
+    engine.executeScript("e=exp(1)");
+    engine.executeScript("i=sqrt(-1)");
+    engine.executeScript("pi=tau(1)/2");
+    engine.useStandardDefinitions();
 
     // TODO: Remove these comments when everything is working.
     // Not going to do this anymore.
@@ -281,19 +280,18 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     }
 }
 
+/**
+ * For the test harness we use the caret symbol for exponentiation.
+ */
 function harness_options_to_engine_options(options: TestOptions | undefined): ScriptEngineOptions {
     if (options) {
         return {
-            dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true
         };
     }
     else {
         return {
-            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         };
     }
 }

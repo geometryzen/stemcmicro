@@ -4,7 +4,6 @@ import { ExtensionEnv } from "../env/ExtensionEnv";
 import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
@@ -12,35 +11,15 @@ import { execute_definition, execute_std_definitions } from "./init";
 
 export interface ScriptEngineOptions {
     /**
-     * Determines the direction of association for associative operators.
-     * The default is left-association with the exception of exponentiation which associates to the right.
-     */
-    assocs?: { sym: Sym; dir: 'L' | 'R' }[];
-    /**
-     * Determines the features that the script depends on. The default value is to include all features.
-     * Restricting the features may be done for optimization or functional reasons.
-     */
-    dependencies?: ('Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector')[];
-    /**
-     * Allows various phases of the processing pipeline to be disabled.
-     */
-    disable?: ('factorize' | 'implicate')[];
-    /**
-     * Primarily used for testing.
-     */
-    noOptimize?: boolean;
-    /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
      * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
      * in applications using Geometric Algebra. The default value is false.
      */
     useCaretForExponentiation?: boolean;
-    /**
-     *
-     */
     useDefinitions?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
 
     hard_reset();
@@ -83,10 +62,10 @@ export function env_options_from_engine_options(options: ScriptEngineOptions | u
     };
     if (options) {
         const config: EnvOptions = {
-            assocs: Array.isArray(options.assocs) ? options.assocs : [],
-            dependencies: Array.isArray(options.dependencies) ? options.dependencies : ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            disable: Array.isArray(options.disable) ? options.disable : [],
-            noOptimize: options.noOptimize,
+            assocs: [],
+            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
+            disable: [],
+            noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions
         };

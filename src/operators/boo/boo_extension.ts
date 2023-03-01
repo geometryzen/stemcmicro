@@ -69,7 +69,8 @@ export class BooExtension implements Extension<Boo> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subst(expr: Boo, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
-        throw new Error("Boo Method not implemented.");
+        return expr;
+        // throw new Error(`Boo.subst(expr=${render_as_infix(expr, $)}, oldExpr=${render_as_infix(oldExpr, $)}, newExpr=${render_as_infix(newExpr, $)}) Method not implemented.`);
     }
     toInfixString(expr: Boo): string {
         return expr.equals(booT) ? 'true' : 'false';

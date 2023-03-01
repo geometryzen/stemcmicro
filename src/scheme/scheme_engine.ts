@@ -1,5 +1,7 @@
 import { create_env, EnvOptions } from "../env/env";
-import { render_as_infix } from "../print/print";
+import { render_as_ascii } from "../print/render_as_ascii";
+import { render_as_human } from "../print/render_as_human";
+import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
 import { transform_tree } from "../runtime/execute";
@@ -51,6 +53,12 @@ export function createSchemeEngine(): ScriptEngine {
                 }
             }
             return { values, prints, errors };
+        },
+        renderAsAscii(expr: U): string {
+            return render_as_ascii(expr, $);
+        },
+        renderAsHuman(expr: U): string {
+            return render_as_human(expr, $);
         },
         renderAsInfix(expr: U): string {
             return render_as_infix(expr, $);

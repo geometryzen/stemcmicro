@@ -3,7 +3,7 @@ import { extract_single_blade } from "../../calculators/compare/extract_single_b
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { render_as_infix } from "../../print/print";
+import { render_as_infix } from "../../print/render_as_infix";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";

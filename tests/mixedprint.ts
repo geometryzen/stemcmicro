@@ -60,16 +60,16 @@ run_test([
     'printhuman',
     '0.000000000000001',
 
-    'printcomputer',
+    'printinfix',
     '0.000000000000001',
 
     'printlatex',
     '0.000000000000001',
 
-    'printlist',
+    'printsexpr',
     '0.000000000000001',
 
-    'print2dascii',
+    'printascii',
     '0.000000000000001',
 
     'forceFixedPrintout=0',
@@ -81,16 +81,16 @@ run_test([
     'printhuman',
     '1.0*10^(-15)',
 
-    'printcomputer',
+    'printinfix',
     '1.0*10^(-15)',
 
     'printlatex',
     '1.0\\mathrm{e}{-15}',
 
-    'printlist',
+    'printsexpr',
     '1.0*10^(-15)',
 
-    'print2dascii',
+    'printascii',
     '1.0*10^(-15)',
 
     'forceFixedPrintout=1',
@@ -119,51 +119,50 @@ run_test([
     'printhuman',
     '-1/2 2^(1/2)',
 
-    'printcomputer',
+    'printinfix',
     '-1/2*2^(1/2)',
 
     'printlatex',
     '-\\frac{\\sqrt{2}}{2}',
 
-    'printlist',
+    'printsexpr',
     '(multiply -1/2 (power 2 1/2))',
 
-    'printlist(a+b)\nprintlist(c+d)',
+    'printsexpr(a+b)\nprintsexpr(c+d)',
     '(add a b)(add c d)',
 
-    'print2dascii',
+    'printascii',
     '   1   1/2\n- --- 2\n   2',
 
     'last2dasciiprint',
     '"   1   1/2\n- --- 2\n   2"',
 
-    // checks that no extra newlines are
-    // inserted
-    'x=0\ny=2\nfor(do(x=sqrt(2+x),y=2*y/x,printcomputer(y)),k,1,2)',
+    // checks that no extra newlines are inserted
+    'x=0\ny=2\nfor(do(x=sqrt(2+x),y=2*y/x,printinfix(y)),k,1,2)',
     '2*2^(1/2)4*2^(1/2)/((2+2^(1/2))^(1/2))',
 
     'clearall',
     '',
 
-    'print2dascii([[a,b],[c,d]])',
+    'prindascii([[a,b],[c,d]])',
     'a   b\n\nc   d',
 
-    'print2dascii(x^(1/a))',
+    'printascii(x^(1/a))',
     ' 1/a\nx',
 
-    'print2dascii(x^(a/b))',
+    'printascii(x^(a/b))',
     ' a/b\nx',
 
-    'print2dascii(x^(1/(a+b)))',
+    'printascii(x^(1/(a+b)))',
     ' 1/(a + b)\nx',
 
-    'print2dascii(-sqrt(2)/2)',
+    'printascii(-sqrt(2)/2)',
     '   1   1/2\n- --- 2\n   2',
 
-    'print2dascii(1/sqrt(-15))',
+    'printascii(1/sqrt(-15))',
     '        1/2\n    (-1)\n- -----------\n    1/2  1/2\n   3    5',
 
-    'print2dascii(x^(a/2))',
+    'printascii(x^(a/2))',
     ' 1/2 a\nx',
 
     // ------------------------------------------
@@ -174,16 +173,16 @@ run_test([
     'printhuman',
     '(5/3)!',
 
-    'printcomputer',
+    'printinfix',
     '(5/3)!',
 
     'printlatex',
     '(\\frac{5}{3})!',
 
-    'printlist',
+    'printsexpr',
     '(factorial 5/3)',
 
-    'print2dascii',
+    'printascii',
     '  5\n(---)!\n  3',
 
     // bug #106 ---------------------------------

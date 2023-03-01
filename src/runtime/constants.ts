@@ -1,7 +1,6 @@
 import bigInt from 'big-integer';
 import { create_sym } from '../tree/sym/Sym';
 import { MATH_ADD, MATH_ARG, MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
-import { NAME_SCRIPT_LAST } from './ns_script';
 
 export const dontCreateNewRadicalsInDenominatorWhenEvalingMultiplication = true;
 export const do_simplify_nested_radicals = true;
@@ -111,11 +110,6 @@ export const PRIME = create_sym('prime');
 export const PRINT_LEAVE_E_ALONE = create_sym('printLeaveEAlone');
 export const PRINT_LEAVE_X_ALONE = create_sym('printLeaveXAlone');
 export const PRINT = create_sym('print');
-export const PRINT2DASCII = create_sym('print2dascii');
-export const PRINTFULL = create_sym('printcomputer');
-export const PRINTLATEX = create_sym('printlatex');
-export const PRINTLIST = create_sym('printlist');
-export const PRINTPLAIN = create_sym('printhuman');
 export const PRODUCT = create_sym('product');
 export const QUOTE = create_sym('quote');
 export const QUOTIENT = create_sym('quotient');
@@ -153,21 +147,20 @@ export const UNIT = create_sym('unit');
 export const UOM = create_sym('uom');
 export const ZERO = create_sym('zero');
 
-export const LAST = NAME_SCRIPT_LAST;
-
-export const LAST_PRINT = create_sym('lastprint');
-export const LAST_2DASCII_PRINT = create_sym('last2dasciiprint');
-export const LAST_COMPUTER_PRINT = create_sym('lastfullprint');
-export const LAST_LATEX_PRINT = create_sym('lastlatexprint');
-export const LAST_LIST_PRINT = create_sym('lastlistprint');
-export const LAST_HUMAN_PRINT = create_sym('lastplainprint');
+export const LAST_PRINT = create_sym('lastPrint');
+export const LAST_ASCII_PRINT = create_sym('lastAsciiPrint');
+export const LAST_INFIX_PRINT = create_sym('lastInfixPrint');
+export const LAST_LATEX_PRINT = create_sym('lastLatexPrint');
+export const LAST_SEXPR_PRINT = create_sym('lastSexprPrint');
+export const LAST_HUMAN_PRINT = create_sym('lastHumanPrint');
 
 export const AUTOEXPAND = create_sym('autoexpand');
 export const BAKE = create_sym('bake');
 export const ASSUME_REAL_VARIABLES = create_sym('assumeRealVariables');
 export const TRACE = create_sym('trace');
 export const FORCE_FIXED_PRINTOUT = create_sym('forceFixedPrintout');
-export const MAX_FIXED_PRINTOUT_DIGITS = create_sym('maxFixedPrintoutDigits');
+export const VARNAME_MAX_FIXED_PRINTOUT_DIGITS = create_sym('maxFixedPrintoutDigits');
+export const DEFAULT_MAX_FIXED_PRINTOUT_DIGITS = 6;
 
 export const DRAWX = create_sym('$DRAWX');
 export const METAA = create_sym('$METAA');

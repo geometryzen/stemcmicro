@@ -244,8 +244,8 @@ import { pow_2_sym_rat } from '../operators/pow/pow_2_sym_rat';
 import { pow_2_uom_rat } from '../operators/pow/pow_2_uom_rat';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
-import { printlist_1_any } from '../operators/printlist/printlist_1_any';
-import { printlist_keyword } from '../operators/printlist/printlist_keyword';
+import { make_printmode_keyword } from '../operators/printing/make_printmode_keyword';
+import { make_printmode_operator } from '../operators/printing/make_printmode_operator';
 import { product_varargs } from '../operators/product/product_varargs';
 import { quote_varargs } from '../operators/quote/quote_varargs';
 import { quotient_varargs } from '../operators/quotient/quotient_varargs';
@@ -326,6 +326,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
+import { PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
@@ -703,8 +704,17 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(pred_any);
     $.defineOperator(polar_varargs);
 
-    $.defineOperator(printlist_1_any);
-    $.defineOperator(printlist_keyword);
+    $.defineOperator(make_printmode_operator('printascii', PRINTMODE_ASCII));
+    $.defineOperator(make_printmode_operator('printhuman', PRINTMODE_HUMAN));
+    $.defineOperator(make_printmode_operator('printinfix', PRINTMODE_INFIX));
+    $.defineOperator(make_printmode_operator('printlatex', PRINTMODE_LATEX));
+    $.defineOperator(make_printmode_operator('printsexpr', PRINTMODE_SEXPR));
+
+    $.defineOperator(make_printmode_keyword('printascii', PRINTMODE_ASCII));
+    $.defineOperator(make_printmode_keyword('printhuman', PRINTMODE_HUMAN));
+    $.defineOperator(make_printmode_keyword('printinfix', PRINTMODE_INFIX));
+    $.defineOperator(make_printmode_keyword('printlatex', PRINTMODE_LATEX));
+    $.defineOperator(make_printmode_keyword('printsexpr', PRINTMODE_SEXPR));
 
     $.defineOperator(product_varargs);
 

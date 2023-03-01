@@ -21,8 +21,7 @@ import { is_str } from "../operators/str/is_str";
 import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_uom } from "../operators/uom/is_uom";
-import { render_as_infix } from "../print/print";
-import { render_as_sexpr } from "../print/render_as_sexpr";
+import { render_as_human } from "../print/render_as_human";
 import { FUNCTION } from "../runtime/constants";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
@@ -520,7 +519,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return selectOperator(expr.name, expr);
             }
             else {
-                throw new SystemError(`operatorFor ${render_as_infix(expr, $)}`);
+                throw new SystemError(`operatorFor ${render_as_human(expr, $)}`);
             }
         },
         outer(lhs: U, rhs: U): U {
@@ -616,6 +615,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     doneWithExpr = true;
                     // keys are the buckets we should look in for operators from specific to generic.
                     const keys = hash_info(curExpr);
+                    // console.lg("keys", JSON.stringify(keys));
                     for (const key of keys) {
                         let doneWithCurExpr = false;
                         const ops = pops[key];
@@ -689,9 +689,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             else if (is_sym(expr)) {
                 const op = $.operatorFor(expr);
-                // console.lg("op", op.name);
                 const retval = op.transform(expr);
-                // console.lg("retval", JSON.stringify(retval));
                 return retval;
             }
             else if (is_blade(expr)) {
@@ -720,7 +718,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return [TFLAG_NONE, expr];
             }
             else {
-                throw new SystemError(`transform ${render_as_infix(expr, $)}`);
+                throw new SystemError(`transform ${render_as_human(expr, $)}`);
             }
         },
         valueOf(expr: U): U {

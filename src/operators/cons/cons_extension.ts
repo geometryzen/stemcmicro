@@ -8,9 +8,8 @@ import { Eval_leading } from "../../leading";
 import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
 import { Eval_prime } from "../../prime";
-import { Eval_print, Eval_print2dascii, Eval_printcomputer, Eval_printhuman, Eval_printlatex, Eval_printlist } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, PRINT, PRINT2DASCII, PRINTFULL, PRINTLATEX, PRINTLIST, PRINTPLAIN, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from "../../runtime/constants";
 import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
@@ -216,24 +215,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case PRIME:
                 Eval_prime(expr, $);
-                return stack_pop();
-            case PRINT:
-                Eval_print(expr, $);
-                return stack_pop();
-            case PRINT2DASCII:
-                Eval_print2dascii(expr, $);
-                return stack_pop();
-            case PRINTFULL:
-                Eval_printcomputer(expr, $);
-                return stack_pop();
-            case PRINTLATEX:
-                Eval_printlatex(expr, $);
-                return stack_pop();
-            case PRINTLIST:
-                Eval_printlist(expr, $);
-                return stack_pop();
-            case PRINTPLAIN:
-                Eval_printhuman(expr, $);
                 return stack_pop();
             case SILENTPATTERN:
                 Eval_silentpattern(expr, $);

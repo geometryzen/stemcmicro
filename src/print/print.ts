@@ -37,11 +37,8 @@ import {
     FLOOR,
     FOR,
     FUNCTION,
-    LAST_2DASCII_PRINT,
-    LAST_COMPUTER_PRINT,
-    LAST_HUMAN_PRINT,
-    LAST_LATEX_PRINT,
-    LAST_LIST_PRINT,
+    LAST_ASCII_PRINT, LAST_HUMAN_PRINT, LAST_INFIX_PRINT, LAST_LATEX_PRINT,
+    LAST_SEXPR_PRINT,
     MULTIPLY,
     PATTERN, POWER,
     PRINT_LEAVE_E_ALONE,
@@ -64,8 +61,7 @@ import {
 import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
-import { NAME_SCRIPT_LAST } from '../runtime/ns_script';
-import { stack_push } from '../runtime/stack';
+import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { SystemError } from '../runtime/SystemError';
 import { scan } from '../scanner/scan';
 import { booT } from '../tree/boo/Boo';
@@ -76,128 +72,23 @@ import { create_sym, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from '../tree/tree';
 import { is_blade } from '../tree/vec/Algebra';
-import { print2dascii } from './print2d';
 import { print_number } from './print_number';
+import { render_as_ascii } from './render_as_ascii';
 import { render_as_sexpr } from './render_as_sexpr';
 
+
 export function get_script_last($: ExtensionEnv): U {
-    return $.valueOf(NAME_SCRIPT_LAST);
+    return $.valueOf(RESERVED_KEYWORD_LAST);
 }
 
-/**
- * (print script.last)
- */
-export function Eval_print(expr: Cons, $: ExtensionEnv): void {
-    const script_last = get_script_last($);
-    try {
-        const argList = expr.cdr;
-        if (is_cons(argList)) {
-            const texts = print_in_mode(argList, defs.printMode, $);
-            const printHandler = $.getPrintHandler();
-            printHandler.print(...texts);
-        }
-    }
-    finally {
-        stack_push(script_last);
-    }
-}
-
-/**
- * (print2dascii script.last)
- */
-export function Eval_print2dascii(expr: Cons, $: ExtensionEnv): void {
-    const script_last = get_script_last($);
-    try {
-        const argList = expr.cdr;
-        if (is_cons(argList)) {
-            const texts = print_in_mode(argList, PRINTMODE_ASCII, $);
-            const printHandler = $.getPrintHandler();
-            printHandler.print(...texts);
-        }
-    }
-    finally {
-        stack_push(script_last);
-    }
-}
-
-/**
- * (printcomputer script.last)
- */
-export function Eval_printcomputer(expr: Cons, $: ExtensionEnv): void {
-    const script_last = get_script_last($);
-    try {
-        const argList = expr.cdr;
-        if (is_cons(argList)) {
-            const texts = print_in_mode(argList, PRINTMODE_INFIX, $);
-            const printHandler = $.getPrintHandler();
-            printHandler.print(...texts);
-        }
-    }
-    finally {
-        stack_push(script_last);
-    }
-}
-
-/**
- * (printlatex script.last)
- */
-export function Eval_printlatex(expr: Cons, $: ExtensionEnv): void {
-    const script_last = get_script_last($);
-    try {
-        const argList = expr.cdr;
-        if (is_cons(argList)) {
-            const texts = print_in_mode(argList, PRINTMODE_LATEX, $);
-            const printHandler = $.getPrintHandler();
-            printHandler.print(...texts);
-        }
-    }
-    finally {
-        stack_push(script_last);
-    }
-}
-
-/**
- * (printhuman script.last)
- */
-export function Eval_printhuman(expr: Cons, $: ExtensionEnv): void {
-    const script_last = get_script_last($);
-    try {
-        // test flag needs to be suspended
-        // because otherwise "printcomputer" mode
-        // will happen.
-        const orig_test_flag = defs.testFlag;
-        defs.setTestFlag(false);
-        try {
-            const argList = expr.cdr;
-            if (is_cons(argList)) {
-                const texts = print_in_mode(argList, PRINTMODE_HUMAN, $);
-                const printHandler = $.getPrintHandler();
-                printHandler.print(...texts);
-            }
-        }
-        finally {
-            defs.setTestFlag(orig_test_flag);
-        }
-    }
-    finally {
-        stack_push(script_last);
-    }
-}
-
-// this is only invoked when user invokes
-// "printlist" explicitly
-export function Eval_printlist(expr: Cons, $: ExtensionEnv): void {
-    const script_last = get_script_last($);
-    try {
-        const argList = expr.cdr;
-        if (is_cons(argList)) {
-            const texts = print_in_mode(argList, PRINTMODE_SEXPR, $);
-            const printHandler = $.getPrintHandler();
-            printHandler.print(...texts);
-        }
-    }
-    finally {
-        stack_push(script_last);
+export function get_last_print_mode_symbol(printMode: PrintMode): Sym {
+    switch (printMode) {
+        case PRINTMODE_ASCII: return LAST_ASCII_PRINT;
+        case PRINTMODE_HUMAN: return LAST_HUMAN_PRINT;
+        case PRINTMODE_LATEX: return LAST_LATEX_PRINT;
+        case PRINTMODE_INFIX: return LAST_INFIX_PRINT;
+        case PRINTMODE_SEXPR: return LAST_SEXPR_PRINT;
+        default: throw new Error(printMode);
     }
 }
 
@@ -217,29 +108,29 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
         defs.setPrintMode(printMode);
         try {
             if (printMode === PRINTMODE_INFIX) {
-                const str = render_as_infix(value, $);
+                const str = render_as_non__sexpr_mode(value, $);
                 texts.push(str);
-                store_text_in_binding(str, LAST_COMPUTER_PRINT, $);
+                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
             else if (printMode === PRINTMODE_HUMAN) {
-                const str = render_as_infix(value, $);
+                const str = render_as_non__sexpr_mode(value, $);
                 texts.push(str);
-                store_text_in_binding(str, LAST_HUMAN_PRINT, $);
+                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
             else if (printMode === PRINTMODE_ASCII) {
-                const str = print2dascii(value, $);
+                const str = render_as_ascii(value, $);
                 texts.push(str);
-                store_text_in_binding(str, LAST_2DASCII_PRINT, $);
+                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
             else if (printMode === PRINTMODE_LATEX) {
-                const str = render_as_infix(value, $);
+                const str = render_as_non__sexpr_mode(value, $);
                 texts.push(str);
-                store_text_in_binding(str, LAST_LATEX_PRINT, $);
+                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
             else if (printMode === PRINTMODE_SEXPR) {
                 const str = render_as_sexpr(value, $);
                 texts.push(str);
-                store_text_in_binding(str, LAST_LIST_PRINT, $);
+                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
         }
         finally {
@@ -257,7 +148,7 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
  * @param text The text that will be the binding value.
  * @param sym The symbol that will be used as a key to store the text.
  */
-function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
+export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
     // TODO: Not clear why we go to the trouble to scan the string when we'll just get a string.
     // It does not seem that reliable anyway given the simplistic escaping of the text.
     const sourceText = '"' + text + '"';
@@ -287,10 +178,10 @@ function print_char(c: string): string {
 
 function print_base_of_denom(base: U, $: ExtensionEnv): string {
     if (should_group_base_of_denom(base)) {
-        return `(${render_as_infix(base, $)})`;
+        return `(${render_as_non__sexpr_mode(base, $)})`;
     }
     else {
-        return render_as_infix(base, $);
+        return render_as_non__sexpr_mode(base, $);
     }
 }
 
@@ -315,13 +206,13 @@ function should_group_base_of_denom(expr: U): boolean {
 
 function print_expo_of_denom(expo: U, $: ExtensionEnv): string {
     if (is_rat(expo) && expo.isFraction()) {
-        return `(${render_as_infix(expo, $)})`;
+        return `(${render_as_non__sexpr_mode(expo, $)})`;
     }
     if (is_add(expo) || is_multiply(expo) || is_power(expo)) {
-        return `(${render_as_infix(expo, $)})`;
+        return `(${render_as_non__sexpr_mode(expo, $)})`;
     }
     else {
-        return render_as_infix(expo, $);
+        return render_as_non__sexpr_mode(expo, $);
     }
 }
 
@@ -480,11 +371,12 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
 
 /**
  * This is used for almost everything except printing in s-expr format.
+ * TODO: Issue over naming with to_infix_string.
  * @param expr 
  * @param $ 
  * @returns 
  */
-export function render_as_infix(expr: U, $: ExtensionEnv): string {
+export function render_as_non__sexpr_mode(expr: U, $: ExtensionEnv): string {
     return print_additive_expr(expr, $);
 }
 
@@ -794,7 +686,7 @@ function print_grouping_expr(expr: U, $: ExtensionEnv): string {
     // console.lg(`print_grouping_expr ${expr}`);
     let str = '';
     str += print_char('(');
-    str += render_as_infix(expr, $);
+    str += render_as_non__sexpr_mode(expr, $);
     str += print_char(')');
     return str;
 }
@@ -812,7 +704,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
         accumulator += print_grouping_expr(p, $);
     }
     else {
-        accumulator += render_as_infix(p, $);
+        accumulator += render_as_non__sexpr_mode(p, $);
     }
     accumulator += print_char('!');
     return accumulator;
@@ -821,7 +713,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
 function print_ABS_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\left |');
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += print_str(' \\right |');
     return accumulator;
 }
@@ -829,68 +721,68 @@ function print_ABS_latex(p: U, $: ExtensionEnv): string {
 function print_BINOMIAL_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\binom{');
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += print_str('}{');
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     accumulator += print_str('} ');
     return accumulator;
 }
 
 function print_DOT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += print_str(' \\cdot ');
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     return accumulator;
 }
 
 function print_DOT_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'dot(';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ', ';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_SIN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.sin(';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_COS_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.cos(';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_TAN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.tan(';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCSIN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.asin(';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCCOS_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.acos(';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCTAN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.atan(';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
@@ -898,7 +790,7 @@ function print_ARCTAN_codegen(p: U, $: ExtensionEnv): string {
 function print_SQRT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\sqrt{');
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += print_str('} ');
     return accumulator;
 }
@@ -909,7 +801,7 @@ function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
     if (is_cons(cadr(p))) {
         accumulator += print_str('(');
     }
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     if (is_cons(cadr(p))) {
         accumulator += print_str(')');
     }
@@ -921,7 +813,7 @@ function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
 function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('transpose(');
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -929,7 +821,7 @@ function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
 function print_UNIT_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('identity(');
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -940,7 +832,7 @@ function print_INV_latex(p: Cons, $: ExtensionEnv): string {
     if (is_cons(cadr(p))) {
         str += print_str('(');
     }
-    str += render_as_infix(cadr(p), $);
+    str += render_as_non__sexpr_mode(cadr(p), $);
     if (is_cons(cadr(p))) {
         str += print_str(')');
     }
@@ -952,7 +844,7 @@ function print_INV_latex(p: Cons, $: ExtensionEnv): string {
 function print_INV_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('inv(');
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -970,14 +862,14 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
         const theIntegral = cdr(cdr(p));
 
         accumulator += print_str('\\int^{');
-        accumulator += render_as_infix(car(cdr(theIntegral)), $);
+        accumulator += render_as_non__sexpr_mode(car(cdr(theIntegral)), $);
         accumulator += print_str('}_{');
-        accumulator += render_as_infix(car(theIntegral), $);
+        accumulator += render_as_non__sexpr_mode(car(theIntegral), $);
         accumulator += print_str('} \\! ');
         p = cdr(theIntegral);
     }
 
-    accumulator += render_as_infix(functionBody, $);
+    accumulator += render_as_non__sexpr_mode(functionBody, $);
     accumulator += print_str(' \\,');
 
     p = originalIntegral;
@@ -985,7 +877,7 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
     for (let i = 1; i <= numberOfIntegrals; i++) {
         const theVariable = cdr(p);
         accumulator += print_str(' \\mathrm{d} ');
-        accumulator += render_as_infix(car(theVariable), $);
+        accumulator += render_as_non__sexpr_mode(car(theVariable), $);
         if (i < numberOfIntegrals) {
             accumulator += print_str(' \\, ');
         }
@@ -1034,7 +926,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
     }
     else {
         for (let i = 0; i < p.dim(j); i++) {
-            accumulator += render_as_infix(p.elem(k), $);
+            accumulator += render_as_non__sexpr_mode(p.elem(k), $);
             // add separator between elements in the
             // inner-most dimension
             if (i !== p.dim(j) - 1) {
@@ -1097,7 +989,7 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
     }
     else {
         for (let i = 0; i < p.dim(j); i++) {
-            accumulator += render_as_infix(p.elem(k), $);
+            accumulator += render_as_non__sexpr_mode(p.elem(k), $);
             // separator between elements in each row
             if (i !== p.dim(j) - 1) {
                 accumulator += print_str(' & ');
@@ -1116,13 +1008,13 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
 
 function print_SUM_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '\\sum_{';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     accumulator += '=';
-    accumulator += render_as_infix(cadddr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadddr(p), $);
     accumulator += '}^{';
-    accumulator += render_as_infix(caddddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddddr(p), $);
     accumulator += '}{';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += '}';
     return accumulator;
 }
@@ -1136,24 +1028,24 @@ function print_SUM_codegen(p: U, $: ExtensionEnv): string {
     const accumulator =
         '(function(){' +
         ' var ' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         '; ' +
         ' var holderSum = 0; ' +
         ' var lowerlimit = ' +
-        render_as_infix(lowerlimit, $) +
+        render_as_non__sexpr_mode(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        render_as_infix(upperlimit, $) +
+        render_as_non__sexpr_mode(upperlimit, $) +
         '; ' +
         ' for (' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         ' = lowerlimit; ' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         ' < upperlimit; ' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         '++) { ' +
         '   holderSum += ' +
-        render_as_infix(body, $) +
+        render_as_non__sexpr_mode(body, $) +
         ';' +
         ' } ' +
         ' return holderSum;' +
@@ -1172,16 +1064,16 @@ function print_TEST_latex(p: U, $: ExtensionEnv): string {
         // i.e. the one without a test.
         if (nil === cdr(p)) {
             accumulator += '{';
-            accumulator += render_as_infix(car(p), $);
+            accumulator += render_as_non__sexpr_mode(car(p), $);
             accumulator += '} & otherwise ';
             accumulator += ' \\\\\\\\';
             break;
         }
 
         accumulator += '{';
-        accumulator += render_as_infix(cadr(p), $);
+        accumulator += render_as_non__sexpr_mode(cadr(p), $);
         accumulator += '} & if & ';
-        accumulator += render_as_infix(car(p), $);
+        accumulator += render_as_non__sexpr_mode(car(p), $);
         accumulator += ' \\\\\\\\';
 
         // test unsuccessful, continue to the
@@ -1203,7 +1095,7 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
         // i.e. the one without a test.
         if (nil === cdr(p)) {
             accumulator += 'else {';
-            accumulator += 'return (' + render_as_infix(car(p), $) + ');,$';
+            accumulator += 'return (' + render_as_non__sexpr_mode(car(p), $) + ');,$';
             accumulator += '}';
             break;
         }
@@ -1212,8 +1104,8 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
             accumulator += ' else ';
         }
 
-        accumulator += 'if (' + render_as_infix(car(p), $) + '){,$';
-        accumulator += 'return (' + render_as_infix(cadr(p), $) + ');,$';
+        accumulator += 'if (' + render_as_non__sexpr_mode(car(p), $) + '){,$';
+        accumulator += 'return (' + render_as_non__sexpr_mode(cadr(p), $) + ');,$';
         accumulator += '}';
 
         // test unsuccessful, continue to the
@@ -1229,51 +1121,51 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
 
 function print_TESTLT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' < ';
     accumulator += '{';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTLE_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' \\leq ';
     accumulator += '{';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTGT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' > ';
     accumulator += '{';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTGE_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' \\geq ';
     accumulator += '{';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTEQ_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' = ';
     accumulator += '{';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
@@ -1289,10 +1181,10 @@ function print_FOR_codegen(p: U, $: ExtensionEnv): string {
         variable +
         '; ' +
         ' var lowerlimit = ' +
-        render_as_infix(lowerlimit, $) +
+        render_as_non__sexpr_mode(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        render_as_infix(upperlimit, $) +
+        render_as_non__sexpr_mode(upperlimit, $) +
         '; ' +
         ' for (' +
         variable +
@@ -1302,7 +1194,7 @@ function print_FOR_codegen(p: U, $: ExtensionEnv): string {
         variable +
         '++) { ' +
         '   ' +
-        render_as_infix(body, $) +
+        render_as_non__sexpr_mode(body, $) +
         ' } ' +
         '})()';
 
@@ -1314,7 +1206,7 @@ function print_DO_codegen(p: U, $: ExtensionEnv): string {
 
     p = cdr(p);
     while (is_cons(p)) {
-        accumulator += render_as_infix(car(p), $);
+        accumulator += render_as_non__sexpr_mode(car(p), $);
         p = cdr(p);
     }
 
@@ -1323,22 +1215,22 @@ function print_DO_codegen(p: U, $: ExtensionEnv): string {
 
 function print_SETQ_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += ' = ';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     accumulator += '; ';
     return accumulator;
 }
 
 function print_PRODUCT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '\\prod_{';
-    accumulator += render_as_infix(caddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddr(p), $);
     accumulator += '=';
-    accumulator += render_as_infix(cadddr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadddr(p), $);
     accumulator += '}^{';
-    accumulator += render_as_infix(caddddr(p), $);
+    accumulator += render_as_non__sexpr_mode(caddddr(p), $);
     accumulator += '}{';
-    accumulator += render_as_infix(cadr(p), $);
+    accumulator += render_as_non__sexpr_mode(cadr(p), $);
     accumulator += '}';
     return accumulator;
 }
@@ -1352,24 +1244,24 @@ function print_PRODUCT_codegen(p: U, $: ExtensionEnv): string {
     const accumulator =
         '(function(){' +
         ' var ' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         '; ' +
         ' var holderProduct = 1; ' +
         ' var lowerlimit = ' +
-        render_as_infix(lowerlimit, $) +
+        render_as_non__sexpr_mode(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        render_as_infix(upperlimit, $) +
+        render_as_non__sexpr_mode(upperlimit, $) +
         '; ' +
         ' for (' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         ' = lowerlimit; ' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         ' < upperlimit; ' +
-        render_as_infix(variable, $) +
+        render_as_non__sexpr_mode(variable, $) +
         '++) { ' +
         '   holderProduct *= ' +
-        render_as_infix(body, $) +
+        render_as_non__sexpr_mode(body, $) +
         ';' +
         ' } ' +
         ' return holderProduct;' +
@@ -1418,13 +1310,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         else {
             if (defs.printMode === PRINTMODE_LATEX) {
                 str += print_str('\\sqrt{');
-                str += render_as_infix(base, $);
+                str += render_as_non__sexpr_mode(base, $);
                 str += print_str('}');
                 return str;
             }
             else if (defs.codeGen) {
                 str += print_str('Math.sqrt(');
-                str += render_as_infix(base, $);
+                str += render_as_non__sexpr_mode(base, $);
                 str += print_str(')');
                 return str;
             }
@@ -1441,12 +1333,12 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
         if (defs.printMode === PRINTMODE_LATEX) {
             str += print_str('e^{');
-            str += render_as_infix(expo, $);
+            str += render_as_non__sexpr_mode(expo, $);
             str += print_str('}');
         }
         else {
             str += print_str('exp(');
-            str += render_as_infix(expo, $);
+            str += render_as_non__sexpr_mode(expo, $);
             str += print_str(')');
         }
         return str;
@@ -1483,11 +1375,11 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
                 if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
                     str += print_str('(');
-                    str += render_as_infix(base, $);
+                    str += render_as_non__sexpr_mode(base, $);
                     str += print_str(')');
                 }
                 else {
-                    str += render_as_infix(base, $);
+                    str += render_as_non__sexpr_mode(base, $);
                 }
 
                 if (defs.printMode === PRINTMODE_LATEX) {
@@ -1533,7 +1425,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // we omit the "2" on the radical
             if (!is_num_and_eq_two(denomExponent)) {
                 str += print_str('[');
-                str += render_as_infix(denomExponent, $);
+                str += render_as_non__sexpr_mode(denomExponent, $);
                 str += print_str(']');
             }
             str += print_str('{');
@@ -1551,7 +1443,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         // (e.g. square root turns into a radical
         // with a power one underneath) so handle
         // this case simply here, just print the base
-        str += render_as_infix(base, $);
+        str += render_as_non__sexpr_mode(base, $);
     }
     else {
         // print the base,
@@ -1574,13 +1466,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // As an example, in JavaScript unary minus technically has higher precedence than exponentiation,
             // but compilers sometimes require parentheses to avoid errors.
             str += print_str('(');
-            str += render_as_infix(base, $);
+            str += render_as_non__sexpr_mode(base, $);
             str += print_str(')');
         }
         else if (is_add(base)) {
             // Addition has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_as_infix(base, $);
+            str += render_as_non__sexpr_mode(base, $);
             str += print_str(')');
         }
         else if (is_multiply(base)) {
@@ -1598,13 +1490,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         else if (is_outer(base)) {
             // Outer product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_as_infix(base, $);
+            str += render_as_non__sexpr_mode(base, $);
             str += print_str(')');
         }
         else if (is_inner_or_dot(base)) {
             // Inner product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_as_infix(base, $);
+            str += render_as_non__sexpr_mode(base, $);
             str += print_str(')');
         }
         else if (is_num(base) && (lt_num_num(base, zero) || isfraction(base))) {
@@ -1643,18 +1535,18 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // in latex mode, one can omit the curly braces
             // wrapping the exponent if the exponent is only
             // one character long
-            if (render_as_infix(expo, $).length > 1) {
+            if (render_as_non__sexpr_mode(expo, $).length > 1) {
                 str += print_str('{');
-                str += render_as_infix(expo, $);
+                str += render_as_non__sexpr_mode(expo, $);
                 str += print_str('}');
             }
             else {
-                str += render_as_infix(expo, $);
+                str += render_as_non__sexpr_mode(expo, $);
             }
         }
         else if (is_cons(expo) || isfraction(expo) || (is_num(expo) && lt_num_num(expo, zero))) {
             str += print_str('(');
-            str += render_as_infix(expo, $);
+            str += render_as_non__sexpr_mode(expo, $);
             str += print_str(')');
         }
         else {
@@ -1672,16 +1564,16 @@ function print_index_function(p: U, $: ExtensionEnv): string {
         str += print_grouping_expr(car(p), $);
     }
     else {
-        str += render_as_infix(car(p), $);
+        str += render_as_non__sexpr_mode(car(p), $);
     }
     str += print_str('[');
     p = cdr(p);
     if (is_cons(p)) {
-        str += render_as_infix(car(p), $);
+        str += render_as_non__sexpr_mode(car(p), $);
         p = cdr(p);
         while (is_cons(p)) {
             str += print_str(',');
-            str += render_as_infix(car(p), $);
+            str += render_as_non__sexpr_mode(car(p), $);
             p = cdr(p);
         }
     }
@@ -1760,7 +1652,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 }
             }
         }
-        str += render_as_infix(expr, $);
+        str += render_as_non__sexpr_mode(expr, $);
         if (!omtPrns) {
             if (sign_of_term(expr) === '-' || defs.printMode !== PRINTMODE_LATEX) {
                 if (defs.printMode === PRINTMODE_LATEX) {
@@ -1778,7 +1670,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (!omtPrns) {
             str += print_str('(');
         }
-        str += render_as_infix(expr, $);
+        str += render_as_non__sexpr_mode(expr, $);
         if (!omtPrns) {
             str += print_str(')');
         }
@@ -1820,13 +1712,13 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             str += returned;
             str += print_str(' -> ');
         }
-        str += render_as_infix(fbody, $);
+        str += render_as_non__sexpr_mode(fbody, $);
         return str;
     }
 
     if (car(expr).equals(PATTERN)) {
         let str = '';
-        str += render_as_infix(caadr(expr), $);
+        str += render_as_non__sexpr_mode(caadr(expr), $);
         if (defs.printMode === PRINTMODE_LATEX) {
             str += print_str(' \\rightarrow ');
         }
@@ -1839,7 +1731,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             }
         }
 
-        str += render_as_infix(car(cdr(cadr(expr))), $);
+        str += render_as_non__sexpr_mode(car(cdr(cadr(expr))), $);
         return str;
     }
 
@@ -2016,7 +1908,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_infix(cadr(expr), $) + ') < (' + render_as_infix(caddr(expr), $) + '))';
+                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') < (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -2029,7 +1921,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_infix(cadr(expr), $) + ') <= (' + render_as_infix(caddr(expr), $) + '))';
+                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') <= (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -2042,7 +1934,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_infix(cadr(expr), $) + ') > (' + render_as_infix(caddr(expr), $) + '))';
+                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') > (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -2055,7 +1947,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_infix(cadr(expr), $) + ') >= (' + render_as_infix(caddr(expr), $) + '))';
+                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') >= (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -2068,7 +1960,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_infix(cadr(expr), $) + ') === (' + render_as_infix(caddr(expr), $) + '))';
+                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') === (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -2080,31 +1972,31 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     else if (car(expr).equals(FLOOR)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.floor(' + render_as_infix(cadr(expr), $) + '),$';
+            str += 'Math.floor(' + render_as_non__sexpr_mode(cadr(expr), $) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lfloor {' + render_as_infix(cadr(expr), $) + '} \\rfloor ,$';
+            str += ' \\lfloor {' + render_as_non__sexpr_mode(cadr(expr), $) + '} \\rfloor ,$';
             return str;
         }
     }
     else if (car(expr).equals(CEILING)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.ceiling(' + render_as_infix(cadr(expr), $) + '),$';
+            str += 'Math.ceiling(' + render_as_non__sexpr_mode(cadr(expr), $) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lceil {' + render_as_infix(cadr(expr), $) + '} \\rceil ,$';
+            str += ' \\lceil {' + render_as_non__sexpr_mode(cadr(expr), $) + '} \\rceil ,$';
             return str;
         }
     }
     else if (car(expr).equals(ROUND)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.round(' + render_as_infix(cadr(expr), $) + '),$';
+            str += 'Math.round(' + render_as_non__sexpr_mode(cadr(expr), $) + '),$';
             return str;
         }
     }
@@ -2116,9 +2008,9 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         }
         else {
             let str = '';
-            str += render_as_infix(cadr(expr), $);
+            str += render_as_non__sexpr_mode(cadr(expr), $);
             str += print_str('=');
-            str += render_as_infix(caddr(expr), $);
+            str += render_as_non__sexpr_mode(caddr(expr), $);
             return str;
         }
     }
@@ -2135,11 +2027,11 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 str += print_str('(');
             }
             if (is_cons(expr)) {
-                str += render_as_infix(car(expr), $);
+                str += render_as_non__sexpr_mode(car(expr), $);
                 expr = cdr(expr);
                 while (is_cons(expr)) {
                     str += print_str(',');
-                    str += render_as_infix(car(expr), $);
+                    str += render_as_non__sexpr_mode(car(expr), $);
                     expr = cdr(expr);
                 }
             }

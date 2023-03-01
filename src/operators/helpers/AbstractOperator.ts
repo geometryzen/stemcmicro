@@ -1,6 +1,6 @@
 import { cadnr } from "../../calculators/cadnr";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
-import { render_as_infix } from "../../print/print";
+import { render_as_infix } from "../../print/render_as_infix";
 import { render_as_latex } from "../../print/render_as_latex";
 import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { SystemError } from "../../runtime/SystemError";

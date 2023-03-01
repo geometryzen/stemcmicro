@@ -14,7 +14,7 @@ import { Box } from "./Box";
 import { AUTOEXPAND, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { defs, move_top_of_stack } from './defs';
-import { NAME_SCRIPT_LAST } from './ns_script';
+import { RESERVED_KEYWORD_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
@@ -176,8 +176,11 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 }
 
 function store_in_script_last(expr: U, $: ExtensionEnv): void {
-    // console.lg(`store_in_script_last ${expr}`);
-    $.setBinding(NAME_SCRIPT_LAST, expr);
+    // This feels like a bit of a hack.
+    if (!is_nil(expr)) {
+        // console.lg(`store_in_script_last ${render_as_human(expr, $)}`);
+        $.setBinding(RESERVED_KEYWORD_LAST, expr);
+    }
 }
 
 /**

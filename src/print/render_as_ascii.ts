@@ -23,7 +23,7 @@ import { Str } from '../tree/str/Str';
 import { Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, is_cons, U } from '../tree/tree';
-import { render_as_infix } from './print';
+import { render_as_non__sexpr_mode } from './print';
 
 /*
 
@@ -96,7 +96,7 @@ function printchar(character: string) {
     return printchar_nowrap(character);
 }
 
-export function print2dascii(p: U, $: ExtensionEnv): string {
+export function render_as_ascii(p: U, $: ExtensionEnv): string {
     yindex = 0;
     level = 0;
     emit_x = 0;
@@ -107,7 +107,7 @@ export function print2dascii(p: U, $: ExtensionEnv): string {
     const [h, w, y] = Array.from(get_size(0, yindex));
 
     if (w > 100) {
-        render_as_infix(p, $);
+        render_as_non__sexpr_mode(p, $);
         return '';
     }
 

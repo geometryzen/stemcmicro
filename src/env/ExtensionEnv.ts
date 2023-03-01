@@ -201,7 +201,7 @@ export interface Operator<T extends U> {
     toInfixString(expr: T): string;
     toLatexString(expr: T): string;
     toListString(expr: T): string;
-    transform(expr: U): [TFLAGS, U];
+    transform(expr: T): [TFLAGS, U];
     valueOf(expr: T): U;
 }
 

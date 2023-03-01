@@ -2,6 +2,7 @@ import { ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
 import { useCaretForExponentiation } from "../modes/modes";
 import { clear_patterns } from '../pattern';
 import { scan } from '../scanner/scan';
+import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs } from './defs';
 
 /**
@@ -34,7 +35,7 @@ const defn_strings = [
     'last=0',
     'trace=0',
     'forceFixedPrintout=1',
-    'maxFixedPrintoutDigits=6',
+    `${VARNAME_MAX_FIXED_PRINTOUT_DIGITS}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`,
     'printLeaveEAlone=1',
     'printLeaveXAlone=0',
 ];

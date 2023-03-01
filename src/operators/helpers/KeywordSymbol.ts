@@ -4,8 +4,11 @@ import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 
+/**
+ * Base class for symbols that are keywords.
+ */
 export abstract class KeywordOperator implements Operator<Sym> {
-    constructor(private readonly keyword: Sym, protected readonly $: ExtensionEnv) {
+    constructor(protected readonly keyword: Sym, protected readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
     abstract readonly name: string;

@@ -1,26 +1,35 @@
-import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    it("-1**0 is treated as -(1**0) and so evaluates to -1", function () {
-        const lines: string[] = [
-            `-1**0`
-        ];
-        const engine = create_script_engine();
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "-1");
-        assert.strictEqual(engine.renderAsInfix(actual), "-1");
-        engine.release();
-    });
-    it("(-1)**0", function () {
-        const lines: string[] = [
-            `(-1)**0`
-        ];
-        const engine = create_script_engine();
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "1");
-        assert.strictEqual(engine.renderAsInfix(actual), "1");
+    it("sequential keywords", function () {
+        const sourceText = [
+            `a+b`,
+            `printascii`,
+            `printhuman`,
+            `printinfix`,
+            `printlatex`,
+            `printsexpr`
+        ].join('\n');
+        const engine = create_script_engine({
+            useCaretForExponentiation: true,
+            useDefinitions: false
+        });
+        const { values, prints } = engine.executeScript(sourceText);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1, "values.length");
+        assert.strictEqual(engine.renderAsAscii(values[0]), "a + b");
+        assert.strictEqual(engine.renderAsHuman(values[0]), "a + b");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "a+b");
+        assert.strictEqual(engine.renderAsLaTeX(values[0]), "a+b");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
+        assert.isArray(prints);
+        assert.strictEqual(prints.length, 5, "prints.length");
+        assert.strictEqual(prints[0], "a + b");
+        assert.strictEqual(prints[1], "a + b");
+        assert.strictEqual(prints[2], "a+b");
+        assert.strictEqual(prints[3], "a+b");
+        assert.strictEqual(prints[4], "(+ a b)");
         engine.release();
     });
 });

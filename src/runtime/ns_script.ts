@@ -2,6 +2,6 @@ import { create_sym } from "../tree/sym/Sym";
 
 
 /**
- * 'script.last'
+ * 'last'
  */
-export const NAME_SCRIPT_LAST = create_sym('last');
+export const RESERVED_KEYWORD_LAST = create_sym('last');

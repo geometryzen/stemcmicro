@@ -54,6 +54,9 @@ export class Defs {
      * It is set to true during the execution of the test harness, and reset after.
      */
     private $test_flag = false;
+    /**
+     * The (default) PrintMode when using the (print ...) expression or print keyword.
+     */
     private $printMode: PrintMode = PRINTMODE_INFIX;
     constructor() {
         // Nothing to see here yet.

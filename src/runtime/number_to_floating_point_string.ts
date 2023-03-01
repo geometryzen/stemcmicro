@@ -2,9 +2,9 @@ import { ExtensionEnv } from "../env/ExtensionEnv";
 import { renderFloatAsEcmaScript } from "../modes/modes";
 import { nativeInt } from "../nativeInt";
 import { is_rat } from "../operators/rat/is_rat";
-import { six } from "../tree/rat/Rat";
+import { wrap_as_int } from "../tree/rat/Rat";
 import { is_nil } from "../tree/tree";
-import { FORCE_FIXED_PRINTOUT, MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
+import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, FORCE_FIXED_PRINTOUT, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs, PRINTMODE_LATEX } from "./defs";
 
 export function number_to_floating_point_string(d: number, $: ExtensionEnv): string {
@@ -60,8 +60,8 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
     }
     else {
         // MAX_FIXED_PRINTOUT_DIGITS would be 6 if it were defined. If defined it would be a Rat or a Flt.
-        const txtMaxFixedPrintoutDigits = $.getBinding(MAX_FIXED_PRINTOUT_DIGITS);
-        const maxFixedPrintoutDigits = nativeInt(is_nil(txtMaxFixedPrintoutDigits) ? six : txtMaxFixedPrintoutDigits);
+        const txtMaxFixedPrintoutDigits = $.getBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS);
+        const maxFixedPrintoutDigits = nativeInt(is_nil(txtMaxFixedPrintoutDigits) ? wrap_as_int(DEFAULT_MAX_FIXED_PRINTOUT_DIGITS) : txtMaxFixedPrintoutDigits);
 
         str = d.toFixed(maxFixedPrintoutDigits);
 

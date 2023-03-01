@@ -1,13 +1,16 @@
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { render_as_infix } from "../print/print";
+import { render_as_ascii } from "../print/render_as_ascii";
+import { render_as_human } from "../print/render_as_human";
+import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
 import { U } from "../tree/tree";
+import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
-import { execute_std_definitions } from "./init";
+import { execute_definition, execute_std_definitions } from "./init";
 
 export interface ScriptEngineOptions {
     /**
@@ -31,6 +34,8 @@ export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
 
     $.buildOperators();
 
+    execute_definition(`${VARNAME_MAX_FIXED_PRINTOUT_DIGITS.text}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`, $);
+
     if (options && options.useDefinitions) {
         execute_std_definitions($);
     }
@@ -46,6 +51,8 @@ export interface ScriptEngine {
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
+    renderAsAscii(expr: U): string;
+    renderAsHuman(expr: U): string;
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
     renderAsSExpr(expr: U): string;
@@ -106,8 +113,14 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);
         },
+        renderAsAscii(expr: U): string {
+            return render_as_ascii(expr, $);
+        },
         renderAsInfix(expr: U): string {
             return render_as_infix(expr, $);
+        },
+        renderAsHuman(expr: U): string {
+            return render_as_human(expr, $);
         },
         renderAsLaTeX(expr: U): string {
             return render_as_latex(expr, $);

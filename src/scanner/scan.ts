@@ -26,8 +26,8 @@ import { TokenCode } from './Token';
 
 export interface ScanOptions {
     useCaretForExponentiation: boolean;
-    implicitAddition: boolean;
-    implicitMultiplication: boolean;
+    explicitAssocAdd: boolean;
+    explicitAssocMul: boolean;
 }
 
 /**
@@ -49,8 +49,8 @@ export function scan(sourceText: string, options: ScanOptions): [scanned: number
     state.functionInvokationsScanningStack = [''];
     state.assignmentFound = false;
     state.useCaretForExponentiation = options.useCaretForExponentiation;
-    state.implicitAddition = options.implicitAddition;
-    state.implicitMultiplication = options.implicitMultiplication;
+    state.explicitAssocAdd = options.explicitAssocAdd;
+    state.explicitAssocMul = options.explicitAssocMul;
 
     state.advance();
     if (state.code === T_END) {
@@ -250,14 +250,18 @@ function is_additive(code: TokenCode, newLine: boolean): boolean {
     }
 }
 function scan_additive_expr(state: InputState): U {
-    if (state.implicitAddition) {
-        return scan_additive_expr_implicit(state);
+    if (state.explicitAssocAdd) {
+        return scan_additive_expr_explicit(state);
     }
     else {
-        return scan_additive_expr_explicit(state);
+        return scan_additive_expr_implicit(state);
     }
 }
 
+/**
+ * 
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function scan_additive_expr_implicit(state: InputState): U {
     const terms: U[] = [MATH_ADD];
 
@@ -366,14 +370,17 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
     return false;
 }
 export function scan_multiplicative_expr(state: InputState): U {
-    if (state.implicitMultiplication) {
-        return scan_multiplicative_expr_implicit(state);
+    if (state.explicitAssocMul) {
+        return scan_multiplicative_expr_explicit(state);
     }
     else {
-        return scan_multiplicative_expr_explicit(state);
+        return scan_multiplicative_expr_implicit(state);
     }
 }
 
+/**
+ * 
+ */
 export function scan_multiplicative_expr_implicit(state: InputState): U {
     const results = [scan_outer_expr(state)];
     /*

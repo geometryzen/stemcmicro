@@ -19,9 +19,8 @@ import { NAME_SCRIPT_LAST } from './ns_script';
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
         useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
-        implicitAddition: false,
-        // For backwards compatibility, multiplication should be flattened by the parser to (* a1 a2 a3 ...), not left associative.
-        implicitMultiplication: true,
+        explicitAssocAdd: false,
+        explicitAssocMul: false,
     };
 }
 
@@ -41,6 +40,7 @@ export function execute_script(sourceText: string, $: ExtensionEnv): { values: U
     // console.lg(`trees.length = ${trees.length}`);
     for (const tree of trees) {
         // console.lg("tree", render_as_sexpr(tree, $));
+        // console.lg("tree", render_as_infix(tree, $));
         const data = transform_tree(tree, $);
         if (data.value) {
             if (!is_nil(data.value)) {

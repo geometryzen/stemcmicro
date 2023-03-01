@@ -62,8 +62,8 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
     try {
         const [scanned, tree] = scan(sourceText, {
             useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
-            implicitAddition: false,
-            implicitMultiplication: true
+            explicitAssocAdd: false,
+            explicitAssocMul: false
         });
         try {
             if (scanned > 0) {

@@ -881,9 +881,19 @@ describe("C bootstrap", function () {
 
             engine.release();
         });
-        it("-1**0", function () {
+        it("-1**0 because exponentiation binds more tightly than unary minus.", function () {
             const lines: string[] = [
                 `-1**0`
+            ];
+            const engine = create_script_engine();
+            const actual = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsSExpr(actual), "-1");
+            assert.strictEqual(engine.renderAsInfix(actual), "-1");
+            engine.release();
+        });
+        it("(-1)**0", function () {
+            const lines: string[] = [
+                `(-1)**0`
             ];
             const engine = create_script_engine();
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -938,7 +948,6 @@ describe("C bootstrap", function () {
                 `a*a`
             ];
             const engine = create_script_engine({
-                disable: ['factorize']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "(power a 2)");

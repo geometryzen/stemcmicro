@@ -3,7 +3,7 @@ import { render_as_infix } from "../print/print";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
 import { transform_tree } from "../runtime/execute";
-import { execute_definition, execute_std_definitions } from "../runtime/init";
+import { execute_std_definitions } from "../runtime/init";
 import { env_options_from_engine_options, env_term, init_env, ScriptEngine } from "../runtime/script_engine";
 import { is_nil, U } from "../tree/tree";
 import { parse_scheme } from "./parser";
@@ -22,9 +22,6 @@ export function createSchemeEngine(): ScriptEngine {
         },
         useStandardDefinitions(): void {
             execute_std_definitions($);
-        },
-        executeDefinition(sourceText: string): void {
-            execute_definition(sourceText, $);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             const trees = parse_scheme(sourceText);

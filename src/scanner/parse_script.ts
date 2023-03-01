@@ -6,31 +6,38 @@ import { scan } from "./scan";
 export interface ParseScriptOptions {
     /**
      * Determines whether the caret symbol '^' is used to denote exponentiation.
+     * The alternative is to use '**', which frees the caret symbol to denote the outer product.
      */
     useCaretForExponentiation?: boolean;
-    implicitAddition?: boolean;
-    implicitMultiplication?: boolean;
+    /**
+     * Determines whether the parser makes associativity explicit or implicit in additive expressions.
+     */
+    explicitAssocAdd?: boolean;
+    /**
+     * Determines whether the parser makes associativity explicit or implicit in multiplicative expressions.
+     */
+    explicitAssocMul?: boolean;
 }
 
 interface ScanConfig {
     useCaretForExponentiation: boolean;
-    implicitAddition: boolean;
-    implicitMultiplication: boolean;
+    explicitAssocAdd: boolean;
+    explicitAssocMul: boolean;
 }
 
 function config_from_options(options: ParseScriptOptions | undefined): ScanConfig {
     if (options) {
         return {
             useCaretForExponentiation: !!options.useCaretForExponentiation,
-            implicitAddition: !!options.implicitAddition,
-            implicitMultiplication: !!options.implicitMultiplication
+            explicitAssocAdd: !!options.explicitAssocAdd,
+            explicitAssocMul: !!options.explicitAssocMul
         };
     }
     else {
         return {
             useCaretForExponentiation: false,
-            implicitAddition: false,
-            implicitMultiplication: true
+            explicitAssocAdd: false,
+            explicitAssocMul: false
         };
     }
 }
@@ -43,7 +50,7 @@ function config_from_options(options: ParseScriptOptions | undefined): ScanConfi
 export function parse_script(sourceText: string, options?: ParseScriptOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
-    const config = config_from_options(options);
+    const config: ScanConfig = config_from_options(options);
 
     const normalizedScript = normalize_unicode_dots(sourceText);
 
@@ -62,8 +69,8 @@ export function parse_script(sourceText: string, options?: ParseScriptOptions): 
             // TODO: Will the scan ever not return zero?
             [scanned, tree] = scan(normalizedScript.substring(index_of_part_remaining_to_be_parsed), {
                 useCaretForExponentiation: config.useCaretForExponentiation,
-                implicitAddition: config.implicitAddition,
-                implicitMultiplication: config.implicitMultiplication
+                explicitAssocAdd: config.explicitAssocAdd,
+                explicitAssocMul: config.explicitAssocMul
             });
             if (scanned > 0) {
                 trees.push(tree);

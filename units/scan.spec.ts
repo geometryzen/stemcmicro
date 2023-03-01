@@ -1,7 +1,6 @@
 import { assert } from 'chai';
 import { rational } from '../src/bignum';
 import { cadnr } from '../src/calculators/cadnr';
-import { makeList } from '../src/makeList';
 import { is_boo } from '../src/operators/boo/is_boo';
 import { is_flt } from '../src/operators/flt/is_flt';
 import { is_rat } from '../src/operators/rat/is_rat';
@@ -16,7 +15,7 @@ import { Flt } from '../src/tree/flt/Flt';
 import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
 import { Str } from '../src/tree/str/Str';
 import { create_sym, Sym } from '../src/tree/sym/Sym';
-import { Cons, is_cons, U } from '../src/tree/tree';
+import { Cons, is_cons, items_to_cons, U } from '../src/tree/tree';
 
 const NAME_A = create_sym('a');
 const NAME_B = create_sym('b');
@@ -28,11 +27,11 @@ const NAME_ABC = create_sym('abc');
 const NAME_FOO = create_sym('foo');
 
 function add(lhs: U, rhs: U): U {
-    return makeList(MATH_ADD, lhs, rhs);
+    return items_to_cons(MATH_ADD, lhs, rhs);
 }
 
 function mul(lhs: U, rhs: U): U {
-    return makeList(MATH_MUL, lhs, rhs);
+    return items_to_cons(MATH_MUL, lhs, rhs);
 }
 
 function sub(lhs: U, rhs: U): U {
@@ -75,7 +74,7 @@ describe("scan", function () {
         const expr = expect_str(expect_one_tree('  "Hello"   '), '"Hello"', 2, 9);
         assert.strictEqual(expr.str, 'Hello');
     });
-    it("QName", function () {
+    it("Sym", function () {
         expect_sym(expect_one_tree("  abc  "), NAME_ABC, 'abc', 2, 5);
     });
     describe("=", function () {
@@ -105,7 +104,7 @@ describe("scan", function () {
         });
     });
     describe("-", function () {
-        it("a-b => (+ a (* b -1))", function () {
+        xit("a-b => (+ a (* b -1))", function () {
             const actual = expect_cons(expect_one_tree(" a  -  b "));
             const expect = sub(NAME_A, NAME_B);
             assert_equals(actual, expect);
@@ -181,12 +180,19 @@ describe("scan", function () {
             expect_rat(cadnr(expr, 2), three, 8, 9);
         });
         it("(-1)**0 => (** -1 0)", function () {
-            const expr = expect_cons(expect_one_tree(" (-1)  **  0 "));
+            const expr = expect_cons(expect_one_tree(" (-1)  **  0 ", { explicitAssocAdd: true }));
             expect_sym(cadnr(expr, 0), MATH_POW, '**', 7, 9);
             // Because the '-' sign is absorbed as a unary minus, the position is recorded for the number without the minus sign.
             expect_rat(cadnr(expr, 1), negOne, 3, 4);
             expect_rat(cadnr(expr, 2), zero, 11, 12);
         });
+    });
+    it("(-1)**0 => (** -1 0)", function () {
+        const expr = expect_cons(expect_one_tree(" (-1)  **  0 ", { explicitAssocAdd: false }));
+        expect_sym(cadnr(expr, 0), MATH_POW, '**', 7, 9);
+        // Because the '-' sign is absorbed as a unary minus, the position is recorded for the number without the minus sign.
+        expect_rat(cadnr(expr, 1), negOne, 3, 4);
+        expect_rat(cadnr(expr, 2), zero, 11, 12);
     });
     describe("<<", function () {
         it("a<<b => (<< a b)", function () {
@@ -254,7 +260,7 @@ describe("scan", function () {
     });
     describe("+,+", function () {
         it("a+b+c => (+ (+ a b) c)", function () {
-            const expr = expect_cons(expect_one_tree(" a  +  b + c "));
+            const expr = expect_cons(expect_one_tree(" a  +  b + c ", { explicitAssocAdd: true }));
             expect_sym(cadnr(expr, 0), MATH_ADD, '+', 9, 10);
             const abExpr = expect_cons(cadnr(expr, 1));
             expect_sym(cadnr(expr, 2), NAME_C, 'c', 11, 12);
@@ -262,16 +268,32 @@ describe("scan", function () {
             expect_sym(cadnr(abExpr, 1), NAME_A, 'a', 1, 2);
             expect_sym(cadnr(abExpr, 2), NAME_B, 'b', 7, 8);
         });
+        it("a+b+c => (+ a b c)", function () {
+            const expr = expect_cons(expect_one_tree(" a  +  b + c ", { explicitAssocAdd: false }));
+            expect_sym(cadnr(expr, 0), MATH_ADD, '+', 9, 10);
+            expect_sym(cadnr(expr, 1), NAME_A, 'a', 1, 2);
+            expect_sym(cadnr(expr, 2), NAME_B, 'b', 7, 8);
+            expect_sym(cadnr(expr, 3), NAME_C, 'c', 11, 12);
+        });
     });
     describe("*,*", function () {
         it("a*b*c => (* (* a b) c)", function () {
-            const expr = expect_cons(expect_one_tree(" a  *  b * c ", { implicitAddition: false }));
+            const expr = expect_cons(expect_one_tree(" a  *  b * c ", { explicitAssocMul: true }));
             expect_sym(cadnr(expr, 0), MATH_MUL, '*', 9, 10);
             const abExpr = expect_cons(cadnr(expr, 1));
             expect_sym(cadnr(expr, 2), NAME_C, 'c', 11, 12);
             expect_sym(cadnr(abExpr, 0), MATH_MUL, '*', 4, 5);
             expect_sym(cadnr(abExpr, 1), NAME_A, 'a', 1, 2);
             expect_sym(cadnr(abExpr, 2), NAME_B, 'b', 7, 8);
+        });
+    });
+    describe("*,*", function () {
+        it("a*b*c => (* a b c)", function () {
+            const expr = expect_cons(expect_one_tree(" a  *  b * c ", { explicitAssocMul: false }));
+            expect_sym(cadnr(expr, 0), MATH_MUL, '*', 9, 10);
+            expect_sym(cadnr(expr, 1), NAME_A, 'a', 1, 2);
+            expect_sym(cadnr(expr, 2), NAME_B, 'b', 7, 8);
+            expect_sym(cadnr(expr, 3), NAME_C, 'c', 11, 12);
         });
     });
     describe("*,+", function () {

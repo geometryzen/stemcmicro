@@ -94,11 +94,11 @@ export class InputState {
     /**
      * 
      */
-    implicitAddition = false;
+    explicitAssocAdd = false;
     /**
      * 
      */
-    implicitMultiplication = true;
+    explicitAssocMul = false;
     /**
      * @param sourceText The text that will be used for the scan.
      * @param end The zero-based starting position in the text. 

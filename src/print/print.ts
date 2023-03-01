@@ -264,8 +264,8 @@ function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
     // TOOD: Need a better routing to initialize the ScanOptions.
     const [scanned, tree] = scan(sourceText, {
         useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
-        implicitAddition: false,
-        implicitMultiplication: true
+        explicitAssocAdd: false,
+        explicitAssocMul: false
     });
     if (scanned === sourceText.length) {
         const str = assert_str(tree);

@@ -7,7 +7,7 @@ import { render_as_sexpr } from "../print/render_as_sexpr";
 import { U } from "../tree/tree";
 import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
-import { execute_definition, execute_std_definitions } from "./init";
+import { execute_std_definitions } from "./init";
 
 export interface ScriptEngineOptions {
     /**
@@ -45,7 +45,6 @@ export interface ScriptEngine {
     clearBindings(): void;
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
-    executeDefinition(sourceText: string): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
@@ -103,9 +102,6 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
         },
         useStandardDefinitions(): void {
             execute_std_definitions($);
-        },
-        executeDefinition(sourceText: string): void {
-            execute_definition(sourceText, $);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
             return execute_script(sourceText, $);

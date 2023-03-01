@@ -31,6 +31,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_atom_atom(opr, HASH_ANY, HASH_RAT);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
+        // console.lg(this.name, render_as_infix(lhs, this.$), render_as_infix(rhs, this.$), render_as_infix(orig, this.$));
         if (rhs.isOne()) {
             return [TFLAG_DIFF, lhs];
         }

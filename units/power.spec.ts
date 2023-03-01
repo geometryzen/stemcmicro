@@ -43,6 +43,26 @@ describe("Exponentiation", function () {
         assert.strictEqual(engine.renderAsInfix(actual), '1/2*a');
         engine.release();
     });
+    it("-1**0 is treated as -(1**0) and so evaluates to -1", function () {
+        const lines: string[] = [
+            `-1**0`
+        ];
+        const engine = create_script_engine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "-1");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1");
+        engine.release();
+    });
+    it("(-1)**0", function () {
+        const lines: string[] = [
+            `(-1)**0`
+        ];
+        const engine = create_script_engine();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "1");
+        assert.strictEqual(engine.renderAsInfix(actual), "1");
+        engine.release();
+    });
     it("test A", function () {
         const lines: string[] = [
             `a**1/2 + a**1/2`

@@ -17,7 +17,7 @@ run_test([
   '1/2',
 
   'approxratio(a*3.14)',
-  'a*22/7',
+  '22/7*a',
 
   'approxratio(a*b)',
   'a*b',

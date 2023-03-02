@@ -4,7 +4,6 @@ import { zzfloat } from './operators/float/float';
 import { is_flt } from './operators/flt/is_flt';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { APPROXRATIO } from './runtime/constants';
-import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
 import { wrap_as_int } from './tree/rat/Rat';
 import { car, cdr, cons, is_cons, items_to_cons, U } from './tree/tree';
@@ -12,8 +11,8 @@ import { car, cdr, cons, is_cons, items_to_cons, U } from './tree/tree';
 /*
  Guesses a rational for each float in the passed expression
 */
-export function Eval_approxratio(p1: U, $: ExtensionEnv): void {
-    stack_push(approxratioRecursive(cadr(p1), $));
+export function Eval_approxratio(p1: U, $: ExtensionEnv): U {
+    return approxratioRecursive(cadr(p1), $);
 }
 
 function approxratioRecursive(expr: U, $: ExtensionEnv): U {

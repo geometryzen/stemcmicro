@@ -1,3 +1,4 @@
+import { Eval_approxratio } from '../approxratio';
 import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
 import { Eval_clear, Eval_clearall } from '../clear';
@@ -313,7 +314,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, CLEAR, CLEARALL, NROOTS, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CLEAR, CLEARALL, NROOTS, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -507,6 +508,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_sin_cos);
     $.defineOperator(mul_varargs);
 
+    $.defineFunction(APPROXRATIO, Eval_approxratio);
     $.defineOperator(binomial_varargs);
     $.defineOperator(choose_varargs);
     $.defineFunction(CLEAR, Eval_clear);

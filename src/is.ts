@@ -267,12 +267,14 @@ export function iscomplexnumberdouble(p: U, $: ExtensionEnv): boolean {
  * Determines whether expr is of the form (+ Num (something times i))
  * For this to work it is crucial that the complex number terms be arranged with
  * the real part on the left hand side. e.g. 1.0 + 2.0*i.
+ * Notice that 
  * @param expr 
  * @param $ 
  * @returns 
  */
-export function is_complex_number(expr: U): boolean {
-    // console.lg(`is_complex_number ${$.toListString(expr)}`);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function is_complex_number(expr: U, $: ExtensionEnv): boolean {
+    // console.lg(`is_complex_number ${render_as_sexpr(expr, $)}`);
     if (is_add(expr)) {
         // console.lg(`${$.toInfixString(expr)} is an add expression`);
         const n = length_of_cons_otherwise_zero(expr);

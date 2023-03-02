@@ -287,7 +287,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
 
     // console.lg(`${$.toInfixString(base)} TESTING FOR IS COMPLEX...`);
     // complex number? (just number, not expression)
-    if (is_complex_number(base)) {
+    if (is_complex_number(base, $)) {
         // console.lg(`${$.toInfixString(base)} IS COMPLEX`)
         // integer power?
         // n will be negative here, positive n already handled

@@ -25,6 +25,17 @@ describe("sgn", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
+    it("sgn(3)", function () {
+        const lines: string[] = [
+            `sgn(3)`
+        ];
+        const engine = create_script_engine({
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1");
+        engine.release();
+    });
     // Flt
     it("sgn(3.0)", function () {
         const lines: string[] = [
@@ -59,15 +70,14 @@ describe("sgn", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
-    it("sgn(3)", function () {
+    it("sgn(a)", function () {
         const lines: string[] = [
-            `sgn(3)`
+            `sgn(a)`
         ];
         const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "1");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "a/abs(a)");
         engine.release();
     });
     it("sgn(a*b)", function () {
@@ -77,8 +87,7 @@ describe("sgn", function () {
         const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(sgn (* a b))");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "sgn(a*b)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "a*b/(abs(a)*abs(b))");
         engine.release();
     });
     // The Rat should be able to inform how a Rat factor changes a product.
@@ -90,8 +99,19 @@ describe("sgn", function () {
         const engine = create_script_engine({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(sgn b)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "sgn(b)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "b/abs(b)");
+        engine.release();
+    });
+    it("sgn(x+i*y)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `sgn(x+i*y)`
+        ];
+        const engine = create_script_engine({
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "x/((x^2+y^2)^(1/2))+i*y/((x^2+y^2)^(1/2))");
         engine.release();
     });
 });

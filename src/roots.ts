@@ -65,8 +65,8 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-function is_some_coeff_complex_number(coefficients: U[]): boolean {
-    return coefficients.some((c) => is_complex_number(c));
+function is_some_coeff_complex_number(coefficients: U[], $: ExtensionEnv): boolean {
+    return coefficients.some((c) => is_complex_number(c, $));
 }
 
 /**
@@ -199,7 +199,7 @@ function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEn
 function roots2(P: U, X: U, $: ExtensionEnv): U[] {
     // console.lg(`roots2 ${render_as_infix(P, $)} in variable ${render_as_infix(X, $)}`);
     const ks = normalized_coeff(P, X, $);
-    if (!is_some_coeff_complex_number(ks)) {
+    if (!is_some_coeff_complex_number(ks, $)) {
         const factorized = $.factorize(P, X);
         // console.lg("factorized", render_as_infix(factorized, $));
         if (is_multiply(factorized)) {

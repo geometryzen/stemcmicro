@@ -1,22 +1,15 @@
 import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    xit("clearall", function () {
-        const sourceText = [
-            `clearall`,
-        ].join('\n');
-        const engine = create_script_engine({
-            useCaretForExponentiation: true,
-            useDefinitions: false
-        });
-        const { values, prints } = engine.executeScript(sourceText);
-        assert.isArray(values);
-        assert.strictEqual(values.length, 1, "values.length");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "b^2/(a^2)");
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (power a -2) (power b 2))");
-        assert.isArray(prints);
-        assert.strictEqual(prints.length, 0, "prints.length");
+    it("roots(x^2==1)", function () {
+        const lines: string[] = [
+            `roots(x^2==1)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[-1,1]");
         engine.release();
     });
 });

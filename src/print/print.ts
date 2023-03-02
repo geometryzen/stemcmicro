@@ -107,12 +107,12 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
         defs.setPrintMode(printMode);
         try {
             if (printMode === PRINTMODE_INFIX) {
-                const str = render_as_non__sexpr_mode(value, $);
+                const str = render_using_non_sexpr_print_mode(value, $);
                 texts.push(str);
                 store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
             else if (printMode === PRINTMODE_HUMAN) {
-                const str = render_as_non__sexpr_mode(value, $);
+                const str = render_using_non_sexpr_print_mode(value, $);
                 texts.push(str);
                 store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
@@ -122,7 +122,7 @@ export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionE
                 store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
             else if (printMode === PRINTMODE_LATEX) {
-                const str = render_as_non__sexpr_mode(value, $);
+                const str = render_using_non_sexpr_print_mode(value, $);
                 texts.push(str);
                 store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
             }
@@ -179,10 +179,10 @@ function print_char(c: string): string {
 
 function print_base_of_denom(base: U, $: ExtensionEnv): string {
     if (should_group_base_of_denom(base)) {
-        return `(${render_as_non__sexpr_mode(base, $)})`;
+        return `(${render_using_non_sexpr_print_mode(base, $)})`;
     }
     else {
-        return render_as_non__sexpr_mode(base, $);
+        return render_using_non_sexpr_print_mode(base, $);
     }
 }
 
@@ -207,13 +207,13 @@ function should_group_base_of_denom(expr: U): boolean {
 
 function print_expo_of_denom(expo: U, $: ExtensionEnv): string {
     if (is_rat(expo) && expo.isFraction()) {
-        return `(${render_as_non__sexpr_mode(expo, $)})`;
+        return `(${render_using_non_sexpr_print_mode(expo, $)})`;
     }
     if (is_add(expo) || is_multiply(expo) || is_power(expo)) {
-        return `(${render_as_non__sexpr_mode(expo, $)})`;
+        return `(${render_using_non_sexpr_print_mode(expo, $)})`;
     }
     else {
-        return render_as_non__sexpr_mode(expo, $);
+        return render_using_non_sexpr_print_mode(expo, $);
     }
 }
 
@@ -377,7 +377,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
  * @param $ 
  * @returns 
  */
-export function render_as_non__sexpr_mode(expr: U, $: ExtensionEnv): string {
+export function render_using_non_sexpr_print_mode(expr: U, $: ExtensionEnv): string {
     return print_additive_expr(expr, $);
 }
 
@@ -687,7 +687,7 @@ function print_grouping_expr(expr: U, $: ExtensionEnv): string {
     // console.lg(`print_grouping_expr ${expr}`);
     let str = '';
     str += print_char('(');
-    str += render_as_non__sexpr_mode(expr, $);
+    str += render_using_non_sexpr_print_mode(expr, $);
     str += print_char(')');
     return str;
 }
@@ -705,7 +705,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
         accumulator += print_grouping_expr(p, $);
     }
     else {
-        accumulator += render_as_non__sexpr_mode(p, $);
+        accumulator += render_using_non_sexpr_print_mode(p, $);
     }
     accumulator += print_char('!');
     return accumulator;
@@ -714,7 +714,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
 function print_ABS_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\left |');
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str(' \\right |');
     return accumulator;
 }
@@ -722,68 +722,68 @@ function print_ABS_latex(p: U, $: ExtensionEnv): string {
 function print_BINOMIAL_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\binom{');
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str('}{');
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += print_str('} ');
     return accumulator;
 }
 
 function print_DOT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str(' \\cdot ');
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     return accumulator;
 }
 
 function print_DOT_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'dot(';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ', ';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_SIN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.sin(';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_COS_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.cos(';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_TAN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.tan(';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCSIN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.asin(';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCCOS_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.acos(';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
 function print_ARCTAN_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = 'Math.atan(';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
@@ -791,7 +791,7 @@ function print_ARCTAN_codegen(p: U, $: ExtensionEnv): string {
 function print_SQRT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('\\sqrt{');
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str('} ');
     return accumulator;
 }
@@ -802,7 +802,7 @@ function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
     if (is_cons(cadr(p))) {
         accumulator += print_str('(');
     }
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     if (is_cons(cadr(p))) {
         accumulator += print_str(')');
     }
@@ -814,7 +814,7 @@ function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
 function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('transpose(');
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -822,7 +822,7 @@ function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
 function print_UNIT_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('identity(');
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -833,7 +833,7 @@ function print_INV_latex(p: Cons, $: ExtensionEnv): string {
     if (is_cons(cadr(p))) {
         str += print_str('(');
     }
-    str += render_as_non__sexpr_mode(cadr(p), $);
+    str += render_using_non_sexpr_print_mode(cadr(p), $);
     if (is_cons(cadr(p))) {
         str += print_str(')');
     }
@@ -845,7 +845,7 @@ function print_INV_latex(p: Cons, $: ExtensionEnv): string {
 function print_INV_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     accumulator += print_str('inv(');
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str(')');
     return accumulator;
 }
@@ -863,14 +863,14 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
         const theIntegral = cdr(cdr(p));
 
         accumulator += print_str('\\int^{');
-        accumulator += render_as_non__sexpr_mode(car(cdr(theIntegral)), $);
+        accumulator += render_using_non_sexpr_print_mode(car(cdr(theIntegral)), $);
         accumulator += print_str('}_{');
-        accumulator += render_as_non__sexpr_mode(car(theIntegral), $);
+        accumulator += render_using_non_sexpr_print_mode(car(theIntegral), $);
         accumulator += print_str('} \\! ');
         p = cdr(theIntegral);
     }
 
-    accumulator += render_as_non__sexpr_mode(functionBody, $);
+    accumulator += render_using_non_sexpr_print_mode(functionBody, $);
     accumulator += print_str(' \\,');
 
     p = originalIntegral;
@@ -878,7 +878,7 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
     for (let i = 1; i <= numberOfIntegrals; i++) {
         const theVariable = cdr(p);
         accumulator += print_str(' \\mathrm{d} ');
-        accumulator += render_as_non__sexpr_mode(car(theVariable), $);
+        accumulator += render_using_non_sexpr_print_mode(car(theVariable), $);
         if (i < numberOfIntegrals) {
             accumulator += print_str(' \\, ');
         }
@@ -927,7 +927,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
     }
     else {
         for (let i = 0; i < p.dim(j); i++) {
-            accumulator += render_as_non__sexpr_mode(p.elem(k), $);
+            accumulator += render_using_non_sexpr_print_mode(p.elem(k), $);
             // add separator between elements in the
             // inner-most dimension
             if (i !== p.dim(j) - 1) {
@@ -990,7 +990,7 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
     }
     else {
         for (let i = 0; i < p.dim(j); i++) {
-            accumulator += render_as_non__sexpr_mode(p.elem(k), $);
+            accumulator += render_using_non_sexpr_print_mode(p.elem(k), $);
             // separator between elements in each row
             if (i !== p.dim(j) - 1) {
                 accumulator += print_str(' & ');
@@ -1009,13 +1009,13 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
 
 function print_SUM_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '\\sum_{';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += '=';
-    accumulator += render_as_non__sexpr_mode(cadddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadddr(p), $);
     accumulator += '}^{';
-    accumulator += render_as_non__sexpr_mode(caddddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddddr(p), $);
     accumulator += '}{';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
     return accumulator;
 }
@@ -1029,24 +1029,24 @@ function print_SUM_codegen(p: U, $: ExtensionEnv): string {
     const accumulator =
         '(function(){' +
         ' var ' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         '; ' +
         ' var holderSum = 0; ' +
         ' var lowerlimit = ' +
-        render_as_non__sexpr_mode(lowerlimit, $) +
+        render_using_non_sexpr_print_mode(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        render_as_non__sexpr_mode(upperlimit, $) +
+        render_using_non_sexpr_print_mode(upperlimit, $) +
         '; ' +
         ' for (' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         ' = lowerlimit; ' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         ' < upperlimit; ' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         '++) { ' +
         '   holderSum += ' +
-        render_as_non__sexpr_mode(body, $) +
+        render_using_non_sexpr_print_mode(body, $) +
         ';' +
         ' } ' +
         ' return holderSum;' +
@@ -1065,16 +1065,16 @@ function print_TEST_latex(p: U, $: ExtensionEnv): string {
         // i.e. the one without a test.
         if (nil === cdr(p)) {
             accumulator += '{';
-            accumulator += render_as_non__sexpr_mode(car(p), $);
+            accumulator += render_using_non_sexpr_print_mode(car(p), $);
             accumulator += '} & otherwise ';
             accumulator += ' \\\\\\\\';
             break;
         }
 
         accumulator += '{';
-        accumulator += render_as_non__sexpr_mode(cadr(p), $);
+        accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
         accumulator += '} & if & ';
-        accumulator += render_as_non__sexpr_mode(car(p), $);
+        accumulator += render_using_non_sexpr_print_mode(car(p), $);
         accumulator += ' \\\\\\\\';
 
         // test unsuccessful, continue to the
@@ -1096,7 +1096,7 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
         // i.e. the one without a test.
         if (nil === cdr(p)) {
             accumulator += 'else {';
-            accumulator += 'return (' + render_as_non__sexpr_mode(car(p), $) + ');,$';
+            accumulator += 'return (' + render_using_non_sexpr_print_mode(car(p), $) + ');,$';
             accumulator += '}';
             break;
         }
@@ -1105,8 +1105,8 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
             accumulator += ' else ';
         }
 
-        accumulator += 'if (' + render_as_non__sexpr_mode(car(p), $) + '){,$';
-        accumulator += 'return (' + render_as_non__sexpr_mode(cadr(p), $) + ');,$';
+        accumulator += 'if (' + render_using_non_sexpr_print_mode(car(p), $) + '){,$';
+        accumulator += 'return (' + render_using_non_sexpr_print_mode(cadr(p), $) + ');,$';
         accumulator += '}';
 
         // test unsuccessful, continue to the
@@ -1122,51 +1122,51 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
 
 function print_TESTLT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' < ';
     accumulator += '{';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTLE_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' \\leq ';
     accumulator += '{';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTGT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' > ';
     accumulator += '{';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTGE_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' \\geq ';
     accumulator += '{';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
 function print_TESTEQ_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '{';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
     accumulator += ' = ';
     accumulator += '{';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     return (accumulator += '}');
 }
 
@@ -1182,10 +1182,10 @@ function print_FOR_codegen(p: U, $: ExtensionEnv): string {
         variable +
         '; ' +
         ' var lowerlimit = ' +
-        render_as_non__sexpr_mode(lowerlimit, $) +
+        render_using_non_sexpr_print_mode(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        render_as_non__sexpr_mode(upperlimit, $) +
+        render_using_non_sexpr_print_mode(upperlimit, $) +
         '; ' +
         ' for (' +
         variable +
@@ -1195,7 +1195,7 @@ function print_FOR_codegen(p: U, $: ExtensionEnv): string {
         variable +
         '++) { ' +
         '   ' +
-        render_as_non__sexpr_mode(body, $) +
+        render_using_non_sexpr_print_mode(body, $) +
         ' } ' +
         '})()';
 
@@ -1207,7 +1207,7 @@ function print_DO_codegen(p: U, $: ExtensionEnv): string {
 
     p = cdr(p);
     while (is_cons(p)) {
-        accumulator += render_as_non__sexpr_mode(car(p), $);
+        accumulator += render_using_non_sexpr_print_mode(car(p), $);
         p = cdr(p);
     }
 
@@ -1216,22 +1216,22 @@ function print_DO_codegen(p: U, $: ExtensionEnv): string {
 
 function print_SETQ_codegen(p: U, $: ExtensionEnv): string {
     let accumulator = '';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ' = ';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += '; ';
     return accumulator;
 }
 
 function print_PRODUCT_latex(p: U, $: ExtensionEnv): string {
     let accumulator = '\\prod_{';
-    accumulator += render_as_non__sexpr_mode(caddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += '=';
-    accumulator += render_as_non__sexpr_mode(cadddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadddr(p), $);
     accumulator += '}^{';
-    accumulator += render_as_non__sexpr_mode(caddddr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(caddddr(p), $);
     accumulator += '}{';
-    accumulator += render_as_non__sexpr_mode(cadr(p), $);
+    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
     return accumulator;
 }
@@ -1245,24 +1245,24 @@ function print_PRODUCT_codegen(p: U, $: ExtensionEnv): string {
     const accumulator =
         '(function(){' +
         ' var ' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         '; ' +
         ' var holderProduct = 1; ' +
         ' var lowerlimit = ' +
-        render_as_non__sexpr_mode(lowerlimit, $) +
+        render_using_non_sexpr_print_mode(lowerlimit, $) +
         '; ' +
         ' var upperlimit = ' +
-        render_as_non__sexpr_mode(upperlimit, $) +
+        render_using_non_sexpr_print_mode(upperlimit, $) +
         '; ' +
         ' for (' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         ' = lowerlimit; ' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         ' < upperlimit; ' +
-        render_as_non__sexpr_mode(variable, $) +
+        render_using_non_sexpr_print_mode(variable, $) +
         '++) { ' +
         '   holderProduct *= ' +
-        render_as_non__sexpr_mode(body, $) +
+        render_using_non_sexpr_print_mode(body, $) +
         ';' +
         ' } ' +
         ' return holderProduct;' +
@@ -1311,13 +1311,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         else {
             if (defs.printMode === PRINTMODE_LATEX) {
                 str += print_str('\\sqrt{');
-                str += render_as_non__sexpr_mode(base, $);
+                str += render_using_non_sexpr_print_mode(base, $);
                 str += print_str('}');
                 return str;
             }
             else if (defs.codeGen) {
                 str += print_str('Math.sqrt(');
-                str += render_as_non__sexpr_mode(base, $);
+                str += render_using_non_sexpr_print_mode(base, $);
                 str += print_str(')');
                 return str;
             }
@@ -1334,12 +1334,12 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
         if (defs.printMode === PRINTMODE_LATEX) {
             str += print_str('e^{');
-            str += render_as_non__sexpr_mode(expo, $);
+            str += render_using_non_sexpr_print_mode(expo, $);
             str += print_str('}');
         }
         else {
             str += print_str('exp(');
-            str += render_as_non__sexpr_mode(expo, $);
+            str += render_using_non_sexpr_print_mode(expo, $);
             str += print_str(')');
         }
         return str;
@@ -1376,11 +1376,11 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
                 if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
                     str += print_str('(');
-                    str += render_as_non__sexpr_mode(base, $);
+                    str += render_using_non_sexpr_print_mode(base, $);
                     str += print_str(')');
                 }
                 else {
-                    str += render_as_non__sexpr_mode(base, $);
+                    str += render_using_non_sexpr_print_mode(base, $);
                 }
 
                 if (defs.printMode === PRINTMODE_LATEX) {
@@ -1426,7 +1426,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // we omit the "2" on the radical
             if (!is_num_and_eq_two(denomExponent)) {
                 str += print_str('[');
-                str += render_as_non__sexpr_mode(denomExponent, $);
+                str += render_using_non_sexpr_print_mode(denomExponent, $);
                 str += print_str(']');
             }
             str += print_str('{');
@@ -1444,7 +1444,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         // (e.g. square root turns into a radical
         // with a power one underneath) so handle
         // this case simply here, just print the base
-        str += render_as_non__sexpr_mode(base, $);
+        str += render_using_non_sexpr_print_mode(base, $);
     }
     else {
         // print the base,
@@ -1467,13 +1467,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // As an example, in JavaScript unary minus technically has higher precedence than exponentiation,
             // but compilers sometimes require parentheses to avoid errors.
             str += print_str('(');
-            str += render_as_non__sexpr_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, $);
             str += print_str(')');
         }
         else if (is_add(base)) {
             // Addition has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_as_non__sexpr_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, $);
             str += print_str(')');
         }
         else if (is_multiply(base)) {
@@ -1491,13 +1491,13 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         else if (is_outer(base)) {
             // Outer product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_as_non__sexpr_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, $);
             str += print_str(')');
         }
         else if (is_inner_or_dot(base)) {
             // Inner product has lower precedence than power so we need to prevent it from being pulled apart by the exponentiation.
             str += print_str('(');
-            str += render_as_non__sexpr_mode(base, $);
+            str += render_using_non_sexpr_print_mode(base, $);
             str += print_str(')');
         }
         else if (is_num(base) && (lt_num_num(base, zero) || isfraction(base))) {
@@ -1536,18 +1536,18 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             // in latex mode, one can omit the curly braces
             // wrapping the exponent if the exponent is only
             // one character long
-            if (render_as_non__sexpr_mode(expo, $).length > 1) {
+            if (render_using_non_sexpr_print_mode(expo, $).length > 1) {
                 str += print_str('{');
-                str += render_as_non__sexpr_mode(expo, $);
+                str += render_using_non_sexpr_print_mode(expo, $);
                 str += print_str('}');
             }
             else {
-                str += render_as_non__sexpr_mode(expo, $);
+                str += render_using_non_sexpr_print_mode(expo, $);
             }
         }
         else if (is_cons(expo) || isfraction(expo) || (is_num(expo) && lt_num_num(expo, zero))) {
             str += print_str('(');
-            str += render_as_non__sexpr_mode(expo, $);
+            str += render_using_non_sexpr_print_mode(expo, $);
             str += print_str(')');
         }
         else {
@@ -1565,16 +1565,16 @@ function print_index_function(p: U, $: ExtensionEnv): string {
         str += print_grouping_expr(car(p), $);
     }
     else {
-        str += render_as_non__sexpr_mode(car(p), $);
+        str += render_using_non_sexpr_print_mode(car(p), $);
     }
     str += print_str('[');
     p = cdr(p);
     if (is_cons(p)) {
-        str += render_as_non__sexpr_mode(car(p), $);
+        str += render_using_non_sexpr_print_mode(car(p), $);
         p = cdr(p);
         while (is_cons(p)) {
             str += print_str(',');
-            str += render_as_non__sexpr_mode(car(p), $);
+            str += render_using_non_sexpr_print_mode(car(p), $);
             p = cdr(p);
         }
     }
@@ -1653,7 +1653,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 }
             }
         }
-        str += render_as_non__sexpr_mode(expr, $);
+        str += render_using_non_sexpr_print_mode(expr, $);
         if (!omtPrns) {
             if (sign_of_term(expr) === '-' || defs.printMode !== PRINTMODE_LATEX) {
                 if (defs.printMode === PRINTMODE_LATEX) {
@@ -1671,7 +1671,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (!omtPrns) {
             str += print_str('(');
         }
-        str += render_as_non__sexpr_mode(expr, $);
+        str += render_using_non_sexpr_print_mode(expr, $);
         if (!omtPrns) {
             str += print_str(')');
         }
@@ -1713,13 +1713,13 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             str += returned;
             str += print_str(' -> ');
         }
-        str += render_as_non__sexpr_mode(fbody, $);
+        str += render_using_non_sexpr_print_mode(fbody, $);
         return str;
     }
 
     if (car(expr).equals(PATTERN)) {
         let str = '';
-        str += render_as_non__sexpr_mode(caadr(expr), $);
+        str += render_using_non_sexpr_print_mode(caadr(expr), $);
         if (defs.printMode === PRINTMODE_LATEX) {
             str += print_str(' \\rightarrow ');
         }
@@ -1732,7 +1732,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             }
         }
 
-        str += render_as_non__sexpr_mode(car(cdr(cadr(expr))), $);
+        str += render_using_non_sexpr_print_mode(car(cdr(cadr(expr))), $);
         return str;
     }
 
@@ -1909,7 +1909,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') < (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') < (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1922,7 +1922,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') <= (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') <= (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1935,7 +1935,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') > (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') > (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1948,7 +1948,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') >= (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') >= (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1961,7 +1961,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         if (defs.codeGen) {
             let str = '';
             str +=
-                '((' + render_as_non__sexpr_mode(cadr(expr), $) + ') === (' + render_as_non__sexpr_mode(caddr(expr), $) + '))';
+                '((' + render_using_non_sexpr_print_mode(cadr(expr), $) + ') === (' + render_using_non_sexpr_print_mode(caddr(expr), $) + '))';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
@@ -1973,31 +1973,31 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     else if (car(expr).equals(FLOOR)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.floor(' + render_as_non__sexpr_mode(cadr(expr), $) + '),$';
+            str += 'Math.floor(' + render_using_non_sexpr_print_mode(cadr(expr), $) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lfloor {' + render_as_non__sexpr_mode(cadr(expr), $) + '} \\rfloor ,$';
+            str += ' \\lfloor {' + render_using_non_sexpr_print_mode(cadr(expr), $) + '} \\rfloor ,$';
             return str;
         }
     }
     else if (car(expr).equals(CEILING)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.ceiling(' + render_as_non__sexpr_mode(cadr(expr), $) + '),$';
+            str += 'Math.ceiling(' + render_using_non_sexpr_print_mode(cadr(expr), $) + '),$';
             return str;
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += ' \\lceil {' + render_as_non__sexpr_mode(cadr(expr), $) + '} \\rceil ,$';
+            str += ' \\lceil {' + render_using_non_sexpr_print_mode(cadr(expr), $) + '} \\rceil ,$';
             return str;
         }
     }
     else if (car(expr).equals(ROUND)) {
         if (defs.codeGen) {
             let str = '';
-            str += 'Math.round(' + render_as_non__sexpr_mode(cadr(expr), $) + '),$';
+            str += 'Math.round(' + render_using_non_sexpr_print_mode(cadr(expr), $) + '),$';
             return str;
         }
     }
@@ -2009,9 +2009,9 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         }
         else {
             let str = '';
-            str += render_as_non__sexpr_mode(cadr(expr), $);
+            str += render_using_non_sexpr_print_mode(cadr(expr), $);
             str += print_str('=');
-            str += render_as_non__sexpr_mode(caddr(expr), $);
+            str += render_using_non_sexpr_print_mode(caddr(expr), $);
             return str;
         }
     }
@@ -2028,11 +2028,11 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 str += print_str('(');
             }
             if (is_cons(expr)) {
-                str += render_as_non__sexpr_mode(car(expr), $);
+                str += render_using_non_sexpr_print_mode(car(expr), $);
                 expr = cdr(expr);
                 while (is_cons(expr)) {
                     str += print_str(',');
-                    str += render_as_non__sexpr_mode(car(expr), $);
+                    str += render_using_non_sexpr_print_mode(car(expr), $);
                     expr = cdr(expr);
                 }
             }

@@ -102,23 +102,76 @@ describe("roots", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "[a]");
         engine.release();
     });
-    xit("roots(a*x^2+b*x+c)", function () {
+    it("roots(a*x^2+b*x+c)", function () {
         const lines: string[] = [
             `roots(a*x^2+b*x+c)`
         ];
         const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(b^2/(a^2)-4*c/a)^(1/2),-b/(2*a)1/2*(b^2/(a^2)-4*c/a)^(1/2)]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(-4*c/a+b^2/(a^2))^(1/2),-b/(2*a)+1/2*(-4*c/a+b^2/(a^2))^(1/2)]");
         engine.release();
     });
-    xit("roots(a*x**2+b*x+c)", function () {
+    it("roots(a*x**2+b*x+c)", function () {
         const lines: string[] = [
             `roots(a*x**2+b*x+c)`
         ];
         const engine = create_script_engine({ useCaretForExponentiation: false });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(+ a b)");
-        assert.strictEqual(engine.renderAsInfix(actual), "a+b");
+        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(-4*c/a+b**2/(a**2))**(1/2),-b/(2*a)+1/2*(-4*c/a+b**2/(a**2))**(1/2)]");
+        engine.release();
+    });
+    it("roots(3+7*x+5*x^2+x^3)", function () {
+        const lines: string[] = [
+            `roots(3+7*x+5*x^2+x^3)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[-3,-1]");
+        engine.release();
+    });
+    it("roots(x^3+x^2+x+1)", function () {
+        const lines: string[] = [
+            `roots(x^3+x^2+x+1)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[-1,-i,i]");
+        engine.release();
+    });
+    it("roots(x^2-1)", function () {
+        const lines: string[] = [
+            `roots(x^2-1)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[-1,1]");
+        engine.release();
+    });
+    xit("roots(x^2==1)", function () {
+        const lines: string[] = [
+            `roots(x^2==1)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[-1,1]");
+        engine.release();
+    });
+    it("roots(3*x-12)", function () {
+        const lines: string[] = [
+            `roots(3*x-12)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[4]");
+        engine.release();
+    });
+    xit("roots(3*x==12)", function () {
+        const lines: string[] = [
+            `roots(3*x==12)`
+        ];
+        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[4]");
         engine.release();
     });
 });

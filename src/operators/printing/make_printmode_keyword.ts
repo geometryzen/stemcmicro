@@ -1,7 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { get_last_print_mode_symbol, store_text_in_binding } from "../../print/print";
-import { render_as_mode } from "../../print/render_as_mode";
+import { render_using_print_mode } from "../../print/render_using_print_mode";
 import { defs, PrintMode } from "../../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { create_sym } from "../../tree/sym/Sym";
@@ -32,7 +32,7 @@ export class PrintKeyword extends KeywordOperator {
             defs.setPrintMode(printMode);
             try {
                 const last = $.getBinding(RESERVED_KEYWORD_LAST);
-                const str = render_as_mode(last, printMode, $);
+                const str = render_using_print_mode(last, printMode, $);
 
                 const printHandler = this.$.getPrintHandler();
                 printHandler.print(str);

@@ -7,7 +7,7 @@ import { render_as_infix } from "./render_as_infix";
 import { render_as_latex } from "./render_as_latex";
 import { render_as_sexpr } from "./render_as_sexpr";
 
-export function render_as_mode(expr: U, printMode: PrintMode, $: ExtensionEnv): string {
+export function render_using_print_mode(expr: U, printMode: PrintMode, $: ExtensionEnv): string {
     switch (printMode) {
         case PRINTMODE_ASCII: return render_as_ascii(expr, $);
         case PRINTMODE_HUMAN: return render_as_human(expr, $);

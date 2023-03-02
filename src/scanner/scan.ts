@@ -3,7 +3,9 @@ import { is_rat } from '../operators/rat/rat_extension';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import {
-    ASSIGN, FACTORIAL, PATTERN,
+    ASSIGN,
+    FACTORIAL,
+    PATTERN,
     predefinedSymbolsInGlobalScope_doNotTrackInDependencies,
     QUOTE,
     TRANSPOSE,

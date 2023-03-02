@@ -10,6 +10,7 @@ import { simplify } from './operators/simplify/simplify';
 import { ASSIGN, SECRETX, TESTEQ } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
+import { MATH_EQ } from './runtime/ns_math';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
 import { eight, four, half, negFour, negOne, nine, one, third, three, two, wrap_as_int } from './tree/rat/Rat';
@@ -24,16 +25,21 @@ import { car, Cons, nil, U } from './tree/tree';
 // define Y p6
 
 export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
-    // console.lg(`Eval_roots expr=${print_expr(expr, $)}`);
+    // console.lg(`Eval_roots expr=${render_as_sexpr(expr, $)}`);
     // A == B -> A - B
     const arg1 = cadr(expr);
+    // console.lg("arg1", `${render_as_sexpr(arg1, $)}`);
+    // console.lg("ASSIGN", `${render_as_sexpr(ASSIGN, $)}`);
+    // console.lg("MATH_EQ", `${render_as_sexpr(MATH_EQ, $)}`);
+    // console.lg("TESTEQ", `${render_as_sexpr(TESTEQ, $)}`);
     let poly: U;
-    if (car(arg1).equals(ASSIGN) || car(arg1).equals(TESTEQ)) {
+    // TODO: Do we really need more than MATH_EQ?
+    if (car(arg1).equals(MATH_EQ) || car(arg1).equals(ASSIGN) || car(arg1).equals(TESTEQ)) {
         poly = $.subtract($.valueOf(cadr(arg1)), $.valueOf(caddr(arg1)));
     }
     else {
         const vArg1 = $.valueOf(arg1);
-        if (car(vArg1).equals(ASSIGN) || car(vArg1).equals(TESTEQ)) {
+        if (car(vArg1).equals(MATH_EQ) || car(vArg1).equals(ASSIGN) || car(vArg1).equals(TESTEQ)) {
             poly = $.subtract($.valueOf(cadr(vArg1)), $.valueOf(caddr(vArg1)));
         }
         else {

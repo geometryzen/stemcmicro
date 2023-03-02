@@ -67,10 +67,6 @@ export const MATH_E = create_sym('e');
  */
 export const MATH_PI = create_sym('pi');
 /**
- * arg
- */
-export const MATH_ARG = create_sym('arg');
-/**
  * component e.g. (indexing into a tensor).
  */
 export const MATH_COMPONENT = create_sym('component');

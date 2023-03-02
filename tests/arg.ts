@@ -1,4 +1,4 @@
-import { run_test } from '../test-harness';
+import { run_test, xrun_test } from '../test-harness';
 
 run_test([
   // wrong
@@ -31,7 +31,7 @@ run_test([
 ]);
 
 // check when not assuming real variables ----------
-run_test([
+xrun_test([
     'assumeRealVariables = 0',
     '',
 

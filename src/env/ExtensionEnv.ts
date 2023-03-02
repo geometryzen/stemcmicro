@@ -82,10 +82,6 @@ export interface ExtensionEnv {
      * @param rhs 
      */
     add(lhs: U, rhs: U): U;
-    /**
-     *
-     */
-    arg(expr: U): U;
     clearBindings(): void;
     clearOperators(): void;
     compareFn(sym: Sym): CompareFn;

@@ -1,108 +1,81 @@
 import { subtract } from '../../calculators/sub/subtract';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { imag } from '../imag/imag';
 import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
-import { makeList } from '../../makeList';
 import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
+import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
 import { is_negative } from '../../predicates/is_negative';
 import { is_negative_number } from '../../predicates/is_negative_number';
-import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
-import { ARG, ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
+import { ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { piAsDouble, zeroAsDouble } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, U } from '../../tree/tree';
+import { create_sym } from '../../tree/sym/Sym';
+import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { arctan } from '../arctan/arctan';
 import { MATH_EXP } from '../exp/MATH_EXP';
 import { is_flt } from '../flt/is_flt';
 import { is_unaop } from '../helpers/is_unaop';
+import { imag } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
+import { is_pi } from '../pi/is_pi';
+import { is_pow } from '../pow/is_pow';
+import { is_rat } from '../rat/is_rat';
 import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { is_sym } from '../sym/is_sym';
-import { is_pi } from '../pi/is_pi';
 
-/* arg =====================================================================
+export const MATH_ARG = create_sym('arg');
 
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-z
-
-General description
--------------------
-Returns the angle of complex z.
-
-*/
-
-/*
- Argument (angle) of complex z
-
-  z    arg(z)
-  -    ------
-
-  a    0
-
-  -a    -pi      See note 3 below
-
-  (-1)^a    a pi
-
-  exp(a + i b)  b
-
-  a b    arg(a) + arg(b)
-
-  a + i b    arctan(b/a)
-
-Result by quadrant
-    return p1;
-
-  z    arg(z)
-  -    ------
-
-  1 + i    1/4 pi
-
-  1 - i    -1/4 pi
-
-  -1 + i    3/4 pi
-
-  -1 - i    -3/4 pi
-
-Notes
-
-  1. Handles mixed polar and rectangular forms, e.g. 1 + exp(i pi/3)
-
-  2. Symbols in z are assumed to be positive and real.
-
-  3. Negative direction adds -pi to angle.
-
-     Example: z = (-1)^(1/3), abs(z) = 1/3 pi, abs(-z) = -2/3 pi
-
-  4. jean-francois.debroux reports that when z=(a+i*b)/(c+i*d) then
-
-    arg(numerator(z)) - arg(denominator(z))
-
-     must be used to get the correct answer. Now the operation is
-     automatic.
-*/
-
-export function Eval_arg(expr: Cons, $: ExtensionEnv): U {
-    // console.lg(`Eval_arg expr => ${expr}`);
-    const z = cadr(expr);
-    // console.lg(`z => ${z}`);
-    const value_of_z = $.valueOf(z);
-    // console.lg(`value_of_z => ${value_of_z}`);
-    const arg_z = $.arg(value_of_z);
-    // console.lg(`arg_z => ${arg_z}`);
-    return arg_z;
+export function define_arg($: ExtensionEnv): void {
+    // If we also want to control the name as it appears in the script 
+    $.defineFunction(MATH_ARG, function (expr: Cons, $: ExtensionEnv): U {
+        const z = cadr(expr);
+        // console.lg(`z => ${z}`);
+        const value_of_z = $.valueOf(z);
+        // console.lg(`value_of_z => ${render_as_sexpr(value_of_z, $)}`);
+        const arg_z = arg(value_of_z, $);
+        // console.lg(`arg_z => ${render_as_sexpr(arg_z, $)}`);
+        return arg_z;
+    });
 }
 
-export function yyarg(expr: U, $: ExtensionEnv): U {
+export function arg(z: U, $: ExtensionEnv): U {
+    // console.lg(`arg => ${render_as_sexpr(z, $)}`);
+    if (is_multiply(z)) {
+        const argList = z.argList;
+        if (argList.length === 2) {
+            const lhs = argList.item(0);
+            const rhs = argList.item(1);
+            if (is_cons(rhs) && is_pow(rhs)) {
+                const base = rhs.lhs;
+                const expo = rhs.rhs;
+                if (is_rat(expo) && expo.isMinusOne()) {
+                    // console.lg(`z => ${render_as_infix(z, $)} is in the form a/b`);
+                    const numer = lhs; // numerator(z, $);
+                    // console.lg(`numer=> ${render_as_sexpr(numer, $)}`);
+                    // console.lg(`lhs  => ${render_as_sexpr(lhs, $)}`);
+                    const denom = base; // denominator(z, $);
+                    // console.lg(`denom=> ${render_as_sexpr(denom, $)}`);
+                    // console.lg(`base => ${render_as_sexpr(base, $)}`);
+                    if (numer.equals(z)) {
+                        // Termination condition to prevent infinite recursion.
+                        // I'm allowed to use the MATH_ARG symbol because I'm the arg implementation.
+                        return items_to_cons(MATH_ARG, z);
+                    }
+                    else {
+                        return $.subtract(yyarg(numer, $), yyarg(denom, $));
+                    }
+                }
+            }
+        }
+    }
+    return yyarg(z, $);
+}
+
+function yyarg(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyarg expr=${expr}`);
     // case of plain number
     if (is_num_and_gt_zero(expr) || is_pi(expr)) {
@@ -119,7 +92,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     // arg(a) is pi when a is negative so we have
     // to leave unexpressed
     if (is_sym(expr)) {
-        return makeList(ARG, expr);
+        return items_to_cons(MATH_ARG, expr);
     }
 
     // Implementation in which the imaginary unit is it's own object.
@@ -127,20 +100,21 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
         return $.multiply(DynamicConstants.Pi($), half);
     }
 
-    const base = cadr(expr);
+    if (is_power(expr)) {
+        const base = cadr(expr);
+        // Implementation in which imaginary unit is (power -1 1/2).
+        if (equaln(base, -1)) {
+            // -1 to a power
+            return $.multiply(DynamicConstants.Pi($), caddr(expr));
+        }
 
-    // Implementation in which imaginary unit is (power -1 1/2).
-    if (is_power(expr) && equaln(base, -1)) {
-        // -1 to a power
-        return $.multiply(DynamicConstants.Pi($), caddr(expr));
-    }
-
-    // (power e X) => imag(X)
-    if (is_power(expr) && is_base_of_natural_logarithm(base)) {
-        // exponential
-        // arg(a^(1/2)) is always equal to 1/2 * arg(a)
-        // this can obviously be made more generic TODO
-        return imag(caddr(expr), $);
+        // (power e X) => imag(X)
+        if (is_base_of_natural_logarithm(base)) {
+            // exponential
+            // arg(a^(1/2)) is always equal to 1/2 * arg(a)
+            // this can obviously be made more generic TODO
+            return imag(caddr(expr), $);
+        }
     }
 
     // (exp X) => imag(X)
@@ -150,7 +124,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_power(expr) && is_one_over_two(caddr(expr))) {
-        const arg1 = $.arg(cadr(expr));
+        const arg1 = arg(cadr(expr), $);
         return $.multiply(arg1, caddr(expr));
     }
 
@@ -158,7 +132,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     if (is_multiply(expr)) {
         // product of factors
         return expr.tail().map(function (x) {
-            return $.arg(x);
+            return arg(x, $);
         }).reduce(function (x, y) {
             return $.add(x, y);
         }, zero);
@@ -167,6 +141,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
     if (is_cons(expr) && is_add(expr)) {
         return arg_of_sum(expr, $);
     }
+
     if (!$.isZero($.getBinding(ASSUME_REAL_VARIABLES))) {
         // if we assume all passed values are real
         return zero;
@@ -174,7 +149,7 @@ export function yyarg(expr: U, $: ExtensionEnv): U {
 
     // if we don't assume all passed values are real, all
     // we con do is to leave unexpressed
-    return makeList(ARG, expr);
+    return items_to_cons(MATH_ARG, expr);
 }
 
 function arg_of_sum(expr: Cons, $: ExtensionEnv): U {

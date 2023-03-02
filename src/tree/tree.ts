@@ -239,6 +239,7 @@ export class Cons implements U {
      * Returns the length of the list.
      */
     get length(): number {
+        // console.lg("Cons.length", "is_cons", is_cons(this), "is_nil", is_nil(this));
         if (this !== nil) {
             const argList = this.argList;
             if (is_cons(argList)) {

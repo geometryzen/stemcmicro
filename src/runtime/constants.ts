@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { create_sym } from '../tree/sym/Sym';
-import { MATH_ADD, MATH_ARG, MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
+import { MATH_ADD, MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
 
 export const dontCreateNewRadicalsInDenominatorWhenEvalingMultiplication = true;
 export const do_simplify_nested_radicals = true;
@@ -18,7 +18,6 @@ export const ARCSIN = create_sym('arcsin');
 export const ARCSINH = create_sym('arcsinh');
 export const ARCTAN = create_sym('arctan');
 export const ARCTANH = create_sym('arctanh');
-export const ARG = MATH_ARG;
 export const ATOMIZE = create_sym('atomize');
 export const BESSELJ = create_sym('besselj');
 export const BESSELY = create_sym('bessely');

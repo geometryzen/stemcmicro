@@ -5,6 +5,7 @@ import { evaluatingAsPolar } from '../../modes/modes';
 import { cadr } from '../../tree/helpers';
 import { U } from '../../tree/tree';
 import { abs } from '../abs/abs';
+import { arg } from '../arg/arg';
 
 /*
 Convert complex z to polar form
@@ -27,7 +28,7 @@ export function polar(p1: U, $: ExtensionEnv): U {
     const mode = $.getModeFlag(evaluatingAsPolar);
     $.setModeFlag(evaluatingAsPolar, true);
     try {
-        return $.multiply(abs(p1, $), exp($.multiply(imu, $.arg(p1)), $));
+        return $.multiply(abs(p1, $), exp($.multiply(imu, arg(p1, $)), $));
     }
     finally {
         $.setModeFlag(evaluatingAsPolar, mode);

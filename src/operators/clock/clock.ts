@@ -5,6 +5,7 @@ import { DynamicConstants } from '../../runtime/defs';
 import { negOne } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { abs } from '../abs/abs';
+import { arg } from '../arg/arg';
 
 /*
  Convert complex z to clock form
@@ -40,7 +41,7 @@ export function clockform(z: U, $: ExtensionEnv): U {
     // that we can't use "power", as "power" evaluates
     // clock forms into rectangular form (see "-1 ^ rational"
     // section in power)
-    const arg_z = $.arg(z);
+    const arg_z = arg(z, $);
     // console.lg(`arg_z=${print_expr(arg_z, $)}`);
     const pi = DynamicConstants.Pi($);
     // console.lg(`pi=${print_expr(pi, $)}`);

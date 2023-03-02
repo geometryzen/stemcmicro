@@ -4,10 +4,8 @@ import { MulComparator } from '../calculators/compare/comparator_mul';
 import { Eval_clear, Eval_clearall } from '../clear';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { Eval_nroots } from '../nroots';
-import { abs_any } from '../operators/abs/abs_any';
-import { abs_factorize } from '../operators/abs/abs_factorize';
-import { abs_rat } from '../operators/abs/abs_rat';
-import { abs_sym_real } from '../operators/abs/abs_sym_real';
+import { Eval_abs } from '../operators/abs/eval_abs';
+import { MATH_ABS } from '../operators/abs/MATH_ABS';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
 import { add_2_add_2_any_imag_imag } from '../operators/add/add_2_add_2_any_imag_imag';
 import { add_2_add_2_any_imag_real } from '../operators/add/add_2_add_2_any_imag_real';
@@ -54,7 +52,7 @@ import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
 import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
 import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
-import { arg_varargs } from '../operators/arg/arg_varargs';
+import { define_arg } from '../operators/arg/arg';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
@@ -226,7 +224,7 @@ import { outer_2_blade_blade } from '../operators/outer/outer_2_blade_blade';
 import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_scalar_any_any';
 import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
-import { polar_varargs } from '../operators/polar/polar_varargs';
+import { Eval_polar } from '../operators/polar/polar';
 import { pow_2_cons_rat } from '../operators/pow/pow_2_cons_rat';
 import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
@@ -245,11 +243,13 @@ import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_sca
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { real_any } from '../operators/real/real_any';
-import { rect_varargs } from '../operators/rect/rect_varargs';
+import { Eval_rect } from '../operators/rect/rect';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
-import { sgn_varargs } from '../operators/sgn/sgn_varargs';
+import { Eval_sgn } from '../operators/sgn/sgn';
+import { sgn_extension_flt } from '../operators/sgn/sgn_extension_flt';
+import { sgn_extension_rat } from '../operators/sgn/sgn_extension_rat';
 import { shape_varargs } from '../operators/shape/shape_varargs';
 import { simplify_varargs } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
@@ -314,7 +314,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CLEAR, CLEARALL, NROOTS, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CLEAR, CLEARALL, NROOTS, POLAR, RECT, SGN, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -588,10 +588,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(flt_extension);
     $.defineOperator(str_extension);
 
-    $.defineOperator(abs_rat);
-    $.defineOperator(abs_sym_real);
-    $.defineOperator(abs_any);
-    $.defineOperator(abs_factorize);
+    // TODO: cleanup
+    // $.defineOperator(abs_rat);
+    // $.defineOperator(abs_sym_real);
+    // $.defineOperator(abs_any);
+    // $.defineOperator(abs_factorize);
+    $.defineFunction(MATH_ABS, Eval_abs);
 
     $.defineOperator(adj_any);
 
@@ -603,7 +605,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(arcsinh_any);
     $.defineOperator(arctan_varargs);
     $.defineOperator(arctanh_varargs);
-    $.defineOperator(arg_varargs);
+    define_arg($);
+    // $.defineOperator(arg_varargs);
 
     $.defineOperator(assign_sym_any);
     $.defineOperator(assign_any_any);
@@ -697,7 +700,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
-    $.defineOperator(polar_varargs);
+    $.defineFunction(POLAR, Eval_polar);
 
     $.defineOperator(make_printmode_operator('print', () => defs.printMode));
     $.defineOperator(make_printmode_operator('printascii', () => PRINTMODE_ASCII));
@@ -719,12 +722,14 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
     $.defineOperator(real_any);
-    $.defineOperator(rect_varargs);
+    $.defineFunction(RECT, Eval_rect);
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);
 
     $.defineOperator(script_last_0);
-    $.defineOperator(sgn_varargs);
+    $.defineFunction(SGN, sgn_extension_rat);
+    $.defineFunction(SGN, sgn_extension_flt);
+    $.defineFunction(SGN, Eval_sgn);
     $.defineOperator(shape_varargs);
     $.defineOperator(simplify_varargs);
 

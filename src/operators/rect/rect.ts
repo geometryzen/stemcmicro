@@ -10,6 +10,7 @@ import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, U } from '../../tree/tree';
 import { abs } from '../abs/abs';
+import { arg } from '../arg/arg';
 import { cos } from '../cos/cosine';
 import { is_imu } from '../imu/is_imu';
 import { sin } from '../sin/sine';
@@ -75,7 +76,7 @@ export function rect(z: U, $: ExtensionEnv): U {
     // abs(z) * (cos(arg(z)) + i sin(arg(z)))
     const result = $.multiply(
         abs(z, $),
-        $.add(cos($.arg(z), $), $.multiply(imu, sin($.arg(z), $)))
+        $.add(cos(arg(z, $), $), $.multiply(imu, sin(arg(z, $), $)))
     );
 
     return result;

@@ -4,10 +4,8 @@ import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { useCaretForExponentiation } from "../modes/modes";
-import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/is_blade";
 import { is_boo } from "../operators/boo/is_boo";
-import { denominator } from "../operators/denominator/denominator";
 import { derivative } from "../operators/derivative/derivative";
 import { is_err } from "../operators/err/is_err";
 import { is_flt } from "../operators/flt/is_flt";
@@ -15,7 +13,6 @@ import { value_of } from "../operators/helpers/valueOf";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
 import { is_num } from "../operators/num/is_num";
-import { numerator } from "../operators/numerator/numerator";
 import { is_rat } from "../operators/rat/is_rat";
 import { is_str } from "../operators/str/is_str";
 import { is_sym } from "../operators/sym/is_sym";
@@ -214,17 +211,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             */
             return binop(MATH_ADD, lhs, rhs, $);
-        },
-        arg(expr: U): U {
-            const A = numerator(expr, $);
-            // console.lg(`numer=${render_as_infix(A, $)}`);
-            const B = denominator(expr, $);
-            // console.lg(`denom=${render_as_infix(B, $)}`);
-            const C = yyarg(A, $);
-            // console.lg(`arg_numer=${render_as_infix(C, $)}`);
-            const D = yyarg(B, $);
-            // console.lg(`arg_denom=${render_as_infix(D, $)}`);
-            return $.subtract(C, D);
         },
         clearOperators(): void {
             builders.length = 0;

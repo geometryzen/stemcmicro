@@ -7,6 +7,7 @@ import { useCaretForExponentiation } from "../modes/modes";
 import { yyarg } from "../operators/arg/arg";
 import { is_blade } from "../operators/blade/is_blade";
 import { is_boo } from "../operators/boo/is_boo";
+import { make_pluggable_keyword_operator } from "./make_pluggable_keyword_operator";
 import { denominator } from "../operators/denominator/denominator";
 import { derivative } from "../operators/derivative/derivative";
 import { is_err } from "../operators/err/is_err";
@@ -31,7 +32,7 @@ import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
 import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
-import { make_operator_from_evaluator } from "./make_operator_from_function";
+import { make_pluggable_function_operator } from "./make_pluggable_function_operator";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -235,7 +236,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         defineFunction(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void {
-            this.defineOperator(make_operator_from_evaluator(opr, transformer));
+            this.defineOperator(make_pluggable_function_operator(opr, transformer));
+        },
+        defineKeyword(sym: Sym, runner: ($: ExtensionEnv) => void): void {
+            $.defineOperator(make_pluggable_keyword_operator(sym, runner));
         },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);

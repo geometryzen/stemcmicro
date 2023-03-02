@@ -1,5 +1,6 @@
 import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
+import { Eval_clear, Eval_clearall } from '../clear';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_factorize } from '../operators/abs/abs_factorize';
@@ -65,7 +66,6 @@ import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
 import { choose_varargs } from '../operators/choose/choose_varargs';
 import { circexp_any } from '../operators/circexp/circexp_any';
-import { clearall_extension } from '../operators/clearall/clearall_extension';
 import { clock_any } from '../operators/clock/clock_any';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
@@ -313,7 +313,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, CLEAR, CLEARALL, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -408,6 +408,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineAssociative(MATH_ADD, zero);
     $.defineAssociative(MATH_MUL, one);
 
+    // TODO: See what these do. Ensure unit tests. Remove.
     // $.defineOperator(pow_2_pow_2_e_any_rat);
     // $.defineOperator(pow_2_pow_2_any_rat_rat);
     $.defineOperator(pow_2_e_any);      // Needed
@@ -508,7 +509,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(binomial_varargs);
     $.defineOperator(choose_varargs);
-    $.defineOperator(clearall_extension);
+    $.defineFunction(CLEAR, Eval_clear);
+    $.defineKeyword(CLEARALL, Eval_clearall);
 
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);

@@ -6,6 +6,7 @@ import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
+import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { hard_reset } from "./defs";
@@ -48,6 +49,8 @@ export function env_term($: ExtensionEnv) {
 
 export interface ScriptEngine {
     clearBindings(): void;
+    getBinding(sym: Sym): U;
+    getBindings(): { sym: Sym, binding: U }[]
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
     executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
@@ -102,6 +105,12 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
     const theEngine: ScriptEngine = {
         clearBindings(): void {
             $.clearBindings();
+        },
+        getBinding(sym: Sym): U {
+            return $.getBinding(sym);
+        },
+        getBindings(): { sym: Sym, binding: U }[] {
+            return $.getBindings();
         },
         evaluate(tree: U): { value: U, prints: string[], errors: Error[] } {
             // This is like a fixed pipeline.

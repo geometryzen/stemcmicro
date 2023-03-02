@@ -50,6 +50,7 @@
         "unit-ceiling": "mocha 'units/ceiling.spec.ts'",
         "unit-choose": "mocha 'units/choose.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
+        "unit-clearall": "mocha 'units/clearall.spec.ts'",
         "unit-clock": "mocha 'units/clock.spec.ts'",
         "unit-coeff": "mocha 'units/coeff.spec.ts'",
         "unit-cofactor": "mocha 'units/cofactor.spec.ts'",

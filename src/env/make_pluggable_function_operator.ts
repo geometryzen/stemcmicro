@@ -38,6 +38,6 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
  * @param evaluator The implementation of the operator.
  * @returns 
  */
-export function make_operator_from_evaluator(opr: Sym, evaluator: (expr: Cons, $: ExtensionEnv) => U) {
+export function make_pluggable_function_operator(opr: Sym, evaluator: (expr: Cons, $: ExtensionEnv) => U) {
     return new Builder(opr, evaluator);
 }

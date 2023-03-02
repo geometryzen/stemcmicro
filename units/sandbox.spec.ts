@@ -2,9 +2,9 @@ import { assert } from "chai";
 import { create_script_engine } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    it("(b/a)^2", function () {
+    xit("clearall", function () {
         const sourceText = [
-            `(b/a)^2`,
+            `clearall`,
         ].join('\n');
         const engine = create_script_engine({
             useCaretForExponentiation: true,

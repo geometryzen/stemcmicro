@@ -7,6 +7,7 @@ import { render_as_sexpr } from "../print/render_as_sexpr";
 import { transform_tree } from "../runtime/execute";
 import { execute_std_definitions } from "../runtime/init";
 import { env_options_from_engine_options, env_term, init_env, ScriptEngine } from "../runtime/script_engine";
+import { Sym } from "../tree/sym/Sym";
 import { is_nil, U } from "../tree/tree";
 import { parse_scheme } from "./parser";
 
@@ -18,6 +19,12 @@ export function createSchemeEngine(): ScriptEngine {
     const theEngine: ScriptEngine = {
         clearBindings(): void {
             $.clearBindings();
+        },
+        getBinding(sym: Sym): U {
+            return $.getBinding(sym);
+        },
+        getBindings(): { sym: Sym, binding: U }[] {
+            return $.getBindings();
         },
         evaluate(tree: U): { value: U, prints: string[], errors: Error[] } {
             return transform_tree(tree, $);

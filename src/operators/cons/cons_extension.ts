@@ -1,5 +1,4 @@
 import { Eval_approxratio } from "../../approxratio";
-import { Eval_clear } from "../../clear";
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Eval_filter } from "../../filter";
 import { invg } from "../../inv";
@@ -9,7 +8,7 @@ import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
 import { Eval_prime } from "../../prime";
 import { to_infix_string } from "../../print/to_infix_string";
-import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTGE, TESTGT, TESTLE } from "../../runtime/constants";
+import { APPROXRATIO, BINDING, CHECK, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTGE, TESTGT, TESTLE } from "../../runtime/constants";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
 import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern } from "../../scripting/eval_pattern";
@@ -168,9 +167,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case CHECK:
                 Eval_check(expr, $);
-                return stack_pop();
-            case CLEAR:
-                Eval_clear(expr, $);
                 return stack_pop();
             case CLEARPATTERNS:
                 Eval_clearpatterns();

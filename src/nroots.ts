@@ -1,26 +1,26 @@
-import { coeff } from './operators/coeff/coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
-import { imag } from './operators/imag/imag';
 import { is_poly_expanded_form } from './is';
 import { sort_stack } from './misc';
+import { coeff } from './operators/coeff/coeff';
 import { evaluate_as_float } from './operators/float/float';
+import { is_flt } from './operators/flt/is_flt';
+import { imag } from './operators/imag/imag';
 import { real } from './operators/real/real';
 import { defs, halt, move_top_of_stack } from './runtime/defs';
 import { stack_pop, stack_push } from './runtime/stack';
 import { wrap_as_flt } from './tree/flt/Flt';
-import { is_flt } from './operators/flt/is_flt';
 import { caddr, cadr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
-import { nil, U } from './tree/tree';
+import { Cons, is_nil, U } from './tree/tree';
 
 // find the roots of a polynomial numerically
 const NROOTS_YMAX = 101;
 const NROOTS_DELTA = 1.0e-6;
 const NROOTS_EPSILON = 1.0e-9;
 
-function NROOTS_ABS(z: numericRootOfPolynomial): number {
+function NROOTS_ABS(z: NumericRootOfPolynomial): number {
     return Math.sqrt(z.r * z.r + z.i * z.i);
 }
 
@@ -33,31 +33,45 @@ function NROOTS_RANDOM(): number {
     return 4.0 * Math.random() - 2.0;
 }
 
-class numericRootOfPolynomial {
+/**
+ * A pair of numbers (r, i)
+ */
+class NumericRootOfPolynomial {
     public r = 0.0;
     public i = 0.0;
 }
 
-const nroots_a = new numericRootOfPolynomial();
-const nroots_b = new numericRootOfPolynomial();
-const nroots_x = new numericRootOfPolynomial();
-const nroots_y = new numericRootOfPolynomial();
-const nroots_fa = new numericRootOfPolynomial();
-const nroots_fb = new numericRootOfPolynomial();
-const nroots_dx = new numericRootOfPolynomial();
-const nroots_df = new numericRootOfPolynomial();
-const nroots_c: numericRootOfPolynomial[] = [];
-for (let initNRoots = 0; initNRoots < NROOTS_YMAX; initNRoots++) {
-    nroots_c[initNRoots] = new numericRootOfPolynomial();
+const nroots_a = new NumericRootOfPolynomial();
+const nroots_b = new NumericRootOfPolynomial();
+const nroots_x = new NumericRootOfPolynomial();
+const nroots_y = new NumericRootOfPolynomial();
+const nroots_fa = new NumericRootOfPolynomial();
+const nroots_fb = new NumericRootOfPolynomial();
+const nroots_dx = new NumericRootOfPolynomial();
+const nroots_df = new NumericRootOfPolynomial();
+const nroots_c: NumericRootOfPolynomial[] = [];
+for (let i = 0; i < NROOTS_YMAX; i++) {
+    nroots_c[i] = new NumericRootOfPolynomial();
 }
 
-export function Eval_nroots(p1: U, $: ExtensionEnv): U {
-    let p2: U = $.valueOf(caddr(p1));
-    p1 = $.valueOf(cadr(p1));
+/**
+ * nroots(p,x), where x is optional and may be guessed from p.
+ * @param expr 
+ * @param $ 
+ * @returns 
+ */
+export function Eval_nroots(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_nroots", render_as_infix(expr, $));
+    let X: U = $.valueOf(caddr(expr));
+    let P = $.valueOf(cadr(expr));
+    // console.lg("P", render_as_infix(P, $));
+    // console.lg("X", render_as_infix(X, $));
 
-    p2 = nil === p2 ? guess(p1) : p2;
+    X = is_nil(X) ? guess(P) : X;
 
-    if (!is_poly_expanded_form(p1, p2, $)) {
+    // console.lg("P", render_as_infix(X, $));
+
+    if (!is_poly_expanded_form(P, X, $)) {
         halt('nroots: polynomial?');
     }
 
@@ -65,21 +79,21 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): U {
     const h = defs.tos;
 
     // get the coefficients
-    const cs = coeff(p1, p2, $);
-    let n = cs.length;
+    const coefficients = coeff(P, X, $);
+    let n = coefficients.length;
     if (n > NROOTS_YMAX) {
         halt('nroots: degree?');
     }
 
     // convert the coefficients to real and imaginary doubles
     for (let i = 0; i < n; i++) {
-        p1 = $.valueOf(evaluate_as_float(real(cs[i], $), $));
-        p2 = $.valueOf(evaluate_as_float(imag(cs[i], $), $));
-        if (!is_flt(p1) || !is_flt(p2)) {
+        P = $.valueOf(evaluate_as_float(real(coefficients[i], $), $));
+        X = $.valueOf(evaluate_as_float(imag(coefficients[i], $), $));
+        if (!is_flt(P) || !is_flt(X)) {
             halt('nroots: coefficients?');
         }
-        nroots_c[i].r = p1.d;
-        nroots_c[i].i = p2.d;
+        nroots_c[i].r = P.d;
+        nroots_c[i].i = X.d;
     }
 
     // n is the number of coefficients, n = deg(p) + 1
@@ -113,22 +127,20 @@ export function Eval_nroots(p1: U, $: ExtensionEnv): U {
 }
 
 // divide the polynomial by its leading coefficient
-function monic(n: number) {
+function monic(n: number): void {
     nroots_y.r = nroots_c[n - 1].r;
     nroots_y.i = nroots_c[n - 1].i;
     const t = nroots_y.r * nroots_y.r + nroots_y.i * nroots_y.i;
     for (let k = 0; k < n - 1; k++) {
-        nroots_c[k].r =
-            (nroots_c[k].r * nroots_y.r + nroots_c[k].i * nroots_y.i) / t;
-        nroots_c[k].i =
-            (nroots_c[k].i * nroots_y.r - nroots_c[k].r * nroots_y.i) / t;
+        nroots_c[k].r = (nroots_c[k].r * nroots_y.r + nroots_c[k].i * nroots_y.i) / t;
+        nroots_c[k].i = (nroots_c[k].i * nroots_y.r - nroots_c[k].r * nroots_y.i) / t;
     }
     nroots_c[n - 1].r = 1.0;
     nroots_c[n - 1].i = 0.0;
 }
 
 // uses the secant method
-function findroot(n: number) {
+function findroot(n: number): void {
     if (NROOTS_ABS(nroots_c[0]) < NROOTS_DELTA) {
         nroots_a.r = 0.0;
         nroots_a.i = 0.0;
@@ -197,26 +209,22 @@ function findroot(n: number) {
             nroots_y.i = (nroots_dx.i * nroots_df.r - nroots_dx.r * nroots_df.i) / t;
 
             // a = b - y * fb
-            nroots_a.r =
-                nroots_b.r - (nroots_y.r * nroots_fb.r - nroots_y.i * nroots_fb.i);
-            nroots_a.i =
-                nroots_b.i - (nroots_y.r * nroots_fb.i + nroots_y.i * nroots_fb.r);
+            nroots_a.r = nroots_b.r - (nroots_y.r * nroots_fb.r - nroots_y.i * nroots_fb.i);
+            nroots_a.i = nroots_b.i - (nroots_y.r * nroots_fb.i + nroots_y.i * nroots_fb.r);
         }
     }
 
     halt('nroots: convergence error');
 }
 
-function compute_fa(n: number) {
+function compute_fa(n: number): void {
     // x = a
     nroots_x.r = nroots_a.r;
     nroots_x.i = nroots_a.i;
 
     // fa = c0 + c1 * x
-    nroots_fa.r =
-        nroots_c[0].r + nroots_c[1].r * nroots_x.r - nroots_c[1].i * nroots_x.i;
-    nroots_fa.i =
-        nroots_c[0].i + nroots_c[1].r * nroots_x.i + nroots_c[1].i * nroots_x.r;
+    nroots_fa.r = nroots_c[0].r + nroots_c[1].r * nroots_x.r - nroots_c[1].i * nroots_x.i;
+    nroots_fa.i = nroots_c[0].i + nroots_c[1].r * nroots_x.i + nroots_c[1].i * nroots_x.r;
 
     for (let k = 2; k < n; k++) {
         // x = a * x
@@ -231,12 +239,10 @@ function compute_fa(n: number) {
 }
 
 // divide the polynomial by x - a
-function NROOTS_divpoly(n: number) {
+function NROOTS_divpoly(n: number): void {
     for (let k = n - 1; k > 0; k--) {
-        nroots_c[k - 1].r +=
-            nroots_c[k].r * nroots_a.r - nroots_c[k].i * nroots_a.i;
-        nroots_c[k - 1].i +=
-            nroots_c[k].i * nroots_a.r + nroots_c[k].r * nroots_a.i;
+        nroots_c[k - 1].r += nroots_c[k].r * nroots_a.r - nroots_c[k].i * nroots_a.i;
+        nroots_c[k - 1].i += nroots_c[k].i * nroots_a.r + nroots_c[k].r * nroots_a.i;
     }
 
     if (NROOTS_ABS(nroots_c[0]) > NROOTS_DELTA) {

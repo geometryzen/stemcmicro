@@ -194,6 +194,7 @@
         "test-log_v1": "mocha 'tests/log_v1.ts'",
         "test-log": "mocha 'tests/log.ts'",
         "test-mixedprint": "mocha 'tests/mixedprint.ts'",
+        "test-nroots": "mocha 'tests/nroots.ts'",
         "test-outer": "mocha 'tests/outer.ts'",
         "test-print": "mocha 'tests/print.ts'",
         "test-roots": "mocha 'tests/roots.ts'",

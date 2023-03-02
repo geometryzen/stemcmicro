@@ -226,20 +226,9 @@ import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_s
 import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { polar_varargs } from '../operators/polar/polar_varargs';
-import { pow } from '../operators/pow/pow';
-import { pow_2_any_any } from '../operators/pow/pow_2_any_any';
-import { pow_2_any_rat } from '../operators/pow/pow_2_any_rat';
-import { pow_2_blade_rat } from '../operators/pow/pow_2_blade_rat';
 import { pow_2_cons_rat } from '../operators/pow/pow_2_cons_rat';
 import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
-import { pow_2_flt_rat } from '../operators/pow/pow_2_flt_rat';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
-import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_any_any_rat';
-import { pow_2_pow_2_any_rat_rat } from '../operators/pow/pow_2_pow_2_any_rat_rat';
-import { pow_2_rat_mul_2_rat_rat } from '../operators/pow/pow_2_rat_mul_2_rat_rat';
-import { pow_2_rat_rat } from '../operators/pow/pow_2_rat_rat';
-import { pow_2_sym_rat } from '../operators/pow/pow_2_sym_rat';
-import { pow_2_uom_rat } from '../operators/pow/pow_2_uom_rat';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
 import { make_printmode_keyword } from '../operators/printing/make_printmode_keyword';
@@ -324,8 +313,10 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
+import { AND, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
-import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
+import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
+import { Eval_power } from '../scripting/eval_power';
 import { Eval_and, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from '../test';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
@@ -417,20 +408,21 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineAssociative(MATH_ADD, zero);
     $.defineAssociative(MATH_MUL, one);
 
-    $.defineOperator(pow_2_pow_2_e_any_rat);
-    $.defineOperator(pow_2_pow_2_any_rat_rat);
-    $.defineOperator(pow_2_e_any);
-    $.defineOperator(pow_2_sym_rat);
-    $.defineOperator(pow_2_rat_rat);
-    $.defineOperator(pow_2_rat_mul_2_rat_rat);
-    $.defineOperator(pow_2_flt_rat);
-    $.defineOperator(pow_2_imu_rat);
-    $.defineOperator(pow_2_uom_rat);
-    $.defineOperator(pow_2_cons_rat);
-    $.defineOperator(pow_2_blade_rat);
-    $.defineOperator(pow_2_any_rat);
-    $.defineOperator(pow_2_any_any);
-    $.defineOperator(pow);
+    // $.defineOperator(pow_2_pow_2_e_any_rat);
+    // $.defineOperator(pow_2_pow_2_any_rat_rat);
+    $.defineOperator(pow_2_e_any);      // Needed
+    // $.defineOperator(pow_2_sym_rat);
+    // $.defineOperator(pow_2_rat_rat);
+    // $.defineOperator(pow_2_rat_mul_2_rat_rat);
+    // $.defineOperator(pow_2_flt_rat);
+    $.defineOperator(pow_2_imu_rat);    // Needed
+    // $.defineOperator(pow_2_uom_rat);
+    $.defineOperator(pow_2_cons_rat);   // Needed
+    // $.defineOperator(pow_2_blade_rat);
+    // $.defineOperator(pow_2_any_rat);
+    // $.defineOperator(pow_2_any_any);
+    // $.defineOperator(pow);
+    $.defineFunction(MATH_POW, Eval_power);
 
     $.defineOperator(mul_2_sym_blade);
     $.defineOperator(mul_2_one_any);
@@ -600,7 +592,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(adj_any);
 
     $.defineOperator(algebra_2_tensor_tensor);
-    $.defineFunction("and", Eval_and);
+    $.defineFunction(AND, Eval_and);
     $.defineOperator(arccos_varargs);
     $.defineOperator(arccosh_varargs);
     $.defineOperator(arcsin_varargs);
@@ -769,20 +761,20 @@ export function define_std_operators($: ExtensionEnv) {
 
 
     $.defineOperator(testeq_sym_rat);
-    $.defineFunction("testeq", Eval_testeq);
-    $.defineFunction("testle", Eval_testle);
+    $.defineFunction(TESTEQ, Eval_testeq);
+    $.defineFunction(TESTLE, Eval_testle);
 
     $.defineOperator(testlt_flt_rat);
     $.defineOperator(testlt_rat_rat);
     $.defineOperator(testlt_sym_rat);
     $.defineOperator(testlt_mul_2_any_any_rat);
-    $.defineFunction("testlt", Eval_testlt);
+    $.defineFunction(TESTLT, Eval_testlt);
 
-    $.defineFunction("testge", Eval_testge);
+    $.defineFunction(TESTGE, Eval_testge);
     $.defineOperator(testgt_rat_rat);
     $.defineOperator(testgt_sym_rat);
     $.defineOperator(testgt_mul_2_any_any_rat);
-    $.defineFunction("testgt", Eval_testgt);
+    $.defineFunction(TESTGT, Eval_testgt);
 
     $.defineOperator(transpose_varargs);
 

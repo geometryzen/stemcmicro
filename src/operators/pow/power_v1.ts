@@ -5,7 +5,6 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";
 import { is_rat_integer } from "../../is_rat_integer";
-import { makeList } from "../../makeList";
 import { evaluatingAsFloat, evaluatingAsPolar } from "../../modes/modes";
 import { nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
@@ -18,7 +17,7 @@ import { power_tensor } from "../../tensor";
 import { oneAsDouble, wrap_as_flt } from "../../tree/flt/Flt";
 import { caddr, cadr } from "../../tree/helpers";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
-import { car, Cons, is_cons, is_nil, U } from "../../tree/tree";
+import { car, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { QQ } from "../../tree/uom/QQ";
 import { abs } from "../abs/abs";
 import { cos } from "../cos/cosine";
@@ -40,7 +39,7 @@ import { dpow } from "./dpow";
  * @returns 
  */
 export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
-    // console.lg(`power_v1 base=${print_list(base, $)} expo=${print_list(expo, $)}`);
+    // console.lg(`power_v1 base=${render_as_infix(base, $)} expo=${render_as_infix(expo, $)}`);
     if (typeof base === 'undefined') {
         throw new Error("base must be defined.");
     }
@@ -49,7 +48,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg(`power ${base} ${exponent} => ${retval} made by power_v1 at ${description}`);
+        // console.lg(`power ${render_as_infix(base, $)} ${render_as_infix(expo, $)} => ${render_as_infix(retval, $)} made by power_v1 at ${description}`);
         return retval;
     };
 
@@ -95,13 +94,13 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
         !$.getModeFlag(evaluatingAsFloat)
     ) {
         if (expo.a < expo.b) {
-            tmp = makeList(POWER, base, expo);
+            tmp = items_to_cons(POWER, base, expo);
         }
         else {
-            tmp = makeList(
+            tmp = items_to_cons(
                 MULTIPLY,
                 base,
-                makeList(
+                items_to_cons(
                     POWER,
                     base,
                     rational(expo.a.mod(expo.b), expo.b)
@@ -172,7 +171,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // otherwise we'd just undo the work we want to do
     if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getModeFlag(evaluatingAsPolar)) {
         // TODO: We could simply use origExpr now that it is an agument.
-        const tmp = makeList(POWER, base, expo);
+        const tmp = items_to_cons(POWER, base, expo);
         const hopefullySimplified = rect(tmp, $); // put new (hopefully simplified expr) in exponent
         if (!hopefullySimplified.contains(PI)) {
             // console.lg(`hopefullySimplified=${hopefullySimplified}`);
@@ -192,7 +191,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
         // console.lg(`base=>${render_as_infix(base, $)}`);
         // console.lg(`expo=>${render_as_infix(expo, $)}`);
         // console.lg(`base is scalar=>${$.isScalar(base)}`);
-        if (is_multiply(base) && $.isScalar(base) && is_rat_integer(expo)) {
+        if (is_multiply(base) /*&& $.isScalar(base)*/ && is_rat_integer(expo)) {
             const aList = base.cdr;
             if (is_cons(aList)) {
                 const a1 = aList.car;
@@ -327,7 +326,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
             //  * we can't go back to other forms.
             // so leave the power as it is.
             if (avoidCalculatingPowersIntoArctans && tmp.contains(ARCTAN)) {
-                tmp = makeList(POWER, base, expo);
+                tmp = items_to_cons(POWER, base, expo);
             }
 
             return hook(tmp, "X");

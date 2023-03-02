@@ -10,11 +10,9 @@ import { makeList } from "../../makeList";
 import { Eval_prime } from "../../prime";
 import { to_infix_string } from "../../print/to_infix_string";
 import { APPROXRATIO, BINDING, CHECK, CLEAR, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTGE, TESTGT, TESTLE } from "../../runtime/constants";
-import { MATH_POW } from "../../runtime/ns_math";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
 import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern } from "../../scripting/eval_pattern";
-import { Eval_power } from "../../scripting/eval_power";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
 import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
@@ -209,9 +207,6 @@ class ConsExtension implements Extension<Cons> {
                 return stack_pop();
             case PATTERNSINFO:
                 Eval_patternsinfo();
-                return stack_pop();
-            case MATH_POW:
-                Eval_power(expr, $);
                 return stack_pop();
             case PRIME:
                 Eval_prime(expr, $);

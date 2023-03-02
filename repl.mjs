@@ -1,6 +1,5 @@
 import process from 'node:process';
 import repl from 'node:repl';
-import console from 'node:console';
 import { create_script_engine } from './dist/commonjs/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,13 +67,14 @@ r.on('reset', () => {
 
 // r.close();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 process.on('beforeExit', (code) => {
-    console.log('Process beforeExit event with code: ', code);
+    // console.lg('Process beforeExit event with code: ', code);
 });
 
 process.on('exit', (code) => {
     engine.release();
     if (code !== 0) {
-        console.log('Process exit event with code: ', code);
+        // console.lg('Process exit event with code: ', code);
     }
 });

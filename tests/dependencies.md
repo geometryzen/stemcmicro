@@ -352,9 +352,9 @@ test('25', t => {
   if testResult[0] == "All local dependencies:  variable g depends on: 'x, f, x, ;  variable f depends on: 'x, g, x, ; . Symbols with reassignments: . Symbols in expressions without assignments: . All dependencies recursively:  variable g depends on: 'x, ;  g --> f -->  ... then g again,  variable f depends on: 'x, x, ;  f --> g -->  ... then f again, " and
     testResult[1] == "" and
     testResult[2] == "// g is part of a cyclic dependency, no code generated.\n// f is part of a cyclic dependency, no code generated."
-      console.log "ok dependency test"
+      console.lg "ok dependency test"
   else
-      console.log "fail dependency test 28 expected: " + testResult
+      console.lg "fail dependency test 28 expected: " + testResult
 
   do_clearall()
   */

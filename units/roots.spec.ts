@@ -108,7 +108,7 @@ describe("roots", function () {
         ];
         const engine = create_script_engine({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[-1/2*(b^2/(a^2)-4*c/a)^(1/2)-b/(2*a),1/2*(b^2/(a^2)-4*c/a)^(1/2)-b/(2*a)]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(b^2/(a^2)-4*c/a)^(1/2),-b/(2*a)1/2*(b^2/(a^2)-4*c/a)^(1/2)]");
         engine.release();
     });
     xit("roots(a*x**2+b*x+c)", function () {

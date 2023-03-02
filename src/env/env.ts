@@ -20,7 +20,6 @@ import { is_rat } from "../operators/rat/is_rat";
 import { is_str } from "../operators/str/is_str";
 import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from "../operators/tensor/is_tensor";
-import { make_operator_from_evaluator } from "./make_operator_from_function";
 import { is_uom } from "../operators/uom/is_uom";
 import { render_as_human } from "../print/render_as_human";
 import { FUNCTION } from "../runtime/constants";
@@ -32,6 +31,7 @@ import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
 import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { make_operator_from_evaluator } from "./make_operator_from_function";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
 
@@ -234,8 +234,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        defineFunction(name: string, evaluator: (expr: Cons, $: ExtensionEnv) => U): void {
-            this.defineOperator(make_operator_from_evaluator(name, evaluator));
+        defineFunction(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void {
+            this.defineOperator(make_operator_from_evaluator(opr, transformer));
         },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);

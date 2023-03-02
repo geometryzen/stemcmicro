@@ -91,10 +91,8 @@ export interface ExtensionEnv {
     compareFn(sym: Sym): CompareFn;
     /**
      * Defines the implementation of a function that is used to transform (name ...) expressions.
-     * @param name The name used to construct a symbol.
-     * @param evaluator The implementation of the function.
      */
-    defineFunction(name: string, evaluator: (expr: Cons, $: ExtensionEnv) => U): void;
+    defineFunction(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     derivative(expr: U, wrt: U): U;

@@ -20,7 +20,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">ScriptEngine</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L44">src/runtime/script_engine.ts:44</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L50">src/runtime/script_engine.ts:50</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -32,7 +32,11 @@
 <a href="ScriptEngine.html#clearBindings" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>clear<wbr/>Bindings</span></a>
 <a href="ScriptEngine.html#evaluate" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>evaluate</span></a>
 <a href="ScriptEngine.html#executeScript" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>execute<wbr/>Script</span></a>
+<a href="ScriptEngine.html#getBinding" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>get<wbr/>Binding</span></a>
+<a href="ScriptEngine.html#getBindings" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>get<wbr/>Bindings</span></a>
 <a href="ScriptEngine.html#release" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>release</span></a>
+<a href="ScriptEngine.html#renderAsAscii" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>render<wbr/>As<wbr/>Ascii</span></a>
+<a href="ScriptEngine.html#renderAsHuman" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>render<wbr/>As<wbr/>Human</span></a>
 <a href="ScriptEngine.html#renderAsInfix" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>render<wbr/>As<wbr/>Infix</span></a>
 <a href="ScriptEngine.html#renderAsLaTeX" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>render<wbr/>As<wbr/>La<wbr/>TeX</span></a>
 <a href="ScriptEngine.html#renderAsSExpr" class="tsd-index-link tsd-kind-method tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>render<wbr/>AsSExpr</span></a>
@@ -47,7 +51,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L52">src/runtime/script_engine.ts:52</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L62">src/runtime/script_engine.ts:62</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="clearBindings" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>clear<wbr/>Bindings</span><a href="#clearBindings" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -55,7 +59,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L45">src/runtime/script_engine.ts:45</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L51">src/runtime/script_engine.ts:51</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="evaluate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>evaluate</span><a href="#evaluate" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -75,7 +79,7 @@
 <li class="tsd-parameter">
 <h5>value<span class="tsd-signature-symbol">: </span><a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a></h5></li></ul><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L46">src/runtime/script_engine.ts:46</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L54">src/runtime/script_engine.ts:54</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="executeScript" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>execute<wbr/>Script</span><a href="#executeScript" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -95,7 +99,28 @@
 <li class="tsd-parameter">
 <h5>values<span class="tsd-signature-symbol">: </span><a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a><span class="tsd-signature-symbol">[]</span></h5></li></ul><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L48">src/runtime/script_engine.ts:48</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L56">src/runtime/script_engine.ts:56</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="getBinding" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Binding</span><a href="#getBinding" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+<li class="tsd-signature tsd-anchor-link" id="getBinding.getBinding-1">get<wbr/>Binding<span class="tsd-signature-symbol">(</span>sym<span class="tsd-signature-symbol">: </span><a href="../classes/Sym.html" class="tsd-signature-type" data-tsd-kind="Class">Sym</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a><a href="#getBinding.getBinding-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>sym: <a href="../classes/Sym.html" class="tsd-signature-type" data-tsd-kind="Class">Sym</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L52">src/runtime/script_engine.ts:52</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="getBindings" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Bindings</span><a href="#getBindings" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+<li class="tsd-signature tsd-anchor-link" id="getBindings.getBindings-1">get<wbr/>Bindings<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>binding<span class="tsd-signature-symbol">: </span><a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a><span class="tsd-signature-symbol">; </span><br/><span>    </span>sym<span class="tsd-signature-symbol">: </span><a href="../classes/Sym.html" class="tsd-signature-type" data-tsd-kind="Class">Sym</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span><a href="#getBindings.getBindings-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span><br/><span>    </span>binding<span class="tsd-signature-symbol">: </span><a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a><span class="tsd-signature-symbol">; </span><br/><span>    </span>sym<span class="tsd-signature-symbol">: </span><a href="../classes/Sym.html" class="tsd-signature-type" data-tsd-kind="Class">Sym</a><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L53">src/runtime/script_engine.ts:53</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="release" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>release</span><a href="#release" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -103,7 +128,33 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L53">src/runtime/script_engine.ts:53</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L63">src/runtime/script_engine.ts:63</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="renderAsAscii" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>render<wbr/>As<wbr/>Ascii</span><a href="#renderAsAscii" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+<li class="tsd-signature tsd-anchor-link" id="renderAsAscii.renderAsAscii-1">render<wbr/>As<wbr/>Ascii<span class="tsd-signature-symbol">(</span>expr<span class="tsd-signature-symbol">: </span><a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#renderAsAscii.renderAsAscii-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>expr: <a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L57">src/runtime/script_engine.ts:57</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="renderAsHuman" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>render<wbr/>As<wbr/>Human</span><a href="#renderAsHuman" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+<li class="tsd-signature tsd-anchor-link" id="renderAsHuman.renderAsHuman-1">render<wbr/>As<wbr/>Human<span class="tsd-signature-symbol">(</span>expr<span class="tsd-signature-symbol">: </span><a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#renderAsHuman.renderAsHuman-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>expr: <a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L58">src/runtime/script_engine.ts:58</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="renderAsInfix" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>render<wbr/>As<wbr/>Infix</span><a href="#renderAsInfix" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -116,7 +167,7 @@
 <h5>expr: <a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L49">src/runtime/script_engine.ts:49</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L59">src/runtime/script_engine.ts:59</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="renderAsLaTeX" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>render<wbr/>As<wbr/>La<wbr/>TeX</span><a href="#renderAsLaTeX" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -129,7 +180,7 @@
 <h5>expr: <a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L50">src/runtime/script_engine.ts:50</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L60">src/runtime/script_engine.ts:60</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="renderAsSExpr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>render<wbr/>AsSExpr</span><a href="#renderAsSExpr" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -142,7 +193,7 @@
 <h5>expr: <a href="U.html" class="tsd-signature-type" data-tsd-kind="Interface">U</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L51">src/runtime/script_engine.ts:51</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L61">src/runtime/script_engine.ts:61</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface"><a id="useStandardDefinitions" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>use<wbr/>Standard<wbr/>Definitions</span><a href="#useStandardDefinitions" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -150,7 +201,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/b7497df/src/runtime/script_engine.ts#L47">src/runtime/script_engine.ts:47</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/e54bea7/src/runtime/script_engine.ts#L55">src/runtime/script_engine.ts:55</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -179,7 +230,11 @@
 <li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#clearBindings" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>clear<wbr/>Bindings</a></li>
 <li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#evaluate" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>evaluate</a></li>
 <li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#executeScript" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>execute<wbr/>Script</a></li>
+<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#getBinding" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>get<wbr/>Binding</a></li>
+<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#getBindings" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>get<wbr/>Bindings</a></li>
 <li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#release" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>release</a></li>
+<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#renderAsAscii" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>render<wbr/>As<wbr/>Ascii</a></li>
+<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#renderAsHuman" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>render<wbr/>As<wbr/>Human</a></li>
 <li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#renderAsInfix" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>render<wbr/>As<wbr/>Infix</a></li>
 <li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#renderAsLaTeX" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>render<wbr/>As<wbr/>La<wbr/>TeX</a></li>
 <li class="tsd-kind-method tsd-parent-kind-interface"><a href="ScriptEngine.html#renderAsSExpr" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>render<wbr/>AsSExpr</a></li>

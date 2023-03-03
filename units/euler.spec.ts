@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../index";
+import { create_script_context } from "../index";
 
 describe("euler", function () {
     it("exp(0)", function () {
         const lines: string[] = [
             `exp(0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -17,7 +17,7 @@ describe("euler", function () {
         const lines: string[] = [
             `exp(1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -28,7 +28,7 @@ describe("euler", function () {
         const lines: string[] = [
             `exp(-1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -39,7 +39,7 @@ describe("euler", function () {
         const lines: string[] = [
             `exp(i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -50,7 +50,7 @@ describe("euler", function () {
         const lines: string[] = [
             `exp(-i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -61,7 +61,7 @@ describe("euler", function () {
         const lines: string[] = [
             `exp(i*x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -72,7 +72,7 @@ describe("euler", function () {
         const lines: string[] = [
             `exp(-i*x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

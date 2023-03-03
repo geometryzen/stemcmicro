@@ -1,5 +1,5 @@
 import bigInt from "big-integer";
-import { TokenParser } from "../../scanner/ScanConfig";
+import { TokenParser } from "../../brite/ScanConfig";
 import { Rat } from "../../tree/rat/Rat";
 
 export class IntTokenParser implements TokenParser {

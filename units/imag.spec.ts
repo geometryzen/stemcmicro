@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("imag", function () {
     it("imag(a+i*b)", function () {
         const lines: string[] = [
             `imag(a+i*b)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Imu'],
             useDefinitions: true
         });

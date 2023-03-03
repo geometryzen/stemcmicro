@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
     it("tau(1)", function () {
         const sourceText = [
             `tau(1)`
         ].join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
@@ -19,7 +19,7 @@ describe("sandbox", function () {
         const sourceText = [
             `float(tau(1))`
         ].join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
@@ -32,7 +32,7 @@ describe("sandbox", function () {
         const sourceText = [
             `float(tau(1)/2)`
         ].join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
@@ -46,7 +46,7 @@ describe("sandbox", function () {
             `maxFixedPrintoutDigits=10`,
             `float(tau(1)/2)`
         ].join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");

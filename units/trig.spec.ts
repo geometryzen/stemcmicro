@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("trig", function () {
@@ -7,7 +7,7 @@ describe("trig", function () {
         const lines: string[] = [
             `cos(x)*cos(x)+sin(x)*sin(x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -24,7 +24,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `sin(a)*cos(b)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -35,7 +35,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `cos(b)*sin(a)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -46,7 +46,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `sin(b)*cos(a)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -57,7 +57,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `cos(a)*sin(b)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -69,7 +69,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `sin(x)*cos(x)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -80,7 +80,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `cos(x)*sin(x)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -93,7 +93,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `cos(x)*cos(x)+sin(x)*sin(x)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -104,7 +104,7 @@ describe("trig", function () {
             const lines: string[] = [
                 `sin(x)*sin(x)+cos(x)*cos(x)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

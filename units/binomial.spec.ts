@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("binomial", function () {
     it("binomial(12,6)", function () {
         const lines: string[] = [
             `binomial(12,6)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -18,7 +18,7 @@ describe("binomial", function () {
         const lines: string[] = [
             `binomial(n,k)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -29,7 +29,7 @@ describe("binomial", function () {
         const lines: string[] = [
             `binomial(0,k)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -42,7 +42,7 @@ describe("binomial", function () {
         const lines: string[] = [
             `binomial(n,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

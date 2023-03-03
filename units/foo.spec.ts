@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("foo", function () {
@@ -7,7 +7,7 @@ describe("foo", function () {
         const lines: string[] = [
             `foo(1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsAscii(actual), "foo(1)");
@@ -21,7 +21,7 @@ describe("foo", function () {
         const lines: string[] = [
             `foo(1,i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsAscii(actual), "foo(1,i)");

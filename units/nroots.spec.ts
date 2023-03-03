@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("nroots", function () {
     it("nroots(x)", function () {
@@ -7,7 +7,7 @@ describe("nroots", function () {
             `nroots(x)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: true
         });
@@ -20,7 +20,7 @@ describe("nroots", function () {
             `nroots(x-1)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: true
         });
@@ -33,7 +33,7 @@ describe("nroots", function () {
             `nroots(x+1)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: true
         });
@@ -45,7 +45,7 @@ describe("nroots", function () {
         const lines: string[] = [
             `nroots((1+i)*x^2+1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: true
         });
@@ -57,7 +57,7 @@ describe("nroots", function () {
         const lines: string[] = [
             `nroots(sqrt(2)*exp(i*pi/4)*x^2+1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: true
         });
@@ -69,7 +69,7 @@ describe("nroots", function () {
         const lines: string[] = [
             `nroots(x^2+1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: true
         });
@@ -82,7 +82,7 @@ describe("nroots", function () {
         const lines: string[] = [
             `nroots(x^4+1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: true
         });

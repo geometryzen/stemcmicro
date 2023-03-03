@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("tan", function () {
@@ -7,7 +7,7 @@ describe("tan", function () {
         const lines: string[] = [
             `tan(x)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(tan x)");
         assert.strictEqual(engine.renderAsInfix(actual), "tan(x)");
@@ -18,7 +18,7 @@ describe("tan", function () {
         const lines: string[] = [
             `tan(-x)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(* -1 (tan x))");
         assert.strictEqual(engine.renderAsInfix(actual), "-tan(x)");
@@ -29,7 +29,7 @@ describe("tan", function () {
         const lines: string[] = [
             `tan(b-a)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "-tan(a-b)");
 
@@ -40,7 +40,7 @@ describe("tan", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(0,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -54,7 +54,7 @@ describe("tan", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(180,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -68,7 +68,7 @@ describe("tan", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(-180,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -82,7 +82,7 @@ describe("tan", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(360,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -96,7 +96,7 @@ describe("tan", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(-360,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -110,7 +110,7 @@ describe("tan", function () {
             `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(135,-1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });

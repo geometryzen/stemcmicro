@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cofactor", function () {
@@ -7,7 +7,7 @@ describe("cofactor", function () {
         const lines: string[] = [
             `cofactor([[1,2],[3,4]],1,1)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "4");
         assert.strictEqual(engine.renderAsInfix(actual), "4");
@@ -17,7 +17,7 @@ describe("cofactor", function () {
         const lines: string[] = [
             `cofactor([[1,2],[3,4]],1,2)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "-3");
         assert.strictEqual(engine.renderAsInfix(actual), "-3");
@@ -27,7 +27,7 @@ describe("cofactor", function () {
         const lines: string[] = [
             `cofactor([[1,2],[3,4]],2,1)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "-2");
         assert.strictEqual(engine.renderAsInfix(actual), "-2");
@@ -37,7 +37,7 @@ describe("cofactor", function () {
         const lines: string[] = [
             `cofactor([[1,2],[3,4]],2,2)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "1");
         assert.strictEqual(engine.renderAsInfix(actual), "1");

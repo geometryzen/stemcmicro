@@ -62,7 +62,7 @@ import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRI
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_opr_eq_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
-import { scan } from '../scanner/scan';
+import { scan } from '../brite/scan';
 import { booT } from '../tree/boo/Boo';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
 import { negOne, one, Rat, zero } from '../tree/rat/Rat';

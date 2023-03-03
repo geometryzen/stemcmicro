@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("mul", function () {
@@ -7,7 +7,7 @@ describe("mul", function () {
         const lines: string[] = [
             `(x*x)/x`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "x");
         assert.strictEqual(engine.renderAsInfix(actual), "x");
@@ -19,7 +19,7 @@ describe("mul", function () {
             `(a*b)*c`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -32,7 +32,7 @@ describe("mul", function () {
             `0.0*a`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -44,7 +44,7 @@ describe("mul", function () {
             `a*0.0`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);

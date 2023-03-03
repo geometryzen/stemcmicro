@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("coeff", function () {
     it("coeff(40*x^3+30*x^2+20*x+10,3)", function () {
         const lines: string[] = [
             `coeff(40*x^3+30*x^2+20*x+10,3)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -18,7 +18,7 @@ describe("coeff", function () {
         const lines: string[] = [
             `coeff(40*x^3+30*x^2+20*x+10,2)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -30,7 +30,7 @@ describe("coeff", function () {
         const lines: string[] = [
             `coeff(40*x^3+30*x^2+20*x+10,1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -42,7 +42,7 @@ describe("coeff", function () {
         const lines: string[] = [
             `coeff(40*x^3+30*x^2+20*x+10,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

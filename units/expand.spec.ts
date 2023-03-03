@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../index";
+import { create_script_context } from "../index";
 
 describe("expand", function () {
     it("(a+b)*c", function () {
@@ -7,7 +7,7 @@ describe("expand", function () {
             `(a+b)*c`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -20,7 +20,7 @@ describe("expand", function () {
             `(a+b+c)*d`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);

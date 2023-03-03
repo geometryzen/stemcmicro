@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("add", function () {
@@ -8,7 +8,7 @@ describe("add", function () {
         const lines: string[] = [
             `2.0+3`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -21,7 +21,7 @@ describe("add", function () {
         const lines: string[] = [
             `2+3.0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -34,7 +34,7 @@ describe("add", function () {
             `a+b`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -47,7 +47,7 @@ describe("add", function () {
             `b+a`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -60,7 +60,7 @@ describe("add", function () {
             `a+b+c`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -73,7 +73,7 @@ describe("add", function () {
             `b+a+c`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -86,7 +86,7 @@ describe("add", function () {
             `a+b+b+a`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
@@ -99,7 +99,7 @@ describe("add", function () {
             `a+b+c+c+b+a`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);

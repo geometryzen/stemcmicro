@@ -1,8 +1,8 @@
 
 import { assert } from "chai";
 import { is_str } from "../src/operators/str/is_str";
-import { ts_parse } from "../src/parser/ts_parse";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { ts_parse } from "../src/typescript/ts_parse";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value } from "./assert_one_value";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -12,7 +12,7 @@ describe("tsparse", function () {
             `x`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "x");
 
@@ -27,7 +27,7 @@ describe("tsparse", function () {
         const lines: string[] = [
             `12345`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "12345");
 
@@ -42,7 +42,7 @@ describe("tsparse", function () {
         const lines: string[] = [
             `12345.0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -59,7 +59,7 @@ describe("tsparse", function () {
         const lines: string[] = [
             `"Hello"`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
         assert.strictEqual(engine.renderAsSExpr(actual), '"Hello"');
@@ -83,7 +83,7 @@ describe("tsparse", function () {
         const lines: string[] = [
             `"Hello"`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // The result here would be different in version 1.x
         assert.strictEqual(engine.renderAsSExpr(actual), '"Hello"');
@@ -108,7 +108,7 @@ describe("tsparse", function () {
             `a+b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -122,7 +122,7 @@ describe("tsparse", function () {
             `a-b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
         assert.strictEqual(engine.renderAsSExpr(tree), "(- a b)");
@@ -135,7 +135,7 @@ describe("tsparse", function () {
             `a*b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -149,7 +149,7 @@ describe("tsparse", function () {
             `a/b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -163,7 +163,7 @@ describe("tsparse", function () {
             `a^b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -177,7 +177,7 @@ describe("tsparse", function () {
             `a<<b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -191,7 +191,7 @@ describe("tsparse", function () {
             `a>>b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -205,7 +205,7 @@ describe("tsparse", function () {
             `a**b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -219,7 +219,7 @@ describe("tsparse", function () {
             `x = 3`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -233,7 +233,7 @@ describe("tsparse", function () {
             `let a: A`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -247,7 +247,7 @@ describe("tsparse", function () {
             `let a: Real = b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -261,7 +261,7 @@ describe("tsparse", function () {
             `let a: Complex = b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
@@ -275,7 +275,7 @@ describe("tsparse", function () {
             `let a: Vec = b`
         ];
 
-        const engine = create_script_engine();
+        const engine = create_script_context();
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);

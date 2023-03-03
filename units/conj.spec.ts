@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("conj", function () {
@@ -7,7 +7,7 @@ describe("conj", function () {
         const lines: string[] = [
             `conj(1)`
         ];
-        const engine = create_script_engine({});
+        const engine = create_script_context({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), '1');
         engine.release();
@@ -16,7 +16,7 @@ describe("conj", function () {
         const lines: string[] = [
             `conj(x)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), 'x');
         engine.release();
@@ -25,7 +25,7 @@ describe("conj", function () {
         const lines: string[] = [
             `conj(-x)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), '-x');
         engine.release();
@@ -34,7 +34,7 @@ describe("conj", function () {
         const lines: string[] = [
             `conj(a*b)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), 'a*b');
         engine.release();

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("sgn", function () {
     // Rat
@@ -7,7 +7,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(-3)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "-1");
@@ -18,7 +18,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
@@ -29,7 +29,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(3)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -41,7 +41,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(3.0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -52,7 +52,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(-3.0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "-1");
@@ -63,7 +63,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(0.0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
@@ -74,7 +74,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(a)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "a/abs(a)");
@@ -84,7 +84,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(a*b)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "a*b/(abs(a)*abs(b))");
@@ -96,7 +96,7 @@ describe("sgn", function () {
         const lines: string[] = [
             `sgn(5*b)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "b/abs(b)");
@@ -107,7 +107,7 @@ describe("sgn", function () {
             `i=sqrt(-1)`,
             `sgn(x+i*y)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

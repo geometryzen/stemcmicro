@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("do", function () {
     it("d(1/(5+4*cos(x)),x)", function () {
         const lines: string[] = [
             `d(1/(5+4*cos(x)),x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

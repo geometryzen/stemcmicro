@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("predicate", function () {
@@ -7,7 +7,7 @@ describe("predicate", function () {
         const lines: string[] = [
             `x==0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -19,7 +19,7 @@ describe("predicate", function () {
         const lines: string[] = [
             `x>0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -31,7 +31,7 @@ describe("predicate", function () {
         const lines: string[] = [
             `x<0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -43,7 +43,7 @@ describe("predicate", function () {
         const lines: string[] = [
             `x * y < 0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -55,7 +55,7 @@ describe("predicate", function () {
         const lines: string[] = [
             `x * y > 0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

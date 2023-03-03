@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../index";
+import { create_script_context } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("exp", function () {
@@ -7,7 +7,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(5)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         engine.executeScript("e=exp(1)");
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(power e 5)");
@@ -19,7 +19,7 @@ describe("exp", function () {
             `e=exp(1)`,
             `exp(1)`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "e");
         assert.strictEqual(engine.renderAsInfix(actual), "e");
@@ -29,7 +29,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(i*pi)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -40,7 +40,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(pi*i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -51,7 +51,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(i*x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -62,7 +62,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-i*x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -73,7 +73,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(x*i)+exp(-x*i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -84,7 +84,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-x*i)+exp(x*i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -95,7 +95,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(x*i)-exp(-x*i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -106,7 +106,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-x*i)-exp(x*i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -117,7 +117,7 @@ describe("exp", function () {
         const lines: string[] = [
             `exp(-3/4*i*pi)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);

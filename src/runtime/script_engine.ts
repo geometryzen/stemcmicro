@@ -1,6 +1,7 @@
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ScriptKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
@@ -13,18 +14,25 @@ import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { execute_definition, execute_std_definitions } from "./init";
 
-export interface ScriptEngineOptions {
+export interface ScriptContextOptions {
+    /**
+     * Determines what kind of parser is used for the sourceText.
+     */
+    scriptKind?: ScriptKind,
     /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
      * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
      * in applications using Geometric Algebra. The default value is false.
      */
     useCaretForExponentiation?: boolean;
+    /**
+     * @deprecated
+     */
     useDefinitions?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function init_env($: ExtensionEnv, options?: ScriptEngineOptions) {
+export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
 
     hard_reset();
 
@@ -47,7 +55,7 @@ export function env_term($: ExtensionEnv) {
     $.clearOperators();
 }
 
-export interface ScriptEngine {
+export interface ScriptContext {
     clearBindings(): void;
     getBinding(sym: Sym): U;
     getBindings(): { sym: Sym, binding: U }[]
@@ -63,7 +71,7 @@ export interface ScriptEngine {
     release(): void;
 }
 
-export function env_options_from_engine_options(options: ScriptEngineOptions | undefined): EnvOptions {
+export function env_options_from_sm_context_options(options: ScriptContextOptions | undefined): EnvOptions {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: EnvOptions, description: string): EnvOptions {
         // console.lg(`env_options_from_engine_options(${JSON.stringify(options)}) => ${JSON.stringify(retval)} @ ${description}`);
@@ -97,12 +105,12 @@ export function env_options_from_engine_options(options: ScriptEngineOptions | u
  * Creates an engine for executing scripts.
  * The returned engine is reference counted and should be released when no longer needed.
  */
-export function create_script_engine(options?: ScriptEngineOptions): ScriptEngine {
+export function create_script_context(options?: ScriptContextOptions): ScriptContext {
     let ref_count = 1;
-    const envOptions: EnvOptions = env_options_from_engine_options(options);
+    const envOptions: EnvOptions = env_options_from_sm_context_options(options);
     const $ = create_env(envOptions);
     init_env($, options);
-    const theEngine: ScriptEngine = {
+    const theEngine: ScriptContext = {
         clearBindings(): void {
             $.clearBindings();
         },

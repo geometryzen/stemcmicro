@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../index";
+import { create_script_context } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("float", function () {
@@ -7,7 +7,7 @@ describe("float", function () {
         const lines: string[] = [
             `float(tau(1/2))`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -19,7 +19,7 @@ describe("float", function () {
         const lines: string[] = [
             `1+i`
         ];
-        const engine = create_script_engine({});
+        const engine = create_script_context({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ 1 i)");
         assert.strictEqual(engine.renderAsInfix(actual), "1+i");
@@ -29,7 +29,7 @@ describe("float", function () {
         const lines: string[] = [
             `1+2*i`
         ];
-        const engine = create_script_engine({});
+        const engine = create_script_context({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(+ 1 (* 2 i))");
         assert.strictEqual(engine.renderAsInfix(actual), "1+2*i");
@@ -39,7 +39,7 @@ describe("float", function () {
         const lines: string[] = [
             `(1+2*i)^(1/2)`
         ];
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "(power (+ 1 (* 2 i)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(actual), "(1+2*i)^(1/2)");
@@ -49,7 +49,7 @@ describe("float", function () {
         const lines: string[] = [
             `float((1+2*i)^(1/2))`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useCaretForExponentiation: true
         });
@@ -62,7 +62,7 @@ describe("float", function () {
         const lines: string[] = [
             `float(x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -75,7 +75,7 @@ describe("float", function () {
         const lines: string[] = [
             `float(pi)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -89,7 +89,7 @@ describe("float", function () {
             `float(exp(1))`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useDefinitions: false });
+        const engine = create_script_context({ useDefinitions: false });
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {
@@ -106,7 +106,7 @@ describe("float", function () {
             `log(-1.0)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useDefinitions: true });
+        const engine = create_script_context({ useDefinitions: true });
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {
@@ -123,7 +123,7 @@ describe("float", function () {
             `log(-1.0)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useDefinitions: false });
+        const engine = create_script_context({ useDefinitions: false });
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {

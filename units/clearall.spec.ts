@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 // TODO: Finish
 describe("clearall", function () {
@@ -7,7 +7,7 @@ describe("clearall", function () {
         const sourceText = [
             `clear(E)`,
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -27,7 +27,7 @@ describe("clearall", function () {
         const sourceText = [
             `clearall`,
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });

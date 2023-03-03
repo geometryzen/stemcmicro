@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cos", function () {
@@ -7,7 +7,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -18,7 +18,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(-x)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -29,7 +29,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(-x*y)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -40,7 +40,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(-x*y*z)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -51,7 +51,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(a+b)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -61,7 +61,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(b+a)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -71,7 +71,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(a-b)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -81,7 +81,7 @@ describe("cos", function () {
         const lines: string[] = [
             `cos(b-a)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

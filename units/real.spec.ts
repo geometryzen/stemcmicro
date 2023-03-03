@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../index";
+import { create_script_context } from "../index";
 
 describe("real", function () {
     it("exp(x*i)", function () {
@@ -7,7 +7,7 @@ describe("real", function () {
             `i=sqrt(-1)`,
             `real(exp(x*i))`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -20,7 +20,7 @@ describe("real", function () {
             `i=sqrt(-1)`,
             `real(x+i*y)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -33,7 +33,7 @@ describe("real", function () {
             `i=sqrt(-1)`,
             `real(exp(i*x))`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));

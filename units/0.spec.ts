@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { create_script_engine } from '../src/runtime/script_engine';
+import { create_script_context } from '../src/runtime/script_engine';
 
 describe("0", function () {
     it("B", function () {
@@ -7,7 +7,7 @@ describe("0", function () {
             `2 + 3`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useDefinitions: true });
+        const engine = create_script_context({ useDefinitions: true });
         const { values } = engine.executeScript(sourceText);
         const value = values[0];
         assert.strictEqual(engine.renderAsInfix(value), "5");

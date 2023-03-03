@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("mixedprint", function () {
     it("maxFixedPrintoutDigits should default to 6", function () {
         const sourceText = [
             `maxFixedPrintoutDigits`
         ].join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const { values } = engine.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
@@ -18,7 +18,7 @@ describe("mixedprint", function () {
             `maxFixedPrintoutDigits=20`,
             `maxFixedPrintoutDigits`
         ].join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const { values } = engine.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
@@ -30,7 +30,7 @@ describe("mixedprint", function () {
             `maxFixedPrintoutDigits=20`,
             `1.0*10^(-15)`
         ].join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
@@ -42,7 +42,7 @@ describe("mixedprint", function () {
             `maxFixedPrintoutDigits=10`,
             `1.0*10^(-15)`
         ].join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values } = engine.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
@@ -54,7 +54,7 @@ describe("mixedprint", function () {
             `maxFixedPrintoutDigits=10`,
             `tau(1)/2`
         ].join('\n');
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const { values, errors } = engine.executeScript(sourceText);
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0, "errors.length");
@@ -67,7 +67,7 @@ describe("mixedprint", function () {
         const sourceText = [
             `printhuman(x*y)`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -84,7 +84,7 @@ describe("mixedprint", function () {
             `1.0*10^(-15)`,
             `printhuman`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -102,7 +102,7 @@ describe("mixedprint", function () {
             `x*y`,
             `printhuman`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -120,7 +120,7 @@ describe("mixedprint", function () {
         const sourceText = [
             `printsexpr(x*y)`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -137,7 +137,7 @@ describe("mixedprint", function () {
             `x*y`,
             `printsexpr`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -154,7 +154,7 @@ describe("mixedprint", function () {
             `1.0*10^(-15)`,
             `printinfix`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -172,7 +172,7 @@ describe("mixedprint", function () {
             `a+b`,
             `printinfix`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -195,7 +195,7 @@ describe("mixedprint", function () {
             `printlatex`,
             `printsexpr`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -225,7 +225,7 @@ describe("mixedprint", function () {
             `printlatex`,
             `printsexpr`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });
@@ -255,7 +255,7 @@ describe("mixedprint", function () {
             `printlatex`,
             `printsexpr`
         ].join('\n');
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true,
             useDefinitions: false
         });

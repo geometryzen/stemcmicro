@@ -3,7 +3,7 @@ import { normalize_unicode_dots } from "../runtime/normalize_dots";
 import { U } from "../tree/tree";
 import { scan } from "./scan";
 
-export interface SmParseOptions {
+export interface BriteParseOptions {
     /**
      * Determines whether the caret symbol '^' is used to denote exponentiation.
      * The alternative is to use '**', which frees the caret symbol to denote the outer product.
@@ -25,7 +25,7 @@ interface ScanConfig {
     explicitAssocMul: boolean;
 }
 
-function config_from_options(options: SmParseOptions | undefined): ScanConfig {
+function config_from_options(options: BriteParseOptions | undefined): ScanConfig {
     if (options) {
         return {
             useCaretForExponentiation: !!options.useCaretForExponentiation,
@@ -48,7 +48,7 @@ function config_from_options(options: SmParseOptions | undefined): ScanConfig {
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the parsing behaves.
  */
-export function sm_parse(fileName: string, sourceText: string, options?: SmParseOptions): { trees: U[], errors: Error[] } {
+export function brite_parse(fileName: string, sourceText: string, options?: BriteParseOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config: ScanConfig = config_from_options(options);

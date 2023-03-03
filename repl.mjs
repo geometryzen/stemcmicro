@@ -1,6 +1,6 @@
 import process from 'node:process';
 import repl from 'node:repl';
-import { create_script_engine } from './dist/commonjs/index.js';
+import { create_script_context, ScriptKind } from './dist/commonjs/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isRecoverableError(error) {
@@ -10,13 +10,14 @@ function isRecoverableError(error) {
     return false;
 }
 
-const engine = create_script_engine({
+const ctxt = create_script_context({
+    scriptKind: ScriptKind.BRITE,
     useCaretForExponentiation: false,
     useDefinitions: false
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function run(cmd, context, filename, callback) {
+function run(cmd, unusedContext, filename, callback) {
     /*
     let result;
     try {
@@ -29,12 +30,12 @@ function run(cmd, context, filename, callback) {
     }
     callback(null, result);
     */
-    const { values, errors } = engine.executeScript(cmd);
+    const { values, errors } = ctxt.executeScript(cmd);
     for (const error of errors) {
         return `${error}`;
     }
     for (const value of values) {
-        return engine.renderAsInfix(value);
+        return ctxt.renderAsInfix(value);
     }
 }
 
@@ -60,7 +61,7 @@ r.on('exit', () => {
 // Handle the .clear command.
 //
 r.on('reset', () => {
-    engine.clearBindings();
+    ctxt.clearBindings();
 });
 
 // r.write("");
@@ -73,7 +74,7 @@ process.on('beforeExit', (code) => {
 });
 
 process.on('exit', (code) => {
-    engine.release();
+    ctxt.release();
     if (code !== 0) {
         // console.lg('Process exit event with code: ', code);
     }

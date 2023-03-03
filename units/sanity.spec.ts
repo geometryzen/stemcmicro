@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine, is_cons, nil } from "../index";
+import { create_script_context, is_cons, nil } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sanity", function () {
@@ -10,7 +10,7 @@ describe("sanity", function () {
         const lines: string[] = [
             `float(i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt', 'Imu'],
             useCaretForExponentiation: true,
             useDefinitions: true

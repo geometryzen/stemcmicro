@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { create_env } from "../src/env/env";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("env", function () {
     describe("constructor", function () {
@@ -14,7 +14,7 @@ describe("env", function () {
             const lines: string[] = [
                 `exp(1)`
             ];
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "e");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "e");
@@ -25,7 +25,7 @@ describe("env", function () {
             const lines: string[] = [
                 `sqrt(-1)`
             ];
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "i");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "i");
@@ -36,7 +36,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a+b`
             ];
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a+b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ a b)");
@@ -47,7 +47,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a*b`
             ];
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a*b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(* a b)");
@@ -58,7 +58,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a**b`
             ];
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a**b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(power a b)");
@@ -69,7 +69,7 @@ describe("env", function () {
             const lines: string[] = [
                 `a^b`
             ];
-            const engine = create_script_engine({ useCaretForExponentiation: true });
+            const engine = create_script_context({ useCaretForExponentiation: true });
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a^b");
             assert.strictEqual(engine.renderAsSExpr(values[0]), "(power a b)");

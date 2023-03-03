@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { create_script_engine, ScriptEngineOptions } from "../index";
+import { create_script_context, ScriptContextOptions } from "../index";
+import { ScriptKind } from "../src/parser/parser";
 
 describe("example", function () {
     it("Geometric Algebra", function () {
@@ -19,16 +20,17 @@ describe("example", function () {
             `A|B`,
             `A^B`
         ];
-        const sourceText = lines.join('\n');
-        const options: ScriptEngineOptions = {
+        const sourcetText = lines.join('\n');
+        const options: ScriptContextOptions = {
+            scriptKind: ScriptKind.BRITE,
             useCaretForExponentiation: false,
             useDefinitions: false
         };
-        const engine = create_script_engine(options);
-        const { values } = engine.executeScript(sourceText);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "Ay*Bz*i-Az*By*i-Ax*Bz*j+Az*Bx*j+Ax*By*k-Ay*Bx*k");
-        assert.strictEqual(engine.renderAsInfix(values[1]), "Ax*Bx+Ay*By+Az*Bz");
-        assert.strictEqual(engine.renderAsInfix(values[2]), "Ax*By*i^j-Ay*Bx*i^j+Ax*Bz*i^k-Az*Bx*i^k+Ay*Bz*j^k-Az*By*j^k");
-        engine.release();
+        const context = create_script_context(options);
+        const { values } = context.executeScript(sourcetText);
+        assert.strictEqual(context.renderAsInfix(values[0]), "Ay*Bz*i-Az*By*i-Ax*Bz*j+Az*Bx*j+Ax*By*k-Ay*Bx*k");
+        assert.strictEqual(context.renderAsInfix(values[1]), "Ax*Bx+Ay*By+Az*Bz");
+        assert.strictEqual(context.renderAsInfix(values[2]), "Ax*By*i^j-Ay*Bx*i^j+Ax*Bz*i^k-Az*Bx*i^k+Ay*Bz*j^k-Az*By*j^k");
+        context.release();
     });
 });

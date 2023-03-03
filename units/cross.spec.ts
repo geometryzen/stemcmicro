@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("cross", function () {
@@ -15,7 +15,7 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = create_script_engine({ dependencies: ['Blade'] });
+        const engine = create_script_context({ dependencies: ['Blade'] });
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
@@ -37,7 +37,7 @@ describe("cross", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -52,7 +52,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -67,7 +67,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(j,j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -82,7 +82,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,k)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -97,7 +97,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -112,7 +112,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(j,k)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -127,7 +127,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -142,7 +142,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(j,i)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -157,7 +157,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -172,7 +172,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,k)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -187,7 +187,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(a*i,j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -202,7 +202,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i*a,j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -217,7 +217,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i,a*j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -232,7 +232,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(i+k,j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -247,7 +247,7 @@ describe("cross", function () {
             `k=G[3]`,
             `cross(k,i+j)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -262,7 +262,7 @@ describe("cross", function () {
             `k=G[3]`,
             `k+j+i+k+j+i`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -281,7 +281,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `cross(A,B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         // const startTime = new Date().getTime();
@@ -302,7 +302,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `cross(A,B)+cross(B,A)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         // const startTime = new Date().getTime();
@@ -323,7 +323,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A^B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         // const startTime = new Date().getTime();
@@ -344,7 +344,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A^B+B^A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         // const startTime = new Date().getTime();
@@ -365,7 +365,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A|B-B|A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -384,7 +384,7 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -403,7 +403,7 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))-B*(A|C)+C*(A|B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -423,7 +423,7 @@ describe("cross", function () {
             `I = e1 * e2 * e3`,
             `I * (e1 ^ e2)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -443,7 +443,7 @@ describe("cross", function () {
             `I = e1 * e2 * e3`,
             `cross(A,B)+I*(A^B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         // const startTime = new Date().getTime();
@@ -468,7 +468,7 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))+(A*(B^C)-(B^C)*A)/2`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -488,7 +488,7 @@ describe("cross", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = create_script_engine({ dependencies: ['Blade'] });
+        const engine = create_script_context({ dependencies: ['Blade'] });
         // const startTime = new Date().getTime();
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // const elapsedTime = new Date().getTime() - startTime;
@@ -505,7 +505,7 @@ describe("cross", function () {
             `A = i * Ax`,
             `A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -522,7 +522,7 @@ describe("cross", function () {
             `B = i * Bx + j * By + k * Bz`,
             `cross(A,B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         // const startTime = new Date().getTime();

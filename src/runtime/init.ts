@@ -1,7 +1,7 @@
 import { ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
 import { useCaretForExponentiation } from "../modes/modes";
 import { clear_patterns } from '../pattern';
-import { scan } from '../scanner/scan';
+import { scan } from '../brite/scan';
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs } from './defs';
 

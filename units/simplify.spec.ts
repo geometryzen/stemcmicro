@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("simplify", function () {
@@ -7,7 +7,7 @@ describe("simplify", function () {
         const lines: string[] = [
             `simplify(exp(-3/4*i*pi))`
         ];
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // Expecting -(1+i)/(2^(1/2))
         assert.strictEqual(engine.renderAsSExpr(actual), "(power e (* -3/4 i pi))");
@@ -20,7 +20,7 @@ describe("simplify", function () {
         const lines: string[] = [
             `simplify(cos(x)^2+sin(x)^2)`
         ];
-        const engine = create_script_engine({ useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "1");
         assert.strictEqual(engine.renderAsInfix(actual), "1");

@@ -2,9 +2,10 @@
 import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
+import { ScriptKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
 import { defs } from './src/runtime/defs';
-import { create_script_engine, ScriptEngine, ScriptEngineOptions } from './src/runtime/script_engine';
+import { create_script_context, ScriptContext, ScriptContextOptions } from './src/runtime/script_engine';
 import { U } from './src/tree/tree';
 
 const shardCount = Number(process.env['TEST_TOTAL_SHARDS']) || 1;
@@ -183,7 +184,7 @@ test.failing = function failing<T extends unknown[]>(name: string, f: (t: Assert
 export { test };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOptions) {
+function setup_test(f: () => void, engine: ScriptContext, options: ScriptContextOptions) {
     // TODO: Some global issues to be addressed...
     // Inlining 'clearall' is illuminating.
     // Reveals some objects that are still global.
@@ -224,8 +225,8 @@ function setup_test(f: () => void, engine: ScriptEngine, options: ScriptEngineOp
  * @param prefix 
  */
 export function run_shardable_test(s: string[], prefix = '') {
-    const options: ScriptEngineOptions = {};
-    const engine = create_script_engine(options);
+    const options: ScriptContextOptions = {};
+    const engine = create_script_context(options);
     try {
         setup_test(() => {
             for (let i = 0; i < s.length; i += 2) {
@@ -283,15 +284,17 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
 /**
  * For the test harness we use the caret symbol for exponentiation.
  */
-function harness_options_to_engine_options(options: TestOptions | undefined): ScriptEngineOptions {
+function harness_options_to_script_context_options(options: TestOptions | undefined): ScriptContextOptions {
     if (options) {
         return {
-            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true
+            useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
+            scriptKind: ScriptKind.BRITE
         };
     }
     else {
         return {
-            useCaretForExponentiation: true
+            useCaretForExponentiation: true,
+            scriptKind: ScriptKind.BRITE
         };
     }
 }
@@ -315,8 +318,8 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
  */
 export function run_test(s: string[], options?: TestOptions): void {
     // const config = test_config_from_options(options);
-    const engcfg = harness_options_to_engine_options(options);
-    const engine = create_script_engine(engcfg);
+    const engcfg: ScriptContextOptions = harness_options_to_script_context_options(options);
+    const engine = create_script_context(engcfg);
     try {
         setup_test(() => {
             test(name_from_harness_options(options) || `${testIndex}`, t => {

@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("vectors", function () {
@@ -12,7 +12,7 @@ describe("vectors", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -29,7 +29,7 @@ describe("vectors", function () {
             `A = i * Ax + j * Ay + k * Az`,
             `abs(A)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -47,7 +47,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A|B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -65,7 +65,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A<<B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -83,7 +83,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By + k * Bz`,
             `A>>B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -102,7 +102,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `B*(A|C)-C*(A|B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -121,7 +121,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -141,7 +141,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `cross(A,cross(B,C))-B*A|C+C*A|B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -160,7 +160,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -178,7 +178,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -196,7 +196,7 @@ describe("vectors", function () {
             `C = e1 * Cx + e2 * Cy + e3 * Cz`,
             `A|cross(B,C)-B|cross(C,A)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -212,7 +212,7 @@ describe("vectors", function () {
             `A = e1 * Ax + e2 * Ay + e3 * Az`,
             `abs(A)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -230,7 +230,7 @@ describe("vectors", function () {
             `B = i * Bx + j * By`,
             `A*B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -249,7 +249,7 @@ describe("vectors", function () {
                 `e3 = G30[3]`,
                 `e1|e1`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -265,7 +265,7 @@ describe("vectors", function () {
                 `e3 = G30[3]`,
                 `a*e1|e1`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -281,7 +281,7 @@ describe("vectors", function () {
                 `e3 = G30[3]`,
                 `a*b*e1|e1`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -299,7 +299,7 @@ describe("vectors", function () {
                 `B = b * e3`,
                 `cross(A,B)|e1`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -317,7 +317,7 @@ describe("vectors", function () {
                 `B = b * e3`,
                 `e1|cross(A,B)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -335,7 +335,7 @@ describe("vectors", function () {
                 `B = b * e3`,
                 `d(e1|cross(A,B),x)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -353,7 +353,7 @@ describe("vectors", function () {
                 `B = b * e3`,
                 `d(cross(A,B)|e1,x)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

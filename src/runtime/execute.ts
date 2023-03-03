@@ -1,12 +1,12 @@
 import { bake } from "../bake";
+import { ScanOptions } from '../brite/scan';
 import { ExtensionEnv, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
-import { sm_parse } from '../scanner/parse_script';
-import { ScanOptions } from '../scanner/scan';
+import { parse_script } from "../parser/parser";
 import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
@@ -32,7 +32,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  * @returns The return values, print outputs, and errors.
  */
 export function execute_script(fileName: string, sourceText: string, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = sm_parse(fileName, sourceText, scan_options($));
+    const { trees, errors } = parse_script(fileName, sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }
@@ -60,7 +60,7 @@ export function execute_script(fileName: string, sourceText: string, $: Extensio
 }
 
 export function transform_script(fileName: string, sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = sm_parse(fileName, sourceText, scan_options($));
+    const { trees, errors } = parse_script(fileName, sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }

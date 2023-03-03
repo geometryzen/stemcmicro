@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("round", function () {
     it("round(5/2)", function () {
         const lines: string[] = [
             `round(5/2)`,
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -18,7 +18,7 @@ describe("round", function () {
         const lines: string[] = [
             `round(5/2.0)`,
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });
@@ -30,7 +30,7 @@ describe("round", function () {
         const lines: string[] = [
             `round(5/2) - round(5/2.0)`,
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt'],
             useDefinitions: true
         });

@@ -9,7 +9,7 @@ import { is_num } from '../num/is_num';
 import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_add, is_multiply } from '../../runtime/helpers';
-import { scan_meta } from '../../scanner/scan';
+import { scan_meta } from '../../brite/scan';
 import { simplify } from '../simplify/simplify';
 import { transform } from '../../transform';
 import { wrap_as_flt } from '../../tree/flt/Flt';

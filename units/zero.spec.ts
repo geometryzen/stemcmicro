@@ -1,27 +1,29 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { ScriptKind } from "../src/parser/parser";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("zero", function () {
     it("zero(1,1)", function () {
         const lines: string[] = [
             `zero(1,1)`
         ];
-        const engine = create_script_engine({
+        const context = create_script_context({
+            scriptKind: ScriptKind.BRITE
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[0]]");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "[[0]]");
-        engine.release();
+        const { values } = context.executeScript(lines.join('\n'));
+        assert.strictEqual(context.renderAsSExpr(values[0]), "[[0]]");
+        assert.strictEqual(context.renderAsInfix(values[0]), "[[0]]");
+        context.release();
     });
     it("zero(2,2)", function () {
         const lines: string[] = [
             `zero(2,2)`
         ];
-        const engine = create_script_engine({
+        const context = create_script_context({
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[0,0],[0,0]]");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "[[0,0],[0,0]]");
-        engine.release();
+        const { values } = context.executeScript(lines.join('\n'));
+        assert.strictEqual(context.renderAsSExpr(values[0]), "[[0,0],[0,0]]");
+        assert.strictEqual(context.renderAsInfix(values[0]), "[[0,0],[0,0]]");
+        context.release();
     });
 });

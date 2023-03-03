@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("hermite", function () {
     it("hermite(x,0)", function () {
         const lines: string[] = [
             `hermite(x,0)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -17,7 +17,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,1)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "2*x");
@@ -27,7 +27,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,2)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             disable: ['factorize']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -38,7 +38,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,3)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             disable: ['factorize']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -49,7 +49,7 @@ describe("hermite", function () {
         const lines: string[] = [
             `hermite(x,4)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             disable: ['factorize']
         });
         const { values } = engine.executeScript(lines.join('\n'));

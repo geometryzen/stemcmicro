@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
@@ -7,7 +7,7 @@ describe("sandbox", function () {
         const lines: string[] = [
             `(-1)^(1/2)*0.0`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -18,7 +18,7 @@ describe("sandbox", function () {
         const lines: string[] = [
             `0.0*(-1)^(1/2)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -29,7 +29,7 @@ describe("sandbox", function () {
         const lines: string[] = [
             `1.0*(-1)^(1/2)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -40,7 +40,7 @@ describe("sandbox", function () {
         const lines: string[] = [
             `1+1.0*(-1)^(1/2)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -51,7 +51,7 @@ describe("sandbox", function () {
         const lines: string[] = [
             `abs(1+1.0*(-1)^(1/2))`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);

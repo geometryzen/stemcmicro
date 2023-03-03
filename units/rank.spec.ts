@@ -1,12 +1,12 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("rank", function () {
     it("rank(a)", function () {
         const lines: string[] = [
             `rank(a)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
@@ -25,7 +25,7 @@ describe("rank", function () {
             `T[1][1]`,
             `rank(T)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "[[1],[2]]");
@@ -39,7 +39,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([a,b,c])`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
@@ -53,7 +53,7 @@ describe("rank", function () {
             `c=[5,6,7]`,
             `rank([a,b,c])`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "2");
@@ -64,7 +64,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([[a,b,c]])`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "2");
@@ -75,7 +75,7 @@ describe("rank", function () {
         const lines: string[] = [
             `rank([[a],[b],[c]])`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "2");

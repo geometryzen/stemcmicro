@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { create_sym } from "../src/tree/sym/Sym";
 import { Tensor } from "../src/tree/tensor/Tensor";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -11,7 +11,7 @@ describe("tensor-sandbox", function () {
             `det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
         assert.strictEqual(engine.renderAsInfix(actual), "a*d-b*c");
         engine.release();
@@ -20,7 +20,7 @@ describe("tensor-sandbox", function () {
 
 describe("tensor", function () {
     it("sanity-check", function () {
-        // const engine = create_script_engine();
+        // const engine = create_script_context();
         const a = create_sym('a');
         const b = create_sym('b');
         const c = create_sym('c');
@@ -60,7 +60,7 @@ describe("tensor", function () {
             `A`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
         assert.strictEqual(engine.renderAsInfix(actual), "[[a,b],[c,d]]");
@@ -75,7 +75,7 @@ describe("tensor", function () {
                 `A[]`
             ];
             const sourceText = lines.join('\n');
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
             assert.strictEqual(engine.renderAsInfix(actual), "[[a,b],[c,d]]");
@@ -87,7 +87,7 @@ describe("tensor", function () {
                 `A[1]`
             ];
             const sourceText = lines.join('\n');
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
             assert.strictEqual(engine.renderAsInfix(actual), "[a,b]");
             engine.release();
@@ -98,7 +98,7 @@ describe("tensor", function () {
                 `A[2]`
             ];
             const sourceText = lines.join('\n');
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
             assert.strictEqual(engine.renderAsInfix(actual), "[c,d]");
             engine.release();
@@ -109,7 +109,7 @@ describe("tensor", function () {
                 `A[1,1]`
             ];
             const sourceText = lines.join('\n');
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
             assert.strictEqual(engine.renderAsInfix(actual), "a");
             engine.release();
@@ -120,7 +120,7 @@ describe("tensor", function () {
                 `A[1,2]`
             ];
             const sourceText = lines.join('\n');
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
             assert.strictEqual(engine.renderAsInfix(actual), "b");
             engine.release();
@@ -131,7 +131,7 @@ describe("tensor", function () {
                 `A[2,1]`
             ];
             const sourceText = lines.join('\n');
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
             assert.strictEqual(engine.renderAsInfix(actual), "c");
             engine.release();
@@ -142,7 +142,7 @@ describe("tensor", function () {
                 `A[2,2]`
             ];
             const sourceText = lines.join('\n');
-            const engine = create_script_engine();
+            const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
             assert.strictEqual(engine.renderAsInfix(actual), "d");
             engine.release();
@@ -153,7 +153,7 @@ describe("tensor", function () {
             const lines: string[] = [
                 `[[a,b],[c,d]]+[[p,q],[r,s]]`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: [],
                 useDefinitions: false,
                 useCaretForExponentiation: false
@@ -166,7 +166,7 @@ describe("tensor", function () {
             const lines: string[] = [
                 `[[p,q],[r,s]]+[[a,b],[c,d]]`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: [],
                 useDefinitions: false,
                 useCaretForExponentiation: false
@@ -179,7 +179,7 @@ describe("tensor", function () {
             const lines: string[] = [
                 `s*[[a,b],[c,d]]`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: [],
                 useDefinitions: false,
                 useCaretForExponentiation: false
@@ -192,7 +192,7 @@ describe("tensor", function () {
             const lines: string[] = [
                 `[[a,b],[c,d]]*s`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: [],
                 useDefinitions: false,
                 useCaretForExponentiation: false
@@ -205,7 +205,7 @@ describe("tensor", function () {
             const lines: string[] = [
                 `[[a,b],[c,d]]+[[p,q],[r,s]]`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: [],
                 useDefinitions: false,
                 useCaretForExponentiation: false
@@ -218,7 +218,7 @@ describe("tensor", function () {
             const lines: string[] = [
                 `[[a,b],[c,d]]*[[p,q],[r,s]]`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: [],
                 useDefinitions: false,
                 useCaretForExponentiation: false
@@ -234,7 +234,7 @@ describe("tensor", function () {
             `adj(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
         assert.strictEqual(engine.renderAsInfix(actual), "[[d,-b],[-c,a]]");
         engine.release();
@@ -245,7 +245,7 @@ describe("tensor", function () {
             `det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
         assert.strictEqual(engine.renderAsInfix(actual), "a*d-b*c");
         engine.release();
@@ -256,7 +256,7 @@ describe("tensor", function () {
             `inv(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
         assert.strictEqual(engine.renderAsInfix(actual), "[[d/(a*d-b*c),-b/(a*d-b*c)],[-c/(a*d-b*c),a/(a*d-b*c)]]");
         engine.release();
@@ -267,7 +267,7 @@ describe("tensor", function () {
             `inv(A)-adj(A)/det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine();
+        const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "[[0,0],[0,0]]");
         assert.strictEqual(engine.renderAsInfix(actual), "[[0,0],[0,0]]");
@@ -277,7 +277,7 @@ describe("tensor", function () {
         const lines: string[] = [
             `-[0,0]`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Imu'],
             useDefinitions: true,
             useCaretForExponentiation: false

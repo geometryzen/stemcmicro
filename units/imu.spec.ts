@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("imu", function () {
@@ -7,7 +7,7 @@ describe("imu", function () {
         const lines: string[] = [
             `i * i`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -25,7 +25,7 @@ describe("imu", function () {
             `kg=uom("kilogram")`,
             `2*i*x*"hello"*sin(x)*e1*kg`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             useDefinitions: true
         });

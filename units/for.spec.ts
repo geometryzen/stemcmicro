@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../src/runtime/script_engine";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("for", function () {
     it("compute pi to six digits using Viete's formula ( see http://www.pi314.net/eng/viete.php )", function () {
@@ -10,7 +10,7 @@ describe("for", function () {
             `float(y)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_engine({ useDefinitions: false });
+        const engine = create_script_context({ useDefinitions: false });
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {

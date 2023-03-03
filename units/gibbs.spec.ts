@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_engine } from "../index";
+import { create_script_context } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("gibbs", function () {
@@ -13,7 +13,7 @@ describe("gibbs", function () {
             `B = Bx * e1 + By * e2 + Bz * e3`,
             `A|B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -31,7 +31,7 @@ describe("gibbs", function () {
             `B = Bx * e1 + By * e2 + Bz * e3`,
             `cross(A,B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -47,7 +47,7 @@ describe("gibbs", function () {
             `A = Ax * e1 + Ay * e2 + Az * e3`,
             `abs(A)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -67,7 +67,7 @@ describe("gibbs", function () {
             `v=A-B`,
             `(u+v)/2`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -86,7 +86,7 @@ describe("gibbs", function () {
             `v=A-B`,
             `(u-v)/2`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -104,7 +104,7 @@ describe("gibbs", function () {
             `B = Bx * e1 + By * e2 + Bz * e3`,
             `A|e1-B|e1`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -125,7 +125,7 @@ describe("gibbs", function () {
             `B = Bx * e1 + By * e2 + Bz * e3`,
             `(A|B)**2-Ax*Ax*Bx*Bx-Ay*Ay*By*By-Az*Az*Bz*Bz-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz-2*Ay*Az*By*Bz`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -149,7 +149,7 @@ describe("gibbs", function () {
             `RHS=(A|A)*(B|B)-(A|B)**2`,
             `LHS-RHS`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -160,7 +160,7 @@ describe("gibbs", function () {
         const lines: string[] = [
             `Ax**2*(By*By)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -172,7 +172,7 @@ describe("gibbs", function () {
         const lines: string[] = [
             `Ax**2*(By*By)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -184,7 +184,7 @@ describe("gibbs", function () {
         const lines: string[] = [
             `Ax**2*By*By`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -208,7 +208,7 @@ describe("gibbs", function () {
             `D=cross(A,B)`,
             `D|D`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -231,7 +231,7 @@ describe("gibbs", function () {
             `C = Cx * e1 + Cy * e2 + Cz * e3`,
             `cross(A,B)|cross(A,B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -254,7 +254,7 @@ describe("gibbs", function () {
             `C = Cx * e1 + Cy * e2 + Cz * e3`,
             `A|A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -275,7 +275,7 @@ describe("gibbs", function () {
             `A = Ax * e1`,
             `A*A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -297,7 +297,7 @@ describe("gibbs", function () {
             `A = Ax * e1 + Ay * e2`,
             `A*A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -315,7 +315,7 @@ describe("gibbs", function () {
             `A = Ax * e1 + Ay * e2 + Az * e3`,
             `A*A`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             disable: ['factorize']
         });
@@ -337,7 +337,7 @@ describe("gibbs", function () {
             `B = By * e2`,
             `A*B`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -363,7 +363,7 @@ describe("gibbs", function () {
                 `RHS=B|cross(C,A)`,
                 `LHS-RHS`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -387,7 +387,7 @@ describe("gibbs", function () {
                 `RHS=B* A|C - C * A|B`,
                 `LHS-RHS`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -411,7 +411,7 @@ describe("gibbs", function () {
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `grad(f*g)-f*grad(g)-grad(f)*g`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -433,7 +433,7 @@ describe("gibbs", function () {
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `grad(A|B)-cross(A, curl(B))-cross(B,curl(A))-ddrv(B,A)-ddrv(A,B)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -455,7 +455,7 @@ describe("gibbs", function () {
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `div(f*A)-f*div(A)-A|grad(f)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -477,7 +477,7 @@ describe("gibbs", function () {
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `div(cross(A,B))-B|curl(A)+A|curl(B)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -501,7 +501,7 @@ describe("gibbs", function () {
                 `RHS=f*curl(A)-cross(A,grad(f))`,
                 `LHS-RHS`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -516,7 +516,7 @@ describe("gibbs", function () {
                 `e3=G30[3]`,
                 `Bz*e3*d(Az,z)`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
                 disable: ['factorize']
             });
@@ -541,7 +541,7 @@ describe("gibbs", function () {
                 `RHS=ddrv(A,B)-ddrv(B,A)+A*div(B)-B*div(A)`,
                 `LHS-RHS`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
                 disable: ['factorize']
             });
@@ -566,7 +566,7 @@ describe("gibbs", function () {
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `div(curl(A))`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
                 disable: ['factorize']
             });
@@ -584,7 +584,7 @@ describe("gibbs", function () {
                 `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
                 `curl(grad(f))`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -606,7 +606,7 @@ describe("gibbs", function () {
                 `RHS=grad(div(A))-laplacian(A)`,
                 `LHS-RHS`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

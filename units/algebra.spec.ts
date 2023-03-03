@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { create_script_engine, is_blade, is_tensor } from '../index';
+import { create_script_context, is_blade, is_tensor } from '../index';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("operator +", function () {
@@ -11,7 +11,7 @@ describe("operator +", function () {
             `X = b1 + b1`,
             `X`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -31,7 +31,7 @@ describe("algebra", function () {
             const lines: string[] = [
                 `algebra([1, 1, 1], ["L1", "L2", "L3"])`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const G30 = assert_one_value_execute(lines.join('\n'), engine);
@@ -70,7 +70,7 @@ describe("algebra", function () {
                 `X = b1 + b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -85,7 +85,7 @@ describe("algebra", function () {
                 `X = b1 + b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -100,7 +100,7 @@ describe("algebra", function () {
                 `X = b1 + b1`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -117,7 +117,7 @@ describe("algebra", function () {
                 `X = b1 - b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -135,7 +135,7 @@ describe("algebra", function () {
                 `X = b1 - b1`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -152,7 +152,7 @@ describe("algebra", function () {
                 `X = b1 * b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -168,7 +168,7 @@ describe("algebra", function () {
                 `X = 2 * b1`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -186,7 +186,7 @@ describe("algebra", function () {
                 `X = b1 * b2 * b3`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -204,7 +204,7 @@ describe("algebra", function () {
                 `X = b1 | b1`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -220,7 +220,7 @@ describe("algebra", function () {
                 `X = b1 | b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -238,7 +238,7 @@ describe("algebra", function () {
                 `X = b1 << b1`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -254,7 +254,7 @@ describe("algebra", function () {
                 `X = b1 << b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -272,7 +272,7 @@ describe("algebra", function () {
                 `X = b1 >> b1`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -288,7 +288,7 @@ describe("algebra", function () {
                 `X = b1 >> b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -306,7 +306,7 @@ describe("algebra", function () {
                 `X = b1 ^ b1`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -322,7 +322,7 @@ describe("algebra", function () {
                 `X = b1 ^ b2`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -339,7 +339,7 @@ describe("algebra", function () {
                 `X = b1 ^ b2 ^ b3`,
                 `X`
             ];
-            const engine = create_script_engine({
+            const engine = create_script_context({
                 dependencies: ['Blade']
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -374,7 +374,7 @@ describe("algebra", function () {
             `X = b1 - b1`,
             `X`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -389,7 +389,7 @@ describe("algebra", function () {
             `X = b1 - b2`,
             `X`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -401,7 +401,7 @@ describe("algebra", function () {
         const lines: string[] = [
             `a + (-1 * a)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -414,7 +414,7 @@ describe("algebra", function () {
             `a = 5`,
             `a + (-1 * a)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -427,7 +427,7 @@ describe("algebra", function () {
             `a = 5.0`,
             `a + (-1 * a)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Flt']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -444,7 +444,7 @@ describe("algebra", function () {
             `X = b1 + b2`,
             `X`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -459,7 +459,7 @@ describe("algebra", function () {
             `X = b1 + b2`,
             `X`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -474,7 +474,7 @@ describe("algebra", function () {
             `X = b1 + b1`,
             `X`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade']
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -498,7 +498,7 @@ describe("metric", function () {
             `C = Cx * e1 + Cy * e2 + Cz * e3`,
             `cross(A,B)`
         ];
-        const engine = create_script_engine({
+        const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

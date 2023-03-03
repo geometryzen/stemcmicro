@@ -1,4 +1,4 @@
-import { TokenParser } from "../../scanner/ScanConfig";
+import { TokenParser } from "../../brite/ScanConfig";
 import { Str } from "../../tree/str/Str";
 
 export class StrTokenParser implements TokenParser {

@@ -8,6 +8,7 @@ dist/cjs/src/
 dist/cjs/tests/
 dist/cjs/types/
 dist/cjs/units/
+dist/commonjs/
 dist/esm/index.d.ts
 dist/esm/test-harness.d.ts
 dist/esm/src/
@@ -18,6 +19,7 @@ dist/system/index.d.ts
 dist/system/test-harness.d.ts
 dist/system/src/
 dist/system/tests/
+dist/system/types/
 dist/system/units/
 dist/umd/index.d.ts
 dist/umd/test-harness.d.ts
@@ -42,9 +44,11 @@ index.html
 index.ts
 inspector.ts
 register.js
+repl.mjs
 REFACTORING.md
 TUTORIAL.md
 rollup.config.js
+rollup.config.mts
 run-micro-tests.ts
 run-tests-from-master.js
 run-tests-from-master.sh

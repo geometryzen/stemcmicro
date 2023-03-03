@@ -5,7 +5,7 @@ import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
-import { parse_script } from '../scanner/parse_script';
+import { sm_parse } from '../scanner/parse_script';
 import { ScanOptions } from '../scanner/scan';
 import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
@@ -25,13 +25,14 @@ function scan_options($: ExtensionEnv): ScanOptions {
 }
 
 /**
- * Scans the sourceText into a tree expression then evaluates the expression. 
+ * Scans the sourceText into a tree expression then evaluates the expression.
+ * @param fileName The name of the file containing the sourceText. 
  * @param sourceText The source text to be scanned.
  * @param $ The environment that defines the operators.
  * @returns The return values, print outputs, and errors.
  */
-export function execute_script(sourceText: string, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = parse_script(sourceText, scan_options($));
+export function execute_script(fileName: string, sourceText: string, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
+    const { trees, errors } = sm_parse(fileName, sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }
@@ -58,8 +59,8 @@ export function execute_script(sourceText: string, $: ExtensionEnv): { values: U
     return { values, prints, errors };
 }
 
-export function transform_script(sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = parse_script(sourceText, scan_options($));
+export function transform_script(fileName: string, sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
+    const { trees, errors } = sm_parse(fileName, sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }

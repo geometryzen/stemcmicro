@@ -12,7 +12,6 @@ import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { is_blade } from "../blade/is_blade";
-import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
 import { is_tensor } from "../tensor/is_tensor";
@@ -42,18 +41,7 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     if (is_num(lhs) && is_num(rhs)) {
         return multiply_num_num(lhs, rhs);
     }
-    /*
-    if (is_flt(lhs)) {
-        if (lhs.isZero()) {
-            return lhs;
-        }
-    }
-    if (is_flt(rhs)) {
-        if (rhs.isZero()) {
-            return rhs;
-        }
-    }
-    */
+    // TODO: Move these out, just like Flt.
     if (is_rat(lhs)) {
         if (lhs.isZero()) {
             return lhs;

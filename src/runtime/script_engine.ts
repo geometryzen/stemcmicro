@@ -120,7 +120,7 @@ export function create_script_engine(options?: ScriptEngineOptions): ScriptEngin
             execute_std_definitions($);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
-            return execute_script(sourceText, $);
+            return execute_script("", sourceText, $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);

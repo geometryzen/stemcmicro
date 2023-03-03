@@ -1,4 +1,4 @@
-import bigInt from 'big-integer';
+import { BigInteger } from 'big-integer';
 import { create_sym } from '../tree/sym/Sym';
 import { MATH_ADD, MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
 
@@ -274,7 +274,7 @@ export const MIDDLE_DOT_CHAR_CODE = 183;
 export const MIDDLE_DOT_STRING = String.fromCharCode(MIDDLE_DOT_CHAR_CODE);
 export const MIDDLE_DOT_REGEX_GLOBAL = new RegExp(MIDDLE_DOT_STRING, 'g');
 
-export function MSIGN(p: bigInt.BigInteger): 1 | -1 | 0 {
+export function MSIGN(p: BigInteger): 1 | -1 | 0 {
     if (p.isZero()) {
         return 0;
     }
@@ -286,8 +286,7 @@ export function MSIGN(p: bigInt.BigInteger): 1 | -1 | 0 {
 
 /**
  * p.equals(n)
- * @deprecated Find a way to do it through the Rat, encapsulating the BigInteger.
  */
-export function MEQUAL(p: bigInt.BigInteger, n: number): boolean {
+export function MEQUAL(p: BigInteger, n: number): boolean {
     return p.equals(n);
 }

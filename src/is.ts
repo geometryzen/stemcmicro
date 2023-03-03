@@ -343,7 +343,7 @@ export function isfraction(p: U): p is Rat {
  * @param expr The expresson being tested.
  * @param n The value that the expression must match.
  */
-export function equaln(expr: U/* | null | undefined*/, n: number): boolean {
+export function equaln(expr: U, n: number): boolean {
     if (expr !== null) {
         if (is_rat(expr)) {
             return MEQUAL(expr.a, n) && MEQUAL(expr.b, 1);

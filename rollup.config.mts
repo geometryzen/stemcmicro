@@ -21,9 +21,16 @@ const options: RollupOptions[] = [
         input: 'index.ts',
         output: [
             {
-                file: pkg.module,
+                banner,
+                file: './dist/esm/index.js',
                 format: 'esm',
                 sourcemap: true
+            },
+            {
+                file: './dist/esm/index.min.js',
+                format: 'esm',
+                sourcemap: true,
+                plugins: [terser()]
             },
             {
                 banner,
@@ -32,7 +39,6 @@ const options: RollupOptions[] = [
                 sourcemap: true
             },
             {
-                banner,
                 file: './dist/system/index.min.js',
                 format: 'system',
                 sourcemap: true,

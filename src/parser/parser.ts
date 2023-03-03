@@ -1,10 +1,11 @@
 import { BriteParseOptions, brite_parse } from "../brite/parse_script";
 import { U } from "../tree/tree";
-import type { TsParseOptions } from "../typescript/ts_parse";
+import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
 
 export enum ScriptKind {
     BRITE = 1,
     JS = 2,
+    PYTHON = 3,
     TS = 4,
 }
 
@@ -31,13 +32,11 @@ export function parse_script(fileName: string, sourceText: string, options?: Par
         case ScriptKind.BRITE: {
             return brite_parse(fileName, sourceText, brite_parse_options(options));
         }
-        /*
         case ScriptKind.JS:
         case ScriptKind.TS: {
             const tree = ts_parse(fileName, sourceText, ts_parse_options(options));
             return { trees: [tree], errors: [] };
         }
-        */
         default: {
             throw new Error(`options.scriptKind ${scriptKind} must be either BRITE or Js, or TS.`);
         }

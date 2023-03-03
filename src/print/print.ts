@@ -59,7 +59,7 @@ import {
     UNIT
 } from '../runtime/constants';
 import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
-import { is_abs, is_add, is_factorial, is_inner_or_dot, is_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
+import { is_abs, is_add, is_factorial, is_inner_or_dot, is_opr_eq_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { scan } from '../scanner/scan';
@@ -1775,7 +1775,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return str;
         }
     }
-    else if (is_cons(expr) && is_inv(expr)) {
+    else if (is_cons(expr) && is_opr_eq_inv(expr)) {
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
             str += print_INV_latex(expr, $);

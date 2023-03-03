@@ -1,12 +1,11 @@
-import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { divide } from './helpers/divide';
 import { makeList } from './makeList';
 import { adj } from './operators/adj/adj';
 import { det } from './operators/det/det';
-import { is_tensor } from './operators/tensor/is_tensor';
 import { INV, INVG } from './runtime/constants';
 import { halt } from './runtime/defs';
-import { is_identity_matrix, is_inner_or_dot, is_inv, is_num_or_tensor_or_identity_matrix } from './runtime/helpers';
+import { is_identity_matrix, is_inner_or_dot, is_num_or_tensor_or_identity_matrix, is_opr_eq_inv } from './runtime/helpers';
 import { is_square_matrix } from './tensor';
 import { Err } from './tree/err/Err';
 import { one, zero } from './tree/rat/Rat';
@@ -41,20 +40,8 @@ export function inv(expr: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
     };
 
     // an inv just goes away when applied to another inv
-    if (is_cons(expr) && is_inv(expr)) {
-        const cdr_expr = expr.cdr;
-        if (is_cons(cdr_expr)) {
-            const M = cdr_expr.car;
-            if (is_tensor(M)) {
-                return hook(M);
-            }
-            else {
-                return hook(new Err(''));
-            }
-        }
-        else {
-            return hook(new Err(''));
-        }
+    if (is_cons(expr) && is_opr_eq_inv(expr)) {
+        return expr.argList;
     }
 
     // inverse goes away in case of identity matrix

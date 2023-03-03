@@ -2,8 +2,9 @@ import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { inv } from "../../inv";
 import { MATH_INV } from "../../runtime/ns_math";
+import { cadr } from "../../tree/helpers";
 import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
@@ -17,12 +18,10 @@ class Builder implements OperatorBuilder<U> {
 type ARG = U;
 type EXP = UCons<Sym, ARG>;
 
-/*
-function Eval_inv(expr: Cons, $: ExtensionEnv): U {
+export function Eval_inv(expr: Cons, $: ExtensionEnv): U {
     const arg = $.valueOf(cadr(expr));
     return inv(arg, $);
 }
-*/
 
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;

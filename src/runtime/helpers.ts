@@ -64,7 +64,7 @@ export function is_transpose(expr: U): boolean {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, TRANSPOSE);
 }
 
-export function is_inv(expr: Cons): boolean {
+export function is_opr_eq_inv(expr: Cons): boolean {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, INV);
 }
 

@@ -4,7 +4,7 @@
 //
 import { ExtensionEnv, MODE_EXPANDING, MODE_FACTORING } from "../env/ExtensionEnv";
 import { evaluatingAsFloat } from "../modes/modes";
-import { Flt, negOneAsDouble, piAsDouble } from "../tree/flt/Flt";
+import { Flt, negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
@@ -217,9 +217,9 @@ export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lh
  */
 export class DynamicConstants {
     public static NegOne($: ExtensionEnv): Flt | Rat {
-        return $.getModeFlag(evaluatingAsFloat) ? negOneAsDouble : negOne;
+        return $.getModeFlag(evaluatingAsFloat) ? negOneAsFlt : negOne;
     }
     public static Pi($: ExtensionEnv): Sym | Flt {
-        return $.getModeFlag(evaluatingAsFloat) ? piAsDouble : PI;
+        return $.getModeFlag(evaluatingAsFloat) ? piAsFlt : PI;
     }
 }

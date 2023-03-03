@@ -10,7 +10,7 @@ import { is_negative_number } from '../../predicates/is_negative_number';
 import { ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
-import { piAsDouble, zeroAsDouble } from '../../tree/flt/Flt';
+import { piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
 import { create_sym } from '../../tree/sym/Sym';
@@ -32,7 +32,7 @@ export const MATH_ARG = create_sym('arg');
 
 export function define_arg($: ExtensionEnv): void {
     // If we also want to control the name as it appears in the script 
-    $.defineFunction(MATH_ARG, function (expr: Cons, $: ExtensionEnv): U {
+    $.defineTransform(MATH_ARG, function (expr: Cons, $: ExtensionEnv): U {
         const z = cadr(expr);
         // console.lg(`z => ${z}`);
         const value_of_z = $.valueOf(z);
@@ -80,11 +80,11 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyarg expr=${expr}`);
     // case of plain number
     if (is_num_and_gt_zero(expr) || is_pi(expr)) {
-        return is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? zeroAsDouble : zero;
+        return is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? zeroAsFlt : zero;
     }
 
     if (is_negative_number(expr)) {
-        const pi = is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? piAsDouble : PI;
+        const pi = is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? piAsFlt : PI;
         return $.negate(pi);
     }
 

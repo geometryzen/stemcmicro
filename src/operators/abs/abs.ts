@@ -9,14 +9,16 @@ import { is_negative } from '../../predicates/is_negative';
 import { is_negative_number } from '../../predicates/is_negative_number';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
-import { oneAsDouble } from '../../tree/flt/Flt';
+import { oneAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, items_to_cons, U } from '../../tree/tree';
 import { imag } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
+import { is_num } from '../num/is_num';
 import { is_pi } from '../pi/is_pi';
+import { is_rat } from '../rat/is_rat';
 import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { simplify, simplify_trig } from '../simplify/simplify';
@@ -100,6 +102,7 @@ export function abs(x: U, $: ExtensionEnv): U {
 // Keep the following function for reference.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function abs(x: U, $: ExtensionEnv): U {
+    // console.lg("abs x=", render_as_sexpr(x, $));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`abs ${render_as_infix(x, $)} => ${render_as_infix(retval, $)} @ ${description}`);
@@ -174,16 +177,33 @@ export function abs(x: U, $: ExtensionEnv): U {
     // abs(-1^anything) = abs(-1)^anything = 1^anything = 1
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
         // -1 to any power
-        return hook($.getModeFlag(evaluatingAsFloat) ? oneAsDouble : one, "G");
+        return hook($.getModeFlag(evaluatingAsFloat) ? oneAsFlt : one, "G");
     }
 
-    // abs(base^expo) is equal to abs(base)^expo IF expo is positive
+    // abs(base^expo) is equal to abs(base)^expo IF expo is positive.
+    // TODO: This needs more flexibility because (1/a)^(1/m) = a^(-1/m)
+    // console.lg("expr", render_as_sexpr(expr, $));
     if (is_cons(expr) && is_power(expr)) {
+        const base = cadr(expr);
         const expo = caddr(expr);
-        if (is_num_and_gt_zero(expo)) {
-            const base = cadr(expr);
-            const abs_base = abs(base, $);
-            return hook($.power(abs_base, expo), "H");
+        if (is_num(expo)) {
+            if (is_num_and_gt_zero(expo)) {
+                const abs_base = abs(base, $);
+                return hook($.power(abs_base, expo), "H");
+            }
+            if (is_rat(expo)) {
+                // const a = base;
+                // const m = expo.numer();
+                // const n = expo.denom();
+                // Let m = numer(expo), n = denom(expo), with n > 0. m is any integer.
+                // abs(a^(m/n)) = abs((a^(1/n))^m) = abs(a^(1/n))^m, for all m (positive, negative, zero)
+                // Notice that if m = +1, we get abs(a^(1/n)) = abs(a^(1/n))^1, which leads to infinite recursion.
+                // If a is a Num that is non-negative then we can take the n-th root and it will be positive.
+                // Under these conditions abs(a^(1/n)) = a^(1/n) and abs(a^(m/n)) = a^(m/n)
+                if (is_num(base) && !base.isNegative()) {
+                    return hook($.power(base, expo), "I");
+                }
+            }
         }
     }
 

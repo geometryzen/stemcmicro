@@ -86,7 +86,7 @@ export interface ExtensionEnv {
     /**
      * Defines the implementation of a function that is used to transform (name ...) expressions.
      */
-    defineFunction(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void;
+    defineTransform(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void;
     defineKeyword(sym: Sym, runner: ($: ExtensionEnv) => void): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;

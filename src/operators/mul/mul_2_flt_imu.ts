@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_IMU } from "../../hashing/hash_info";
 import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -33,10 +33,15 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {
+            // I'm not seeing this being called.
+            // It should be called in an extensible system where Flt is not native.
+            // It also happens to be WRONG because it forgets that the factor was a Flt (1.0) and uses a Rat (1).
             return [TFLAG_DIFF, zero];
         }
         if (lhs.isOne()) {
-            return [TFLAG_DIFF, rhs];
+            // Even though one is the identity element for multiplication, we have to keep
+            // the factor of 1.0 to know that we are using floats.
+            return [TFLAG_NONE, expr];
         }
         return [TFLAG_HALT, expr];
     }

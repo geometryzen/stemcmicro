@@ -1,7 +1,7 @@
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { SINH } from "../../runtime/constants";
-import { Flt, wrap_as_flt, zeroAsDouble } from "../../tree/flt/Flt";
+import { Flt, wrap_as_flt, zeroAsFlt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
@@ -33,7 +33,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         const d = Math.sinh(arg.d);
         // TODO: There use of this magic constant should be implementation defined.
         if (Math.abs(d) < 1e-10) {
-            return [TFLAG_DIFF, zeroAsDouble];
+            return [TFLAG_DIFF, zeroAsFlt];
         }
         else {
             return [TFLAG_DIFF, wrap_as_flt(d)];

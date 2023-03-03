@@ -1,9 +1,9 @@
 import { nativeDouble, rational } from "../../bignum";
 import { gt_num_num } from "../../calculators/compare/gt_num_num";
 import { complex_conjugate } from "../../complex_conjugate";
-import { divide } from "../../helpers/divide";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
+import { divide } from "../../helpers/divide";
 import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";
 import { is_rat_integer } from "../../is_rat_integer";
 import { evaluatingAsFloat, evaluatingAsPolar } from "../../modes/modes";
@@ -15,7 +15,7 @@ import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, 
 import { defs } from "../../runtime/defs";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { power_tensor } from "../../tensor";
-import { oneAsDouble, wrap_as_flt } from "../../tree/flt/Flt";
+import { oneAsFlt, wrap_as_flt } from "../../tree/flt/Flt";
 import { caddr, cadr } from "../../tree/helpers";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
@@ -51,6 +51,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`power ${render_as_infix(base, $)} ${render_as_infix(expo, $)} => ${render_as_infix(retval, $)} made by power_v1 at ${description}`);
+        // console.lg(`power ${render_as_sexpr(base, $)} ${render_as_sexpr(expo, $)} => ${render_as_sexpr(retval, $)} made by power_v1 at ${description}`);
         return retval;
     };
 
@@ -59,7 +60,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     //  1 ^ a    ->  1
     //  a ^ 0    ->  1
     if ($.equals(base, one) || $.isZero(expo)) {
-        const dynOne = $.getModeFlag(evaluatingAsFloat) ? oneAsDouble : one;
+        const dynOne = $.getModeFlag(evaluatingAsFloat) ? oneAsFlt : one;
         return hook(dynOne, "A");
     }
 
@@ -70,7 +71,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
 
     //   -1 ^ -1    ->  -1
     if (is_num_and_eq_minus_one(base) && is_num_and_eq_minus_one(expo)) {
-        const negOne = $.negate($.getModeFlag(evaluatingAsFloat) ? oneAsDouble : one);
+        const negOne = $.negate($.getModeFlag(evaluatingAsFloat) ? oneAsFlt : one);
         return hook(negOne, "C");
     }
 

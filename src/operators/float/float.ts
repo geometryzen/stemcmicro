@@ -2,7 +2,7 @@ import { rat_to_flt } from '../../bignum';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { eAsDouble, Flt, piAsDouble } from '../../tree/flt/Flt';
+import { eAsFlt, Flt, piAsFlt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
@@ -99,10 +99,10 @@ function yyfloat_(expr: U, $: ExtensionEnv): Flt | Cons | Tensor | U {
         return rat_to_flt(expr);
     }
     if (is_pi(expr)) {
-        return piAsDouble;
+        return piAsFlt;
     }
     if (is_base_of_natural_logarithm(expr)) {
-        return eAsDouble;
+        return eAsFlt;
     }
     return expr;
 }

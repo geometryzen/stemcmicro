@@ -1,6 +1,9 @@
 import { Atom } from "../atom/Atom";
 import { U } from "../tree";
 
+// TODO: Use the cache to intern common Flt values.
+const cache: Flt[] = [];
+
 /**
  * Constructs a floating point number object from a number primitive.
  * @param value The floating point number value.
@@ -8,6 +11,22 @@ import { U } from "../tree";
  * @param end The end position of the number in the source text.
  */
 export function wrap_as_flt(value: number, pos?: number, end?: number): Flt {
+    if (value === zeroAsFlt.d) {
+        return zeroAsFlt;
+    }
+    if (value === oneAsFlt.d) {
+        return oneAsFlt;
+    }
+    if (value === negOneAsFlt.d) {
+        return negOneAsFlt;
+    }
+    if (value === twoAsFlt.d) {
+        return twoAsFlt;
+    }
+    if (value === negTwoAsFlt.d) {
+        return negTwoAsFlt;
+    }
+    // console.lg("wrap_as_flt", value);
     return new Flt(value, pos, end);
 }
 
@@ -85,9 +104,15 @@ export class Flt extends Atom {
     }
 }
 
-export const zeroAsDouble = wrap_as_flt(0.0);
-export const oneAsDouble = wrap_as_flt(1.0);
-export const piAsDouble = wrap_as_flt(Math.PI);
-export const εAsDouble = wrap_as_flt(1e-6);
-export const eAsDouble = wrap_as_flt(Math.E);
-export const negOneAsDouble = wrap_as_flt(-1.0);
+export const zeroAsFlt = new Flt(0.0);
+export const oneAsFlt = new Flt(1.0);
+export const twoAsFlt = new Flt(2.0);
+export const piAsFlt = new Flt(Math.PI);
+export const εAsFlt = new Flt(1e-6);
+export const eAsFlt = new Flt(Math.E);
+export const negOneAsFlt = new Flt(-1.0);
+export const negTwoAsFlt = new Flt(-2.0);
+
+cache.push(zeroAsFlt);
+cache.push(oneAsFlt);
+

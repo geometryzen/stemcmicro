@@ -1,9 +1,9 @@
 import bigInt from 'big-integer';
-import { bignum_truncate, makePositive, makeSignSameAs, mp_denominator, mp_numerator } from './bignum';
+import { bignum_truncate, makePositive, makeSignSameAs } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
-import { is_num_and_eq_minus_one } from './is';
 import { in_safe_integer_range } from './in_safe_integer_range';
+import { is_num_and_eq_minus_one } from './is';
 import { is_rat_integer } from './is_rat_integer';
 import { makeList } from './makeList';
 import { mpow } from './mpow';
@@ -20,6 +20,7 @@ import { Cons, U } from './tree/tree';
 export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat | Sym | U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
+        // console.lg("pow_rat_rat", render_as_sexpr(base, $), render_as_sexpr(expo, $), render_as_sexpr(retval, $), description);
         return retval;
     };
 
@@ -87,19 +88,26 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
         return hook($.multiply(pow_rat_rat($.negate(base) as Rat, expo, $), pow_rat_rat(negOne, expo, $)), "I");
     }
 
-    // if BASE is not an integer then power numerator and denominator
+    // if base is not an integer then power numerator and denominator
     if (!is_rat_integer(base)) {
-        return hook($.multiply(pow_rat_rat(mp_numerator(base), expo, $), pow_rat_rat(mp_denominator(base), $.negate(expo) as Rat, $)), "J");
+        // (m/n)^a = m^a * n^(-a)
+        const m = base.numer();
+        const n = base.denom();
+        const a = expo;
+        const pow_m_a = pow_rat_rat(m, a, $);
+        const minus_a = a.neg();
+        const pow_n_minus_a = pow_rat_rat(n, minus_a, $);
+        return hook($.multiply(pow_m_a, pow_n_minus_a), "J");
     }
 
-    // At this point BASE is a positive integer.
+    // At this point base is a positive integer.
 
-    // If BASE is small then factor it.
+    // If base is small then factor it.
     if (is_small_integer(base)) {
         return hook(quickfactor(base, expo, $), "K");
     }
 
-    // At this point BASE is a positive integer and EXPO is not an integer.
+    // At this point base is a positive integer and EXPO is not an integer.
     if (!in_safe_integer_range(expo.a) || !in_safe_integer_range(expo.b)) {
         return hook(makeList(POWER, base, expo), "L");
     }

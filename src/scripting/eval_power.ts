@@ -5,6 +5,6 @@ import { Cons, U } from '../tree/tree';
 
 export function Eval_power(expr: Cons, $: ExtensionEnv): U {
     const base = $.valueOf(cadr(expr));
-    const exponent = $.valueOf(caddr(expr));
-    return power_v1(base, exponent, expr, $);
+    const expo = $.valueOf(caddr(expr));
+    return power_v1(base, expo, expr, $);
 }

@@ -15,7 +15,7 @@ import { is_flt } from '../flt/is_flt';
 import { is_rat } from '../rat/is_rat';
 import { ARCCOS, COS, PI, POWER } from '../../runtime/constants';
 import { is_multiply } from '../../runtime/helpers';
-import { piAsDouble, wrap_as_flt, zeroAsDouble } from '../../tree/flt/Flt';
+import { piAsFlt, wrap_as_flt, zeroAsFlt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { half, third, two, zero } from '../../tree/rat/Rat';
 import { car, cdr, U } from '../../tree/tree';
@@ -87,7 +87,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
     const n = nativeInt($.multiply(x, two));
     switch (n) {
         case -2:
-            return $.getModeFlag(evaluatingAsFloat) ? piAsDouble : PI;
+            return $.getModeFlag(evaluatingAsFloat) ? piAsFlt : PI;
         case -1:
             return $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt((Math.PI * 2.0) / 3.0) : $.multiply(rational(2, 3), PI);
         case 0:
@@ -95,7 +95,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
         case 1:
             return $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt(Math.PI / 3.0) : $.multiply(third, PI);
         case 2:
-            return $.getModeFlag(evaluatingAsFloat) ? zeroAsDouble : zero;
+            return $.getModeFlag(evaluatingAsFloat) ? zeroAsFlt : zero;
         default:
             return makeList(ARCCOS, x);
     }

@@ -18,6 +18,12 @@ import { is_rat } from "../rat/is_rat";
 import { is_tensor } from "../tensor/is_tensor";
 import { is_uom } from "../uom/is_uom";
 
+/**
+ * TODO: A better name might be transform_multiplicative_expr
+ * @param expr 
+ * @param $ 
+ * @returns 
+ */
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     const temp = $.valueOf(cadr(expr));
     const p1 = cddr(expr);
@@ -30,10 +36,13 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     // console.lg("lhs", render_as_sexpr(lhs, $));
     // console.lg("rhs", render_as_sexpr(rhs, $));
     // TODO: Optimize handling of numbers, 0, 1.
+
+    // TODO: This function should not known anything about Flt(s) and Rat(s).
+    // These optimizations should be introduced by extensions to multiplication.
     if (is_num(lhs) && is_num(rhs)) {
         return multiply_num_num(lhs, rhs);
     }
-
+    /*
     if (is_flt(lhs)) {
         if (lhs.isZero()) {
             return lhs;
@@ -44,6 +53,7 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
             return rhs;
         }
     }
+    */
     if (is_rat(lhs)) {
         if (lhs.isZero()) {
             return lhs;

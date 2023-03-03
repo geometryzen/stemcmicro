@@ -1,7 +1,7 @@
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { evaluatingAsFloat } from "../../modes/modes";
-import { piAsDouble } from "../../tree/flt/Flt";
+import { piAsFlt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -29,7 +29,7 @@ class SymExtension implements Extension<Sym> {
         // Doing the dirty work for PI. Why do we need a special case?
         // What about E from the math namespace?
         if (is_pi(sym) && $.getModeFlag(evaluatingAsFloat)) {
-            return piAsDouble;
+            return piAsFlt;
         }
 
         // Evaluate symbol's binding

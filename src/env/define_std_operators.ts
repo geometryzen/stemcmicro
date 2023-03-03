@@ -163,6 +163,7 @@ import { lco_2_mul_2_scalar_any_any } from '../operators/lco/lco_2_mul_2_scalar_
 import { legendre_varargs } from '../operators/legendre/legendre_varargs';
 import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
+import { Eval_multiply } from '../operators/mul/Eval_multiply';
 import { mul_2_any_rat } from '../operators/mul/mul_2_any_rat';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
 import { mul_2_blade_rat } from '../operators/mul/mul_2_blade_rat';
@@ -212,7 +213,7 @@ import { mul_2_uom_flt } from '../operators/mul/mul_2_uom_flt';
 import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
-import { mul_varargs } from '../operators/mul/mul_varargs';
+import { transform_mul_flt } from '../operators/mul/transform_mul_flt';
 import { nil_extension } from '../operators/nil/nil_extension';
 import { not_fn } from '../operators/not/not_fn';
 import { number_fn } from '../operators/number/number_fn';
@@ -314,7 +315,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CLEAR, CLEARALL, NROOTS, POLAR, RECT, SGN, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CLEAR, CLEARALL, MULTIPLY, NROOTS, POLAR, RECT, SGN, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -424,7 +425,7 @@ export function define_std_operators($: ExtensionEnv) {
     // $.defineOperator(pow_2_any_rat);
     // $.defineOperator(pow_2_any_any);
     // $.defineOperator(pow);
-    $.defineFunction(MATH_POW, Eval_power);
+    $.defineTransform(MATH_POW, Eval_power);
 
     $.defineOperator(mul_2_sym_blade);
     $.defineOperator(mul_2_one_any);
@@ -506,12 +507,13 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_blade_blade);
     $.defineOperator(mul_2_scalar_blade);
     $.defineOperator(mul_2_sin_cos);
-    $.defineOperator(mul_varargs);
+    $.defineTransform(MULTIPLY, transform_mul_flt);
+    $.defineTransform(MULTIPLY, Eval_multiply);
 
-    $.defineFunction(APPROXRATIO, Eval_approxratio);
+    $.defineTransform(APPROXRATIO, Eval_approxratio);
     $.defineOperator(binomial_varargs);
     $.defineOperator(choose_varargs);
-    $.defineFunction(CLEAR, Eval_clear);
+    $.defineTransform(CLEAR, Eval_clear);
     $.defineKeyword(CLEARALL, Eval_clearall);
 
     $.defineOperator(conj_inner);
@@ -593,12 +595,12 @@ export function define_std_operators($: ExtensionEnv) {
     // $.defineOperator(abs_sym_real);
     // $.defineOperator(abs_any);
     // $.defineOperator(abs_factorize);
-    $.defineFunction(MATH_ABS, Eval_abs);
+    $.defineTransform(MATH_ABS, Eval_abs);
 
     $.defineOperator(adj_any);
 
     $.defineOperator(algebra_2_tensor_tensor);
-    $.defineFunction(AND, Eval_and);
+    $.defineTransform(AND, Eval_and);
     $.defineOperator(arccos_varargs);
     $.defineOperator(arccosh_varargs);
     $.defineOperator(arcsin_varargs);
@@ -695,12 +697,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(not_fn);
     $.defineOperator(number_fn);
     $.defineOperator(numerator_fn);
-    $.defineFunction(NROOTS, Eval_nroots);
+    $.defineTransform(NROOTS, Eval_nroots);
     $.defineOperator(or_varargs);
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
-    $.defineFunction(POLAR, Eval_polar);
+    $.defineTransform(POLAR, Eval_polar);
 
     $.defineOperator(make_printmode_operator('print', () => defs.printMode));
     $.defineOperator(make_printmode_operator('printascii', () => PRINTMODE_ASCII));
@@ -722,14 +724,14 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
     $.defineOperator(real_any);
-    $.defineFunction(RECT, Eval_rect);
+    $.defineTransform(RECT, Eval_rect);
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);
 
     $.defineOperator(script_last_0);
-    $.defineFunction(SGN, sgn_extension_rat);
-    $.defineFunction(SGN, sgn_extension_flt);
-    $.defineFunction(SGN, Eval_sgn);
+    $.defineTransform(SGN, sgn_extension_rat);
+    $.defineTransform(SGN, sgn_extension_flt);
+    $.defineTransform(SGN, Eval_sgn);
     $.defineOperator(shape_varargs);
     $.defineOperator(simplify_varargs);
 
@@ -770,20 +772,20 @@ export function define_std_operators($: ExtensionEnv) {
 
 
     $.defineOperator(testeq_sym_rat);
-    $.defineFunction(TESTEQ, Eval_testeq);
-    $.defineFunction(TESTLE, Eval_testle);
+    $.defineTransform(TESTEQ, Eval_testeq);
+    $.defineTransform(TESTLE, Eval_testle);
 
     $.defineOperator(testlt_flt_rat);
     $.defineOperator(testlt_rat_rat);
     $.defineOperator(testlt_sym_rat);
     $.defineOperator(testlt_mul_2_any_any_rat);
-    $.defineFunction(TESTLT, Eval_testlt);
+    $.defineTransform(TESTLT, Eval_testlt);
 
-    $.defineFunction(TESTGE, Eval_testge);
+    $.defineTransform(TESTGE, Eval_testge);
     $.defineOperator(testgt_rat_rat);
     $.defineOperator(testgt_sym_rat);
     $.defineOperator(testgt_mul_2_any_any_rat);
-    $.defineFunction(TESTGT, Eval_testgt);
+    $.defineTransform(TESTGT, Eval_testgt);
 
     $.defineOperator(transpose_varargs);
 

@@ -3,6 +3,10 @@ import { one } from "../tree/rat/Rat";
 import { cons, Cons, is_cons, is_nil, U } from "../tree/tree";
 import { canonicalize_mul } from "./canonicalize/canonicalize_mul";
 
+/**
+ * Removes factors from a (* f1 f2 f3) or atom that satisfy the predicate.
+ * Essentialy returns an expression which is the original with factors removed.
+ */
 export function remove_factors(expr: U, predicate: (factor: U) => boolean): U {
     if (is_cons(expr)) {
         if (is_cons_opr_eq_mul(expr)) {

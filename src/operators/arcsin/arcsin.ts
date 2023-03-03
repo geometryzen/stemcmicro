@@ -13,7 +13,7 @@ import { evaluatingAsFloat } from '../../modes/modes';
 import { nativeInt } from '../../nativeInt';
 import { ARCSIN, PI, POWER } from '../../runtime/constants';
 import { is_multiply, is_sin } from '../../runtime/helpers';
-import { wrap_as_flt, zeroAsDouble } from '../../tree/flt/Flt';
+import { wrap_as_flt, zeroAsFlt } from '../../tree/flt/Flt';
 import { half, third, two, zero } from '../../tree/rat/Rat';
 import { car, cdr, is_cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
@@ -92,7 +92,7 @@ export function arcsin(x: U, $: ExtensionEnv): U {
         case -1:
             return $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt(-Math.PI / 6.0) : $.multiply(rational(-1, 6), PI);
         case 0:
-            return $.getModeFlag(evaluatingAsFloat) ? zeroAsDouble : zero;
+            return $.getModeFlag(evaluatingAsFloat) ? zeroAsFlt : zero;
         case 1:
             return $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt(Math.PI / 6.0) : $.multiply(rational(1, 6), PI);
         case 2:

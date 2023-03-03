@@ -219,7 +219,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        defineFunction(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void {
+        defineTransform(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void {
             this.defineOperator(make_pluggable_function_operator(opr, transformer));
         },
         defineKeyword(sym: Sym, runner: ($: ExtensionEnv) => void): void {

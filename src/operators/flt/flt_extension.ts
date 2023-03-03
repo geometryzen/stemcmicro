@@ -1,6 +1,6 @@
 import { Extension, ExtensionEnv, FEATURE, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
-import { Flt, oneAsDouble } from "../../tree/flt/Flt";
+import { Flt, oneAsFlt } from "../../tree/flt/Flt";
 import { U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
@@ -24,7 +24,7 @@ export class FltExtension implements Extension<Flt> {
         // Nothing to see here.
     }
     get key(): string {
-        return oneAsDouble.name;
+        return oneAsFlt.name;
     }
     get name(): string {
         return 'FltExtension';
@@ -64,7 +64,7 @@ export class FltExtension implements Extension<Flt> {
         return arg.isZero();
     }
     one(): Flt {
-        return oneAsDouble;
+        return oneAsFlt;
     }
     subst(expr: Flt, oldExpr: U, newExpr: U): U {
         if (is_flt(oldExpr)) {

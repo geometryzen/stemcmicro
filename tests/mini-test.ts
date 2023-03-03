@@ -42,7 +42,7 @@ run_test([
   'GDD=RDD-1/2*gdd*R',
   '',
 
-  'Gtt=1/r^2*exp(2 Phi(r)) d(r*(1 - exp(-2 Lambda(r))),r)',
+  'Gtt=1/r^2*exp(2 * Phi(r)) * d(r*(1 - exp(-2 * Lambda(r))),r)',
   '',
 
   'Grr=-1/r^2*exp(2*Lambda(r))*(1-exp(-2*Lambda(r)))+2/r*d(Phi(r),r)',

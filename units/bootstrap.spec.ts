@@ -885,7 +885,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `-1**0`
             ];
-            const engine = create_script_context();
+            const engine = create_script_context({ useCaretForExponentiation: false });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "-1");
             assert.strictEqual(engine.renderAsInfix(actual), "-1");
@@ -895,7 +895,7 @@ describe("C bootstrap", function () {
             const lines: string[] = [
                 `(-1)**0`
             ];
-            const engine = create_script_context();
+            const engine = create_script_context({ useCaretForExponentiation: false });
             const actual = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(actual), "1");
             assert.strictEqual(engine.renderAsInfix(actual), "1");

@@ -153,6 +153,7 @@
         "unit-trie": "mocha 'units/Trie.spec.ts'",
         "unit-trig": "mocha 'units/trig.spec.ts'",
         "unit-tsparse": "mocha 'units/tsparse.spec.ts'",
+        "unit-typhon": "mocha 'units/typhon.spec.ts'",
         "unit-tutorial": "mocha 'units/tutorial.spec.ts'",
         "unit-unit": "mocha 'units/unit.spec.ts'",
         "unit-uom": "mocha 'units/uom.spec.ts'",
@@ -245,8 +246,7 @@
     "dependencies": {
         "big-integer": "^1.6.51",
         "generic-rbtree": "^1.1.2",
-        "typhon-lang": "^1.0.10",
-        "typescript": "5.1.0-dev.20230303"
+        "typhon-lang": "^1.0.10"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
@@ -270,6 +270,7 @@
         "rollup-plugin-dts": "^5.2.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.1",
-        "typedoc": "^0.23.26"
+        "typedoc": "^0.23.26",
+        "typescript": "5.1.0-dev.20230303"
     }
 }

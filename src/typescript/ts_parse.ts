@@ -45,7 +45,7 @@ export interface TsParseOptions {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ts_parse(fileName: string, sourceText: string, options?: TsParseOptions): U {
-    // console.log(`create_source_tree(fileName => ${JSON.stringify(fileName)}, sourceText => ${JSON.stringify(sourceText)})`)
+    // console.lg(`create_source_tree(fileName => ${JSON.stringify(fileName)}, sourceText => ${JSON.stringify(sourceText)})`)
     const languageVersion = ScriptTarget.Latest;
     const setParentNodes = true;
     const scriptKind = ScriptKind.TS;

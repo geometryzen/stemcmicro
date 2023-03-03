@@ -1,7 +1,8 @@
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { ScriptKind } from "../parser/parser";
+import { useCaretForExponentiation } from "../modes/modes";
+import { ParseOptions, ScriptKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
@@ -128,7 +129,7 @@ export function create_script_context(options?: ScriptContextOptions): ScriptCon
             execute_std_definitions($);
         },
         executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
-            return execute_script("", sourceText, $);
+            return execute_script("", sourceText, parse_options_from_script_context_options(options, $), $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);
@@ -156,4 +157,26 @@ export function create_script_context(options?: ScriptContextOptions): ScriptCon
         }
     };
     return theEngine;
+}
+
+/**
+ * Makes use of the extension environment because this is called prior to each script execution.
+ */
+function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, 'scriptKind'> | undefined, $: ExtensionEnv): ParseOptions {
+    if (options) {
+        return {
+            scriptKind: options.scriptKind,
+            useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
+            explicitAssocAdd: false,
+            explicitAssocMul: false
+        };
+    }
+    else {
+        return {
+            scriptKind: ScriptKind.BRITE,
+            useCaretForExponentiation: false,
+            explicitAssocAdd: false,
+            explicitAssocMul: false
+        };
+    }
 }

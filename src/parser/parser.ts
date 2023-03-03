@@ -1,12 +1,19 @@
 import { BriteParseOptions, brite_parse } from "../brite/parse_script";
 import { U } from "../tree/tree";
-import { TsParseOptions, ts_parse } from "../typescript/ts_parse";
+import { TsParseOptions } from "../typescript/ts_parse";
+import { TyphonParseOptions, typhon_parse } from "../typhon/typhon_parse";
 
 export enum ScriptKind {
+    /**
+     * Brite syntax.
+     */
     BRITE = 1,
-    JS = 2,
-    PYTHON = 3,
-    TS = 4,
+    //    JS = 2,
+    /**
+     * Python syntax.
+     */
+    PY = 3,
+    //    TS = 4,
 }
 
 export interface ParseOptions {
@@ -32,11 +39,17 @@ export function parse_script(fileName: string, sourceText: string, options?: Par
         case ScriptKind.BRITE: {
             return brite_parse(fileName, sourceText, brite_parse_options(options));
         }
+        case ScriptKind.PY: {
+            const tree = typhon_parse(fileName, sourceText, typhon_parse_options(options));
+            return { trees: [tree], errors: [] };
+        }
+        /*
         case ScriptKind.JS:
         case ScriptKind.TS: {
             const tree = ts_parse(fileName, sourceText, ts_parse_options(options));
             return { trees: [tree], errors: [] };
         }
+        */
         default: {
             throw new Error(`options.scriptKind ${scriptKind} must be either BRITE or Js, or TS.`);
         }
@@ -65,6 +78,21 @@ function ts_parse_options(options?: ParseOptions): TsParseOptions {
         return {
             explicitAssocAdd: options.explicitAssocAdd,
             explicitAssocMul: options.explicitAssocMul,
+        };
+    }
+    else {
+        return {};
+    }
+}
+
+function typhon_parse_options(options?: ParseOptions): TyphonParseOptions {
+    if (options) {
+        if (options.useCaretForExponentiation) {
+            throw new Error("useCaretForExponentiation is not supported by the Python parser");
+        }
+        return {
+            explicitAssocAdd: options.explicitAssocAdd,
+            explicitAssocMul: options.explicitAssocMul
         };
     }
     else {

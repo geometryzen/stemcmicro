@@ -43,7 +43,6 @@ describe("tsparse", function () {
             `12345.0`
         ];
         const engine = create_script_context({
-            dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "12345.0", "A");

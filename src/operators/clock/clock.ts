@@ -1,9 +1,9 @@
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
 import { POWER } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { negOne } from '../../tree/rat/Rat';
-import { U } from '../../tree/tree';
+import { items_to_cons, U } from '../../tree/tree';
 import { abs } from '../abs/abs';
 import { arg } from '../arg/arg';
 
@@ -45,7 +45,7 @@ export function clockform(z: U, $: ExtensionEnv): U {
     // console.lg(`arg_z=${print_expr(arg_z, $)}`);
     const pi = DynamicConstants.Pi($);
     // console.lg(`pi=${print_expr(pi, $)}`);
-    const direction = makeList(POWER, negOne, $.divide(arg_z, pi));
+    const direction = items_to_cons(POWER, negOne, divide(arg_z, pi, $));
     // console.lg(`direction=${print_expr(direction, $)}`);
     const magnitude = abs(z, $);
     // console.lg(`magnitude=${print_expr(magnitude, $)}`);

@@ -1,11 +1,12 @@
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { LAGUERRE, SECRETX } from '../../runtime/constants';
-import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { nil, U } from '../../tree/tree';
+import { subst } from '../subst/subst';
 import { is_sym } from '../sym/is_sym';
 
 /*
@@ -60,13 +61,13 @@ function laguerre2(n: number, p1: U, p3: U, $: ExtensionEnv): U {
     let Y1: U = one;
 
     for (let i = 0; i < n; i++) {
-        const result = $.divide(
+        const result = divide(
             $.subtract(
                 $.multiply($.add($.subtract(wrap_as_int(2 * i + 1), p1), p3), Y1),
                 $.multiply($.add(wrap_as_int(i), p3), Y0)
             ),
             wrap_as_int(i + 1)
-        );
+            , $);
         Y0 = Y1;
         Y1 = result;
     }

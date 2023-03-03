@@ -1,4 +1,6 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { divide } from '../../helpers/divide';
+import { inverse } from '../../helpers/inverse';
 import { doexpand_binary } from '../../runtime/defs';
 import { car, cdr, is_cons, U } from '../../tree/tree';
 import { gcd } from '../gcd/gcd';
@@ -19,7 +21,7 @@ export function lcm(p1: U, p2: U, $: ExtensionEnv): U {
 
 function yylcm(p1: U, p2: U, $: ExtensionEnv): U {
     const A = gcd(p1, p2, $);
-    const B = $.divide(A, p1);
-    const C = $.divide(B, p2);
-    return $.inverse(C);
+    const B = divide(A, p1, $);
+    const C = divide(B, p2, $);
+    return inverse(C, $);
 }

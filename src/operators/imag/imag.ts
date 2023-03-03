@@ -1,4 +1,5 @@
 import { complex_conjugate } from '../../complex_conjugate';
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { cadr } from '../../tree/helpers';
@@ -31,7 +32,7 @@ export function imag(z: U, $: ExtensionEnv): U {
     const rect_z = rect(z, $);
     const conj_z = complex_conjugate(rect_z, $);
     const two_i_times_im = $.subtract(rect_z, conj_z);
-    const i_times_im = $.divide(two_i_times_im, two);
-    const im = $.divide(i_times_im, imu);
+    const i_times_im = divide(two_i_times_im, two, $);
+    const im = divide(i_times_im, imu, $);
     return hook(im, "");
 }

@@ -3,6 +3,8 @@ import { complex_conjugate } from './complex_conjugate';
 import { yycondense } from './condense';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
+import { divide } from './helpers/divide';
+import { inverse } from './helpers/inverse';
 import { contains_floating_values_or_floatf } from './is';
 import { multiply_noexpand, negate_noexpand } from './multiply';
 import { coeff } from './operators/coeff/coeff';
@@ -277,7 +279,7 @@ function rationalize_coefficients(coefficients: U[], $: ExtensionEnv): U {
         coefficients[i] = $.multiply(one_over_k, coefficients[i]);
     }
 
-    const k = $.inverse(one_over_k);
+    const k = inverse(one_over_k, $);
     return k;
 }
 
@@ -309,7 +311,7 @@ function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, p4: U,
             p4 = defs.stack[an + rootsTries_i] as U;
             p5 = defs.stack[a0 + rootsTries_j] as U;
 
-            const neg_p5_div_p4 = $.negate($.divide(p5, p4));
+            const neg_p5_div_p4 = $.negate(divide(p5, p4, $));
 
             // TODO: Why is this typed to return a single element array?
             const [neg_poly] = Evalpoly(neg_p5_div_p4, coeffs, coeffIdx, $);
@@ -420,7 +422,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
 function yydivpoly(p4: U, p5: U, polycoeff: U[], factpoly_expo: number, $: ExtensionEnv): void {
     let p6: U = zero;
     for (let i = factpoly_expo; i > 0; i--) {
-        const divided = $.divide(polycoeff[i], p4);
+        const divided = divide(polycoeff[i], p4, $);
         polycoeff[i] = p6;
         p6 = divided;
         polycoeff[i - 1] = $.subtract(polycoeff[i - 1], $.multiply(p6, p5));

@@ -4,6 +4,8 @@ import { add_terms } from '../../../calculators/add/add_terms';
 import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
 import { exp } from '../../../exp';
+import { divide } from '../../../helpers/divide';
+import { inverse } from '../../../helpers/inverse';
 import {
     ARCCOS,
     ARCCOSH,
@@ -179,7 +181,7 @@ function dsum(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 function dlog(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative(cadr(p1), p2, $);
-    return $.divide(deriv, cadr(p1));
+    return divide(deriv, cadr(p1), $);
 }
 
 //  derivative of derivative
@@ -273,9 +275,8 @@ function darccos(p1: U, p2: Sym, $: ExtensionEnv): U {
 //  d(arctan(y/x),y)  1/(x*(y^2/x^2+1))  x/(x^2+y^2)
 function darctan(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative(cadr(p1), p2, $);
-    return simplify(
-        $.multiply(deriv, $.inverse($.add(one, $.power(cadr(p1), two)))), $
-    );
+    const A = inverse($.add(one, $.power(cadr(p1), two)), $);
+    return simplify($.multiply(deriv, A), $);
 }
 
 function dsinh(p1: U, p2: Sym, $: ExtensionEnv): U {
@@ -309,12 +310,10 @@ function darccosh(p1: U, p2: Sym, $: ExtensionEnv): U {
     );
 }
 
-export function darctanh(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative(cadr(p1), p2, $);
-    return $.multiply(
-        deriv,
-        $.inverse($.subtract(one, $.power(cadr(p1), two)))
-    );
+export function darctanh(p1: U, X: Sym, $: ExtensionEnv): U {
+    const deriv = derivative(cadr(p1), X, $);
+    const A = inverse($.subtract(one, $.power(cadr(p1), two)), $);
+    return $.multiply(deriv, A);
 }
 
 export function dabs(p1: U, p2: Sym, $: ExtensionEnv): U {
@@ -383,7 +382,7 @@ export function dbesseljn(p1: U, p2: Sym, $: ExtensionEnv): U {
     const A = $.add(caddr(p1), negOne);
     const B = $.multiply(caddr(p1), negOne);
     const C = besselj(cadr(p1), A, $);
-    const D = $.divide(B, cadr(p1));
+    const D = divide(B, cadr(p1), $);
     const E = besselj(cadr(p1), caddr(p1), $);
     const F = $.multiply(D, E);
     const G = $.add(C, F);
@@ -409,7 +408,7 @@ export function dbesselyn(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative(cadr(p1), p2, $);
     const A = $.add(caddr(p1), negOne);
     const B = $.multiply(caddr(p1), negOne);
-    const C = $.divide(B, cadr(p1));
+    const C = divide(B, cadr(p1), $);
     const D = bessely(cadr(p1), caddr(p1), $);
     const E = bessely(cadr(p1), A, $);
     const F = $.multiply(C, D);

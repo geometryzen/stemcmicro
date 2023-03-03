@@ -1,14 +1,15 @@
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
-import { is_rat } from '../rat/is_rat';
-import { sin } from '../sin/sine';
 import { is_negative } from '../../predicates/is_negative';
 import { GAMMA, MEQUAL } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add } from '../../runtime/helpers';
 import { cadr } from '../../tree/helpers';
 import { half, negOne, Rat } from '../../tree/rat/Rat';
-import { car, cdr, U } from '../../tree/tree';
+import { car, cdr, items_to_cons, U } from '../../tree/tree';
+import { is_rat } from '../rat/is_rat';
+import { sin } from '../sin/sine';
 
 export function Eval_gamma(p1: U, $: ExtensionEnv): U {
     return gamma($.valueOf(cadr(p1)), $);
@@ -34,13 +35,13 @@ function gammaf(p1: U, $: ExtensionEnv): U {
     //  }
 
     if (is_negative(p1)) {
-        return $.divide(
+        return divide(
             $.multiply(DynamicConstants.Pi($), negOne),
             $.multiply(
                 $.multiply(sin($.multiply(DynamicConstants.Pi($), p1), $), p1),
                 gamma($.negate(p1), $)
             )
-        );
+            , $);
     }
 
     if (is_add(p1)) {
@@ -57,8 +58,8 @@ function gamma_of_sum(p1: U, $: ExtensionEnv): U {
     }
 
     if (is_rat(car(p3)) && MEQUAL((car(p3) as Rat).a, -1) && MEQUAL((car(p3) as Rat).b, 1)) {
-        return $.divide(gamma(cadr(p3), $), $.add(cadr(p3), negOne));
+        return divide(gamma(cadr(p3), $), $.add(cadr(p3), negOne), $);
     }
 
-    return makeList(GAMMA, p1);
+    return items_to_cons(GAMMA, p1);
 }

@@ -1,5 +1,7 @@
 import { condense } from '../../condense';
 import { ExtensionEnv, MODE_FACTORING } from '../../env/ExtensionEnv';
+import { divide } from '../../helpers/divide';
+import { inverse } from '../../helpers/inverse';
 import { is_negative_number } from '../../predicates/is_negative_number';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
@@ -61,7 +63,7 @@ function yyrationalize(arg: U, $: ExtensionEnv): U {
     // console.lg(`temp ${print_expr(temp, $)}`);
     const condensed = condense(temp, $);
     // console.lg(`condensed ${print_expr(condensed, $)}`);
-    const rationalized = $.divide(condensed, commonDenominator);
+    const rationalized = divide(condensed, commonDenominator, $);
     // console.lg(`rationalized ${print_expr(rationalized, $)}`);
     return rationalized;
 }
@@ -99,12 +101,12 @@ function multiply_denominators_factor(p: U, p2: U, $: ExtensionEnv): U {
 
     // like x^(-2) ?
     if (is_negative_number(p)) {
-        return __lcm(p2, $.inverse(arg2), $);
+        return __lcm(p2, inverse(arg2, $), $);
     }
 
     // like x^(-a) ?
     if (is_multiply(p) && is_negative_number(cadr(p))) {
-        return __lcm(p2, $.inverse(arg2), $);
+        return __lcm(p2, inverse(arg2, $), $);
     }
 
     // no match
@@ -126,5 +128,5 @@ function __rationalize_tensor(p1: U, $: ExtensionEnv): U {
 }
 
 function __lcm(p1: U, p2: U, $: ExtensionEnv): U {
-    return $.divide($.multiply(p1, p2), gcd(p1, p2, $));
+    return divide($.multiply(p1, p2), gcd(p1, p2, $), $);
 }

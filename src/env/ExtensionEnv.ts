@@ -77,9 +77,7 @@ export interface ExtensionEnv {
     setPrintHandler(handler: PrintHandler): void;
     treatAsReal(sym: Sym): boolean;
     /**
-     * 
-     * @param lhs 
-     * @param rhs 
+     * @deprecated
      */
     add(lhs: U, rhs: U): U;
     clearBindings(): void;
@@ -92,9 +90,13 @@ export interface ExtensionEnv {
     defineKeyword(sym: Sym, runner: ($: ExtensionEnv) => void): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
-    derivative(expr: U, wrt: U): U;
-    divide(lhs: U, rhs: U): U;
+    /**
+     * @deprecated
+     */
     equals(lhs: U, rhs: U): boolean;
+    /**
+     * @deprecated
+     */
     factorize(poly: U, x: U): U;
     getBinding(sym: Sym): U;
     getBindings(): { sym: Sym, binding: U }[];
@@ -105,8 +107,10 @@ export interface ExtensionEnv {
      * Used to make the environment ready after all operator builders have been added.
      */
     buildOperators(): void;
+    /**
+     * @deprecated
+     */
     inner(lhs: U, rhs: U): U;
-    inverse(expr: U): U;
     isAssocL(opr: Sym): boolean;
     isAssocR(opr: Sym): boolean;
     isExpanding(): boolean;
@@ -127,14 +131,26 @@ export interface ExtensionEnv {
      * Returns false when atom matches Cons or Sym, otherwise depends on the appropriate extension.
      */
     isZero(expr: U): boolean;
+    /**
+     * @deprecated
+     */
     multiply(lhs: U, rhs: U): U;
+    /**
+     * @deprecated
+     */
     negate(expr: U): U;
     /**
      * Returns the operator for interacting with the expression.
      * Operator(s) are reference counted and so the operator MUST be released when no longer needed.
      */
     operatorFor(expr: U): Operator<U>;
+    /**
+     * @deprecated
+     */
     outer(lhs: U, rhs: U): U;
+    /**
+     * @deprecated
+     */
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
     setAssocL(opr: Sym, value: boolean): void;
@@ -144,6 +160,9 @@ export interface ExtensionEnv {
     setModeFlag(mode: MODE, value: boolean): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolToken(sym: Sym, token: string): void;
+    /**
+     * @deprecated
+     */
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;
     toLatexString(expr: U): string;

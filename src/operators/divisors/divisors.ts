@@ -1,12 +1,13 @@
 import { sort_factors } from '../../calculators/compare/sort_factors';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { factor_small_number } from '../factor/factor';
+import { inverse } from '../../helpers/inverse';
 import { nativeInt } from '../../nativeInt';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, U } from '../../tree/tree';
+import { factor_small_number } from '../factor/factor';
 import { gcd } from '../gcd/gcd';
 import { is_num } from '../num/is_num';
 
@@ -168,7 +169,7 @@ function __factor_add(p1: U, $: ExtensionEnv): U[] {
     }
 
     // divide each term by gcd
-    p2 = $.inverse(p2);
+    p2 = inverse(p2, $);
     const temp2 = is_cons(p1)
         ? p1.tail().reduce((a: U, b: U) => $.add(a, $.multiply(p2, b)), zero)
         : cdr(p1);

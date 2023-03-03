@@ -1,3 +1,4 @@
+import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { exp } from './exp';
@@ -44,7 +45,7 @@ export function circexp(p1: U, $: ExtensionEnv): U {
         const p2 = exp($.multiply(imu, p1), $);
         const p3 = exp($.negate($.multiply(imu, p1)), $);
 
-        return $.divide($.multiply($.subtract(p3, p2), imu), $.add(p2, p3));
+        return divide($.multiply($.subtract(p3, p2), imu), $.add(p2, p3), $);
     }
 
     if (car(p1).equals(COSH)) {
@@ -59,7 +60,7 @@ export function circexp(p1: U, $: ExtensionEnv): U {
 
     if (car(p1).equals(TANH)) {
         p1 = exp($.multiply(cadr(p1), two), $);
-        return $.divide($.subtract(p1, one), $.add(p1, one));
+        return divide($.subtract(p1, one), $.add(p1, one), $);
     }
 
     if (is_cons(p1)) {

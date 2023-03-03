@@ -1,8 +1,9 @@
 import { add_terms } from './calculators/add/add_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { factorial } from './operators/factorial/factorial';
+import { inverse } from './helpers/inverse';
 import { equaln, is_num_and_eq_minus_one } from './is';
 import { multiply_items_factoring } from './multiply';
+import { factorial } from './operators/factorial/factorial';
 import { FACTORIAL } from './runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
@@ -91,7 +92,7 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
 
             //  n / n!    ->  1 / (n - 1)!
             if (is_power(p2) && is_num_and_eq_minus_one(caddr(p2)) && caadr(p2).equals(FACTORIAL) && $.equals(p1, cadadr(p2))) {
-                stack[i] = $.inverse(factorial($.add(p1, negOne)));
+                stack[i] = inverse(factorial($.add(p1, negOne)), $);
                 stack[j] = one;
                 return true;
             }
@@ -116,7 +117,7 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
             ) {
                 const p3 = $.subtract(cadr(p1), cadr(cadr(p2)));
                 if ($.isOne(p3)) {
-                    stack[i] = $.inverse(factorial(cadr(p1)));
+                    stack[i] = inverse(factorial(cadr(p1)), $);
                     stack[j] = one;
                     return true;
                 }
@@ -138,7 +139,7 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
                     return true;
                 }
                 if (is_num_and_eq_minus_one(p3)) {
-                    stack[i] = $.inverse(cadr(cadr(p2)));
+                    stack[i] = inverse(cadr(cadr(p2)), $);
                     stack[j] = one;
                     return true;
                 }
@@ -148,8 +149,8 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
                     return true;
                 }
                 if (equaln(p3, -2)) {
-                    stack[i] = $.inverse(cadr(cadr(p2)));
-                    stack[j] = $.inverse($.add(cadr(cadr(p2)), negOne));
+                    stack[i] = inverse(cadr(cadr(p2)), $);
+                    stack[j] = inverse($.add(cadr(cadr(p2)), negOne), $);
                     return true;
                 }
             }

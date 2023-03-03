@@ -2,8 +2,8 @@ import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
-import { factor } from "../factor/factor";
-import { areunivarpolysfactoredorexpandedform, gcd } from "../gcd/gcd";
+import { divide } from '../../helpers/divide';
+import { inverse } from '../../helpers/inverse';
 import { equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { makeList } from '../../makeList';
@@ -16,7 +16,6 @@ import { DEBUG, defs, noexpand_unary } from '../../runtime/defs';
 import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/helpers';
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
-import { transpose_factoring } from '../transpose/transpose';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, one, third, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
@@ -24,7 +23,9 @@ import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 import { clockform } from '../clock/clock';
 import { denominator } from "../denominator/denominator";
+import { factor } from "../factor/factor";
 import { evaluate_as_float } from '../float/float';
+import { areunivarpolysfactoredorexpandedform, gcd } from "../gcd/gcd";
 import { BCons } from '../helpers/BCons';
 import { is_imu } from '../imu/is_imu';
 import { is_num } from '../num/is_num';
@@ -36,6 +37,7 @@ import { rationalize_factoring } from '../rationalize/rationalize';
 import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { is_tensor } from '../tensor/is_tensor';
+import { transpose_factoring } from '../transpose/transpose';
 
 function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
     // when we do code generation, we proceed to
@@ -232,15 +234,21 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
 }
 
 // try expanding denominators
-function simplify_by_expanding_denominators(p1: U, $: ExtensionEnv): U {
-    if ($.isZero(p1)) {
-        return p1;
+function simplify_by_expanding_denominators(expr: U, $: ExtensionEnv): U {
+    if ($.isZero(expr)) {
+        return expr;
     }
-    const p2 = rationalize_factoring($.inverse(rationalize_factoring($.inverse(rationalize_factoring(p1, $)), $)), $);
-    if (count(p2) < count(p1)) {
-        p1 = p2;
+    const A = rationalize_factoring(expr, $);
+    const B = inverse(A, $);
+    const C = rationalize_factoring(B, $);
+    const D = inverse(C, $);
+    const E = rationalize_factoring(D, $);
+    if (count(E) < count(expr)) {
+        return E;
     }
-    return p1;
+    else {
+        return expr;
+    }
 }
 
 // simplifies trig forms
@@ -328,7 +336,7 @@ function simplify_rational_expressions(p1: U, $: ExtensionEnv): U {
     }
 
     const factoredNum: U = factor(num, polyVar, $);
-    const theGCDInverse: U = $.inverse(theGCD);
+    const theGCDInverse: U = inverse(theGCD, $);
     const multipliedNoeExpandNum: U = multiply_noexpand(factoredNum, theGCDInverse, $);
     const simplifiedNum: U = simplify(multipliedNoeExpandNum, $);
 
@@ -336,7 +344,7 @@ function simplify_rational_expressions(p1: U, $: ExtensionEnv): U {
     const multipliedNoeExpandDenom: U = multiply_noexpand(factoredDenom, theGCDInverse, $);
     const simplifiedDenom: U = simplify(multipliedNoeExpandDenom, $);
 
-    const numDividedDenom: U = $.divide(simplifiedNum, simplifiedDenom);
+    const numDividedDenom: U = divide(simplifiedNum, simplifiedDenom, $);
 
     const p2 = condense(numDividedDenom, $);
 
@@ -515,7 +523,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
 
     let temp: U = nil;
     if (equalq(expo, 1, 3)) {
-        const checkSize1 = $.divide($.multiply($.negate(A), C), B); // 4th coeff
+        const checkSize1 = divide($.multiply($.negate(A), C), B, $); // 4th coeff
         const result1 = nativeDouble(evaluate_as_float(real(checkSize1, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -528,7 +536,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         }
         const arg1b = $.multiply(checkSize2, SECRETX);
 
-        const checkSize3 = $.divide($.multiply(wrap_as_int(-3), A), B); // 2nd coeff
+        const checkSize3 = divide($.multiply(wrap_as_int(-3), A), B, $); // 2nd coeff
         const result3 = nativeDouble(evaluate_as_float(real(checkSize3, $), $));
         if (Math.abs(result3) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -548,7 +556,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
             return [p1, TFLAG_NONE];
         }
 
-        const checkSize = $.divide($.multiply(wrap_as_int(-2), A), B);
+        const checkSize = divide($.multiply(wrap_as_int(-2), A), B, $);
         const result2 = nativeDouble(evaluate_as_float(real(checkSize, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -603,13 +611,13 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
 
     if (equalq(expo, 1, 3)) {
         const lowercase_b = $.power(
-            $.divide(
+            divide(
                 A,
                 $.add(
                     $.power(SOLUTION, three),
                     $.multiply($.multiply(three, C), SOLUTION)
                 )
-            ),
+                , $),
             third
         );
         const lowercase_a = $.multiply(lowercase_b, SOLUTION);
@@ -621,7 +629,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
 
     if (equalq(expo, 1, 2)) {
         const lowercase_b = $.power(
-            $.divide(A, $.add($.power(SOLUTION, two), C)),
+            divide(A, $.add($.power(SOLUTION, two), C), $),
             half
         );
         const lowercase_a = $.multiply(lowercase_b, SOLUTION);

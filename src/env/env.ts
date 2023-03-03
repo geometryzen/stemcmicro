@@ -1,4 +1,3 @@
-import { divide_numbers, invert_number } from "../bignum";
 import { binop } from "../calculators/binop";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
@@ -6,7 +5,6 @@ import { is_poly_expanded_form } from "../is";
 import { useCaretForExponentiation } from "../modes/modes";
 import { is_blade } from "../operators/blade/is_blade";
 import { is_boo } from "../operators/boo/is_boo";
-import { derivative } from "../operators/derivative/derivative";
 import { is_err } from "../operators/err/is_err";
 import { is_flt } from "../operators/flt/is_flt";
 import { value_of } from "../operators/helpers/valueOf";
@@ -251,18 +249,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
-        derivative(expr: U, wrt: U): U {
-            return derivative(expr, wrt, $);
-        },
-        divide(lhs: U, rhs: U): U {
-            if (is_num(lhs) && is_num(rhs)) {
-                return divide_numbers(lhs, rhs);
-            }
-            else {
-                const inverse_rhs = $.inverse(rhs);
-                return $.multiply(lhs, inverse_rhs);
-            }
-        },
         getBinding(sym: Sym): U {
             const value = symTab.get(sym);
             // console.lg(`ExtensionEnv.getBinding(sym = ${$.toInfixString(sym)}) => ${$.toInfixString(value)}`);
@@ -326,15 +312,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
             */
-        },
-        inverse(expr: U): U {
-            // console.lg(`inverse(expr: ${atomType(expr)} => ${expr})`);
-            if (is_num(expr)) {
-                return invert_number(expr);
-            }
-            else {
-                return binop(MATH_POW, expr, negOne, $);
-            }
         },
         isAssocL(opr: Sym): boolean {
             const entry = assocs[opr.key()];

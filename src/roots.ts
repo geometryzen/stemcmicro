@@ -1,6 +1,7 @@
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
 import { cmp_expr } from './calculators/compare/cmp_expr';
+import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
@@ -98,7 +99,7 @@ function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
         // console.lg("coefficient", render_as_infix(coefficient, $));
     });
     const divideBy = coefficients[coefficients.length - 1];
-    return coefficients.map((coe) => $.divide(coe, divideBy));
+    return coefficients.map((coe) => divide(coe, divideBy, $));
 }
 
 /**
@@ -171,7 +172,7 @@ function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEn
 
     n = n - 1;
 
-    const commonPart = $.divide($.power(lastCoeff, rational(1, n)), $.power(leadingCoeff, rational(1, n)));
+    const commonPart = divide($.power(lastCoeff, rational(1, n)), $.power(leadingCoeff, rational(1, n)), $);
     const results = [];
 
     if (n % 2 === 0) {
@@ -286,7 +287,7 @@ function mini_solve(coefficients: U[], $: ExtensionEnv): U[] {
 }
 
 function _solveDegree1(A: U, B: U, $: ExtensionEnv): U[] {
-    return [$.negate($.divide(B, A))];
+    return [$.negate(divide(B, A, $))];
 }
 
 function _solveDegree2(A: U, B: U, C: U, $: ExtensionEnv): U[] {
@@ -294,10 +295,10 @@ function _solveDegree2(A: U, B: U, C: U, $: ExtensionEnv): U[] {
     const p6 = $.power($.subtract($.power(B, two), $.multiply($.multiply(four, A), C)), half);
 
     // ((B^2 - 4AC)^(1/2) - B)/ (2A)
-    const result1 = $.divide($.subtract(p6, B), $.multiply(A, two));
+    const result1 = divide($.subtract(p6, B), $.multiply(A, two), $);
 
     // 1/2 * -(B + (B^2 - 4AC)^(1/2)) / A
-    const result2 = $.multiply($.divide($.negate($.add(p6, B)), A), half);
+    const result2 = $.multiply(divide($.negate($.add(p6, B)), A, $), half);
     return [result1, result2];
 }
 
@@ -338,7 +339,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
 
     const R_b2_c2 = $.multiply(R_b2, $.multiply(C, C));
 
-    const R_m_b_over_3a = $.divide($.negate(B), R_3_a);
+    const R_m_b_over_3a = divide($.negate(B), R_3_a, $);
 
     const R_4_DELTA03 = $.multiply($.power(R_DELTA0, three), four);
 
@@ -393,24 +394,24 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
     const i_sqrt3 = $.multiply(imu, $.power(three, half));
     const one_plus_i_sqrt3 = $.add(one, i_sqrt3);
     const one_minus_i_sqrt3 = $.subtract(one, i_sqrt3);
-    const R_C_over_3a = $.divide(R_C, R_3_a);
+    const R_C_over_3a = divide(R_C, R_3_a, $);
 
     // first solution
     const firstSolTerm1 = R_m_b_over_3a;
     const firstSolTerm2 = $.negate(R_C_over_3a);
-    const firstSolTerm3 = $.negate($.divide(R_DELTA0, $.multiply(R_C, R_3_a)));
+    const firstSolTerm3 = $.negate(divide(R_DELTA0, $.multiply(R_C, R_3_a), $));
     const firstSolution = simplify(add_terms([firstSolTerm1, firstSolTerm2, firstSolTerm3], $), $);
 
     // second solution
     const secondSolTerm1 = R_m_b_over_3a;
-    const secondSolTerm2 = $.divide($.multiply(R_C_over_3a, one_plus_i_sqrt3), two);
-    const secondSolTerm3 = $.divide($.multiply(one_minus_i_sqrt3, R_DELTA0), R_6_a_C);
+    const secondSolTerm2 = divide($.multiply(R_C_over_3a, one_plus_i_sqrt3), two, $);
+    const secondSolTerm3 = divide($.multiply(one_minus_i_sqrt3, R_DELTA0), R_6_a_C, $);
     const secondSolution = simplify(add_terms([secondSolTerm1, secondSolTerm2, secondSolTerm3], $), $);
 
     // third solution
     const thirdSolTerm1 = R_m_b_over_3a;
-    const thirdSolTerm2 = $.divide($.multiply(R_C_over_3a, one_minus_i_sqrt3), two);
-    const thirdSolTerm3 = $.divide($.multiply(one_plus_i_sqrt3, R_DELTA0), R_6_a_C);
+    const thirdSolTerm2 = divide($.multiply(R_C_over_3a, one_minus_i_sqrt3), two, $);
+    const thirdSolTerm3 = divide($.multiply(one_plus_i_sqrt3, R_DELTA0), R_6_a_C, $);
     const thirdSolution = simplify(add_terms([thirdSolTerm1, thirdSolTerm2, thirdSolTerm3], $), $);
 
     return [firstSolution, secondSolution, thirdSolution];
@@ -445,9 +446,7 @@ function _solveDegree3ZeroRDeterminant(
     }
     // log.dbg(' cubic: DETERMINANT IS ZERO and delta0 is not zero');
 
-    const rootSolution = $.divide($.subtract($.multiply(A, $.multiply(D, nine)), $.multiply(B, C)),
-        $.multiply(R_DELTA0, two)
-    );
+    const rootSolution = divide($.subtract($.multiply(A, $.multiply(D, nine)), $.multiply(B, C)), $.multiply(R_DELTA0, two), $);
 
     // second solution here
 
@@ -461,7 +460,7 @@ function _solveDegree3ZeroRDeterminant(
     // build the fraction
     // numerator: sum the three terms
     // denominator: a*delta0
-    const secondSolution = $.divide(add_terms([numer_term3, numer_term2, numer_term1], $), $.multiply(A, R_DELTA0));
+    const secondSolution = divide(add_terms([numer_term3, numer_term2, numer_term1], $), $.multiply(A, R_DELTA0), $);
 
     return [rootSolution, rootSolution, secondSolution];
 }
@@ -520,7 +519,7 @@ function _solveDegree4ZeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] 
     const coeff4 = $.add(
         $.multiply(rational(-1, 2), $.multiply(R_p, R_r)),
         $.add(
-            $.divide($.power(R_p, three), two),
+            divide($.power(R_p, three), two, $),
             $.multiply(rational(-1, 8), $.power(R_q, two))
         )
     );
@@ -556,37 +555,31 @@ function _solveDegree4ZeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] 
 
     const sqrtPPlus2M = simplify($.power($.add($.multiply(R_m, two), R_p), half), $);
 
-    const twoQOversqrtPPlus2M = simplify($.divide($.multiply(R_q, two), sqrtPPlus2M), $);
+    const twoQOversqrtPPlus2M = simplify(divide($.multiply(R_q, two), sqrtPPlus2M, $), $);
 
     const threePPlus2M = $.add($.multiply(R_p, three), $.multiply(R_m, two));
     // solution1
     const sol1Arg = simplify($.power($.negate($.add(threePPlus2M, twoQOversqrtPPlus2M)), half), $);
-    const solution1 = $.divide($.add(sqrtPPlus2M, sol1Arg), two);
+    const solution1 = divide($.add(sqrtPPlus2M, sol1Arg), two, $);
 
     // solution2
     const sol2Arg = simplify($.power($.negate($.add(threePPlus2M, twoQOversqrtPPlus2M)), half), $);
-    const solution2 = $.divide($.subtract(sqrtPPlus2M, sol2Arg), two);
+    const solution2 = divide($.subtract(sqrtPPlus2M, sol2Arg), two, $);
 
     // solution3
     const sol3Arg = simplify($.power($.negate($.subtract(threePPlus2M, twoQOversqrtPPlus2M)), half), $);
-    const solution3 = $.divide($.add($.negate(sqrtPPlus2M), sol3Arg), two);
+    const solution3 = divide($.add($.negate(sqrtPPlus2M), sol3Arg), two, $);
 
     // solution4
     const sol4Arg = simplify($.power($.negate($.subtract(threePPlus2M, twoQOversqrtPPlus2M)), half), $);
-    const solution4 = $.divide($.subtract($.negate(sqrtPPlus2M), sol4Arg), two);
+    const solution4 = divide($.subtract($.negate(sqrtPPlus2M), sol4Arg), two, $);
 
     return [solution1, solution2, solution3, solution4];
 }
 
 function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] {
-    const R_p = $.divide(
-        $.add(
-            $.multiply(eight, $.multiply(C, A)),
-            $.multiply(wrap_as_int(-3), $.power(B, two))
-        ),
-        $.multiply(eight, $.power(A, two))
-    );
-    const R_q = $.divide(
+    const R_p = divide($.add($.multiply(eight, $.multiply(C, A)), $.multiply(wrap_as_int(-3), $.power(B, two))), $.multiply(eight, $.power(A, two)), $);
+    const R_q = divide(
         $.add(
             $.power(B, three),
             $.add(
@@ -594,14 +587,13 @@ function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U
                 $.multiply(eight, $.multiply(D, $.power(A, two)))
             )
         ),
-        $.multiply(eight, $.power(A, three))
-    );
+        $.multiply(eight, $.power(A, three)), $);
     const R_a3 = $.multiply($.multiply(A, A), A);
     const R_b2 = $.multiply(B, B);
     const R_a2_d = $.multiply($.multiply(A, A), D);
 
     // convert to depressed quartic
-    const R_r = $.divide(
+    const R_r = divide(
         $.add(
             $.multiply($.power(B, four), wrap_as_int(-3)),
             $.add(
@@ -612,8 +604,7 @@ function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U
                 )
             )
         ),
-        $.multiply(wrap_as_int(256), $.power(A, four))
-    );
+        $.multiply(wrap_as_int(256), $.power(A, four)), $);
     const four_x_4 = $.power(SECRETX, four);
     const r_q_x_2 = $.multiply(R_p, $.power(SECRETX, two));
     const r_q_x = $.multiply(R_q, SECRETX);
@@ -632,7 +623,7 @@ function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U
     // log.dbg(`depressedSolutions: ${toInfixString(depressedSolutions)}`);
 
     return depressedSolutions.mapElements((sol) => {
-        const result = simplify($.subtract(sol, $.divide(B, $.multiply(four, A))), $);
+        const result = simplify($.subtract(sol, divide(B, $.multiply(four, A), $)), $);
         // log.dbg(`solution from depressed: ${toInfixString(result)}`);
         return result;
     });

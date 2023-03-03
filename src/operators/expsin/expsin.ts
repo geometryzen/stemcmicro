@@ -1,3 +1,4 @@
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv, TFLAG_KEEP } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { MATH_E, MATH_POW } from '../../runtime/ns_math';
@@ -15,5 +16,5 @@ export function expsin(x: U, $: ExtensionEnv): U {
     exp_pos_ix.meta |= TFLAG_KEEP;
     const exp_neg_ix = items_to_cons(MATH_POW, MATH_E, $.multiply($.negate(imu), x));
     exp_neg_ix.meta |= TFLAG_KEEP;
-    return $.subtract($.multiply($.divide(exp_pos_ix, imu), half), $.multiply($.divide(exp_neg_ix, imu), half));
+    return $.subtract($.multiply(divide(exp_pos_ix, imu, $), half), $.multiply(divide(exp_neg_ix, imu, $), half));
 }

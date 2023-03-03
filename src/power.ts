@@ -1,3 +1,4 @@
+import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { exp } from './exp';
@@ -104,7 +105,7 @@ function multinomial_sum(k: number, n: number, a: number[], i: number, m: number
     // coefficient
     let temp = p1;
     for (let j = 0; j < k; j++) {
-        temp = $.divide(temp, factorial(wrap_as_int(a[j])));
+        temp = divide(temp, factorial(wrap_as_int(a[j])), $);
     }
 
     // factors

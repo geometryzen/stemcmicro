@@ -1,4 +1,5 @@
 import { complex_conjugate } from '../../complex_conjugate';
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { cadr } from '../../tree/helpers';
 import { two } from '../../tree/rat/Rat';
@@ -39,6 +40,6 @@ export function real(z: U, $: ExtensionEnv): U {
     // console.lg(`conj_z => ${$.toInfixString(conj_z)}`);
     const two_re = $.add(rect_z, conj_z);
     // console.lg(`2*x => ${$.toInfixString(two_re)}`);
-    const re = $.divide(two_re, two);
+    const re = divide(two_re, two, $);
     return hook(re, "");
 }

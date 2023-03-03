@@ -1,6 +1,7 @@
 import { nativeDouble, rational } from "../../bignum";
 import { gt_num_num } from "../../calculators/compare/gt_num_num";
 import { complex_conjugate } from "../../complex_conjugate";
+import { divide } from "../../helpers/divide";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";
@@ -300,7 +301,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
             const p3 = complex_conjugate(base, $);
 
             // gets the denominator
-            let result = $.divide(p3, $.multiply(p3, base));
+            let result = divide(p3, $.multiply(p3, base), $);
 
             if (!is_plus_or_minus_one(expo, $)) {
                 result = $.power(result, $.negate(expo));
@@ -318,7 +319,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
             const pi = $.getModeFlag(evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? wrap_as_flt(Math.PI) : PI;
             let tmp = $.multiply(
                 $.power(abs(base, $), expo),
-                $.power(negOne, $.divide($.multiply(arg(base, $), expo), pi))
+                $.power(negOne, divide($.multiply(arg(base, $), expo), pi, $))
             );
 
             // if we calculate the power making use of arctan:

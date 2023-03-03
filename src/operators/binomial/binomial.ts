@@ -1,9 +1,10 @@
 import { lt_num_num } from '../../calculators/compare/lt_num_num';
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { factorial } from '../factorial/factorial';
 import { caddr, cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
+import { factorial } from '../factorial/factorial';
 import { is_num } from '../num/is_num';
 
 //  Binomial coefficient
@@ -34,7 +35,7 @@ function ybinomial(N: U, K: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    return $.divide($.divide(factorial(N), factorial(K)), factorial($.subtract(N, K)));
+    return divide(divide(factorial(N), factorial(K), $), factorial($.subtract(N, K)), $);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

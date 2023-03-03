@@ -1,7 +1,7 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { divide } from "../../helpers/divide";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { subst } from "../subst/subst";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
@@ -9,6 +9,7 @@ import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { MATH_STANDARD_PART } from "../st/MATH_STANDARD_PART";
+import { subst } from "../subst/subst";
 import { MATH_DERIVATIVE } from "./MATH_DERIVATIVE";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -35,7 +36,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const p1 = subst(lhs, X, items_to_cons(MATH_ADD, X, p0), $);
         const p2 = $.negate(lhs);
         const p3 = items_to_cons(MATH_ADD, p1, p2);
-        const p4 = $.divide(p3, p0);
+        const p4 = divide(p3, p0, $);
         const retval = $.valueOf(items_to_cons(MATH_STANDARD_PART, p4));
 
         // Lookup 

@@ -1,7 +1,8 @@
-import { degree } from './operators/degree/degree';
+import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { filter } from './filter';
 import { guess } from './guess';
+import { degree } from './operators/degree/degree';
 import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
 import { nil, U } from './tree/tree';
@@ -31,5 +32,5 @@ function leading(P: U, X: U, $: ExtensionEnv) {
     const N = degree(P, X, $);
 
     // divide through by X ^ N, remove terms that depend on X
-    return filter($.divide(P, $.power(X, N)), X, $);
+    return filter(divide(P, $.power(X, N), $), X, $);
 }

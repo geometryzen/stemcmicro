@@ -22,7 +22,7 @@ import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
 import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
 import { InputState } from './InputState';
-import { inverse } from './inverse';
+import { one_divided_by } from './one_divided_by';
 import { scanner_negate } from './scanner_negate';
 import { TokenCode } from './Token';
 
@@ -405,7 +405,7 @@ export function scan_multiplicative_expr_implicit(state: InputState): U {
             // 1/(2*a) become 1*(1/(2*a))
             simplify_1_in_products(results);
             state.advance();
-            results.push(inverse(scan_outer_expr(state)));
+            results.push(one_divided_by(scan_outer_expr(state)));
         }
         /*
         else if (tokenCharCode() === dotprod_unicode) {
@@ -469,12 +469,12 @@ export function scan_multiplicative_expr_explicit(state: InputState): U {
                 // console.lg("result", JSON.stringify(result));
                 if (is_rat(result) && result.isOne()) {
                     state.advance();
-                    result = inverse(scan_outer_expr(state));
+                    result = one_divided_by(scan_outer_expr(state));
                 }
                 else {
                     const mulOp = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
                     state.advance();
-                    result = items_to_cons(mulOp, result, inverse(scan_outer_expr(state)));
+                    result = items_to_cons(mulOp, result, one_divided_by(scan_outer_expr(state)));
                 }
                 break;
             }

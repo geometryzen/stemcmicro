@@ -1,3 +1,4 @@
+import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { coeff } from './operators/coeff/coeff';
 import { SYMBOL_X } from './runtime/constants';
@@ -40,7 +41,7 @@ export function divpoly(DIVIDEND: U, DIVISOR: U, X: U, $: ExtensionEnv): U {
 
     let QUOTIENT: U = zero;
     while (x >= 0) {
-        const Q = $.divide(dividendCs[m], divisorCs[n]);
+        const Q = divide(dividendCs[m], divisorCs[n], $);
 
         for (let i = 0; i <= n; i++) {
             dividendCs[x + i] = $.subtract(dividendCs[x + i], $.multiply(divisorCs[i], Q));

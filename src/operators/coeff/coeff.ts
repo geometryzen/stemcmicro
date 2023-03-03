@@ -1,13 +1,13 @@
 import { subtract } from '../../calculators/sub/subtract';
-import { divide_expand } from '../../divide';
+import { divide, divide_expand } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { filter } from '../../filter';
 import { SYMBOL_X } from '../../runtime/constants';
-import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { one, zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, nil, U } from '../../tree/tree';
 import { is_mul_2_any_any } from '../mul/is_mul_2_any_any';
+import { subst } from '../subst/subst';
 
 /* coeff =====================================================================
 
@@ -37,7 +37,7 @@ export function Eval_coeff(p1: U, $: ExtensionEnv): U {
 
     // divide p by x^n, keep the constant term (the term not containing x)
     const x_pow_n = $.power(x, n);
-    const p_div_x_pow_n = $.divide(p, x_pow_n);
+    const p_div_x_pow_n = divide(p, x_pow_n, $);
     const k = filter(p_div_x_pow_n, x, $);
     return k;
 }

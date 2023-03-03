@@ -1,14 +1,15 @@
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { factorial } from '../factorial/factorial';
 import { guess } from '../../guess';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { TAYLOR } from '../../runtime/constants';
 import { stack_peek } from '../../runtime/stack';
-import { subst } from '../subst/subst';
 import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { car, cdr, nil, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';
+import { factorial } from '../factorial/factorial';
+import { subst } from '../subst/subst';
 
 /*
 Taylor expansion of a function
@@ -83,7 +84,7 @@ function taylor(f: U, X: U, N: U, A: U, $: ExtensionEnv): U {
         weight = $.multiply(weight, x_minus_a);
 
         const dfi_at_a = $.valueOf(subst(dfi, X, A, $)); // F: f(a)
-        const term = $.divide($.multiply(dfi_at_a, weight), factorial(wrap_as_int(i)));
+        const term = divide($.multiply(dfi_at_a, weight), factorial(wrap_as_int(i)), $);
         retval = $.add(retval, term);
     }
     return retval;

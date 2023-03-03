@@ -1,10 +1,13 @@
-import { MATH_POW } from "../runtime/ns_math";
 import { is_flt } from "../operators/flt/is_flt";
 import { is_rat } from "../operators/rat/is_rat";
+import { MATH_POW } from "../runtime/ns_math";
 import { negOne } from "../tree/rat/Rat";
 import { items_to_cons, U } from "../tree/tree";
 
-export function inverse(expr: U): U {
+/**
+ * Constructs (divide 1 expr) without any further evaluation.
+ */
+export function one_divided_by(expr: U): U {
     if (is_rat(expr)) {
         return expr.inv();
     }

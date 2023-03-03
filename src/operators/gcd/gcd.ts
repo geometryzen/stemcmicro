@@ -1,4 +1,5 @@
 import { compare_num_num } from '../../calculators/compare/compare_num_num';
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { isunivarpolyfactoredorexpandedform } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
@@ -180,7 +181,7 @@ function gcd_powers_with_same_base(base1: U, base2: U, $: ExtensionEnv): U {
     }
 
     // are the exponents multiples of eah other?
-    const expo1_div_expo2 = $.divide(exponent1, exponent2);
+    const expo1_div_expo2 = divide(exponent1, exponent2, $);
 
     if (is_num(expo1_div_expo2)) {
         // choose the smallest exponent
@@ -221,8 +222,8 @@ function gcd_sum_sum(p1: U, p2: U, $: ExtensionEnv): U {
         return gcd(x, y, $);
     }) : car(cdr(p2));
 
-    const p5 = $.divide(p1, p3);
-    const p6 = $.divide(p2, p4);
+    const p5 = divide(p1, p3, $);
+    const p6 = divide(p2, p4, $);
 
     if (p5.equals(p6)) {
         return $.multiply(p5, gcd(p3, p4, $));

@@ -1,17 +1,18 @@
-import { adj } from './operators/adj/adj';
-import { det } from './operators/det/det';
+import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { makeList } from './makeList';
+import { adj } from './operators/adj/adj';
+import { det } from './operators/det/det';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { INV, INVG } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { is_identity_matrix, is_inner_or_dot, is_inv, is_num_or_tensor_or_identity_matrix } from './runtime/helpers';
 import { is_square_matrix } from './tensor';
 import { Err } from './tree/err/Err';
-import { is_tensor } from './operators/tensor/is_tensor';
-import { Tensor } from './tree/tensor/Tensor';
 import { one, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
-import { Cons, is_cons, U } from './tree/tree';
+import { Tensor } from './tree/tensor/Tensor';
+import { Cons, is_cons, items_to_cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
 //
@@ -90,12 +91,12 @@ export function inv(expr: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
     if ($.isZero(p2)) {
         halt('inverse of singular matrix');
     }
-    return hook($.divide(adj(expr, $), p2) as Tensor);
+    return hook(divide(adj(expr, $), p2, $) as Tensor);
 }
 
 export function invg(p1: U, $: ExtensionEnv): Cons | Sym | Tensor {
     if (!is_square_matrix(p1)) {
-        return makeList(INVG, p1);
+        return items_to_cons(INVG, p1);
     }
 
     return inverse_tensor(p1, $);
@@ -156,10 +157,10 @@ function INV_decomp(units: U[], elements: U[], n: number, $: ExtensionEnv): U[] 
 
         for (let j = 0; j < n; j++) {
             if (j > d) {
-                elements[n * d + j] = $.divide(elements[n * d + j], p2);
+                elements[n * d + j] = divide(elements[n * d + j], p2, $);
             }
 
-            units[n * d + j] = $.divide(units[n * d + j], p2);
+            units[n * d + j] = divide(units[n * d + j], p2, $);
         }
 
         for (let i = 0; i < n; i++) {

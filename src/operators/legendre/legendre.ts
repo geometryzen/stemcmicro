@@ -1,16 +1,17 @@
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
-import { cos } from '../cos/cosine';
-import { derivative } from '../derivative/derivative';
-import { sin } from '../sin/sine';
-import { is_sym } from '../sym/is_sym';
 import { COS, LEGENDRE, SECRETX, SIN } from '../../runtime/constants';
 import { square } from '../../square';
-import { subst } from '../subst/subst';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { half, one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { car, nil, U } from '../../tree/tree';
+import { cos } from '../cos/cosine';
+import { derivative } from '../derivative/derivative';
+import { sin } from '../sin/sine';
+import { subst } from '../subst/subst';
+import { is_sym } from '../sym/is_sym';
 
 /*
  Legendre function
@@ -90,13 +91,7 @@ function __legendre2(n: number, m: number, X: U, $: ExtensionEnv): U {
     //    Y1 = -1/2 + 3/2*x^2
     //    ((2*i+1)*x*Y1 - i*Y0) / i = -3/2*x + 5/2*x^3
     for (let i = 0; i < n; i++) {
-        const divided = $.divide(
-            $.subtract(
-                $.multiply($.multiply(wrap_as_int(2 * i + 1), X), Y1),
-                $.multiply(wrap_as_int(i), Y0)
-            ),
-            wrap_as_int(i + 1)
-        );
+        const divided = divide($.subtract($.multiply($.multiply(wrap_as_int(2 * i + 1), X), Y1), $.multiply(wrap_as_int(i), Y0)), wrap_as_int(i + 1), $);
         Y0 = Y1;
         Y1 = divided;
     }

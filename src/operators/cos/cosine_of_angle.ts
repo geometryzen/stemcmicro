@@ -1,5 +1,6 @@
 
 import { rational } from '../../bignum';
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
@@ -54,7 +55,7 @@ export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] 
 
     const x_times_180 = $.multiply(x, wrap_as_int(180));
     const Pi = DynamicConstants.Pi($);
-    const n = nativeInt($.divide(x_times_180, Pi));
+    const n = nativeInt(divide(x_times_180, Pi, $));
 
     // most "good" (i.e. compact) trigonometric results
     // happen for a round number of degrees. There are some exceptions

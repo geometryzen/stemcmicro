@@ -1,11 +1,12 @@
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv, Sign } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
-import { is_num } from '../num/is_num';
 import { DET } from '../../runtime/constants';
 import { is_square_matrix } from '../../tensor';
-import { wrap_as_int, one, zero } from '../../tree/rat/Rat';
+import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { U } from '../../tree/tree';
+import { is_num } from '../num/is_num';
 
 /* det =====================================================================
 
@@ -181,7 +182,7 @@ function lu_decomp(elements: U[], n: number, $: ExtensionEnv): U {
 
         // update lower diagonal matrix
         for (let i = d + 1; i < n; i++) {
-            const p2 = $.negate($.divide(getM(elements, n, i, d), getM(elements, n, d, d)));
+            const p2 = $.negate(divide(getM(elements, n, i, d), getM(elements, n, d, d), $));
 
             // update one row
             setM(elements, n, i, d, zero); // clear column below pivot d

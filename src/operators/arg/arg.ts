@@ -1,4 +1,5 @@
 import { subtract } from '../../calculators/sub/subtract';
+import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
 import { evaluatingAsFloat } from '../../modes/modes';
@@ -170,7 +171,7 @@ function arg_of_sum(expr: Cons, $: ExtensionEnv): U {
         }
     }
     else {
-        const arg1 = arctan($.divide(y, x), $);
+        const arg1 = arctan(divide(y, x, $), $);
         if (is_negative(x)) {
             if (is_negative(y)) {
                 return subtract(arg1, DynamicConstants.Pi($), $); // quadrant 1 -> 3

@@ -1,8 +1,9 @@
-import { divide_expand } from './divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factors } from './factors';
 import { filter } from './filter';
 import { guess } from './guess';
+import { divide_expand } from './helpers/divide';
+import { inverse } from './helpers/inverse';
 import { inv } from './inv';
 import { is_plus_or_minus_one, is_poly_expanded_form } from './is';
 import { multiply, multiply_items } from './multiply';
@@ -360,27 +361,27 @@ function expand_get_B(p3: U, p4: U, p9: U, $: ExtensionEnv): U {
 }
 
 // Returns the expansion fractions in A.
-function expand_get_A(p2: U, p4: U, p9: U, $: ExtensionEnv): U {
+function expand_get_A(p2: U, p4: U, X: U, $: ExtensionEnv): U {
     if (!is_tensor(p4)) {
-        return $.inverse(p2);
+        return inverse(p2, $);
     }
     let elements: U[] = [];
     if (is_multiply(p2)) {
         p2.tail().forEach((p5) => {
-            elements.push(...expand_get_AF(p5, p9, $));
+            elements.push(...expand_get_AF(p5, X, $));
         });
     }
     else {
-        elements = expand_get_AF(p2, p9, $);
+        elements = expand_get_AF(p2, X, $);
     }
     const n = elements.length;
     const dims = [n];
     return new Tensor(dims, elements);
 }
 
-function expand_get_AF(p5: U, p9: U, $: ExtensionEnv): U[] {
+function expand_get_AF(p5: U, X: U, $: ExtensionEnv): U[] {
     let n = 1;
-    if (!p5.contains(p9)) {
+    if (!p5.contains(X)) {
         return [];
     }
     if (is_power(p5)) {
@@ -388,10 +389,13 @@ function expand_get_AF(p5: U, p9: U, $: ExtensionEnv): U[] {
         p5 = cadr(p5);
     }
     const results: U[] = [];
-    const d = nativeInt(degree(p5, p9, $));
+    const d = nativeInt(degree(p5, X, $));
     for (let i = n; i > 0; i--) {
         for (let j = 0; j < d; j++) {
-            results.push($.multiply($.inverse($.power(p5, wrap_as_int(i))), $.power(p9, wrap_as_int(j))));
+            const A = $.power(p5, wrap_as_int(i));
+            const B = inverse(A, $);
+            const C = $.power(X, wrap_as_int(j));
+            results.push($.multiply(B, C));
         }
     }
     return results;

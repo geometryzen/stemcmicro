@@ -1080,7 +1080,7 @@ function scan_tensor(state: InputState): Tensor {
  * then that elements must be flattened, but the dimensionality recorded and incorporated
  * into the created Tensor.
  */
-function create_tensor(elements: U[]): Tensor {
+export function create_tensor(elements: U[]): Tensor {
     if (elements.length > 0) {
         // The dimensions of the new tensor.
         const dims: number[] = [elements.length];

@@ -40,8 +40,7 @@ export function parse_script(fileName: string, sourceText: string, options?: Par
             return brite_parse(fileName, sourceText, brite_parse_options(options));
         }
         case ScriptKind.PY: {
-            const tree = typhon_parse(fileName, sourceText, typhon_parse_options(options));
-            return { trees: [tree], errors: [] };
+            return typhon_parse(fileName, sourceText, typhon_parse_options(options));
         }
         /*
         case ScriptKind.JS:

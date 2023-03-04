@@ -1,6 +1,5 @@
 import { assert } from "chai";
-import { create_script_context, ScriptContextOptions } from "../index";
-import { ScriptKind } from "../src/parser/parser";
+import { create_script_context, ScriptContextOptions, ScriptKind } from "../index";
 
 describe("example", function () {
     it("Geometric Algebra", function () {

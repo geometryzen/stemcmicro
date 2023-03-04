@@ -13,11 +13,13 @@ import {
     Compare,
     Dict,
     Div,
+    Ellipsis,
     ExpressionStatement,
     ForStatement,
     FunctionDef,
     IfStatement,
     ImportFrom,
+    Index,
     List,
     LShift,
     Module,
@@ -29,22 +31,22 @@ import {
     Print,
     ReturnStatement,
     RShift,
+    Slice,
     SourceKind,
     Statement,
     Str as PythonString,
     Sub,
-    UnaryOp,
+    Subscript, UnaryOp,
     Visitor
 } from "typhon-lang";
 import { create_tensor } from "../brite/scan";
 import { FltTokenParser } from '../operators/flt/FltTokenParser';
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { ASSIGN } from "../runtime/constants";
-import { MATH_ADD, MATH_DIV, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
+import { MATH_ADD, MATH_COMPONENT, MATH_DIV, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
 import { wrap_as_int } from "../tree/rat/Rat";
 import { Str } from "../tree/str/Str";
 import { create_sym } from "../tree/sym/Sym";
-import { Tensor } from "../tree/tensor/Tensor";
 import { items_to_cons, U } from "../tree/tree";
 
 export interface TyphonParseOptions {
@@ -199,6 +201,24 @@ class PythonVisitor implements Visitor {
         str.s.range;
         const value = str.s.value;
         this.stack.push(new Str(value, 0, 0));
+    }
+    subscript(se: Subscript): void {
+        se.value.accept(this);
+        const value = this.stack.pop() as U;
+        if (se.slice instanceof Ellipsis) {
+            throw new Error();
+        }
+        if (se.slice instanceof Index) {
+            se.slice.value.accept(this);
+            const index = this.stack.pop() as U;
+            this.stack.push(items_to_cons(MATH_COMPONENT, value, index));
+        }
+        if (se.slice instanceof Name) {
+            throw new Error();
+        }
+        if (se.slice instanceof Slice) {
+            throw new Error();
+        }
     }
     unaryOp(unaryExpr: UnaryOp): void {
         throw new Error("Method not implemented.");

@@ -288,7 +288,7 @@ describe("typhon", function () {
         context.release();
     });
     // TODO: Looks like 'typhon-lang' package may not implement component access.
-    xit("a[5]", function () {
+    it("a[5]", function () {
         const lines: string[] = [
             `a[5]`
         ];
@@ -332,6 +332,31 @@ describe("typhon", function () {
         assert.strictEqual(values.length, 1, "values.length");
         assert.strictEqual(context.renderAsSExpr(values[0]), `[i,j,k]`);
         assert.strictEqual(context.renderAsInfix(values[0]), `[i,j,k]`);
+        context.release();
+    });
+    it("Geometric Algebra II", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["i","j","k"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `e1`,
+            `e2`,
+            `e3`
+        ];
+        const sourceText = lines.join('\n');
+        const context = create_script_context({
+            scriptKind: ScriptKind.PY
+        });
+        const { values } = context.executeScript(sourceText);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 3, "values.length");
+        assert.strictEqual(context.renderAsSExpr(values[0]), `i`);
+        assert.strictEqual(context.renderAsInfix(values[0]), `i`);
+        assert.strictEqual(context.renderAsSExpr(values[1]), `j`);
+        assert.strictEqual(context.renderAsInfix(values[1]), `j`);
+        assert.strictEqual(context.renderAsSExpr(values[2]), `k`);
+        assert.strictEqual(context.renderAsInfix(values[2]), `k`);
         context.release();
     });
 });

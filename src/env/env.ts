@@ -6,6 +6,7 @@ import { useCaretForExponentiation } from "../modes/modes";
 import { is_blade } from "../operators/blade/is_blade";
 import { is_boo } from "../operators/boo/is_boo";
 import { is_err } from "../operators/err/is_err";
+import { MATH_EXP } from "../operators/exp/MATH_EXP";
 import { is_flt } from "../operators/flt/is_flt";
 import { value_of } from "../operators/helpers/valueOf";
 import { is_hyp } from "../operators/hyp/is_hyp";
@@ -700,8 +701,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     // TODO: Consistency in names used for symbols in symbolic expressions.
     $.setSymbolToken(MATH_ADD, '+');        // changing will break  82 cases.
     $.setSymbolToken(MATH_MUL, '*');        // changing will break 113 cases.
-    //    $.setSymbolToken(MATH_POW, 'power');    // changing will break  22 cases.
-    $.setSymbolToken(MATH_POW, 'expt');    // changing will break  22 cases.
+    $.setSymbolToken(MATH_POW, 'expt');
     $.setSymbolToken(MATH_RCO, '>>');
     $.setSymbolToken(MATH_LCO, '<<');
     $.setSymbolToken(MATH_INNER, '|');
@@ -711,6 +711,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolToken(MATH_PI, 'pi');
     $.setSymbolToken(MATH_NIL, '()');
     $.setSymbolToken(MATH_IMU, 'i');
+    $.setSymbolToken(MATH_EXP, 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
     $.setModeFlag(useCaretForExponentiation, config.useCaretForExponentiation);

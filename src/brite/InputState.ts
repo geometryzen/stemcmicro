@@ -1,3 +1,4 @@
+import { MATH_EXP } from "../operators/exp/MATH_EXP";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { StrTokenParser } from "../operators/str/StrTokenParser";
@@ -45,7 +46,8 @@ const scanConfig: ScanConfig = {
         '!=': MATH_NE,
         '==': MATH_EQ,
         ':=': LANG_COLON_EQ,
-        '=': ASSIGN
+        '=': ASSIGN,
+        'exp': MATH_EXP
     },
     meta: {
         'a': METAA,

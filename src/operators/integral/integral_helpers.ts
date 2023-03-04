@@ -660,33 +660,33 @@ function hash_multiplication(terms: U, x: U, $: ExtensionEnv): number {
     return product;
 }
 
-function hash_power(base: U, power: U, x: U, $: ExtensionEnv): number {
+function hash_power(base: U, power_number: U, x: U, $: ExtensionEnv): number {
     let base_hash = hashcode_values.constant;
     let exp_hash = hashcode_values.constexp;
     if (base.contains(x)) {
         base_hash = italu_hashcode(base, x, $);
     }
-    if (power.contains(x)) {
-        exp_hash = italu_hashcode(power, x, $);
+    if (power_number.contains(x)) {
+        exp_hash = italu_hashcode(power_number, x, $);
     }
     else {
         // constant to constant = constant
         if (base_hash === hashcode_values.constant) {
             return hashcode_values.constant;
         }
-        if (is_num_and_eq_minus_one(power)) {
+        if (is_num_and_eq_minus_one(power_number)) {
             exp_hash = -1;
         }
-        else if (is_one_over_two(power)) {
+        else if (is_one_over_two(power_number)) {
             exp_hash = 0.5;
         }
-        else if (isminusoneovertwo(power)) {
+        else if (isminusoneovertwo(power_number)) {
             exp_hash = -0.5;
         }
-        else if (equalq(power, 2, 1)) {
+        else if (equalq(power_number, 2, 1)) {
             exp_hash = 2;
         }
-        else if (equalq(power, -2, 1)) {
+        else if (equalq(power_number, -2, 1)) {
             exp_hash = -2;
         }
     }

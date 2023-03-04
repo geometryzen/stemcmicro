@@ -211,7 +211,7 @@ function has_negative_rational_exponent(expr: U): boolean {
     if (is_power(expr)) {
         if (is_rat(car(cdr(cdr(expr))))) {
             if (is_negative_number(car(cdr(expr)))) {
-                // (power )
+                // (expt)
                 return true;
             }
         }
@@ -242,7 +242,7 @@ export function is_imaginary_number(expr: U): boolean {
                 return true;
             }
             if (expr.equals(imu)) {
-                // Probbaly dead code because i => (power -1 1/2), which isn't a (multiply )
+                // Probbaly dead code because i => (expt -1 1/2), which isn't a (multiply )
                 return true;
             }
             if (has_negative_rational_exponent(caddr(expr))) {

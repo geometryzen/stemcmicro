@@ -12,7 +12,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "i");
         engine.release();
     });
@@ -25,7 +25,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "3**(1/2)*i");
         engine.release();
     });
@@ -38,7 +38,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "-3**(1/2)");
         engine.release();
     });
@@ -51,7 +51,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "1/2*3**(1/2)");
         engine.release();
     });
@@ -64,7 +64,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "3/4");
         engine.release();
     });
@@ -77,7 +77,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();
     });
@@ -90,7 +90,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();
     });
@@ -103,7 +103,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "1/2+(1/2*3**(1/2))*i");
         engine.release();
     });
@@ -116,7 +116,7 @@ describe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(power (+ (power x 2) (power y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "(-1)**(1/3)");
         engine.release();
     });

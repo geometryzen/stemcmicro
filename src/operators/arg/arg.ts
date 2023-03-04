@@ -103,13 +103,13 @@ function yyarg(expr: U, $: ExtensionEnv): U {
 
     if (is_power(expr)) {
         const base = cadr(expr);
-        // Implementation in which imaginary unit is (power -1 1/2).
+        // Implementation in which imaginary unit is (expt -1 1/2).
         if (equaln(base, -1)) {
             // -1 to a power
             return $.multiply(DynamicConstants.Pi($), caddr(expr));
         }
 
-        // (power e X) => imag(X)
+        // (expt e X) => imag(X)
         if (is_base_of_natural_logarithm(base)) {
             // exponential
             // arg(a^(1/2)) is always equal to 1/2 * arg(a)

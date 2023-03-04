@@ -26,8 +26,11 @@ export const MATH_DIV = create_sym('/');
 export const MATH_MUL = create_sym('*');
 /**
  * Exponentiation.
+ * JavaScript: Math.pow
+ * Python:     math.pow
+ * Scheme:     expt
  */
-export const MATH_POW = create_sym('**');
+export const MATH_POW = create_sym('math.pow');
 /**
  * The exterior or outer product. Uses '^' as the infix operator.
  * WARNING! This must be in the global namespace in order to match the function name in scripts.

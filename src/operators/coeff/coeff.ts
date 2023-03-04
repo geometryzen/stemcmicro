@@ -116,7 +116,7 @@ export function coeff(expr: U, x: U, $: ExtensionEnv): U[] {
         else if (is_cons(p) && is_mul_2_any_any_and_rhs_equals(p, x)) {
             p = p.lhs;
         }
-        // TODO: Optimize for the case that p is (power x n)
+        // TODO: Optimize for the case that p is (expt x n)
         else {
             // console.lg(`P(${x}) => ${print_expr(p, $)}`);
             p = divide_expand(p, x, $);

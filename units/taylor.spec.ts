@@ -35,7 +35,7 @@ describe("taylor", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1/9 (* 2/81 (power x 2)))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1/9 (* 2/81 (expt x 2)))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1/9+2/81*x**2");
         engine.release();
     });
@@ -47,7 +47,7 @@ describe("taylor", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1/9 (* 2/81 (power x 2)) (* 5/1458 (power x 4)) (* 49/131220 (power x 6)))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1/9 (* 2/81 (expt x 2)) (* 5/1458 (expt x 4)) (* 49/131220 (expt x 6)))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1/9+2/81*x**2+5/1458*x**4+49/131220*x**6");
         engine.release();
     });

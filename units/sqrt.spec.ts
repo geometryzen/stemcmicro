@@ -9,7 +9,7 @@ describe("sqrt", function () {
         ];
         const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), '(power a 1/2)');
+        assert.strictEqual(engine.renderAsSExpr(actual), '(expt a 1/2)');
         assert.strictEqual(engine.renderAsInfix(actual), 'a**(1/2)');
         engine.release();
     });

@@ -1,6 +1,6 @@
 import { create_sym } from "../../tree/sym/Sym";
 
 /**
- * cos(x) = ... (power series)
+ * cos(x) = ... (expt series)
  */
 export const MATH_COS = create_sym('cos');

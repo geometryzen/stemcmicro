@@ -40,7 +40,7 @@ function cross(lhs: LHS, rhs: RHS): boolean {
 }
 
 /**
- * (add (power (cos x) 2) (power (sin x) 2)) => 1
+ * (add (expt (cos x) 2) (expt (sin x) 2)) => 1
  * cos(x)**2+sin(x)**2 => 1
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {

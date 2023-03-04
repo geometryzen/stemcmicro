@@ -19,7 +19,7 @@ type ARG = UCons<Sym, U>;
 type EXP = UCons<Sym, ARG>;
 
 /**
- * abs(exp(a+b*i)) => (power (inner X X) 1/2)
+ * abs(exp(a+b*i)) => (expt (inner X X) 1/2)
  * 
  * This general replacement of the abs function with an inner product requires the concept of conjugation to unpack the inner product.
  * It should work for real numbers, complex numbers, blades, tensors and scalars.

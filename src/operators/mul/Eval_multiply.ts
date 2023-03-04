@@ -137,7 +137,7 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         const [baseL, powerL] = base_and_power(head1, $);
         const [baseR, powerR] = base_and_power(head2, $);
 
-        // We can get the ordering wrong here. e.g. lhs = (power 2 1/2), rhs = imu
+        // We can get the ordering wrong here. e.g. lhs = (expt 2 1/2), rhs = imu
         // We end up comparing 2 and i and the 2 gets pushed first and the i waits
         // for the next loop iteration.
         // console.lg("head1", render_as_infix(head1, $));
@@ -149,7 +149,7 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
 
         // If the head elements are the same then the bases will be the same.
         // On the other hand, the heads can be different but the bases the same.
-        // e.g. head1 = x, head2 = 1/x = (power x -1)
+        // e.g. head1 = x, head2 = 1/x = (expt x -1)
         if (baseL.equals(baseR)) {
             combine_factors(factors, baseR, powerL, powerR, $);
             p1 = p1.cdr;
@@ -223,7 +223,7 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
 }
 
 /**
- * Decomposes an expression into a base and power (power may be one).
+ * Decomposes an expression into a base and power (expt may be one).
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function base_and_power(expr: U, $: ExtensionEnv): [base: U, power: U] {

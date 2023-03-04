@@ -115,4 +115,61 @@ describe("scripts", function () {
             context.release();
         });
     });
+    describe("exponentiation", function () {
+        it("Eigenmath", function () {
+            const lines: string[] = [
+                `x^y`
+            ];
+            const sourceText = lines.join('\n');
+            const context = create_script_context({
+                scriptKind: ScriptKind.Eigenmath,
+                useCaretForExponentiation: true
+            });
+            const { values } = context.executeScript(sourceText);
+            assert.isArray(values);
+            assert.strictEqual(values.length, 1, "values.length");
+            assert.strictEqual(context.renderAsAscii(values[0]), ` y\nx`);
+            assert.strictEqual(context.renderAsHuman(values[0]), `x^y`);
+            assert.strictEqual(context.renderAsInfix(values[0]), `x^y`);
+            assert.strictEqual(context.renderAsLaTeX(values[0]), `x^y`);
+            assert.strictEqual(context.renderAsSExpr(values[0]), `(expt x y)`);
+            context.release();
+        });
+        it("Python", function () {
+            const lines: string[] = [
+                `x**y`
+            ];
+            const sourceText = lines.join('\n');
+            const context = create_script_context({
+                scriptKind: ScriptKind.Python
+            });
+            const { values } = context.executeScript(sourceText);
+            assert.isArray(values);
+            assert.strictEqual(values.length, 1, "values.length");
+            assert.strictEqual(context.renderAsAscii(values[0]), ` y\nx`);
+            assert.strictEqual(context.renderAsHuman(values[0]), `x**y`);
+            assert.strictEqual(context.renderAsInfix(values[0]), `x**y`);
+            assert.strictEqual(context.renderAsLaTeX(values[0]), `x^y`);
+            assert.strictEqual(context.renderAsSExpr(values[0]), `(expt x y)`);
+            context.release();
+        });
+        it("Scheme", function () {
+            const lines: string[] = [
+                `(expt x y)`
+            ];
+            const sourceText = lines.join('\n');
+            const context = create_script_context({
+                scriptKind: ScriptKind.Scheme
+            });
+            const { values } = context.executeScript(sourceText);
+            assert.isArray(values);
+            assert.strictEqual(values.length, 1, "values.length");
+            assert.strictEqual(context.renderAsAscii(values[0]), ` y\nx`);
+            assert.strictEqual(context.renderAsHuman(values[0]), `x**y`);
+            assert.strictEqual(context.renderAsInfix(values[0]), `x**y`);
+            assert.strictEqual(context.renderAsLaTeX(values[0]), `x^y`);
+            assert.strictEqual(context.renderAsSExpr(values[0]), `(expt x y)`);
+            context.release();
+        });
+    });
 });

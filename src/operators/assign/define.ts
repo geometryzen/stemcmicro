@@ -37,7 +37,7 @@ import { is_sym } from '../sym/is_sym';
 //
 //  caadr(p1) points to the function name i.e. f
 //  cdadr(p1) points to the arguments i.e. the list (x y)
-//  caddr(p1) points to the function body i.e. (power x y)
+//  caddr(p1) points to the function body i.e. (expt x y)
 // F function name
 // A argument list
 // B function body

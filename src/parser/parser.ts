@@ -1,5 +1,5 @@
 import { EigenmathParseOptions, eigenmath_parse } from "../brite/parse_script";
-import { MATH_ADD, MATH_MUL } from "../runtime/ns_math";
+import { MATH_ADD, MATH_MUL, MATH_POW } from "../runtime/ns_math";
 import { SchemeParseOptions } from "../scheme/SchemeParseOptions";
 import { scheme_parse } from "../scheme/scheme_parse";
 import { U } from "../tree/tree";
@@ -85,7 +85,8 @@ function scheme_parse_options(options?: ParseOptions): SchemeParseOptions {
         return {
             lexicon: {
                 '+': MATH_ADD,
-                '*': MATH_MUL
+                '*': MATH_MUL,
+                'expt': MATH_POW
             },
             explicitAssocAdd: options.explicitAssocAdd,
             explicitAssocMul: options.explicitAssocMul,

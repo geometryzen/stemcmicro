@@ -23,6 +23,8 @@ export interface ScriptExecuteOptions {
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
+    dependencies?: string[];
+    disable?: string[];
     /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
      * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
@@ -133,8 +135,18 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, executeOptions: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
-            // TODO: Combine the options here with the options from the context (as defaults).
-            return execute_script("", sourceText, parse_options_from_script_context_options(contextOptions, $), $);
+            const options: Pick<ScriptContextOptions, 'scriptKind'> = { scriptKind: ScriptKind.Eigenmath };
+            if (contextOptions) {
+                if (contextOptions.scriptKind) {
+                    options.scriptKind = contextOptions.scriptKind;
+                }
+            }
+            if (executeOptions) {
+                if (executeOptions.scriptKind) {
+                    options.scriptKind = executeOptions.scriptKind;
+                }
+            }
+            return execute_script("", sourceText, parse_options_from_script_context_options(options, $), $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);

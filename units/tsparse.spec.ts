@@ -208,7 +208,7 @@ describe("tsparse", function () {
 
         const tree = ts_parse('foo.ts', lines.join('\n'));
         assert.isDefined(tree);
-        assert.strictEqual(engine.renderAsSExpr(tree), "(power a b)");
+        assert.strictEqual(engine.renderAsSExpr(tree), "(expt a b)");
         const value = assert_one_value(engine.evaluate(tree));
         assert.strictEqual(engine.renderAsInfix(value), "a**b");
         engine.release();

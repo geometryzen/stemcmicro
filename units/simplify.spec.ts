@@ -10,7 +10,7 @@ describe("simplify", function () {
         const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // Expecting -(1+i)/(2^(1/2))
-        assert.strictEqual(engine.renderAsSExpr(actual), "(power e (* -3/4 i pi))");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(expt e (* -3/4 i pi))");
         assert.strictEqual(engine.renderAsInfix(actual), "e**(-3/4*i*pi)");
 
         engine.release();

@@ -95,31 +95,31 @@ describe("derivative", function () {
     });
     it("d(a^x,x)", function () {
         const lines: string[] = [
-            `d(a^x,x)`
+            `d(a^x,x)-(x*d(a,x)/(a^(1-x))+a^x*log(a))`
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "x*d(a,x)/(a^(1-x))+a^x*log(a)");
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
 
         engine.release();
     });
     it("d(3^x,x)", function () {
         const lines: string[] = [
-            `d(3^x,x)`
+            `d(3^x,x)-3^x*log(3)`
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "3^x*log(3)");
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
 
         engine.release();
     });
     it("d(a**x,x)", function () {
         const lines: string[] = [
-            `d(a**x,x)`
+            `d(a**x,x)-(x*d(a,x)/(a**(1-x))+a**x*log(a))`
         ];
         const engine = create_script_context({ useCaretForExponentiation: false });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "x*d(a,x)/(a**(1-x))+a**x*log(a)");
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
 
         engine.release();
     });

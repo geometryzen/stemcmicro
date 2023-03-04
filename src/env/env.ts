@@ -700,7 +700,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     // TODO: Consistency in names used for symbols in symbolic expressions.
     $.setSymbolToken(MATH_ADD, '+');        // changing will break  82 cases.
     $.setSymbolToken(MATH_MUL, '*');        // changing will break 113 cases.
-    $.setSymbolToken(MATH_POW, 'power');    // changing will break  22 cases.
+    //    $.setSymbolToken(MATH_POW, 'power');    // changing will break  22 cases.
+    $.setSymbolToken(MATH_POW, 'expt');    // changing will break  22 cases.
     $.setSymbolToken(MATH_RCO, '>>');
     $.setSymbolToken(MATH_LCO, '<<');
     $.setSymbolToken(MATH_INNER, '|');

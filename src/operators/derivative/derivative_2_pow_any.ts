@@ -22,7 +22,7 @@ type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
- * (derivative (power base expo) X)
+ * (derivative (expt base expo) X)
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;

@@ -31,7 +31,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
         return hook(one, "A");
     }
 
-    // (power -1 1/2) is replaced by the imaginary unit.
+    // (expt -1 1/2) is replaced by the imaginary unit.
     if (base.isMinusOne() && expo.isHalf()) {
         // console.lg(`power(base => ${base}, expo => ${expo}) => i`);
         return hook(imu, "B");

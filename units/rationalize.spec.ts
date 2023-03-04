@@ -9,7 +9,7 @@ describe("rationalize", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(power a -1)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(expt a -1)");
         assert.strictEqual(engine.renderAsInfix(actual), "1/a");
         engine.release();
     });
@@ -19,7 +19,7 @@ describe("rationalize", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ a b) (power (* a b) -1))");
+        // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ a b) (expt (* a b) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a+b)/(a*b)");
         engine.release();
     });
@@ -39,7 +39,7 @@ describe("rationalize", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (* a d) (* b c)) (power (* b d) -1))");
+        // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (* a d) (* b c)) (expt (* b d) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a*d+b*c)/(b*d)");
         engine.release();
     });
@@ -52,7 +52,7 @@ describe("rationalize", function () {
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (power a 2) (power b 2)) (power (* a b) -1))");
+        // assert.strictEqual(engine.renderAsSExpr(actual), "(* (+ (expt a 2) (expt b 2)) (expt (* a b) -1))");
         assert.strictEqual(engine.renderAsInfix(actual), "(a^2+b^2)/(a*b)");
         engine.release();
     });

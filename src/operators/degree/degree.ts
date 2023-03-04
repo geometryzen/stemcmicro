@@ -58,7 +58,7 @@ function yydegree(P: U, X: U, d: Num, $: ExtensionEnv): Num {
     }
     else if (is_cons(P) && is_power(P)) {
         // It's not obvious in the following that we are looking at the base and exponent.
-        // A match on (power base exponent) would make this clearer.
+        // A match on (expt base exponent) would make this clearer.
         const caddr_poly = caddr(P);
         if ($.equals(cadr(P), X) && is_num(caddr_poly) && compare_num_num(d, caddr_poly) < 0) {
             return caddr_poly;

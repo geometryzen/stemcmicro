@@ -10,7 +10,7 @@ describe("exp", function () {
         const engine = create_script_context();
         engine.executeScript("e=exp(1)");
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(power e 5)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(expt e 5)");
         assert.strictEqual(engine.renderAsInfix(actual), "e**5");
         engine.release();
     });

@@ -1,6 +1,6 @@
 import { create_sym } from "../../tree/sym/Sym";
 
 /**
- * exp(x) = (power e x)
+ * exp(x) = (expt e x)
  */
 export const MATH_EXP = create_sym('exp');

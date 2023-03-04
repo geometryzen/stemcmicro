@@ -19,7 +19,7 @@ type ARG = U;
 type EXPR = UCons<Sym, ARG>;
 
 /**
- * sqrt(x) => (power x 1/2)
+ * sqrt(x) => (expt x 1/2)
  */
 class Sqrt extends Function1<ARG> implements Operator<EXPR> {
     readonly hash: string;

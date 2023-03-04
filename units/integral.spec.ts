@@ -9,7 +9,7 @@ describe("integral", function () {
         ];
         const engine = create_script_context({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(* 1/3 (power x 3))");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(* 1/3 (expt x 3))");
         assert.strictEqual(engine.renderAsInfix(actual), "1/3*x**3");
 
         engine.release();

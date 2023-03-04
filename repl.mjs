@@ -1,6 +1,6 @@
 import process from 'node:process';
 import repl from 'node:repl';
-import { create_script_context, ScriptKind } from './dist/commonjs/index.js';
+import { create_script_context, human_readable_script_kind, ScriptKind, scriptKinds } from './dist/commonjs/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isRecoverableError(error) {
@@ -10,11 +10,21 @@ function isRecoverableError(error) {
     return false;
 }
 
-const ctxt = create_script_context({
+function prompt(scriptKind) {
+    return `symbolic-math:${human_readable_script_kind(scriptKind).toLowerCase()}> `;
+}
+
+const contextOptions = {
     scriptKind: ScriptKind.Python,
     useCaretForExponentiation: false,
     useDefinitions: false
-});
+};
+
+const ctxt = create_script_context(contextOptions);
+
+const executeOptions = {
+    scriptKind: contextOptions.scriptKind
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function run(cmd, unusedContext, filename, callback) {
@@ -30,7 +40,7 @@ function run(cmd, unusedContext, filename, callback) {
     }
     callback(null, result);
     */
-    const { values, errors } = ctxt.executeScript(cmd);
+    const { values, errors } = ctxt.executeScript(cmd, executeOptions);
     for (const error of errors) {
         return `${error}`;
     }
@@ -39,8 +49,8 @@ function run(cmd, unusedContext, filename, callback) {
     }
 }
 
-const options = {
-    prompt: 'symbolic-math> ',
+const serverOptions = {
+    prompt: prompt(executeOptions.scriptKind),
     eval: (input, context, filename, callback) => {
         callback(null, run(input));
     },
@@ -48,19 +58,31 @@ const options = {
     useColors: true
 };
 
-const r = new repl.REPLServer(options);
+const replServer = new repl.REPLServer(serverOptions);
+
+scriptKinds.forEach(function (scriptKind) {
+    replServer.defineCommand(human_readable_script_kind(scriptKind).toLowerCase(), {
+        help: `Use ${human_readable_script_kind(scriptKind)} as the scripting language`,
+        action() {
+            this.clearBufferedCommand();
+            executeOptions.scriptKind = scriptKind;
+            replServer.setPrompt(prompt(scriptKind));
+            this.displayPrompt();
+        },
+    });
+});
 
 //
 // Handle the .exit command
 //
-r.on('exit', () => {
+replServer.on('exit', () => {
     process.exit();
 });
 
 //
 // Handle the .clear command.
 //
-r.on('reset', () => {
+replServer.on('reset', () => {
     ctxt.clearBindings();
 });
 

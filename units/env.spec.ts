@@ -61,7 +61,7 @@ describe("env", function () {
             const engine = create_script_context();
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a**b");
-            assert.strictEqual(engine.renderAsSExpr(values[0]), "(power a b)");
+            assert.strictEqual(engine.renderAsSExpr(values[0]), "(expt a b)");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "a^b");
             engine.release();
         });
@@ -72,7 +72,7 @@ describe("env", function () {
             const engine = create_script_context({ useCaretForExponentiation: true });
             const { values } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(engine.renderAsInfix(values[0]), "a^b");
-            assert.strictEqual(engine.renderAsSExpr(values[0]), "(power a b)");
+            assert.strictEqual(engine.renderAsSExpr(values[0]), "(expt a b)");
             assert.strictEqual(engine.renderAsLaTeX(values[0]), "a^b");
             engine.release();
         });

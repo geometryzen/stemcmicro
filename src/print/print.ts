@@ -1290,7 +1290,7 @@ function should_tweak_exponent_syntax(base: U, $: ExtensionEnv): boolean {
         }
     }
     else {
-        // e.g. (power 5 -1) can be written as 1/5
+        // e.g. (expt 5 -1) can be written as 1/5
         return true;
     }
 }

@@ -173,7 +173,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     // $.isOne(xx);
     // const ext = $.extensionOf(expr);
     // const correctly_typed_one = ext.one(expr, $) 
-    // (abs (power -1 Unknown)) => 1
+    // (abs (expt -1 Unknown)) => 1
     // abs(-1^anything) = abs(-1)^anything = 1^anything = 1
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
         // -1 to any power

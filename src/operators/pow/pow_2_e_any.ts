@@ -50,7 +50,7 @@ type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
- * (power e X) is equivalent to exp(X)
+ * (expt e X) is equivalent to exp(X)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
@@ -81,7 +81,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
             // Do nothing
         }
         else {
-            // Conversion of (power e to trigonometric form, when expanding.
+            // Conversion of (expt e to trigonometric form, when expanding.
             if ($.isExpanding()) {
                 // TODO: We could also consider the case of blades whose square is -1.
                 if (is_imu(expo)) {

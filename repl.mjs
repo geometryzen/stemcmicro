@@ -11,7 +11,7 @@ function isRecoverableError(error) {
 }
 
 const ctxt = create_script_context({
-    scriptKind: ScriptKind.BRITE,
+    scriptKind: ScriptKind.Python,
     useCaretForExponentiation: false,
     useDefinitions: false
 });

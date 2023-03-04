@@ -288,13 +288,13 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
     if (options) {
         return {
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
-            scriptKind: ScriptKind.BRITE
+            scriptKind: ScriptKind.Eigenmath
         };
     }
     else {
         return {
             useCaretForExponentiation: true,
-            scriptKind: ScriptKind.BRITE
+            scriptKind: ScriptKind.Eigenmath
         };
     }
 }

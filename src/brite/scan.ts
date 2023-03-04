@@ -1,7 +1,6 @@
 import { is_num } from '../operators/num/is_num';
 import { is_rat } from '../operators/rat/rat_extension';
 import { assert_sym } from '../operators/sym/assert_sym';
-import { is_tensor } from '../operators/tensor/is_tensor';
 import {
     ASSIGN,
     FACTORIAL,
@@ -21,6 +20,7 @@ import { items_to_cons, nil, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
 import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
+import { create_tensor } from './create_tensor';
 import { InputState } from './InputState';
 import { one_divided_by } from './one_divided_by';
 import { scanner_negate } from './scanner_negate';
@@ -1073,47 +1073,4 @@ function scan_tensor(state: InputState): Tensor {
     state.advance();
 
     return M;
-}
-
-/**
- * Creates a Tensor from an array of elements. If the elements themselves are tensors,
- * then that elements must be flattened, but the dimensionality recorded and incorporated
- * into the created Tensor.
- */
-export function create_tensor(elements: U[]): Tensor {
-    if (elements.length > 0) {
-        // The dimensions of the new tensor.
-        const dims: number[] = [elements.length];
-        /**
-         * The elements of the new tensor.
-         */
-        const elems: U[] = [];
-        let seenTensor = false;
-        for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
-            if (is_tensor(element)) {
-                const M = element;
-                if (seenTensor) {
-                    // Does this tensor have the same dimesions as the previous one?
-                }
-                else {
-                    for (let j = 0; j < M.ndim; j++) {
-                        dims[j + 1] = M.dim(j);
-                    }
-                    seenTensor = true;
-                }
-                for (let j = 0; j < M.nelem; j++) {
-                    elems.push(M.elem(j));
-                }
-            }
-            else {
-                elems.push(element);
-            }
-
-        }
-        return new Tensor(dims, elems);
-    }
-    else {
-        return new Tensor([0], []);
-    }
 }

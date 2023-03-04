@@ -39,7 +39,7 @@ import {
     Subscript, UnaryOp,
     Visitor
 } from "typhon-lang";
-import { create_tensor } from "../brite/scan";
+import { create_tensor } from "../brite/create_tensor";
 import { FltTokenParser } from '../operators/flt/FltTokenParser';
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { ASSIGN } from "../runtime/constants";

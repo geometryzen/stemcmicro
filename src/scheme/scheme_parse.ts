@@ -1,5 +1,10 @@
+import { CharStream, consume_num, NumHandler } from "../brite/consume_num";
+import { FltTokenParser } from "../operators/flt/FltTokenParser";
+import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { Boo } from "../tree/boo/Boo";
-import { Flt } from "../tree/flt/Flt";
+import { Flt, wrap_as_flt } from "../tree/flt/Flt";
+import { Num } from "../tree/num/Num";
+import { wrap_as_int } from "../tree/rat/Rat";
 import { Str } from "../tree/str/Str";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { cons, items_to_cons, nil, U } from "../tree/tree";
@@ -7,13 +12,55 @@ import { Char } from "./char";
 import { CommentMarker } from "./CommentMarker";
 import { EOS } from "./EOS";
 import { Pair } from "./Pair";
+import { SchemeParseOptions } from "./SchemeParseOptions";
 
 const endOfString = new EOS();
 const sexpCommentMarker = new CommentMarker();
 
-export function parse_scheme(sourceText: string): U[] {
-    const parser = new Parser(sourceText);
-    const exprs: U[] = [];
+class CharStreamOnString implements CharStream {
+    private pos = 0;
+    constructor(private readonly chars: string) {
+    }
+    get curr(): string {
+        return this.chars[this.pos];
+    }
+    get next(): string {
+        return this.chars[this.pos + 1];
+    }
+    consumeChars(n: number): void {
+        this.pos += n;
+    }
+    currEquals(ch: string): boolean {
+        return this.curr === ch;
+    }
+}
+
+class NumBuilder implements NumHandler {
+    #num?: Num;
+    constructor(private readonly chars: string) {
+
+    }
+    get num(): Num {
+        if (this.#num) {
+            return this.#num;
+        }
+        else {
+            throw new Error();
+        }
+    }
+    flt(): void {
+        this.#num = new FltTokenParser().parse(this.chars, 0, 0);
+        throw new Error("Method not implemented.");
+    }
+    int(): void {
+        this.#num = new IntTokenParser().parse(this.chars, 0, 0);
+    }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function scheme_parse(fileName: string, sourceText: string, options?: SchemeParseOptions): { trees: U[], errors: Error[] } {
+    const parser = new Parser(sourceText, options);
+    const trees: U[] = [];
     let done = false;
     while (!done) {
         const expr = parser.value();
@@ -21,16 +68,16 @@ export function parse_scheme(sourceText: string): U[] {
             done = true;
         }
         else {
-            exprs.push(expr);
+            trees.push(expr);
         }
     }
-    return exprs;
+    return { trees, errors: [] };
 }
 
 class Parser {
     #tokenIdx = 0;
     readonly #tokens: string[] = [];
-    constructor(sourceText: string) {
+    constructor(sourceText: string, private readonly options: SchemeParseOptions | undefined) {
         this.#tokens = tokenize(sourceText);
     }
     value(): U {
@@ -100,8 +147,17 @@ class Parser {
                     t == ",@" ? 'unquote-splicing' : false;
 
         if (s || t == '(' || t == '#(' || t == '[' || t == '#[' || t == '{' || t == '#{') {
-            return s ? new Pair(create_sym(s), new Pair(this.#consumeObject(), nil))
-                : (t == '(' || t == '[' || t == '{') ? this.#consumeList(t) : this.#consumeVector(t);
+            if (s) {
+                return new Pair(create_sym(s), new Pair(this.#consumeObject(), nil));
+            }
+            else {
+                if (t == '(' || t == '[' || t == '{') {
+                    return this.#consumeList(t);
+                }
+                else {
+                    return this.#consumeVector(t);
+                }
+            }
         }
         else {
             switch (t) {
@@ -110,21 +166,21 @@ class Parser {
                 case "+nan.0": return new Flt(NaN);
             }
 
-            let n: number;
             if (/^#x[0-9a-z]+$/i.test(t)) {  // #x... Hex
-                n = new Number('0x' + t.substring(2, t.length)).valueOf();
+                return wrap_as_int(new Number('0x' + t.substring(2, t.length)).valueOf());
             }
             else if (/^#d[0-9.]+$/i.test(t)) {  // #d... Decimal
-                n = new Number(t.substring(2, t.length)).valueOf();
+                return wrap_as_flt(new Number(t.substring(2, t.length)).valueOf());
             }
             else {
-                n = new Number(t).valueOf();  // use constrictor as parser
+                const stream = new CharStreamOnString(t);
+                const builder = new NumBuilder(t);
+                if (consume_num(stream, builder)) {
+                    return builder.num;
+                }
             }
 
-            if (!isNaN(n)) {
-                return new Flt(n.valueOf());
-            }
-            else if (t == '#f' || t == '#F') {
+            if (t == '#f' || t == '#F') {
                 return Boo.valueOf(false);
             }
             else if (t == '#t' || t == '#T') {
@@ -164,7 +220,9 @@ class Parser {
                 });
                 return new Str(s);
             }
-            else return create_sym(t);
+            else {
+                return sym_from_lexeme(t, this.options);
+            }
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -234,4 +292,24 @@ function tokenize(txt: string): string[] {
             });
     }
     return tokens;
+}
+
+export function sym_from_lexeme(lexeme: string, options: SchemeParseOptions | undefined): Sym {
+    if (options) {
+        if (options.lexicon) {
+            // console.lg(Object.keys(options.lexicon));
+            if (options.lexicon[lexeme]) {
+                return options.lexicon[lexeme];
+            }
+            else {
+                return create_sym(lexeme);
+            }
+        }
+        else {
+            return create_sym(lexeme);
+        }
+    }
+    else {
+        return create_sym(lexeme);
+    }
 }

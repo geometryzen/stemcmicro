@@ -9,9 +9,9 @@ import { MATH_ADD, MATH_DIV, MATH_EQ, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MA
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NewLine, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { consume_num } from "./consume_num";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
-import { is_digit } from "./is_digit";
 import { is_space } from "./is_space";
 import { ScanConfig } from "./ScanConfig";
 import { Token, TokenCode } from "./Token";
@@ -182,6 +182,9 @@ export class InputState {
         }
         // console.lg(`InputState.advance(token = ${JSON.stringify(this.#token)})`);
     }
+    consumeChars(n: number): void {
+        this.#token.end += n;
+    }
     currEquals(thing: string): boolean {
         return this.curr === thing;
     }
@@ -257,8 +260,19 @@ export class InputState {
             return;
         }
 
-        // number?
-        // console.lg(`curr = ${this.curr}`);
+        if (consume_num(this, {
+            flt: () => {
+                this.#token.code = T_FLT;
+                this.update_token_text(this.#token.pos, this.#token.end);
+            },
+            int: () => {
+                this.#token.code = T_INT;
+                this.update_token_text(this.#token.pos, this.#token.end);
+            }
+        })) {
+            return;
+        }
+        /*
         if (is_digit(this.curr) || this.curr === '.') {
             while (is_digit(this.curr)) {
                 this.#token.end++;
@@ -282,6 +296,7 @@ export class InputState {
             this.update_token_text(this.#token.pos, this.#token.end);
             return;
         }
+        */
 
         // symbol?
         if (is_alphabetic(this.curr)) {

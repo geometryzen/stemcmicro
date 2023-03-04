@@ -135,6 +135,7 @@
         "unit-scan": "mocha 'units/scan.spec.ts'",
         "unit-scheme": "mocha 'units/scheme.spec.ts'",
         "unit-scriptlast": "mocha 'units/scriptlast.spec.ts'",
+        "unit-scripts": "mocha 'units/scripts.spec.ts'",
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",
         "unit-sinh": "mocha 'units/sinh.spec.ts'",

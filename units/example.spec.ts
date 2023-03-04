@@ -22,7 +22,7 @@ describe("example", function () {
         ];
         const sourcetText = lines.join('\n');
         const options: ScriptContextOptions = {
-            scriptKind: ScriptKind.BRITE,
+            scriptKind: ScriptKind.Eigenmath,
             useCaretForExponentiation: false,
             useDefinitions: false
         };

@@ -15,11 +15,14 @@ import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { execute_definition, execute_std_definitions } from "./init";
 
-export interface ScriptContextOptions {
+export interface ScriptExecuteOptions {
     /**
      * Determines what kind of parser is used for the sourceText.
      */
-    scriptKind?: ScriptKind,
+    scriptKind?: ScriptKind
+}
+
+export interface ScriptContextOptions extends ScriptExecuteOptions {
     /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
      * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
@@ -62,7 +65,7 @@ export interface ScriptContext {
     getBindings(): { sym: Sym, binding: U }[]
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
-    executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
+    executeScript(sourceText: string, options?: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] };
     renderAsAscii(expr: U): string;
     renderAsHuman(expr: U): string;
     renderAsInfix(expr: U): string;
@@ -106,11 +109,11 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
  * Creates an engine for executing scripts.
  * The returned engine is reference counted and should be released when no longer needed.
  */
-export function create_script_context(options?: ScriptContextOptions): ScriptContext {
+export function create_script_context(contextOptions?: ScriptContextOptions): ScriptContext {
     let ref_count = 1;
-    const envOptions: EnvOptions = env_options_from_sm_context_options(options);
+    const envOptions: EnvOptions = env_options_from_sm_context_options(contextOptions);
     const $ = create_env(envOptions);
-    init_env($, options);
+    init_env($, contextOptions);
     const theEngine: ScriptContext = {
         clearBindings(): void {
             $.clearBindings();
@@ -128,8 +131,10 @@ export function create_script_context(options?: ScriptContextOptions): ScriptCon
         useStandardDefinitions(): void {
             execute_std_definitions($);
         },
-        executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] } {
-            return execute_script("", sourceText, parse_options_from_script_context_options(options, $), $);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        executeScript(sourceText: string, executeOptions: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
+            // TODO: Combine the options here with the options from the context (as defaults).
+            return execute_script("", sourceText, parse_options_from_script_context_options(contextOptions, $), $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);
@@ -173,7 +178,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
     }
     else {
         return {
-            scriptKind: ScriptKind.BRITE,
+            scriptKind: ScriptKind.Eigenmath,
             useCaretForExponentiation: false,
             explicitAssocAdd: false,
             explicitAssocMul: false

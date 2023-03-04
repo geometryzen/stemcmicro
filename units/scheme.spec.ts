@@ -1,16 +1,36 @@
 import { assert } from 'chai';
-import { createSchemeEngine } from '../src/scheme/scheme_engine';
+import { ScriptKind } from '../src/parser/parser';
+import { create_script_context } from '../src/runtime/script_engine';
 
 describe("scheme", function () {
-    xit("A", function () {
+    it("123", function () {
         const lines: string[] = [
-            `(+ 2 3)`
+            `123`
         ];
         const sourceText = lines.join('\n');
-        const engine = createSchemeEngine();
-        const { values } = engine.executeScript(sourceText);
-        const value = values[0];
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ x y)");
-        engine.release();
+        const context = create_script_context({
+            scriptKind: ScriptKind.Scheme
+        });
+        const { values } = context.executeScript(sourceText);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1, "values.length");
+        // TODO: Should be x + y
+        assert.strictEqual(context.renderAsInfix(values[0]), `123`);
+        context.release();
+    });
+    xit("(+ x y)", function () {
+        const lines: string[] = [
+            `(+ x y)`
+        ];
+        const sourceText = lines.join('\n');
+        const context = create_script_context({
+            scriptKind: ScriptKind.Scheme
+        });
+        const { values } = context.executeScript(sourceText);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1, "values.length");
+        // TODO: Should be x + y
+        assert.strictEqual(context.renderAsInfix(values[0]), `x+y`);
+        context.release();
     });
 });

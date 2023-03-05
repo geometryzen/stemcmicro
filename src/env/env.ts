@@ -7,7 +7,6 @@ import { MATH_EXP } from "../operators/exp/MATH_EXP";
 import { value_of } from "../operators/helpers/valueOf";
 import { is_num } from "../operators/num/is_num";
 import { is_sym } from "../operators/sym/is_sym";
-import { is_tensor } from "../operators/tensor/is_tensor";
 import { FUNCTION } from "../runtime/constants";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
@@ -609,17 +608,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             else if (is_nil(expr)) {
                 return [TFLAG_NONE, expr];
             }
-            else if (is_sym(expr)) {
-                const op = $.operatorFor(expr);
-                const retval = op.transform(expr);
-                return retval;
-            }
-            else if (is_tensor(expr)) {
-                const retval = $.operatorFor(expr).transform(expr);
-                return retval;
-            }
             else {
-                return [TFLAG_NONE, expr];
+                const op = $.operatorFor(expr);
+                return op.transform(expr);
             }
         },
         valueOf(expr: U): U {

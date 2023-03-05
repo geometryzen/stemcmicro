@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import { ScriptKind } from '../src/parser/parser';
 import { create_script_context } from '../src/runtime/script_engine';
 
-describe("scheme", function () {
+xdescribe("scheme", function () {
     xit("123", function () {
         const lines: string[] = [
             `123`

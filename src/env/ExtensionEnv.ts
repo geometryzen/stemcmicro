@@ -203,6 +203,9 @@ export const MODE_FLAGS_NONE = 0;
 export const MODE_FLAGS_ALL = MODE_EXPANDING | MODE_FACTORING;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTORING;
 
+/**
+ * Use to handle an expression.
+ */
 export interface Operator<T extends U> {
     readonly key?: string;
     readonly name: string;
@@ -210,6 +213,9 @@ export interface Operator<T extends U> {
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
     isImag(expr: T): boolean;
+    /**
+     * Determines whether this operator can be used to evaluate the expression.
+     */
     isKind(expr: U): boolean;
     isMinusOne(expr: T): boolean;
     isOne(expr: T): boolean;
@@ -221,7 +227,13 @@ export interface Operator<T extends U> {
     toInfixString(expr: T): string;
     toLatexString(expr: T): string;
     toListString(expr: T): string;
+    /**
+     * Evaluates the expression and also returns some information about the returned expression.
+     */
     transform(expr: T): [TFLAGS, U];
+    /**
+     * Evaluates the expression.
+     */
     valueOf(expr: T): U;
 }
 

@@ -1,13 +1,5 @@
 /**
- * It's incredibly painful to program the symbolic code with only unknown types.
- * We require any type that works with the tree to implement an interface.
- * This seems like a burden when you might want to use primitive string, number, or boolean,
- * or even some other type that does not support this interface. However, it will be useful
- * for a parsed tree so contain information that allows it to reference into the source text.
- * This will require an object wrapper. So we may as well accept the fact that any object we use
- * with the tree will need to be wrapped. Further we may as well make the information consistent
- * by defining it here. Finally, there's no point in alaiasing the interface so we'll give it a nice short
- * name that indicates the universal type. 
+ * The handle for any expression in the system.
  */
 export interface U {
     /**

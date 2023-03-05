@@ -3,21 +3,11 @@ import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { useCaretForExponentiation } from "../modes/modes";
-import { is_blade } from "../operators/blade/is_blade";
-import { is_boo } from "../operators/boo/is_boo";
-import { is_err } from "../operators/err/is_err";
 import { MATH_EXP } from "../operators/exp/MATH_EXP";
-import { is_flt } from "../operators/flt/is_flt";
 import { value_of } from "../operators/helpers/valueOf";
-import { is_hyp } from "../operators/hyp/is_hyp";
-import { is_imu } from "../operators/imu/is_imu";
 import { is_num } from "../operators/num/is_num";
-import { is_rat } from "../operators/rat/is_rat";
-import { is_str } from "../operators/str/is_str";
 import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from "../operators/tensor/is_tensor";
-import { is_uom } from "../operators/uom/is_uom";
-import { render_as_human } from "../print/render_as_human";
 import { FUNCTION } from "../runtime/constants";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
@@ -457,41 +447,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // The consumer is trying to answer a question
                 // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
             }
-            else if (is_num(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_sym(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_blade(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_imu(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_tensor(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_uom(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_nil(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_str(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_boo(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_hyp(expr)) {
-                return selectOperator(expr.name, expr);
-            }
-            else if (is_err(expr)) {
-                return selectOperator(expr.name, expr);
-            }
             else {
-                throw new SystemError(`operatorFor ${render_as_human(expr, $)}`);
+                return selectOperator(expr.name, expr);
             }
         },
         outer(lhs: U, rhs: U): U {
@@ -573,11 +530,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return [TFLAG_HALT, expr];
             }
             // We short-circuit some expressions in order to improve performance.
-            if (is_imu(expr)) {
-                expr.meta |= TFLAG_HALT;
-                return [TFLAG_NONE, expr];
-            }
-            else if (is_cons(expr)) {
+            if (is_cons(expr)) {
                 // let changedExpr = false;
                 let outFlags = TFLAG_NONE;
                 let curExpr: U = expr;
@@ -653,10 +606,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 curExpr.meta = TFLAG_HALT;
                 return [outFlags, curExpr];
             }
-            else if (is_rat(expr)) {
-                return [TFLAG_NONE, expr];
-            }
-            else if (is_flt(expr)) {
+            else if (is_nil(expr)) {
                 return [TFLAG_NONE, expr];
             }
             else if (is_sym(expr)) {
@@ -664,33 +614,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const retval = op.transform(expr);
                 return retval;
             }
-            else if (is_blade(expr)) {
-                return [TFLAG_NONE, expr];
-            }
             else if (is_tensor(expr)) {
                 const retval = $.operatorFor(expr).transform(expr);
                 return retval;
             }
-            else if (is_uom(expr)) {
-                return [TFLAG_NONE, expr];
-            }
-            else if (is_nil(expr)) {
-                return [TFLAG_NONE, expr];
-            }
-            else if (is_str(expr)) {
-                return [TFLAG_NONE, expr];
-            }
-            else if (is_boo(expr)) {
-                return [TFLAG_NONE, expr];
-            }
-            else if (is_hyp(expr)) {
-                return [TFLAG_NONE, expr];
-            }
-            else if (is_err(expr)) {
-                return [TFLAG_NONE, expr];
-            }
             else {
-                throw new SystemError(`transform ${render_as_human(expr, $)}`);
+                return [TFLAG_NONE, expr];
             }
         },
         valueOf(expr: U): U {

@@ -204,7 +204,9 @@ export const MODE_FLAGS_ALL = MODE_EXPANDING | MODE_FACTORING;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTORING;
 
 /**
- * Use to handle an expression.
+ * Use to handle an expression, especially to evaluate it.
+ * This is the means of extending the system to include other atoms.
+ * Every object in the system is an opaque handle.
  */
 export interface Operator<T extends U> {
     readonly key?: string;

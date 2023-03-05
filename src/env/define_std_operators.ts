@@ -234,7 +234,7 @@ import { pred_rat } from '../operators/pred/pred_rat';
 import { make_printmode_keyword } from '../operators/printing/make_printmode_keyword';
 import { make_printmode_operator } from '../operators/printing/make_printmode_operator';
 import { product_varargs } from '../operators/product/product_varargs';
-import { quote_varargs } from '../operators/quote/quote_varargs';
+import { Eval_quote } from '../operators/quote/quote_varargs';
 import { quotient_varargs } from '../operators/quotient/quotient_varargs';
 import { rank_varargs } from '../operators/rank/rank_varargs';
 import { is_rat, rat_extension } from '../operators/rat/rat_extension';
@@ -315,7 +315,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CLEAR, CLEARALL, MULTIPLY, NROOTS, POLAR, RECT, SGN, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CLEAR, CLEARALL, MULTIPLY, NROOTS, POLAR, QUOTE, RECT, SGN, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -720,7 +720,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(product_varargs);
 
-    $.defineOperator(quote_varargs);
+    $.defineTransform(QUOTE, Eval_quote);
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
     $.defineOperator(real_any);

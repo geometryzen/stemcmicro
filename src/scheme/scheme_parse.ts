@@ -141,14 +141,15 @@ class Parser {
             return sexpCommentMarker;
         }
 
-        const s = t == "'" ? 'quote' :
+        const s: false | 'quote' | 'quasiquote' | 'unquote' | 'unquote-splicing' = t == "'" ? 'quote' :
             t == "`" ? 'quasiquote' :
                 t == "," ? 'unquote' :
                     t == ",@" ? 'unquote-splicing' : false;
 
+
         if (s || t == '(' || t == '#(' || t == '[' || t == '#[' || t == '{' || t == '#{') {
             if (s) {
-                return new Pair(create_sym(s), new Pair(this.#consumeObject(), nil));
+                return new Pair(sym_from_lexeme(s, this.options), new Pair(this.#consumeObject(), nil));
             }
             else {
                 if (t == '(' || t == '[' || t == '{') {
@@ -286,7 +287,9 @@ function tokenize(txt: string): string[] {
                     }
                 }
                 else {
-                    if (t.charAt(0) != ';') tokens[tokens.length] = t;
+                    if (t.charAt(0) != ';') {
+                        tokens[tokens.length] = t;
+                    }
                     return "";
                 }
             });
@@ -295,6 +298,7 @@ function tokenize(txt: string): string[] {
 }
 
 export function sym_from_lexeme(lexeme: string, options: SchemeParseOptions | undefined): Sym {
+    // console.lg("sym_from_lexeme", JSON.stringify(lexeme), JSON.stringify(options, null, 2));
     if (options) {
         if (options.lexicon) {
             // console.lg(Object.keys(options.lexicon));

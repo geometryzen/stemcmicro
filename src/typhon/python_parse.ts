@@ -47,18 +47,8 @@ import { MATH_ADD, MATH_COMPONENT, MATH_DIV, MATH_INNER, MATH_LCO, MATH_MUL, MAT
 import { wrap_as_int } from "../tree/rat/Rat";
 import { Str } from "../tree/str/Str";
 import { create_sym } from "../tree/sym/Sym";
-import { items_to_cons, U } from "../tree/tree";
-
-export interface TyphonParseOptions {
-    /**
-     * Determines whether the parser makes associativity explicit or implicit in additive expressions.
-     */
-    explicitAssocAdd?: boolean;
-    /**
-     * Determines whether the parser makes associativity explicit or implicit in multiplicative expressions.
-     */
-    explicitAssocMul?: boolean;
-}
+import { items_to_cons, nil, U } from "../tree/tree";
+import { PythonParseOptions } from "./PythonParseOptions";
 
 class PythonVisitor implements Visitor {
     readonly stack: U[] = [];
@@ -147,7 +137,19 @@ class PythonVisitor implements Visitor {
         es.value.accept(this);
     }
     functionDef(functionDef: FunctionDef): void {
-        throw new Error("Method not implemented.");
+        const name = create_sym(functionDef.name.value);
+        const params: U[] = [];
+        functionDef.args.args.forEach((paramDef) => {
+            paramDef.name.accept(this);
+            params.push(this.stack.pop() as U);
+        });
+        const stmts: U[] = [];
+        functionDef.body.forEach((stmt) => {
+            stmt.accept(this);
+            stmts.push(this.stack.pop() as U);
+        });
+        const lambda = items_to_cons(create_sym('lambda'), items_to_cons(...params), ...stmts);
+        this.stack.push(items_to_cons(create_sym('define'), name, lambda));
     }
     ifStatement(ifs: IfStatement): void {
         throw new Error("Method not implemented.");
@@ -195,7 +197,12 @@ class PythonVisitor implements Visitor {
         throw new Error("Method not implemented.");
     }
     returnStatement(rs: ReturnStatement): void {
-        throw new Error("Method not implemented.");
+        if (rs.value) {
+            rs.value.accept(this);
+        }
+        else {
+            this.stack.push(nil);
+        }
     }
     str(str: PythonString): void {
         str.s.range;
@@ -228,8 +235,7 @@ class PythonVisitor implements Visitor {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function typhon_parse(fileName: string, sourceText: string, options?: TyphonParseOptions): { trees: U[], errors: Error[] } {
+export function python_parse(fileName: string, sourceText: string, options?: PythonParseOptions): { trees: U[], errors: Error[] } {
     const node = parse(sourceText, SourceKind.File);
     if (typeof node === 'object') {
         const stmts: Statement[] = astFromParse(node);

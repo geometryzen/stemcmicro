@@ -1,11 +1,13 @@
-import { EigenmathParseOptions, eigenmath_parse } from "../brite/parse_script";
+import { EigenmathParseOptions, eigenmath_parse } from "../brite/eigenmath_parse";
 import { MATH_EXP } from "../operators/exp/MATH_EXP";
+import { QUOTE } from "../runtime/constants";
 import { MATH_ADD, MATH_MUL, MATH_POW } from "../runtime/ns_math";
 import { SchemeParseOptions } from "../scheme/SchemeParseOptions";
 import { scheme_parse } from "../scheme/scheme_parse";
 import { U } from "../tree/tree";
 import { TsParseOptions } from "../typescript/ts_parse";
-import { TyphonParseOptions, typhon_parse } from "../typhon/typhon_parse";
+import { PythonParseOptions } from "../typhon/PythonParseOptions";
+import { python_parse } from "../typhon/python_parse";
 
 export enum ScriptKind {
     Eigenmath = 1,
@@ -50,7 +52,7 @@ export function parse_script(fileName: string, sourceText: string, options?: Par
             return scheme_parse(fileName, sourceText, scheme_parse_options(options));
         }
         case ScriptKind.Python: {
-            return typhon_parse(fileName, sourceText, typhon_parse_options(options));
+            return python_parse(fileName, sourceText, typhon_parse_options(options));
         }
         /*
         case ScriptKind.JS:
@@ -88,7 +90,8 @@ function scheme_parse_options(options?: ParseOptions): SchemeParseOptions {
                 '+': MATH_ADD,
                 '*': MATH_MUL,
                 'exp': MATH_EXP,
-                'expt': MATH_POW
+                'expt': MATH_POW,
+                'quote': QUOTE
             },
             explicitAssocAdd: options.explicitAssocAdd,
             explicitAssocMul: options.explicitAssocMul,
@@ -115,7 +118,7 @@ function ts_parse_options(options?: ParseOptions): TsParseOptions {
     }
 }
 
-function typhon_parse_options(options?: ParseOptions): TyphonParseOptions {
+function typhon_parse_options(options?: ParseOptions): PythonParseOptions {
     if (options) {
         if (options.useCaretForExponentiation) {
             throw new Error("useCaretForExponentiation is not supported by the Python parser");

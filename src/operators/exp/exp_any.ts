@@ -36,6 +36,7 @@ class Exp extends Function1<ARG> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toSExprString(expr));
         const $ = this.$;
         if ($.isExpanding()) {
             return [TFLAG_DIFF, binop(MATH_POW, MATH_E, arg, $)];

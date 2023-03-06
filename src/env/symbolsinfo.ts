@@ -8,15 +8,15 @@ import { ExtensionEnv } from "./ExtensionEnv";
 export function symbolsinfo($: ExtensionEnv): string {
     let str = '';
     const bnds = $.getBindings();
-    for (const { sym, binding } of bnds) {
+    for (const { sym, value } of bnds) {
         const printname = sym.key();
-        if (binding) {
-            const bindingi = (`${$.toSExprString(binding)}`).substring(0, 4);
+        if (value) {
+            const bindingi = (`${$.toSExprString(value)}`).substring(0, 4);
             str +=
                 'symbol: ' +
                 printname +
                 ' size: ' +
-                count_size(binding, $) +
+                count_size(value, $) +
                 ' value: ' +
                 bindingi +
                 '...\n';

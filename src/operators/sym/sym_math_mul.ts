@@ -36,7 +36,7 @@ class SymMathMul implements Operator<Sym> {
     isImag(expr: Sym): boolean {
         throw new Error("SymMathMul Method not implemented.");
     }
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is Sym {
         return is_sym(expr) && MATH_MUL.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

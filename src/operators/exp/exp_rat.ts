@@ -1,4 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { MATH_E } from "../../runtime/ns_math";
 import { one, Rat } from "../../tree/rat/Rat";
 import { create_sym, Sym } from "../../tree/sym/Sym";
@@ -13,10 +14,13 @@ class ExpRatBuilder implements OperatorBuilder<U> {
 }
 
 class ExpRat extends Function1<Rat> implements Operator<U> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('exp_rat', create_sym('exp'), is_rat, $);
+        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
+        // console.lg(this.name);
         if (arg.isZero()) {
             return [TFLAG_DIFF, one];
         }

@@ -7,7 +7,7 @@ import { render_as_infix } from "../../print/render_as_infix";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { caddr, cadr, cdddr, cddr } from "../../tree/helpers";
+import { caddr, cadr, cdddr } from "../../tree/helpers";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
@@ -24,14 +24,32 @@ import { is_uom } from "../uom/is_uom";
  * @returns 
  */
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
-    const temp = $.valueOf(cadr(expr));
-    const p1 = cddr(expr);
-    if (is_cons(p1)) {
-        return [...p1].reduce((acc: U, p: U) => multiply(acc, $.valueOf(p), $), temp);
+    // The only reason we should be here is that all other handlers for this multiplication do not match.
+    // console.lg("Eval_multiply", $.toSExprString(expr));
+    const args = expr.argList;
+    const vals = args.map($.valueOf);
+    if (vals.equals(args)) {
+        const retval = vals.car;
+        const remaining = vals.cdr;
+        if (is_cons(remaining)) {
+            return [...remaining].reduce((prev: U, curr: U) => multiply(prev, curr, $), retval);
+        }
+        return retval;
     }
-    return temp;
+    else {
+        // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.
+        return $.valueOf(cons(expr.car, vals));
+    }
 }
-export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
+
+/**
+ * 
+ * @param lhs 
+ * @param rhs 
+ * @param $ 
+ * @returns 
+ */
+function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     // console.lg("lhs", render_as_sexpr(lhs, $));
     // console.lg("rhs", render_as_sexpr(rhs, $));
     // TODO: Optimize handling of numbers, 0, 1.
@@ -204,22 +222,37 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     // n is the number of result factors on the stack
     const n = factors.length;
     if (n === 1) {
-        return assert_not_undefined(factors.pop());
+        const retval = assert_not_undefined(factors.pop());
+        // console.lg("retval 1", $.toSExprString(retval));
+        return retval;
     }
 
     // discard integer 1
     const first = factors[0];
     if (is_rat(first) && first.isOne()) {
         if (n === 2) {
-            return assert_not_undefined(factors.pop());
+            const retval = assert_not_undefined(factors.pop());
+            // console.lg("retval 2", $.toSExprString(retval));
+            return retval;
         }
         else {
-            factors[0] = MATH_MUL;
-            return items_to_cons(...factors);
+            // factors[0] is Rat(1) so we'll just replace it with the multiplication operand
+            // so that we can easily built the multiplicative expression from the factors.
+            // But before we do that we'll sort the factors to ensure that they are in canonical order.
+            // We must do this because, despite our previous efforts, symbols can be shunted in front
+            // of exponentials where they later create new exponentials that must be reordered.
+            // e.g. a^n * b * b => b * a^n * b = b * b * a^n => b^2 * a^n.
+            factors.splice(0, 1);  // remove the Rat(1)
+            factors.sort(compareFactors);
+            const retval = items_to_cons(MATH_MUL, ...factors);
+            // console.lg("retval 3", $.toSExprString(retval));
+            return retval;
         }
     }
 
-    return cons(MATH_MUL, items_to_cons(...factors));
+    const retval = cons(MATH_MUL, items_to_cons(...factors));
+    // console.lg("retval 3", $.toSExprString(retval));
+    return retval;
 }
 
 /**

@@ -27,7 +27,7 @@ class NilExtension implements Operator<Cons> {
         throw new Error("Nil Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is Cons {
         return nil.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -84,11 +84,11 @@ export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
 }
 
 function yyfloat_(expr: U, $: ExtensionEnv): Flt | Cons | Tensor | U {
-    // console.lg(`yyfloat_`, render_as_sexpr(expr, $));
+    // console.lg(`yyfloat_`, $.toSExprString(expr));
     if (is_cons(expr)) {
-        return items_to_cons(...expr.map(function (x) {
+        return $.valueOf(items_to_cons(...expr.map(function (x) {
             return yyfloat_(x, $);
-        }));
+        })));
     }
     if (is_tensor(expr)) {
         return expr.map(function (x) {

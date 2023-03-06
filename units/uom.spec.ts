@@ -16,7 +16,7 @@ describe("SI units", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "1/5*kg");
         engine.release();
     });
-    it("(Uom, Flt)", function () {
+    it("/(Uom, Flt)", function () {
         const lines: string[] = [
             `kg = uom("kilogram")`,
             `kg / 5.0`
@@ -148,7 +148,7 @@ describe("uom", function () {
             assert.strictEqual(engine.renderAsInfix(actual), "5.0*kg");
             engine.release();
         });
-        it("(Uom, Flt)", function () {
+        it("*(Uom, Flt)", function () {
             const lines: string[] = [
                 `kg = uom("kilogram")`,
                 `kg * 5.0`
@@ -244,7 +244,7 @@ describe("uom", function () {
             assert.strictEqual(engine.renderAsInfix(actual), "5.0*kg ** -1");
             engine.release();
         });
-        it("(Uom, Flt)", function () {
+        it("/(Uom, Flt)", function () {
             const lines: string[] = [
                 `kg = uom("kilogram")`,
                 `kg / 5.0`
@@ -307,7 +307,7 @@ describe("uom", function () {
             assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Flt, Uom) is not supported.");
             engine.release();
         });
-        it("(Uom, Flt)", function () {
+        it("+(Uom, Flt)", function () {
             const lines: string[] = [
                 `kg = uom("kilogram")`,
                 `kg + 5.0`
@@ -316,7 +316,7 @@ describe("uom", function () {
                 dependencies: ['Flt', 'Uom']
             });
             const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Flt, Uom) is not supported.");
+            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Uom, Flt) is not supported.");
             engine.release();
         });
         it("(Rat, Uom)", function () {

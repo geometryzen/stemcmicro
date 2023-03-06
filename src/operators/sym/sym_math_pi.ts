@@ -35,7 +35,7 @@ class SymMathPi implements Operator<Sym> {
     isImag(): boolean {
         return false;
     }
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is Sym {
         return is_pi(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -10,7 +10,7 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
     constructor(name: string, opr: Sym, private readonly guardL: GUARD<U, L>, private readonly guardR: GUARD<U, R>, $: ExtensionEnv) {
         super(name, opr, $);
     }
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is BCons<Sym, L, R> {
         const m = this.match(expr);
         return !!m;
     }

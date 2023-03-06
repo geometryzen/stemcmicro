@@ -15,7 +15,7 @@ export abstract class KeywordOperator implements Operator<Sym> {
     isImag(expr: Sym): boolean {
         throw new Error("Keyword.isImag Symbol Method not implemented.");
     }
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {
             return expr.equalsSym(this.keyword);
         }

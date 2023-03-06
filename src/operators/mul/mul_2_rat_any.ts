@@ -1,14 +1,14 @@
 
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
+import { is_rat } from "../rat/is_rat";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -18,12 +18,12 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Rat;
 type RHS = U;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 //
 // TODO: We can choose whether to get reuse by extending classes or by containing functions, or both.
 //
-function multiply_rat_any(lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+function multiply_rat_any(lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
     if (lhs.isZero()) {
         return [TFLAG_DIFF, lhs];
     }
@@ -38,29 +38,38 @@ function multiply_rat_any(lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
 /**
  * Rat * X
  */
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_any', MATH_MUL, is_rat, is_any, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_ANY);
     }
-    isImag(expr: EXPR): boolean {
+    isKind(expr: U): expr is EXP {
+        if (super.isKind(expr)) {
+            const lhs = expr.lhs;
+            return lhs.isZero() || lhs.isOne();
+        }
+        else {
+            return false;
+        }
+    }
+    isImag(expr: EXP): boolean {
         const $ = this.$;
         return $.isImag(expr.rhs);
     }
-    isReal(expr: EXPR): boolean {
+    isReal(expr: EXP): boolean {
         const $ = this.$;
         return $.isReal(expr.rhs);
     }
-    isScalar(expr: EXPR): boolean {
+    isScalar(expr: EXP): boolean {
         const $ = this.$;
         return $.isScalar(expr.rhs);
     }
-    isVector(expr: EXPR): boolean {
+    isVector(expr: EXP): boolean {
         const $ = this.$;
         return $.isVector(expr.rhs);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         return multiply_rat_any(lhs, rhs, expr);
     }
 }

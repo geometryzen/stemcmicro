@@ -28,7 +28,7 @@ export function Eval_log(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function logarithm(expr: U, $: ExtensionEnv): U {
-    // console.lg("logarithm", render_as_infix(expr, $));
+    // console.lg("logarithm", $.toSExprString(expr));
     if (is_base_of_natural_logarithm(expr)) {
         return one;
     }

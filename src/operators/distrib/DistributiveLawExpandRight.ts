@@ -10,7 +10,7 @@ import { is_any } from "../helpers/is_any";
 
 type LHS = Cons;
 type RHS = U;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
 function make_is_cons_and_opr_eq_sym(lower: Sym) {
     return function (expr: U): expr is Cons {
@@ -21,7 +21,7 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
 /**
  * (upper (lower x1 x2 x3 ...) Z)
  */
-export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements Operator<EXPR> {
+export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv, upper: Sym, lower: Sym) {
@@ -29,14 +29,15 @@ export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements O
         this.hash = hash_binop_cons_atom(upper, lower, HASH_ANY);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
+    transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
+        const $ = this.$;
         const lower = lhs.opr;
         const Z = rhs;
         const xs = lhs.tail();
         const terms = xs.map(function (x) {
-            return items_to_cons(upper, x, Z);
+            return $.valueOf(items_to_cons(upper, x, Z));
         });
-        const retval = items_to_cons(lower, ...terms);
+        const retval = $.valueOf(items_to_cons(lower, ...terms));
         return [TFLAG_DIFF, retval];
     }
 }

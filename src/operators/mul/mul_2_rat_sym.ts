@@ -31,6 +31,15 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_rat_sym', MATH_MUL, is_rat, is_sym, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_SYM);
     }
+    isKind(expr: U): expr is EXP {
+        if (super.isKind(expr)) {
+            const lhs = expr.lhs;
+            return lhs.isZero() || lhs.isOne();
+        }
+        else {
+            return false;
+        }
+    }
     isReal(expr: EXP): boolean {
         return this.$.isReal(expr.rhs);
     }

@@ -37,7 +37,7 @@ class SymMathPow implements Operator<Sym> {
     isImag(expr: Sym): boolean {
         throw new Error("SymMathPow Method not implemented.");
     }
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is Sym {
         return is_sym(expr) && MATH_POW.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

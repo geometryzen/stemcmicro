@@ -1,15 +1,34 @@
-import { count_factors } from "../../calculators/count_factors";
-import { remove_factors } from "../../calculators/remove_factors";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
 import { mmul } from "../../mmul";
-import { is_multiply } from "../../runtime/helpers";
+import { SGN } from "../../runtime/constants";
 import { negOne, one, Rat, zero } from "../../tree/rat/Rat";
-import { Cons, U } from "../../tree/tree";
+import { Sym } from "../../tree/sym/Sym";
+import { U } from "../../tree/tree";
+import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/is_rat";
-import { sgn } from "./sgn";
 
-const not_is_rat = (expr: U) => !is_rat(expr);
+class Builder implements OperatorBuilder<U> {
+    create($: ExtensionEnv): Operator<U> {
+        return new SgnRat($);
+    }
+}
 
+class SgnRat extends Function1<Rat> implements Operator<U> {
+    readonly hash: string;
+    constructor($: ExtensionEnv) {
+        super('sgn_rat', SGN, is_rat, $);
+        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+    }
+    transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
+        return [TFLAG_DIFF, sgn_of_rat(arg)];
+    }
+}
+
+export const sgn_rat = new Builder();
+
+// const not_is_rat = (expr: U) => !is_rat(expr);
+/*
 export function sgn_extension_rat(expr: Cons, $: ExtensionEnv): U {
     const arg = $.valueOf(expr.argList.car);
     if (is_rat(arg)) {
@@ -24,6 +43,7 @@ export function sgn_extension_rat(expr: Cons, $: ExtensionEnv): U {
     }
     return expr;
 }
+*/
 
 function sgn_of_rat(arg: Rat): Rat {
     const ab = mmul(arg.a, arg.b);
@@ -35,7 +55,7 @@ function sgn_of_rat(arg: Rat): Rat {
     }
     return one;
 }
-
+/*
 function assert_rat(expr: U): Rat {
     if (is_rat(expr)) {
         return expr;
@@ -44,3 +64,4 @@ function assert_rat(expr: U): Rat {
         throw new Error();
     }
 }
+*/

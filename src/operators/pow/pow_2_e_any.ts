@@ -5,6 +5,7 @@ import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_inf
 import { evaluatingTrigAsExp } from "../../modes/modes";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
+import { render_as_infix } from "../../print/render_as_infix";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -76,6 +77,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(base), this.$.toInfixString(expo));
         const $ = this.$;
         if ($.getModeFlag(evaluatingTrigAsExp)) {
             // Do nothing
@@ -122,10 +124,10 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                             return [TFLAG_NONE, expr];
                         }
                         else {
-                            const c = items_to_cons(MATH_COS, expo_lhs);
-                            const s = items_to_cons(MATH_SIN, expo_lhs);
-                            const s_times_i = items_to_cons(MATH_MUL, s, imu);
-                            return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, s_times_i)];
+                            const c = $.valueOf(items_to_cons(MATH_COS, expo_lhs));
+                            const s = $.valueOf(items_to_cons(MATH_SIN, expo_lhs));
+                            const s_times_i = $.valueOf(items_to_cons(MATH_MUL, s, imu));
+                            return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_ADD, c, s_times_i))];
                         }
                     }
                     // Euler's formula with rational factor.
@@ -148,7 +150,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                     const N = count_imu_factors(expo);
                     if (N === 1) {
                         const x = divide_by_imu(expo, $);
-                        return [TFLAG_DIFF, euler_formula(x)];
+                        return [TFLAG_DIFF, euler_formula(x, $)];
                     }
                 }
             }
@@ -160,11 +162,11 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-function euler_formula(x: U): U {
-    const c = items_to_cons(MATH_COS, x);
-    const s = items_to_cons(MATH_SIN, x);
-    const i_times_s = items_to_cons(MATH_MUL, imu, s);
-    return items_to_cons(MATH_ADD, c, i_times_s);
+function euler_formula(x: U, $: ExtensionEnv): U {
+    const c = $.valueOf(items_to_cons(MATH_COS, x));
+    const s = $.valueOf(items_to_cons(MATH_SIN, x));
+    const i_times_s = $.valueOf(items_to_cons(MATH_MUL, imu, s));
+    return $.valueOf(items_to_cons(MATH_ADD, c, i_times_s));
 
 }
 

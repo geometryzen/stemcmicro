@@ -16,7 +16,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * (uom Str) 
  */
-class UomStr extends Function1<Str> implements Operator<Cons> {
+class UomStr extends Function1<Str> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('uom_1_str', create_sym('uom'), is_str, $);

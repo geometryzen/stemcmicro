@@ -14,6 +14,7 @@ const is_flt_and_zero = (expr: U) => is_flt(expr) && expr.isZero();
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function transform_mul_flt(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("transform_mul_flt");
     // TODO: This works even though I am not evaluating the arguments.
     // Do the factors need to be evaluated for this to do its job?
     if (count_factors(expr, is_flt_and_zero) === 1) {

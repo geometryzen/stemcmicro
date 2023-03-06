@@ -12,7 +12,7 @@ export abstract class FunctionVarArgs extends AbstractOperator {
         super(name, $);
         this.key = `(${opr.key()})`;
     }
-    isKind(expr: Cons): boolean {
+    isKind(expr: Cons): expr is Cons {
         return expr.opr.equals(this.opr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

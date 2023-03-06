@@ -30,13 +30,14 @@ export class DistributiveLawExpandLeft extends Function2<LHS, RHS> implements Op
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
+        const $ = this.$;
         const add = rhs.opr;
         const A = lhs;
         const xs = rhs.tail();
         const terms = xs.map(function (x) {
-            return items_to_cons(opr, A, x);
+            return $.valueOf(items_to_cons(opr, A, x));
         });
-        const retval = items_to_cons(add, ...terms);
+        const retval = $.valueOf(items_to_cons(add, ...terms));
         return [TFLAG_DIFF, retval];
     }
 }

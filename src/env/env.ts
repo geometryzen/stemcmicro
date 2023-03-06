@@ -15,7 +15,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, haltFlag, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { make_pluggable_function_operator } from "./make_pluggable_function_operator";
 import { make_pluggable_keyword_operator } from "./make_pluggable_keyword_operator";
 import { NoopPrintHandler } from "./NoopPrintHandler";
@@ -346,7 +346,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return retval;
         },
         isScalar(expr: U): boolean {
-            return $.operatorFor(expr).isScalar(expr);
+            const op = $.operatorFor(expr);
+            const retval = op.isScalar(expr);
+            // console.lg(`${op.name} isScalar ${$.toInfixString(expr)} => ${retval}`);
+            return retval;
         },
         isVector(expr: U): boolean {
             return $.operatorFor(expr).isVector(expr);
@@ -522,88 +525,49 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         transform(expr: U): [TFLAGS, U] {
             // console.lg("transform", render_as_sexpr(expr, $), "is_sym", is_sym(expr));
-            // The legacy behaviour is to transform an expression once.
-            // The modern behaviour is to transform until stability is achieved.
-            const continueIfExprChanges = true;
             if (expr.meta === TFLAG_HALT) {
                 return [TFLAG_HALT, expr];
             }
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // let changedExpr = false;
-                let outFlags = TFLAG_NONE;
-                let curExpr: U = expr;
-                let doneWithExpr = false;
                 const pops = currentOps();
-                while (!doneWithExpr) {
-                    doneWithExpr = true;
-                    // keys are the buckets we should look in for operators from specific to generic.
-                    const keys = hash_info(curExpr);
-                    // console.lg("keys", JSON.stringify(keys));
-                    for (const key of keys) {
-                        let doneWithCurExpr = false;
-                        const ops = pops[key];
-                        // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
-                        // Determine whether there are operators in the bucket.
-                        if (Array.isArray(ops)) {
-                            for (const op of ops) {
-                                const [flags, newExpr] = op.transform(curExpr);
-                                // console.lg(`TRY  ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                if (!newExpr.equals(curExpr)) {
-                                    // By logging here we can see all the transformations that make changes.
-                                    // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                    // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_sexpr(curExpr, $)} newExpr: ${render_as_sexpr(newExpr, $)}`);
-                                    outFlags |= TFLAG_DIFF;
-                                    doneWithCurExpr = true;
-                                    if (haltFlag(flags)) {
-                                        // doneWithExpr remains true.
-                                        outFlags |= TFLAG_HALT;
-                                        // console.lg(`DIFF HALT: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                    }
-                                    else {
-                                        // console.lg(`DIFF ....: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                        if (continueIfExprChanges) {
-                                            doneWithExpr = false;
-                                        }
-                                    }
-                                    curExpr = newExpr;
-                                    break;
-                                }
-                                else if (haltFlag(flags)) {
-                                    // console.lg(`.... HALT: ${op.name} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                    // TODO: We also need to break out of the loop on keys
-                                    doneWithCurExpr = true;
-                                    break;
-                                }
-                                else {
-                                    // console.lg(`NOFLAGS..: op.name=${op.name} op.hash=${op.hash} oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                }
-                            }
+                // keys are the buckets we should look in for operators from specific to generic.
+                const keys = hash_info(expr);
+                // console.lg("keys", JSON.stringify(keys));
+                for (const key of keys) {
+                    const ops = pops[key];
+                    // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                    // Determine whether there are handlers in the bucket.
+                    if (Array.isArray(ops)) {
+                        const op = unambiguous_operator(expr, ops, $);
+                        if (op) {
+                            const composite = op.transform(expr);
+                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
+                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
+                            return composite;
                         }
-                        else {
-                            // If there were no operators registered for the given key, look for a user-defined function.
-                            if (is_cons(curExpr)) {
-                                const opr = curExpr.opr;
-                                if (is_sym(opr)) {
-                                    const binding = $.getBinding(opr);
-                                    if (!is_nil(binding)) {
-                                        if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
-                                            const newExpr = Eval_user_function(curExpr, $);
-                                            // // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                            return [TFLAG_DIFF, newExpr];
-                                        }
+                    }
+                    else {
+                        // If there were no handlers registered for the given key, look for a user-defined function.
+                        if (is_cons(expr)) {
+                            const opr = expr.opr;
+                            if (is_sym(opr)) {
+                                const binding = $.getBinding(opr);
+                                if (!is_nil(binding)) {
+                                    if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
+                                        const newExpr = Eval_user_function(expr, $);
+                                        // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                        return [TFLAG_DIFF, newExpr];
                                     }
                                 }
                             }
-                        }
-                        if (doneWithCurExpr) {
-                            break;
                         }
                     }
                 }
                 // Once an expression has been transformed into a stable condition, it should not be transformed until a different phase.
-                curExpr.meta = TFLAG_HALT;
-                return [outFlags, curExpr];
+                expr.meta = TFLAG_HALT;
+                return [TFLAG_NONE, expr];
             }
             else if (is_nil(expr)) {
                 return [TFLAG_NONE, expr];
@@ -660,3 +624,24 @@ function dependencies_satisfied(deps: FEATURE[] | undefined, includes: FEATURE[]
         return true;
     }
 }
+function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): Operator<U> | undefined {
+    const candidates: Operator<U>[] = [];
+    for (const op of ops) {
+        if (op.isKind(expr)) {
+            candidates.push(op);
+        }
+    }
+    if (candidates.length === 1) {
+        return candidates[0];
+    }
+    else if (candidates.length > 0) {
+        // The alternative here is that the first operator wins.
+        // eslint-disable-next-line no-console
+        console.warn(`Ambiguous operators for expression ${$.toInfixString(expr)} ${JSON.stringify(candidates.map((candidate) => candidate.name))}`);
+        return candidates[0];
+    }
+    else {
+        return void 0;
+    }
+}
+

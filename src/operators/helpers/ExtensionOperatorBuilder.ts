@@ -46,8 +46,8 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     isImag(expr: T): boolean {
         return this.extension.isImag(expr, this.$);
     }
-    isKind(arg: U): boolean {
-        return this.extension.isKind(arg, this.$);
+    isKind(expr: U): expr is T {
+        return this.extension.isKind(expr, this.$);
     }
     isMinusOne(expr: T): boolean {
         return this.extension.isMinusOne(expr, this.$);

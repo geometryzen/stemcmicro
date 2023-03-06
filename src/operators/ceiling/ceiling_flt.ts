@@ -11,7 +11,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class CeilingFlt extends Function1<Flt> implements Operator<U> {
+class CeilingFlt extends Function1<Flt> {
     constructor($: ExtensionEnv) {
         super('ceiling_flt', create_sym('ceiling'), is_flt, $);
     }

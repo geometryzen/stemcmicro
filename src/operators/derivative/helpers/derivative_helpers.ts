@@ -40,7 +40,7 @@ import { bessely } from '../../bessely/bessely';
 import { cos } from '../../cos/cosine';
 import { ycosh } from '../../cosh/cosh';
 import { hermite } from '../../hermite/hermite';
-import { sgn } from '../../sgn/sgn';
+import { sgn } from '../../sgn/sgn_any';
 import { simplify } from '../../simplify/simplify';
 import { sin } from '../../sin/sine';
 import { sinh } from '../../sinh/sinh';

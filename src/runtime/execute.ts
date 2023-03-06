@@ -237,8 +237,8 @@ function post_processing_complex_numbers(input: U, output: U, box: Box<U>, $: Ex
     const entries = $.getBindings();
     for (const entry of entries) {
         const sym = entry.sym;
-        const binding = entry.binding;
-        if (is_imu(binding)) {
+        const value = entry.value;
+        if (is_imu(value)) {
             const A = box.pop();
             const B = subst(A, imu, sym, $);
             box.push(B);

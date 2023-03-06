@@ -32,7 +32,7 @@ class SymMathAdd implements Operator<Sym> {
     isImag(expr: Sym): boolean {
         throw new Error("SymMathAdd Method not implemented.");
     }
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {
             return MATH_ADD.equalsSym(expr);
         }

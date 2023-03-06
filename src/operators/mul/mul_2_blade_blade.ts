@@ -25,7 +25,9 @@ class Op extends Function2<Blade, Blade> implements Operator<BCons<Sym, Blade, B
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_BLADE, HASH_BLADE);
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
-        return [TFLAG_DIFF, lhs.mul(rhs)];
+        const $ = this.$;
+        // The result of multiplication may produce a factor of -1 or zero, so we require further evaluation.
+        return [TFLAG_DIFF, $.valueOf(lhs.mul(rhs))];
     }
 }
 

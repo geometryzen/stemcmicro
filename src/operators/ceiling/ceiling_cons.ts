@@ -1,8 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { create_sym, Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { Cons, is_cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
 
 class Builder implements OperatorBuilder<U> {
@@ -11,13 +10,15 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class Ceiling extends Function1<U> implements Operator<U> {
+type ARG = Cons;
+
+class Ceiling extends Function1<ARG> {
     constructor($: ExtensionEnv) {
-        super('ceiling_any', create_sym('ceiling'), is_any, $);
+        super('ceiling_cons', create_sym('ceiling'), is_cons, $);
     }
     transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
         return [TFLAG_NONE, expr];
     }
 }
 
-export const ceiling_any = new Builder();
+export const ceiling_cons = new Builder();

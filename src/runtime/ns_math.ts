@@ -64,11 +64,11 @@ export const MATH_PRED = create_sym('pred');
 /**
  * Approximately 2.71828.
  */
-export const MATH_E = create_sym('e');
+export const MATH_E = create_sym('math.e');
 /**
  * Approximately 3.14159.
  */
-export const MATH_PI = create_sym('pi');
+export const MATH_PI = create_sym('math.pi');
 /**
  * component e.g. (indexing into a tensor).
  */

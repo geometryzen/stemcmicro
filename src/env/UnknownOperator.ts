@@ -22,7 +22,7 @@ export class UnknownOperator implements Operator<U> {
         return false;
         // throw new Error("UnknownOperator.isImag Method not implemented.");
     }
-    isKind(expr: U): boolean {
+    isKind(expr: U): expr is U {
         throw new Error("UnknownOperator.isKind Method not implemented.");
     }
     isMinusOne(expr: U): boolean {

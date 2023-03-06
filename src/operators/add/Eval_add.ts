@@ -18,20 +18,27 @@ import { is_tensor } from "../tensor/is_tensor";
 import { add_tensor_tensor } from "../tensor/tensor_extension";
 
 export function Eval_add(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_add", render_as_infix(expr, $));
+    // console.lg("Eval_add", $.toSExprString(expr));
     const terms: U[] = [];
-    const argList = expr.argList;
-    const values = [...argList].map((term) => $.valueOf(term));
-    const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
-    for (const value of values) {
-        if (some_term_is_zero_float) {
-            push_terms(terms, evaluate_as_float(value, $));
+    const args = expr.argList;
+    const vals = args.map($.valueOf);
+    if (vals.equals(args)) {
+        const values = [...vals];
+        const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
+        for (const value of values) {
+            if (some_term_is_zero_float) {
+                push_terms(terms, evaluate_as_float(value, $));
+            }
+            else {
+                push_terms(terms, $.valueOf(value));
+            }
         }
-        else {
-            push_terms(terms, $.valueOf(value));
-        }
+        return add_terms(terms, $);
     }
-    return add_terms(terms, $);
+    else {
+        // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.
+        return $.valueOf(cons(expr.car, vals));
+    }
 }
 
 /**

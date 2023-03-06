@@ -18,7 +18,7 @@ import { power_tensor } from "../../tensor";
 import { oneAsFlt, wrap_as_flt } from "../../tree/flt/Flt";
 import { caddr, cadr } from "../../tree/helpers";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
-import { car, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
+import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { QQ } from "../../tree/uom/QQ";
 import { abs } from "../abs/abs";
 import { arg } from "../arg/arg";
@@ -36,11 +36,10 @@ import { dpow } from "./dpow";
  * 
  * @param base
  * @param expo 
- * @param origExpr The original power expression, which is returned if no simplifications are made. 
  * @param $ 
  * @returns 
  */
-export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
+export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // console.lg(`power_v1 base=${render_as_infix(base, $)} expo=${render_as_infix(expo, $)}`);
     if (typeof base === 'undefined') {
         throw new Error("base must be defined.");
@@ -51,7 +50,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`power ${render_as_infix(base, $)} ${render_as_infix(expo, $)} => ${render_as_infix(retval, $)} made by power_v1 at ${description}`);
-        // console.lg(`power ${render_as_sexpr(base, $)} ${render_as_sexpr(expo, $)} => ${render_as_sexpr(retval, $)} made by power_v1 at ${description}`);
+        // console.lg(`HOOK power ${render_as_sexpr(base, $)} ${render_as_sexpr(expo, $)} => ${render_as_sexpr(retval, $)} made by power_v1 at ${description}`);
         return retval;
     };
 
@@ -244,7 +243,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
             return hook(result, "S");
         }
         else {
-            return hook(origExpr, "S");
+            return hook(items_to_cons(POWER, base, expo), "S");
         }
     }
 
@@ -254,6 +253,7 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
     if ($.isExpanding() && is_add(base) && is_num(expo)) {
         const terms = args_to_items(base);
         const everyTermIsScalar = terms.every(function (term) {
+            // console.lg("term", $.toSExprString(term));
             return $.isScalar(term);
         });
         // console.lg(`everyTermIsScalar=>${everyTermIsScalar}`);
@@ -341,5 +341,5 @@ export function power_v1(base: U, expo: U, origExpr: Cons, $: ExtensionEnv): U {
         return hook(polarResult, "Y");
     }
 
-    return hook(origExpr, "Z");
+    return hook(items_to_cons(POWER, base, expo), "Z");
 }

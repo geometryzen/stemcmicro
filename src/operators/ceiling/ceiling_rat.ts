@@ -11,7 +11,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class CeilingRat extends Function1<Rat> implements Operator<U> {
+class CeilingRat extends Function1<Rat> {
     constructor($: ExtensionEnv) {
         super('ceiling_rat', create_sym('ceiling'), is_rat, $);
     }

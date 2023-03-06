@@ -99,7 +99,7 @@ export interface ExtensionEnv {
      */
     factorize(poly: U, x: U): U;
     getBinding(sym: Sym): U;
-    getBindings(): { sym: Sym, binding: U }[];
+    getBindings(): { sym: Sym, value: U }[];
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
     getSymbolToken(sym: Sym): string;
@@ -218,7 +218,7 @@ export interface Operator<T extends U> {
     /**
      * Determines whether this operator can be used to evaluate the expression.
      */
-    isKind(expr: U): boolean;
+    isKind(expr: U): expr is T;
     isMinusOne(expr: T): boolean;
     isOne(expr: T): boolean;
     isReal(expr: T): boolean;

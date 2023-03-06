@@ -1,4 +1,6 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
+import { is_multiply } from "../../runtime/helpers";
 import { MATH_OUTER } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
@@ -13,19 +15,40 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
+type LHS = U;
+type RHS = BCons<Sym, U, U>;
+type EXP = BCons<Sym, LHS, RHS>;
+
 /**
  * x ^ (a * y) => a * (x ^ y)
  */
-class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
+class Op extends Function2<LHS, RHS> {
+    readonly hash: string;
     constructor($: ExtensionEnv) {
         super('outer_2_any_mul_2_scalar_any', MATH_OUTER, is_any, is_mul_2_scalar_any($), $);
+        this.hash = hash_binop_atom_atom(this.opr, HASH_ANY, HASH_ANY);
     }
-    transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>): [TFLAGS, U] {
+    isKind(expr: U): expr is EXP {
+        if (super.isKind(expr)) {
+            const lhs = expr.lhs;
+            if (is_multiply(lhs)) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
+        const $ = this.$;
         const x = lhs;
         const a = rhs.lhs;
         const y = rhs.rhs;
-        const xy = items_to_cons(opr, x, y);
-        const retval = items_to_cons(rhs.opr, a, xy);
+        const xy = $.valueOf(items_to_cons(opr, x, y));
+        const retval = $.valueOf(items_to_cons(rhs.opr, a, xy));
         return [TFLAG_DIFF, retval];
     }
 }

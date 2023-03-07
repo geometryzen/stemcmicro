@@ -100,6 +100,7 @@ export interface ExtensionEnv {
     factorize(poly: U, x: U): U;
     getBinding(sym: Sym): U;
     getBindings(): { sym: Sym, value: U }[];
+    getChain(outer: Sym, inner: Sym): (argList: Cons, $: ExtensionEnv) => U;
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
     getSymbolToken(sym: Sym): string;

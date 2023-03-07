@@ -29,12 +29,18 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     const args = expr.argList;
     const vals = args.map($.valueOf);
     if (vals.equals(args)) {
-        const retval = vals.car;
-        const remaining = vals.cdr;
-        if (is_cons(remaining)) {
-            return [...remaining].reduce((prev: U, curr: U) => multiply(prev, curr, $), retval);
+        // For multiplication, the expression (*) evaluates to 1.
+        if (is_nil(vals)) {
+            return one;
         }
-        return retval;
+        else {
+            const retval = vals.car;
+            const remaining = vals.cdr;
+            if (is_cons(remaining)) {
+                return [...remaining].reduce((prev: U, curr: U) => multiply(prev, curr, $), retval);
+            }
+            return retval;
+        }
     }
     else {
         // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.

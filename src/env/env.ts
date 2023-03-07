@@ -13,7 +13,7 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
-import { Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
+import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
 import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { make_pluggable_function_operator } from "./make_pluggable_function_operator";
@@ -246,6 +246,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         getBindings() {
             return symTab.entries();
+        },
+        getChain(outer: Sym, inner: Sym): (argList: Cons, $: ExtensionEnv) => U {
+            return function (argList: Cons, $: ExtensionEnv) {
+                const i = $.valueOf(cons(inner, argList));
+                return $.valueOf(cons(outer, i));
+            };
         },
         getMode(): number {
             return current_mode;

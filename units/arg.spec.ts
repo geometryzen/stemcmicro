@@ -37,7 +37,7 @@ describe("arg", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "arctan(y/x)");
         engine.release();
     });
-    xit("arg((a+i*b)/(c+i*d))", function () {
+    it("arg((a+i*b)/(c+i*d))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `arg((a+i*b)/(c+i*d))`

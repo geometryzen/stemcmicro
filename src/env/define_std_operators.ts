@@ -171,7 +171,6 @@ import { mul_2_imu_flt } from '../operators/mul/mul_2_imu_flt';
 import { mul_2_imu_imu } from '../operators/mul/mul_2_imu_imu';
 import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_cons_sym } from '../operators/mul/mul_2_mul_2_any_cons_sym';
-import { mul_2_mul_2_any_imu_sym } from '../operators/mul/mul_2_mul_2_any_imu_sym';
 import { mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_mul_2_any_sym_imu } from '../operators/mul/mul_2_mul_2_any_sym_imu';
 import { mul_2_mul_2_any_sym_mul_2_imu_sym } from '../operators/mul/mul_2_mul_2_any_sym_mul_2_imu_sym';
@@ -433,7 +432,6 @@ export function define_std_operators($: ExtensionEnv) {
 
     // The following is only used for right-associating.
     $.defineOperator(mul_2_mul_2_sym_imu_sym);
-    $.defineOperator(mul_2_mul_2_any_imu_sym);
 
     // $.defineOperator(mul_2_mul_2_num_any_rat);
     $.defineOperator(mul_2_mul_2_any_cons_sym);

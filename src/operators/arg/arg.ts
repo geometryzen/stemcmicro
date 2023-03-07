@@ -1,6 +1,6 @@
 import { subtract } from '../../calculators/sub/subtract';
-import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { divide } from '../../helpers/divide';
 import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
 import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
@@ -34,8 +34,9 @@ export function define_arg($: ExtensionEnv): void {
     // If we also want to control the name as it appears in the script 
     $.defineTransform(MATH_ARG, function (expr: Cons, $: ExtensionEnv): U {
         const z = cadr(expr);
-        // console.lg(`z => ${z}`);
+        // console.lg("z", $.toSExprString(z));
         const value_of_z = $.valueOf(z);
+        // console.lg("value_of_z", $.toSExprString(value_of_z));
         // console.lg(`value_of_z => ${render_as_sexpr(value_of_z, $)}`);
         const arg_z = arg(value_of_z, $);
         // console.lg(`arg_z => ${render_as_sexpr(arg_z, $)}`);
@@ -44,7 +45,7 @@ export function define_arg($: ExtensionEnv): void {
 }
 
 export function arg(z: U, $: ExtensionEnv): U {
-    // console.lg(`arg => ${render_as_sexpr(z, $)}`);
+    // console.lg("arg", $.toSExprString(z));
     if (is_multiply(z)) {
         const argList = z.argList;
         if (argList.length === 2) {
@@ -77,7 +78,7 @@ export function arg(z: U, $: ExtensionEnv): U {
 }
 
 function yyarg(expr: U, $: ExtensionEnv): U {
-    // console.lg(`yyarg expr=${expr}`);
+    // console.lg("yyarg", $.toSExprString(expr));
     // case of plain number
     if (is_num_and_gt_zero(expr) || is_pi(expr)) {
         return is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? zeroAsFlt : zero;

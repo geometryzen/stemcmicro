@@ -1,5 +1,4 @@
 import { mp_numerator } from '../../bignum';
-import { cadnr } from '../../calculators/cadnr';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { multiply_items } from '../../multiply';
 import { is_negative } from '../../predicates/is_negative';
@@ -15,12 +14,13 @@ export function Eval_numerator(p1: Cons, $: ExtensionEnv): U {
 }
 
 export function numerator(p1: U, $: ExtensionEnv): U {
-    // console.lg(`numerator p1=${p1}`);
+    // console.lg(`numerator ${$.toInfixString(p1)}`);
     if (is_add(p1)) {
         //console.trace "rationalising "
         p1 = rationalize_factoring(p1, $);
     }
-    // console.lg(`rationalized=${print_expr(p1, $)}`);
+    // console.lg(`rationalized=${$.toInfixString(p1)}`);
+    // console.lg(`rationalized=${$.toSExprString(p1)}`);
 
     if (is_multiply(p1) && !$.isOne(car(cdr(p1)))) {
         // console.lg "p1 inside multiply: " + p1
@@ -35,13 +35,7 @@ export function numerator(p1: U, $: ExtensionEnv): U {
     }
 
     if (is_power(p1) && is_negative(caddr(p1))) {
-        const base = cadnr(p1, 1);
-        const expo = cadnr(p1, 2);
-        // console.lg(`base=${base}, ${$.isReal(base)}`);
-        // console.lg(`expo=${expo}, ${$.isReal(expo)}`);
-        if ($.isReal(base) && $.isReal(expo)) {
-            return one;
-        }
+        return one;
     }
 
     return p1;

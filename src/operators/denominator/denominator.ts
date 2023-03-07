@@ -1,5 +1,4 @@
 import { mp_denominator } from '../../bignum';
-import { cadnr } from '../../calculators/cadnr';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inverse } from '../../helpers/inverse';
 import { multiply_items } from '../../multiply';
@@ -63,11 +62,7 @@ export function denominator(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_power(expr) && is_negative(caddr(expr))) {
-        const base = cadnr(expr, 1);
-        const expo = cadnr(expr, 2);
-        if ($.isReal(base) && $.isReal(expo)) {
-            return hook(inverse(expr, $));
-        }
+        return hook(inverse(expr, $));
     }
 
     return hook(one);

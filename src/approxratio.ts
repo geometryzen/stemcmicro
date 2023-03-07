@@ -4,34 +4,43 @@ import { zzfloat } from './operators/float/float';
 import { is_flt } from './operators/flt/is_flt';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { APPROXRATIO } from './runtime/constants';
-import { cadr } from './tree/helpers';
+import { Flt } from './tree/flt/Flt';
 import { wrap_as_int } from './tree/rat/Rat';
-import { car, cdr, cons, is_cons, items_to_cons, U } from './tree/tree';
+import { Cons, cons, is_cons, items_to_cons, U } from './tree/tree';
 
 /*
  Guesses a rational for each float in the passed expression
 */
-export function Eval_approxratio(p1: U, $: ExtensionEnv): U {
-    return approxratioRecursive(cadr(p1), $);
+export function Eval_approxratio(expr: Cons, $: ExtensionEnv): U {
+    // Evaluating the expression gets it into canonical order.
+    const arg = $.valueOf(expr.argList.head);
+    // console.lg("Eval_approxratio", $.toInfixString(arg));
+    return approxratio(arg, $);
 }
 
-function approxratioRecursive(expr: U, $: ExtensionEnv): U {
+function approxratio(expr: U, $: ExtensionEnv): U {
+    // Notice that this function is recursive.
+    // TODO: This can be made extensible using specialized operators.
+    // But the recursion will need to allow for extensions.
     if (is_tensor(expr)) {
         return expr.map(function (elem) {
-            return approxratioRecursive(elem, $);
+            return approxratio(elem, $);
         });
     }
     if (is_flt(expr)) {
-        return approxOneRatioOnly(expr, $);
+        return approxratio_flt(expr, $);
     }
     if (is_cons(expr)) {
-        return cons(approxratioRecursive(car(expr), $), approxratioRecursive(cdr(expr), $));
+        const head = expr.head;
+        const rest = expr.argList;
+        return cons(approxratio(head, $), approxratio(rest, $));
     }
     return expr;
 }
 
-function approxOneRatioOnly(p1: U, $: ExtensionEnv): U {
-    const supposedlyTheFloat = zzfloat(p1, $);
+function approxratio_flt(value: Flt, $: ExtensionEnv): U {
+    // TypeScript establishes that the argument actually is a float, so we could simplify here.
+    const supposedlyTheFloat = zzfloat(value, $);
     if (is_flt(supposedlyTheFloat)) {
         const theFloat = supposedlyTheFloat.d;
         const splitBeforeAndAfterDot = theFloat.toString().split('.');

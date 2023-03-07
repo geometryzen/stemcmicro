@@ -33,6 +33,7 @@
         "unit-abs": "mocha 'units/abs.spec.ts'",
         "unit-add": "mocha 'units/add.spec.ts'",
         "unit-algebra": "mocha 'units/algebra.spec.ts'",
+        "unit-approxratio": "mocha 'units/approxratio.spec.ts'",
         "unit-arccos": "mocha 'units/arccos.spec.ts'",
         "unit-arccosh": "mocha 'units/arccosh.spec.ts'",
         "unit-arcsin": "mocha 'units/arcsin.spec.ts'",

@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { HASH_STR, hash_unaop_atom } from "../../hashing/hash_info";
 import { Str } from "../../tree/str/Str";
 import { create_sym, Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_str } from "../str/str_extension";
 import { uom } from "./uom";

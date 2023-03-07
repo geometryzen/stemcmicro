@@ -50,7 +50,6 @@ class NumBuilder implements NumHandler {
     }
     flt(): void {
         this.#num = new FltTokenParser().parse(this.chars, 0, 0);
-        throw new Error("Method not implemented.");
     }
     int(): void {
         this.#num = new IntTokenParser().parse(this.chars, 0, 0);

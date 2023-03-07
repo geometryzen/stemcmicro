@@ -1,6 +1,6 @@
 import { EigenmathParseOptions, eigenmath_parse } from "../brite/eigenmath_parse";
 import { MATH_EXP } from "../operators/exp/MATH_EXP";
-import { QUOTE } from "../runtime/constants";
+import { PREDICATE_IS_REAL, QUOTE } from "../runtime/constants";
 import { MATH_ADD, MATH_MUL, MATH_POW } from "../runtime/ns_math";
 import { SchemeParseOptions } from "../scheme/SchemeParseOptions";
 import { scheme_parse } from "../scheme/scheme_parse";
@@ -91,7 +91,8 @@ function scheme_parse_options(options?: ParseOptions): SchemeParseOptions {
                 '*': MATH_MUL,
                 'exp': MATH_EXP,
                 'expt': MATH_POW,
-                'quote': QUOTE
+                'quote': QUOTE,
+                'real?': PREDICATE_IS_REAL
             },
             explicitAssocAdd: options.explicitAssocAdd,
             explicitAssocMul: options.explicitAssocMul,

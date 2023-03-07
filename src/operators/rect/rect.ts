@@ -34,7 +34,7 @@ export function rect(z: U, $: ExtensionEnv): U {
     // (note that 'i' is not a symbol, it's made of (-1)^(1/2))
     // otherwise we have to leave unevalled
     if (is_sym(z)) {
-        if (!$.isZero($.getBinding(ASSUME_REAL_VARIABLES))) {
+        if (!$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
             return z;
         }
 
@@ -52,14 +52,14 @@ export function rect(z: U, $: ExtensionEnv): U {
         //
     }
 
-    if (!$.isZero($.getBinding(ASSUME_REAL_VARIABLES)) && !has_exp_form(z, $) && !has_clock_form(z, z, $) &&
+    if (!$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES)) && !has_exp_form(z, $) && !has_clock_form(z, z, $) &&
         !(z.contains(MATH_SIN) && z.contains(COS) && z.contains(imu))
     ) {
         // no polar form?
         return z; // ib
     }
 
-    if (is_cons(z) && is_multiply(z) && is_imu(cadr(z)) && !$.isZero($.getBinding(ASSUME_REAL_VARIABLES))) {
+    if (is_cons(z) && is_multiply(z) && is_imu(cadr(z)) && !$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
         return z; // sum
     }
 

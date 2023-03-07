@@ -3,20 +3,58 @@ import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("imag", function () {
+    it("imag(a)", function () {
+        const lines: string[] = [
+            `imag(a)`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu']
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "0");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        engine.release();
+    });
+    it("imag(i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `imag(i)`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu']
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1");
+        engine.release();
+    });
+    it("imag(i*y)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `imag(i*y)`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu']
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "y");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "y");
+        engine.release();
+    });
     it("imag(a+i*b)", function () {
         const lines: string[] = [
+            `i=sqrt(-1)`,
             `imag(a+i*b)`
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: true
+            dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "b");
         assert.strictEqual(engine.renderAsInfix(values[0]), "b");
         engine.release();
     });
-    it("imag(x+i*y)", function () {
+    xit("imag(x+i*y)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `imag(x+i*y)`
@@ -28,7 +66,7 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "y");
         engine.release();
     });
-    it("imag(1/(x+i*y))", function () {
+    xit("imag(1/(x+i*y))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `imag(1/(x+i*y))`

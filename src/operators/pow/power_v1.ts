@@ -148,7 +148,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // if we only assume variables to be real, then |a|^2 = a^2
     // (if x is complex this doesn't hold e.g. i, which makes 1 and -1
     // Looking for (pow (abs ...) )
-    if (is_cons(base) && is_abs(base) && iseveninteger(expo) && !$.isZero($.getBinding(ASSUME_REAL_VARIABLES))) {
+    if (is_cons(base) && is_abs(base) && iseveninteger(expo) && !$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
         const result = $.power(cadr(base), expo);
         return hook(result, "L");
     }

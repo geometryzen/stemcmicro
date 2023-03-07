@@ -33,5 +33,9 @@ export class Boo extends Atom {
     }
 }
 
+export function wrap_as_boo(b: boolean): Boo {
+    return Boo.valueOf(b);
+}
+
 export const booT = new Boo(true);
 export const booF = new Boo(false);

@@ -238,7 +238,7 @@ function Eval_binding(expr: Cons, $: ExtensionEnv) {
     if (is_cons(argList)) {
         const sym = argList.car;
         if (is_sym(sym)) {
-            stack_push($.getBinding(sym));
+            stack_push($.getSymbolValue(sym));
         }
         else {
             stack_push(new Err(`expr.argList.car MUST be a Sym. binding(expr => ${$.toInfixString(expr)})`));

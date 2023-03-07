@@ -127,7 +127,7 @@ export function Eval_lookup(expr: Cons, $: ExtensionEnv): void {
         // For now, we use the assertive properties of the Cons API.
         const op = expr.car;
         if (is_sym(op)) {
-            const binding = $.getBinding(op);
+            const binding = $.getSymbolValue(op);
             stack_push(binding);
         }
         else {

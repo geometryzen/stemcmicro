@@ -18,7 +18,6 @@ import { add_2_any_mul_2_rat_any } from '../operators/add/add_2_any_mul_2_rat_an
 import { add_2_assoc_lhs_factorize_blades } from '../operators/add/add_2_assoc_lhs_factorize_blades';
 import { add_2_blade_blade } from '../operators/add/add_2_blade_blade';
 import { add_2_blade_mul_2_rat_blade } from '../operators/add/add_2_blade_mul_2_rat_blade';
-import { add_2_cons_rat } from '../operators/add/add_2_cons_rat';
 import { add_2_flt_flt } from '../operators/add/add_2_flt_flt';
 import { add_2_flt_rat } from '../operators/add/add_2_flt_rat';
 import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
@@ -29,7 +28,6 @@ import { add_2_mul_2_rat_X_mul_2_rat_X } from '../operators/add/add_2_mul_2_rat_
 import { add_2_mul_2_rat_zzz_aaa } from '../operators/add/add_2_mul_2_rat_zzz_aaa';
 import { add_2_pow_2_any_any_mul_2_any_any } from '../operators/add/add_2_pow_2_any_any_mul_2_any_any';
 import { add_2_rat_blade } from '../operators/add/add_2_rat_blade';
-import { add_2_rat_cons } from '../operators/add/add_2_rat_cons';
 import { add_2_rat_flt } from '../operators/add/add_2_rat_flt';
 import { add_2_rat_rat } from '../operators/add/add_2_rat_rat';
 import { add_2_rat_sym } from '../operators/add/add_2_rat_sym';
@@ -81,6 +79,8 @@ import { cos_any } from '../operators/cos/cos_any';
 import { cos_hyp } from '../operators/cos/cos_hyp';
 import { cos_mul_2_any_imu } from '../operators/cos/cos_mul_2_any_imu';
 import { cos_sym } from '../operators/cos/cos_sym';
+import { MATH_COS } from '../operators/cos/MATH_COS';
+import { real_cos } from '../operators/cos/real_cos';
 import { cosh_sym } from '../operators/cosh/cosh_sym';
 import { cosh_varargs } from '../operators/cosh/cosh_varargs';
 import { cross_any_any } from '../operators/cross/cross_any_any';
@@ -148,6 +148,12 @@ import { inv_any } from '../operators/inv/inv_any';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
+import { is_real_add } from '../operators/is_real/is_real_add';
+import { is_real_flt } from '../operators/is_real/is_real_flt';
+import { is_real_imu } from '../operators/is_real/is_real_imu';
+import { is_real_mul } from '../operators/is_real/is_real_mul';
+import { is_real_rat } from '../operators/is_real/is_real_rat';
+import { make_predicate_sym_operator } from '../operators/is_real/is_real_sym';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -169,7 +175,6 @@ import { mul_2_hyp_rat } from '../operators/mul/mul_2_hyp_rat';
 import { mul_2_hyp_sym } from '../operators/mul/mul_2_hyp_sym';
 import { mul_2_imu_flt } from '../operators/mul/mul_2_imu_flt';
 import { mul_2_imu_imu } from '../operators/mul/mul_2_imu_imu';
-import { mul_2_mul_2_aaa_bbb_bbb } from '../operators/mul/mul_2_mul_2_aaa_bbb_bbb';
 import { mul_2_mul_2_any_cons_sym } from '../operators/mul/mul_2_mul_2_any_cons_sym';
 import { mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_mul_2_any_sym_imu } from '../operators/mul/mul_2_mul_2_any_sym_imu';
@@ -300,7 +305,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CLEAR, CLEARALL, NROOTS, POLAR, QUOTE, RECT, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CLEAR, CLEARALL, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -308,12 +313,6 @@ import { Eval_and, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_test
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 export function define_std_operators($: ExtensionEnv) {
-
-    $.setAssocL(MATH_ADD, true);
-    $.setAssocL(MATH_MUL, true);
-    $.setAssocL(MATH_LCO, true);
-    $.setAssocL(MATH_RCO, true);
-    $.setAssocL(MATH_OUTER, true);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
@@ -337,7 +336,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_rat_flt);
     $.defineOperator(add_2_rat_rat);
     $.defineOperator(add_2_rat_sym);
-    $.defineOperator(add_2_rat_cons);
     $.defineOperator(add_2_tensor_tensor);
     $.defineOperator(add_2_uom_flt);
     $.defineOperator(add_2_uom_rat);
@@ -345,7 +343,6 @@ export function define_std_operators($: ExtensionEnv) {
     // Missing add_sym_flt
     // Missing add_sym_rat
     $.defineOperator(add_2_sym_rat);
-    $.defineOperator(add_2_cons_rat);
     $.defineOperator(add_2_xxx_mul_2_rm1_xxx);
     $.defineOperator(add_2_any_mul_2_rat_any);
     $.defineOperator(add_2_blade_mul_2_rat_blade);
@@ -427,8 +424,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_mul_2_rat_any_mul_2_rat_any);
 
     $.defineOperator(simplify_mul_2_blade_mul_2_blade_any);
-
-    $.defineOperator(mul_2_mul_2_aaa_bbb_bbb);
 
     // The following is only used for right-associating.
     $.defineOperator(mul_2_mul_2_sym_imu_sym);
@@ -597,6 +592,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(cos_sym);
     $.defineOperator(cos_hyp);
     $.defineOperator(cos_any);
+    $.setChain(REAL, MATH_COS, real_cos);
 
     $.defineOperator(cosh_sym);
     $.defineOperator(cosh_varargs);
@@ -687,6 +683,14 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
     $.defineOperator(real_any);
+
+    $.defineOperator(is_real_add);
+    $.defineOperator(is_real_flt);
+    $.defineOperator(is_real_imu);
+    $.defineOperator(is_real_mul);
+    $.defineOperator(is_real_rat);
+    $.defineOperator(make_predicate_sym_operator(PREDICATE_IS_REAL));
+
     $.defineTransform(RECT, Eval_rect);
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);

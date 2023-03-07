@@ -160,7 +160,7 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     });
     if (scanned === sourceText.length) {
         const str = assert_str(tree);
-        $.setBinding(sym, str);
+        $.setSymbolValue(sym, str);
     }
     else {
         // TODO
@@ -1275,7 +1275,7 @@ function should_tweak_exponent_syntax(base: U, $: ExtensionEnv): boolean {
     if (is_sym(base)) {
         if (base.equals(create_sym('x'))) {
             const sym = PRINT_LEAVE_X_ALONE;
-            const binding = $.getBinding(sym);
+            const binding = $.getSymbolValue(sym);
             if (sym === binding) {
                 // There is no override, therefore tweak!
                 return true;
@@ -1324,7 +1324,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         }
     }
 
-    if (equaln($.getBinding(PRINT_LEAVE_E_ALONE), 1) && is_base_of_natural_logarithm(base)) {
+    if (equaln($.getSymbolValue(PRINT_LEAVE_E_ALONE), 1) && is_base_of_natural_logarithm(base)) {
         if (defs.codeGen) {
             str += print_str('Math.exp(');
             str += print_expo_of_denom(expo, $);

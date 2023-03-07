@@ -3,11 +3,12 @@ import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { useCaretForExponentiation } from "../modes/modes";
+import { is_boo } from "../operators/boo/is_boo";
 import { MATH_EXP } from "../operators/exp/MATH_EXP";
 import { value_of } from "../operators/helpers/valueOf";
 import { is_num } from "../operators/num/is_num";
 import { is_sym } from "../operators/sym/is_sym";
-import { FUNCTION } from "../runtime/constants";
+import { FUNCTION, PREDICATE_IS_REAL } from "../runtime/constants";
 import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
@@ -15,7 +16,7 @@ import { negOne, Rat, zero } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, LambdaExpr, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { make_pluggable_function_operator } from "./make_pluggable_function_operator";
 import { make_pluggable_keyword_operator } from "./make_pluggable_keyword_operator";
 import { NoopPrintHandler } from "./NoopPrintHandler";
@@ -33,7 +34,7 @@ class StableExprComparator implements ExprComparator {
 }
 
 export interface EnvOptions {
-    assocs?: { sym: Sym, dir: 'L' | 'R' }[];
+    assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: FEATURE[];
     disable?: ('factorize' | 'implicate')[];
     noOptimize?: boolean;
@@ -42,7 +43,7 @@ export interface EnvOptions {
 }
 
 export interface EnvConfig {
-    assocs: { sym: Sym, dir: 'L' | 'R' }[];
+    assumes: { [name: string]: Partial<SymbolProps> };
     dependencies: FEATURE[];
     disable: ('factorize' | 'implicate')[];
     noOptimize: boolean;
@@ -53,7 +54,7 @@ export interface EnvConfig {
 function config_from_options(options: EnvOptions | undefined): EnvConfig {
     if (options) {
         const config: EnvConfig = {
-            assocs: Array.isArray(options.assocs) ? options.assocs : [],
+            assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             disable: Array.isArray(options.disable) ? options.disable : [],
             noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
@@ -64,7 +65,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
     }
     else {
         const config: EnvConfig = {
-            assocs: [],
+            assumes: {},
             dependencies: [],
             disable: [],
             noOptimize: false,
@@ -98,6 +99,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     }
 
     const assocs: { [key: string]: Assoc } = {};
+
+    const chains: Map<string, Map<string, LambdaExpr>> = new Map();
 
     let current_mode: number = MODE_EXPANDING;
 
@@ -185,19 +188,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         add(lhs: U, rhs: U): U {
-            // If the number is a Flt type, the other term must be coerced to a float.
-            /*
-            if (is_num(lhs)) {
-                if (lhs.isZero()) {
-                    return rhs;
-                }
-            }
-            if (is_num(rhs)) {
-                if (rhs.isZero()) {
-                    return lhs;
-                }
-            }
-            */
             return binop(MATH_ADD, lhs, rhs, $);
         },
         clearOperators(): void {
@@ -239,19 +229,48 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
-        getBinding(sym: Sym): U {
-            const value = symTab.get(sym);
-            // console.lg(`ExtensionEnv.getBinding(sym = ${$.toInfixString(sym)}) => ${$.toInfixString(value)}`);
-            return value;
+        getSymbolProps(sym: Sym): SymbolProps {
+            return symTab.getProps(sym);
+        },
+        getSymbolValue(sym: Sym): U {
+            return symTab.getValue(sym);
         },
         getBindings() {
             return symTab.entries();
         },
-        getChain(outer: Sym, inner: Sym): (argList: Cons, $: ExtensionEnv) => U {
-            return function (argList: Cons, $: ExtensionEnv) {
-                const i = $.valueOf(cons(inner, argList));
-                return $.valueOf(cons(outer, i));
+        getChain(outer: Sym, inner: Sym): LambdaExpr {
+            const outerKey = outer.key();
+            const map = chains.get(outerKey);
+            if (map) {
+                const innerKey = inner.key();
+                const lambda = map.get(innerKey);
+                if (lambda) {
+                    return lambda;
+                }
+            }
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            return function (argList: Cons, $: ExtensionEnv): U {
+                const i = cons(inner, argList);
+                return items_to_cons(outer, i);
             };
+        },
+        setChain(outer: Sym, inner: Sym, lambda: (argList: Cons, $: ExtensionEnv) => U): void {
+            const outerKey = outer.key();
+            const ensureOuterMap = function () {
+                const found = chains.get(outerKey);
+                if (found) {
+                    return found;
+                }
+                else {
+                    const minted = new Map<string, (argList: Cons, $: ExtensionEnv) => U>();
+                    chains.set(outerKey, minted);
+                    return minted;
+                }
+
+            };
+            const map = ensureOuterMap();
+            const innerKey = inner.key();
+            map.set(innerKey, lambda);
         },
         getMode(): number {
             return current_mode;
@@ -309,24 +328,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             */
         },
-        isAssocL(opr: Sym): boolean {
-            const entry = assocs[opr.key()];
-            if (entry) {
-                return entry.lhs;
-            }
-            else {
-                throw new SystemError(`isAssocL(${opr})`);
-            }
-        },
-        isAssocR(opr: Sym): boolean {
-            const entry = assocs[opr.key()];
-            if (entry) {
-                return entry.rhs;
-            }
-            else {
-                throw new SystemError(`isAssocR(${opr})`);
-            }
-        },
         isExpanding(): boolean {
             return current_mode == MODE_EXPANDING;
         },
@@ -346,10 +347,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.operatorFor(expr).isOne(expr);
         },
         isReal(expr: U): boolean {
-            const op = $.operatorFor(expr);
-            const retval = op.isReal(expr);
+            // In the new way we don't require every operator to provide the answer.
+            const response = $.valueOf(items_to_cons(PREDICATE_IS_REAL, expr));
+            if (is_boo(response) && response.isTrue()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+
+            // const op = $.operatorFor(expr);
+            // const retval = op.isReal(expr);
             // console.lg(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
-            return retval;
+            // return retval;
         },
         isScalar(expr: U): boolean {
             const op = $.operatorFor(expr);
@@ -471,34 +481,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         remove(varName: Sym): void {
             symTab.delete(varName);
         },
-        setAssocL(opr: Sym, assocL: boolean): void {
-            const assoc = assocs[opr.key()];
-            if (assoc) {
-                assoc.lhs = assocL;
-            }
-            else {
-                assocs[opr.key()] = { lhs: assocL, rhs: false };
-            }
-            if (assocL) {
-                $.setAssocR(opr, false);
-            }
-        },
-        setAssocR(opr: Sym, assocR: boolean): void {
-            const assoc = assocs[opr.key()];
-            if (assoc) {
-                assoc.rhs = assocR;
-            }
-            else {
-                assocs[opr.key()] = { lhs: false, rhs: assocR };
-            }
-            if (assocR) {
-                $.setAssocL(opr, false);
-            }
-        },
-        setBinding(sym: Sym, binding: U): void {
-            // console.lg("setBinding", render_as_infix(sym, $), "to", render_as_infix(binding, $));
-            symTab.set(sym, binding);
-        },
         setMode(focus: number): void {
             // console.lg(`ExtensionEnv.setFocus(focus=${decodePhase(focus)})`);
             current_mode = focus;
@@ -509,8 +491,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setSymbolOrder(sym: Sym, order: ExprComparator): void {
             sym_order[sym.key()] = order;
         },
+        setSymbolProps(sym: Sym, props: Partial<SymbolProps>): void {
+            symTab.setProps(sym, props);
+        },
         setSymbolToken(sym: Sym, token: string): void {
             sym_token[sym.key()] = token;
+        },
+        setSymbolValue(sym: Sym, value: U): void {
+            symTab.setValue(sym, value);
         },
         subtract(lhs: U, rhs: U): U {
             const A = $.negate(rhs);
@@ -559,7 +547,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (is_cons(expr)) {
                             const opr = expr.opr;
                             if (is_sym(opr)) {
-                                const binding = $.getBinding(opr);
+                                const binding = $.getSymbolValue(opr);
                                 if (!is_nil(binding)) {
                                     if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
                                         const newExpr = Eval_user_function(expr, $);

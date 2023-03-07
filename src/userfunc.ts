@@ -47,7 +47,7 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
         // eslint-disable-next-line no-console
         // console.lg(`Eval_user_function evaluating: ${car(expr)}`);
     }
-    if (car(expr).equals(SYMBOL_D) && $.getBinding(SYMBOL_D).equals(SYMBOL_D)) {
+    if (car(expr).equals(SYMBOL_D) && $.getSymbolValue(SYMBOL_D).equals(SYMBOL_D)) {
         const retval = Eval_derivative(expr, $);
         return retval;
     }
@@ -215,7 +215,7 @@ function rewrite_args($: ExtensionEnv) {
 
     // Get the symbol's content, if _that_
     // matches then do the substitution
-    p3 = $.getBinding(p1);
+    p3 = $.getSymbolValue(p1);
     stack_push(p3);
     if (p1 !== p3) {
         stack_push(p2); // subst. list

@@ -50,13 +50,13 @@ export class UnknownOperator implements Operator<U> {
         throw new Error("UnknownOperator.subst Method not implemented.");
     }
     toInfixString(expr: U): string {
-        throw new Error("UnknownOperator.toInfixString Method not implemented.");
+        throw new Error(`${expr.toString()} is not defined.`);
     }
     toLatexString(expr: U): string {
-        throw new Error("UnknownOperator.toLatexString Method not implemented.");
+        throw new Error(`${expr.toString()} is not defined.`);
     }
     toListString(expr: U): string {
-        throw new Error("UnknownOperator.toListString Method not implemented.");
+        throw new Error(`${expr.toString()} is not defined.`);
     }
     transform(expr: U): [number, U] {
         throw new Error("UnknownOperator. Method not implemented.");
@@ -64,5 +64,4 @@ export class UnknownOperator implements Operator<U> {
     valueOf(expr: U): U {
         throw new Error("UnknownOperator. Method not implemented.");
     }
-
 }

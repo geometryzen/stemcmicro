@@ -89,7 +89,7 @@ export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
     // somehow
     B = makeList(FUNCTION, B, A);
 
-    $.setBinding(F, B);
+    $.setSymbolValue(F, B);
 
     return nil;
 }

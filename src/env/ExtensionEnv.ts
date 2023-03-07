@@ -71,6 +71,31 @@ export interface ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign;
 }
 
+export type LambdaExpr = (argList: Cons, $: ExtensionEnv) => U;
+
+export interface SymbolProps {
+    commutative: boolean,
+    complex: boolean,
+    extended_negative: boolean,
+    extended_nonnegative: boolean,
+    extended_nonpositive: boolean,
+    extended_nonzero: boolean,
+    extended_positive: boolean,
+    extended_real: boolean,
+    finite: boolean,
+    hermitian: boolean,
+    imaginary: boolean,
+    infinite: boolean,
+    negative: boolean,
+    nonnegative: boolean,
+    nonpositive: boolean,
+    nonzero: boolean,
+    positive: boolean,
+    real: boolean,
+    zero: boolean
+}
+
+
 export interface ExtensionEnv {
     getPrintHandler(): PrintHandler;
     setField(kind: 'R' | undefined): void;
@@ -98,12 +123,14 @@ export interface ExtensionEnv {
      * @deprecated
      */
     factorize(poly: U, x: U): U;
-    getBinding(sym: Sym): U;
     getBindings(): { sym: Sym, value: U }[];
-    getChain(outer: Sym, inner: Sym): (argList: Cons, $: ExtensionEnv) => U;
+    getChain(outer: Sym, inner: Sym): LambdaExpr;
+    setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void;
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
+    getSymbolProps(sym: Sym): SymbolProps;
     getSymbolToken(sym: Sym): string;
+    getSymbolValue(sym: Sym): U;
     /**
      * Used to make the environment ready after all operator builders have been added.
      */
@@ -112,8 +139,6 @@ export interface ExtensionEnv {
      * @deprecated
      */
     inner(lhs: U, rhs: U): U;
-    isAssocL(opr: Sym): boolean;
-    isAssocR(opr: Sym): boolean;
     isExpanding(): boolean;
     isFactoring(): boolean;
     /**
@@ -122,6 +147,9 @@ export interface ExtensionEnv {
     isImag(expr: U): boolean;
     isMinusOne(expr: U): boolean;
     isOne(expr: U): boolean;
+    /**
+     * Corresponds to the 'real' property.
+     */
     isReal(expr: U): boolean;
     /**
      * Determines whether expr is scalar-valued.
@@ -154,13 +182,12 @@ export interface ExtensionEnv {
      */
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
-    setAssocL(opr: Sym, value: boolean): void;
-    setAssocR(opr: Sym, value: boolean): void;
-    setBinding(sym: Sym, binding: U): void;
     setMode(mode: number): void;
     setModeFlag(mode: MODE, value: boolean): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
+    setSymbolProps(sym: Sym, props: Partial<SymbolProps>): void;
     setSymbolToken(sym: Sym, token: string): void;
+    setSymbolValue(sym: Sym, value: U): void;
     /**
      * @deprecated
      */

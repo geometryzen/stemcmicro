@@ -5,7 +5,6 @@ import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_inf
 import { evaluatingTrigAsExp } from "../../modes/modes";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { render_as_infix } from "../../print/render_as_infix";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";

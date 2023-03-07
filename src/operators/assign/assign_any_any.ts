@@ -60,7 +60,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
 
     // TODO: The evaluation of the right hand side is not really necessary.
     const binding = $.valueOf(expr.rhs);
-    $.setBinding(lhs, binding);
+    $.setSymbolValue(lhs, binding);
 
     // An assignment returns nothing.
     // This is unlike most programming languages

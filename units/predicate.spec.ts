@@ -12,7 +12,7 @@ describe("predicate", function () {
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "false");
+        assert.strictEqual(engine.renderAsSExpr(value), "#f");
         assert.strictEqual(engine.renderAsInfix(value), 'false');
     });
     it("x>0", function () {
@@ -24,7 +24,7 @@ describe("predicate", function () {
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "true");
+        assert.strictEqual(engine.renderAsSExpr(value), "#t");
         assert.strictEqual(engine.renderAsInfix(value), 'true');
     });
     it("x<0", function () {
@@ -36,7 +36,7 @@ describe("predicate", function () {
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "false");
+        assert.strictEqual(engine.renderAsSExpr(value), "#f");
         assert.strictEqual(engine.renderAsInfix(value), 'false');
     });
     it("x * y < 0", function () {
@@ -48,7 +48,7 @@ describe("predicate", function () {
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "false");
+        assert.strictEqual(engine.renderAsSExpr(value), "#f");
         assert.strictEqual(engine.renderAsInfix(value), 'false');
     });
     it("x * y > 0", function () {
@@ -60,7 +60,7 @@ describe("predicate", function () {
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "true");
+        assert.strictEqual(engine.renderAsSExpr(value), "#t");
         assert.strictEqual(engine.renderAsInfix(value), 'true');
     });
 });

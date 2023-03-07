@@ -3,7 +3,7 @@ import { FltTokenParser } from "../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { StrTokenParser } from "../operators/str/StrTokenParser";
 import { SymTokenParser } from "../operators/sym/SymTokenParser";
-import { ASSIGN, METAA, METAB, METAX } from "../runtime/constants";
+import { ASSIGN, METAA, METAB, METAX, PREDICATE_IS_REAL } from "../runtime/constants";
 import { defs } from "../runtime/defs";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { MATH_ADD, MATH_DIV, MATH_EQ, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
@@ -47,7 +47,8 @@ const scanConfig: ScanConfig = {
         '==': MATH_EQ,
         ':=': LANG_COLON_EQ,
         '=': ASSIGN,
-        'exp': MATH_EXP
+        'exp': MATH_EXP,
+        'isreal': PREDICATE_IS_REAL
     },
     meta: {
         'a': METAA,

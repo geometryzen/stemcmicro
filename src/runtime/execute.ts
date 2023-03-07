@@ -112,7 +112,7 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
  * 
  */
 function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
-    const binding = $.getBinding(sym);
+    const binding = $.getSymbolValue(sym);
     if (is_nil(binding)) {
         return true;
     }
@@ -159,7 +159,7 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
         // console.lg(`tranned   : ${print_expr(transformed, $)}`);
         // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
         box.push(transformed);
-        if ($.isOne($.getBinding(BAKE))) {
+        if ($.isOne($.getSymbolValue(BAKE))) {
             // console.lg("Baking...");
             let expr = bake(box.pop(), $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.
@@ -181,7 +181,7 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
     // This feels like a bit of a hack.
     if (!is_nil(expr)) {
         // console.lg(`store_in_script_last ${render_as_human(expr, $)}`);
-        $.setBinding(RESERVED_KEYWORD_LAST, expr);
+        $.setSymbolValue(RESERVED_KEYWORD_LAST, expr);
     }
 }
 

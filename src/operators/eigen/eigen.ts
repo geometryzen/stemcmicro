@@ -108,8 +108,8 @@ export function Eval_eigen(expr: U, $: ExtensionEnv): U {
 
     // TODO: Who consumes these? Should we use a special namespace?
     // Better to return a Tensor.
-    $.setBinding(create_sym('D'), D);
-    $.setBinding(create_sym('Q'), Q);
+    $.setSymbolValue(create_sym('D'), D);
+    $.setSymbolValue(create_sym('Q'), Q);
 
     return nil;
 }

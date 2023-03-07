@@ -116,6 +116,7 @@ export const RANK = create_sym('rank');
 export const RATIONALIZE = create_sym('rationalize');
 export const RCO = create_sym('rco');
 export const REAL = create_sym('real');
+export const PREDICATE_IS_REAL = create_sym('math.isreal');
 export const ROUND = create_sym('round');
 export const RECT = create_sym('rect');
 export const ROOTS = create_sym('roots');

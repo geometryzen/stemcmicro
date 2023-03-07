@@ -43,16 +43,16 @@ function _sum(p1: U, $: ExtensionEnv): U {
 
     // remember contents of the index
     // variable so we can put it back after the loop
-    const original = $.getBinding(index);
+    const original = $.getSymbolValue(index);
     let temp: U = zero;
     try {
         for (let i = j; i <= k; i++) {
-            $.setBinding(index, wrap_as_int(i));
+            $.setSymbolValue(index, wrap_as_int(i));
             temp = $.add(temp, $.valueOf(body));
         }
     }
     finally {
-        $.setBinding(index, original);
+        $.setSymbolValue(index, original);
     }
 
 

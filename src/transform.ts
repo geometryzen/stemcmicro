@@ -58,7 +58,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
 
     const state = saveMetaBindings($);
 
-    $.setBinding(METAX, X);
+    $.setSymbolValue(METAX, X);
 
     const arg = polyform(F, X, $); // collect coefficients of x, x^2, etc.
     const result = decomp(generalTransform, arg, X, $);
@@ -217,24 +217,24 @@ interface TransformState {
 
 function saveMetaBindings($: ExtensionEnv): TransformState {
     return {
-        METAA: $.getBinding(METAA),
-        METAB: $.getBinding(METAB),
-        METAX: $.getBinding(METAX),
+        METAA: $.getSymbolValue(METAA),
+        METAB: $.getSymbolValue(METAB),
+        METAX: $.getSymbolValue(METAX),
     };
 }
 
 function restoreMetaBindings(state: TransformState, $: ExtensionEnv) {
-    $.setBinding(METAX, state.METAX);
-    $.setBinding(METAB, state.METAB);
-    $.setBinding(METAA, state.METAA);
+    $.setSymbolValue(METAX, state.METAX);
+    $.setSymbolValue(METAB, state.METAB);
+    $.setSymbolValue(METAA, state.METAA);
 }
 
 // search for a METAA and METAB such that F = A
 function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: ExtensionEnv): boolean {
     for (const fea_i of stack) {
-        $.setBinding(METAA, fea_i);
+        $.setSymbolValue(METAA, fea_i);
         for (const fea_j of stack) {
-            $.setBinding(METAB, fea_j);
+            $.setSymbolValue(METAB, fea_j);
 
             // now test all the conditions (it's an and between them)
             let temp = C;

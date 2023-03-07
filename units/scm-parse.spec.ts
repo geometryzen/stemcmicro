@@ -22,6 +22,21 @@ describe("scm-parse", function () {
         assert.strictEqual(engine.renderAsSExpr(tree), '(quote "Hello")');
         engine.release();
     });
+    it('(real? 1901)', function () {
+        const lines: string[] = [
+            `(real? 1901)`
+        ];
+
+        const engine = create_script_context({});
+
+        const { trees } = scheme_parse('foo.ts', lines.join('\n'));
+        assert.isArray(trees);
+        assert.strictEqual(trees.length, 1);
+        const tree = trees[0];
+        assert.isDefined(tree);
+        assert.strictEqual(engine.renderAsSExpr(tree), '(real? 1901)');
+        engine.release();
+    });
     it("'obj", function () {
         const lines: string[] = [
             "'obj"

@@ -1,6 +1,6 @@
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv, SymbolProps } from "../env/ExtensionEnv";
 import { useCaretForExponentiation } from "../modes/modes";
 import { ParseOptions, ScriptKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
@@ -8,7 +8,7 @@ import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
 import { render_as_latex } from "../print/render_as_latex";
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { Sym } from "../tree/sym/Sym";
+import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { hard_reset } from "./defs";
@@ -23,6 +23,7 @@ export interface ScriptExecuteOptions {
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
+    assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: string[];
     disable?: string[];
     /**
@@ -44,6 +45,14 @@ export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
 
     $.clearBindings();
     $.clearOperators();
+
+    if (options && options.assumes) {
+        const names = Object.keys(options.assumes);
+        for (const name of names) {
+            const props = options.assumes[name];
+            $.setSymbolProps(create_sym(name), props);
+        }
+    }
 
     define_std_operators($);
 
@@ -85,7 +94,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
     };
     if (options) {
         const config: EnvOptions = {
-            assocs: [],
+            assumes: options.assumes,
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             disable: [],
             noOptimize: false,
@@ -96,7 +105,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
     }
     else {
         const config: EnvOptions = {
-            assocs: [],
+            assumes: {},
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
             disable: [],
             noOptimize: false,
@@ -121,7 +130,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
             $.clearBindings();
         },
         getBinding(sym: Sym): U {
-            return $.getBinding(sym);
+            return $.getSymbolValue(sym);
         },
         getBindings(): { sym: Sym, value: U }[] {
             return $.getBindings();

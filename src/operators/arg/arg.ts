@@ -34,9 +34,9 @@ export function define_arg($: ExtensionEnv): void {
     // If we also want to control the name as it appears in the script 
     $.defineTransform(MATH_ARG, function (expr: Cons, $: ExtensionEnv): U {
         const z = cadr(expr);
-        console.log("z", $.toInfixString(z));
+        // console.lg("z", $.toInfixString(z));
         const value_of_z = $.valueOf(z);
-        console.log("value_of_z", $.toInfixString(value_of_z));
+        // console.lg("value_of_z", $.toInfixString(value_of_z));
         const arg_z = arg(value_of_z, $);
         // console.lg(`arg_z => ${render_as_sexpr(arg_z, $)}`);
         return arg_z;
@@ -51,7 +51,7 @@ export function arg(z: U, $: ExtensionEnv): U {
 }
 
 export function arg_old(z: U, $: ExtensionEnv): U {
-    console.log("arg", $.toInfixString(z));
+    // console.lg("arg", $.toInfixString(z));
     if (is_multiply(z)) {
         const argList = z.argList;
         if (argList.length === 2) {
@@ -150,7 +150,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
         return arg_of_sum(expr, $);
     }
 
-    if (!$.isZero($.getBinding(ASSUME_REAL_VARIABLES))) {
+    if (!$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
         // if we assume all passed values are real
         return zero;
     }

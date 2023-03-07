@@ -33,7 +33,7 @@ class SymExtension implements Extension<Sym> {
         }
 
         // Evaluate symbol's binding
-        const binding = $.getBinding(sym);
+        const binding = $.getSymbolValue(sym);
 
         // console.lg(`binding ${$.toInfixString(sym)} => ${$.toInfixString(binding)}`);
 

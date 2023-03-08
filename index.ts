@@ -10,7 +10,7 @@ export { is_str } from './src/operators/str/is_str';
 export { is_sym } from './src/operators/sym/is_sym';
 export { is_tensor } from './src/operators/tensor/is_tensor';
 export { is_uom } from './src/operators/uom/is_uom';
-export { human_readable_script_kind, ParseOptions, parse_script, ScriptKind, scriptKinds } from './src/parser/parser';
+export { human_readable_script_kind, ParseOptions, parse_expr, parse_script, ScriptKind, scriptKinds } from './src/parser/parser';
 export { create_script_context, ScriptContext, ScriptContextOptions, ScriptExecuteOptions } from './src/runtime/script_engine';
 export { Atom } from './src/tree/atom/Atom';
 export { Boo, booF, booT } from './src/tree/boo/Boo';

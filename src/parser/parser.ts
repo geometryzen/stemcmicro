@@ -42,6 +42,21 @@ export interface ParseOptions {
     explicitAssocMul?: boolean;
 }
 
+export function parse_expr(sourceText: string, options?: ParseOptions): U {
+    const { trees, errors } = parse_script("", sourceText, options);
+    if (errors.length == 0) {
+        if (trees.length > 0) {
+            return trees[0];
+        }
+        else {
+            throw new Error();
+        }
+    }
+    else {
+        throw errors[1];
+    }
+}
+
 export function parse_script(fileName: string, sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
     const scriptKind = script_kind_from_options(options);
     switch (scriptKind) {

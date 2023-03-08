@@ -713,7 +713,7 @@ export function make_hashed_itab($: ExtensionEnv): { [index: string]: string[] }
 
 // pre-calculated hashed integral table.
 // in case the integral table is changed, use this
-//   Algebrite.make_hashed_itab()
+// make_hashed_itab()
 // and copy the resulting JSON in here.
 const hashed_itab: { [key: string]: string[] } = {
     '1.144166': ['f(a,a*x)'],

@@ -6,7 +6,7 @@ Not yet stable.
 
 ## tests
 
-This is the suite that tests for backwards compatibility with Algebrite.
+This is the suite that tests for (approximate) backwards compatibility with Algebrite.
 
 Some have been renamed from *.ts to *.md to evade execution.
 

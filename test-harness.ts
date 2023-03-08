@@ -3,7 +3,7 @@ import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
 import { SymbolProps } from './src/env/ExtensionEnv';
-import { ScriptKind } from './src/parser/parser';
+import { SyntaxKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
 import { defs } from './src/runtime/defs';
 import { create_script_context, ScriptContext, ScriptContextOptions } from './src/runtime/script_engine';
@@ -298,14 +298,14 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
             assumes: options.assumes,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
-            scriptKind: ScriptKind.Eigenmath
+            syntaxKind: SyntaxKind.Native
         };
     }
     else {
         return {
             useCaretForExponentiation: true,
             useDefinitions: true,
-            scriptKind: ScriptKind.Eigenmath
+            syntaxKind: SyntaxKind.Native
         };
     }
 }

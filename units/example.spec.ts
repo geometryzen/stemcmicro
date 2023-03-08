@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_context, ScriptContextOptions, ScriptKind } from "../index";
+import { create_script_context, ScriptContextOptions, SyntaxKind } from "../index";
 
 describe("example", function () {
     it("Geometric Algebra", function () {
@@ -21,7 +21,7 @@ describe("example", function () {
         ];
         const sourcetText = lines.join('\n');
         const options: ScriptContextOptions = {
-            scriptKind: ScriptKind.Eigenmath,
+            syntaxKind: SyntaxKind.Native,
             useCaretForExponentiation: false,
             useDefinitions: false
         };

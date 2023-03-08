@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { ScriptKind } from '../src/parser/parser';
+import { SyntaxKind } from '../src/parser/parser';
 import { create_script_context } from '../src/runtime/script_engine';
 
 describe("scheme", function () {
@@ -9,7 +9,7 @@ describe("scheme", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            scriptKind: ScriptKind.Scheme
+            syntaxKind: SyntaxKind.Scheme
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -24,7 +24,7 @@ describe("scheme", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            scriptKind: ScriptKind.Scheme
+            syntaxKind: SyntaxKind.Scheme
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -39,7 +39,7 @@ describe("scheme", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            scriptKind: ScriptKind.Scheme
+            syntaxKind: SyntaxKind.Scheme
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -54,7 +54,7 @@ describe("scheme", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            scriptKind: ScriptKind.Scheme
+            syntaxKind: SyntaxKind.Scheme
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -69,7 +69,7 @@ describe("scheme", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            scriptKind: ScriptKind.Scheme
+            syntaxKind: SyntaxKind.Scheme
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);

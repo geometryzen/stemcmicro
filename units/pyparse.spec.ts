@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { ScriptKind } from "../src/parser/parser";
+import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { python_parse } from "../src/typhon/python_parse";
 
@@ -29,7 +29,7 @@ describe("Python parse", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { scriptKind: ScriptKind.Python });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Python });
         assert.isArray(values);
         assert.strictEqual(values.length, 2);
         // TODO: This should create a binding which contains the lambda expression.

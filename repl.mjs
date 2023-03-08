@@ -1,6 +1,6 @@
 import process from 'node:process';
 import repl from 'node:repl';
-import { create_script_context, human_readable_script_kind, ScriptKind, scriptKinds } from './dist/commonjs/index.js';
+import { create_script_context, human_readable_syntax_kind, SyntaxKind, syntaxKinds } from './dist/commonjs/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isRecoverableError(error) {
@@ -10,12 +10,12 @@ function isRecoverableError(error) {
     return false;
 }
 
-function prompt(scriptKind) {
-    return `symbolic-math:${human_readable_script_kind(scriptKind).toLowerCase()}> `;
+function prompt(syntaxKind) {
+    return `symbolic-math:${human_readable_syntax_kind(syntaxKind).toLowerCase()}> `;
 }
 
 const contextOptions = {
-    scriptKind: ScriptKind.Python,
+    syntaxKind: SyntaxKind.Native,
     useCaretForExponentiation: false,
     useDefinitions: false
 };
@@ -23,7 +23,7 @@ const contextOptions = {
 const ctxt = create_script_context(contextOptions);
 
 const executeOptions = {
-    scriptKind: contextOptions.scriptKind
+    syntaxKind: contextOptions.syntaxKind
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -50,7 +50,7 @@ function run(cmd, unusedContext, filename, callback) {
 }
 
 const serverOptions = {
-    prompt: prompt(executeOptions.scriptKind),
+    prompt: prompt(executeOptions.syntaxKind),
     eval: (input, context, filename, callback) => {
         callback(null, run(input));
     },
@@ -60,13 +60,13 @@ const serverOptions = {
 
 const replServer = new repl.REPLServer(serverOptions);
 
-scriptKinds.forEach(function (scriptKind) {
-    replServer.defineCommand(human_readable_script_kind(scriptKind).toLowerCase(), {
-        help: `Use ${human_readable_script_kind(scriptKind)} as the scripting language`,
+syntaxKinds.forEach(function (syntaxKind) {
+    replServer.defineCommand(human_readable_syntax_kind(syntaxKind).toLowerCase(), {
+        help: `Sets the scripting syntax to ${human_readable_syntax_kind(syntaxKind)}`,
         action() {
             this.clearBufferedCommand();
-            executeOptions.scriptKind = scriptKind;
-            replServer.setPrompt(prompt(scriptKind));
+            executeOptions.syntaxKind = syntaxKind;
+            replServer.setPrompt(prompt(syntaxKind));
             this.displayPrompt();
         },
     });

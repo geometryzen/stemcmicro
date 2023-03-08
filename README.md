@@ -6,8 +6,7 @@ symbolic-math is a Javascript (Typescript) library for symbolic mathematics.
 
 ```typescript
 import { assert } from "chai";
-import { create_script_context, ScriptContextOptions, ScriptKind } from "symbolic-math";
-
+import { create_script_context, ScriptContextOptions } from "symbolic-math";
 
 describe("example", function () {
     it("Geometric Algebra", function () {
@@ -29,7 +28,6 @@ describe("example", function () {
         ];
         const sourcetText = lines.join('\n');
         const options: ScriptContextOptions = {
-            scriptKind: ScriptKind.Eigenmath,
             useCaretForExponentiation: false,
             useDefinitions: false
         };

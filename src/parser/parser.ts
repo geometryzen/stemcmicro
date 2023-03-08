@@ -9,24 +9,33 @@ import { TsParseOptions } from "../typescript/ts_parse";
 import { PythonParseOptions } from "../typhon/PythonParseOptions";
 import { python_parse } from "../typhon/python_parse";
 
-export enum ScriptKind {
-    Eigenmath = 1,
+export enum SyntaxKind {
+    /**
+     * Based on Algebrite, which was derived from Eigenmath.
+     */
+    Native = 1,
+    /**
+     * Python Programming Language.
+     */
     Python = 2,
+    /**
+     * Scheme Programming Language, a dialect of Lisp.
+     */
     Scheme = 3,
 }
 
-export function human_readable_script_kind(scriptKind: ScriptKind): string {
-    switch (scriptKind) {
-        case ScriptKind.Eigenmath: return "Eigenmath";
-        case ScriptKind.Python: return "Python";
-        case ScriptKind.Scheme: return "Scheme";
+export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
+    switch (syntaxKind) {
+        case SyntaxKind.Native: return "Native";
+        case SyntaxKind.Python: return "Python";
+        case SyntaxKind.Scheme: return "Scheme";
     }
 }
 
-export const scriptKinds: ScriptKind[] = [ScriptKind.Eigenmath, ScriptKind.Python, ScriptKind.Scheme];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Native, SyntaxKind.Python, SyntaxKind.Scheme];
 
 export interface ParseOptions {
-    scriptKind?: ScriptKind;
+    syntaxKind?: SyntaxKind;
     /**
      * Determines whether the caret symbol '^' is used to denote exponentiation.
      * The alternative is to use '**', which frees the caret symbol to denote the outer product.
@@ -58,15 +67,15 @@ export function parse_expr(sourceText: string, options?: ParseOptions): U {
 }
 
 export function parse_script(fileName: string, sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
-    const scriptKind = script_kind_from_options(options);
-    switch (scriptKind) {
-        case ScriptKind.Eigenmath: {
+    const syntaxKind = script_kind_from_options(options);
+    switch (syntaxKind) {
+        case SyntaxKind.Native: {
             return eigenmath_parse(fileName, sourceText, eigenmath_parse_options(options));
         }
-        case ScriptKind.Scheme: {
+        case SyntaxKind.Scheme: {
             return scheme_parse(fileName, sourceText, scheme_parse_options(options));
         }
-        case ScriptKind.Python: {
+        case SyntaxKind.Python: {
             return python_parse(fileName, sourceText, typhon_parse_options(options));
         }
         /*
@@ -77,7 +86,7 @@ export function parse_script(fileName: string, sourceText: string, options?: Par
         }
         */
         default: {
-            throw new Error(`options.scriptKind ${scriptKind} must be one of ${JSON.stringify(scriptKinds.map(human_readable_script_kind).sort())}.`);
+            throw new Error(`options.syntaxKind ${syntaxKind} must be one of ${JSON.stringify(syntaxKinds.map(human_readable_syntax_kind).sort())}.`);
         }
     }
 }
@@ -149,16 +158,16 @@ function typhon_parse_options(options?: ParseOptions): PythonParseOptions {
     }
 }
 
-function script_kind_from_options(options?: ParseOptions): ScriptKind {
+function script_kind_from_options(options?: ParseOptions): SyntaxKind {
     if (options) {
-        if (options.scriptKind) {
-            return options.scriptKind;
+        if (options.syntaxKind) {
+            return options.syntaxKind;
         }
         else {
-            return ScriptKind.Eigenmath;
+            return SyntaxKind.Native;
         }
     }
     else {
-        return ScriptKind.Eigenmath;
+        return SyntaxKind.Native;
     }
 }

@@ -2,7 +2,7 @@ import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ExtensionEnv, SymbolProps } from "../env/ExtensionEnv";
 import { useCaretForExponentiation } from "../modes/modes";
-import { ParseOptions, ScriptKind } from "../parser/parser";
+import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
 import { render_as_infix } from "../print/render_as_infix";
@@ -19,7 +19,7 @@ export interface ScriptExecuteOptions {
     /**
      * Determines what kind of parser is used for the sourceText.
      */
-    scriptKind?: ScriptKind
+    syntaxKind?: SyntaxKind
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
@@ -150,15 +150,15 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, executeOptions: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
-            const options: Pick<ScriptContextOptions, 'scriptKind'> = { scriptKind: ScriptKind.Eigenmath };
+            const options: Pick<ScriptContextOptions, 'syntaxKind'> = { syntaxKind: SyntaxKind.Native };
             if (contextOptions) {
-                if (contextOptions.scriptKind) {
-                    options.scriptKind = contextOptions.scriptKind;
+                if (contextOptions.syntaxKind) {
+                    options.syntaxKind = contextOptions.syntaxKind;
                 }
             }
             if (executeOptions) {
-                if (executeOptions.scriptKind) {
-                    options.scriptKind = executeOptions.scriptKind;
+                if (executeOptions.syntaxKind) {
+                    options.syntaxKind = executeOptions.syntaxKind;
                 }
             }
             return execute_script("", sourceText, parse_options_from_script_context_options(options, $), $);
@@ -194,10 +194,10 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
 /**
  * Makes use of the extension environment because this is called prior to each script execution.
  */
-function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, 'scriptKind'> | undefined, $: ExtensionEnv): ParseOptions {
+function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, 'syntaxKind'> | undefined, $: ExtensionEnv): ParseOptions {
     if (options) {
         return {
-            scriptKind: options.scriptKind,
+            syntaxKind: options.syntaxKind,
             useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
             explicitAssocAdd: false,
             explicitAssocMul: false
@@ -205,7 +205,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
     }
     else {
         return {
-            scriptKind: ScriptKind.Eigenmath,
+            syntaxKind: SyntaxKind.Native,
             useCaretForExponentiation: false,
             explicitAssocAdd: false,
             explicitAssocMul: false

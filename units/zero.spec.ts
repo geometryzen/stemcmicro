@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { ScriptKind } from "../src/parser/parser";
+import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("zero", function () {
@@ -8,7 +8,7 @@ describe("zero", function () {
             `zero(1,1)`
         ];
         const context = create_script_context({
-            scriptKind: ScriptKind.Eigenmath
+            syntaxKind: SyntaxKind.Native
         });
         const { values } = context.executeScript(lines.join('\n'));
         assert.strictEqual(context.renderAsSExpr(values[0]), "[[0]]");

@@ -74,8 +74,6 @@ run_test([
   '1.0 1/2 pi',
   '1.570796...',
 
-  // https://github.com/davidedc/Algebrite/issues/121
-
   "1 - 1/2*0^2",
   "1",
 

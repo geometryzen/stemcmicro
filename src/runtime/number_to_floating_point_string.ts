@@ -19,7 +19,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
     if ($.isZero($.getSymbolValue(FORCE_FIXED_PRINTOUT))) {
         str = '' + d;
         // manipulate the string so that it can be parsed by
-        // Algebrite (something like 1.23e-123 wouldn't cut it because
+        // by ourselves (something like 1.23e-123 wouldn't cut it because
         // that would be parsed as 1.23*e - 123)
 
         if (defs.printMode === PRINTMODE_LATEX) {

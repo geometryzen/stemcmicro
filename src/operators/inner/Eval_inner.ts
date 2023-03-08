@@ -24,7 +24,7 @@ General description
 The inner (or dot) operator gives products of vectors,
 matrices, and tensors.
 
-Note that for Algebrite, the elements of a vector/matrix
+Note that for us, the elements of a vector/matrix
 can only be scalars. This allows for example to flesh out
 matrix multiplication using the usual multiplication.
 So for example block-representations are not allowed.
@@ -40,8 +40,7 @@ The mathematical notion of dot product is here:
   http://mathworld.wolfram.com/DotProduct.html
 
 However, "dot" does that and a bunch of other things,
-i.e. in Algebrite
-dot/inner does what the dot of Mathematica does, i.e.:
+i.e. dot/inner does what the dot of Mathematica does, i.e.:
 
 scalar product of vectors:
 
@@ -70,7 +69,7 @@ distributive but not commutative.
 In Mathematica, Inner is a generalisation of Dot where
 the user can specify the multiplication and the addition
 operators.
-But here in Algebrite they do the same thing.
+But here they do the same thing.
 
  https://reference.wolfram.com/language/ref/Dot.html
  https://reference.wolfram.com/language/ref/Inner.html

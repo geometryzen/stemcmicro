@@ -1,7 +1,6 @@
 import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 
-// degree does not appear to be implemented in Algebrite either.
 describe("degree", function () {
     xit("degree(x)", function () {
         const lines: string[] = [

@@ -24,8 +24,7 @@ run_test([
   'eigen(hilbert(20))',
   '',
 
-  // "contract" is the trace, but "trace" is a debugging flag in
-  // Algebrite/Eigenmath
+  // "contract" is the trace, but "trace" is a debugging flag in Eigenmath
   // this one takes quite some time to finish because of the
   // "dot(transpose(Q),D,Q))" calculation. Note that since
   // D and Q are matrices of doubles, the whole result is a double.

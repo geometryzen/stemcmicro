@@ -73,9 +73,6 @@ run_test([
     'y=quote(y)',
     '',
 
-    // --------------------------------------------
-    // examples covering https://github.com/davidedc/Algebrite/issues/130
-
     "roots(-2*z+x^2+y^2,z)",
     "1/2*x^2+1/2*y^2",
 

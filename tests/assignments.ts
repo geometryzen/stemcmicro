@@ -175,7 +175,7 @@ f
 
   // ----------------------
   // note how this case actually doesn't generate a recursion
-  // as in Algebrite it's not a problem when a variable
+  // as it's not a problem when a variable
   // just contain itself, actually that's the default of
   // unassigned variables.
 
@@ -184,7 +184,7 @@ f
 
   // ----------------------
   // note how these assignments actually don't generate
-  // a recursion as in Algebrite it's not a problem when
+  // a recursion as it's not a problem when
   // a variable just contain itself, actually that's the
   // default for unassigned variables.
 

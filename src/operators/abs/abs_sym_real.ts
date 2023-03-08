@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 
 function cross($: ExtensionEnv) {
     return function (arg: Sym): boolean {
-        return $.isReal(arg) && $.isExpanding();
+        return $.is_real(arg) && $.isExpanding();
     };
 }
 

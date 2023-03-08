@@ -19,7 +19,7 @@ class ConjAny extends Function1<U> implements Operator<U> {
     transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
         if (is_cons(arg)) {
             // console.lg(`${this.name} opr=${render_as_infix(opr, this.$)} arg=${render_as_infix(arg, this.$)} expr=${render_as_infix(expr, this.$)}`);
-            if (this.$.isReal(arg)) {
+            if (this.$.is_real(arg)) {
                 return [TFLAG_DIFF, arg];
             }
         }

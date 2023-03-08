@@ -139,18 +139,24 @@ export interface ExtensionEnv {
      * @deprecated
      */
     inner(lhs: U, rhs: U): U;
+    /**
+     * Generalized predicate testing.
+     * @param predicate 
+     * @param expr 
+     */
+    is(predicate: Sym, expr: U): boolean;
     isExpanding(): boolean;
     isFactoring(): boolean;
     /**
      * Meaning is imaginary valued. i.e. evaluates to i times a real number.
      */
-    isImag(expr: U): boolean;
+    is_imag(expr: U): boolean;
     isMinusOne(expr: U): boolean;
     isOne(expr: U): boolean;
     /**
      * Corresponds to the 'real' property.
      */
-    isReal(expr: U): boolean;
+    is_real(expr: U): boolean;
     /**
      * Determines whether expr is scalar-valued.
      */

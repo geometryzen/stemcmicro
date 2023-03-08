@@ -186,6 +186,7 @@ export { test };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function setup_test(f: () => void, engine: ScriptContext, options: ScriptContextOptions) {
+    console.log("setup_test");
     // TODO: Some global issues to be addressed...
     // Inlining 'clearall' is illuminating.
     // Reveals some objects that are still global.
@@ -196,10 +197,12 @@ function setup_test(f: () => void, engine: ScriptContext, options: ScriptContext
     engine.clearBindings();
 
     // TODO: Do away with the coarse useStandardDefinitions...
-    engine.executeScript("e=exp(1)");
-    engine.executeScript("i=sqrt(-1)");
-    engine.executeScript("pi=tau(1)/2");
-    engine.useStandardDefinitions();
+    if (options.useDefinitions) {
+        engine.executeScript("e=exp(1)");
+        engine.executeScript("i=sqrt(-1)");
+        engine.executeScript("pi=tau(1)/2");
+        engine.useStandardDefinitions();
+    }
 
     // TODO: Remove these comments when everything is working.
     // Not going to do this anymore.
@@ -294,12 +297,14 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
         return {
             assumes: options.assumes,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
+            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
             scriptKind: ScriptKind.Eigenmath
         };
     }
     else {
         return {
             useCaretForExponentiation: true,
+            useDefinitions: true,
             scriptKind: ScriptKind.Eigenmath
         };
     }
@@ -325,6 +330,7 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
 export function run_test(s: string[], options?: TestOptions): void {
     // const config = test_config_from_options(options);
     const engcfg: ScriptContextOptions = harness_options_to_script_context_options(options);
+    // Unfortunately, setup_test clears bindings and patterns that were established in the script context.
     const engine = create_script_context(engcfg);
     try {
         setup_test(() => {

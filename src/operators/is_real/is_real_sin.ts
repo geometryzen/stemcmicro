@@ -20,7 +20,7 @@ class IsRealSin extends AbstractPredicateCons {
     transform1(opr: Sym, sinExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const x = sinExpr.argList.head;
-        return [TFLAG_DIFF, wrap_as_boo($.isReal(x))];
+        return [TFLAG_DIFF, wrap_as_boo($.is_real(x))];
     }
 }
 

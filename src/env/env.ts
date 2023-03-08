@@ -334,7 +334,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isFactoring(): boolean {
             return current_mode === MODE_FACTORING;
         },
-        isImag(expr: U): boolean {
+        is_imag(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isImag(expr);
             // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
@@ -346,21 +346,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isOne(expr: U): boolean {
             return $.operatorFor(expr).isOne(expr);
         },
-        isReal(expr: U): boolean {
+        is(predicate: Sym, expr: U): boolean {
             // In the new way we don't require every operator to provide the answer.
-            const question = items_to_cons(PREDICATE_IS_REAL, expr);
+            const question = items_to_cons(predicate, expr);
             const response = $.valueOf(question);
             if (is_boo(response)) {
                 return response.isTrue();
             }
             else {
-                throw new Error(`Unable to determine ${$.toInfixString(PREDICATE_IS_REAL)}(${$.toInfixString(expr)})`);
+                throw new Error(`Unable to determine ${$.toInfixString(predicate)}(${$.toInfixString(expr)})`);
             }
-
-            // const op = $.operatorFor(expr);
-            // const retval = op.isReal(expr);
-            // console.lg(`${op.name} isReal ${render_as_infix(expr, $)} => ${retval}`);
-            // return retval;
+        },
+        is_real(expr: U): boolean {
+            return this.is(PREDICATE_IS_REAL, expr);
         },
         isScalar(expr: U): boolean {
             const op = $.operatorFor(expr);

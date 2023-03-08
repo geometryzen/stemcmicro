@@ -47,6 +47,7 @@ export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
     $.clearOperators();
 
     if (options && options.assumes) {
+        // console.lg(JSON.stringify(options.assumes));
         const names = Object.keys(options.assumes);
         for (const name of names) {
             const props = options.assumes[name];
@@ -121,6 +122,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
  * The returned engine is reference counted and should be released when no longer needed.
  */
 export function create_script_context(contextOptions?: ScriptContextOptions): ScriptContext {
+    // console.lg("create_script_context");
     let ref_count = 1;
     const envOptions: EnvOptions = env_options_from_sm_context_options(contextOptions);
     const $ = create_env(envOptions);

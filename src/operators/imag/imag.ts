@@ -42,7 +42,7 @@ export const imag_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv)
 export function imag(z: U, $: ExtensionEnv): U {
     // The use of the real() function is elegant but it introduces the risk of infinite recursion.
     if (is_sym(z)) {
-        if ($.isReal(z)) {
+        if ($.is_real(z)) {
             return zero;
         }
         else {

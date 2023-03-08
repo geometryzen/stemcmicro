@@ -20,7 +20,7 @@ class IsRealCos extends AbstractPredicateCons {
     transform1(opr: Sym, cosExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const x = cosExpr.argList.head;
-        return [TFLAG_DIFF, wrap_as_boo($.isReal(x))];
+        return [TFLAG_DIFF, wrap_as_boo($.is_real(x))];
     }
 }
 

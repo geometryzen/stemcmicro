@@ -68,6 +68,7 @@ export function createSymTab(): SymTab {
 
     const theTab: SymTab = {
         clear(): void {
+            props_from_key.clear();
             value_from_key.clear();
             sym_from_key.clear();
         },

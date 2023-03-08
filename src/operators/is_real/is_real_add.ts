@@ -20,7 +20,7 @@ class IsRealAdd extends AbstractPredicateCons {
     transform1(opr: Sym, add: Cons): [TFLAGS, U] {
         const $ = this.$;
         if ([...add.argList].every(function (arg) {
-            return $.isReal(arg);
+            return $.is_real(arg);
         })) {
             return [TFLAG_DIFF, booT];
         }

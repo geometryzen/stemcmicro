@@ -43,7 +43,7 @@ class Op extends Function2<Rat, Sym> implements Operator<Cons> {
         // console.lg(`lhs=${lhs}`);
         // console.lg(`rhs=${rhs}`);
         // Stronger than needed...
-        return this.$.isReal(lhs) && this.$.isReal(rhs);
+        return this.$.is_real(lhs) && this.$.is_real(rhs);
     }
     override transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {

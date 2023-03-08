@@ -113,7 +113,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
     }
     if (is_sym(lhs)) {
-        if ($.isImag(rhs)) {
+        if ($.is_imag(rhs)) {
             return hook(SIGN_LT, "G");
         }
         if (is_num(rhs)) {
@@ -132,7 +132,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         return SIGN_EQ;
     }
     if (is_sym(rhs)) {
-        if ($.isImag(lhs)) {
+        if ($.is_imag(lhs)) {
             return hook(SIGN_GT, "K");
         }
         if (is_num(lhs)) {
@@ -154,7 +154,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         return compare_num_num(lhs, rhs);
     }
     if (is_num(lhs)) {
-        if ($.isImag(rhs)) {
+        if ($.is_imag(rhs)) {
             return hook(SIGN_LT, "O");
         }
         if (is_cons(rhs) && is_pow_2_any_any(rhs)) {
@@ -165,7 +165,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         }
     }
     if (is_num(rhs)) {
-        if ($.isImag(lhs)) {
+        if ($.is_imag(lhs)) {
             return hook(SIGN_GT, "Q");
         }
         if (is_sym(lhs)) {
@@ -361,10 +361,10 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         // throw new Error(`compare_terms_redux lhs=${print_expr(lhs, $)} rhs=${print_expr(rhs, $)}`);
         //        return compare_terms_redux(lhs.opr, rhs.opr, $);
     }
-    if ($.isImag(lhs) && $.isReal(rhs)) {
+    if ($.is_imag(lhs) && $.is_real(rhs)) {
         return SIGN_GT;
     }
-    if ($.isReal(lhs) && $.isImag(rhs)) {
+    if ($.is_real(lhs) && $.is_imag(rhs)) {
         return SIGN_LT;
     }
     return SIGN_EQ;

@@ -23,7 +23,7 @@ function is_real($: ExtensionEnv) {
         if ($.isOne(expr)) {
             return false;
         }
-        const retval = $.isReal(expr);
+        const retval = $.is_real(expr);
         return retval;
     };
 }

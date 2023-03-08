@@ -1,4 +1,4 @@
-export { PrintHandler } from './src/env/ExtensionEnv';
+export { PrintHandler, SymbolProps } from './src/env/ExtensionEnv';
 export { is_blade } from './src/operators/blade/is_blade';
 export { is_boo } from './src/operators/boo/is_boo';
 export { is_flt } from './src/operators/flt/is_flt';

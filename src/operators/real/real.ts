@@ -48,7 +48,7 @@ export function real(expr: U, $: ExtensionEnv): U {
         return retval;
     };
 
-    if ($.isReal(expr)) {
+    if ($.is_real(expr)) {
         return expr;
     }
     else if (is_rat(expr)) {
@@ -102,7 +102,7 @@ export function real(expr: U, $: ExtensionEnv): U {
         const cs: U[] = []; // treat as complex.
         [...expr.argList].forEach(function (arg) {
             // console.lg("testing the arg:", $.toInfixString(arg));
-            if ($.isReal(arg)) {
+            if ($.is_real(arg)) {
                 // console.lg("arg is real:", $.toInfixString(arg));
                 rs.push(arg);
             }
@@ -128,7 +128,7 @@ export function real(expr: U, $: ExtensionEnv): U {
                     const expo = arg.rhs;
                     // console.lg("base", $.toInfixString(base));
                     // console.lg("expo", $.toInfixString(expo));
-                    if ($.isReal(base)) {
+                    if ($.is_real(base)) {
                         // console.lg("base is real", $.toInfixString(base));
                         rs.push(arg);
                     }

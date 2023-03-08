@@ -348,12 +348,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         isReal(expr: U): boolean {
             // In the new way we don't require every operator to provide the answer.
-            const response = $.valueOf(items_to_cons(PREDICATE_IS_REAL, expr));
-            if (is_boo(response) && response.isTrue()) {
-                return true;
+            const question = items_to_cons(PREDICATE_IS_REAL, expr);
+            const response = $.valueOf(question);
+            if (is_boo(response)) {
+                return response.isTrue();
             }
             else {
-                return false;
+                throw new Error(`Unable to determine ${$.toInfixString(PREDICATE_IS_REAL)}(${$.toInfixString(expr)})`);
             }
 
             // const op = $.operatorFor(expr);

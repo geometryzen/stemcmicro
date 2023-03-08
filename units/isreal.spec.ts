@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 
-describe("sandbox", function () {
+describe("isreal", function () {
     it("real(real(z))", function () {
         const lines: string[] = [
             `real(real(z))`

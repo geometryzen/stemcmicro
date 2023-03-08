@@ -1,33 +1,27 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { PREDICATE_IS_REAL } from "../../runtime/constants";
-import { MATH_ADD } from "../../runtime/ns_math";
-import { booF, booT } from "../../tree/boo/Boo";
+import { wrap_as_boo } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
+import { MATH_SIN } from "../sin/MATH_SIN";
 import { AbstractPredicateCons } from "./AbstractPredicateCons";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new IsRealAdd($);
+        return new IsRealSin($);
     }
 }
 
-class IsRealAdd extends AbstractPredicateCons {
+class IsRealSin extends AbstractPredicateCons {
     constructor($: ExtensionEnv) {
-        super(PREDICATE_IS_REAL, MATH_ADD, $);
+        super(PREDICATE_IS_REAL, MATH_SIN, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, add: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, sinExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        if ([...add.argList].every(function (arg) {
-            return $.isReal(arg);
-        })) {
-            return [TFLAG_DIFF, booT];
-        }
-        else {
-            return [TFLAG_DIFF, booF];
-        }
+        const x = sinExpr.argList.head;
+        return [TFLAG_DIFF, wrap_as_boo($.isReal(x))];
     }
 }
 
-export const is_real_add = new Builder();
+export const is_real_sin = new Builder();

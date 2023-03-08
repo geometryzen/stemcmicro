@@ -1,18 +1,41 @@
 import { complex_conjugate } from '../../complex_conjugate';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { ExtensionEnv, LambdaExpr } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { divide } from '../../helpers/divide';
 import { ASSUME_REAL_VARIABLES, IMAG, REAL } from '../../runtime/constants';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { MATH_ADD, MATH_MUL, MATH_POW } from '../../runtime/ns_math';
-import { zero } from '../../tree/rat/Rat';
-import { cons, is_cons, items_to_cons, U } from '../../tree/tree';
+import { one, zero } from '../../tree/rat/Rat';
+import { cons, Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
 import { is_sym } from '../sym/is_sym';
 
+/**
+ * expr = (real arg)
+ * @param expr 
+ * @param $ 
+ * @returns 
+ */
+export function Eval_real(expr: Cons, $: ExtensionEnv): U {
+    // Do we evaluate the arguments or real_lambda?
+    return real_lambda(expr.argList, $);
+}
+
+/**
+ * argList = (arg)
+ * @param argList 
+ * @param $ 
+ * @returns 
+ */
+export const real_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv) {
+    // We could/should check the numbr of arguments.
+    const arg = $.valueOf(argList.car);
+    return real(arg, $);
+};
 
 /**
  * Returns the real part of complex z
+ * We assume the expr has already been evaluated.
  * @param expr 
  * @param $ 
  * @returns 
@@ -41,11 +64,14 @@ export function real(expr: U, $: ExtensionEnv): U {
         }
     }
     else if (is_add(expr)) {
+        // console.lg("is_add", $.toInfixString(expr));
         const argList = expr.argList;
         const A = argList.map(function (arg) {
             return real(arg, $);
         });
-        return hook($.valueOf(cons(MATH_ADD, A)), 'B');
+        const sum = $.valueOf(cons(MATH_ADD, A));
+        // console.lg("real of", $.toInfixString(expr), "is", $.toInfixString(sum));
+        return hook(sum, 'B');
     }
     else if (is_power(expr)) {
         const base = expr.lhs;
@@ -71,16 +97,17 @@ export function real(expr: U, $: ExtensionEnv): U {
         }
     }
     else if (is_multiply(expr)) {
-        // console.lg("Computing Re of a * expression...", $.toInfixString(expr));
+        // console.lg("Computing Re of a * expression...", $.toSExprString(expr));
         const rs: U[] = []; // treat as real.
         const cs: U[] = []; // treat as complex.
         [...expr.argList].forEach(function (arg) {
-            // console.lg("testing the arg", $.toInfixString(arg));
+            // console.lg("testing the arg:", $.toInfixString(arg));
             if ($.isReal(arg)) {
-                // console.lg("arg is real", $.toInfixString(arg));
+                // console.lg("arg is real:", $.toInfixString(arg));
                 rs.push(arg);
             }
             else {
+                // console.lg("arg is NOT real:", $.toInfixString(arg));
                 // With no boolean response, we have to assume that the argument is not real valued.
                 // How do we make progress with the factors that are complex numbers?
                 if (is_sym(arg)) {
@@ -89,6 +116,7 @@ export function real(expr: U, $: ExtensionEnv): U {
                     const y = items_to_cons(IMAG, arg);
                     const iy = items_to_cons(MATH_MUL, imu, y);
                     const z = items_to_cons(MATH_ADD, x, iy);
+                    // console.lg("Z=>", $.toInfixString(z));
                     cs.push(z);
                 }
                 else if (arg.equals(imu)) {
@@ -120,16 +148,17 @@ export function real(expr: U, $: ExtensionEnv): U {
                         }
                     }
                 }
-                else {
-                    if (is_sym(expr.opr)) {
-                        const chain = $.getChain(REAL, expr.opr);
-                        if (chain) {
-                            return chain(expr.argList, $);
-                        }
-                        else {
-                            throw new Error(`${$.toInfixString(REAL)} ${$.toInfixString(expr.opr)}`);
-                        }
+                else if (is_cons(arg) && is_sym(arg.opr)) {
+                    // console.lg(`getChain ${$.toInfixString(REAL)} ${$.toInfixString(arg.opr)}`);
+                    const chain = $.getChain(REAL, arg.opr);
+                    if (chain) {
+                        return chain(expr.argList, $);
                     }
+                    else {
+                        throw new Error(`${$.toInfixString(REAL)} ${$.toInfixString(arg.opr)}`);
+                    }
+                }
+                else {
                     // Here we might encounter a function.
                     // So far we've handled math.pow.
                     // How to handle arbitrary functions. e.g. abs, sin, ...
@@ -137,10 +166,15 @@ export function real(expr: U, $: ExtensionEnv): U {
                 }
             }
         });
-        const A = $.valueOf(items_to_cons(MATH_MUL, ...rs));
-        const B = $.valueOf(items_to_cons(MATH_MUL, ...cs));
+        const A = multiply_factors(rs, $);
+        // console.lg("A", $.toInfixString(A));
+        const B = multiply_factors(cs, $);
+        // console.lg("B", $.toInfixString(B));
         const C = $.valueOf(items_to_cons(REAL, B));
+        // console.lg("C", $.toSExprString(C));
         const D = $.valueOf(items_to_cons(MATH_MUL, A, C));
+        // console.lg("D", $.toSExprString(D));
+        // console.lg("real of", $.toInfixString(expr), "is", $.toInfixString(D));
         return D;
     }
     else if (expr.equals(imu)) {
@@ -170,4 +204,16 @@ export function real(expr: U, $: ExtensionEnv): U {
     return hook(re, "");
     */
     return hook(expr, 'E');
+}
+
+function multiply_factors(factors: U[], $: ExtensionEnv): U {
+    if (factors.length > 1) {
+        return $.valueOf(items_to_cons(MATH_MUL, ...factors));
+    }
+    else if (factors.length === 1) {
+        return $.valueOf(factors[0]);
+    }
+    else {
+        return one;
+    }
 }

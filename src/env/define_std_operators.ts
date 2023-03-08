@@ -80,7 +80,7 @@ import { cos_hyp } from '../operators/cos/cos_hyp';
 import { cos_mul_2_any_imu } from '../operators/cos/cos_mul_2_any_imu';
 import { cos_sym } from '../operators/cos/cos_sym';
 import { MATH_COS } from '../operators/cos/MATH_COS';
-import { real_cos } from '../operators/cos/real_cos';
+import { real_cos_lamba } from '../operators/cos/real_cos_lambda';
 import { cosh_sym } from '../operators/cosh/cosh_sym';
 import { cosh_varargs } from '../operators/cosh/cosh_varargs';
 import { cross_any_any } from '../operators/cross/cross_any_any';
@@ -125,6 +125,7 @@ import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/het
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp_extension } from '../operators/hyp/hyp_extension';
+import { imag_lambda } from '../operators/imag/imag';
 import { imag_any } from '../operators/imag/imag_any';
 import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
@@ -149,10 +150,14 @@ import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
 import { is_real_add } from '../operators/is_real/is_real_add';
+import { is_real_cos } from '../operators/is_real/is_real_cos';
 import { is_real_flt } from '../operators/is_real/is_real_flt';
+import { is_real_imag } from '../operators/is_real/is_real_imag';
 import { is_real_imu } from '../operators/is_real/is_real_imu';
 import { is_real_mul } from '../operators/is_real/is_real_mul';
 import { is_real_rat } from '../operators/is_real/is_real_rat';
+import { is_real_real } from '../operators/is_real/is_real_real';
+import { is_real_sin } from '../operators/is_real/is_real_sin';
 import { make_predicate_sym_operator } from '../operators/is_real/is_real_sym';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
@@ -233,6 +238,7 @@ import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
+import { real_lambda } from '../operators/real/real';
 import { real_any } from '../operators/real/real_any';
 import { Eval_rect } from '../operators/rect/rect';
 import { roots_varargs } from '../operators/roots/roots_varargs';
@@ -305,7 +311,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CLEAR, CLEARALL, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CLEAR, CLEARALL, IMAG, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -316,6 +322,11 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
+
+    $.setChain(REAL, MATH_COS, real_cos_lamba);
+    $.setChain(REAL, REAL, real_lambda);
+    $.setChain(REAL, IMAG, imag_lambda);
+
 
     $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
@@ -592,7 +603,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(cos_sym);
     $.defineOperator(cos_hyp);
     $.defineOperator(cos_any);
-    $.setChain(REAL, MATH_COS, real_cos);
 
     $.defineOperator(cosh_sym);
     $.defineOperator(cosh_varargs);
@@ -685,10 +695,14 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(real_any);
 
     $.defineOperator(is_real_add);
+    $.defineOperator(is_real_cos);
     $.defineOperator(is_real_flt);
+    $.defineOperator(is_real_imag);
     $.defineOperator(is_real_imu);
     $.defineOperator(is_real_mul);
     $.defineOperator(is_real_rat);
+    $.defineOperator(is_real_real);
+    $.defineOperator(is_real_sin);
     $.defineOperator(make_predicate_sym_operator(PREDICATE_IS_REAL));
 
     $.defineTransform(RECT, Eval_rect);

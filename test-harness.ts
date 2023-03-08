@@ -2,6 +2,7 @@
 import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
+import { SymbolProps } from './src/env/ExtensionEnv';
 import { ScriptKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
 import { defs } from './src/runtime/defs';
@@ -245,6 +246,7 @@ export function run_shardable_test(s: string[], prefix = '') {
 type DEPENDENCY = 'Flt' | 'Imu';
 
 export interface TestOptions {
+    assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: DEPENDENCY[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -253,6 +255,7 @@ export interface TestOptions {
 }
 
 interface TestConfig {
+    assumes: { [name: string]: Partial<SymbolProps> };
     dependencies: DEPENDENCY[];
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
@@ -263,6 +266,7 @@ interface TestConfig {
 function test_config_from_options(options: TestOptions | undefined): TestConfig {
     if (options) {
         const config: TestConfig = {
+            assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
@@ -272,6 +276,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
     }
     else {
         const config: TestConfig = {
+            assumes: {},
             dependencies: [],
             useCaretForExponentiation: true,
             useDefinitions: true,
@@ -287,6 +292,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
 function harness_options_to_script_context_options(options: TestOptions | undefined): ScriptContextOptions {
     if (options) {
         return {
+            assumes: options.assumes,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             scriptKind: ScriptKind.Eigenmath
         };

@@ -1,4 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { PREDICATE_IS_REAL } from "../../runtime/constants";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
@@ -13,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
 
 class IsRealMul extends AbstractPredicateCons {
     constructor(innerOpr: Sym, $: ExtensionEnv) {
-        super(innerOpr, $);
+        super(PREDICATE_IS_REAL, innerOpr, $);
     }
     transform1(opr: Sym, add: Cons): [TFLAGS, U] {
         const $ = this.$;

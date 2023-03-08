@@ -228,6 +228,16 @@ describe("tensor", function () {
             engine.release();
         });
     });
+    it("abs", function () {
+        const lines: string[] = [
+            `abs([a,b])`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "(a**2+b**2)**(1/2)");
+        engine.release();
+    });
     it("adj", function () {
         const lines: string[] = [
             `A=[[a,b],[c,d]]`,

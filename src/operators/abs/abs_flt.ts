@@ -1,11 +1,11 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { Rat } from "../../tree/rat/Rat";
+import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
+import { Flt } from "../../tree/flt/Flt";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
+import { is_flt } from "../flt/is_flt";
 import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
-import { is_rat } from "../rat/is_rat";
 import { wrap_as_transform } from "../wrap_as_transform";
 
 class Builder implements OperatorBuilder<U> {
@@ -14,15 +14,15 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class Op extends Function1<Rat> {
+class Op extends Function1<Flt> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('abs_rat', create_sym('abs'), is_rat, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+        super('abs_rat', create_sym('abs'), is_flt, $);
+        this.hash = hash_unaop_atom(this.opr, HASH_FLT);
     }
-    transform1(opr: Sym, arg: Rat, expr: UCons<Sym, Rat>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Flt, expr: UCons<Sym, Flt>): [TFLAGS, U] {
         return wrap_as_transform(arg.abs(), expr);
     }
 }
 
-export const abs_rat = new Builder();
+export const abs_flt = new Builder();

@@ -2,15 +2,17 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_and_integer } from '../../is_rat_integer';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
 import { wrap_as_flt } from '../../tree/flt/Flt';
-import { one, Rat, two, zero } from '../../tree/rat/Rat';
+import { one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { cons, Cons, items_to_cons, U } from '../../tree/tree';
 import { Adapter, SumTerm } from '../../tree/vec/Adapter';
 import { algebra, is_blade } from '../../tree/vec/Algebra';
 import { Blade } from '../../tree/vec/Blade';
 import { is_flt } from '../flt/is_flt';
+import { is_num } from '../num/is_num';
 import { is_rat } from '../rat/is_rat';
 import { is_str } from '../str/is_str';
+import { is_sym } from '../sym/is_sym';
 import { is_tensor } from '../tensor/is_tensor';
 import { is_uom } from '../uom/is_uom';
 import { extract_grade } from './extract_grade';
@@ -89,12 +91,15 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         throw new Error('min Method not implemented.');
     }
     mul(lhs: U, rhs: U): U {
+        return this.$.multiply(lhs, rhs);
+        /*
         if (is_rat(lhs)) {
             if (is_rat(rhs)) {
                 return lhs.mul(rhs);
             }
         }
         throw new Error(`mul Method not implemented.`);
+        */
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     div(lhs: U, rhs: U): U {
@@ -256,10 +261,16 @@ export function algebraAsTensor<T extends U>(metric: T[], labels: string[], $: E
     return new Tensor(dims, elems);
 }
 
-export function convertMetricToNative(tensor: U): Rat[] {
+export function convertMetricToNative(tensor: U): U[] {
     if (is_tensor(tensor)) {
         return tensor.mapElements(function (e) {
-            if (is_rat_and_integer(e)) {
+            if (is_sym(e)) {
+                return e;
+            }
+            else if (is_num(e)) {
+                return e;
+            }
+            else if (is_rat_and_integer(e)) {
                 return e;
             }
             else {

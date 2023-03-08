@@ -1,10 +1,12 @@
-import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { is_atom, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
-import { abs } from "./abs";
+import { is_sym } from "../sym/is_sym";
+import { wrap_as_transform } from "../wrap_as_transform";
+import { Eval_abs } from "./eval_abs";
 import { MATH_ABS } from "./MATH_ABS";
 
 class Builder implements OperatorBuilder<U> {
@@ -27,20 +29,27 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('abs_any', MATH_ABS, is_any, $);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isKind(expr: U): expr is EXP {
+        if (super.isKind(expr)) {
+            const arg = expr.arg;
+            if (is_sym(arg)) {
+                return true;
+            }
+            else if (is_atom(arg)) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const retval = abs(arg, $);
-        const changed = !retval.equals(expr);
-        return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
-
-        // TODO: Perhaps we should qualify that we are unpacking functions.
-        // console.lg(`expr=${print_expr(expr, $)}`);
-        /*
-        const A = $.inner(arg, arg);
-        const B = $.power(A, half);
-        return [TFLAG_DIFF, B];
-        */
+        const retval = Eval_abs(expr, $);
+        return wrap_as_transform(retval, expr);
     }
 }
 

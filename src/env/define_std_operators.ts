@@ -4,9 +4,13 @@ import { MulComparator } from '../calculators/compare/comparator_mul';
 import { Eval_clear, Eval_clearall } from '../clear';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { Eval_nroots } from '../nroots';
+import { abs_any } from '../operators/abs/abs_any';
+import { abs_blade } from '../operators/abs/abs_blade';
+import { abs_flt } from '../operators/abs/abs_flt';
+import { abs_imu } from '../operators/abs/abs_imu';
 import { abs_rat } from '../operators/abs/abs_rat';
-import { Eval_abs } from '../operators/abs/eval_abs';
-import { MATH_ABS } from '../operators/abs/MATH_ABS';
+import { abs_tensor } from '../operators/abs/abs_tensor';
+import { abs_uom } from '../operators/abs/abs_uom';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
 import { add_2_add_2_any_imag_imag } from '../operators/add/add_2_add_2_any_imag_imag';
 import { add_2_add_2_any_imag_real } from '../operators/add/add_2_add_2_any_imag_real';
@@ -561,12 +565,15 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(flt_extension);
     $.defineOperator(str_extension);
 
-    // TODO: cleanup
+    $.defineOperator(abs_blade);
+    $.defineOperator(abs_flt);
+    $.defineOperator(abs_imu);
     $.defineOperator(abs_rat);
+    $.defineOperator(abs_tensor);
+    $.defineOperator(abs_uom);
     // $.defineOperator(abs_sym_real);
-    // $.defineOperator(abs_any);
     // $.defineOperator(abs_factorize);
-    $.defineTransform(MATH_ABS, Eval_abs);
+    $.defineOperator(abs_any);
 
     $.defineOperator(adj_any);
 

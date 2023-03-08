@@ -17,7 +17,7 @@
     "scripts": {
         "build": "npm run clean && rollup --config rollup.config.mts --configPlugin @rollup/plugin-typescript",
         "clean": "rm -rf ./dist",
-        "coverage": "nyc mocha 'units/**/*.spec.ts'",
+        "coverage": "nyc npm run test",
         "docs": "npm run docs:typedoc && open-cli docs/index.html",
         "docs:typedoc": "rm -rf docs && typedoc --options typedoc.json",
         "pages": "npm run docs:typedoc && gh-pages -d docs",
@@ -37,18 +37,17 @@
         "url": "git+https://github.com/geometryzen/symbolic-math.git"
     },
     "keywords": [
+        "algebrite",
+        "algebra",
         "blade",
         "cas",
-        "geometric",
-        "algebra",
         "computer",
-        "algebra",
-        "algebrite",
-        "system",
         "eigenmath",
+        "geometric",
         "math",
         "multivector",
-        "symbolic"
+        "symbolic",
+        "system"
     ],
     "author": {
         "name": "David Geo Holmes",

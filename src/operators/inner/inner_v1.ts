@@ -96,7 +96,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
             return hook(makeList(MATH_INNER, p1, p2), "K");
         }
         else if (is_blade(p2)) {
-            return hook(p1.scp(p2), "L");
+            return hook($.valueOf(p1.scp(p2)), "L");
         }
         else {
             // simple check if the two consecutive elements are one the (symbolic) inv

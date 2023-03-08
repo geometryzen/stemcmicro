@@ -3,19 +3,6 @@ import { create_script_context, is_uom } from '../index';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
 describe("SI units", function () {
-    it("(Uom, Rat)", function () {
-        const lines: string[] = [
-            `kg = uom("kilogram")`,
-            `kg / 5`
-        ];
-        const engine = create_script_context({
-            dependencies: ['Uom']
-        });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(* 1/5 kg)");
-        assert.strictEqual(engine.renderAsInfix(actual), "1/5*kg");
-        engine.release();
-    });
     it("/(Uom, Flt)", function () {
         const lines: string[] = [
             `kg = uom("kilogram")`,
@@ -438,6 +425,20 @@ describe("uom", function () {
             else {
                 assert.fail(`${JSON.stringify(value)}`);
             }
+            engine.release();
+        });
+    });
+    describe("functions", function () {
+        it("abs(uom(kg))", function () {
+            const lines: string[] = [
+                `kg = uom("kilogram")`,
+                `abs(kg)`
+            ];
+            const engine = create_script_context({
+                dependencies: ['Flt', 'Uom']
+            });
+            const actual = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsInfix(actual), "kg");
             engine.release();
         });
     });

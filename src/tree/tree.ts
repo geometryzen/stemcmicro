@@ -317,6 +317,18 @@ export function items_to_cons(...items: U[]): Cons {
  */
 export const nil = new Cons(0, void 0, void 0);
 
+export function is_atom(expr: U) {
+    if (is_cons(expr)) {
+        return false;
+    }
+    else if (is_nil(expr)) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 /**
  * Returns true if arg is a Cons and is not NIL.
  * For NIL testing, test for identical equality to NIL.

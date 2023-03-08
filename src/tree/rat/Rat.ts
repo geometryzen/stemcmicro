@@ -315,6 +315,7 @@ export function wrap_as_int(n: number, pos?: number, end?: number): Rat {
 }
 
 export function wrap_as_rat(numer: number, denom: number, pos?: number, end?: number): Rat {
+    // console.lg("wrap_as_rat", numer, denom);
     return new Rat(bigInt(numer), bigInt(denom), pos, end);
 }
 

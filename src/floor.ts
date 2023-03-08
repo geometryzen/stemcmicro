@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_rat_integer } from './is_rat_integer';
+import { is_rat_and_integer } from './is_rat_integer';
 import { makeList } from './makeList';
 import { mdiv } from './mmul';
 import { is_flt } from './operators/flt/is_flt';
@@ -30,7 +30,7 @@ function yyfloor(p1: U, $: ExtensionEnv): U {
         return wrap_as_flt(Math.floor(p1.d));
     }
 
-    if (is_rat_integer(p1)) {
+    if (is_rat_and_integer(p1)) {
         return p1;
     }
 

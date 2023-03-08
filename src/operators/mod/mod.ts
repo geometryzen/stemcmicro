@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_integer';
 import { makeList } from '../../makeList';
 import { mmod } from '../../mmul';
 import { nativeInt } from '../../nativeInt';
@@ -43,7 +43,7 @@ function mod(p1: U, p2: U, $: ExtensionEnv): U {
         p2 = wrap_as_int(n);
     }
 
-    if (!is_rat_integer(p1) || !is_rat_integer(p2)) {
+    if (!is_rat_and_integer(p1) || !is_rat_and_integer(p2)) {
         halt('mod function: integer arguments expected');
     }
 

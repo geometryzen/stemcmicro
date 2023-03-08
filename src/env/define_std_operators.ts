@@ -4,6 +4,7 @@ import { MulComparator } from '../calculators/compare/comparator_mul';
 import { Eval_clear, Eval_clearall } from '../clear';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
 import { Eval_nroots } from '../nroots';
+import { abs_rat } from '../operators/abs/abs_rat';
 import { Eval_abs } from '../operators/abs/eval_abs';
 import { MATH_ABS } from '../operators/abs/MATH_ABS';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
@@ -561,7 +562,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(str_extension);
 
     // TODO: cleanup
-    // $.defineOperator(abs_rat);
+    $.defineOperator(abs_rat);
     // $.defineOperator(abs_sym_real);
     // $.defineOperator(abs_any);
     // $.defineOperator(abs_factorize);

@@ -5,7 +5,6 @@ import { U } from "./tree/tree";
 /**
  * is_rat(expr) && expr.isInteger
  */
-export function is_rat_integer(p: U): p is Rat & { __ts_integer: true } {
-    // TODO: I wonder if this should include other types?
-    return is_rat(p) && p.isInteger();
+export function is_rat_and_integer(expr: U): expr is Rat & { __ts_integer: true } {
+    return is_rat(expr) && expr.isInteger();
 }

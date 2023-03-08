@@ -229,13 +229,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
-        getSymbolProps(sym: Sym): SymbolProps {
+        getSymbolProps(sym: Sym | string): SymbolProps {
             return symTab.getProps(sym);
         },
-        getSymbolValue(sym: Sym): U {
+        getSymbolValue(sym: Sym | string): U {
             return symTab.getValue(sym);
         },
-        getBindings() {
+        getSymbolsInfo() {
             return symTab.entries();
         },
         getChain(outer: Sym, inner: Sym): LambdaExpr {
@@ -490,8 +490,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setSymbolOrder(sym: Sym, order: ExprComparator): void {
             sym_order[sym.key()] = order;
         },
-        setSymbolProps(sym: Sym, props: Partial<SymbolProps>): void {
-            symTab.setProps(sym, props);
+        setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void {
+            symTab.setProps(sym, overrides);
         },
         setSymbolToken(sym: Sym, token: string): void {
             sym_token[sym.key()] = token;

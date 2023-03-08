@@ -1,29 +1,43 @@
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from "../tree/tree";
 
-export interface Props {
-    commutative: boolean,
-    complex: boolean,
-    extended_negative: boolean,
-    extended_nonnegative: boolean,
-    extended_nonpositive: boolean,
-    extended_nonzero: boolean,
-    extended_positive: boolean,
-    extended_real: boolean,
-    finite: boolean,
-    hermitian: boolean,
-    imaginary: boolean,
-    infinite: boolean,
-    negative: boolean,
-    nonnegative: boolean,
-    nonpositive: boolean,
-    nonzero: boolean,
-    positive: boolean,
-    real: boolean,
-    zero: boolean
+/**
+ * It's possible that we will use a different representation for our knowledge about symbols.
+ * The fact that this mirrors the predicates in the higher levels is coincidental.
+ * i.e. Don't merge the two.
+ */
+export interface Props extends Record<string, boolean> {
+    readonly antihermitian: boolean,
+    readonly algebraic: boolean;
+    readonly commutative: boolean,
+    readonly complex: boolean,
+    readonly extended_negative: boolean,
+    readonly extended_nonnegative: boolean,
+    readonly extended_nonpositive: boolean,
+    readonly extended_nonzero: boolean,
+    readonly extended_positive: boolean,
+    readonly extended_real: boolean,
+    readonly finite: boolean,
+    readonly hermitian: boolean,
+    readonly imaginary: boolean,
+    readonly infinite: boolean,
+    readonly integer: boolean;
+    readonly irrational: boolean;
+    readonly negative: boolean,
+    readonly noninteger: boolean;
+    readonly nonnegative: boolean,
+    readonly nonpositive: boolean,
+    readonly nonzero: boolean,
+    readonly positive: boolean,
+    readonly rational: boolean,
+    readonly real: boolean,
+    readonly transcendental: boolean,
+    readonly zero: boolean
 }
 
-const DEFAULT_PROPS: Props = {
+const DEFAULT_PROPS: Props = Object.freeze({
+    'antihermitian': false,
+    'algebraic': true,
     'commutative': true,
     'complex': true,
     'extended_negative': false,
@@ -36,26 +50,31 @@ const DEFAULT_PROPS: Props = {
     'hermitian': true,
     'imaginary': false,
     'infinite': false,
+    'integer': false,
+    'irrational': false,
     'negative': false,
+    'noninteger': false,
     'nonnegative': true,
     'nonpositive': false,
     'nonzero': true,
     'positive': true,
+    'rational': true,
     'real': true,
+    'transcendental': false,
     'zero': false
-};
+});
 
 /**
  * 
  */
 export interface SymTab {
     clear(): void;
-    getProps(sym: Sym): Props;
-    setProps(sym: Sym, props: Partial<Props>): void;
+    getProps(sym: Sym | string): Props;
+    setProps(sym: Sym, overrides: Partial<Props>): void;
     /**
      * Returns NIL if the symbol is not bound to anything.
      */
-    getValue(sym: Sym): U;
+    getValue(sym: Sym | string): U;
     setValue(sym: Sym, value: U): void;
     entries(): { sym: Sym, value: U }[];
     delete(sym: Sym): void;
@@ -72,19 +91,24 @@ export function createSymTab(): SymTab {
             value_from_key.clear();
             sym_from_key.clear();
         },
-        getProps(sym: Sym): Props {
-            const key: string = sym.key();
-            const props = props_from_key.get(key);
-            if (props) {
-                return props;
+        getProps(sym: Sym | string): Props {
+            if (typeof sym === 'string') {
+                const props = props_from_key.get(sym);
+                if (props) {
+                    return props;
+                }
+                else {
+                    return DEFAULT_PROPS;
+                }
             }
             else {
-                return DEFAULT_PROPS;
+                return this.getProps(sym.key());
             }
         },
-        setProps(sym: Sym, props: Props): void {
+        setProps(sym: Sym, overrides: Partial<Props>): void {
             const key = sym.key();
-            if (props) {
+            if (overrides) {
+                const props = Object.freeze(Object.assign({ ...this.getProps(sym) }, overrides));
                 props_from_key.set(key, props);
                 sym_from_key.set(key, sym);
             }
@@ -92,14 +116,18 @@ export function createSymTab(): SymTab {
                 props_from_key.delete(key);
             }
         },
-        getValue(sym: Sym): U {
-            const key: string = sym.key();
-            const value = value_from_key.get(key);
-            if (value) {
-                return value;
+        getValue(sym: Sym | string): U {
+            if (typeof sym === 'string') {
+                const value = value_from_key.get(sym);
+                if (value) {
+                    return value;
+                }
+                else {
+                    return nil;
+                }
             }
             else {
-                return nil;
+                return this.getValue(sym.key());
             }
         },
         setValue(sym: Sym, value: U): void {

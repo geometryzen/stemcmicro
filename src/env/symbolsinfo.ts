@@ -7,7 +7,7 @@ import { ExtensionEnv } from "./ExtensionEnv";
  */
 export function symbolsinfo($: ExtensionEnv): string {
     let str = '';
-    const bnds = $.getBindings();
+    const bnds = $.getSymbolsInfo();
     for (const { sym, value } of bnds) {
         const printname = sym.key();
         if (value) {

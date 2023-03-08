@@ -74,24 +74,72 @@ export interface ExprComparator {
 export type LambdaExpr = (argList: Cons, $: ExtensionEnv) => U;
 
 export interface SymbolProps {
+    /**
+     * An algebraic number is any number that is a root of a non-zero polynomial having rational coefficients.
+     * All algebraic numbers are complex.
+     * An algebraic number may or may not be real.
+     * Includes all rational numbers.
+     */
+    algebraic: boolean;
+    /**
+     * An element of the field of antihermitian operators.
+     * Defaults to false.
+     */
+    antihermitian: boolean;
+    /**
+     * A commutative expression.
+     * A commutative expression commutes with all other expressions under multiplication.
+     * If an expression a has commutative then a * b == b * a for any other expression b (even if b is not commutative).
+     * Unlike all other assumptions predicates commutative must always be true or false and can never be undefined.
+     * Also unlike all other predicates commutative defaults to true.
+     */
     commutative: boolean,
+    /**
+     * A complex number is any number of the form x+i*y where x and y are real.
+     * All complex numbers are finite. Includes all real numbers.
+     */
     complex: boolean,
     extended_negative: boolean,
     extended_nonnegative: boolean,
     extended_nonpositive: boolean,
     extended_nonzero: boolean,
     extended_positive: boolean,
+    /**
+     * An element of the real number line extended to include infinity.
+     * Default is true.
+     */
     extended_real: boolean,
+    /**
+     * A finite expression.
+     * Any expression that is not infinite is considered finite.
+     */
     finite: boolean,
+    /**
+     * An element of the field of Hermitian operators.
+     */
     hermitian: boolean,
     imaginary: boolean,
+    /**
+     * An infinite expression.
+     */
     infinite: boolean,
+    integer: boolean;
+    irrational: boolean;
     negative: boolean,
+    noninteger: boolean;
     nonnegative: boolean,
     nonpositive: boolean,
     nonzero: boolean,
     positive: boolean,
+    rational: boolean,
     real: boolean,
+    /**
+     * A complex number that is not algebraic.
+     * All transcendental numbers are complex.
+     * A transcendental number may or may not be real but can never be rational.
+     * Defaults to false.
+     */
+    transcendental: boolean,
     zero: boolean
 }
 
@@ -123,14 +171,14 @@ export interface ExtensionEnv {
      * @deprecated
      */
     factorize(poly: U, x: U): U;
-    getBindings(): { sym: Sym, value: U }[];
     getChain(outer: Sym, inner: Sym): LambdaExpr;
     setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void;
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
-    getSymbolProps(sym: Sym): SymbolProps;
+    getSymbolProps(sym: Sym | string): SymbolProps;
     getSymbolToken(sym: Sym): string;
-    getSymbolValue(sym: Sym): U;
+    getSymbolValue(sym: Sym | string): U;
+    getSymbolsInfo(): { sym: Sym, value: U }[];
     /**
      * Used to make the environment ready after all operator builders have been added.
      */
@@ -191,7 +239,7 @@ export interface ExtensionEnv {
     setMode(mode: number): void;
     setModeFlag(mode: MODE, value: boolean): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
-    setSymbolProps(sym: Sym, props: Partial<SymbolProps>): void;
+    setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
     setSymbolToken(sym: Sym, token: string): void;
     setSymbolValue(sym: Sym, value: U): void;
     /**

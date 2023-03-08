@@ -1,7 +1,7 @@
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Eval_filter } from "../../filter";
 import { invg } from "../../inv";
-import { is_rat_integer } from "../../is_rat_integer";
+import { is_rat_and_integer } from "../../is_rat_integer";
 import { Eval_leading } from "../../leading";
 import { Eval_lookup } from "../../lookup";
 import { makeList } from "../../makeList";
@@ -311,7 +311,7 @@ function Eval_isinteger(p1: U, $: ExtensionEnv) {
 
 function _isinteger(p1: U): U {
     if (is_rat(p1)) {
-        return is_rat_integer(p1) ? one : zero;
+        return is_rat_and_integer(p1) ? one : zero;
     }
     if (is_flt(p1)) {
         const n = Math.floor(p1.d);

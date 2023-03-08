@@ -73,8 +73,9 @@ export function env_term($: ExtensionEnv) {
 
 export interface ScriptContext {
     clearBindings(): void;
-    getBinding(sym: Sym): U;
-    getBindings(): { sym: Sym, value: U }[]
+    getSymbolProps(sym: Sym | string): SymbolProps;
+    getSymbolValue(sym: Sym | string): U;
+    getSymbolsInfo(): { sym: Sym, value: U }[]
     evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
     executeScript(sourceText: string, options?: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] };
@@ -131,11 +132,14 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         clearBindings(): void {
             $.clearBindings();
         },
-        getBinding(sym: Sym): U {
+        getSymbolProps(sym: Sym | string): SymbolProps {
+            return $.getSymbolProps(sym);
+        },
+        getSymbolValue(sym: Sym | string): U {
             return $.getSymbolValue(sym);
         },
-        getBindings(): { sym: Sym, value: U }[] {
-            return $.getBindings();
+        getSymbolsInfo(): { sym: Sym, value: U }[] {
+            return $.getSymbolsInfo();
         },
         evaluate(tree: U): { value: U, prints: string[], errors: Error[] } {
             // This is like a fixed pipeline.

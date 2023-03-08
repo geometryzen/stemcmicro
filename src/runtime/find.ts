@@ -1,7 +1,7 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { equaln } from '../is';
-import { is_rat_integer } from '../is_rat_integer';
+import { is_rat_and_integer } from '../is_rat_integer';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_imu } from '../operators/imu/is_imu';
 import { caddr, cadr } from '../tree/helpers';
@@ -22,14 +22,14 @@ export function has_clock_form(p: U, p1: U, $: ExtensionEnv): boolean {
         return false;
     }
 
-    if (is_power(p) && !is_rat_integer(caddr(p1))) {
+    if (is_power(p) && !is_rat_and_integer(caddr(p1))) {
         if (cadr(p).contains(imu)) {
             // console.lg "found i^fraction " + p
             return true;
         }
     }
 
-    if (is_power(p) && equaln(cadr(p), -1) && !is_rat_integer(caddr(p1))) {
+    if (is_power(p) && equaln(cadr(p), -1) && !is_rat_and_integer(caddr(p1))) {
         // console.lg "found -1^fraction in " + p
         return true;
     }

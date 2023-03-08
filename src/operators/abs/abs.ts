@@ -99,8 +99,10 @@ export function abs(x: U, $: ExtensionEnv): U {
 }
 */
 
-// Keep the following function for reference.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/**
+ * What should be the role of these generic functions?
+ * They cannot be the entry point if the system is extensible regarding atoms.
+ */
 export function abs(x: U, $: ExtensionEnv): U {
     // console.lg("abs x=", render_as_sexpr(x, $));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -113,11 +115,11 @@ export function abs(x: U, $: ExtensionEnv): U {
     const expr: U = x;
 
     if ($.isZero(expr)) {
-        return hook(zero, "A");
+        return hook(expr, "A");
     }
 
     if ($.isOne(expr)) {
-        return hook(one, "B");
+        return hook(expr, "B");
     }
 
     if (is_negative_number(expr)) {

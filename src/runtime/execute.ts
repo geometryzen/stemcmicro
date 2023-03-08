@@ -234,7 +234,7 @@ function post_processing_complex_numbers(input: U, output: U, box: Box<U>, $: Ex
     // In all other cases, replace all instances of (-1)^(1/2) in the result
     // with the symbol "i" or "j" depending on which one
     // represents the imaginary unit
-    const entries = $.getBindings();
+    const entries = $.getSymbolsInfo();
     for (const entry of entries) {
         const sym = entry.sym;
         const value = entry.value;

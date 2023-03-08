@@ -11,12 +11,12 @@ describe("clearall", function () {
             useCaretForExponentiation: true,
             useDefinitions: false
         });
-        const beginCount = engine.getBindings().length;
+        const beginCount = engine.getSymbolsInfo().length;
         engine.executeScript("E=m*c^2");
-        const endCount = engine.getBindings().length;
+        const endCount = engine.getSymbolsInfo().length;
         assert.strictEqual(endCount - beginCount, 1, "endCount-beginCount");
         const { values, prints } = engine.executeScript(sourceText);
-        assert.strictEqual(engine.getBindings().length, 1, "endCount-beginCount");
+        assert.strictEqual(engine.getSymbolsInfo().length, 1, "endCount-beginCount");
         assert.isArray(values);
         assert.strictEqual(values.length, 0, "values.length");
         assert.isArray(prints);
@@ -31,12 +31,12 @@ describe("clearall", function () {
             useCaretForExponentiation: true,
             useDefinitions: false
         });
-        const beginCount = engine.getBindings().length;
+        const beginCount = engine.getSymbolsInfo().length;
         engine.executeScript("E=m*c^2");
-        const endCount = engine.getBindings().length;
+        const endCount = engine.getSymbolsInfo().length;
         assert.strictEqual(endCount - beginCount, 1, "endCount-beginCount");
         const { values, prints } = engine.executeScript(sourceText);
-        assert.strictEqual(engine.getBindings().length, 1, "endCount-beginCount");
+        assert.strictEqual(engine.getSymbolsInfo().length, 1, "endCount-beginCount");
         assert.isArray(values);
         assert.strictEqual(values.length, 0, "values.length");
         assert.isArray(prints);

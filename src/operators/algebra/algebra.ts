@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_integer';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { one, Rat, two, zero } from '../../tree/rat/Rat';
@@ -259,7 +259,7 @@ export function algebraAsTensor<T extends U>(metric: T[], labels: string[], $: E
 export function convertMetricToNative(tensor: U): Rat[] {
     if (is_tensor(tensor)) {
         return tensor.mapElements(function (e) {
-            if (is_rat_integer(e)) {
+            if (is_rat_and_integer(e)) {
                 return e;
             }
             else {

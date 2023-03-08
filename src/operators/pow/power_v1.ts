@@ -5,7 +5,7 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
 import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";
-import { is_rat_integer } from "../../is_rat_integer";
+import { is_rat_and_integer } from "../../is_rat_integer";
 import { evaluatingAsFloat, evaluatingAsPolar } from "../../modes/modes";
 import { nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
@@ -91,7 +91,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         is_num_and_eq_minus_one(base) &&
         !is_flt(base) &&
         is_rat(expo) &&
-        !is_rat_integer(expo) &&
+        !is_rat_and_integer(expo) &&
         is_num_and_gt_zero(expo) &&
         !$.getModeFlag(evaluatingAsFloat)
     ) {
@@ -148,9 +148,25 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // if we only assume variables to be real, then |a|^2 = a^2
     // (if x is complex this doesn't hold e.g. i, which makes 1 and -1
     // Looking for (pow (abs ...) )
-    if (is_cons(base) && is_abs(base) && iseveninteger(expo) && !$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
-        const result = $.power(cadr(base), expo);
-        return hook(result, "L");
+    // console.lg("power_v1", $.toSExprString(base), $.toSExprString(expo));
+    if (is_cons(base)) {
+        if (is_abs(base)) {
+            if (iseveninteger(expo)) {
+                // Be careful doing this as the result could be unknown.
+                /*
+                if ($.is_real(base)) {
+                    // console.lg($.toSExprString(base), "is real");
+                }
+                else {
+                    // console.lg($.toSExprString(base), "is NOT real");
+                }
+                */
+                if (!$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
+                    const result = $.power(cadr(base), expo);
+                    return hook(result, "L");
+                }
+            }
+        }
     }
 
     // TODO: This code will be extracted into special handlers (all code should be?).
@@ -193,7 +209,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         // console.lg(`base=>${render_as_infix(base, $)}`);
         // console.lg(`expo=>${render_as_infix(expo, $)}`);
         // console.lg(`base is scalar=>${$.isScalar(base)}`);
-        if (is_multiply(base) /*&& $.isScalar(base)*/ && is_rat_integer(expo)) {
+        if (is_multiply(base) /*&& $.isScalar(base)*/ && is_rat_and_integer(expo)) {
             const aList = base.cdr;
             if (is_cons(aList)) {
                 const a1 = aList.car;
@@ -224,7 +240,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
 
     // when c is an integer and when a is >= 0
-    if (is_power(base) && (is_rat_integer(expo) || is_a_moreThanZero)) {
+    if (is_power(base) && (is_rat_and_integer(expo) || is_a_moreThanZero)) {
         const result = $.power(cadr(base), $.multiply(caddr(base), expo));
         return hook(result, "R");
     }
@@ -293,7 +309,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         // console.lg(`${$.toInfixString(base)} IS COMPLEX`)
         // integer power?
         // n will be negative here, positive n already handled
-        if (is_rat_integer(expo)) {
+        if (is_rat_and_integer(expo)) {
             //               /        \  n
             //         -n   |  a - ib  |
             // (a + ib)   = | -------- |

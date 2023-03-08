@@ -1,169 +1,110 @@
 import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("sandbox", function () {
-    it("real(real(z))", function () {
+describe("abs", function () {
+    it("abs(0.0)", function () {
         const lines: string[] = [
-            `real(real(z))`
+            `abs(0.0)`
         ];
-        const engine = create_script_context({
+        const context = create_script_context({
             assumes: {
-                'z': { real: false }
-            },
-            dependencies: ['Imu'],
-        });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "real(z)");
-        engine.release();
-    });
-    it("imag(z)", function () {
-        const lines: string[] = [
-            `imag(z)`
-        ];
-        const engine = create_script_context({
-            assumes: {
-                'z': { real: false }
-            },
-            dependencies: ['Imu'],
-        });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "imag(z)");
-        engine.release();
-    });
-    it("real(imag(z))", function () {
-        const lines: string[] = [
-            `real(imag(z))`
-        ];
-        const engine = create_script_context({
-            assumes: {
-                'z': { real: false }
-            },
-            dependencies: ['Imu'],
-        });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "imag(z)");
-        engine.release();
-    });
-    it("real(-imag(z))", function () {
-        const lines: string[] = [
-            `real(-imag(z))`
-        ];
-        const engine = create_script_context({
-            assumes: {
-                'z': { real: false }
-            },
-            dependencies: ['Imu'],
-        });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-imag(z)");
-        engine.release();
-    });
-    it("real(i*z) when z is not real", function () {
-        const lines: string[] = [
-            `i=sqrt(-1)`,
-            `real(i*z)`
-        ];
-        const engine = create_script_context({
-            assumes: {
-                'z': { real: false }
-            },
-            dependencies: ['Imu'],
-        });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-imag(z)");
-        engine.release();
-    });
-    it("imag(a+i*b)", function () {
-        const lines: string[] = [
-            `i=sqrt(-1)`,
-            `imag(a+i*b)`
-        ];
-        const engine = create_script_context({
-            dependencies: ['Imu']
-        });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "b");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "b");
-        engine.release();
-    });
-    it("isreal(a), when a is real.", function () {
-        const lines: string[] = [
-            `isreal(a)`
-        ];
-        const engine = create_script_context({
-            assumes: {
-                'a': { real: true }
+                'a': {}
             }
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#t");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "true");
-        engine.release();
+
+        const aValue = context.getSymbolValue('a');
+        assert.strictEqual(aValue.toString(), "()");
+
+        const aProps = context.getSymbolProps('a');
+        assert.strictEqual(aProps.real, true, "aProps.real");
+
+        const actual = assert_one_value_execute(lines.join('\n'), context);
+        assert.strictEqual(context.renderAsInfix(actual), '0.0');
+        context.release();
     });
-    it("isreal(a) when a is not real.", function () {
+    it("abs(1.0)", function () {
         const lines: string[] = [
-            `isreal(a)`
+            `abs(1.0)`
         ];
-        const engine = create_script_context({
+        const context = create_script_context({
             assumes: {
-                'a': { real: false }
+                'a': {}
             }
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#f");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "false");
-        engine.release();
+
+        const aValue = context.getSymbolValue('a');
+        assert.strictEqual(aValue.toString(), "()");
+
+        const aProps = context.getSymbolProps('a');
+        assert.strictEqual(aProps.real, true);
+
+        const actual = assert_one_value_execute(lines.join('\n'), context);
+        assert.strictEqual(context.renderAsInfix(actual), '1.0');
+        context.release();
     });
-    it("isreal(i).", function () {
+    it("abs(2.0)", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `isreal(i)`
+            `abs(2.0)`
         ];
-        const engine = create_script_context({
+        const context = create_script_context({
             assumes: {
-                'a': { real: false }
+                'a': {}
             }
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#f");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "false");
-        engine.release();
+
+        const aValue = context.getSymbolValue('a');
+        assert.strictEqual(aValue.toString(), "()");
+
+        const aProps = context.getSymbolProps('a');
+        assert.strictEqual(aProps.real, true);
+
+        const actual = assert_one_value_execute(lines.join('\n'), context);
+        assert.strictEqual(context.renderAsInfix(actual), '2.0');
+        context.release();
     });
-    it("isreal(i*y).", function () {
+});
+
+xdescribe("sandbox", function () {
+    xit("(a) should be converted to a power expression", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `isreal(i*y)`
+            `assumeRealVariables=0`,
+            `abs(a)**2`
         ];
-        const engine = create_script_context({
+        const context = create_script_context({
             assumes: {
-                'y': { real: true }
+                'a': {}
             }
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#f");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "false");
-        engine.release();
+
+        const aValue = context.getSymbolValue('a');
+        assert.strictEqual(aValue.toString(), "()");
+
+        const aProps = context.getSymbolProps('a');
+        assert.strictEqual(aProps.real, true);
+
+        const actual = assert_one_value_execute(lines.join('\n'), context);
+        assert.strictEqual(context.renderAsInfix(actual), 'a**2');
+        context.release();
     });
-    it("imag(a+i*b)", function () {
+    xit("(a) should be converted to a power expression", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `imag(a+i*b)`
+            `sqrt(a**2)`
         ];
-        const engine = create_script_context({
+        const context = create_script_context({
             assumes: {
-                'a': { real: true },
-                'b': { real: true }
-            },
-            dependencies: ['Imu']
+                'a': {}
+            }
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "b");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "b");
-        engine.release();
+
+        const aValue = context.getSymbolValue('a');
+        assert.strictEqual(aValue.toString(), "()");
+
+        const aProps = context.getSymbolProps('a');
+        assert.strictEqual(aProps.real, true);
+
+        const actual = assert_one_value_execute(lines.join('\n'), context);
+        assert.strictEqual(context.renderAsInfix(actual), '(a**2)**(1/2)');
+        context.release();
     });
 });

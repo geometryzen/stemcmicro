@@ -4,7 +4,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { in_safe_integer_range } from './in_safe_integer_range';
 import { is_num_and_eq_minus_one } from './is';
-import { is_rat_integer } from './is_rat_integer';
+import { is_rat_and_integer } from './is_rat_integer';
 import { makeList } from './makeList';
 import { mpow } from './mpow';
 import { mroot } from './mroot';
@@ -56,7 +56,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
     let x: bigInt.BigInteger | 0;
     let y: bigInt.BigInteger;
     // if exponent is integer then power
-    if (is_rat_integer(expo)) {
+    if (is_rat_and_integer(expo)) {
         expoJs = nativeInt(expo);
         if (isNaN(expoJs)) {
             // expo greater than 32 bits
@@ -89,7 +89,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
     }
 
     // if base is not an integer then power numerator and denominator
-    if (!is_rat_integer(base)) {
+    if (!is_rat_and_integer(base)) {
         // (m/n)^a = m^a * n^(-a)
         const m = base.numer();
         const n = base.denom();
@@ -157,7 +157,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
 //-----------------------------------------------------------------------------
 function normalize_angle(A: Rat, $: ExtensionEnv): U {
     // integer exponent?
-    if (is_rat_integer(A)) {
+    if (is_rat_and_integer(A)) {
         if (A.a.isOdd()) {
             return negOne; // odd exponent
         }

@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_integer';
 import { makeList } from '../../makeList';
 import { is_num } from '../num/is_num';
 import { ROUND } from '../../runtime/constants';
@@ -25,7 +25,7 @@ function yround(expr: U, $: ExtensionEnv): U {
         return wrap_as_flt(Math.round(expr.d));
     }
 
-    if (is_rat_integer(expr)) {
+    if (is_rat_and_integer(expr)) {
         return expr;
     }
 

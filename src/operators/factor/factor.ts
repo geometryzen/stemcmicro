@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_integer';
 import { multiply_items_factoring } from '../../multiply';
 import { factor_number } from '../../pollard';
 import { MAXPRIMETAB, primetab } from '../../runtime/constants';
@@ -31,7 +31,7 @@ function factor_term(arr: U[], arg1: U, arg2: U, $: ExtensionEnv): void {
 }
 
 export function factor(p1: U, p2: U, $: ExtensionEnv): U {
-    if (is_rat_integer(p1)) {
+    if (is_rat_and_integer(p1)) {
         return factor_number(p1); // see pollard.cpp
     }
 

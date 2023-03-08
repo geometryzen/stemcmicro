@@ -1,7 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
-import { is_rat_integer } from './is_rat_integer';
+import { is_rat_and_integer } from './is_rat_integer';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
@@ -89,7 +89,7 @@ export function is_integer_or_integer_float(p: U): p is Num & { __ts_integer: tr
     if (is_rat(p)) {
         return p.isInteger();
     }
-    return is_rat_integer(p);
+    return is_rat_and_integer(p);
 }
 
 export function isnonnegativeinteger(p: U): p is Rat & { __ts_integer: true; __ts_sign: 1 } {
@@ -295,8 +295,8 @@ export function is_complex_number(expr: U, $: ExtensionEnv): boolean {
     return false;
 }
 
-export function iseveninteger(p: U): boolean {
-    return is_rat_integer(p) && p.a.isEven();
+export function iseveninteger(expr: U): boolean {
+    return is_rat_and_integer(expr) && expr.a.isEven();
 }
 
 // returns 1 if there's a symbol somewhere.
@@ -317,7 +317,7 @@ export function issymbolic(p: U): boolean {
 // i.e. 2, 2^3, etc.
 export function isintegerfactor(p: U): boolean {
     return (
-        is_rat_integer(p) || (is_power(p) && is_rat_integer(cadr(p)) && is_rat_integer(caddr(p)))
+        is_rat_and_integer(p) || (is_power(p) && is_rat_and_integer(cadr(p)) && is_rat_and_integer(caddr(p)))
     );
 }
 

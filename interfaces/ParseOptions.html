@@ -20,7 +20,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">ParseOptions</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/4e9d1b7/src/parser/parser.ts#L28">src/parser/parser.ts:28</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/6aa71b2/src/parser/parser.ts#L37">src/parser/parser.ts:37</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -30,7 +30,7 @@
 <h3 class="tsd-index-heading">Properties</h3>
 <div class="tsd-index-list"><a href="ParseOptions.html#explicitAssocAdd" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-1024-path"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)" id="icon-1024-text"></path></svg><span>explicit<wbr/>Assoc<wbr/>Add?</span></a>
 <a href="ParseOptions.html#explicitAssocMul" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>explicit<wbr/>Assoc<wbr/>Mul?</span></a>
-<a href="ParseOptions.html#scriptKind" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>script<wbr/>Kind?</span></a>
+<a href="ParseOptions.html#syntaxKind" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>syntax<wbr/>Kind?</span></a>
 <a href="ParseOptions.html#useCaretForExponentiation" class="tsd-index-link tsd-kind-property tsd-parent-kind-interface"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>use<wbr/>Caret<wbr/>For<wbr/>Exponentiation?</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
@@ -41,19 +41,19 @@
 <div class="tsd-comment tsd-typography"><p>Determines whether the parser makes associativity explicit or implicit in additive expressions.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/4e9d1b7/src/parser/parser.ts#L38">src/parser/parser.ts:38</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/6aa71b2/src/parser/parser.ts#L47">src/parser/parser.ts:47</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="explicitAssocMul" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>explicit<wbr/>Assoc<wbr/>Mul</span><a href="#explicitAssocMul" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">explicit<wbr/>Assoc<wbr/>Mul<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>Determines whether the parser makes associativity explicit or implicit in multiplicative expressions.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/4e9d1b7/src/parser/parser.ts#L42">src/parser/parser.ts:42</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="scriptKind" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>script<wbr/>Kind</span><a href="#scriptKind" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">script<wbr/>Kind<span class="tsd-signature-symbol">?:</span> <a href="../enums/ScriptKind.html" class="tsd-signature-type" data-tsd-kind="Enumeration">ScriptKind</a></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/6aa71b2/src/parser/parser.ts#L51">src/parser/parser.ts:51</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="syntaxKind" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>syntax<wbr/>Kind</span><a href="#syntaxKind" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">syntax<wbr/>Kind<span class="tsd-signature-symbol">?:</span> <a href="../enums/SyntaxKind.html" class="tsd-signature-type" data-tsd-kind="Enumeration">SyntaxKind</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/4e9d1b7/src/parser/parser.ts#L29">src/parser/parser.ts:29</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/6aa71b2/src/parser/parser.ts#L38">src/parser/parser.ts:38</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface"><a id="useCaretForExponentiation" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>use<wbr/>Caret<wbr/>For<wbr/>Exponentiation</span><a href="#useCaretForExponentiation" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">use<wbr/>Caret<wbr/>For<wbr/>Exponentiation<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -61,7 +61,7 @@
 The alternative is to use &#39;**&#39;, which frees the caret symbol to denote the outer product.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/4e9d1b7/src/parser/parser.ts#L34">src/parser/parser.ts:34</a></li></ul></aside></section></section></div>
+<li>Defined in <a href="https://github.com/geometryzen/symbolic-math/blob/6aa71b2/src/parser/parser.ts#L43">src/parser/parser.ts:43</a></li></ul></aside></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -88,7 +88,7 @@ The alternative is to use &#39;**&#39;, which frees the caret symbol to denote t
 <ul>
 <li class="tsd-kind-property tsd-parent-kind-interface"><a href="ParseOptions.html#explicitAssocAdd" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>explicit<wbr/>Assoc<wbr/>Add?</a></li>
 <li class="tsd-kind-property tsd-parent-kind-interface"><a href="ParseOptions.html#explicitAssocMul" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>explicit<wbr/>Assoc<wbr/>Mul?</a></li>
-<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ParseOptions.html#scriptKind" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>script<wbr/>Kind?</a></li>
+<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ParseOptions.html#syntaxKind" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>syntax<wbr/>Kind?</a></li>
 <li class="tsd-kind-property tsd-parent-kind-interface"><a href="ParseOptions.html#useCaretForExponentiation" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>use<wbr/>Caret<wbr/>For<wbr/>Exponentiation?</a></li></ul></li></ul></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>

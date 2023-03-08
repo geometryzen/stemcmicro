@@ -14,7 +14,6 @@ import { is_rat } from '../rat/is_rat';
 import { is_str } from '../str/is_str';
 import { is_sym } from '../sym/is_sym';
 import { is_tensor } from '../tensor/is_tensor';
-import { is_uom } from '../uom/is_uom';
 import { extract_grade } from './extract_grade';
 
 function blade_times_weight(blade: Blade, weight: U, $: ExtensionEnv): Cons | Blade {
@@ -165,26 +164,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
             const term = terms[0];
             const weight = term.weight;
             const blade = term.blade;
-            if (is_rat(weight)) {
-                if (weight.isOne()) {
-                    return blade;
-                }
-                else if (weight.isZero()) {
-                    return weight;
-                }
-                else {
-                    return cons(MATH_MUL, items_to_cons(blade, weight));
-                    // throw new Error(`sum of Num weight ${term.weight} and blade ${term.blade} terms Method not implemented.`);
-                }
-            }
-            else {
-                if (is_uom(weight)) {
-                    return cons(MATH_MUL, items_to_cons(blade, weight));
-                }
-                else {
-                    throw new Error(`sum of weight and blade is not defined.`);
-                }
-            }
+            return this.$.multiply(weight, blade);
         }
         else if (terms.length === 2) {
             const a = blade_times_weight(terms[0].blade, terms[0].weight, this.$);

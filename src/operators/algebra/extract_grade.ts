@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { zero } from "../../tree/rat/Rat";
-import { is_cons, items_to_cons, U } from "../../tree/tree";
+import { is_cons, U } from "../../tree/tree";
 import { is_blade } from "../blade/is_blade";
 import { is_flt } from "../flt/is_flt";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
@@ -42,10 +42,10 @@ export function extract_grade(arg: U, grade: number, $: ExtensionEnv): U {
         const lhs = arg.lhs;
         const rhs = arg.rhs;
         if ($.isScalar(lhs)) {
-            throw new Error(`extractGrade   ${lhs} * ${rhs}`);
+            return $.multiply(lhs, extract_grade(rhs, grade, $));
         }
         if ($.isScalar(rhs)) {
-            return items_to_cons(arg.opr, extract_grade(lhs, grade, $), rhs);
+            return $.multiply(extract_grade(lhs, grade, $), rhs);
         }
         throw new Error(`extractGrade   ${lhs} * ${rhs}`);
     }

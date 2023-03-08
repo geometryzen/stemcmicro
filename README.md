@@ -53,12 +53,16 @@ describe("example", function () {
 * substitution
 * factoring
 * symbolic and numeric roots
-* units of measurement
+* units of measure
+* hyperreal numbers
 * matrices
 * derivatives and gradients
 * tensors
+* booleans
 * integrals
 * multi-integrals
+* Native, Python, and Scheme syntax
+* open for extension
 
 ## Getting Started
 

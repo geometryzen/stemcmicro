@@ -45,7 +45,14 @@ function run(cmd, unusedContext, filename, callback) {
         return `${error}`;
     }
     for (const value of values) {
-        return ctxt.renderAsInfix(value);
+        switch (executeOptions.syntaxKind) {
+            case SyntaxKind.Scheme: {
+                return ctxt.renderAsSExpr(value);
+            }
+            default: {
+                return ctxt.renderAsInfix(value);
+            }
+        }
     }
 }
 

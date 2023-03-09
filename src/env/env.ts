@@ -1,4 +1,3 @@
-import { binop } from "../calculators/binop";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
@@ -6,23 +5,22 @@ import { useCaretForExponentiation } from "../modes/modes";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { is_boo } from "../operators/boo/is_boo";
-import { is_num } from "../operators/num/is_num";
 import { is_sym } from "../operators/sym/is_sym";
 import { FUNCTION, PREDICATE_IS_REAL } from "../runtime/constants";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
-import { negOne, Rat, zero } from "../tree/rat/Rat";
+import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, LambdaExpr, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
-import { make_pluggable_function_operator } from "./make_pluggable_function_operator";
-import { make_pluggable_keyword_operator } from "./make_pluggable_keyword_operator";
+import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, LegacyExpr, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
+import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
+import { operator_from_legacy_transformer, operator_from_modern_transformer } from "./operator_from_legacy_transformer";
 import { UnknownOperator } from "./UnknownOperator";
 
 const ADD = native_sym(Native.add);
-const MULTIPLY = native_sym(Native.mul);
+const MULTIPLY = native_sym(Native.multiply);
 const POWER = native_sym(Native.pow);
 
 class StableExprComparator implements ExprComparator {
@@ -79,11 +77,6 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
     }
 }
 
-interface Assoc {
-    lhs: boolean;
-    rhs: boolean;
-}
-
 export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const config: EnvConfig = config_from_options(options);
@@ -100,8 +93,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     for (const mode of MODE_SEQUENCE) {
         ops_by_mode[mode] = {};
     }
-
-    const assocs: { [key: string]: Assoc } = {};
 
     const chains: Map<string, Map<string, LambdaExpr>> = new Map();
 
@@ -135,16 +126,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             default: {
                 return {};
             }
-        }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function reverseAssocs() {
-        const keys = Object.keys(assocs);
-        for (const key of keys) {
-            const assoc = assocs[key];
-            assoc.lhs = !assoc.lhs;
-            assoc.rhs = !assoc.rhs;
         }
     }
 
@@ -191,7 +172,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         add(lhs: U, rhs: U): U {
-            return binop(ADD, lhs, rhs, $);
+            const argList = items_to_cons(lhs, rhs);
+            return $.evaluate(Native.add, argList);
         },
         clearOperators(): void {
             builders.length = 0;
@@ -202,11 +184,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        defineTransform(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void {
-            this.defineOperator(make_pluggable_function_operator(opr, transformer));
+        defineLegacyTransformer(opr: Sym, transformer: LegacyExpr): void {
+            $.defineOperator(operator_from_legacy_transformer(opr, transformer));
         },
-        defineKeyword(sym: Sym, runner: ($: ExtensionEnv) => void): void {
-            $.defineOperator(make_pluggable_keyword_operator(sym, runner));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        defineFunction(match: U, lambda: LambdaExpr): void {
+            $.defineOperator(operator_from_modern_transformer(match, lambda));
+        },
+        defineKeyword(sym: Sym, runner: KeywordRunner): void {
+            $.defineOperator(operator_from_keyword_runner(sym, runner));
         },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);
@@ -232,6 +218,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
+        evaluate(opr: Native, argList: Cons): U {
+            const expr = cons(native_sym(opr), argList);
+            return $.valueOf(expr);
+        },
         getSymbolProps(sym: Sym | string): SymbolProps {
             return symTab.getProps(sym);
         },
@@ -254,10 +244,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             return function (argList: Cons, $: ExtensionEnv): U {
                 const i = cons(inner, argList);
+                // Don't evaluate here. This is a fallback for when no chain exists.
                 return items_to_cons(outer, i);
             };
         },
-        setChain(outer: Sym, inner: Sym, lambda: (argList: Cons, $: ExtensionEnv) => U): void {
+        setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void {
             const outerKey = outer.key();
             const ensureOuterMap = function () {
                 const found = chains.get(outerKey);
@@ -265,7 +256,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     return found;
                 }
                 else {
-                    const minted = new Map<string, (argList: Cons, $: ExtensionEnv) => U>();
+                    const minted = new Map<string, LambdaExpr>();
                     chains.set(outerKey, minted);
                     return minted;
                 }
@@ -361,7 +352,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         is_real(expr: U): boolean {
-            return this.is(PREDICATE_IS_REAL, expr);
+            return $.is(PREDICATE_IS_REAL, expr);
         },
         isScalar(expr: U): boolean {
             const op = $.operatorFor(expr);
@@ -418,30 +409,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return value_inner_lhs_rhs;
         },
         multiply(lhs: U, rhs: U): U {
-            if (is_num(lhs)) {
-                if (lhs.isZero()) {
-                    return zero;
-                }
-                // TODO: This is incorrect, Flt(1.0)
-                if (lhs.isOne()) {
-                    return rhs;
-                }
-            }
-            if (is_num(rhs)) {
-                if (rhs.isZero()) {
-                    return zero;
-                }
-                if (rhs.isOne()) {
-                    return lhs;
-                }
-            }
-            return binop(MULTIPLY, lhs, rhs, $);
+            const argList = items_to_cons(lhs, rhs);
+            return $.evaluate(Native.multiply, argList);
         },
         /**
          * The universal unary minus function meaning multiplication by -1.
          */
         negate(x: U): U {
-            return this.multiply(negOne, x);
+            return $.multiply(negOne, x);
         },
         operatorFor(expr: U): Operator<U> {
             /*
@@ -473,14 +448,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         outer(lhs: U, rhs: U): U {
-            return binop(native_sym(Native.outer), lhs, rhs, $);
+            const argList = items_to_cons(lhs, rhs);
+            return $.evaluate(Native.outer, argList);
         },
         power(base: U, expo: U): U {
-            // const b = $.valueOf(base);
-            // const e = $.valueOf(expo);
-            // const p = items_to_cons(POWER, b, e);
-            const p = items_to_cons(POWER, base, expo);
-            return $.valueOf(p);
+            const argList = items_to_cons(base, expo);
+            return $.evaluate(Native.pow, argList);
         },
         remove(varName: Sym): void {
             symTab.delete(varName);
@@ -505,9 +478,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             symTab.setValue(sym, value);
         },
         subtract(lhs: U, rhs: U): U {
-            const A = $.negate(rhs);
-            const B = binop(ADD, lhs, A, $);
-            return B;
+            return $.add(lhs, $.negate(rhs));
         },
         toInfixString(expr: U): string {
             const op = $.operatorFor(expr);

@@ -317,6 +317,7 @@ import { typeof_tensor } from '../operators/typeof/typeof_tensor';
 import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
+import { define_versin } from '../operators/versin/versin_lambda';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { AND, APPROXRATIO, CLEAR, CLEARALL, IMAG, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
@@ -419,7 +420,7 @@ export function define_std_operators($: ExtensionEnv) {
     // $.defineOperator(pow_2_any_rat);
     // $.defineOperator(pow_2_any_any);
     // $.defineOperator(pow);
-    $.defineTransform(MATH_POW, Eval_power);
+    $.defineLegacyTransformer(MATH_POW, Eval_power);
 
     $.defineOperator(mul_2_sym_blade);
     // $.defineOperator(mul_cons_sym);
@@ -491,10 +492,10 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_sin_cos);
     $.defineOperator(mul_varargs);
 
-    $.defineTransform(APPROXRATIO, Eval_approxratio);
+    $.defineLegacyTransformer(APPROXRATIO, Eval_approxratio);
     $.defineOperator(binomial_varargs);
     $.defineOperator(choose_varargs);
-    $.defineTransform(CLEAR, Eval_clear);
+    $.defineLegacyTransformer(CLEAR, Eval_clear);
     $.defineKeyword(CLEARALL, Eval_clearall);
 
     $.defineOperator(conj_inner);
@@ -582,7 +583,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(adj_any);
 
     $.defineOperator(algebra_2_tensor_tensor);
-    $.defineTransform(AND, Eval_and);
+    $.defineLegacyTransformer(AND, Eval_and);
     $.defineOperator(arccos_varargs);
     $.defineOperator(arccosh_varargs);
     $.defineOperator(arcsin_varargs);
@@ -678,12 +679,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(not_fn);
     $.defineOperator(number_fn);
     $.defineOperator(numerator_fn);
-    $.defineTransform(NROOTS, Eval_nroots);
+    $.defineLegacyTransformer(NROOTS, Eval_nroots);
     $.defineOperator(or_varargs);
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
-    $.defineTransform(POLAR, Eval_polar);
+    $.defineLegacyTransformer(POLAR, Eval_polar);
 
     $.defineOperator(make_printmode_operator('print', () => defs.printMode));
     $.defineOperator(make_printmode_operator('printascii', () => PRINTMODE_ASCII));
@@ -701,7 +702,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(product_varargs);
 
-    $.defineTransform(QUOTE, Eval_quote);
+    $.defineLegacyTransformer(QUOTE, Eval_quote);
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
     $.defineOperator(real_any);
@@ -717,7 +718,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(is_real_sin);
     $.defineOperator(make_predicate_sym_operator(PREDICATE_IS_REAL));
 
-    $.defineTransform(RECT, Eval_rect);
+    $.defineLegacyTransformer(RECT, Eval_rect);
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);
 
@@ -767,20 +768,20 @@ export function define_std_operators($: ExtensionEnv) {
 
 
     $.defineOperator(testeq_sym_rat);
-    $.defineTransform(TESTEQ, Eval_testeq);
-    $.defineTransform(TESTLE, Eval_testle);
+    $.defineLegacyTransformer(TESTEQ, Eval_testeq);
+    $.defineLegacyTransformer(TESTLE, Eval_testle);
 
     $.defineOperator(testlt_flt_rat);
     $.defineOperator(testlt_rat_rat);
     $.defineOperator(testlt_sym_rat);
     $.defineOperator(testlt_mul_2_any_any_rat);
-    $.defineTransform(TESTLT, Eval_testlt);
+    $.defineLegacyTransformer(TESTLT, Eval_testlt);
 
-    $.defineTransform(TESTGE, Eval_testge);
+    $.defineLegacyTransformer(TESTGE, Eval_testge);
     $.defineOperator(testgt_rat_rat);
     $.defineOperator(testgt_sym_rat);
     $.defineOperator(testgt_mul_2_any_any_rat);
-    $.defineTransform(TESTGT, Eval_testgt);
+    $.defineLegacyTransformer(TESTGT, Eval_testgt);
 
     $.defineOperator(transpose_varargs);
 
@@ -800,6 +801,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(unit_any);
 
     $.defineOperator(uom_1_str);
+
+    // Example of a custom funtion.
+    define_versin($);
 
     $.defineOperator(zero_varargs);
 

@@ -26,17 +26,19 @@ export function build_sym(code: Native): Sym {
         // Functions (lower case)...
         case Native.abs: return create_sym('math.abs');
         case Native.add: return create_sym('add');
-        case Native.div: return create_sym('/');
+        case Native.arg: return create_sym('arg');
+        case Native.cosine: return create_sym('cos');
+        case Native.divide: return create_sym('/');
         case Native.exp: return create_sym('exp');
         case Native.inner: return create_sym('inner');
-        case Native.inv: return create_sym('inv');
+        case Native.inverse: return create_sym('inv');
         case Native.lco: return create_sym('<<');
-        case Native.mul: return create_sym('*');
+        case Native.multiply: return create_sym('*');
         case Native.outer: return create_sym('outer');
         case Native.pow: return create_sym('math.pow');
         case Native.rco: return create_sym('>>');
-        case Native.sin: return create_sym('sin');
-        case Native.sub: return create_sym('-');
+        case Native.sine: return create_sym('sin');
+        case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');
         default: throw new Error(`${code}`);
     }

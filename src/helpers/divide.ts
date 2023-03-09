@@ -1,9 +1,7 @@
 
 import { divide_numbers } from "../bignum";
-import { binop } from "../calculators/binop";
 import { ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
 import { is_num } from "../operators/num/is_num";
-import { MATH_MUL } from "../runtime/ns_math";
 import { U } from "../tree/tree";
 import { inverse } from "./inverse";
 
@@ -16,7 +14,7 @@ export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
     }
     else {
         const inverse_rhs = inverse(rhs, $);
-        return binop(MATH_MUL, lhs, inverse_rhs, $);
+        return $.multiply(lhs, inverse_rhs);
     }
 }
 

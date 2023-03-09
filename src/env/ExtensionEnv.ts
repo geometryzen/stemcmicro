@@ -1,3 +1,4 @@
+import { Native } from "../native/Native";
 import { Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { Cons, U } from "../tree/tree";
@@ -71,7 +72,19 @@ export interface ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign;
 }
 
+/**
+ * Not to be confused with the LegacyExpr.
+ * Here the first argument is the argument list and does not include the operator.
+ */
 export type LambdaExpr = (argList: Cons, $: ExtensionEnv) => U;
+
+/**
+ * Not to be confused with a LambdaExpr.
+ * Here the first argument is the expression including the operator.
+ */
+export type LegacyExpr = (expr: Cons, $: ExtensionEnv) => U;
+
+export type KeywordRunner = ($: ExtensionEnv) => void;
 
 export interface SymbolProps {
     /**
@@ -153,14 +166,16 @@ export interface ExtensionEnv {
      *
      */
     add(lhs: U, rhs: U): U;
+    evaluate(opr: Native, argList: Cons): U;
     clearBindings(): void;
     clearOperators(): void;
     compareFn(sym: Sym): CompareFn;
     /**
      * Defines the implementation of a function that is used to transform (name ...) expressions.
      */
-    defineTransform(opr: Sym, transformer: (expr: Cons, $: ExtensionEnv) => U): void;
-    defineKeyword(sym: Sym, runner: ($: ExtensionEnv) => void): void;
+    defineLegacyTransformer(opr: Sym, transformer: LegacyExpr): void;
+    defineFunction(match: U, lambda: LambdaExpr): void;
+    defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     /**

@@ -3,6 +3,8 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
 import { evaluatingAsFloat } from '../../modes/modes';
+import { Native } from '../../native/Native';
+import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
 import { is_negative } from '../../predicates/is_negative';
@@ -13,7 +15,6 @@ import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
-import { create_sym } from '../../tree/sym/Sym';
 import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { arctan } from '../arctan/arctan';
 import { MATH_EXP } from '../exp/MATH_EXP';
@@ -28,11 +29,14 @@ import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { is_sym } from '../sym/is_sym';
 
-export const MATH_ARG = create_sym('arg');
+export const ARG = native_sym(Native.arg);
 
+/**
+ * Example of inverting the registration 
+ */
 export function define_arg($: ExtensionEnv): void {
     // If we also want to control the name as it appears in the script 
-    $.defineTransform(MATH_ARG, function (expr: Cons, $: ExtensionEnv): U {
+    $.defineLegacyTransformer(ARG, function (expr: Cons, $: ExtensionEnv): U {
         const z = cadr(expr);
         // console.lg("z", $.toInfixString(z));
         const value_of_z = $.valueOf(z);
@@ -71,7 +75,7 @@ export function arg_old(z: U, $: ExtensionEnv): U {
                     if (numer.equals(z)) {
                         // Termination condition to prevent infinite recursion.
                         // I'm allowed to use the MATH_ARG symbol because I'm the arg implementation.
-                        return items_to_cons(MATH_ARG, z);
+                        return items_to_cons(ARG, z);
                     }
                     else {
                         return $.subtract(yyarg(numer, $), yyarg(denom, $));
@@ -100,7 +104,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     // arg(a) is pi when a is negative so we have
     // to leave unexpressed
     if (is_sym(expr)) {
-        return items_to_cons(MATH_ARG, expr);
+        return items_to_cons(ARG, expr);
     }
 
     // Implementation in which the imaginary unit is it's own object.
@@ -157,7 +161,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
 
     // if we don't assume all passed values are real, all
     // we con do is to leave unexpressed
-    return items_to_cons(MATH_ARG, expr);
+    return items_to_cons(ARG, expr);
 }
 
 function arg_of_sum(expr: Cons, $: ExtensionEnv): U {

@@ -11,16 +11,16 @@ import { native_sym } from "../native/native_sym";
 import { create_sym } from "../tree/sym/Sym";
 
 export const MATH_ADD = native_sym(Native.add);
-export const MATH_SUB = native_sym(Native.sub);
-export const MATH_MUL = native_sym(Native.mul);
-export const MATH_DIV = native_sym(Native.div);
+export const MATH_SUB = native_sym(Native.subtract);
+export const MATH_MUL = native_sym(Native.multiply);
+export const MATH_DIV = native_sym(Native.divide);
 export const MATH_POW = native_sym(Native.pow);
 export const MATH_OUTER = native_sym(Native.outer);
 export const MATH_INNER = native_sym(Native.inner);
-export const MATH_INV = native_sym(Native.inv);
+export const MATH_INV = native_sym(Native.inverse);
 export const MATH_LCO = native_sym(Native.lco);
 export const MATH_RCO = native_sym(Native.rco);
-export const MATH_SIN = native_sym(Native.sin);
+export const MATH_SIN = native_sym(Native.sine);
 export const MATH_SUCC = native_sym(Native.succ);
 /**
  * pred

@@ -1,13 +1,22 @@
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { Native } from "./Native";
 
-/**
- * Returns the appropriate symbol that is used for the concept.
- * @param concept 
- * @returns 
- */
-export function native_sym(concept: Native): Sym {
-    switch (concept) {
+const cache: Map<Native, Sym> = new Map();
+
+export function native_sym(code: Native): Sym {
+    const sym = cache.get(code);
+    if (sym) {
+        return sym;
+    }
+    else {
+        const s = build_sym(code);
+        cache.set(code, s);
+        return s;
+    }
+}
+
+export function build_sym(code: Native): Sym {
+    switch (code) {
         // Constants (upper case)...
         case Native.E: return create_sym('math.e');
         case Native.IMU: return create_sym('unit-imaginary-number');
@@ -29,6 +38,6 @@ export function native_sym(concept: Native): Sym {
         case Native.sin: return create_sym('sin');
         case Native.sub: return create_sym('-');
         case Native.succ: return create_sym('succ');
-        default: throw new Error(`${concept}`);
+        default: throw new Error(`${code}`);
     }
 }

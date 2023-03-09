@@ -5,7 +5,6 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
-import { value_of } from "../helpers/valueOf";
 import { is_sym } from "../sym/is_sym";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -41,7 +40,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        return [TFLAG_DIFF, value_of(items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs), $)];
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs))];
     }
 }
 

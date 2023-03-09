@@ -6,7 +6,6 @@ import { useCaretForExponentiation } from "../modes/modes";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { is_boo } from "../operators/boo/is_boo";
-import { value_of } from "../operators/helpers/valueOf";
 import { is_num } from "../operators/num/is_num";
 import { is_sym } from "../operators/sym/is_sym";
 import { FUNCTION, PREDICATE_IS_REAL } from "../runtime/constants";
@@ -24,6 +23,7 @@ import { UnknownOperator } from "./UnknownOperator";
 
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.mul);
+const POWER = native_sym(Native.pow);
 
 class StableExprComparator implements ExprComparator {
     constructor(private readonly opr: Sym) {
@@ -441,7 +441,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
          * The universal unary minus function meaning multiplication by -1.
          */
         negate(x: U): U {
-            return binop(MULTIPLY, negOne, x, $);
+            return this.multiply(negOne, x);
         },
         operatorFor(expr: U): Operator<U> {
             /*
@@ -476,10 +476,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return binop(native_sym(Native.outer), lhs, rhs, $);
         },
         power(base: U, expo: U): U {
-            const b = value_of(base, $);
-            const e = value_of(expo, $);
-            const p = items_to_cons(native_sym(Native.pow), b, e);
-            return value_of(p, $);
+            // const b = $.valueOf(base);
+            // const e = $.valueOf(expo);
+            // const p = items_to_cons(POWER, b, e);
+            const p = items_to_cons(POWER, base, expo);
+            return $.valueOf(p);
         },
         remove(varName: Sym): void {
             symTab.delete(varName);
@@ -582,7 +583,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     // TODO: Consistency in names used for symbols in symbolic expressions.
     $.setSymbolToken(ADD, '+');        // changing will break  82 cases.
     $.setSymbolToken(MULTIPLY, '*');  // changing will break 113 cases.
-    $.setSymbolToken(native_sym(Native.pow), 'expt');
+    $.setSymbolToken(POWER, 'expt');
     $.setSymbolToken(native_sym(Native.rco), '>>');
     $.setSymbolToken(native_sym(Native.lco), '<<');
     $.setSymbolToken(native_sym(Native.inner), '|');

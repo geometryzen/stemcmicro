@@ -1,6 +1,8 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
-import { create_sym, Sym } from "../../tree/sym/Sym";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
+import { Sym } from "../../tree/sym/Sym";
 import { items_to_cons, U } from "../../tree/tree";
 import { Blade } from "../../tree/vec/Blade";
 import { is_blade } from "../blade/is_blade";
@@ -32,7 +34,7 @@ export abstract class FunctionBlade extends Function1Atom<Blade> {
 
 class Op extends FunctionBlade {
     constructor($: ExtensionEnv) {
-        super(create_sym('abs'), $);
+        super(native_sym(Native.abs), $);
     }
     transform1(opr: Sym, arg: Blade, expr: UCons<Sym, Blade>): [TFLAGS, U] {
         const $ = this.$;

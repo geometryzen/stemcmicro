@@ -1,4 +1,6 @@
 export { PrintHandler, SymbolProps } from './src/env/ExtensionEnv';
+export { Native } from './src/native/Native';
+export { native_sym } from './src/native/native_sym';
 export { is_blade } from './src/operators/blade/is_blade';
 export { is_boo } from './src/operators/boo/is_boo';
 export { is_flt } from './src/operators/flt/is_flt';
@@ -22,7 +24,7 @@ export { one, Rat, wrap_as_int, wrap_as_rat, zero } from './src/tree/rat/Rat';
 export { Str } from './src/tree/str/Str';
 export { create_sym, Sym } from './src/tree/sym/Sym';
 export { Tensor } from './src/tree/tensor/Tensor';
-export { car, cdr, Cons, cons, is_cons, is_nil, items_to_cons, nil, U } from './src/tree/tree';
+export { car, cdr, Cons, cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from './src/tree/tree';
 export { Dimensions } from './src/tree/uom/Dimensions';
 export { QQ } from './src/tree/uom/QQ';
 export { Uom } from './src/tree/uom/Uom';

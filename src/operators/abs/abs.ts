@@ -11,7 +11,7 @@ import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { oneAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
-import { half, one, two, zero } from '../../tree/rat/Rat';
+import { half, one, two } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, items_to_cons, U } from '../../tree/tree';
 import { imag } from '../imag/imag';

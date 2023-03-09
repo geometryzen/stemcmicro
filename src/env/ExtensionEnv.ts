@@ -150,7 +150,7 @@ export interface ExtensionEnv {
     setPrintHandler(handler: PrintHandler): void;
     treatAsReal(sym: Sym): boolean;
     /**
-     * @deprecated
+     *
      */
     add(lhs: U, rhs: U): U;
     clearBindings(): void;
@@ -164,7 +164,7 @@ export interface ExtensionEnv {
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
     /**
-     * @deprecated
+     *
      */
     equals(lhs: U, rhs: U): boolean;
     /**
@@ -176,6 +176,9 @@ export interface ExtensionEnv {
     getMode(): number;
     getModeFlag(mode: MODE): boolean;
     getSymbolProps(sym: Sym | string): SymbolProps;
+    /**
+     * Used during rendering.
+     */
     getSymbolToken(sym: Sym): string;
     getSymbolValue(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[];
@@ -184,7 +187,7 @@ export interface ExtensionEnv {
      */
     buildOperators(): void;
     /**
-     * @deprecated
+     *
      */
     inner(lhs: U, rhs: U): U;
     /**
@@ -215,11 +218,11 @@ export interface ExtensionEnv {
      */
     isZero(expr: U): boolean;
     /**
-     * @deprecated
+     *
      */
     multiply(lhs: U, rhs: U): U;
     /**
-     * @deprecated
+     *
      */
     negate(expr: U): U;
     /**
@@ -228,11 +231,11 @@ export interface ExtensionEnv {
      */
     operatorFor(expr: U): Operator<U>;
     /**
-     * @deprecated
+     *
      */
     outer(lhs: U, rhs: U): U;
     /**
-     * @deprecated
+     *
      */
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
@@ -243,7 +246,7 @@ export interface ExtensionEnv {
     setSymbolToken(sym: Sym, token: string): void;
     setSymbolValue(sym: Sym, value: U): void;
     /**
-     * @deprecated
+     *
      */
     subtract(lhs: U, rhs: U): U;
     toInfixString(expr: U): string;

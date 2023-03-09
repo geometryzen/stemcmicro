@@ -1,8 +1,11 @@
 import { mp_denominator, mp_numerator } from '../bignum';
+import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { ExtensionEnv } from '../env/ExtensionEnv';
 import { equaln, isfraction, isNumberOneOverSomething, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from '../is';
 import { useCaretForExponentiation } from '../modes/modes';
+import { Native } from '../native/Native';
+import { native_sym } from '../native/native_sym';
 import { abs } from '../operators/abs/abs';
 import { is_boo } from '../operators/boo/is_boo';
 import { denominator } from '../operators/denominator/denominator';
@@ -59,10 +62,8 @@ import {
     UNIT
 } from '../runtime/constants';
 import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
-import { is_abs, is_add, is_factorial, is_inner_or_dot, is_opr_eq_inv, is_lco, is_multiply, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
-import { MATH_E, MATH_IMU, MATH_NIL, MATH_PI } from '../runtime/ns_math';
+import { is_abs, is_add, is_factorial, is_inner_or_dot, is_lco, is_multiply, is_opr_eq_inv, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
-import { scan } from '../brite/scan';
 import { booT } from '../tree/boo/Boo';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
 import { negOne, one, Rat, zero } from '../tree/rat/Rat';
@@ -75,6 +76,9 @@ import { print_number } from './print_number';
 import { render_as_ascii } from './render_as_ascii';
 import { render_as_sexpr } from './render_as_sexpr';
 
+const MATH_E = native_sym(Native.E);
+const MATH_IMU = native_sym(Native.IMU);
+const MATH_PI = native_sym(Native.PI);
 
 export function get_script_last($: ExtensionEnv): U {
     return $.valueOf(RESERVED_KEYWORD_LAST);
@@ -2093,7 +2097,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return expr.printname;
         }
         if (is_nil(expr)) {
-            return print_str($.getSymbolToken(MATH_NIL));
+            return print_str($.getSymbolToken(native_sym(Native.NIL)));
         }
         if (is_err(expr)) {
             return expr.message;

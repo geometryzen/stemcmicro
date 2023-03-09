@@ -1,8 +1,10 @@
 import { complex_conjugate } from "../../complex_conjugate";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_TENSOR, hash_unaop_atom } from "../../hashing/hash_info";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { half } from "../../tree/rat/Rat";
-import { create_sym, Sym } from "../../tree/sym/Sym";
+import { Sym } from "../../tree/sym/Sym";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -27,7 +29,7 @@ export abstract class FunctionTensor extends Function1<Tensor> {
 
 class Op extends FunctionTensor {
     constructor($: ExtensionEnv) {
-        super(create_sym('abs'), $);
+        super(native_sym(Native.abs), $);
     }
     transform1(opr: Sym, arg: Tensor, expr: UCons<Sym, Tensor>): [TFLAGS, U] {
         return wrap_as_transform(abs_of_tensor(arg, this.$), expr);

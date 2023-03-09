@@ -77,7 +77,7 @@ describe("sgn", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "a/abs(a)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "a/math.abs(a)");
         engine.release();
     });
     it("sgn(a*b)", function () {
@@ -87,7 +87,7 @@ describe("sgn", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "a*b/(abs(a)*abs(b))");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "a*b/(math.abs(a)*math.abs(b))");
         engine.release();
     });
     // The Rat should be able to inform how a Rat factor changes a product.
@@ -99,7 +99,7 @@ describe("sgn", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "b/abs(b)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "b/math.abs(b)");
         engine.release();
     });
     it("sgn(x+i*y)", function () {

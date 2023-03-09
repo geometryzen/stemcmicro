@@ -1,3 +1,5 @@
+import { Native } from "../native/Native";
+import { native_sym } from "../native/native_sym";
 import { MATH_EXP } from "../operators/exp/MATH_EXP";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../operators/int/IntTokenParser";
@@ -47,6 +49,7 @@ const scanConfig: ScanConfig = {
         '==': MATH_EQ,
         ':=': LANG_COLON_EQ,
         '=': ASSIGN,
+        'abs': native_sym(Native.abs),
         'exp': MATH_EXP,
         'isreal': PREDICATE_IS_REAL
     },

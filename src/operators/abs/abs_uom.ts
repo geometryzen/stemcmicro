@@ -1,6 +1,8 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_atom, HASH_UOM } from "../../hashing/hash_info";
-import { create_sym, Sym } from "../../tree/sym/Sym";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
+import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";
 import { Function1 } from "../helpers/Function1";
@@ -31,7 +33,7 @@ export abstract class FunctionUom extends Function1Atom<Uom> {
 
 class Op extends FunctionUom {
     constructor($: ExtensionEnv) {
-        super(create_sym('abs'), $);
+        super(native_sym(Native.abs), $);
     }
     transform1(opr: Sym, arg: Uom, expr: UCons<Sym, Uom>): [TFLAGS, U] {
         return wrap_as_transform(arg, expr);

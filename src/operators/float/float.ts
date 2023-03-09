@@ -36,23 +36,6 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): U {
         $.setModeFlag(evaluatingAsFloat, mode);
     }
 }
-/*
-function checkFloatHasWorkedOutCompletely(nodeToCheck: U, $: ExtensionEnv) {
-  const numberOfPowers = countOccurrencesOfSymbol(POWER, nodeToCheck, $);
-  const numberOfPIs = countOccurrencesOfSymbol(PI, nodeToCheck, $);
-  const numberOfEs = countOccurrencesOfSymbol(MATH_E, nodeToCheck, $);
-  const numberOfMults = countOccurrencesOfSymbol(MULTIPLY, nodeToCheck, $);
-  const numberOfSums = countOccurrencesOfSymbol(ADD, nodeToCheck, $);
-  console.lg(`     ... numberOfPowers: ${numberOfPowers}`);
-  console.lg(`     ... numberOfPIs: ${numberOfPIs}`);
-  console.lg(`     ... numberOfEs: ${numberOfEs}`);
-  console.lg(`     ... numberOfMults: ${numberOfMults}`);
-  console.lg(`     ... numberOfSums: ${numberOfSums}`);
-  if (numberOfPowers > 1 || numberOfPIs > 0 || numberOfEs > 0 || numberOfMults > 1 || numberOfSums > 1) {
-    throw new Error('float: some unevalued parts in ' + nodeToCheck);
-  }
-}
-*/
 
 export function zzfloat(p1: U, $: ExtensionEnv): U {
     const mode = $.getModeFlag(evaluatingAsFloat);

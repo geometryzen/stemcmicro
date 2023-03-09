@@ -1,3 +1,5 @@
+import { Native } from '../native/Native';
+import { native_sym } from '../native/native_sym';
 import { is_num } from '../operators/num/is_num';
 import { is_rat } from '../operators/rat/rat_extension';
 import { assert_sym } from '../operators/sym/assert_sym';
@@ -11,7 +13,7 @@ import {
     TRANSPOSE_CHAR_CODE
 } from '../runtime/constants';
 import { defs } from '../runtime/defs';
-import { MATH_ADD, MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
+import { MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Boo } from '../tree/boo/Boo';
 import { negOne, one } from '../tree/rat/Rat';
 import { create_sym } from '../tree/sym/Sym';
@@ -263,9 +265,9 @@ function scan_additive_expr(state: InputState): U {
 /**
  * 
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function scan_additive_expr_implicit(state: InputState): U {
-    const terms: U[] = [MATH_ADD];
+    // TODO: We could cache the symbol.
+    const terms: U[] = [native_sym(Native.add)];
 
     switch (state.code) {
         case T_PLUS:
@@ -318,7 +320,7 @@ function scan_additive_expr_explicit(state: InputState): U {
     while (is_additive(state.code, state.newLine)) {
         switch (state.code) {
             case T_PLUS: {
-                const opr = clone_symbol_using_info(MATH_ADD, state.tokenToSym());
+                const opr = clone_symbol_using_info(native_sym(Native.add), state.tokenToSym());
                 state.advance();
                 result = items_to_cons(opr, result, scan_multiplicative_expr(state));
                 break;
@@ -327,7 +329,7 @@ function scan_additive_expr_explicit(state: InputState): U {
                 // TODO: Remove this negate code and handle it in the engine.
                 // Make sure to also add test for a-b-c = (a-b)-c
                 assert_token_code(state.code, T_MINUS);
-                const opr = clone_symbol_using_info(MATH_ADD, state.tokenToSym());
+                const opr = clone_symbol_using_info(native_sym(Native.add), state.tokenToSym());
                 state.advance();
                 result = items_to_cons(opr, result, scanner_negate(scan_multiplicative_expr(state)));
                 break;

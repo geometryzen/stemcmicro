@@ -3,13 +3,13 @@ import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { useCaretForExponentiation } from "../modes/modes";
+import { Native } from "../native/Native";
+import { native_sym } from "../native/native_sym";
 import { is_boo } from "../operators/boo/is_boo";
-import { MATH_EXP } from "../operators/exp/MATH_EXP";
 import { value_of } from "../operators/helpers/valueOf";
 import { is_num } from "../operators/num/is_num";
 import { is_sym } from "../operators/sym/is_sym";
 import { FUNCTION, PREDICATE_IS_REAL } from "../runtime/constants";
-import { MATH_ADD, MATH_E, MATH_IMU, MATH_INNER, MATH_LCO, MATH_MUL, MATH_NIL, MATH_OUTER, MATH_PI, MATH_POW, MATH_RCO } from "../runtime/ns_math";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { negOne, Rat, zero } from "../tree/rat/Rat";
@@ -21,6 +21,9 @@ import { make_pluggable_function_operator } from "./make_pluggable_function_oper
 import { make_pluggable_keyword_operator } from "./make_pluggable_keyword_operator";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { UnknownOperator } from "./UnknownOperator";
+
+const ADD = native_sym(Native.add);
+const MULTIPLY = native_sym(Native.mul);
 
 class StableExprComparator implements ExprComparator {
     constructor(private readonly opr: Sym) {
@@ -188,7 +191,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         add(lhs: U, rhs: U): U {
-            return binop(MATH_ADD, lhs, rhs, $);
+            return binop(ADD, lhs, rhs, $);
         },
         clearOperators(): void {
             builders.length = 0;
@@ -410,7 +413,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
             const value_lhs = $.valueOf(lhs);
             const value_rhs = $.valueOf(rhs);
-            const inner_lhs_rhs = items_to_cons(MATH_INNER, value_lhs, value_rhs);
+            const inner_lhs_rhs = items_to_cons(native_sym(Native.inner), value_lhs, value_rhs);
             const value_inner_lhs_rhs = $.valueOf(inner_lhs_rhs);
             return value_inner_lhs_rhs;
         },
@@ -419,6 +422,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 if (lhs.isZero()) {
                     return zero;
                 }
+                // TODO: This is incorrect, Flt(1.0)
                 if (lhs.isOne()) {
                     return rhs;
                 }
@@ -431,13 +435,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     return lhs;
                 }
             }
-            return binop(MATH_MUL, lhs, rhs, $);
+            return binop(MULTIPLY, lhs, rhs, $);
         },
         /**
          * The universal unary minus function meaning multiplication by -1.
          */
         negate(x: U): U {
-            return binop(MATH_MUL, negOne, x, $);
+            return binop(MULTIPLY, negOne, x, $);
         },
         operatorFor(expr: U): Operator<U> {
             /*
@@ -469,12 +473,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         outer(lhs: U, rhs: U): U {
-            return binop(MATH_OUTER, lhs, rhs, $);
+            return binop(native_sym(Native.outer), lhs, rhs, $);
         },
         power(base: U, expo: U): U {
             const b = value_of(base, $);
             const e = value_of(expo, $);
-            const p = items_to_cons(MATH_POW, b, e);
+            const p = items_to_cons(native_sym(Native.pow), b, e);
             return value_of(p, $);
         },
         remove(varName: Sym): void {
@@ -501,7 +505,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         subtract(lhs: U, rhs: U): U {
             const A = $.negate(rhs);
-            const B = binop(MATH_ADD, lhs, A, $);
+            const B = binop(ADD, lhs, A, $);
             return B;
         },
         toInfixString(expr: U): string {
@@ -576,19 +580,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     };
 
     // TODO: Consistency in names used for symbols in symbolic expressions.
-    $.setSymbolToken(MATH_ADD, '+');        // changing will break  82 cases.
-    $.setSymbolToken(MATH_MUL, '*');        // changing will break 113 cases.
-    $.setSymbolToken(MATH_POW, 'expt');
-    $.setSymbolToken(MATH_RCO, '>>');
-    $.setSymbolToken(MATH_LCO, '<<');
-    $.setSymbolToken(MATH_INNER, '|');
-    $.setSymbolToken(MATH_OUTER, '^');
+    $.setSymbolToken(ADD, '+');        // changing will break  82 cases.
+    $.setSymbolToken(MULTIPLY, '*');  // changing will break 113 cases.
+    $.setSymbolToken(native_sym(Native.pow), 'expt');
+    $.setSymbolToken(native_sym(Native.rco), '>>');
+    $.setSymbolToken(native_sym(Native.lco), '<<');
+    $.setSymbolToken(native_sym(Native.inner), '|');
+    $.setSymbolToken(native_sym(Native.outer), '^');
+    $.setSymbolToken(native_sym(Native.abs), 'abs');
 
-    $.setSymbolToken(MATH_E, 'e');
-    $.setSymbolToken(MATH_PI, 'pi');
-    $.setSymbolToken(MATH_NIL, '()');
-    $.setSymbolToken(MATH_IMU, 'i');
-    $.setSymbolToken(MATH_EXP, 'exp');
+    $.setSymbolToken(native_sym(Native.E), 'e');
+    $.setSymbolToken(native_sym(Native.PI), 'pi');
+    $.setSymbolToken(native_sym(Native.NIL), '()');
+    $.setSymbolToken(native_sym(Native.IMU), 'i');
+    $.setSymbolToken(native_sym(Native.exp), 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
     $.setModeFlag(useCaretForExponentiation, config.useCaretForExponentiation);

@@ -52,10 +52,16 @@ export function hash_unaop_atom(opr: Sym, arg: string): string {
     return `(${opr.key()} ${arg})`;
 }
 
+/**
+ * '(' opr '(' arg ')' ')'
+ */
 export function hash_unaop_cons(opr: Sym, arg: Sym): string {
     return `(${opr.key()} (${arg.key()}))`;
 }
 
+/**
+ * '(' opr ')'
+ */
 export function hash_nonop_cons(opr: Sym): string {
     return `(${opr.key()})`;
 }

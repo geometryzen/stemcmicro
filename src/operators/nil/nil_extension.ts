@@ -24,7 +24,7 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(expr: U): expr is Cons {
@@ -32,7 +32,7 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isMinusOne(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isOne(expr: Cons): boolean {
@@ -40,19 +40,19 @@ class NilExtension implements Operator<Cons> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNil(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isVector(expr: Cons): boolean {
-        throw new Error("Nil Method not implemented.");
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Cons): boolean {

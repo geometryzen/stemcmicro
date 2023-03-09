@@ -186,7 +186,6 @@ export { test };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function setup_test(f: () => void, engine: ScriptContext, options: ScriptContextOptions) {
-    console.log("setup_test");
     // TODO: Some global issues to be addressed...
     // Inlining 'clearall' is illuminating.
     // Reveals some objects that are still global.

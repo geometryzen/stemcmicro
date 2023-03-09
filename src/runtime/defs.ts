@@ -8,7 +8,7 @@ import { Flt, negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { PI } from "./constants";
+import { MATH_PI } from "./ns_math";
 
 // TOS cannot be arbitrarily large because the OS seg faults on deep recursion.
 // For example, a circular evaluation like x=x+1 can cause a seg fault.
@@ -213,13 +213,13 @@ export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lh
 }
 
 /**
- * TODO: Make more use of this. 
+ *
  */
 export class DynamicConstants {
     public static NegOne($: ExtensionEnv): Flt | Rat {
         return $.getModeFlag(evaluatingAsFloat) ? negOneAsFlt : negOne;
     }
     public static Pi($: ExtensionEnv): Sym | Flt {
-        return $.getModeFlag(evaluatingAsFloat) ? piAsFlt : PI;
+        return $.getModeFlag(evaluatingAsFloat) ? piAsFlt : MATH_PI;
     }
 }

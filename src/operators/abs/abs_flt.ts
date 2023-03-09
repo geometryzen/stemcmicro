@@ -1,7 +1,9 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { Flt } from "../../tree/flt/Flt";
-import { create_sym, Sym } from "../../tree/sym/Sym";
+import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { Function1 } from "../helpers/Function1";
@@ -17,7 +19,7 @@ class Builder implements OperatorBuilder<U> {
 class Op extends Function1<Flt> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('abs_rat', create_sym('abs'), is_flt, $);
+        super('abs_rat', native_sym(Native.abs), is_flt, $);
         this.hash = hash_unaop_atom(this.opr, HASH_FLT);
     }
     transform1(opr: Sym, arg: Flt, expr: UCons<Sym, Flt>): [TFLAGS, U] {

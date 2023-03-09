@@ -3,6 +3,8 @@ import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
 import { Eval_clear, Eval_clearall } from '../clear';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
+import { Native } from '../native/Native';
+import { native_sym } from '../native/native_sym';
 import { Eval_nroots } from '../nroots';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_blade } from '../operators/abs/abs_blade';
@@ -318,12 +320,14 @@ import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { AND, APPROXRATIO, CLEAR, CLEARALL, IMAG, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
-import { MATH_ADD, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
+import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
 import { Eval_and, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from '../test';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 export function define_std_operators($: ExtensionEnv) {
+    // 
+    const MATH_ADD = native_sym(Native.add);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());

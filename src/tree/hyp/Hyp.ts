@@ -28,5 +28,9 @@ export class Hyp extends Atom<'Hyp'> {
     }
 }
 
+export function create_hyp(printname: string): Hyp {
+    return new Hyp(printname);
+}
+
 export const epsilon = new Hyp('ε');
 export const delta = new Hyp('δ');

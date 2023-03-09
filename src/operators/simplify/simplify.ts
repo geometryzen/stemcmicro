@@ -17,7 +17,7 @@ import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/he
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
 import { caddr, cadr } from '../../tree/helpers';
-import { half, one, third, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { half, one, third, three, two, create_int, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
@@ -536,7 +536,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         }
         const arg1b = $.multiply(checkSize2, SECRETX);
 
-        const checkSize3 = divide($.multiply(wrap_as_int(-3), A), B, $); // 2nd coeff
+        const checkSize3 = divide($.multiply(create_int(-3), A), B, $); // 2nd coeff
         const result3 = nativeDouble(evaluate_as_float(real(checkSize3, $), $));
         if (Math.abs(result3) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -556,7 +556,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
             return [p1, TFLAG_NONE];
         }
 
-        const checkSize = divide($.multiply(wrap_as_int(-2), A), B, $);
+        const checkSize = divide($.multiply(create_int(-2), A), B, $);
         const result2 = nativeDouble(evaluate_as_float(real(checkSize, $), $));
         if (Math.abs(result2) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];

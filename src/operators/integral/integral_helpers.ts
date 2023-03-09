@@ -12,7 +12,7 @@ import { is_add, is_multiply } from '../../runtime/helpers';
 import { scan_meta } from '../../brite/scan';
 import { simplify } from '../simplify/simplify';
 import { transform } from '../../transform';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
@@ -596,7 +596,7 @@ function italu_hashcode(u: U, x: U, $: ExtensionEnv): number {
             return hash_power(exp(one, $), cadr(u), x, $);
         }
         if (opr.equals(SQRT)) {
-            return hash_power(cadr(u), wrap_as_flt(0.5), x, $);
+            return hash_power(cadr(u), create_flt(0.5), x, $);
         }
         return hash_function(u, x, $);
     }

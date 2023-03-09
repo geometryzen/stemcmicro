@@ -5,13 +5,15 @@ import { create_sym, Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_str } from "../str/str_extension";
-import { uom } from "./uom";
+import { create_uom } from "./uom";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
         return new UomStr($);
     }
 }
+
+type UOM_STRING = 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelvin' | 'mole' | 'candela';
 
 /**
  * (uom Str) 
@@ -23,7 +25,9 @@ class UomStr extends Function1<Str> {
         this.hash = hash_unaop_atom(create_sym('uom'), HASH_STR);
     }
     transform1(opr: Sym, arg: Str): [TFLAGS, U] {
-        return [TFLAG_DIFF, uom(arg.str)];
+        // We are casting away the type safety knowing that the creation function will raise an exception.
+        // How we choose to manage exceptions is TBD.
+        return [TFLAG_DIFF, create_uom(arg.str as UOM_STRING)];
     }
 }
 

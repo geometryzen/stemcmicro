@@ -35,7 +35,7 @@ import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
 import { MATH_ADD, MATH_E, MATH_PI } from '../../../runtime/ns_math';
 import { caddr, cadr } from '../../../tree/helpers';
-import { negOne, one, two, wrap_as_int, zero } from '../../../tree/rat/Rat';
+import { negOne, one, two, create_int, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
 import { car, Cons, is_cons, items_to_cons, nil, U } from '../../../tree/tree';
 import { besselj } from '../../besselj/besselj';
@@ -247,7 +247,7 @@ function dcos(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 function dtan(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative(cadr(p1), p2, $);
-    return $.multiply(deriv, $.power(cos(cadr(p1), $), wrap_as_int(-2)));
+    return $.multiply(deriv, $.power(cos(cadr(p1), $), create_int(-2)));
 }
 
 function darcsin(p1: U, p2: Sym, $: ExtensionEnv): U {
@@ -294,7 +294,7 @@ function dcosh(p1: U, p2: Sym, $: ExtensionEnv): U {
 
 function dtanh(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative(cadr(p1), p2, $);
-    return $.multiply(deriv, $.power(ycosh(cadr(p1), $), wrap_as_int(-2)));
+    return $.multiply(deriv, $.power(ycosh(cadr(p1), $), create_int(-2)));
 }
 
 function darcsinh(p1: U, p2: Sym, $: ExtensionEnv): U {
@@ -359,7 +359,7 @@ export function derfc(p1: U, p2: Sym, $: ExtensionEnv): U {
                 exp($.multiply($.power(cadr(p1), two), negOne), $),
                 $.power(DynamicConstants.Pi($), rational(-1, 2))
             ),
-            wrap_as_int(-2)
+            create_int(-2)
         ),
         deriv
     );

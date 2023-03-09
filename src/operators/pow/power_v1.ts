@@ -15,7 +15,7 @@ import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, 
 import { defs } from "../../runtime/defs";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { power_tensor } from "../../tensor";
-import { oneAsFlt, wrap_as_flt } from "../../tree/flt/Flt";
+import { oneAsFlt, create_flt } from "../../tree/flt/Flt";
 import { caddr, cadr } from "../../tree/helpers";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
@@ -180,7 +180,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // e^some_float
     // Expect this to be covered by math.exp.Flt operator.
     if (is_base_of_natural_logarithm(base) && is_flt(expo)) {
-        const result = wrap_as_flt(Math.exp(expo.d));
+        const result = create_flt(Math.exp(expo.d));
         return hook(result, "N");
     }
 
@@ -333,7 +333,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             // need to evaluate PI to its actual double
             // value
 
-            const pi = $.getModeFlag(evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? wrap_as_flt(Math.PI) : PI;
+            const pi = $.getModeFlag(evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
             let tmp = $.multiply(
                 $.power(abs(base, $), expo),
                 $.power(negOne, divide($.multiply(arg(base, $), expo), pi, $))

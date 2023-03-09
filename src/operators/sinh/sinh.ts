@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { ARCSINH, SINH } from '../../runtime/constants';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { car, U } from '../../tree/tree';
@@ -23,7 +23,7 @@ export function sinh(expr: U, $: ExtensionEnv): U {
         if (Math.abs(d) < 1e-10) {
             d = 0.0;
         }
-        return wrap_as_flt(d);
+        return create_flt(d);
     }
     if ($.isZero(expr)) {
         return zero;

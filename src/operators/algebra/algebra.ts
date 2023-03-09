@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_and_integer } from '../../is_rat_integer';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { cons, Cons, items_to_cons, U } from '../../tree/tree';
@@ -29,7 +29,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
     constructor(private readonly dimensions: number, private readonly $: ExtensionEnv) {
     }
     get ε(): U {
-        return wrap_as_flt(1e-6);
+        return create_flt(1e-6);
     }
     get one(): U {
         return one;

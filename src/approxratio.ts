@@ -5,7 +5,7 @@ import { is_flt } from './operators/flt/is_flt';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { APPROXRATIO } from './runtime/constants';
 import { Flt } from './tree/flt/Flt';
-import { wrap_as_int } from './tree/rat/Rat';
+import { create_int } from './tree/rat/Rat';
 import { Cons, cons, is_cons, items_to_cons, U } from './tree/tree';
 
 /*
@@ -50,7 +50,7 @@ function approxratio_flt(value: Flt, $: ExtensionEnv): U {
             const theRatio = floatToRatioRoutine(theFloat, precision);
             return rational(theRatio[0], theRatio[1]);
         }
-        return wrap_as_int(theFloat);
+        return create_int(theFloat);
     }
 
     // we didn't manage, just leave unexpressed

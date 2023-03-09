@@ -16,7 +16,7 @@ import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLik
 import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
 import { Err } from "../../tree/err/Err";
 import { cadr } from "../../tree/helpers";
-import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
+import { one, create_int, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -285,7 +285,7 @@ function Eval_check(p1: U, $: ExtensionEnv) {
     }
     else {
         // returned true or false -> 1 or 0
-        stack_push(wrap_as_int(Number(checkResult)));
+        stack_push(create_int(Number(checkResult)));
     }
 }
 

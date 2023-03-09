@@ -5,7 +5,7 @@ import { nativeInt } from './nativeInt';
 import { is_num } from './operators/num/is_num';
 import { halt } from './runtime/defs';
 import { stack_pop, stack_push } from './runtime/stack';
-import { wrap_as_flt, Flt } from './tree/flt/Flt';
+import { create_flt, Flt } from './tree/flt/Flt';
 import { is_flt } from './operators/flt/is_flt';
 import { Num } from './tree/num/Num';
 import { is_rat } from './operators/rat/is_rat';
@@ -68,7 +68,7 @@ export function divide_numbers(lhs: Num, rhs: Num): Num {
     const a = is_flt(lhs) ? lhs.d : lhs.toNumber();
     const b = is_flt(rhs) ? rhs.d : rhs.toNumber();
 
-    return wrap_as_flt(a / b);
+    return create_flt(a / b);
 }
 
 /**
@@ -190,7 +190,7 @@ export function pop_number(): Num {
 
 export function rat_to_flt(n: Rat): Flt {
     const d = n.toNumber();
-    return wrap_as_flt(d);
+    return create_flt(d);
 }
 
 //static unsigned int *__factorial(int)

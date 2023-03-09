@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { cadr } from "../../tree/helpers";
-import { half, wrap_as_rat } from "../../tree/rat/Rat";
+import { half, create_rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -33,5 +33,5 @@ export const sqrt_1_any = new Builder();
 
 export function Eval_sqrt(p1: Cons, $: ExtensionEnv): U {
     const base = $.valueOf(cadr(p1));
-    return $.power(base, wrap_as_rat(1, 2));
+    return $.power(base, create_rat(1, 2));
 }

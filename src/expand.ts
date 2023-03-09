@@ -16,7 +16,7 @@ import { divpoly } from './quotient';
 import { doexpand_binary, doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
-import { one, wrap_as_int, zero } from './tree/rat/Rat';
+import { one, create_int, zero } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { nil, U } from './tree/tree';
 
@@ -136,10 +136,10 @@ function remove_negative_exponents(p2: U, p3: U, p9: U, $: ExtensionEnv): [U, U]
     }
 
     // A = A / X^j
-    p2 = $.multiply(p2, $.power(p9, wrap_as_int(-j)));
+    p2 = $.multiply(p2, $.power(p9, create_int(-j)));
 
     // B = B / X^j
-    p3 = $.multiply(p3, $.power(p9, wrap_as_int(-j)));
+    p3 = $.multiply(p3, $.power(p9, create_int(-j)));
 
     return [p2, p3];
 }
@@ -215,7 +215,7 @@ function expand_get_C(p2: U, p9: U, $: ExtensionEnv): U {
     const elems = new Array<U>(n * n);
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            const arg2 = $.power(p9, wrap_as_int(i));
+            const arg2 = $.power(p9, create_int(i));
             const divided = divide_expand(stack[j], arg2, $);
             elems[n * i + j] = filter(divided, p9, $);
         }
@@ -317,9 +317,9 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     const d = nativeInt(degree(p6, p9, $));
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < d; j++) {
-            const arg6 = $.power(p6, wrap_as_int(i));
+            const arg6 = $.power(p6, create_int(i));
             const arg8 = doexpand_binary(multiply, p8, arg6, $);
-            const arg9 = $.power(p9, wrap_as_int(j));
+            const arg9 = $.power(p9, create_int(j));
             const multiplied = doexpand_binary(multiply, arg8, arg9, $);
             stack.push(multiplied);
         }
@@ -353,7 +353,7 @@ function expand_get_B(p3: U, p4: U, p9: U, $: ExtensionEnv): U {
     const dims = [n];
     const elems = new Array<U>(n);
     for (let i = 0; i < n; i++) {
-        const arg2 = $.power(p9, wrap_as_int(i));
+        const arg2 = $.power(p9, create_int(i));
         const divided = divide_expand(p3, arg2, $);
         elems[i] = filter(divided, p9, $);
     }
@@ -392,9 +392,9 @@ function expand_get_AF(p5: U, X: U, $: ExtensionEnv): U[] {
     const d = nativeInt(degree(p5, X, $));
     for (let i = n; i > 0; i--) {
         for (let j = 0; j < d; j++) {
-            const A = $.power(p5, wrap_as_int(i));
+            const A = $.power(p5, create_int(i));
             const B = inverse(A, $);
-            const C = $.power(X, wrap_as_int(j));
+            const C = $.power(X, create_int(j));
             results.push($.multiply(B, C));
         }
     }

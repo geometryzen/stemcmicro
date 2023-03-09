@@ -3,7 +3,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { coeff } from './operators/coeff/coeff';
 import { SYMBOL_X } from './runtime/constants';
 import { cadddr, caddr, cadr } from './tree/helpers';
-import { wrap_as_int, zero } from './tree/rat/Rat';
+import { create_int, zero } from './tree/rat/Rat';
 import { is_nil, U } from './tree/tree';
 
 // Divide polynomials
@@ -47,7 +47,7 @@ export function divpoly(DIVIDEND: U, DIVISOR: U, X: U, $: ExtensionEnv): U {
             dividendCs[x + i] = $.subtract(dividendCs[x + i], $.multiply(divisorCs[i], Q));
         }
 
-        QUOTIENT = $.add(QUOTIENT, $.multiply(Q, $.power(X, wrap_as_int(x))));
+        QUOTIENT = $.add(QUOTIENT, $.multiply(Q, $.power(X, create_int(x))));
 
         m--;
         x--;

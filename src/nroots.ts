@@ -10,7 +10,7 @@ import { imag } from './operators/imag/imag';
 import { real } from './operators/real/real';
 import { defs, halt, move_top_of_stack } from './runtime/defs';
 import { stack_pop, stack_push } from './runtime/stack';
-import { wrap_as_flt } from './tree/flt/Flt';
+import { create_flt } from './tree/flt/Flt';
 import { caddr, cadr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
 import { Cons, is_nil, U } from './tree/tree';
@@ -107,7 +107,7 @@ export function Eval_nroots(expr: Cons, $: ExtensionEnv): U {
         if (Math.abs(nroots_a.i) < NROOTS_DELTA) {
             nroots_a.i = 0.0;
         }
-        stack_push($.add(wrap_as_flt(nroots_a.r), $.multiply(wrap_as_flt(nroots_a.i), imu)));
+        stack_push($.add(create_flt(nroots_a.r), $.multiply(create_flt(nroots_a.i), imu)));
         NROOTS_divpoly(k);
     }
 

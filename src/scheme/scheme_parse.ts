@@ -2,9 +2,9 @@ import { CharStream, consume_num, NumHandler } from "../brite/consume_num";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { Boo } from "../tree/boo/Boo";
-import { Flt, wrap_as_flt } from "../tree/flt/Flt";
+import { Flt, create_flt } from "../tree/flt/Flt";
 import { Num } from "../tree/num/Num";
-import { wrap_as_int } from "../tree/rat/Rat";
+import { create_int } from "../tree/rat/Rat";
 import { Str } from "../tree/str/Str";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { cons, items_to_cons, nil, U } from "../tree/tree";
@@ -167,10 +167,10 @@ class Parser {
             }
 
             if (/^#x[0-9a-z]+$/i.test(t)) {  // #x... Hex
-                return wrap_as_int(new Number('0x' + t.substring(2, t.length)).valueOf());
+                return create_int(new Number('0x' + t.substring(2, t.length)).valueOf());
             }
             else if (/^#d[0-9.]+$/i.test(t)) {  // #d... Decimal
-                return wrap_as_flt(new Number(t.substring(2, t.length)).valueOf());
+                return create_flt(new Number(t.substring(2, t.length)).valueOf());
             }
             else {
                 const stream = new CharStreamOnString(t);

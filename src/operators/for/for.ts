@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
-import { wrap_as_int } from '../../tree/rat/Rat';
+import { create_int } from '../../tree/rat/Rat';
 import { Cons, nil, U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 
@@ -49,7 +49,7 @@ export function Eval_for(p1: Cons, $: ExtensionEnv): U {
     const p4: U = $.getSymbolValue(loopingVariable);
     try {
         for (let i = j; i <= k; i++) {
-            $.setSymbolValue(loopingVariable, wrap_as_int(i));
+            $.setSymbolValue(loopingVariable, create_int(i));
             $.valueOf(cadr(p1));
         }
     }

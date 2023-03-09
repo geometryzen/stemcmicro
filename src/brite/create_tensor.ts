@@ -4,7 +4,7 @@ import { U } from "../tree/tree";
 
 /**
  * Creates a Tensor from an array of elements. If the elements themselves are tensors,
- * then that elements must be flattened, but the dimensionality recorded and incorporated
+ * then that elements must be flattened, but the dimensionality is computed and incorporated
  * into the created Tensor.
  */
 export function create_tensor(elements: U[]): Tensor {

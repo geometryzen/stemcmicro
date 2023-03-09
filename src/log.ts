@@ -10,7 +10,7 @@ import { is_negative_number } from './predicates/is_negative_number';
 import { LOG } from './runtime/constants';
 import { DynamicConstants } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
-import { wrap_as_flt, zeroAsFlt } from './tree/flt/Flt';
+import { create_flt, zeroAsFlt } from './tree/flt/Flt';
 import { caddr, cadr } from './tree/helpers';
 import { one, zero } from './tree/rat/Rat';
 import { Cons, U } from './tree/tree';
@@ -48,7 +48,7 @@ export function logarithm(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(expr)) {
-        return wrap_as_flt(Math.log(expr.d));
+        return create_flt(Math.log(expr.d));
     }
 
     // rational number and not an integer?

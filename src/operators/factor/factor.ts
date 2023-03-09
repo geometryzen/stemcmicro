@@ -5,7 +5,7 @@ import { factor_number } from '../../pollard';
 import { MAXPRIMETAB, primetab } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_multiply } from '../../runtime/helpers';
-import { one, Rat, wrap_as_int } from '../../tree/rat/Rat';
+import { one, Rat, create_int } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 
 export function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
@@ -63,13 +63,13 @@ export function factor_small_number(n: number): Rat[] {
         }
 
         if (expo) {
-            arr.push(wrap_as_int(d));
-            arr.push(wrap_as_int(expo));
+            arr.push(create_int(d));
+            arr.push(create_int(expo));
         }
     }
 
     if (n > 1) {
-        arr.push(wrap_as_int(n));
+        arr.push(create_int(n));
         arr.push(one);
     }
     return arr;

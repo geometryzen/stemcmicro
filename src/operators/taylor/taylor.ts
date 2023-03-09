@@ -5,7 +5,7 @@ import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { TAYLOR } from '../../runtime/constants';
 import { stack_peek } from '../../runtime/stack';
-import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { one, create_int, zero } from '../../tree/rat/Rat';
 import { car, cdr, nil, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';
 import { factorial } from '../factorial/factorial';
@@ -33,7 +33,7 @@ export function Eval_taylor(p1: U, $: ExtensionEnv): U {
     // 3rd arg
     p1 = cdr(p1);
     p2 = $.valueOf(car(p1));
-    const N = nil === p2 ? wrap_as_int(24) : p2; // 24: default number of terms
+    const N = nil === p2 ? create_int(24) : p2; // 24: default number of terms
 
     // 4th arg
     p1 = cdr(p1);
@@ -84,7 +84,7 @@ function taylor(f: U, X: U, N: U, A: U, $: ExtensionEnv): U {
         weight = $.multiply(weight, x_minus_a);
 
         const dfi_at_a = $.valueOf(subst(dfi, X, A, $)); // F: f(a)
-        const term = divide($.multiply(dfi_at_a, weight), factorial(wrap_as_int(i)), $);
+        const term = divide($.multiply(dfi_at_a, weight), factorial(create_int(i)), $);
         retval = $.add(retval, term);
     }
     return retval;

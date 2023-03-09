@@ -4,7 +4,7 @@ import { inverse } from '../../helpers/inverse';
 import { nativeInt } from '../../nativeInt';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
-import { one, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { one, create_int, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, U } from '../../tree/tree';
 import { factor_small_number } from '../factor/factor';
@@ -116,7 +116,7 @@ function gen(stack: U[], h: number, k: number, $: ExtensionEnv): void {
     const expo = nativeInt(EXPO);
     if (!isNaN(expo)) {
         for (let i = 0; i <= Math.abs(expo); i++) {
-            stack.push($.multiply(ACCUM, $.power(BASE, wrap_as_int(signum(expo) * i))));
+            stack.push($.multiply(ACCUM, $.power(BASE, create_int(signum(expo) * i))));
             gen(stack, h + 2, k, $);
         }
     }

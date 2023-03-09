@@ -5,7 +5,7 @@ import { nativeInt } from '../../nativeInt';
 import { COS, LEGENDRE, SECRETX, SIN } from '../../runtime/constants';
 import { square } from '../../square';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
-import { half, one, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { half, one, create_int, zero } from '../../tree/rat/Rat';
 import { car, nil, U } from '../../tree/tree';
 import { cos } from '../cos/cosine';
 import { derivative } from '../derivative/derivative';
@@ -91,7 +91,7 @@ function __legendre2(n: number, m: number, X: U, $: ExtensionEnv): U {
     //    Y1 = -1/2 + 3/2*x^2
     //    ((2*i+1)*x*Y1 - i*Y0) / i = -3/2*x + 5/2*x^3
     for (let i = 0; i < n; i++) {
-        const divided = divide($.subtract($.multiply($.multiply(wrap_as_int(2 * i + 1), X), Y1), $.multiply(wrap_as_int(i), Y0)), wrap_as_int(i + 1), $);
+        const divided = divide($.subtract($.multiply($.multiply(create_int(2 * i + 1), X), Y1), $.multiply(create_int(i), Y0)), create_int(i + 1), $);
         Y0 = Y1;
         Y1 = divided;
     }
@@ -117,7 +117,7 @@ function __legendre3(p1: U, m: number, X: U, $: ExtensionEnv): U | undefined {
         base = square(cos(cadr(X), $), $);
     }
 
-    let result = $.multiply(p1, $.power(base, $.multiply(wrap_as_int(m), half)));
+    let result = $.multiply(p1, $.power(base, $.multiply(create_int(m), half)));
 
     if (m % 2) {
         result = $.negate(result);

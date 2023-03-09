@@ -8,7 +8,7 @@ import { is_add, is_factorial, is_multiply, is_power } from '../../runtime/helpe
 import { stack_pop, stack_push } from '../../runtime/stack';
 import { doexpand_value_of } from '../../scripting/doexpand_eval';
 import { caddr, cadr } from '../../tree/helpers';
-import { wrap_as_int, one, zero } from '../../tree/rat/Rat';
+import { create_int, one, zero } from '../../tree/rat/Rat';
 import { is_cons, nil, U } from '../../tree/tree';
 
 export function factorial(p1: U): U {
@@ -145,7 +145,7 @@ function sfac_product_f(s: number, a: number, b: number, $: ExtensionEnv) {
 
         let temp3: U = one;
         for (let i = 1; i <= n; i++) {
-            temp3 = $.multiply(temp3, $.power($.add(cadr(p2), wrap_as_int(i)), p3));
+            temp3 = $.multiply(temp3, $.power($.add(cadr(p2), create_int(i)), p3));
         }
         defs.stack[s + a] = temp3;
         defs.stack[s + b] = nil;

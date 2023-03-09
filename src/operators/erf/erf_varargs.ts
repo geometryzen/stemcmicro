@@ -3,7 +3,7 @@ import { erfc } from "../erfc/erfc";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { is_negative } from "../../predicates/is_negative";
 import { ERF } from "../../runtime/constants";
-import { wrap_as_flt } from "../../tree/flt/Flt";
+import { create_flt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
 import { zero } from "../../tree/rat/Rat";
 import { Cons, items_to_cons, U } from "../../tree/tree";
@@ -32,7 +32,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
 
 function yerf(p1: U, $: ExtensionEnv): U {
     if (is_flt(p1)) {
-        return wrap_as_flt(1.0 - erfc(p1.d));
+        return create_flt(1.0 - erfc(p1.d));
     }
 
     if ($.isZero(p1)) {

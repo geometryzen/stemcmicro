@@ -16,7 +16,7 @@ import { is_negative } from './predicates/is_negative';
 import { divpoly } from './quotient';
 import { defs, halt, move_top_of_stack, noexpand_unary } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
-import { negOne, one, wrap_as_int, zero } from './tree/rat/Rat';
+import { negOne, one, create_int, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { U } from './tree/tree';
 
@@ -139,7 +139,7 @@ export function yyfactorpoly(P: U, X: Sym, $: ExtensionEnv): U {
                 let temp: U = zero;
                 for (let i = 0; i <= coeffIdx; i++) {
                     // p2: the free variable
-                    temp = $.add(temp, $.multiply(coefficients[i], $.power(X, wrap_as_int(i))));
+                    temp = $.add(temp, $.multiply(coefficients[i], $.power(X, create_int(i))));
                 }
                 remainingPoly = temp;
             }
@@ -186,7 +186,7 @@ export function yyfactorpoly(P: U, X: Sym, $: ExtensionEnv): U {
                     let temp: U = zero;
                     for (let i = 0; i <= coeffIdx; i++) {
                         // p2: the free variable
-                        temp = $.add(temp, $.multiply(coefficients[i], $.power(X, wrap_as_int(i))));
+                        temp = $.add(temp, $.multiply(coefficients[i], $.power(X, create_int(i))));
                     }
                     remainingPoly = temp;
                 }
@@ -238,7 +238,7 @@ export function yyfactorpoly(P: U, X: Sym, $: ExtensionEnv): U {
 
     let temp: U = zero;
     for (let i = 0; i <= coeffIdx; i++) {
-        temp = $.add(temp, $.multiply(coefficients[i], $.power(X, wrap_as_int(i))));
+        temp = $.add(temp, $.multiply(coefficients[i], $.power(X, create_int(i))));
     }
 
     // console.lg("temp       II", render_as_infix(temp, $));
@@ -380,8 +380,8 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
         for (let rootsTries_j = 1; rootsTries_j <= 5; rootsTries_j++) {
             p4 = rect(
                 $.add(
-                    wrap_as_int(rootsTries_i),
-                    $.multiply(wrap_as_int(rootsTries_j), imu)
+                    create_int(rootsTries_i),
+                    $.multiply(create_int(rootsTries_j), imu)
                 ),
                 $
             );

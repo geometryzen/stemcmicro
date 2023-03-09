@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_BOO, HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
-import { wrap_as_boo } from "../../tree/boo/Boo";
+import { create_boo } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -23,7 +23,7 @@ class PredicateSym extends Function1<Sym> {
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         const $ = this.$;
         const props = $.getSymbolProps(arg);
-        return [TFLAG_DIFF, wrap_as_boo(props.real)];
+        return [TFLAG_DIFF, create_boo(props.real)];
     }
 }
 

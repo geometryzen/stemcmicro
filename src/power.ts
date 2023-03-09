@@ -6,7 +6,7 @@ import { is_quarter_turn } from './is_quarter_turn';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { factorial } from './operators/factorial/factorial';
 import { is_add } from './runtime/helpers';
-import { negOne, one, wrap_as_int, zero } from './tree/rat/Rat';
+import { negOne, one, create_int, zero } from './tree/rat/Rat';
 import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ export function power_sum(n: number, sum: Cons, $: ExtensionEnv): U {
     let p1 = cdr(sum);
     for (let i = 0; i < k; i++) {
         for (let j = 0; j <= n; j++) {
-            powers[i * (n + 1) + j] = $.power(car(p1), wrap_as_int(j));
+            powers[i * (n + 1) + j] = $.power(car(p1), create_int(j));
         }
         p1 = cdr(p1);
     }
@@ -63,7 +63,7 @@ export function power_sum(n: number, sum: Cons, $: ExtensionEnv): U {
         a[i] = 0;
     }
 
-    return multinomial_sum(k, n, a, 0, n, powers, factorial(wrap_as_int(n)), zero, $);
+    return multinomial_sum(k, n, a, 0, n, powers, factorial(create_int(n)), zero, $);
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ function multinomial_sum(k: number, n: number, a: number[], i: number, m: number
     // coefficient
     let temp = p1;
     for (let j = 0; j < k; j++) {
-        temp = divide(temp, factorial(wrap_as_int(a[j])), $);
+        temp = divide(temp, factorial(create_int(a[j])), $);
     }
 
     // factors

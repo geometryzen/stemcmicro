@@ -3,7 +3,7 @@ import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { BESSELY } from '../../runtime/constants';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { negOne } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
@@ -38,7 +38,7 @@ function yybessely(X: U, N: U, $: ExtensionEnv): U {
 
     if (is_flt(X) && !isNaN(n)) {
         const d = yn(n, X.d);
-        return wrap_as_flt(d);
+        return create_flt(d);
     }
 
     if (is_negative(N)) {

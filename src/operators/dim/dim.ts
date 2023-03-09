@@ -1,7 +1,7 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { caddr, cadr, cddr } from "../../tree/helpers";
-import { one, wrap_as_int } from "../../tree/rat/Rat";
+import { one, create_int } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
 import { is_tensor } from "../tensor/is_tensor";
 
@@ -31,6 +31,6 @@ export function Eval_dim(p1: U, $: ExtensionEnv): U {
         return p1;
     }
     else {
-        return wrap_as_int(p2.dim(n - 1));
+        return create_int(p2.dim(n - 1));
     }
 }

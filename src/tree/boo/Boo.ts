@@ -33,7 +33,7 @@ export class Boo extends Atom<'Boo'> {
     }
 }
 
-export function wrap_as_boo(b: boolean): Boo {
+export function create_boo(b: boolean): Boo {
     return Boo.valueOf(b);
 }
 

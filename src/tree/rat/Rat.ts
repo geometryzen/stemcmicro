@@ -305,7 +305,7 @@ for (let n = lBound + 1; n < uBound; n++) {
 /**
  * Constructor function for Num from integer which is a primitive number.
  */
-export function wrap_as_int(n: number, pos?: number, end?: number): Rat {
+export function create_int(n: number, pos?: number, end?: number): Rat {
     if (n < uBound && n > lBound) {
         return cache.search(n);
     }
@@ -314,7 +314,7 @@ export function wrap_as_int(n: number, pos?: number, end?: number): Rat {
     }
 }
 
-export function wrap_as_rat(numer: number, denom: number, pos?: number, end?: number): Rat {
+export function create_rat(numer: number, denom: number, pos?: number, end?: number): Rat {
     // console.lg("wrap_as_rat", numer, denom);
     return new Rat(bigInt(numer), bigInt(denom), pos, end);
 }

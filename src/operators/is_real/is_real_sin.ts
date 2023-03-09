@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { PREDICATE_IS_REAL } from "../../runtime/constants";
-import { wrap_as_boo } from "../../tree/boo/Boo";
+import { create_boo } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { MATH_SIN } from "../sin/MATH_SIN";
@@ -20,7 +20,7 @@ class IsRealSin extends AbstractPredicateCons {
     transform1(opr: Sym, sinExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const x = sinExpr.argList.head;
-        return [TFLAG_DIFF, wrap_as_boo($.is_real(x))];
+        return [TFLAG_DIFF, create_boo($.is_real(x))];
     }
 }
 

@@ -7,7 +7,7 @@ import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
 import { is_negative_number } from './predicates/is_negative_number';
 import { FLOOR } from './runtime/constants';
-import { wrap_as_flt } from './tree/flt/Flt';
+import { create_flt } from './tree/flt/Flt';
 import { cadr } from './tree/helpers';
 import { negOne, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -27,7 +27,7 @@ function yyfloor(p1: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(p1)) {
-        return wrap_as_flt(Math.floor(p1.d));
+        return create_flt(Math.floor(p1.d));
     }
 
     if (is_rat_and_integer(p1)) {

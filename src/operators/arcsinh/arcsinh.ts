@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
 import { ARCSINH, SINH } from '../../runtime/constants';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { car, U } from '../../tree/tree';
@@ -34,7 +34,7 @@ export function arcsinh(x: U, $: ExtensionEnv): U {
     if (is_flt(x)) {
         let { d } = x;
         d = Math.log(d + Math.sqrt(d * d + 1.0));
-        return wrap_as_flt(d);
+        return create_flt(d);
     }
 
     if ($.isZero(x)) {

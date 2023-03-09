@@ -6,9 +6,9 @@ import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCCOS, ARCTAN, COS } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { half, negOne, one, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { half, negOne, one, three, two, create_int, zero } from '../../tree/rat/Rat';
 import { car, items_to_cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 
@@ -25,7 +25,7 @@ export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] 
         if (Math.abs(d) < 1e-10) {
             d = 0.0;
         }
-        return [TFLAG_DIFF, wrap_as_flt(d)];
+        return [TFLAG_DIFF, create_flt(d)];
     }
 
     // cosine function is symmetric, cos(-x) = cos(x)
@@ -53,7 +53,7 @@ export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] 
     // convoluted as we'd need to look at both numerator and
     // denominator.
 
-    const x_times_180 = $.multiply(x, wrap_as_int(180));
+    const x_times_180 = $.multiply(x, create_int(180));
     const Pi = DynamicConstants.Pi($);
     const n = nativeInt(divide(x_times_180, Pi, $));
 

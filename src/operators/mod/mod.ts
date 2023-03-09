@@ -9,7 +9,7 @@ import { is_num } from '../num/is_num';
 import { MOD } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { caddr, cadr } from '../../tree/helpers';
-import { Rat, wrap_as_int } from '../../tree/rat/Rat';
+import { Rat, create_int } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 
 export function Eval_mod(p1: U, $: ExtensionEnv): U {
@@ -32,7 +32,7 @@ function mod(p1: U, p2: U, $: ExtensionEnv): U {
         if (isNaN(n)) {
             halt('mod function: cannot convert float value to integer');
         }
-        p1 = wrap_as_int(n);
+        p1 = create_int(n);
     }
 
     if (is_flt(p2)) {
@@ -40,7 +40,7 @@ function mod(p1: U, p2: U, $: ExtensionEnv): U {
         if (isNaN(n)) {
             halt('mod function: cannot convert float value to integer');
         }
-        p2 = wrap_as_int(n);
+        p2 = create_int(n);
     }
 
     if (!is_rat_and_integer(p1) || !is_rat_and_integer(p2)) {

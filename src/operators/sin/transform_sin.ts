@@ -7,9 +7,9 @@ import { is_negative } from '../../predicates/is_negative';
 import { ARCSIN, ARCTAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add } from '../../runtime/helpers';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from "../../tree/helpers";
-import { half, negOne, one, three, two, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { half, negOne, one, three, two, create_int, zero } from '../../tree/rat/Rat';
 import { car, cdr, Cons, is_cons, U } from "../../tree/tree";
 import { cos } from '../cos/cosine';
 import { is_flt } from '../flt/is_flt';
@@ -48,7 +48,7 @@ function sine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
         if (Math.abs(d) < 1e-10) {
             d = 0.0;
         }
-        return [TFLAG_DIFF, wrap_as_flt(d)];
+        return [TFLAG_DIFF, create_flt(d)];
     }
 
     // sine function is antisymmetric, sin(-x) = -sin(x)
@@ -76,7 +76,7 @@ function sine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
     // convoluted as we'd need to look at both numerator and
     // denominator.
     // TODO: DynamicConstants.Pi
-    const n = nativeInt(divide($.multiply(x, wrap_as_int(180)), DynamicConstants.Pi($), $));
+    const n = nativeInt(divide($.multiply(x, create_int(180)), DynamicConstants.Pi($), $));
 
     // most "good" (i.e. compact) trigonometric results
     // happen for a round number of degrees. There are some exceptions

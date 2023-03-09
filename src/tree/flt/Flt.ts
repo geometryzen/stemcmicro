@@ -10,7 +10,7 @@ const cache: Flt[] = [];
  * @param pos The start position of the number in the source text.
  * @param end The end position of the number in the source text.
  */
-export function wrap_as_flt(value: number, pos?: number, end?: number): Flt {
+export function create_flt(value: number, pos?: number, end?: number): Flt {
     if (value === zeroAsFlt.d) {
         return zeroAsFlt;
     }
@@ -41,7 +41,7 @@ export class Flt extends Atom<'Flt'> {
         return this.d >= 0 ? this : this.neg();
     }
     add(rhs: Flt): Flt {
-        return wrap_as_flt(this.d + rhs.d);
+        return create_flt(this.d + rhs.d);
     }
     compare(other: Flt): 1 | -1 | 0 {
         if (this.d > other.d) {
@@ -85,10 +85,10 @@ export class Flt extends Atom<'Flt'> {
         return this.d === 0;
     }
     mul(rhs: Flt): Flt {
-        return wrap_as_flt(this.d * rhs.d);
+        return create_flt(this.d * rhs.d);
     }
     neg(): Flt {
-        return wrap_as_flt(-this.d);
+        return create_flt(-this.d);
     }
     toInfixString(): string {
         return `${this.d}`;

@@ -14,7 +14,7 @@ import { is_multiply, is_power } from './runtime/helpers';
 import { MATH_EQ } from './runtime/ns_math';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
-import { eight, four, half, negFour, negOne, nine, one, third, three, two, wrap_as_int } from './tree/rat/Rat';
+import { eight, four, half, negFour, negOne, nine, one, third, three, two, create_int } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, Cons, nil, U } from './tree/tree';
 
@@ -320,9 +320,9 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
 
     const R_a2_d = $.multiply($.multiply(A, A), D);
 
-    const R_27_a2_d = $.multiply(R_a2_d, wrap_as_int(27));
+    const R_27_a2_d = $.multiply(R_a2_d, create_int(27));
 
-    const R_m27_a2_d2 = $.multiply($.multiply(R_a2_d, D), wrap_as_int(-27));
+    const R_m27_a2_d2 = $.multiply($.multiply(R_a2_d, D), create_int(-27));
 
     // mixed calculations
     const R_a_b_c = $.multiply($.multiply(A, C), B);
@@ -333,7 +333,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
 
     const R_m9_a_b_c = $.negate($.multiply(R_a_b_c, nine));
 
-    const R_18_a_b_c_d = $.multiply($.multiply(R_a_b_c, D), wrap_as_int(18));
+    const R_18_a_b_c_d = $.multiply($.multiply(R_a_b_c, D), create_int(18));
 
     const R_DELTA0 = $.subtract(R_b2, R_3_a_c);
 
@@ -578,7 +578,7 @@ function _solveDegree4ZeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] 
 }
 
 function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] {
-    const R_p = divide($.add($.multiply(eight, $.multiply(C, A)), $.multiply(wrap_as_int(-3), $.power(B, two))), $.multiply(eight, $.power(A, two)), $);
+    const R_p = divide($.add($.multiply(eight, $.multiply(C, A)), $.multiply(create_int(-3), $.power(B, two))), $.multiply(eight, $.power(A, two)), $);
     const R_q = divide(
         $.add(
             $.power(B, three),
@@ -595,16 +595,16 @@ function _solveDegree4NonzeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U
     // convert to depressed quartic
     const R_r = divide(
         $.add(
-            $.multiply($.power(B, four), wrap_as_int(-3)),
+            $.multiply($.power(B, four), create_int(-3)),
             $.add(
-                $.multiply(wrap_as_int(256), $.multiply(R_a3, E)),
+                $.multiply(create_int(256), $.multiply(R_a3, E)),
                 $.add(
-                    $.multiply(wrap_as_int(-64), $.multiply(R_a2_d, B)),
-                    $.multiply(wrap_as_int(16), $.multiply(R_b2, $.multiply(A, C)))
+                    $.multiply(create_int(-64), $.multiply(R_a2_d, B)),
+                    $.multiply(create_int(16), $.multiply(R_b2, $.multiply(A, C)))
                 )
             )
         ),
-        $.multiply(wrap_as_int(256), $.power(A, four)), $);
+        $.multiply(create_int(256), $.power(A, four)), $);
     const four_x_4 = $.power(SECRETX, four);
     const r_q_x_2 = $.multiply(R_p, $.power(SECRETX, two));
     const r_q_x = $.multiply(R_q, SECRETX);

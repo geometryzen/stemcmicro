@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
-import { one, wrap_as_int } from '../../tree/rat/Rat';
+import { one, create_int } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 
@@ -43,7 +43,7 @@ export function Eval_product(p1: U, $: ExtensionEnv): U {
     let temp: U = one;
 
     for (let i = j; i <= k; i++) {
-        $.setSymbolValue(indexVariable, wrap_as_int(i));
+        $.setSymbolValue(indexVariable, create_int(i));
         const arg2 = $.valueOf(body);
         temp = $.multiply(temp, arg2);
     }

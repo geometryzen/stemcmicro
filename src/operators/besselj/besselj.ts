@@ -5,9 +5,9 @@ import { evaluatingAsFloat } from '../../modes/modes';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { BESSELJ, MEQUAL, MSIGN, PI } from '../../runtime/constants';
-import { wrap_as_flt } from '../../tree/flt/Flt';
+import { create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
-import { half, negOne, one, two, wrap_as_int, zero } from '../../tree/rat/Rat';
+import { half, negOne, one, two, create_int, zero } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { cos } from '../cos/cosine';
 import { is_flt } from '../flt/is_flt';
@@ -66,7 +66,7 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     // numerical result
     if (is_flt(X) && !isNaN(n)) {
         const d = jn(n, X.d);
-        return wrap_as_flt(d);
+        return create_flt(d);
     }
 
     // bessej(0,0) = 1
@@ -83,18 +83,18 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     if (is_rat(N) && MEQUAL(N.b, 2)) {
         // n = 1/2
         if (MEQUAL(N.a, 1)) {
-            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : divide(two, PI, $);
+            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
             return $.multiply($.power(divide(twoOverPi, X, $), half), sin(X, $));
         }
 
         // n = -1/2
         if (MEQUAL(N.a, -1)) {
-            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? wrap_as_flt(2.0 / Math.PI) : divide(two, PI, $);
+            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
             return $.multiply($.power(divide(twoOverPi, X, $), half), cos(X, $));
         }
 
         // besselj(x,n) = (2/x) (n-sgn(n)) besselj(x,n-sgn(n)) - besselj(x,n-2*sgn(n))
-        const SGN = wrap_as_int(MSIGN(N.a));
+        const SGN = create_int(MSIGN(N.a));
 
         return $.subtract(
             $.multiply(

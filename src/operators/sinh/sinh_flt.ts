@@ -1,7 +1,7 @@
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
 import { SINH } from "../../runtime/constants";
-import { Flt, wrap_as_flt, zeroAsFlt } from "../../tree/flt/Flt";
+import { Flt, create_flt, zeroAsFlt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
@@ -36,7 +36,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
             return [TFLAG_DIFF, zeroAsFlt];
         }
         else {
-            return [TFLAG_DIFF, wrap_as_flt(d)];
+            return [TFLAG_DIFF, create_flt(d)];
         }
     }
 }

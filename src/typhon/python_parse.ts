@@ -44,7 +44,7 @@ import { FltTokenParser } from '../operators/flt/FltTokenParser';
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { ASSIGN } from "../runtime/constants";
 import { MATH_ADD, MATH_COMPONENT, MATH_DIV, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
-import { wrap_as_int } from "../tree/rat/Rat";
+import { create_int } from "../tree/rat/Rat";
 import { Str } from "../tree/str/Str";
 import { create_sym } from "../tree/sym/Sym";
 import { items_to_cons, nil, U } from "../tree/tree";
@@ -181,7 +181,7 @@ class PythonVisitor implements Visitor {
         // Ranges are given a s line and column, so we need a converter to get offset.
         range.begin;
         if (value.isInt()) {
-            this.stack.push(wrap_as_int(value.value as number));
+            this.stack.push(create_int(value.value as number));
         }
         else if (value.isFloat()) {
             this.stack.push(new FltTokenParser().parse(value.text as string, 0, 0));

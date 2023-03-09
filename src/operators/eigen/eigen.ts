@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { print_str } from '../../print/print';
 import { EIGEN, EIGENVAL, EIGENVEC } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
-import { Flt, wrap_as_flt } from '../../tree/flt/Flt';
+import { Flt, create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { create_sym, Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
@@ -279,7 +279,7 @@ function eigen(op: Sym, p1: Tensor<Flt>): [D: Tensor, Q: Tensor] {
     if (op.equals(EIGEN) || op.equals(EIGENVAL)) {
         for (let i = 0; i < EIG_N; i++) {
             for (let j = 0; j < EIG_N; j++) {
-                Delems[EIG_N * i + j] = wrap_as_flt(EIG_yydd[EIG_N * i + j]);
+                Delems[EIG_N * i + j] = create_flt(EIG_yydd[EIG_N * i + j]);
             }
         }
     }
@@ -289,7 +289,7 @@ function eigen(op: Sym, p1: Tensor<Flt>): [D: Tensor, Q: Tensor] {
     if (op.equals(EIGEN) || op.equals(EIGENVEC)) {
         for (let i = 0; i < EIG_N; i++) {
             for (let j = 0; j < EIG_N; j++) {
-                Qelems[EIG_N * i + j] = wrap_as_flt(EIG_yyqq[EIG_N * i + j]);
+                Qelems[EIG_N * i + j] = create_flt(EIG_yyqq[EIG_N * i + j]);
             }
         }
     }

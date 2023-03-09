@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { cadr } from '../../tree/helpers';
-import { wrap_as_int, zero } from '../../tree/rat/Rat';
+import { create_int, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { U } from '../../tree/tree';
 import { is_tensor } from '../tensor/is_tensor';
@@ -26,7 +26,7 @@ function shape(M: U, $: ExtensionEnv): U {
 
     const dims = [rank];
     for (let i = 0; i < rank; i++) {
-        elems[i] = wrap_as_int(M.dim(i));
+        elems[i] = create_int(M.dim(i));
     }
 
     return new Tensor(dims, elems);

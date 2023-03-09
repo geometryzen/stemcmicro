@@ -2,7 +2,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { inverse } from './helpers/inverse';
 import { nativeInt } from './nativeInt';
 import { HILBERT } from './runtime/constants';
-import { wrap_as_int } from './tree/rat/Rat';
+import { create_int } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Tensor } from './tree/tensor/Tensor';
 import { Cons, items_to_cons, U } from './tree/tree';
@@ -31,7 +31,7 @@ export function hilbert(N: U, $: ExtensionEnv): Cons | Sym | Tensor {
     const elems = new Array<U>(n * n);
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            elems[i * n + j] = inverse(wrap_as_int(i + j + 1), $);
+            elems[i * n + j] = inverse(create_int(i + j + 1), $);
         }
     }
     return new Tensor(dims, elems);

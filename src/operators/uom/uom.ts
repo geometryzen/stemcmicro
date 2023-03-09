@@ -1,8 +1,7 @@
 import { Err } from "../../tree/err/Err";
-import { U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";
 
-export function uom(name: string): U {
+export function create_uom(name: 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelvin' | 'mole' | 'candela'): Uom {
     switch (name) {
         case 'kilogram': {
             return Uom.KILOGRAM;
@@ -29,7 +28,7 @@ export function uom(name: string): U {
             return Uom.CANDELA;
         }
         default: {
-            return new Err(`Unknown name ${name}`);
+            throw new Err(`Unknown name ${name}`);
         }
     }
 }

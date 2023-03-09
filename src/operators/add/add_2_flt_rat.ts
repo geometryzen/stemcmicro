@@ -1,7 +1,7 @@
 import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { Flt, wrap_as_flt } from "../../tree/flt/Flt";
+import { Flt, create_flt } from "../../tree/flt/Flt";
 import { is_flt } from "../flt/is_flt";
 import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -25,7 +25,7 @@ class Op extends Function2<Flt, Rat> implements Operator<Cons> {
     transform2(opr: Sym, lhs: Flt, rhs: Rat): [TFLAGS, U] {
         const lhsNum = lhs.toNumber();
         const rhsNum = rhs.toNumber();
-        return [TFLAG_DIFF, wrap_as_flt(lhsNum + rhsNum)];
+        return [TFLAG_DIFF, create_flt(lhsNum + rhsNum)];
     }
 }
 

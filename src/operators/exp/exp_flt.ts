@@ -1,5 +1,5 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { Flt, wrap_as_flt } from "../../tree/flt/Flt";
+import { Flt, create_flt } from "../../tree/flt/Flt";
 import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -20,7 +20,7 @@ class ExpFlt extends Function1<Flt> implements Operator<U> {
         this.hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
     transform1(opr: Sym, arg: Flt): [TFLAGS, U] {
-        return [TFLAG_DIFF, wrap_as_flt(Math.exp(arg.toNumber()))];
+        return [TFLAG_DIFF, create_flt(Math.exp(arg.toNumber()))];
     }
 }
 

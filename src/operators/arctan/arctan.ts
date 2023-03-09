@@ -7,7 +7,7 @@ import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, COS, PI, POWER, SIN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_multiply, is_power } from '../../runtime/helpers';
-import { piAsFlt, wrap_as_flt } from '../../tree/flt/Flt';
+import { piAsFlt, create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { third, zero } from '../../tree/rat/Rat';
 import { car, cdr, U } from '../../tree/tree';
@@ -40,7 +40,7 @@ export function arctan(x: U, $: ExtensionEnv): U {
     }
 
     if (is_flt(x)) {
-        return wrap_as_flt(Math.atan(x.d));
+        return create_flt(Math.atan(x.d));
     }
 
     if ($.isZero(x)) {

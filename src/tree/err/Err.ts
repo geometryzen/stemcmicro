@@ -4,7 +4,7 @@ import { U } from "../tree";
 /**
  * An error that may be used as a return value. This will not be thrown. 
  */
-export class Err extends Atom {
+export class Err extends Atom<'Err'> {
     constructor(public message: string, pos?: number, end?: number) {
         super('Err', pos, end);
     }

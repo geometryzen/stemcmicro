@@ -1,7 +1,7 @@
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
 import { emptyStr, Str } from "../../tree/str/Str";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 
@@ -85,6 +85,9 @@ class StrExtension implements Extension<Str> {
     }
     toListString(str: Str): string {
         return str.toListString();
+    }
+    evaluate(str: Str, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(str, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_str(expr)) {

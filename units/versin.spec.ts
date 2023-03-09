@@ -3,7 +3,7 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 // TODO: Define the versin function externally and then use it.
-describe("exmple", function () {
+describe("versin", function () {
     it("versin(x)", function () {
         const lines: string[] = [
             `versin(x)`

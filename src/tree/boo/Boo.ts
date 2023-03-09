@@ -4,7 +4,7 @@ import { U } from "../tree";
 /**
  * The implementation of a Logical Boolean value.
  */
-export class Boo extends Atom {
+export class Boo extends Atom<'Boo'> {
     constructor(private readonly b: boolean, pos?: number, end?: number) {
         super('Boo', pos, end);
     }

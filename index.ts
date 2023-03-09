@@ -18,7 +18,7 @@ export { Atom } from './src/tree/atom/Atom';
 export { Boo, booF, booT } from './src/tree/boo/Boo';
 export { Flt, wrap_as_flt } from './src/tree/flt/Flt';
 export { Hyp } from './src/tree/hyp/Hyp';
-export { Imu, imu } from './src/tree/imu/ImaginaryUnit';
+export { Imu, imu } from './src/tree/imu/Imu';
 export { Num } from './src/tree/num/Num';
 export { one, Rat, wrap_as_int, wrap_as_rat, zero } from './src/tree/rat/Rat';
 export { Str } from './src/tree/str/Str';

@@ -5,10 +5,14 @@ import { useCaretForExponentiation } from "../modes/modes";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { is_boo } from "../operators/boo/is_boo";
+import { is_lambda } from "../operators/lambda/is_lambda";
+import { is_rat } from "../operators/rat/is_rat";
 import { is_sym } from "../operators/sym/is_sym";
+import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { FUNCTION, PREDICATE_IS_REAL } from "../runtime/constants";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
+import { Lambda } from "../tree/lambda/Lambda";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
@@ -16,7 +20,7 @@ import { Eval_user_function } from "../userfunc";
 import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, LegacyExpr, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
-import { operator_from_legacy_transformer, operator_from_modern_transformer } from "./operator_from_legacy_transformer";
+import { hash_from_match, operator_from_legacy_transformer, opr_from_match } from "./operator_from_legacy_transformer";
 import { UnknownOperator } from "./UnknownOperator";
 
 const ADD = native_sym(Native.add);
@@ -188,8 +192,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             $.defineOperator(operator_from_legacy_transformer(opr, transformer));
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        defineFunction(match: U, lambda: LambdaExpr): void {
-            $.defineOperator(operator_from_modern_transformer(match, lambda));
+        defineFunction(match: U, impl: LambdaExpr): void {
+            // $.defineOperator(operator_from_modern_transformer(match, impl));
+            const opr = opr_from_match(match);
+            const hash = hash_from_match(match);
+            $.setSymbolValue(opr, new Lambda(impl, hash));
         },
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
             $.defineOperator(operator_from_keyword_runner(sym, runner));
@@ -493,12 +500,36 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return op.toListString(expr);
         },
         transform(expr: U): [TFLAGS, U] {
-            // console.lg("transform", render_as_sexpr(expr, $), "is_sym", is_sym(expr));
+            // console.lg("transform", expr.toString(), "is_sym", is_sym(expr));
             if (expr.meta === TFLAG_HALT) {
                 return [TFLAG_HALT, expr];
             }
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
+                // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
+                // to the left or right. This implies that I have distinct right and left evaluations.
+                const head = expr.head;
+                if (is_sym(head)) {
+                    // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
+                    const value = $.getSymbolValue(head);
+                    if (is_lambda(value)) {
+                        return wrap_as_transform(value.evaluate(expr.argList, $), expr);
+                    }
+                }
+                else if (is_rat(head)) {
+                    // We know that the key and hash are both 'Rat'
+                    const ops: Operator<U>[] = currentOps()['Rat'];
+                    // TODO: The operator will be acting on the argList, not the entire expression.
+                    const op = unambiguous_operator(expr.argList, ops, $);
+                    if (op) {
+                        // console.lg(`We found the ${op.name} operator!`);
+                        return op.evaluate(head, expr.argList);
+                    }
+                    else {
+                        // eslint-disable-next-line no-console
+                        console.warn(`No unique operators found for Rat from ${ops.length} choice(s).`);
+                    }
+                }
                 // let changedExpr = false;
                 const pops = currentOps();
                 // keys are the buckets we should look in for operators from specific to generic.
@@ -542,6 +573,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return [TFLAG_NONE, expr];
             }
             else {
+                // If it's not a list or nil, then it's an atom.
                 const op = $.operatorFor(expr);
                 return op.transform(expr);
             }
@@ -595,6 +627,7 @@ function dependencies_satisfied(deps: FEATURE[] | undefined, includes: FEATURE[]
     }
 }
 function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): Operator<U> | undefined {
+    // console.lg(`unambiguous_operator for ${$.toInfixString(expr)} from ${ops.length} choice(s).`);
     const candidates: Operator<U>[] = [];
     for (const op of ops) {
         if (op.isKind(expr)) {

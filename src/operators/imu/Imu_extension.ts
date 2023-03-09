@@ -4,7 +4,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../
 import { imu } from "../../env/imu";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { MATH_IMU } from "../../runtime/ns_math";
-import { Cons, U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 
 class Builder implements OperatorBuilder<Imu> {
     create($: ExtensionEnv): Operator<Imu> {
@@ -80,6 +80,9 @@ class ImuExtension implements Operator<Imu> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Imu): string {
         return this.$.getSymbolToken(MATH_IMU);
+    }
+    evaluate(expr: Imu, argList: Cons): [TFLAGS, U] {
+        return [TFLAG_HALT, cons(expr, argList)];
     }
     transform(expr: Imu): [TFLAGS, U] {
         return [TFLAG_HALT, expr];

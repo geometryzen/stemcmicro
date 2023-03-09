@@ -1,5 +1,5 @@
 import { Extension, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { U } from "../../tree/tree";
+import { Cons, U } from "../../tree/tree";
 
 /**
  * A poor-mans way of implementing an OperatorBuilder is to take an existing Extension
@@ -81,6 +81,9 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     }
     toListString(expr: T): string {
         return this.extension.toListString(expr, this.$);
+    }
+    evaluate(expr: T, argList: Cons): [TFLAGS, U] {
+        return this.extension.evaluate(expr, argList, this.$);
     }
     transform(expr: U): [TFLAGS, U] {
         return this.extension.transform(expr, this.$);

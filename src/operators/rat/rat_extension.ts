@@ -3,7 +3,7 @@ import { HASH_RAT } from "../../hashing/hash_info";
 import { evaluatingAsFloat } from "../../modes/modes";
 import { wrap_as_flt } from '../../tree/flt/Flt';
 import { one, Rat } from "../../tree/rat/Rat";
-import { U } from "../../tree/tree";
+import { cons, Cons, is_cons, is_singleton, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from '../helpers/ExtensionOperatorBuilder';
 
 export function is_rat(p: unknown): p is Rat {
@@ -15,10 +15,10 @@ class RatExtension implements Extension<Rat> {
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
+    get key(): 'Rat' {
         return one.name;
     }
-    get hash(): string {
+    get hash(): 'Rat' {
         return HASH_RAT;
     }
     get name(): string {
@@ -28,7 +28,13 @@ class RatExtension implements Extension<Rat> {
     isImag(expr: Rat): boolean {
         return false;
     }
-    isKind(arg: unknown): arg is Rat {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isKind(arg: U, $: ExtensionEnv): arg is Rat {
+        // console.lg(`RatExtension.isKind for ${arg.toString()}`);
+        // We must be prepared to handle singleton lists containing a single rat.
+        if (is_cons(arg) && is_singleton(arg)) {
+            return this.isKind(arg.head, $);
+        }
         return arg instanceof Rat;
     }
     isMinusOne(arg: Rat): boolean {
@@ -71,6 +77,12 @@ class RatExtension implements Extension<Rat> {
     }
     toListString(rat: Rat): string {
         return rat.toListString();
+    }
+    evaluate(rat: Rat, argList: Cons): [TFLAGS, U] {
+        if (is_cons(rat)) {
+            throw new Error(`The expr is really a Cons! ${rat}`);
+        }
+        return this.transform(cons(rat, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Rat) {

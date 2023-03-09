@@ -26,7 +26,7 @@ export function create_sym(text: string, pos?: number, end?: number): Sym {
     return sym;
 }
 
-export class Sym extends Atom {
+export class Sym extends Atom<'Sym'> {
     readonly #text: string;
     /**
      * Use create_sym to create a new Sym instance.

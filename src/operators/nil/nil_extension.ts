@@ -1,7 +1,7 @@
 
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_NIL } from "../../hashing/hash_info";
-import { Cons, nil, U } from "../../tree/tree";
+import { cons, Cons, nil, U } from "../../tree/tree";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -77,6 +77,9 @@ class NilExtension implements Operator<Cons> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Cons): string {
         return '()';
+    }
+    evaluate(argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(nil, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         if (nil.equals(expr)) {

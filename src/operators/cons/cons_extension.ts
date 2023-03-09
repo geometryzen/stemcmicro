@@ -17,7 +17,7 @@ import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
 import { Err } from "../../tree/err/Err";
 import { cadr } from "../../tree/helpers";
 import { one, wrap_as_int, zero } from "../../tree/rat/Rat";
-import { car, cdr, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
+import { car, cdr, cons, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_rat } from "../rat/is_rat";
@@ -119,6 +119,9 @@ class ConsExtension implements Extension<Cons> {
         }
         str += ')';
         return str;
+    }
+    evaluate(expr: Cons, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
+        return this.transform(cons(expr, argList), $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {

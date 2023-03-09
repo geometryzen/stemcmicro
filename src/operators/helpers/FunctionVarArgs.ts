@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { AbstractOperator } from "./AbstractOperator";
 
 /**
@@ -11,6 +11,14 @@ export abstract class FunctionVarArgs extends AbstractOperator {
     constructor(name: string, readonly opr: Sym, $: ExtensionEnv) {
         super(name, $);
         this.key = `(${opr.key()})`;
+    }
+    evaluate(argList: Cons): [number, U] {
+        const expr = cons(this.opr, argList);
+        return this.transform(expr, this.$);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform(expr: Cons, $: ExtensionEnv): [number, U] {
+        throw new Error(`FunctionVarArgs.transform must be implemented in ${this.name}`);
     }
     isKind(expr: Cons): expr is Cons {
         return expr.opr.equals(this.opr);

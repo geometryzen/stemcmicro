@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/Exten
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { Imu } from "../../tree/imu/ImaginaryUnit";
+import { Imu } from "../../tree/imu/Imu";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";

@@ -1,12 +1,15 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { useCaretForExponentiation } from "../../modes/modes";
-import { MATH_POW } from "../../runtime/ns_math";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { Cons, cons, U } from "../../tree/tree";
 import { assert_sym } from "./assert_sym";
 import { is_sym } from "./is_sym";
 import { TYPE_NAME_SYM } from "./TYPE_NAME_SYM";
+
+const MATH_POW = native_sym(Native.pow);
 
 class Builder implements OperatorBuilder<Sym> {
     create($: ExtensionEnv): Operator<Sym> {
@@ -29,6 +32,9 @@ class SymMathPow implements Operator<Sym> {
     }
     get name(): string {
         return 'SymMathPow';
+    }
+    evaluate(expr: U, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];

@@ -6,7 +6,7 @@ import { U } from "../tree";
  * By escaping here, this class gets written into expression correctly.
  * As it works now, if we escape here then tests break because of double-duty escaping.
  */
-export class Str extends Atom {
+export class Str extends Atom<'Str'> {
     /**
      * @param str The parsed representation of the string. i.e. Delimiters and escaping have been removed.
      * @param pos The zero-based start position of the original text.

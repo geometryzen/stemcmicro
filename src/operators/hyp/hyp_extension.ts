@@ -1,7 +1,7 @@
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_HYP } from "../../hashing/hash_info";
 import { epsilon, Hyp } from "../../tree/hyp/Hyp";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 class HypExtension implements Extension<Hyp> {
@@ -18,15 +18,18 @@ class HypExtension implements Extension<Hyp> {
     get name() {
         return 'HypExtension';
     }
+    evaluate(hyp: Hyp, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(hyp, argList));
+    }
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Hyp ? TFLAG_HALT : TFLAG_NONE, expr];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    valueOf(expr: Hyp, $: ExtensionEnv): U {
+    valueOf(hyp: Hyp, $: ExtensionEnv): U {
         throw new Error("Hyp Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Hyp): boolean {
+    isImag(hyp: Hyp): boolean {
         return false;
     }
     isKind(arg: U): arg is Hyp {

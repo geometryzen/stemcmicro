@@ -101,7 +101,7 @@ function abs(a: bigInt.BigInteger): bigInt.BigInteger {
 /**
  * "God gave us the integers, all else is the work of man" - Kronecker.
  */
-export class Rat extends Atom {
+export class Rat extends Atom<'Rat'> {
     /**
      * @param a The numerator.
      * @param b The denominator.

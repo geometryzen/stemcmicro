@@ -5,7 +5,7 @@ import { car, cdr, Cons, is_cons, is_nil, is_singleton, items_to_cons, nil, U } 
 /**
  * A simple atom for testing purposes.
  */
-class Int extends Atom {
+class Int extends Atom<'Int'> {
     constructor(public readonly value: number, pos?: number, end?: number) {
         super('Int', pos, end);
     }

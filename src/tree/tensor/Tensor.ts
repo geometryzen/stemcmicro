@@ -36,7 +36,7 @@ function equals_U_arrays(arrL: U[], arrR: U[]): boolean {
  * the elements of the tensor are stored in a flattened manner. Presumambly,
  * this makes things easier in the case when a Tensor is used as a square matrix.
  */
-export class Tensor<T extends U = U> extends Atom {
+export class Tensor<T extends U = U> extends Atom<'Tensor'> {
     readonly #dims: number[];
     readonly #elems: T[];
     /**

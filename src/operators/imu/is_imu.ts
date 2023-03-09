@@ -1,6 +1,6 @@
 // import { BCons } from "../operators/helpers/BCons";
 // import { is_pow_2_rat_rat } from "../operators/pow/is_pow_2_rat_rat";
-import { Imu } from "../../tree/imu/ImaginaryUnit";
+import { Imu } from "../../tree/imu/Imu";
 // import { Rat } from "../tree/rat/Rat";
 // import { Sym } from "../tree/sym/Sym";
 import { U } from "../../tree/tree";

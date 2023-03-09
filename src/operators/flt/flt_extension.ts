@@ -1,7 +1,7 @@
 import { Extension, ExtensionEnv, FEATURE, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
 import { Flt, oneAsFlt } from "../../tree/flt/Flt";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 export function is_flt(p: unknown): p is Flt {
@@ -31,6 +31,9 @@ export class FltExtension implements Extension<Flt> {
     }
     get dependencies(): FEATURE[] {
         return ['Flt'];
+    }
+    evaluate(expr: Flt, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Flt ? TFLAG_HALT : TFLAG_NONE, expr];

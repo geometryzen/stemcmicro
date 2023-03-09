@@ -1,7 +1,7 @@
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { KeywordOperator } from "../helpers/KeywordSymbol";
 import { TYPE_NAME_SYM } from "../sym/TYPE_NAME_SYM";
 
@@ -23,6 +23,9 @@ class ScriptLast extends KeywordOperator {
     }
     get name(): string {
         return 'ScriptLast';
+    }
+    evaluate(argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(RESERVED_KEYWORD_LAST, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         if (this.isKind(expr)) {

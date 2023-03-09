@@ -1,6 +1,6 @@
 import { Extension, ExtensionEnv, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { bitCount } from "../../tree/vec/bitCount";
 import { Blade } from "../../tree/vec/Blade";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -99,6 +99,9 @@ class BladeExtension implements Extension<Blade> {
     }
     toListString(vec: Blade): string {
         return vec.toListString();
+    }
+    evaluate(expr: Blade, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_blade(expr)) {

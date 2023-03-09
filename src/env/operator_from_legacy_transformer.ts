@@ -48,7 +48,7 @@ export function operator_from_modern_transformer(match: U, lambda: LambdaExpr): 
     return new PluggableBuilder(opr, hash, transformer);
 }
 
-function opr_from_match(match: U): Sym {
+export function opr_from_match(match: U): Sym {
     if (is_cons(match)) {
         const head = match.head;
         if (is_sym(head)) {
@@ -63,7 +63,7 @@ function opr_from_match(match: U): Sym {
     }
 }
 
-function hash_from_match(pattern: U): string {
+export function hash_from_match(pattern: U): string {
     if (is_cons(pattern)) {
         const opr = pattern.head;
         if (is_sym(opr)) {

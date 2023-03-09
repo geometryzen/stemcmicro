@@ -3,7 +3,7 @@ import { HASH_TENSOR } from "../../hashing/hash_info";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
 import { Tensor } from "../../tree/tensor/Tensor";
-import { Cons, nil, U } from "../../tree/tree";
+import { cons, Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { subst } from "../subst/subst";
 import { is_tensor } from "./is_tensor";
@@ -149,6 +149,9 @@ class TensorExtension implements Extension<Tensor> {
     }
     toListString(matrix: Tensor, $: ExtensionEnv): string {
         return to_infix_string(matrix, $);
+    }
+    evaluate(matrix: Tensor, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(matrix, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         const $ = this.$;

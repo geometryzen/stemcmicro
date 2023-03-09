@@ -1,6 +1,6 @@
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
@@ -83,6 +83,9 @@ class UomExtension implements Extension<Uom> {
     }
     toListString(uom: Uom): string {
         return uom.toListString();
+    }
+    evaluate(expr: U, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         if (is_uom(expr)) {

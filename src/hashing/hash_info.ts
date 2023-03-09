@@ -112,22 +112,25 @@ function hash_info_at_level(expr: U, level: number): INFO {
                 const opr = expr.opr;
                 const lhs = expr.lhs;
                 const rhs = expr.rhs;
-                return { kind: KIND_CONS, parts: [hash_opr(opr), compress(hash_info_at_level(lhs, level + 1)), compress(hash_info_at_level(rhs, level + 1))] };
+                return { kind: KIND_CONS, parts: [hash_arg(opr), compress(hash_info_at_level(lhs, level + 1)), compress(hash_info_at_level(rhs, level + 1))] };
             }
             if (expr.length === 2) {
                 const opr = expr.opr;
                 const arg = expr.arg;
-                return { kind: KIND_CONS, parts: [hash_opr(opr), compress(hash_info_at_level(arg, level + 1))] };
+                return { kind: KIND_CONS, parts: [hash_arg(opr), compress(hash_info_at_level(arg, level + 1))] };
             }
-            if (is_sym(expr.opr)) {
-                return { kind: KIND_CONS, parts: [hash_opr(expr.opr)] };
+            if (is_sym(expr.head)) {
+                return { kind: KIND_CONS, parts: [hash_arg(expr.head)] };
+            }
+            else if (is_rat(expr.head)) {
+                return { kind: KIND_CONS, parts: [hash_arg(expr.head)] };
             }
             else {
                 throw new Error(`${expr}`);
             }
         }
         else {
-            return { kind: KIND_CONS, parts: [hash_opr(expr.opr)] };
+            return { kind: KIND_CONS, parts: [hash_arg(expr.opr)] };
         }
     }
     if (is_sym(expr)) {
@@ -169,11 +172,19 @@ function hash_info_at_level(expr: U, level: number): INFO {
     throw new Error(`hash_string(${expr})`);
 }
 
-function hash_opr(opr: U): string {
-    if (is_sym(opr)) {
-        return opr.key();
+/**
+ * Note: This is starting to look a lot like the hash_from_match function, except in that case it is a pattern.
+ */
+function hash_arg(arg: U): string {
+    if (is_sym(arg)) {
+        // For a symbol, what distinguishes it is the text of the symbol.
+        return arg.key();
+    }
+    else if (is_rat(arg)) {
+        // We know that this is 'Rat' and is the same as the hash.
+        return arg.name;
     }
     else {
-        throw new Error(`hash_opr(opr=${opr})`);
+        throw new Error(`hash_arg(arg=${arg})`);
     }
 }

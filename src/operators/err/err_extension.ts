@@ -1,6 +1,6 @@
 import { Extension, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Err, oops } from "../../tree/err/Err";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 export function error_compare(lhs: Err, rhs: Err): Sign {
@@ -27,6 +27,9 @@ export class ErrExtension implements Extension<Err> {
     }
     get name(): string {
         return 'ErrExtension';
+    }
+    evaluate(expr: Err, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Err ? TFLAG_HALT : TFLAG_NONE, expr];

@@ -30,7 +30,7 @@ export function wrap_as_flt(value: number, pos?: number, end?: number): Flt {
     return new Flt(value, pos, end);
 }
 
-export class Flt extends Atom {
+export class Flt extends Atom<'Flt'> {
     /**
      * Use the factory method instead. This may not exist in future.
      */

@@ -307,6 +307,7 @@ export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTO
  * Use to handle an expression, especially to evaluate it.
  * This is the means of extending the system to include other atoms.
  * Every object in the system is an opaque handle.
+ * Methods don't take a $ parameter because it is hidden state.
  */
 export interface Operator<T extends U> {
     readonly key?: string;
@@ -330,6 +331,11 @@ export interface Operator<T extends U> {
     toLatexString(expr: T): string;
     toListString(expr: T): string;
     /**
+     * Applies the procedure managed by this extension to the argList.
+     * @param argList
+     */
+    evaluate(opr: T, argList: Cons): [TFLAGS, U];
+    /**
      * Evaluates the expression and also returns some information about the returned expression.
      */
     transform(expr: T): [TFLAGS, U];
@@ -341,6 +347,7 @@ export interface Operator<T extends U> {
 
 /**
  * A legacy (and less favored) alternative to using OperatorBuilder and Operator.
+ * But now I'm starting to favor the explicit $ parameter.
  */
 export interface Extension<T extends U> {
     readonly key?: string;
@@ -366,6 +373,7 @@ export interface Extension<T extends U> {
     toInfixString(expr: T, $: ExtensionEnv): string;
     toLatexString(expr: T, $: ExtensionEnv): string;
     toListString(expr: T, $: ExtensionEnv): string;
+    evaluate(expr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
     transform(expr: U, $: ExtensionEnv): [TFLAGS, U];
     valueOf(expr: T, $: ExtensionEnv): U;
 }

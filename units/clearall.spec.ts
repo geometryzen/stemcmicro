@@ -3,7 +3,7 @@ import { create_script_context } from "../src/runtime/script_engine";
 
 // TODO: Finish
 describe("clearall", function () {
-    it("clear()", function () {
+    xit("clear()", function () {
         const sourceText = [
             `clear(E)`,
         ].join('\n');

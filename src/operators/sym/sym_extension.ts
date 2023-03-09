@@ -3,7 +3,7 @@ import { HASH_SYM } from "../../hashing/hash_info";
 import { evaluatingAsFloat } from "../../modes/modes";
 import { piAsFlt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
-import { nil, U } from "../../tree/tree";
+import { cons, Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_pi } from "../pi/is_pi";
 import { get_binding } from "./get_binding";
@@ -109,6 +109,9 @@ class SymExtension implements Extension<Sym> {
         else {
             return sym.key();
         }
+    }
+    evaluate(sym: Sym, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(sym, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         // console.lg("SymExtension.transform", render_as_infix(expr, this.$));

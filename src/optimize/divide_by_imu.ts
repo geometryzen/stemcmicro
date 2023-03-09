@@ -1,6 +1,6 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { MATH_MUL } from "../runtime/ns_math";
-import { imu } from "../tree/imu/ImaginaryUnit";
+import { imu } from "../tree/imu/Imu";
 import { negOne } from "../tree/rat/Rat";
 import { items_to_cons, U } from "../tree/tree";
 

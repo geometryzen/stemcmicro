@@ -1,8 +1,8 @@
 import { reset_meta_flag, U } from "../tree";
 
-export abstract class Atom implements U {
+export abstract class Atom<NAME extends string> implements U {
     #meta = 0;
-    constructor(public readonly name: string, public readonly pos?: number, public readonly end?: number) {
+    constructor(public readonly name: NAME, public readonly pos?: number, public readonly end?: number) {
 
     }
     reset(meta: number): void {

@@ -1,6 +1,6 @@
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
-import { Imu } from "../../tree/imu/ImaginaryUnit";
+import { Imu } from "../../tree/imu/Imu";
 import { one, Rat } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
 import { canonicalize_mul } from "../canonicalize/canonicalize_mul";

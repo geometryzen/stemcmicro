@@ -4,7 +4,7 @@ import { U } from "../tree";
 /**
  * The implementation of the imaginary unit.
  */
-export class Imu extends Atom {
+export class Imu extends Atom<'Imu'> {
     constructor(pos?: number, end?: number) {
         super('Imu', pos, end);
     }

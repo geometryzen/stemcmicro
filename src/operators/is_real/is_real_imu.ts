@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { HASH_BOO, HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
 import { PREDICATE_IS_REAL } from "../../runtime/constants";
 import { booF } from "../../tree/boo/Boo";
-import { Imu } from "../../tree/imu/ImaginaryUnit";
+import { Imu } from "../../tree/imu/Imu";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";

@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
+import { cons, Cons, U } from "../../tree/tree";
 import { assert_sym } from "./assert_sym";
 import { is_sym } from "./is_sym";
 import { TYPE_NAME_SYM } from "./TYPE_NAME_SYM";
@@ -28,6 +28,9 @@ class SymMathMul implements Operator<Sym> {
     }
     get name(): string {
         return 'SymMathMul';
+    }
+    evaluate(expr: U, argList: Cons): [TFLAGS, U] {
+        return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];

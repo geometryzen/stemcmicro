@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { render_as_sexpr } from "../print/render_as_sexpr";
-import { U } from "../tree/tree";
+import { Cons, U } from "../tree/tree";
 import { ExtensionEnv, FEATURE, Operator } from "./ExtensionEnv";
 
 export class UnknownOperator implements Operator<U> {
@@ -57,6 +57,9 @@ export class UnknownOperator implements Operator<U> {
     }
     toListString(expr: U): string {
         throw new Error(`${expr.toString()} is not defined.`);
+    }
+    evaluate(expr: U, argList: Cons): [number, U] {
+        throw new Error("UnknownOperator. Method not implemented.");
     }
     transform(expr: U): [number, U] {
         throw new Error("UnknownOperator. Method not implemented.");

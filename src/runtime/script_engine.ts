@@ -1,6 +1,6 @@
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { ExtensionEnv, SymbolProps } from "../env/ExtensionEnv";
+import { ExtensionEnv, LambdaExpr, SymbolProps } from "../env/ExtensionEnv";
 import { useCaretForExponentiation } from "../modes/modes";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
@@ -73,6 +73,7 @@ export function env_term($: ExtensionEnv) {
 
 export interface ScriptContext {
     clearBindings(): void;
+    defineFunction(pattern: U, impl: LambdaExpr): ScriptContext;
     getSymbolProps(sym: Sym | string): SymbolProps;
     getSymbolValue(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
@@ -131,6 +132,10 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
     const theEngine: ScriptContext = {
         clearBindings(): void {
             $.clearBindings();
+        },
+        defineFunction(pattern: U, impl: LambdaExpr): ScriptContext {
+            $.defineFunction(pattern, impl);
+            return this;
         },
         getSymbolProps(sym: Sym | string): SymbolProps {
             return $.getSymbolProps(sym);

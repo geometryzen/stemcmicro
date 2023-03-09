@@ -1,4 +1,4 @@
-export { PrintHandler, SymbolProps } from './src/env/ExtensionEnv';
+export { ExtensionEnv, LambdaExpr, PrintHandler, SymbolProps } from './src/env/ExtensionEnv';
 export { Native } from './src/native/Native';
 export { native_sym } from './src/native/native_sym';
 export { is_blade } from './src/operators/blade/is_blade';

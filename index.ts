@@ -1,4 +1,4 @@
-export { ExtensionEnv, LambdaExpr, PrintHandler, SymbolProps } from './src/env/ExtensionEnv';
+export { CompareFn, ExprComparator, ExtensionEnv, LambdaExpr, PrintHandler, SymbolProps } from './src/env/ExtensionEnv';
 export { Native } from './src/native/Native';
 export { native_sym } from './src/native/native_sym';
 export { is_blade } from './src/operators/blade/is_blade';
@@ -16,7 +16,7 @@ export { human_readable_syntax_kind, ParseOptions, parse_expr, parse_script, Syn
 export { create_script_context, ScriptContext, ScriptContextOptions, ScriptExecuteOptions } from './src/runtime/script_engine';
 export { Atom } from './src/tree/atom/Atom';
 export { Boo, booF, booT } from './src/tree/boo/Boo';
-export { Flt, wrap_as_flt } from './src/tree/flt/Flt';
+export { Flt, oneAsFlt, wrap_as_flt, zeroAsFlt } from './src/tree/flt/Flt';
 export { Hyp } from './src/tree/hyp/Hyp';
 export { Imu, imu } from './src/tree/imu/Imu';
 export { Num } from './src/tree/num/Num';

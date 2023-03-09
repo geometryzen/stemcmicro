@@ -166,7 +166,7 @@ export interface ExtensionEnv {
      *
      */
     add(lhs: U, rhs: U): U;
-    evaluate(opr: Native, argList: Cons): U;
+    evaluate(opr: Native, ...args: U[]): U;
     clearBindings(): void;
     clearOperators(): void;
     compareFn(sym: Sym): CompareFn;

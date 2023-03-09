@@ -176,8 +176,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         add(lhs: U, rhs: U): U {
-            const argList = items_to_cons(lhs, rhs);
-            return $.evaluate(Native.add, argList);
+            return $.evaluate(Native.add, lhs, rhs);
         },
         clearOperators(): void {
             builders.length = 0;
@@ -225,7 +224,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
-        evaluate(opr: Native, argList: Cons): U {
+        evaluate(opr: Native, ...args: U[]): U {
+            const argList = items_to_cons(...args);
             const expr = cons(native_sym(opr), argList);
             return $.valueOf(expr);
         },
@@ -416,8 +416,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return value_inner_lhs_rhs;
         },
         multiply(lhs: U, rhs: U): U {
-            const argList = items_to_cons(lhs, rhs);
-            return $.evaluate(Native.multiply, argList);
+            return $.evaluate(Native.multiply, lhs, rhs);
         },
         /**
          * The universal unary minus function meaning multiplication by -1.
@@ -455,12 +454,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         outer(lhs: U, rhs: U): U {
-            const argList = items_to_cons(lhs, rhs);
-            return $.evaluate(Native.outer, argList);
+            return $.evaluate(Native.outer, lhs, rhs);
         },
         power(base: U, expo: U): U {
-            const argList = items_to_cons(base, expo);
-            return $.evaluate(Native.pow, argList);
+            return $.evaluate(Native.pow, base, expo);
         },
         remove(varName: Sym): void {
             symTab.delete(varName);

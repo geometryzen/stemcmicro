@@ -1,13 +1,15 @@
 import { BigInteger } from 'big-integer';
+import { Native } from '../native/Native';
+import { native_sym } from '../native/native_sym';
 import { create_sym } from '../tree/sym/Sym';
-import { MATH_ADD, MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
+import { MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
 
 export const dontCreateNewRadicalsInDenominatorWhenEvalingMultiplication = true;
 export const do_simplify_nested_radicals = true;
 export const avoidCalculatingPowersIntoArctans = true;
 
 // TODO: Migrate to a situation of only creating these on demand by extensions.
-export const ADD = MATH_ADD;
+export const ADD = native_sym(Native.add);
 export const ADJ = create_sym('adj');
 export const ALGEBRA = create_sym('algebra');
 export const AND = create_sym('and');
@@ -137,7 +139,7 @@ export const TAN = create_sym('tan');
 export const TANH = create_sym('tanh');
 export const TAYLOR = create_sym('taylor');
 export const TEST = create_sym('test');
-export const TESTEQ = create_sym('testeq');
+// export const TESTEQ = native_sym(Native.testeq);
 export const TESTGE = create_sym('testge');
 export const TESTGT = create_sym('testgt');
 export const TESTLE = create_sym('testle');

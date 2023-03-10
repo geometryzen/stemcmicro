@@ -4,19 +4,17 @@ import { invg } from "../../inv";
 import { is_rat_and_integer } from "../../is_rat_integer";
 import { Eval_leading } from "../../leading";
 import { Eval_lookup } from "../../lookup";
-import { makeList } from "../../makeList";
 import { Eval_prime } from "../../prime";
 import { to_infix_string } from "../../print/to_infix_string";
-import { BINDING, CHECK, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTGE, TESTGT, TESTLE } from "../../runtime/constants";
+import { BINDING, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTGE, TESTGT, TESTLE } from "../../runtime/constants";
 import { stack_pop, stack_push } from "../../runtime/stack";
 import { Eval_if } from "../../scripting/eval_if";
 import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern } from "../../scripting/eval_pattern";
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
-import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
 import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
 import { cadr } from "../../tree/helpers";
-import { create_int, one, zero } from "../../tree/rat/Rat";
-import { car, cdr, cons, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
+import { one, zero } from "../../tree/rat/Rat";
+import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_rat } from "../rat/is_rat";
@@ -157,9 +155,6 @@ class ConsExtension implements Extension<Cons> {
             case BINDING:
                 Eval_binding(expr, $);
                 return stack_pop();
-            case CHECK:
-                Eval_check(expr, $);
-                return stack_pop();
             case CLEARPATTERNS:
                 Eval_clearpatterns();
                 return stack_pop();
@@ -247,43 +242,6 @@ function Eval_binding(expr: Cons, $: ExtensionEnv) {
     }
 }
 
-/* check =====================================================================
- 
-Tags
-----
-scripting, JS, internal, treenode, general concept
- 
-Parameters
-----------
-p
- 
-General description
--------------------
-Returns whether the predicate p is true/false or unknown:
-0 if false, 1 if true or remains unevaluated if unknown.
-Note that if "check" is passed an assignment, it turns it into a test,
-i.e. check(a = b) is turned into check(a==b) 
-so "a" is not assigned anything.
-Like in many programming languages, "check" also gives truthyness/falsyness
-for numeric values. In which case, "true" is returned for non-zero values.
-Potential improvements: "check" can't evaluate strings yet.
- 
-*/
-function Eval_check(p1: U, $: ExtensionEnv) {
-    // check the argument
-    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(cadr(p1), $);
-
-    if (checkResult == null) {
-        // returned null: unknown result
-        // leave the whole check unevalled
-        stack_push(p1);
-    }
-    else {
-        // returned true or false -> 1 or 0
-        stack_push(create_int(Number(checkResult)));
-    }
-}
-
 function Eval_factorpoly(p1: U, $: ExtensionEnv) {
     p1 = cdr(p1);
     const arg1 = $.valueOf(car(p1));
@@ -315,12 +273,12 @@ function _isinteger(p1: U): U {
         const n = Math.floor(p1.d);
         return n === p1.d ? one : zero;
     }
-    return makeList(ISINTEGER), p1;
+    return items_to_cons(ISINTEGER), p1;
 }
 
 function Eval_operator(p1: U, $: ExtensionEnv) {
     const mapped = is_cons(p1) ? p1.tail().map($.valueOf) : [];
-    const result = makeList(OPERATOR, ...mapped);
+    const result = items_to_cons(OPERATOR, ...mapped);
     stack_push(result);
 }
 

@@ -61,10 +61,6 @@ export const MATH_GT = create_sym('>');
  */
 export const MATH_LE = create_sym('<=');
 /**
- * '=='
- */
-export const MATH_EQ = create_sym('==');
-/**
  * ':'
  */
 export const MATH_HAS_TYPE = create_sym(':');

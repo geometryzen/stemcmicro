@@ -21,7 +21,7 @@ run_test([
   '1',
 
   'check(a===a)',
-  'check(a=== ? a)\nStop: syntax error',
+  'Unexpected token "=" in range [9, 10]',
 
   'check(a+1=a)',
   '0',
@@ -30,7 +30,7 @@ run_test([
   '0',
 
   'check(a+1===a)',
-  'check(a+1=== ? a)\nStop: syntax error',
+  'Unexpected token "=" in range [11, 12]',
 
   'check(1)',
   '1',

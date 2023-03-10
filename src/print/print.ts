@@ -53,7 +53,6 @@ import {
     SYM_MATH_COMPONENT,
     TAN,
     TEST,
-    TESTEQ,
     TESTGE,
     TESTGT,
     TESTLE,
@@ -80,6 +79,7 @@ const ENGLISH_UNDEFINED = 'undefined';
 const MATH_E = native_sym(Native.E);
 const MATH_IMU = native_sym(Native.IMU);
 const MATH_PI = native_sym(Native.PI);
+const testeq = native_sym(Native.testeq);
 
 export function get_script_last($: ExtensionEnv): U {
     return $.valueOf(RESERVED_KEYWORD_LAST);
@@ -1165,14 +1165,14 @@ function print_TESTGE_latex(p: U, $: ExtensionEnv): string {
     return (accumulator += '}');
 }
 
-function print_TESTEQ_latex(p: U, $: ExtensionEnv): string {
-    let accumulator = '{';
-    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
-    accumulator += '}';
-    accumulator += ' = ';
-    accumulator += '{';
-    accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
-    return (accumulator += '}');
+function print_testeq_latex(expr: Cons, $: ExtensionEnv): string {
+    let s = '{';
+    s += render_using_non_sexpr_print_mode(expr.lhs, $);
+    s += '}';
+    s += ' = ';
+    s += '{';
+    s += render_using_non_sexpr_print_mode(expr.rhs, $);
+    return (s += '}');
 }
 
 function print_FOR_codegen(p: U, $: ExtensionEnv): string {
@@ -1962,7 +1962,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return str;
         }
     }
-    else if (car(expr).equals(TESTEQ)) {
+    else if (is_cons(expr) && expr.opr.equals(testeq)) {
         if (defs.codeGen) {
             let str = '';
             str +=
@@ -1971,7 +1971,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         }
         if (defs.printMode === PRINTMODE_LATEX) {
             let str = '';
-            str += print_TESTEQ_latex(expr, $);
+            str += print_testeq_latex(expr, $);
             return str;
         }
     }

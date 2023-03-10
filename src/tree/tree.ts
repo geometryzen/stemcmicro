@@ -250,6 +250,7 @@ export class Cons implements U {
      * A useful shortcut when working with operators.
      */
     get opr(): U {
+        // TODO: this.car woul be more optimal.
         return this.item(0);
     }
     /**

@@ -10,7 +10,7 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from "../env/imu";
 import { zzfloat } from "../operators/float/float";
-import { Eval_predicate } from "../operators/predicate/predicate";
+import { replace_assign_with_testeq } from "../operators/predicate/replace_assign_with_testeq";
 import { is_num_or_tensor_or_identity_matrix } from "../runtime/helpers";
 import { U } from "../tree/tree";
 import { float_eval_abs_eval } from "./float_eval_abs_eval";
@@ -18,11 +18,11 @@ import { float_eval_abs_eval } from "./float_eval_abs_eval";
 // routine is sufficient.
 export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: ExtensionEnv): boolean | null {
     // just like Eval but turns assignments into equality checks
-    let evalledArgument = Eval_predicate(valueOrPredicate, $);
+    const value = $.valueOf(replace_assign_with_testeq(valueOrPredicate));
 
     // OK first check if we already have
     // a simple zero (or simple zero tensor)
-    if ($.is_zero(evalledArgument)) {
+    if ($.is_zero(value)) {
         return false;
     }
 
@@ -31,7 +31,7 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // In such cases, since we
     // just excluded they are zero, then we take it as
     // a "true"
-    if (is_num_or_tensor_or_identity_matrix(evalledArgument)) {
+    if (is_num_or_tensor_or_identity_matrix(value)) {
         return true;
     }
 
@@ -42,7 +42,8 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // so in such cases let's try to do a float()
     // so we might get down to a simple numeric value
     // in some of those cases
-    evalledArgument = zzfloat(evalledArgument, $);
+    // TODO: Why do we use zz float when we know that the value is fully evaluated?
+    const valueAsFlt = zzfloat(value, $);
 
     // anything that could be calculated down to a simple
     // numeric value is now indeed either a
@@ -57,11 +58,11 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // by doing the simple numeric
     // values checks again
 
-    if ($.is_zero(evalledArgument)) {
+    if ($.is_zero(valueAsFlt)) {
         return false;
     }
 
-    if (is_num_or_tensor_or_identity_matrix(evalledArgument)) {
+    if (is_num_or_tensor_or_identity_matrix(valueAsFlt)) {
         return true;
     }
 
@@ -74,16 +75,16 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // calculate the absolute value and re-do all the checks
     // we just did
 
-    if (evalledArgument.contains(imu)) {
-        evalledArgument = Eval_predicate(float_eval_abs_eval(evalledArgument, $), $);
+    if (valueAsFlt.contains(imu)) {
+        const complexValue = $.valueOf(replace_assign_with_testeq(float_eval_abs_eval(valueAsFlt, $)));
 
         // re-do the simple-number checks...
 
-        if ($.is_zero(evalledArgument)) {
+        if ($.is_zero(complexValue)) {
             return false;
         }
 
-        if (is_num_or_tensor_or_identity_matrix(evalledArgument)) {
+        if (is_num_or_tensor_or_identity_matrix(complexValue)) {
             return true;
         }
     }

@@ -60,6 +60,7 @@ import { boo_extension } from '../operators/boo/boo_extension';
 import { ceiling_cons } from '../operators/ceiling/ceiling_cons';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';
 import { ceiling_rat } from '../operators/ceiling/ceiling_rat';
+import { Eval_check } from '../operators/check/Eval_check';
 import { choose_varargs } from '../operators/choose/choose_varargs';
 import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
@@ -311,7 +312,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CLEAR, CLEARALL, IMAG, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTEQ, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, IMAG, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -321,6 +322,7 @@ import { ExtensionEnv } from "./ExtensionEnv";
 export function define_std_operators($: ExtensionEnv) {
     // 
     const MATH_ADD = native_sym(Native.add);
+    const testeq = native_sym(Native.testeq);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
@@ -477,6 +479,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineLegacyTransformer(APPROXRATIO, Eval_approxratio);
     $.defineOperator(binomial_varargs);
+    $.defineLegacyTransformer(CHECK, Eval_check);
+
     $.defineOperator(choose_varargs);
     $.defineLegacyTransformer(CLEAR, Eval_clear);
     $.defineKeyword(CLEARALL, Eval_clearall);
@@ -751,7 +755,7 @@ export function define_std_operators($: ExtensionEnv) {
 
 
     $.defineOperator(testeq_sym_rat);
-    $.defineLegacyTransformer(TESTEQ, Eval_testeq);
+    $.defineLegacyTransformer(testeq, Eval_testeq);
     $.defineLegacyTransformer(TESTLE, Eval_testle);
 
     $.defineOperator(testlt_flt_rat);

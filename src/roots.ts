@@ -1,22 +1,25 @@
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
 import { cmp_expr } from './calculators/compare/cmp_expr';
-import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
+import { divide } from './helpers/divide';
 import { is_complex_number, is_poly_expanded_form, is_positive_integer } from './is';
+import { Native } from './native/Native';
+import { native_sym } from './native/native_sym';
 import { coeff } from './operators/coeff/coeff';
 import { simplify } from './operators/simplify/simplify';
-import { ASSIGN, SECRETX, TESTEQ } from './runtime/constants';
+import { ASSIGN, SECRETX } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
 import { is_multiply, is_power } from './runtime/helpers';
-import { MATH_EQ } from './runtime/ns_math';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
-import { eight, four, half, negFour, negOne, nine, one, third, three, two, create_int } from './tree/rat/Rat';
+import { create_int, eight, four, half, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, Cons, nil, U } from './tree/tree';
+
+const testeq = native_sym(Native.testeq);
 
 // define POLY p1
 // define X p2
@@ -29,18 +32,13 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`Eval_roots expr=${render_as_sexpr(expr, $)}`);
     // A == B -> A - B
     const arg1 = cadr(expr);
-    // console.lg("arg1", `${render_as_sexpr(arg1, $)}`);
-    // console.lg("ASSIGN", `${render_as_sexpr(ASSIGN, $)}`);
-    // console.lg("MATH_EQ", `${render_as_sexpr(MATH_EQ, $)}`);
-    // console.lg("TESTEQ", `${render_as_sexpr(TESTEQ, $)}`);
     let poly: U;
-    // TODO: Do we really need more than MATH_EQ?
-    if (car(arg1).equals(MATH_EQ) || car(arg1).equals(ASSIGN) || car(arg1).equals(TESTEQ)) {
+    if (car(arg1).equals(testeq) || car(arg1).equals(ASSIGN)) {
         poly = $.subtract($.valueOf(cadr(arg1)), $.valueOf(caddr(arg1)));
     }
     else {
         const vArg1 = $.valueOf(arg1);
-        if (car(vArg1).equals(MATH_EQ) || car(vArg1).equals(ASSIGN) || car(vArg1).equals(TESTEQ)) {
+        if (car(vArg1).equals(testeq) || car(vArg1).equals(ASSIGN)) {
             poly = $.subtract($.valueOf(cadr(vArg1)), $.valueOf(caddr(vArg1)));
         }
         else {

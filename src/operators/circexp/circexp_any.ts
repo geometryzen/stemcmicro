@@ -1,7 +1,6 @@
 import { circexp } from "../../circexp";
-import { ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { evaluatingTrigAsExp } from "../../modes/modes";
 import { CIRCEXP } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -27,8 +26,8 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const flag = $.getModeFlag(evaluatingTrigAsExp);
-        $.setModeFlag(evaluatingTrigAsExp, true);
+        const flag = $.getNativeDirective(Directive.evaluatingTrigAsExp);
+        $.setNativeDirective(Directive.evaluatingTrigAsExp, true);
         try {
             const rawExpr = circexp(arg, $);
             const newExpr = $.valueOf(rawExpr);
@@ -39,7 +38,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
             return [changed ? TFLAG_DIFF : TFLAG_NONE, newExpr];
         }
         finally {
-            $.setModeFlag(evaluatingTrigAsExp, flag);
+            $.setNativeDirective(Directive.evaluatingTrigAsExp, flag);
         }
     }
 }

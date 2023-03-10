@@ -1,9 +1,8 @@
 import { mp_denominator, mp_numerator } from '../bignum';
 import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
-import { ExtensionEnv } from '../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { equaln, isfraction, isNumberOneOverSomething, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from '../is';
-import { useCaretForExponentiation } from '../modes/modes';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { abs } from '../operators/abs/abs';
@@ -158,7 +157,7 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     const sourceText = '"' + text + '"';
     // TOOD: Need a better routing to initialize the ScanOptions.
     const [scanned, tree] = scan(sourceText, {
-        useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
+        useCaretForExponentiation: $.getNativeDirective(Directive.useCaretForExponentiation),
         explicitAssocAdd: false,
         explicitAssocMul: false
     });
@@ -1515,7 +1514,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
         // print the power symbol
         if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
-            if ($.getModeFlag(useCaretForExponentiation)) {
+            if ($.getNativeDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {
@@ -1527,7 +1526,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             str += print_str('^');
         }
         else {
-            if ($.getModeFlag(useCaretForExponentiation)) {
+            if ($.getNativeDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {

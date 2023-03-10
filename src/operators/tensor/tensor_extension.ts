@@ -122,10 +122,6 @@ class TensorExtension implements Extension<Tensor> {
             return $.isZero(element);
         });
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Tensor, $: ExtensionEnv): Tensor {
-        throw new Error();
-    }
     subst(expr: Tensor, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
         if (is_tensor(oldExpr) && expr.equals(oldExpr)) {
             return newExpr;

@@ -1,7 +1,6 @@
 import { mp_denominator, mp_numerator } from '../bignum';
-import { ExtensionEnv } from '../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { isfraction, is_num_and_eq_minus_one } from '../is';
-import { useCaretForExponentiation } from '../modes/modes';
 import { abs } from '../operators/abs/abs';
 import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
 import { is_flt } from '../operators/flt/is_flt';
@@ -621,7 +620,7 @@ function emit_power(p: U, $: ExtensionEnv) {
             else {
                 emit_grouped_expr(cadr(p), $);
             }
-            if ($.getModeFlag(useCaretForExponentiation)) {
+            if ($.getNativeDirective(Directive.useCaretForExponentiation)) {
                 __emit_char('^');
             }
             else {

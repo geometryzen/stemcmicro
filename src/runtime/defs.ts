@@ -2,8 +2,7 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
-import { ExtensionEnv, MODE_EXPANDING, MODE_FACTORING } from "../env/ExtensionEnv";
-import { evaluatingAsFloat } from "../modes/modes";
+import { Directive, ExtensionEnv, MODE_EXPANDING, MODE_FACTORING } from "../env/ExtensionEnv";
 import { Flt, negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
@@ -217,9 +216,9 @@ export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lh
  */
 export class DynamicConstants {
     public static NegOne($: ExtensionEnv): Flt | Rat {
-        return $.getModeFlag(evaluatingAsFloat) ? negOneAsFlt : negOne;
+        return $.getNativeDirective(Directive.evaluatingAsFloat) ? negOneAsFlt : negOne;
     }
     public static Pi($: ExtensionEnv): Sym | Flt {
-        return $.getModeFlag(evaluatingAsFloat) ? piAsFlt : MATH_PI;
+        return $.getNativeDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
     }
 }

@@ -1,5 +1,4 @@
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { keepZeroTermsInSums } from "../../modes/modes";
+import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_add } from "../../runtime/helpers";
 import { is_cons, U } from "../../tree/tree";
 import { to_list_add_sort } from "./to_list_add_sort";
@@ -25,7 +24,7 @@ export function append_terms(terms: U[], term: U, $: ExtensionEnv): void {
         });
     }
     else if ($.isZero(term)) {
-        if ($.getModeFlag(keepZeroTermsInSums)) {
+        if ($.getNativeDirective(Directive.keepZeroTermsInSums)) {
             terms.push(term);
         }
     }

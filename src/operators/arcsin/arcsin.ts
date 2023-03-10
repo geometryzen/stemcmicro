@@ -1,5 +1,5 @@
 import { rational } from '../../bignum';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import {
     equaln,
     equalq,
@@ -9,7 +9,6 @@ import {
     isSqrtThreeOverTwo
 } from '../../is';
 import { makeList } from '../../makeList';
-import { evaluatingAsFloat } from '../../modes/modes';
 import { nativeInt } from '../../nativeInt';
 import { ARCSIN, PI, POWER } from '../../runtime/constants';
 import { is_multiply, is_sin } from '../../runtime/helpers';
@@ -68,17 +67,17 @@ export function arcsin(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return $.getModeFlag(evaluatingAsFloat) ? create_flt(-Math.PI / 4.0) : $.multiply(rational(-1, 4), PI);
+        return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 4.0) : $.multiply(rational(-1, 4), PI);
     }
 
     // if x == sqrt(3)/2 then return 1/3*pi (60 degrees)
     if (isSqrtThreeOverTwo(x)) {
-        return $.getModeFlag(evaluatingAsFloat) ? create_flt(Math.PI / 3.0) : $.multiply(third, PI);
+        return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 3.0) : $.multiply(third, PI);
     }
 
     // if x == -sqrt(3)/2 then return -1/3*pi (-60 degrees)
     if (isMinusSqrtThreeOverTwo(x)) {
-        return $.getModeFlag(evaluatingAsFloat) ? create_flt(-Math.PI / 3.0) : $.multiply(rational(-1, 3), PI);
+        return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 3.0) : $.multiply(rational(-1, 3), PI);
     }
 
     if (!is_rat(x)) {
@@ -88,15 +87,15 @@ export function arcsin(x: U, $: ExtensionEnv): U {
     const n = nativeInt(x.mul(two));
     switch (n) {
         case -2:
-            return $.getModeFlag(evaluatingAsFloat) ? create_flt(-Math.PI / 2.0) : $.multiply(rational(-1, 2), PI);
+            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 2.0) : $.multiply(rational(-1, 2), PI);
         case -1:
-            return $.getModeFlag(evaluatingAsFloat) ? create_flt(-Math.PI / 6.0) : $.multiply(rational(-1, 6), PI);
+            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 6.0) : $.multiply(rational(-1, 6), PI);
         case 0:
-            return $.getModeFlag(evaluatingAsFloat) ? zeroAsFlt : zero;
+            return $.getNativeDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
         case 1:
-            return $.getModeFlag(evaluatingAsFloat) ? create_flt(Math.PI / 6.0) : $.multiply(rational(1, 6), PI);
+            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 6.0) : $.multiply(rational(1, 6), PI);
         case 2:
-            return $.getModeFlag(evaluatingAsFloat) ? create_flt(Math.PI / 2.0) : $.multiply(half, PI);
+            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 2.0) : $.multiply(half, PI);
         default:
             return makeList(ARCSIN, x);
     }

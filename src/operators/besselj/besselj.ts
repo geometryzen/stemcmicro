@@ -1,13 +1,12 @@
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { makeList } from '../../makeList';
-import { evaluatingAsFloat } from '../../modes/modes';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { BESSELJ, MEQUAL, MSIGN, PI } from '../../runtime/constants';
 import { create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
-import { half, negOne, one, two, create_int, zero } from '../../tree/rat/Rat';
+import { create_int, half, negOne, one, two, zero } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { cos } from '../cos/cosine';
 import { is_flt } from '../flt/is_flt';
@@ -83,13 +82,13 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     if (is_rat(N) && MEQUAL(N.b, 2)) {
         // n = 1/2
         if (MEQUAL(N.a, 1)) {
-            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
+            const twoOverPi = $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
             return $.multiply($.power(divide(twoOverPi, X, $), half), sin(X, $));
         }
 
         // n = -1/2
         if (MEQUAL(N.a, -1)) {
-            const twoOverPi = $.getModeFlag(evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
+            const twoOverPi = $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
             return $.multiply($.power(divide(twoOverPi, X, $), half), cos(X, $));
         }
 

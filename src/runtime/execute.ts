@@ -1,8 +1,7 @@
 import { bake } from "../bake";
 import { ScanOptions } from '../brite/scan';
-import { ExtensionEnv, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
-import { useCaretForExponentiation } from "../modes/modes";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
@@ -18,7 +17,7 @@ import { RESERVED_KEYWORD_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
-        useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
+        useCaretForExponentiation: $.getNativeDirective(Directive.useCaretForExponentiation),
         explicitAssocAdd: false,
         explicitAssocMul: false,
     };

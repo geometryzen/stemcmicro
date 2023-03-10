@@ -54,13 +54,47 @@ export function keepFlag(flags: TFLAGS): boolean {
  */
 export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
 
-export type MODE =
-    'evaluatingAsFloat' |
-    'evaluatingAsPolar' |
-    'evaluatingTrigAsExp' |
-    'keepZeroTermsInSums' |
-    'renderFloatAsEcmaScript' |
-    'useCaretForExponentiation';
+export enum Directive {
+    /**
+     * Determines whether numeric types are converted to floating point numbers for numeric evaluation.
+     * 
+     * The default value as false.
+     */
+    evaluatingAsFloat,
+    /**
+     * Determines whether complex numbers are driven towards rectangular or polar notation.
+     * 
+     * The default value is false.
+     */
+    evaluatingAsPolar,
+    /**
+     * Determines whether trigonometric functions are converted to exponential form.
+     * 
+     * The default is false.
+     */
+    evaluatingTrigAsExp,
+    /**
+     * Determines whether zero terms are kept in sums in attempt to preserve the dynamic type.
+     * The alternative is to use a canonical zero value, usually that for rational numbers.
+     * 
+     * The default value is false.
+     */
+    keepZeroTermsInSums,
+    /**
+     * Determines whether floating point numbers are rendered as EcmaScript numbers.
+     * If not, floating point numbers are rendered in a proprietary format.
+     * 
+     * The default value is false.
+     */
+    renderFloatAsEcmaScript,
+    /**
+     * Determines whether caret token '^' will be used for exponentiation or for the exterior product.
+     * Using the caret token for exponetitation is common in mathematical tools but not in programming languages.
+     * 
+     * The default value is false.
+     */
+    useCaretForExponentiation
+}
 
 export interface PrintHandler {
     print(...items: string[]): void;
@@ -189,7 +223,8 @@ export interface ExtensionEnv {
     getChain(outer: Sym, inner: Sym): LambdaExpr;
     setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void;
     getMode(): number;
-    getModeFlag(mode: MODE): boolean;
+    getCustomDirective(directive: string): boolean;
+    getNativeDirective(directive: Directive): boolean;
     getSymbolProps(sym: Sym | string): SymbolProps;
     /**
      * Used during rendering.
@@ -255,7 +290,8 @@ export interface ExtensionEnv {
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
     setMode(mode: number): void;
-    setModeFlag(mode: MODE, value: boolean): void;
+    setCustomDirective(directive: string, value: boolean): void;
+    setNativeDirective(directive: Directive, value: boolean): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
     setSymbolToken(sym: Sym, token: string): void;
@@ -346,8 +382,7 @@ export interface Operator<T extends U> {
 }
 
 /**
- * A legacy (and less favored) alternative to using OperatorBuilder and Operator.
- * But now I'm starting to favor the explicit $ parameter.
+ *
  */
 export interface Extension<T extends U> {
     readonly key?: string;
@@ -363,12 +398,6 @@ export interface Extension<T extends U> {
     isScalar(expr: T, $: ExtensionEnv): boolean;
     isVector(expr: T, $: ExtensionEnv): boolean;
     isZero(expr: T, $: ExtensionEnv): boolean;
-    /**
-     * Provides the multiplicative identity of the same shape as the zero argument.
-     * This capability need only be supported if the data type has an additive identity (zero).
-     * This is used in cases where we wish to preserve the structure when adding zero.
-     */
-    one(zero: T, $: ExtensionEnv): T;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;
     toInfixString(expr: T, $: ExtensionEnv): string;
     toLatexString(expr: T, $: ExtensionEnv): string;

@@ -67,11 +67,6 @@ export class BooExtension implements Extension<Boo> {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Boo, $: ExtensionEnv): Boo {
-        // Boo does not have a zero value.
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subst(expr: Boo, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
         return expr;
         // throw new Error(`Boo.subst(expr=${render_as_infix(expr, $)}, oldExpr=${render_as_infix(oldExpr, $)}, newExpr=${render_as_infix(newExpr, $)}) Method not implemented.`);

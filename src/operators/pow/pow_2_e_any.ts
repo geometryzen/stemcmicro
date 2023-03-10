@@ -1,8 +1,7 @@
 import { count_imu_factors } from "../../calculators/count_imu_factors";
-import { ExtensionEnv, keepFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, keepFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
-import { evaluatingTrigAsExp } from "../../modes/modes";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
@@ -78,7 +77,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(base), this.$.toInfixString(expo));
         const $ = this.$;
-        if ($.getModeFlag(evaluatingTrigAsExp)) {
+        if ($.getNativeDirective(Directive.evaluatingTrigAsExp)) {
             // Do nothing
         }
         else {

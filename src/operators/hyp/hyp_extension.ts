@@ -57,11 +57,6 @@ class HypExtension implements Extension<Hyp> {
         // A hyperreal is non-zero and small than every real number.
         return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Hyp, $: ExtensionEnv): Hyp {
-        // Hyp does not have a zero value.
-        throw new Error();
-    }
     subst(expr: Hyp, oldExpr: U, newExpr: U): U {
         if (this.isKind(oldExpr)) {
             if (expr.equals(oldExpr)) {

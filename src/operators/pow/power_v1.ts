@@ -1,12 +1,11 @@
 import { nativeDouble, rational } from "../../bignum";
 import { gt_num_num } from "../../calculators/compare/gt_num_num";
 import { complex_conjugate } from "../../complex_conjugate";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
 import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";
 import { is_rat_and_integer } from "../../is_rat_integer";
-import { evaluatingAsFloat, evaluatingAsPolar } from "../../modes/modes";
 import { nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { pow_rat_rat } from "../../pow_rat_rat";
@@ -15,7 +14,7 @@ import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, 
 import { defs } from "../../runtime/defs";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { power_tensor } from "../../tensor";
-import { oneAsFlt, create_flt } from "../../tree/flt/Flt";
+import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
 import { caddr, cadr } from "../../tree/helpers";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
@@ -59,7 +58,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     //  1 ^ a    ->  1
     //  a ^ 0    ->  1
     if ($.equals(base, one) || $.isZero(expo)) {
-        const dynOne = $.getModeFlag(evaluatingAsFloat) ? oneAsFlt : one;
+        const dynOne = $.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one;
         return hook(dynOne, "A");
     }
 
@@ -70,7 +69,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     //   -1 ^ -1    ->  -1
     if (is_num_and_eq_minus_one(base) && is_num_and_eq_minus_one(expo)) {
-        const negOne = $.negate($.getModeFlag(evaluatingAsFloat) ? oneAsFlt : one);
+        const negOne = $.negate($.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one);
         return hook(negOne, "C");
     }
 
@@ -93,7 +92,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         is_rat(expo) &&
         !is_rat_and_integer(expo) &&
         is_num_and_gt_zero(expo) &&
-        !$.getModeFlag(evaluatingAsFloat)
+        !$.getNativeDirective(Directive.evaluatingAsFloat)
     ) {
         if (expo.a < expo.b) {
             tmp = items_to_cons(POWER, base, expo);
@@ -187,7 +186,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // complex number in exponential form, get it to rectangular
     // but only if we are not in the process of calculating a polar form,
     // otherwise we'd just undo the work we want to do
-    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getModeFlag(evaluatingAsPolar)) {
+    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getNativeDirective(Directive.evaluatingAsPolar)) {
         // TODO: We could simply use origExpr now that it is an agument.
         const tmp = items_to_cons(POWER, base, expo);
         const hopefullySimplified = rect(tmp, $); // put new (hopefully simplified expr) in exponent
@@ -333,7 +332,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             // need to evaluate PI to its actual double
             // value
 
-            const pi = $.getModeFlag(evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
+            const pi = $.getNativeDirective(Directive.evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
             let tmp = $.multiply(
                 $.power(abs(base, $), expo),
                 $.power(negOne, divide($.multiply(arg(base, $), expo), pi, $))

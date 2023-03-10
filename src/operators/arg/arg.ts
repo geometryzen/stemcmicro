@@ -1,8 +1,7 @@
 import { subtract } from '../../calculators/sub/subtract';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
-import { evaluatingAsFloat } from '../../modes/modes';
 import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
@@ -91,11 +90,11 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     // console.lg("yyarg", $.toSExprString(expr));
     // case of plain number
     if (is_num_and_gt_zero(expr) || is_pi(expr)) {
-        return is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? zeroAsFlt : zero;
+        return is_flt(expr) || $.getNativeDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
     }
 
     if (is_negative_number(expr)) {
-        const pi = is_flt(expr) || $.getModeFlag(evaluatingAsFloat) ? piAsFlt : PI;
+        const pi = is_flt(expr) || $.getNativeDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI;
         return $.negate(pi);
     }
 

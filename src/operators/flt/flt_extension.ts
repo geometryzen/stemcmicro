@@ -66,9 +66,6 @@ export class FltExtension implements Extension<Flt> {
     isZero(arg: Flt): boolean {
         return arg.isZero();
     }
-    one(): Flt {
-        return oneAsFlt;
-    }
     subst(expr: Flt, oldExpr: U, newExpr: U): U {
         if (is_flt(oldExpr)) {
             if (expr.equals(oldExpr)) {

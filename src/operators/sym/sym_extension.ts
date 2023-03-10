@@ -1,6 +1,5 @@
-import { Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
-import { evaluatingAsFloat } from "../../modes/modes";
 import { piAsFlt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { cons, Cons, nil, U } from "../../tree/tree";
@@ -28,7 +27,7 @@ class SymExtension implements Extension<Sym> {
         // console.lg("SymExtension.valueOf");
         // Doing the dirty work for PI. Why do we need a special case?
         // What about E from the math namespace?
-        if (is_pi(sym) && $.getModeFlag(evaluatingAsFloat)) {
+        if (is_pi(sym) && $.getNativeDirective(Directive.evaluatingAsFloat)) {
             return piAsFlt;
         }
 
@@ -81,11 +80,6 @@ class SymExtension implements Extension<Sym> {
     }
     isZero(): boolean {
         return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Sym, $: ExtensionEnv): Sym {
-        // Sym does not have a zero value.
-        throw new Error();
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (is_sym(oldExpr)) {

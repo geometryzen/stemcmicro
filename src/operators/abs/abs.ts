@@ -1,9 +1,8 @@
 import { complex_conjugate } from '../../complex_conjugate';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
 import { equaln, is_num_and_gt_zero } from '../../is';
-import { evaluatingAsFloat } from '../../modes/modes';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../../predicates/is_negative';
 import { is_negative_number } from '../../predicates/is_negative_number';
@@ -179,7 +178,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     // abs(-1^anything) = abs(-1)^anything = 1^anything = 1
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
         // -1 to any power
-        return hook($.getModeFlag(evaluatingAsFloat) ? oneAsFlt : one, "G");
+        return hook($.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one, "G");
     }
 
     // abs(base^expo) is equal to abs(base)^expo IF expo is positive.

@@ -1,6 +1,5 @@
 import { rat_to_flt } from '../../bignum';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { evaluatingAsFloat } from '../../modes/modes';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { eAsFlt, Flt, piAsFlt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
@@ -13,8 +12,8 @@ import { is_tensor } from '../tensor/is_tensor';
 export function Eval_float(expr: Cons, $: ExtensionEnv): U {
     // console.lg("Eval_float", render_as_infix(expr, $));
     // console.lg("Eval_float", render_as_sexpr(expr, $));
-    const mode = $.getModeFlag(evaluatingAsFloat);
-    $.setModeFlag(evaluatingAsFloat, true);
+    const mode = $.getNativeDirective(Directive.evaluatingAsFloat);
+    $.setNativeDirective(Directive.evaluatingAsFloat, true);
     try {
         const A = cadr(expr);
         // console.lg("A", render_as_infix(A, $), JSON.stringify(A));
@@ -33,18 +32,18 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): U {
         return D;
     }
     finally {
-        $.setModeFlag(evaluatingAsFloat, mode);
+        $.setNativeDirective(Directive.evaluatingAsFloat, mode);
     }
 }
 
 export function zzfloat(p1: U, $: ExtensionEnv): U {
-    const mode = $.getModeFlag(evaluatingAsFloat);
-    $.setModeFlag(evaluatingAsFloat, true);
+    const mode = $.getNativeDirective(Directive.evaluatingAsFloat);
+    $.setNativeDirective(Directive.evaluatingAsFloat, true);
     try {
         return $.valueOf(evaluate_as_float($.valueOf(p1), $));
     }
     finally {
-        $.setModeFlag(evaluatingAsFloat, mode);
+        $.setNativeDirective(Directive.evaluatingAsFloat, mode);
     }
 }
 // zzfloat doesn't necessarily result in a double
@@ -56,13 +55,13 @@ export function zzfloat(p1: U, $: ExtensionEnv): U {
 
 export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyfloat`, render_as_sexpr(expr, $));
-    const mode = $.getModeFlag(evaluatingAsFloat);
-    $.setModeFlag(evaluatingAsFloat, true);
+    const mode = $.getNativeDirective(Directive.evaluatingAsFloat);
+    $.setNativeDirective(Directive.evaluatingAsFloat, true);
     try {
         return yyfloat_(expr, $);
     }
     finally {
-        $.setModeFlag(evaluatingAsFloat, mode);
+        $.setNativeDirective(Directive.evaluatingAsFloat, mode);
     }
 }
 

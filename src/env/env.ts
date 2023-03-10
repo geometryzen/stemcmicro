@@ -1,7 +1,6 @@
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
-import { useCaretForExponentiation } from "../modes/modes";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { is_boo } from "../operators/boo/is_boo";
@@ -17,7 +16,7 @@ import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { CompareFn, decodeMode, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, LegacyExpr, MODE, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, decodeMode, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, LegacyExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_legacy_transformer, opr_from_match } from "./operator_from_legacy_transformer";
@@ -106,10 +105,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     let printHandler: PrintHandler = new NoopPrintHandler();
 
-    /**
-     * Modes flags of the environment.
-     */
-    const mode_flag: { [mode: string]: boolean } = {};
+    const native_directives: { [directive: number]: boolean } = {};
+    const custom_directives: { [directive: string]: boolean } = {};
+
     /**
      * Override tokens for symbols used during rendering.
      */
@@ -399,8 +397,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return p;
             }
         },
-        getModeFlag(mode: MODE): boolean {
-            return !!mode_flag[mode];
+        getCustomDirective(directive: string): boolean {
+            return !!custom_directives[directive];
+        },
+        getNativeDirective(directive: Directive): boolean {
+            return !!native_directives[directive];
         },
         getSymbolToken(sym: Sym): string {
             const token = sym_token[sym.key()];
@@ -466,8 +467,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // console.lg(`ExtensionEnv.setFocus(focus=${decodePhase(focus)})`);
             current_mode = focus;
         },
-        setModeFlag(mode: MODE, value: boolean): void {
-            mode_flag[mode] = value;
+        setCustomDirective(directive: string, value: boolean): void {
+            custom_directives[directive] = value;
+        },
+        setNativeDirective(directive: Directive, value: boolean): void {
+            native_directives[directive] = value;
         },
         setSymbolOrder(sym: Sym, order: ExprComparator): void {
             sym_order[sym.key()] = order;
@@ -597,7 +601,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolToken(native_sym(Native.exp), 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
-    $.setModeFlag(useCaretForExponentiation, config.useCaretForExponentiation);
+    $.setNativeDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
 
     return $;
 }

@@ -66,9 +66,6 @@ class StrExtension implements Extension<Str> {
     isZero(): boolean {
         return false;
     }
-    one(): Str {
-        throw new Error();
-    }
     subst(expr: Str, oldExpr: U, newExpr: U): U {
         if (is_str(oldExpr)) {
             if (expr.equals(oldExpr)) {

@@ -1,6 +1,5 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
-import { useCaretForExponentiation } from "../../modes/modes";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
@@ -80,7 +79,7 @@ class SymMathPow implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Sym): string {
-        if (this.$.getModeFlag(useCaretForExponentiation)) {
+        if (this.$.getNativeDirective(Directive.useCaretForExponentiation)) {
             return '^';
         }
         else {

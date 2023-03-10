@@ -1,5 +1,4 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
-import { renderFloatAsEcmaScript } from "../modes/modes";
+import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { nativeInt } from "../nativeInt";
 import { is_rat } from "../operators/rat/is_rat";
 import { create_int } from "../tree/rat/Rat";
@@ -12,7 +11,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
     // when generating code, print out
     // the standard JS Number printout
     let str: string;
-    if (defs.codeGen || $.getModeFlag(renderFloatAsEcmaScript)) {
+    if (defs.codeGen || $.getNativeDirective(Directive.renderFloatAsEcmaScript)) {
         return `${d}`;
     }
 

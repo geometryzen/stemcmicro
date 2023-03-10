@@ -61,11 +61,6 @@ class UomExtension implements Extension<Uom> {
         // A Unit is never zero becuse it has no weighting factor.
         return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Uom, $: ExtensionEnv): Uom {
-        // Uom does not have a zero value.
-        throw new Error();
-    }
     subst(expr: Uom, oldExpr: U, newExpr: U): U {
         if (is_uom(oldExpr)) {
             if (expr.equals(oldExpr)) {

@@ -1,6 +1,5 @@
-import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_RAT } from "../../hashing/hash_info";
-import { evaluatingAsFloat } from "../../modes/modes";
 import { create_flt } from '../../tree/flt/Flt';
 import { one, Rat } from "../../tree/rat/Rat";
 import { cons, Cons, is_cons, is_singleton, U } from "../../tree/tree";
@@ -58,9 +57,6 @@ class RatExtension implements Extension<Rat> {
     isZero(expr: Rat): boolean {
         return expr.isZero();
     }
-    one(): Rat {
-        return one;
-    }
     subst(expr: Rat, oldExpr: U, newExpr: U): U {
         if (is_rat(oldExpr)) {
             if (expr.equals(oldExpr)) {
@@ -87,7 +83,7 @@ class RatExtension implements Extension<Rat> {
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Rat) {
             // console.lg(`RatExtension.transform ${expr}`);
-            if (this.$.getModeFlag(evaluatingAsFloat)) {
+            if (this.$.getNativeDirective(Directive.evaluatingAsFloat)) {
                 return [TFLAG_DIFF, create_flt(expr.toNumber())];
             }
             else {

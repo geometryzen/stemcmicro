@@ -67,11 +67,6 @@ export class ErrExtension implements Extension<Err> {
     isZero(): boolean {
         return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Err, $: ExtensionEnv): Err {
-        // Err does not have a zero value.
-        throw new Err('Err does not have a zero value');
-    }
     subst(expr: Err, oldExpr: U, newExpr: U): U {
         if (this.isKind(oldExpr)) {
             if (expr.equals(oldExpr)) {

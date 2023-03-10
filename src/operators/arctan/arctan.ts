@@ -1,13 +1,12 @@
 import { rational } from '../../bignum';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { equaln, equalq } from '../../is';
 import { makeList } from '../../makeList';
-import { evaluatingAsFloat } from '../../modes/modes';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, COS, PI, POWER, SIN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_multiply, is_power } from '../../runtime/helpers';
-import { piAsFlt, create_flt } from '../../tree/flt/Flt';
+import { create_flt, piAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { third, zero } from '../../tree/rat/Rat';
 import { car, cdr, U } from '../../tree/tree';
@@ -70,7 +69,7 @@ export function arctan(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 3) &&
             equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return $.multiply(rational(1, 6), $.getModeFlag(evaluatingAsFloat) ? piAsFlt : PI);
+        return $.multiply(rational(1, 6), $.getNativeDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI);
     }
 
     // arctan(1) -> pi/4

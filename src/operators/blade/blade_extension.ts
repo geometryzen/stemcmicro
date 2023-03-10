@@ -78,11 +78,6 @@ class BladeExtension implements Extension<Blade> {
         // Blade cannot be zero because weight is implicity one.
         return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Blade, $: ExtensionEnv): Blade {
-        // Vec does not have a zero value.
-        throw new Error();
-    }
     subst(expr: Blade, oldExpr: U, newExpr: U): U {
         if (is_blade(oldExpr)) {
             if (expr.equals(oldExpr)) {

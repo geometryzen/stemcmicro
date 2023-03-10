@@ -1,7 +1,6 @@
-import { ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
-import { useCaretForExponentiation } from "../modes/modes";
-import { clear_patterns } from '../pattern';
 import { scan } from '../brite/scan';
+import { Directive, ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
+import { clear_patterns } from '../pattern';
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs } from './defs';
 
@@ -62,7 +61,7 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
     defs.codeGen = false;
     try {
         const [scanned, tree] = scan(sourceText, {
-            useCaretForExponentiation: $.getModeFlag(useCaretForExponentiation),
+            useCaretForExponentiation: $.getNativeDirective(Directive.useCaretForExponentiation),
             explicitAssocAdd: false,
             explicitAssocMul: false
         });

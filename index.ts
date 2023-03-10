@@ -1,5 +1,5 @@
 export { create_tensor } from './src/brite/create_tensor';
-export { CompareFn, ExprComparator, ExtensionEnv, LambdaExpr, PrintHandler, Sign, SymbolProps } from './src/env/ExtensionEnv';
+export { CompareFn, Directive, ExprComparator, ExtensionEnv, LambdaExpr, PrintHandler, Sign, SymbolProps,Extension } from './src/env/ExtensionEnv';
 export { Native } from './src/native/Native';
 export { native_sym } from './src/native/native_sym';
 export { is_blade } from './src/operators/blade/is_blade';

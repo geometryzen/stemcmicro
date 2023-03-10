@@ -16,7 +16,7 @@ import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLik
 import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
 import { Err } from "../../tree/err/Err";
 import { cadr } from "../../tree/helpers";
-import { one, create_int, zero } from "../../tree/rat/Rat";
+import { create_int, one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -85,11 +85,6 @@ class ConsExtension implements Extension<Cons> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(arg: Cons, $: ExtensionEnv): boolean {
         throw new Error("Cons Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    one(zero: Cons, $: ExtensionEnv): Cons {
-        // Cons does not have a zero value.
-        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subst(expr: Cons, oldExpr: U, newExpr: U, $: ExtensionEnv): U {

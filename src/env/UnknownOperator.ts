@@ -20,7 +20,7 @@ export class UnknownOperator implements Operator<U> {
     isImag(expr: U): boolean {
         // We don't really know.
         return false;
-        // throw new Error("UnknownOperator.isImag Method not implemented.");
+        // throw new Error("UnknownOperator Method not implemented.");
     }
     isKind(expr: U): expr is U {
         throw new Error("UnknownOperator.isKind Method not implemented.");

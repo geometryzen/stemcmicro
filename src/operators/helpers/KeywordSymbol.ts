@@ -13,7 +13,7 @@ export abstract class KeywordOperator implements Operator<Sym> {
     }
     abstract readonly name: string;
     isImag(expr: Sym): boolean {
-        throw new Error("Keyword.isImag Symbol Method not implemented.");
+        throw new Error("Keyword Symbol Method not implemented.");
     }
     isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {

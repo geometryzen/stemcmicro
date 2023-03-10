@@ -40,7 +40,7 @@ export class ErrExtension implements Extension<Err> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Err): boolean {
-        throw new Err("ErrExtension.isImag Method not implemented.");
+        throw new Err("ErrExtension Method not implemented.");
     }
     isKind(arg: unknown): arg is Err {
         return arg instanceof Err;

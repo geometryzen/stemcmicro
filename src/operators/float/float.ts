@@ -36,11 +36,17 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function zzfloat(p1: U, $: ExtensionEnv): U {
+/**
+ * An interpretation of the "zz" is that the expression must be evaluated before it is processed and it will be evaluated after.
+ * @param expr 
+ * @param $ 
+ * @returns 
+ */
+export function zzfloat(expr: U, $: ExtensionEnv): U {
     const mode = $.getNativeDirective(Directive.evaluatingAsFloat);
     $.setNativeDirective(Directive.evaluatingAsFloat, true);
     try {
-        return $.valueOf(evaluate_as_float($.valueOf(p1), $));
+        return $.valueOf(evaluate_as_float($.valueOf(expr), $));
     }
     finally {
         $.setNativeDirective(Directive.evaluatingAsFloat, mode);
@@ -53,6 +59,9 @@ export function zzfloat(p1: U, $: ExtensionEnv): U {
 // when that doesn't happen for those tests.
 // checkFloatHasWorkedOutCompletely(defs.stack[defs.tos-1],$)
 
+/**
+ * coercion of the expr to a Flt, Tensor<Flt> etc.
+ */
 export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyfloat`, render_as_sexpr(expr, $));
     const mode = $.getNativeDirective(Directive.evaluatingAsFloat);

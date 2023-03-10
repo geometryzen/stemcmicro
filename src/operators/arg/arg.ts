@@ -49,8 +49,32 @@ export function define_arg($: ExtensionEnv): void {
 export function arg(z: U, $: ExtensionEnv): U {
     const y = imag(z, $);
     const x = real(z, $);
-    const tan_theta = divide(y, x, $);
-    return arctan(tan_theta, $);
+    // TODO: handle the undefined case when both x and y are zero.
+    if ($.isZero(x)) {
+        if (is_negative(y)) {
+            return $.negate(DynamicConstants.Pi($));
+        }
+        else {
+            return DynamicConstants.Pi($);
+        }
+    }
+    else {
+        if (is_negative(x)) {
+            if (is_negative(y)) {
+                return subtract(arctan(divide(y, x, $), $), DynamicConstants.Pi($), $);
+            }
+            else {
+                const lhs = arctan(divide(y, x, $), $);
+                const rhs = DynamicConstants.Pi($);
+                const sum = $.add(lhs, rhs);
+                return sum;
+            }
+        }
+        else {
+            return arctan(divide(y, x, $), $);
+        }
+    }
+
 }
 
 export function arg_old(z: U, $: ExtensionEnv): U {

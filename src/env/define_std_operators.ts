@@ -19,6 +19,7 @@ import { add_2_any_any_factorize_rhs } from '../operators/add/add_2_any_any_fact
 import { add_2_any_any_zero_sum } from '../operators/add/add_2_any_any_zero_sum';
 import { add_2_blade_blade } from '../operators/add/add_2_blade_blade';
 import { add_2_blade_mul_2_rat_blade } from '../operators/add/add_2_blade_mul_2_rat_blade';
+import { add_2_flt_any } from '../operators/add/add_2_flt_any';
 import { add_2_flt_flt } from '../operators/add/add_2_flt_flt';
 import { add_2_flt_rat } from '../operators/add/add_2_flt_rat';
 import { add_2_flt_uom } from '../operators/add/add_2_flt_uom';
@@ -338,8 +339,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_add_2_any_mul_2_rat_sym);
 
     $.defineOperator(add_2_flt_flt);
-    $.defineOperator(add_2_flt_rat);
-    $.defineOperator(add_2_flt_uom);
+    $.defineOperator(add_2_flt_rat);    // Possibly redundant now that we have (+ Flt U)
+    $.defineOperator(add_2_flt_uom);    // You can't add a Flt to a Uom, but you might multiply a Flt be a Uom.
+    $.defineOperator(add_2_flt_any);
     $.defineOperator(add_2_rat_blade);
     $.defineOperator(add_2_rat_uom);
     $.defineOperator(add_2_rat_flt);

@@ -15,8 +15,6 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-export const add_2_flt_flt = new Builder();
-
 class Op extends Function2<Flt, Flt> implements Operator<Cons> {
     readonly hash: string;
     readonly dependencies: FEATURE[] = ['Flt'];
@@ -28,3 +26,5 @@ class Op extends Function2<Flt, Flt> implements Operator<Cons> {
         return [TFLAG_DIFF, orig.lhs.add(orig.rhs)];
     }
 }
+
+export const add_2_flt_flt = new Builder();

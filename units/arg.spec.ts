@@ -1,6 +1,133 @@
 import { assert } from "chai";
-import { create_script_context } from "../src/runtime/script_engine";
+import { create_script_context, SyntaxKind } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
+
+//
+// Using concrete complex numbers to test the handling of the various quadrants.
+// https://en.wikipedia.org/wiki/Argument_(complex_analysis) 
+//
+describe("arg", function () {
+    it("arg(1)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(1)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "0");
+        context.release();
+    });
+    it("arg(i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(i)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "pi");
+        context.release();
+    });
+    it("arg(-1+0.1*i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(-1+0.1*i)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "3.041924...");
+        context.release();
+    });
+    it("arg(-i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(-i)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1 pi)");
+        context.release();
+    });
+    it("arg(1+i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(1+i)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/4 pi)");
+        context.release();
+    });
+    it("arg(-1+i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(-1+i)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "(* 3/4 pi)");
+        context.release();
+    });
+    it("arg(1-i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(1-i)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/4 pi)");
+        context.release();
+    });
+    it("arg(-1-i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `arg(-1-i)`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsSExpr(values[0]), "(* -3/4 pi)");
+        context.release();
+    });
+});
 
 xdescribe("arg", function () {
     it("arg(a)", function () {

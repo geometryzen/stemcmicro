@@ -26,7 +26,7 @@ run_test([
   'exp(x)',
 
   'd(a^x,x)',
-  'x*d(a,x)/(a^(1-x))+a^x*log(a)',
+  'x*d(a,x)/(a^(1-x))+log(a)*a^x',
 
   'd(x^x,x)-(x^x+x^x*log(x))',
   '0',

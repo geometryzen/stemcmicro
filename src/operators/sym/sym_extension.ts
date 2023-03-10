@@ -74,10 +74,6 @@ class SymExtension implements Extension<Sym> {
     isScalar(sym: Sym, $: ExtensionEnv): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(sym: Sym, $: ExtensionEnv): boolean {
-        return false;
-    }
     isZero(): boolean {
         return false;
     }

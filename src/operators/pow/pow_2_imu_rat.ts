@@ -29,9 +29,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     isScalar(): boolean {
         return true;
     }
-    isVector(): boolean {
-        return false;
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if (rhs.isTwo()) {

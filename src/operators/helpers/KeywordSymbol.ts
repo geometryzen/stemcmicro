@@ -33,9 +33,6 @@ export abstract class KeywordOperator implements Operator<Sym> {
     isScalar(expr: Sym): boolean {
         throw new Error("Keyword.isScalar Symbol Method not implemented.");
     }
-    isVector(expr: Sym): boolean {
-        throw new Error("Keyword.isVector Symbol Method not implemented.");
-    }
     isZero(expr: Sym): boolean {
         throw new Error("Keyword.isZero Symbol Method not implemented.");
     }

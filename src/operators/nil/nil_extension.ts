@@ -51,10 +51,6 @@ class NilExtension implements Operator<Cons> {
         throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Cons): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Cons): boolean {
         return false;
     }

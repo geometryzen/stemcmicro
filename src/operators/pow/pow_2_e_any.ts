@@ -70,10 +70,6 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: EXP): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(base), this.$.toInfixString(expo));
         const $ = this.$;

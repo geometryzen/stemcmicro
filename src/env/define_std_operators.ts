@@ -121,7 +121,6 @@ import { expcos_varargs } from '../operators/expcos/expcos_varargs';
 import { expsin_varargs } from '../operators/expsin/expsin_varargs';
 import { factor_varargs } from '../operators/factor/factor_varargs';
 import { factorial_varargs } from '../operators/factorial/factorial_varargs';
-import { factorize_geometric_product_lhs_assoc } from '../operators/factorize/factorize_geometric_product_lhs_assoc';
 import { float_varargs } from '../operators/float/float_varargs';
 import { floor_varargs } from '../operators/floor/floor_varargs';
 import { flt_extension, is_flt } from '../operators/flt/flt_extension';
@@ -342,8 +341,6 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(make_lhs_distrib_expand_law(MATH_INNER, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_INNER, MATH_ADD));
-
-    $.defineOperator(factorize_geometric_product_lhs_assoc);
 
     $.defineOperator(add_2_add_2_rat_mul_2_rat_any_add_2_rat_any);
     $.defineOperator(add_2_add_2_any_mul_2_rat_sym);

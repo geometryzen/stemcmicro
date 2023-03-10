@@ -39,10 +39,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     isScalar(expr: EXPR): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: EXPR): boolean {
-        return false;
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
         // const $ = this.$;
         // console.lg(`${this.name}  ${print_expr(expr, $)}`);

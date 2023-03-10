@@ -29,9 +29,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     isScalar(): boolean {
         return true;
     }
-    isVector(): boolean {
-        return false;
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: EXP): boolean {
         // It actually could be zero.

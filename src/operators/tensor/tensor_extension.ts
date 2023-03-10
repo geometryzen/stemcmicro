@@ -114,9 +114,6 @@ class TensorExtension implements Extension<Tensor> {
     isScalar(): boolean {
         return false;
     }
-    isVector(): boolean {
-        return false;
-    }
     isZero(arg: Tensor, $: ExtensionEnv): boolean {
         return arg.everyElement(function (element) {
             return $.isZero(element);

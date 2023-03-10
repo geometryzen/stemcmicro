@@ -79,10 +79,6 @@ class ConsExtension implements Extension<Cons> {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Cons, $: ExtensionEnv): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(arg: Cons, $: ExtensionEnv): boolean {
         throw new Error("Cons Method not implemented.");
     }

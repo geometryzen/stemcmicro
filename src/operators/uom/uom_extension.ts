@@ -53,10 +53,6 @@ class UomExtension implements Extension<Uom> {
     isScalar(expr: Uom): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Uom): boolean {
-        return false;
-    }
     isZero(): boolean {
         // A Unit is never zero becuse it has no weighting factor.
         return false;

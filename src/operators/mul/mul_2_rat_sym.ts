@@ -49,9 +49,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     isScalar(expr: EXP): boolean {
         return this.$.isScalar(expr.rhs);
     }
-    isVector(expr: EXP): boolean {
-        return this.$.isVector(expr.rhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {
             return [TFLAG_DIFF, zero];

@@ -24,9 +24,6 @@ class Op extends Function2<Flt, Rat> implements Operator<Cons> {
     isScalar(): boolean {
         return true;
     }
-    isVector(): boolean {
-        return false;
-    }
     transform2(opr: Sym, lhs: Flt, rhs: Rat): [TFLAGS, U] {
         return [TFLAG_DIFF, create_flt(Math.pow(lhs.d, rhs.toNumber()))];
     }

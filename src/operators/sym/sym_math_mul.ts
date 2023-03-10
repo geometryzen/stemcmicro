@@ -59,10 +59,6 @@ class SymMathMul implements Operator<Sym> {
         throw new Error("SymMathMul Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Sym): boolean {
-        throw new Error("SymMathMul Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Sym): boolean {
         throw new Error("SymMathMul Method not implemented.");
     }

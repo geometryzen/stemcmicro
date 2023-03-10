@@ -262,7 +262,6 @@ export interface ExtensionEnv {
      * Determines whether expr is scalar-valued.
      */
     isScalar(expr: U): boolean;
-    isVector(expr: U): boolean;
     /**
      * Returns false when atom matches Cons or Sym, otherwise depends on the appropriate extension.
      */
@@ -360,7 +359,6 @@ export interface Operator<T extends U> {
     isOne(expr: T): boolean;
     isReal(expr: T): boolean;
     isScalar(expr: T): boolean;
-    isVector(expr: T): boolean;
     isZero(expr: T): boolean;
     subst(expr: T, oldExpr: U, newExpr: U): U;
     toInfixString(expr: T): string;
@@ -396,7 +394,6 @@ export interface Extension<T extends U> {
     isOne(expr: T, $: ExtensionEnv): boolean;
     isReal(expr: T, $: ExtensionEnv): boolean;
     isScalar(expr: T, $: ExtensionEnv): boolean;
-    isVector(expr: T, $: ExtensionEnv): boolean;
     isZero(expr: T, $: ExtensionEnv): boolean;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;
     toInfixString(expr: T, $: ExtensionEnv): string;

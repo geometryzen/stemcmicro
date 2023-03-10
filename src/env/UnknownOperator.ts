@@ -39,9 +39,6 @@ export class UnknownOperator implements Operator<U> {
     isScalar(expr: U): boolean {
         throw new Error("UnknownOperator.isScalar Method not implemented.");
     }
-    isVector(expr: U): boolean {
-        throw new Error("UnknownOperator.isVector Method not implemented.");
-    }
     isZero(expr: U): boolean {
         const repr = render_as_sexpr(expr, this.$);
         throw new Error(`UnknownOperator.isZero ${repr} Method not implemented.`);

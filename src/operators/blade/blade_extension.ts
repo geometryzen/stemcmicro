@@ -70,9 +70,6 @@ class BladeExtension implements Extension<Blade> {
     isScalar(blade: Blade): boolean {
         return bitCount(blade.bitmap) === 0;
     }
-    isVector(blade: Blade): boolean {
-        return bitCount(blade.bitmap) === 1;
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Blade): boolean {
         // Blade cannot be zero because weight is implicity one.

@@ -54,10 +54,6 @@ class ImuExtension implements Operator<Imu> {
         return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Imu): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Imu): boolean {
         return false;
     }

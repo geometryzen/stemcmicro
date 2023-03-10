@@ -60,10 +60,6 @@ export class ErrExtension implements Extension<Err> {
     isScalar(expr: Err): boolean {
         return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Err): boolean {
-        return false;
-    }
     isZero(): boolean {
         return false;
     }

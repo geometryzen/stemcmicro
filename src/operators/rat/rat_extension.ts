@@ -50,10 +50,6 @@ class RatExtension implements Extension<Rat> {
     isScalar(expr: Rat): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Rat): boolean {
-        return false;
-    }
     isZero(expr: Rat): boolean {
         return expr.isZero();
     }

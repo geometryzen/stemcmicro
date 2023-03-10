@@ -32,20 +32,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_rat_tensor', MATH_MUL, is_rat, is_tensor, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_TENSOR);
     }
-    /*
-    isReal(expr: EXP): boolean {
-        return this.$.isReal(expr.rhs);
-    }
-    isImag(expr: EXP): boolean {
-        return this.$.isImag(expr.rhs);
-    }
-    isScalar(expr: EXP): boolean {
-        return this.$.isScalar(expr.rhs);
-    }
-    isVector(expr: EXP): boolean {
-        return this.$.isVector(expr.rhs);
-    }
-    */
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
         if (lhs.isZero()) {

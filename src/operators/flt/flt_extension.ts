@@ -59,10 +59,6 @@ export class FltExtension implements Extension<Flt> {
     isScalar(expr: Flt): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Flt): boolean {
-        return false;
-    }
     isZero(arg: Flt): boolean {
         return arg.isZero();
     }

@@ -49,10 +49,6 @@ class HypExtension implements Extension<Hyp> {
     isScalar(expr: Hyp): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Hyp): boolean {
-        return false;
-    }
     isZero(): boolean {
         // A hyperreal is non-zero and small than every real number.
         return false;

@@ -55,9 +55,6 @@ class SymMathPi implements Operator<Sym> {
     isScalar(): boolean {
         return true;
     }
-    isVector(): boolean {
-        return false;
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Sym): boolean {
         return false;

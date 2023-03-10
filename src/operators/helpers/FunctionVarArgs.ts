@@ -44,10 +44,6 @@ export abstract class FunctionVarArgs extends AbstractOperator {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Cons): boolean {
         return false;
     }

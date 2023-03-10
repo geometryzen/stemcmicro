@@ -62,10 +62,6 @@ class SymMathPow implements Operator<Sym> {
         throw new Error("SymMathPow Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Sym): boolean {
-        throw new Error("SymMathPow Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isZero(expr: Sym): boolean {
         throw new Error("SymMathPow Method not implemented.");
     }

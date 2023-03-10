@@ -365,9 +365,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // console.lg(`${op.name} isScalar ${$.toInfixString(expr)} => ${retval}`);
             return retval;
         },
-        isVector(expr: U): boolean {
-            return $.operatorFor(expr).isVector(expr);
-        },
         isZero(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isZero(expr);

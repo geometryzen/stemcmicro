@@ -34,10 +34,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         // TODO: If the symbol was a vector, and it was squared then it might be a scalar.
         return this.$.isScalar(base);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: EXPR): boolean {
-        return false;
-    }
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXPR): [TFLAGS, U] {
         // No change in arguments
         if (expo.isOne()) {

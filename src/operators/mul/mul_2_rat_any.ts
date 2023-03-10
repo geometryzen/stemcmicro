@@ -65,10 +65,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         return $.isScalar(expr.rhs);
     }
-    isVector(expr: EXP): boolean {
-        const $ = this.$;
-        return $.isVector(expr.rhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         return multiply_rat_any(lhs, rhs, expr);
     }

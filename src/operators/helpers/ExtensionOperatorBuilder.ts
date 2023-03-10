@@ -61,9 +61,6 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     isScalar(expr: T): boolean {
         return this.extension.isScalar(expr, this.$);
     }
-    isVector(expr: T): boolean {
-        return this.extension.isVector(expr, this.$);
-    }
     isZero(expr: T): boolean {
         return this.extension.isZero(expr, this.$);
     }

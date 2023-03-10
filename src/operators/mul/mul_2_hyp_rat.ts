@@ -36,9 +36,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     isScalar(expr: EXP): boolean {
         return this.$.isScalar(expr.lhs);
     }
-    isVector(expr: EXP): boolean {
-        return this.$.isVector(expr.lhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         // If the base class binds the symbol to something else then none of this code below will be called.
         // Therefore, you can consider that this code only applies to unbound symbols. 

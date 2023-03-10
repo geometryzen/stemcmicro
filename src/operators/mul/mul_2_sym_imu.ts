@@ -40,10 +40,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         return $.isScalar(expr.lhs);
     }
-    isVector(expr: EXP): boolean {
-        const $ = this.$;
-        return $.isVector(expr.lhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
         switch ($.compareFn(opr)(lhs, rhs)) {

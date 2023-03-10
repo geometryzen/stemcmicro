@@ -24,9 +24,6 @@ class Op extends Function2<Blade, Rat> implements Operator<Cons> {
     isScalar(): boolean {
         return true;
     }
-    isVector(): boolean {
-        return false;
-    }
     transform2(opr: Sym, lhs: Blade, rhs: Rat): [TFLAGS, U] {
         if (rhs.isTwo()) {
             return [TFLAG_DIFF, lhs.__mul__(lhs)];

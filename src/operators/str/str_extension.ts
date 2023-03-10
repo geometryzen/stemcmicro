@@ -59,10 +59,6 @@ class StrExtension implements Extension<Str> {
     isScalar(expr: Str): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isVector(expr: Str): boolean {
-        return true;
-    }
     isZero(): boolean {
         return false;
     }

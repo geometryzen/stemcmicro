@@ -63,7 +63,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
             // of the other. If they are, the answer is the identity matrix
             if (!(is_num_or_tensor_or_identity_matrix(p1) || is_num_or_tensor_or_identity_matrix(p2))) {
                 const subtractionResult = $.subtract(p1, inv(p2, $));
-                if ($.isZero(subtractionResult)) {
+                if ($.is_zero(subtractionResult)) {
                     return hook(SYMBOL_IDENTITY_MATRIX, "E");
                 }
             }
@@ -103,7 +103,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
             // of the other. If they are, the answer is the identity matrix
             if (!(is_num_or_tensor_or_identity_matrix(p1) || is_num_or_tensor_or_identity_matrix(p2))) {
                 const subtractionResult = $.subtract(p1, inv(p2, $));
-                if ($.isZero(subtractionResult)) {
+                if ($.is_zero(subtractionResult)) {
                     return hook(SYMBOL_IDENTITY_MATRIX, "M");
                 }
             }
@@ -127,7 +127,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
         // of the other. If they are, the answer is the identity matrix
         if (!(is_num_or_tensor_or_identity_matrix(p1) || is_num_or_tensor_or_identity_matrix(p2))) {
             const subtractionResult = $.subtract(p1, inv(p2, $));
-            if ($.isZero(subtractionResult)) {
+            if ($.is_zero(subtractionResult)) {
                 return hook(SYMBOL_IDENTITY_MATRIX, "Q");
             }
         }

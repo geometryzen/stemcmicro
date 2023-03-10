@@ -1,12 +1,21 @@
 import { Atom } from "../atom/Atom";
 import { U } from "../tree";
+import { TYPEOF_ERR } from "./TYPEOF_ERR";
 
 /**
- * An error that may be used as a return value. This will not be thrown. 
+ * An Err is synonymous with undefined.
+ * undefined means that the types are correct but the expression is not meaningful because of the values. 
+ * An error that may be used as a return value. This MUST not be thrown.
+ * Err may be considered to be synonymous with undefined.
  */
 export class Err extends Atom<'Err'> {
-    constructor(public message: string, pos?: number, end?: number) {
-        super('Err', pos, end);
+    #cause: U;
+    constructor(cause: U, pos?: number, end?: number) {
+        super(TYPEOF_ERR, pos, end);
+        this.#cause = cause;
+    }
+    get cause(): U {
+        return this.#cause;
     }
     equals(other: U): boolean {
         if (this === other) {
@@ -20,17 +29,15 @@ export class Err extends Atom<'Err'> {
         }
     }
     equalsErr(other: Err): boolean {
-        return this.message === other.message;
+        return this.cause.equals(other.cause);
     }
     toString(): string {
-        return `${this.name}()`;
+        return `${TYPEOF_ERR}(${this.#cause.toString()})`;
     }
     toInfixString(): string {
-        throw new Error("Err.toInfixString() Method not implemented.");
+        throw new Error();
     }
     toListString(): string {
-        throw new Error("Err.toListString() Method not implemented.");
+        throw new Error();
     }
 }
-
-export const oops = new Err("Something is rotten in the state of Denmark");

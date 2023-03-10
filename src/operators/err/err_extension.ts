@@ -1,8 +1,12 @@
-import { Extension, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Err, oops } from "../../tree/err/Err";
+import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Err } from "../../tree/err/Err";
+import { TYPEOF_ERR } from "../../tree/err/TYPEOF_ERR";
 import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
+const ENGLISH_UNDEFINED = 'undefined';
+
+/*
 export function error_compare(lhs: Err, rhs: Err): Sign {
     const str1 = lhs.message;
     const str2 = rhs.message;
@@ -16,6 +20,7 @@ export function error_compare(lhs: Err, rhs: Err): Sign {
         return SIGN_LT;
     }
 }
+*/
 
 export class ErrExtension implements Extension<Err> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,7 +28,7 @@ export class ErrExtension implements Extension<Err> {
         // Nothing to see here.
     }
     get key(): string {
-        return oops.name;
+        return TYPEOF_ERR;
     }
     get name(): string {
         return 'ErrExtension';
@@ -36,25 +41,25 @@ export class ErrExtension implements Extension<Err> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Err, $: ExtensionEnv): U {
-        throw new Err("ErrExtension.valueOf Method not implemented.");
+        throw new Error("ErrExtension.valueOf Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isImag(expr: Err): boolean {
-        throw new Err("ErrExtension Method not implemented.");
+        throw new Error("ErrExtension Method not implemented.");
     }
     isKind(arg: unknown): arg is Err {
         return arg instanceof Err;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isMinusOne(arg: Err, $: ExtensionEnv): boolean {
-        throw new Err("ErrExtension.isMinusOne Method not implemented.");
+        throw new Error("ErrExtension.isMinusOne Method not implemented.");
     }
     isOne(): boolean {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Err): boolean {
-        throw new Err("ErrExtension.isReal Method not implemented.");
+        throw new Error("ErrExtension.isReal Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Err): boolean {
@@ -73,15 +78,15 @@ export class ErrExtension implements Extension<Err> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Err, $: ExtensionEnv): string {
-        return expr.message;
+        return ENGLISH_UNDEFINED;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toLatexString(expr: Err, $: ExtensionEnv): string {
-        return expr.message;
+        return ENGLISH_UNDEFINED;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Err, $: ExtensionEnv): string {
-        return expr.message;
+        return ENGLISH_UNDEFINED;
     }
 }
 

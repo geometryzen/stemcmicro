@@ -42,7 +42,7 @@ export function arctan(x: U, $: ExtensionEnv): U {
         return create_flt(Math.atan(x.d));
     }
 
-    if ($.isZero(x)) {
+    if ($.is_zero(x)) {
         return zero;
     }
 

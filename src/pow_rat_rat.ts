@@ -40,7 +40,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
     // console.lg(`power(base => ${base}, expo => ${expo}) => ?`);
 
     // if base is zero then return 0
-    if ($.isZero(base)) {
+    if ($.is_zero(base)) {
         if (is_negative_number(expo)) {
             throw new Error(`divide by zero for base => ${base} and exponent => ${expo}`);
         }

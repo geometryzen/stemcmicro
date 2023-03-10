@@ -152,7 +152,7 @@ function simplify_tensor(M: Tensor, $: ExtensionEnv) {
         }
     );
 
-    if ($.isZero(simple_M)) {
+    if ($.is_zero(simple_M)) {
         return simple_M;
     }
     else {
@@ -235,7 +235,7 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
 
 // try expanding denominators
 function simplify_by_expanding_denominators(expr: U, $: ExtensionEnv): U {
-    if ($.isZero(expr)) {
+    if ($.is_zero(expr)) {
         return expr;
     }
     const A = rationalize_factoring(expr, $);

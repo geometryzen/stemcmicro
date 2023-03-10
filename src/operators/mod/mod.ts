@@ -19,7 +19,7 @@ export function Eval_mod(p1: U, $: ExtensionEnv): U {
 }
 
 function mod(p1: U, p2: U, $: ExtensionEnv): U {
-    if ($.isZero(p2)) {
+    if ($.is_zero(p2)) {
         throw new Error('mod function: divide by zero');
     }
 

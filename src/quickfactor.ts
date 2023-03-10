@@ -42,7 +42,7 @@ export function quickpower(BASE: Rat, EXPO: Rat, $: ExtensionEnv): [U] | [U, U] 
 
   let fractionalPart: U | undefined;
   // fractional part of EXPO
-  if (!$.isZero(p4)) {
+  if (!$.is_zero(p4)) {
     fractionalPart = makeList(POWER, BASE, p4);
   }
 

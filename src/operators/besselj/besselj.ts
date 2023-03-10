@@ -69,12 +69,12 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     }
 
     // bessej(0,0) = 1
-    if ($.isZero(X) && $.isZero(N)) {
+    if ($.is_zero(X) && $.is_zero(N)) {
         return one;
     }
 
     // besselj(0,n) = 0
-    if ($.isZero(X) && !isNaN(n)) {
+    if ($.is_zero(X) && !isNaN(n)) {
         return zero;
     }
 

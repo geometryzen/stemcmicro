@@ -25,7 +25,7 @@ export function sinh(expr: U, $: ExtensionEnv): U {
         }
         return create_flt(d);
     }
-    if ($.isZero(expr)) {
+    if ($.is_zero(expr)) {
         return zero;
     }
     return makeList(SINH, expr);

@@ -42,7 +42,7 @@ export function ycosh(p1: U, $: ExtensionEnv): U {
         }
         return create_flt(d);
     }
-    if ($.isZero(p1)) {
+    if ($.is_zero(p1)) {
         return one;
     }
     return items_to_cons(COSH, p1);

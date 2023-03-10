@@ -117,7 +117,7 @@ function bake_poly(p: U, x: U, $: ExtensionEnv): U {
 
 // k is an int
 function bake_poly_term(k: number, coefficient: U, term: U, $: ExtensionEnv): U[] {
-    if ($.isZero(coefficient)) {
+    if ($.is_zero(coefficient)) {
         return [];
     }
 

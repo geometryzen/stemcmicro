@@ -365,7 +365,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // console.lg(`${op.name} isScalar ${$.toInfixString(expr)} => ${retval}`);
             return retval;
         },
-        isZero(expr: U): boolean {
+        is_zero(expr: U): boolean {
+            // TODO: This should be done using predicate functions rather than hard-coding
+            // predicates into the operators.
             const op = $.operatorFor(expr);
             const retval = op.isZero(expr);
             // console.lg(`${op.name} isZero ${expr} => ${retval}`);

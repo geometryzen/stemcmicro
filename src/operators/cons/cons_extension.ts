@@ -14,7 +14,6 @@ import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern
 import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
 import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
-import { Err } from "../../tree/err/Err";
 import { cadr } from "../../tree/helpers";
 import { create_int, one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
@@ -227,6 +226,11 @@ class ConsExtension implements Extension<Cons> {
     }
 }
 
+/**
+ * TODO; We're not using this.
+ * @param expr 
+ * @param $ 
+ */
 function Eval_binding(expr: Cons, $: ExtensionEnv) {
     const argList = expr.argList;
     if (is_cons(argList)) {
@@ -235,11 +239,11 @@ function Eval_binding(expr: Cons, $: ExtensionEnv) {
             stack_push($.getSymbolValue(sym));
         }
         else {
-            stack_push(new Err(`expr.argList.car MUST be a Sym. binding(expr => ${$.toInfixString(expr)})`));
+            // stack_push(new Error(`expr.argList.car MUST be a Sym. binding(expr => ${$.toInfixString(expr)})`));
         }
     }
     else {
-        stack_push(new Err(`expr.argList MUST be a Cons. binding(expr => ${$.toInfixString(expr)})`));
+        // stack_push(new Error(`expr.argList MUST be a Cons. binding(expr => ${$.toInfixString(expr)})`));
     }
 }
 

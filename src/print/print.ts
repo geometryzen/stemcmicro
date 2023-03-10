@@ -75,6 +75,8 @@ import { print_number } from './print_number';
 import { render_as_ascii } from './render_as_ascii';
 import { render_as_sexpr } from './render_as_sexpr';
 
+const ENGLISH_UNDEFINED = 'undefined';
+
 const MATH_E = native_sym(Native.E);
 const MATH_IMU = native_sym(Native.IMU);
 const MATH_PI = native_sym(Native.PI);
@@ -2099,7 +2101,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return print_str($.getSymbolToken(native_sym(Native.NIL)));
         }
         if (is_err(expr)) {
-            return expr.message;
+            return ENGLISH_UNDEFINED;
         }
         if (is_imu(expr)) {
             if (defs.printMode === PRINTMODE_LATEX) {

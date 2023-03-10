@@ -11,6 +11,7 @@ import { is_negative_number } from '../../predicates/is_negative_number';
 import { ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { Err } from '../../tree/err/Err';
 import { piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
@@ -50,8 +51,11 @@ export function arg(z: U, $: ExtensionEnv): U {
     const y = imag(z, $);
     const x = real(z, $);
     // TODO: handle the undefined case when both x and y are zero.
-    if ($.isZero(x)) {
-        if (is_negative(y)) {
+    if ($.is_zero(x)) {
+        if ($.is_zero(y)) {
+            return new Err(items_to_cons(ARG, $.add(x, y)));
+        }
+        else if (is_negative(y)) {
             return $.negate(DynamicConstants.Pi($));
         }
         else {
@@ -71,6 +75,7 @@ export function arg(z: U, $: ExtensionEnv): U {
             }
         }
         else {
+            // TODO: We're getting arg(x) is zero because of assumptions that x is not negative.
             return arctan(divide(y, x, $), $);
         }
     }
@@ -177,7 +182,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
         return arg_of_sum(expr, $);
     }
 
-    if (!$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
+    if (!$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
         // if we assume all passed values are real
         return zero;
     }
@@ -196,7 +201,7 @@ function arg_of_sum(expr: Cons, $: ExtensionEnv): U {
     const y = imag(z, $);
     // console.lg(`x => ${$.toListString(x)}`);
     // console.lg(`y => ${$.toListString(y)}`);
-    if ($.isZero(x)) {
+    if ($.is_zero(x)) {
         if (is_negative(y)) {
             return $.negate(DynamicConstants.Pi($));
         }

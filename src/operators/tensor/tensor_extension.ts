@@ -116,7 +116,7 @@ class TensorExtension implements Extension<Tensor> {
     }
     isZero(arg: Tensor, $: ExtensionEnv): boolean {
         return arg.everyElement(function (element) {
-            return $.isZero(element);
+            return $.is_zero(element);
         });
     }
     subst(expr: Tensor, oldExpr: U, newExpr: U, $: ExtensionEnv): U {

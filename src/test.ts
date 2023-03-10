@@ -319,7 +319,7 @@ function cmp_args(args: U, $: ExtensionEnv): Sign | null {
         diff = $.valueOf(evaluate_as_float(diff, $));
     }
 
-    if ($.isZero(diff)) {
+    if ($.is_zero(diff)) {
         return 0;
     }
 

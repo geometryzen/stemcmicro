@@ -39,7 +39,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     isZero(expr: EXP): boolean {
         const x = expr.lhs.lhs;
-        return this.$.isZero(x);
+        return this.$.is_zero(x);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const x = lhs.lhs;

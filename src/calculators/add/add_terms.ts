@@ -23,7 +23,7 @@ export function append_terms(terms: U[], term: U, $: ExtensionEnv): void {
             append_terms(terms, kid, $);
         });
     }
-    else if ($.isZero(term)) {
+    else if ($.is_zero(term)) {
         if ($.getNativeDirective(Directive.keepZeroTermsInSums)) {
             terms.push(term);
         }

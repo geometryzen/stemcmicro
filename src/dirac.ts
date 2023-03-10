@@ -14,14 +14,14 @@ export function Eval_dirac(p1: U, $: ExtensionEnv): U {
 
 export function dirac(p1: U, $: ExtensionEnv): U {
     if (is_flt(p1)) {
-        if ($.isZero(p1)) {
+        if ($.is_zero(p1)) {
             return one;
         }
         return zero;
     }
 
     if (is_rat(p1)) {
-        if ($.isZero(p1)) {
+        if ($.is_zero(p1)) {
             return one;
         }
         return zero;

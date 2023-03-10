@@ -366,7 +366,7 @@ export function derfc(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function dbesselj(p1: U, p2: Sym, $: ExtensionEnv): U {
-    if ($.isZero(caddr(p1))) {
+    if ($.is_zero(caddr(p1))) {
         return dbesselj0(p1, p2, $);
     }
     return dbesseljn(p1, p2, $);
@@ -393,7 +393,7 @@ export function dbesseljn(p1: U, p2: Sym, $: ExtensionEnv): U {
 }
 
 export function dbessely(p1: U, p2: Sym, $: ExtensionEnv): U {
-    if ($.isZero(caddr(p1))) {
+    if ($.is_zero(caddr(p1))) {
         return dbessely0(p1, p2, $);
     }
     return dbesselyn(p1, p2, $);

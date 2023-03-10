@@ -97,7 +97,7 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
     }
 
     if (!is_tensor(p1)) {
-        if (!$.isZero(p1)) {
+        if (!$.is_zero(p1)) {
             //stop("transpose: tensor expected, 1st arg is not a tensor")
             // remove the default "dimensions to be switched"
             // parameters

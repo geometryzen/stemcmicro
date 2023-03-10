@@ -1,12 +1,11 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { Err } from "../../tree/err/Err";
 import { Flt } from "../../tree/flt/Flt";
-import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Uom } from "../../tree/uom/Uom";
+import { is_flt } from "../flt/is_flt";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_uom } from "../uom/uom_extension";
@@ -28,9 +27,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('add_2_uom_flt', MATH_ADD, is_uom, is_flt, $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_UOM, HASH_FLT);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        return [TFLAG_DIFF, new Err(`operator + (Uom, Flt) is not supported.`)];
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
+        throw new TypeError(this.$.toInfixString(expr));
     }
 }
 

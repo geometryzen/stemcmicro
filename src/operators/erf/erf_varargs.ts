@@ -35,7 +35,7 @@ function yerf(p1: U, $: ExtensionEnv): U {
         return create_flt(1.0 - erfc(p1.d));
     }
 
-    if ($.isZero(p1)) {
+    if ($.is_zero(p1)) {
         return zero;
     }
 

@@ -57,7 +57,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     //  1 ^ a    ->  1
     //  a ^ 0    ->  1
-    if ($.equals(base, one) || $.isZero(expo)) {
+    if ($.equals(base, one) || $.is_zero(expo)) {
         const dynOne = $.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one;
         return hook(dynOne, "A");
     }
@@ -160,7 +160,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                     // console.lg($.toSExprString(base), "is NOT real");
                 }
                 */
-                if (!$.isZero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
+                if (!$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
                     const result = $.power(cadr(base), expo);
                     return hook(result, "L");
                 }

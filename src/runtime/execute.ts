@@ -39,21 +39,31 @@ export function execute_script(fileName: string, sourceText: string, options: Pa
     const values: U[] = [];
     const prints: string[] = [];
     // console.lg(`trees.length = ${trees.length}`);
-    for (const tree of trees) {
-        // console.lg("tree", render_as_sexpr(tree, $));
-        // console.lg("tree", render_as_infix(tree, $));
-        const data = transform_tree(tree, $);
-        if (data.value) {
-            if (!is_nil(data.value)) {
-                // console.lg(`value = ${data.value}`);
-                values.push(data.value);
+    try {
+        for (const tree of trees) {
+            // console.lg("tree", render_as_sexpr(tree, $));
+            // console.lg("tree", render_as_infix(tree, $));
+            const data = transform_tree(tree, $);
+            if (data.value) {
+                if (!is_nil(data.value)) {
+                    // console.lg(`value = ${data.value}`);
+                    values.push(data.value);
+                }
+            }
+            for (const p of data.prints) {
+                prints.push(p);
+            }
+            for (const e of data.errors) {
+                errors.push(e);
             }
         }
-        for (const p of data.prints) {
-            prints.push(p);
-        }
-        for (const e of data.errors) {
+    }
+    catch (e) {
+        if (e instanceof Error) {
             errors.push(e);
+        }
+        else {
+            errors.push(new Error(`${e}`));
         }
     }
     return { values, prints, errors };

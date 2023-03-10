@@ -290,8 +290,8 @@ describe("uom", function () {
             const engine = create_script_context({
                 dependencies: ['Flt', 'Uom']
             });
-            const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Flt, Uom) is not supported.");
+            const { errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(errors[0].message, "6.0+kg");
             engine.release();
         });
         it("+(Uom, Flt)", function () {
@@ -302,8 +302,8 @@ describe("uom", function () {
             const engine = create_script_context({
                 dependencies: ['Flt', 'Uom']
             });
-            const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Uom, Flt) is not supported.");
+            const { errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(errors[0].message, "kg+5.0");
             engine.release();
         });
         it("(Rat, Uom)", function () {
@@ -312,8 +312,8 @@ describe("uom", function () {
                 `2 + kg`
             ];
             const engine = create_script_context();
-            const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Rat, Uom) is not supported.");
+            const { errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(errors[0].message, "2+kg");
             engine.release();
         });
         it("(Uom, Rat)", function () {
@@ -324,8 +324,8 @@ describe("uom", function () {
             const engine = create_script_context({
                 dependencies: ['Uom']
             });
-            const { values } = engine.executeScript(lines.join('\n'));
-            assert.strictEqual(engine.renderAsInfix(values[0]), "operator + (Uom, Rat) is not supported.");
+            const { errors } = engine.executeScript(lines.join('\n'));
+            assert.strictEqual(errors[0].message, "kg+2");
             engine.release();
         });
     });

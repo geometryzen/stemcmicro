@@ -9,6 +9,7 @@ import { is_str } from "../operators/str/is_str";
 import { is_sym } from "../operators/sym/is_sym";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { is_uom } from "../operators/uom/is_uom";
+import { TYPEOF_ERR } from "../tree/err/TYPEOF_ERR";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";
 
@@ -20,7 +21,7 @@ type INFO = { kind: KIND, parts: string[] };
 
 export const HASH_BLADE = 'Blade';
 export const HASH_BOO = 'Boo';
-export const HASH_ERR = 'Err';
+export const HASH_ERR = TYPEOF_ERR;
 export const HASH_FLT = 'Flt';
 export const HASH_HYP = 'Hyp';
 export const HASH_IMU = 'Imu';

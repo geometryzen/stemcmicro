@@ -113,7 +113,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     // Just to prove that the argument is not re-assigned.
     const expr: U = x;
 
-    if ($.isZero(expr)) {
+    if ($.is_zero(expr)) {
         return hook(expr, "A");
     }
 

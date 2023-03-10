@@ -294,5 +294,5 @@ function is_num_and_zero(expr: U): boolean {
 
 function is_tensor_and_zero(expr: U, $: ExtensionEnv): boolean {
     // TODO: We can see here that we could simply as if the term is zero.
-    return is_tensor(expr) && $.isZero(expr);
+    return is_tensor(expr) && $.is_zero(expr);
 }

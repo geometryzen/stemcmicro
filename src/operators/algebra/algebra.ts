@@ -138,7 +138,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         throw new Error('isOne Method not implemented.');
     }
     isZero(arg: U): boolean {
-        return this.$.isZero(arg);
+        return this.$.is_zero(arg);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     sin(arg: U): U {

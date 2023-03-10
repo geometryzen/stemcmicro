@@ -1,7 +1,6 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
 import { nativeInt } from '../../nativeInt';
-import { Err } from '../../tree/err/Err';
 import { car, cdr, Cons, nil, U } from '../../tree/tree';
 import { integral } from '../integral/integral_helpers';
 import { is_num } from '../num/is_num';
@@ -54,7 +53,7 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
         if (is_num(N)) {
             n = nativeInt(N);
             if (isNaN(n)) {
-                return new Err('nth derivative: check n');
+                throw new Error('nth derivative: check n');
             }
         }
         else {

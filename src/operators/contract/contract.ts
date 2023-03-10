@@ -45,7 +45,7 @@ function contract(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
     const an = [];
 
     if (!is_tensor(p1)) {
-        if (!$.isZero(p1)) {
+        if (!$.is_zero(p1)) {
             halt('contract: tensor expected, 1st arg is not a tensor');
         }
         return zero;

@@ -263,9 +263,9 @@ export interface ExtensionEnv {
      */
     isScalar(expr: U): boolean;
     /**
-     * Returns false when atom matches Cons or Sym, otherwise depends on the appropriate extension.
+     * A convenience for appling the predicate function to the expression.
      */
-    isZero(expr: U): boolean;
+    is_zero(expr: U): boolean;
     /**
      *
      */
@@ -350,15 +350,33 @@ export interface Operator<T extends U> {
     readonly hash?: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
+    /**
+     * @deprecated We don't want to have predicates hard-coded.
+     */
     isImag(expr: T): boolean;
     /**
      * Determines whether this operator can be used to evaluate the expression.
      */
     isKind(expr: U): expr is T;
+    /**
+     * @deprecated We don't want to have predicates hard-coded.
+     */
     isMinusOne(expr: T): boolean;
+    /**
+     * @deprecated We don't want to have predicates hard-coded.
+     */
     isOne(expr: T): boolean;
+    /**
+     * @deprecated We don't want to have predicates hard-coded.
+     */
     isReal(expr: T): boolean;
+    /**
+     * @deprecated We don't want to have predicates hard-coded.
+     */
     isScalar(expr: T): boolean;
+    /**
+     * @deprecated We don't want to have predicates hard-coded.
+     */
     isZero(expr: T): boolean;
     subst(expr: T, oldExpr: U, newExpr: U): U;
     toInfixString(expr: T): string;

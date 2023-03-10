@@ -19,7 +19,7 @@ export function is_zero_sum(lhs: U, rhs: U, $: ExtensionEnv): boolean {
         const Z = rhs;
         if (Y.equals(Z)) {
             // (X * Y) + Y = (X + 1) * Y
-            return $.isMinusOne(X) || $.isZero(Y);
+            return $.isMinusOne(X) || $.is_zero(Y);
         }
         if (is_cons(rhs) && is_mul_2_any_any(rhs)) {
             // (X * Y) + (Z * W)
@@ -27,7 +27,7 @@ export function is_zero_sum(lhs: U, rhs: U, $: ExtensionEnv): boolean {
             const W = rhs.rhs;
             if (Y.equals(W)) {
                 // (X * Y) + (Z * Y) = (X + Z) * Y
-                return is_zero_sum(X, Z, $) || $.isZero(Y);
+                return is_zero_sum(X, Z, $) || $.is_zero(Y);
             }
         }
     }
@@ -38,7 +38,7 @@ export function is_zero_sum(lhs: U, rhs: U, $: ExtensionEnv): boolean {
         const Z = rhs.rhs;
         if (Z.equals(X)) {
             // X + (Y * X) = (1 + Y) * X
-            return $.isMinusOne(Y) || $.isZero(X);
+            return $.isMinusOne(Y) || $.is_zero(X);
         }
     }
     return false;

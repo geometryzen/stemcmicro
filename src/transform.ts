@@ -240,7 +240,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
             let temp = C;
             while (is_cons(temp)) {
                 const p2 = $.valueOf(temp.car);
-                if ($.isZero(p2)) {
+                if ($.is_zero(p2)) {
                     break;
                 }
                 temp = temp.cdr;
@@ -254,7 +254,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
                 return $.valueOf(x);
             }, A, $) : $.valueOf(A);
 
-            if ($.isZero($.subtract(F, arg2))) {
+            if ($.is_zero($.subtract(F, arg2))) {
                 return true; // yes
             }
         }

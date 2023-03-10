@@ -54,7 +54,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
 
         if (is_num(a) && is_num(b)) {
             const sum = add_num_num(a, b);
-            if ($.isZero(sum)) {
+            if ($.is_zero(sum)) {
                 // Ensure correct runtime type of the result by propagating the type correctly.
                 typedZero = multiply_num_num(typedZero, sum);
                 terms.splice(i, 2);
@@ -94,7 +94,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
         const k = add_num_num(lhs_a, lhs_b);
 
         // If k is zero then (a + b) is zero.
-        if ($.isZero(k)) {
+        if ($.is_zero(k)) {
             terms.splice(i, 2);
             i--;
 

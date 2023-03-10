@@ -1,10 +1,9 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { cofactor } from '../cofactor/cofactor';
 import { assert_square_matrix_tensor } from '../../tensor';
-import { Err } from '../../tree/err/Err';
-import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, Cons, U } from '../../tree/tree';
+import { cofactor } from '../cofactor/cofactor';
+import { is_tensor } from '../tensor/is_tensor';
 
 /* adj =====================================================================
 
@@ -30,7 +29,7 @@ export function Eval_adj(expr: Cons, $: ExtensionEnv): U {
         return result;
     }
     else {
-        return new Err(`adj argument MUST be a tensor.`);
+        throw new Error(`adj argument MUST be a tensor.`);
     }
 }
 

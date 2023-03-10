@@ -155,7 +155,7 @@ export function Eval_inner(p1: U, $: ExtensionEnv): void {
                     const arg1 = inv($.valueOf(operands[i + shift]), $);
                     const difference = $.subtract(arg1, arg2);
                     // console.lg "result: " + difference
-                    if ($.isZero(difference)) {
+                    if ($.is_zero(difference)) {
                         shift += 1;
                     }
                     else {

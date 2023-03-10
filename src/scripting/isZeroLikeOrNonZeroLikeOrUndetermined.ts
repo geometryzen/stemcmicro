@@ -22,7 +22,7 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
 
     // OK first check if we already have
     // a simple zero (or simple zero tensor)
-    if ($.isZero(evalledArgument)) {
+    if ($.is_zero(evalledArgument)) {
         return false;
     }
 
@@ -57,7 +57,7 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // by doing the simple numeric
     // values checks again
 
-    if ($.isZero(evalledArgument)) {
+    if ($.is_zero(evalledArgument)) {
         return false;
     }
 
@@ -79,7 +79,7 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
 
         // re-do the simple-number checks...
 
-        if ($.isZero(evalledArgument)) {
+        if ($.is_zero(evalledArgument)) {
             return false;
         }
 

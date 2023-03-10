@@ -14,7 +14,7 @@ export function Eval_shape(p1: U, $: ExtensionEnv): U {
 
 function shape(M: U, $: ExtensionEnv): U {
     if (!is_tensor(M)) {
-        if (!$.isZero(M)) {
+        if (!$.is_zero(M)) {
             halt('transpose: tensor expected, 1st arg is not a tensor');
         }
         return zero;

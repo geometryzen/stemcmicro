@@ -75,7 +75,7 @@ export function inv(expr: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
     }
 
     const p2 = det(expr, $);
-    if ($.isZero(p2)) {
+    if ($.is_zero(p2)) {
         halt('inverse of singular matrix');
     }
     return hook(divide(adj(expr, $), p2, $) as Tensor);

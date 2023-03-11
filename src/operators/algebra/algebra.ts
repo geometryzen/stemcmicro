@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_and_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
 import { create_flt } from '../../tree/flt/Flt';
 import { one, two, zero } from '../../tree/rat/Rat';

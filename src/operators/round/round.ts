@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_and_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { makeList } from '../../makeList';
 import { is_num } from '../num/is_num';
 import { ROUND } from '../../runtime/constants';

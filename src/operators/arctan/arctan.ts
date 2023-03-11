@@ -1,6 +1,6 @@
 import { rational } from '../../bignum';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
-import { equaln, equalq } from '../../is';
+import { equaln, is_num_and_equalq } from '../../is';
 import { makeList } from '../../makeList';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, COS, PI, POWER, SIN, TAN } from '../../runtime/constants';
@@ -62,12 +62,12 @@ export function arctan(x: U, $: ExtensionEnv): U {
     // arctan(1/sqrt(3)) -> pi/6
     // second if catches the other way of saying it, sqrt(3)/3
     if (
-        (is_power(x) && equaln(cadr(x), 3) && equalq(caddr(x), -1, 2)) ||
+        (is_power(x) && equaln(cadr(x), 3) && is_num_and_equalq(caddr(x), -1, 2)) ||
         (is_multiply(x) &&
-            equalq(car(cdr(x)), 1, 3) &&
+            is_num_and_equalq(car(cdr(x)), 1, 3) &&
             car(car(cdr(cdr(x)))).equals(POWER) &&
             equaln(car(cdr(car(cdr(cdr(x))))), 3) &&
-            equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
+            is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
         return $.multiply(rational(1, 6), $.getNativeDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI);
     }
@@ -78,7 +78,7 @@ export function arctan(x: U, $: ExtensionEnv): U {
     }
 
     // arctan(sqrt(3)) -> pi/3
-    if (is_power(x) && equaln(cadr(x), 3) && equalq(caddr(x), 1, 2)) {
+    if (is_power(x) && equaln(cadr(x), 3) && is_num_and_equalq(caddr(x), 1, 2)) {
         return $.multiply(third, DynamicConstants.Pi($));
     }
 

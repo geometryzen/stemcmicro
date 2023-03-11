@@ -2,13 +2,23 @@ import { complex_conjugate } from '../../complex_conjugate';
 import { ExtensionEnv, LambdaExpr } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { divide } from '../../helpers/divide';
-import { ASSUME_REAL_VARIABLES, IMAG, REAL } from '../../runtime/constants';
+import { Native } from '../../native/Native';
+import { native_sym } from '../../native/native_sym';
+import { ASSUME_REAL_VARIABLES } from '../../runtime/constants';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
-import { MATH_ADD, MATH_MUL, MATH_POW } from '../../runtime/ns_math';
 import { one, zero } from '../../tree/rat/Rat';
 import { cons, Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
 import { is_sym } from '../sym/is_sym';
+
+const MATH_ADD = native_sym(Native.add);
+const COS = native_sym(Native.cosine);
+const EXP = native_sym(Native.exp);
+const IMAG = native_sym(Native.imag);
+const MATH_LOG = native_sym(Native.log);
+const MATH_MUL = native_sym(Native.multiply);
+const MATH_POW = native_sym(Native.pow);
+const REAL = native_sym(Native.real);
 
 /**
  * expr = (real arg)
@@ -41,15 +51,16 @@ export const real_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv)
  * @returns 
  */
 export function real(expr: U, $: ExtensionEnv): U {
+    // console.lg(`real`, $.toInfixString(expr));
     // console.lg("real", $.toSExprString(expr));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, where: string): U {
-        // console.lg(`HOOK: real of ${$.toInfixString(expr)} => ${$.toInfixString(retval)} (${where})`);
+        // console.lg(`HOOK: real part of ${$.toInfixString(expr)} is ${$.toInfixString(retval)} (${where})`);
         return retval;
     };
 
     if ($.is_real(expr)) {
-        return expr;
+        return hook(expr, 'A');
     }
     else if (is_rat(expr)) {
         return expr;
@@ -93,13 +104,27 @@ export function real(expr: U, $: ExtensionEnv): U {
             }
         }
         else {
-            return hook(expr, 'D');
+            // The expression is in the form of a power.
+            // It is natural to then take a log: log(z) = log(base^expo)=>expo*log(base)
+            // Now let z = r * exp(i*theta). log(z) = log(r) + i * theta
+            // Hence log(r) + i * theta = expo*log(base)
+            // real(z) = r * cos(theta)
+            // log(r) = real(expo*log(base))
+            // r = exp(real(expo*log(base)))
+            // theta = imag(expo*log(base)) 
+            // console.lg("base", $.toInfixString(base));
+            // console.lg("expo", $.toInfixString(expo));
+            const r = compute_r_from_base_and_expo(base, expo, $);
+            const theta = compute_theta_from_base_and_expo(base, expo, $);
+            const cos_theta = $.valueOf(items_to_cons(COS, theta));
+            const retval = $.valueOf(items_to_cons(MATH_MUL, r, cos_theta));
+            return hook(retval, 'D');
         }
     }
     else if (is_multiply(expr)) {
         // console.lg("Computing Re of a * expression...", $.toSExprString(expr));
-        const rs: U[] = []; // treat as real.
-        const cs: U[] = []; // treat as complex.
+        const rs: U[] = []; // the real factors.
+        const cs: U[] = []; // the complex factors
         [...expr.argList].forEach(function (arg) {
             // console.lg("testing the arg:", $.toInfixString(arg));
             if ($.is_real(arg)) {
@@ -107,6 +132,7 @@ export function real(expr: U, $: ExtensionEnv): U {
                 rs.push(arg);
             }
             else {
+                // console.lg("arg is NOT real:", $.toInfixString(arg));
                 // console.lg("arg is NOT real:", $.toInfixString(arg));
                 // With no boolean response, we have to assume that the argument is not real valued.
                 // How do we make progress with the factors that are complex numbers?
@@ -128,37 +154,21 @@ export function real(expr: U, $: ExtensionEnv): U {
                     const expo = arg.rhs;
                     // console.lg("base", $.toInfixString(base));
                     // console.lg("expo", $.toInfixString(expo));
-                    if ($.is_real(base)) {
-                        // console.lg("base is real", $.toInfixString(base));
-                        rs.push(arg);
-                    }
-                    else {
-                        if (is_rat(expo) && expo.isInteger() && expo.isNegative()) {
-                            const conj_base = complex_conjugate(base, $);
-                            const A = $.valueOf(items_to_cons(MATH_POW, base, expo.succ()));
-                            const B = $.valueOf(conj_base);
-                            const numer = $.valueOf(items_to_cons(MATH_MUL, A, B));
-                            const denom = $.valueOf(items_to_cons(MATH_MUL, base, conj_base));
-                            const C = divide(numer, denom, $);
-                            // console.lg("base is possibly complex", $.toInfixString(base));
-                            cs.push(C);
-                        }
-                        else {
-                            throw new Error("Power" + $.toInfixString(expr));
-                        }
-                    }
+                    const r = compute_r_from_base_and_expo(base, expo, $);
+                    // console.lg("r", $.toInfixString(r));
+                    const theta = compute_theta_from_base_and_expo(base, expo, $);
+                    // console.lg("theta", $.toInfixString(theta));
+                    const i_times_theta = $.valueOf(items_to_cons(MATH_MUL, imu, theta));
+                    const cis_theta = $.valueOf(items_to_cons(EXP, i_times_theta));
+                    // console.lg("cis_theta", $.toInfixString(cis_theta));
+                    rs.push(r);
+                    cs.push(cis_theta);
                 }
                 else if (is_cons(arg) && is_sym(arg.opr)) {
-                    // console.lg(`getChain ${$.toInfixString(REAL)} ${$.toInfixString(arg.opr)}`);
-                    const chain = $.getChain(REAL, arg.opr);
-                    if (chain) {
-                        return chain(expr.argList, $);
-                    }
-                    else {
-                        throw new Error(`${$.toInfixString(REAL)} ${$.toInfixString(arg.opr)}`);
-                    }
+                    cs.push(arg);
                 }
                 else {
+                    // console.lg("WT...");
                     // Here we might encounter a function.
                     // So far we've handled math.pow.
                     // How to handle arbitrary functions. e.g. abs, sin, ...
@@ -170,6 +180,7 @@ export function real(expr: U, $: ExtensionEnv): U {
         // console.lg("A", $.toInfixString(A));
         const B = multiply_factors(cs, $);
         // console.lg("B", $.toInfixString(B));
+        // console.lg("exp", $.toInfixString(expr));
         const C = $.valueOf(items_to_cons(REAL, B));
         // console.lg("C", $.toSExprString(C));
         const D = $.valueOf(items_to_cons(MATH_MUL, A, C));
@@ -216,4 +227,24 @@ function multiply_factors(factors: U[], $: ExtensionEnv): U {
     else {
         return one;
     }
+}
+
+export function compute_r_from_base_and_expo(base: U, expo: U, $: ExtensionEnv): U {
+    // console.lg("base", $.toInfixString(base));
+    // console.lg("expo", $.toInfixString(expo));
+    const log_base = $.valueOf(items_to_cons(MATH_LOG, base));
+    // console.lg("log_base", $.toInfixString(log_base));
+    const expo_times_log_base = $.valueOf(items_to_cons(MATH_MUL, expo, log_base));
+    // console.lg("expo_times_log_base", $.toInfixString(expo_times_log_base));
+    const real_expo_times_log_base = $.valueOf(items_to_cons(REAL, expo_times_log_base));
+    // console.lg("real_expo_times_log_base", $.toInfixString(real_expo_times_log_base));
+    const r = $.valueOf(items_to_cons(EXP, real_expo_times_log_base));
+    // console.lg("r", $.toInfixString(r));
+    return r;
+}
+export function compute_theta_from_base_and_expo(base: U, expo: U, $: ExtensionEnv): U {
+    const log_base = $.valueOf(items_to_cons(MATH_LOG, base));
+    const expo_times_log_base = $.valueOf(items_to_cons(MATH_MUL, expo, log_base));
+    const theta = $.valueOf(items_to_cons(IMAG, expo_times_log_base));
+    return theta;
 }

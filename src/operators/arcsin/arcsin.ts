@@ -2,7 +2,7 @@ import { rational } from '../../bignum';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import {
     equaln,
-    equalq,
+    is_num_and_equalq,
     isminusoneoversqrttwo,
     isMinusSqrtThreeOverTwo,
     isoneoversqrttwo,
@@ -49,10 +49,10 @@ export function arcsin(x: U, $: ExtensionEnv): U {
     if (
         isoneoversqrttwo(x) ||
         (is_multiply(x) &&
-            equalq(car(cdr(x)), 1, 2) &&
+            is_num_and_equalq(car(cdr(x)), 1, 2) &&
             car(car(cdr(cdr(x)))).equals(POWER) &&
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
-            equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
+            is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
         return $.multiply(rational(1, 4), PI);
     }
@@ -62,10 +62,10 @@ export function arcsin(x: U, $: ExtensionEnv): U {
     if (
         isminusoneoversqrttwo(x) ||
         (is_multiply(x) &&
-            equalq(car(cdr(x)), -1, 2) &&
+            is_num_and_equalq(car(cdr(x)), -1, 2) &&
             car(car(cdr(cdr(x)))).equals(POWER) &&
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
-            equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
+            is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
         return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 4.0) : $.multiply(rational(-1, 4), PI);
     }

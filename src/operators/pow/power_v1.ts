@@ -4,8 +4,8 @@ import { complex_conjugate } from "../../complex_conjugate";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
-import { iscomplexnumberdouble, iseveninteger, isminusoneovertwo, is_complex_number, is_num_and_eq_minus_one, is_num_and_gt_zero, is_one_over_two, is_plus_or_minus_one } from "../../is";
-import { is_rat_and_integer } from "../../is_rat_integer";
+import { iscomplexnumberdouble, iseveninteger, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one } from "../../is";
+import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { pow_rat_rat } from "../../pow_rat_rat";
@@ -39,7 +39,7 @@ import { dpow } from "./dpow";
  * @returns 
  */
 export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
-    // console.lg(`power_v1 base=${render_as_infix(base, $)} expo=${render_as_infix(expo, $)}`);
+    // console.lg(`power_v1 base=${$.toInfixString(base)} expo=${$.toInfixString(expo)}`);
     if (typeof base === 'undefined') {
         throw new Error("base must be defined.");
     }
@@ -74,17 +74,26 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
 
     //   -1 ^ 1/2  ->  i
-    if (is_num_and_eq_minus_one(base) && is_one_over_two(expo)) {
-        return hook(imu, "D");
+    if (is_num_and_eq_minus_one(base) && is_num_and_equal_one_half(expo)) {
+        if ($.getNativeDirective(Directive.evaluatingAsClock)) {
+            return items_to_cons(POWER, base, expo);
+        }
+        else {
+            return hook(imu, "D");
+        }
     }
 
     //   -1 ^ -1/2  ->  -i
-    if (is_num_and_eq_minus_one(base) && isminusoneovertwo(expo)) {
-        const result = $.negate(imu);
-        return hook(result, "E");
+    if (is_num_and_eq_minus_one(base) && is_num_and_equal_minus_half(expo)) {
+        if ($.getNativeDirective(Directive.evaluatingAsClock)) {
+            return items_to_cons(POWER, base, expo);
+        }
+        else {
+            const result = $.negate(imu);
+            return hook(result, "E");
+        }
     }
 
-    let tmp: U;
     //   -1 ^ rational
     if (
         is_num_and_eq_minus_one(base) &&
@@ -94,11 +103,14 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         is_num_and_gt_zero(expo) &&
         !$.getNativeDirective(Directive.evaluatingAsFloat)
     ) {
-        if (expo.a < expo.b) {
-            tmp = items_to_cons(POWER, base, expo);
+        // console.lg("base", $.toInfixString(base));
+        // console.lg("expo", $.toInfixString(expo));
+        // console.lg("typeof expo.a", typeof expo.a);
+        if (expo.numer().compare(expo.denom()) < 0) {
+            return hook(items_to_cons(POWER, base, expo), "F");
         }
         else {
-            tmp = items_to_cons(
+            const raw = items_to_cons(
                 MULTIPLY,
                 base,
                 items_to_cons(
@@ -107,13 +119,9 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                     rational(expo.a.mod(expo.b), expo.b)
                 )
             );
+            const value = $.valueOf(raw);
+            return hook(value, "F");
         }
-
-        // evaluates clock form into
-        // rectangular form. This seems to give
-        // slightly better form to some test results.
-        const result = rect(tmp, $);
-        return hook(result, "F");
     }
 
     // both base and exponent are rational numbers?

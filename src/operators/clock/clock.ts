@@ -1,5 +1,5 @@
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { POWER } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { negOne } from '../../tree/rat/Rat';
@@ -34,22 +34,29 @@ import { arg } from '../arg/arg';
  * @param $ 
  * @returns 
  */
-export function clockform(z: U, $: ExtensionEnv): U {
-    // console.lg();
-    // console.lg(`clockform z=${print_expr(z, $)}`);
-    // pushing the expression (-1)^... but note
-    // that we can't use "power", as "power" evaluates
-    // clock forms into rectangular form (see "-1 ^ rational"
-    // section in power)
-    const arg_z = arg(z, $);
-    // console.lg(`arg_z=${print_expr(arg_z, $)}`);
-    const pi = DynamicConstants.Pi($);
-    // console.lg(`pi=${print_expr(pi, $)}`);
-    const direction = items_to_cons(POWER, negOne, divide(arg_z, pi, $));
-    // console.lg(`direction=${print_expr(direction, $)}`);
-    const magnitude = abs(z, $);
-    // console.lg(`magnitude=${print_expr(magnitude, $)}`);
-    const clock_z = $.multiply(magnitude, direction);
-    // console.lg(`clock_z  =${print_expr(clock_z, $)}`);
-    return clock_z;
+export function clock(z: U, $: ExtensionEnv): U {
+    const original = $.getNativeDirective(Directive.evaluatingAsClock);
+    $.setNativeDirective(Directive.evaluatingAsClock, true);
+    try {
+        // console.lg();
+        // console.lg(`clockform z=${print_expr(z, $)}`);
+        // pushing the expression (-1)^... but note
+        // that we can't use "power", as "power" evaluates
+        // clock forms into rectangular form (see "-1 ^ rational"
+        // section in power)
+        const arg_z = arg(z, $);
+        // console.lg(`arg_z=${print_expr(arg_z, $)}`);
+        const pi = DynamicConstants.Pi($);
+        // console.lg(`pi=${print_expr(pi, $)}`);
+        const direction = items_to_cons(POWER, negOne, divide(arg_z, pi, $));
+        // console.lg(`direction=${print_expr(direction, $)}`);
+        const magnitude = abs(z, $);
+        // console.lg(`magnitude=${print_expr(magnitude, $)}`);
+        const clock_z = $.multiply(magnitude, direction);
+        // console.lg(`clock_z  =${print_expr(clock_z, $)}`);
+        return clock_z;
+    }
+    finally {
+        $.setNativeDirective(Directive.evaluatingAsClock, original);
+    }
 }

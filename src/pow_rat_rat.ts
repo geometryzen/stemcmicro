@@ -4,7 +4,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { in_safe_integer_range } from './in_safe_integer_range';
 import { is_num_and_eq_minus_one } from './is';
-import { is_rat_and_integer } from './is_rat_integer';
+import { is_rat_and_integer } from './is_rat_and_integer';
 import { makeList } from './makeList';
 import { mpow } from './mpow';
 import { mroot } from './mroot';

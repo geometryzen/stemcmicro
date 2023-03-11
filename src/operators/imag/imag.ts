@@ -40,6 +40,7 @@ export const imag_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv)
  * @returns 
  */
 export function imag(z: U, $: ExtensionEnv): U {
+    // console.lg(`imag`, $.toInfixString(z));
     // The use of the real() function is elegant but it introduces the risk of infinite recursion.
     if (is_sym(z)) {
         if ($.is_real(z)) {
@@ -50,6 +51,8 @@ export function imag(z: U, $: ExtensionEnv): U {
         }
     }
     const neg_imu = $.valueOf(items_to_cons(MATH_MUL, negOne, imu));
+    // console.lg(`neg_imu`, $.toInfixString(neg_imu));
     const neg_imu_times_z = $.valueOf(items_to_cons(MATH_MUL, neg_imu, z));
+    // console.lg(`neg_imu_times_z`, $.toInfixString(neg_imu_times_z));
     return real(neg_imu_times_z, $);
 }

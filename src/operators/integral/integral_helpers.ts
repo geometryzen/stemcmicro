@@ -1,7 +1,7 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { exp } from '../../exp';
 import { guess } from '../../guess';
-import { equalq, isminusoneovertwo, is_num_and_eq_minus_one, is_one_over_two } from '../../is';
+import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_eq_minus_one, is_num_and_equal_one_half } from '../../is';
 import { makeList } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { partition } from '../../partition';
@@ -677,16 +677,16 @@ function hash_power(base: U, power_number: U, x: U, $: ExtensionEnv): number {
         if (is_num_and_eq_minus_one(power_number)) {
             exp_hash = -1;
         }
-        else if (is_one_over_two(power_number)) {
+        else if (is_num_and_equal_one_half(power_number)) {
             exp_hash = 0.5;
         }
-        else if (isminusoneovertwo(power_number)) {
+        else if (is_num_and_equal_minus_half(power_number)) {
             exp_hash = -0.5;
         }
-        else if (equalq(power_number, 2, 1)) {
+        else if (is_num_and_equalq(power_number, 2, 1)) {
             exp_hash = 2;
         }
-        else if (equalq(power_number, -2, 1)) {
+        else if (is_num_and_equalq(power_number, -2, 1)) {
             exp_hash = -2;
         }
     }

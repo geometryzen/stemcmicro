@@ -2,7 +2,7 @@ import { mp_denominator, mp_numerator } from '../bignum';
 import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { equaln, isfraction, isNumberOneOverSomething, is_num_and_eq_minus_one, is_num_and_eq_two, is_one_over_two } from '../is';
+import { equaln, isfraction, isNumberOneOverSomething, is_num_and_eq_minus_one, is_num_and_eq_two, is_num_and_equal_one_half } from '../is';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { abs } from '../operators/abs/abs';
@@ -1306,7 +1306,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
     let str = '';
 
     // quick check this is actually a square root.
-    if (is_one_over_two(expo)) {
+    if (is_num_and_equal_one_half(expo)) {
         if (equaln(base, 2)) {
             if (defs.codeGen) {
                 str += print_str('Math.SQRT2');

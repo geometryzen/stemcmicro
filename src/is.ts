@@ -1,7 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
-import { is_rat_and_integer } from './is_rat_integer';
+import { is_rat_and_integer } from './is_rat_and_integer';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
@@ -12,7 +12,7 @@ import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/co
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
 import { Num } from './tree/num/Num';
-import { Rat } from './tree/rat/Rat';
+import { IsInteger, Rat } from './tree/rat/Rat';
 import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 //
@@ -52,19 +52,11 @@ export function is_num_and_eq_two(p: U): p is Num & { __ts_sign: 1; __ts_integer
 
 
 /**
- * @deprecated Use is_num(expr) && expr.isMinusOne
- * @param p 
- * @returns 
+ *
  */
 export function is_num_and_eq_minus_one(p: U): p is Num & { __ts_sign: -1; __ts_integer: true; __ts_special: -1; } {
     if (is_num(p)) {
         return p.isMinusOne();
-    }
-    if (is_rat(p)) {
-        return MEQUAL(p.a, -1) && MEQUAL(p.b, 1);
-    }
-    else if (is_flt(p)) {
-        return p.d === -1.0;
     }
     else {
         return false;
@@ -80,7 +72,6 @@ export function is_plus_or_minus_one(x: U, $: ExtensionEnv): boolean {
 
 export function is_integer_or_integer_float(p: U): p is Num & { __ts_integer: true } {
     if (is_flt(p)) {
-
         if (p.d === Math.round(p.d)) {
             return true;
         }
@@ -92,12 +83,17 @@ export function is_integer_or_integer_float(p: U): p is Num & { __ts_integer: tr
     return is_rat_and_integer(p);
 }
 
-export function isnonnegativeinteger(p: U): p is Rat & { __ts_integer: true; __ts_sign: 1 } {
+export function isnonnegativeinteger(p: U): p is Rat & IsInteger<true> & { __ts_integer: true; __ts_sign: 1 } {
     return is_rat(p) && MEQUAL(p.b, 1) && MSIGN(p.a) === 1;
 }
 
-export function is_positive_integer(p: U): p is Rat & { __ts_integer: true; __ts_sign: 1 } {
-    return is_rat(p) && p.isPositiveInteger();
+export function is_rat_and_positive_integer(p: U): p is Rat & { __ts_integer: true; __ts_sign: 1 } {
+    if (is_rat_and_integer(p)) {
+        return p.isPositiveInteger();
+    }
+    else {
+        return false;
+    }
 }
 
 // --------------------------------------
@@ -143,7 +139,7 @@ function ispolyfactoredorexpandedform_factor(p: U, x: U, $: ExtensionEnv): boole
 
 function ispolyfactoredorexpandedform_power(p: U, x: U, $: ExtensionEnv): boolean {
     if (is_power(p)) {
-        return is_positive_integer(caddr(p)) && is_poly_expanded_form_expr(cadr(p), x, $);
+        return is_rat_and_positive_integer(caddr(p)) && is_poly_expanded_form_expr(cadr(p), x, $);
     }
     else {
         return is_poly_expanded_form_expr(p, x, $);
@@ -197,7 +193,7 @@ function is_poly_expanded_form_factor(p: U, x: U, $: ExtensionEnv): boolean {
         return true;
     }
     if (is_power(p) && cadr(p).equals(x)) {
-        return is_positive_integer(caddr(p));
+        return is_rat_and_positive_integer(caddr(p));
     }
     if (p.contains(x)) {
         return false;
@@ -361,12 +357,12 @@ export function equaln(expr: U, n: number): boolean {
 }
 
 // a and b ints
-export function equalq(p: U, a: number, b: number): boolean {
-    if (is_rat(p)) {
-        return MEQUAL(p.a, a) && MEQUAL(p.b, b);
+export function is_num_and_equalq(expr: U, a: number, b: number): boolean {
+    if (is_rat(expr)) {
+        return expr.numer().isIntegerNumber(a) && expr.denom().isIntegerNumber(b);
     }
-    else if (is_flt(p)) {
-        return p.d === a / b;
+    else if (is_flt(expr)) {
+        return expr.d === a / b;
     }
     else {
         return false;
@@ -374,18 +370,18 @@ export function equalq(p: U, a: number, b: number): boolean {
 }
 
 // p == 1/2 ?
-export function is_one_over_two(p: U): boolean {
-    return equalq(p, 1, 2);
+export function is_num_and_equal_one_half(p: U): boolean {
+    return is_num_and_equalq(p, 1, 2);
 }
 
 // p == -1/2 ?
-export function isminusoneovertwo(p: U): boolean {
-    return equalq(p, -1, 2);
+export function is_num_and_equal_minus_half(p: U): boolean {
+    return is_num_and_equalq(p, -1, 2);
 }
 
 // p == 1/sqrt(2) ?
 export function isoneoversqrttwo(p: U): boolean {
-    return is_power(p) && equaln(cadr(p), 2) && equalq(caddr(p), -1, 2);
+    return is_power(p) && equaln(cadr(p), 2) && is_num_and_equalq(caddr(p), -1, 2);
 }
 
 // p == -1/sqrt(2) ?
@@ -402,7 +398,7 @@ export function isminusoneoversqrttwo(p: U): boolean {
 export function isSqrtThreeOverTwo(p: U): boolean {
     return (
         is_multiply(p) &&
-        is_one_over_two(cadr(p)) &&
+        is_num_and_equal_one_half(cadr(p)) &&
         isSqrtThree(caddr(p)) &&
         length_of_cons_otherwise_zero(p) === 3
     );
@@ -412,7 +408,7 @@ export function isSqrtThreeOverTwo(p: U): boolean {
 export function isMinusSqrtThreeOverTwo(p: U): boolean {
     return (
         is_multiply(p) &&
-        isminusoneovertwo(cadr(p)) &&
+        is_num_and_equal_minus_half(cadr(p)) &&
         isSqrtThree(caddr(p)) &&
         length_of_cons_otherwise_zero(p) === 3
     );
@@ -420,7 +416,7 @@ export function isMinusSqrtThreeOverTwo(p: U): boolean {
 
 // Check if value is sqrt(3)
 function isSqrtThree(p: U): boolean {
-    return is_power(p) && equaln(cadr(p), 3) && is_one_over_two(caddr(p));
+    return is_power(p) && equaln(cadr(p), 3) && is_num_and_equal_one_half(caddr(p));
 }
 
 export function contains_floating_values_or_floatf(expr: U): boolean {

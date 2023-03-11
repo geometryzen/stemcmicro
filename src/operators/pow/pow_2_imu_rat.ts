@@ -31,6 +31,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
+        // TODO: Generalize
         if (rhs.isTwo()) {
             return [TFLAG_DIFF, negOne];
         }

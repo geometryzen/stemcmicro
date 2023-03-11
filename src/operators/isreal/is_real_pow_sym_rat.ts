@@ -1,14 +1,12 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { booF, booT } from "../../tree/boo/Boo";
-import { assert_rat } from "../../tree/rat/assert_rat";
-import { four } from "../../tree/rat/Rat";
+import { booF } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
-import { is_imu } from "../imu/is_imu";
 import { is_rat } from "../rat/is_rat";
+import { is_sym } from "../sym/is_sym";
 import { AbstractChain } from "./AbstractChain";
 
 const POW = native_sym(Native.pow);
@@ -16,14 +14,14 @@ const IS_REAL = native_sym(Native.is_real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new IsRealPow($);
+        return new Op($);
     }
 }
 
 /**
  * isreal(z) <=> iszero(imag(z))
  */
-class IsRealPow extends AbstractChain {
+class Op extends AbstractChain {
     constructor($: ExtensionEnv) {
         super(IS_REAL, POW, $);
     }
@@ -34,7 +32,7 @@ class IsRealPow extends AbstractChain {
             // console.lg("pow", pow.toString());
             const base = pow.lhs;
             const expo = pow.rhs;
-            return is_imu(base) && is_rat(expo);
+            return is_sym(base) && is_rat(expo);
             // return true;
         }
         else {
@@ -43,24 +41,13 @@ class IsRealPow extends AbstractChain {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, pow: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
-        const expo = assert_rat(pow.rhs);
-        const numer = expo.numer();
-        const denom = expo.denom();
-        // If the denominator is 1 then we avoid the issues of roots of unity.
-        if (denom.isOne()) {
-            // If the numerator is divisible by 4 then the argument evaluates to 1.
-            // In that case, the imaginary part will be zero.
-            if (numer.div(four).isInteger()) {
-                return [TFLAG_DIFF, booT];
-            }
-            else {
-                return [TFLAG_DIFF, booF];
-            }
-        }
-        else {
-            return [TFLAG_DIFF, booF];
-        }
+        // const base = assert_sym(pow.lhs);
+        // const expo = assert_rat(pow.rhs);
+        // const numer = expo.numer();
+        // const denom = expo.denom();
+        // We can improve on this...
+        return [TFLAG_DIFF, booF];
     }
 }
 
-export const is_real_pow_imu_rat = new Builder();
+export const is_real_pow_sym_rat = new Builder();

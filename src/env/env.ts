@@ -8,7 +8,7 @@ import { is_lambda } from "../operators/lambda/is_lambda";
 import { is_rat } from "../operators/rat/is_rat";
 import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
-import { FUNCTION, PREDICATE_IS_REAL } from "../runtime/constants";
+import { FUNCTION } from "../runtime/constants";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { Lambda } from "../tree/lambda/Lambda";
@@ -25,6 +25,7 @@ import { UnknownOperator } from "./UnknownOperator";
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POWER = native_sym(Native.pow);
+const ISREAL = native_sym(Native.is_real);
 
 class StableExprComparator implements ExprComparator {
     constructor(private readonly opr: Sym) {
@@ -248,9 +249,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             return function (argList: Cons, $: ExtensionEnv): U {
-                const i = cons(inner, argList);
+                // const i = cons(inner, argList);
                 // Don't evaluate here. This is a fallback for when no chain exists.
-                return items_to_cons(outer, i);
+                // const expr = items_to_cons(outer, i);
+                // We report that the expression is not defined.
+                throw new Error(`${$.toInfixString(outer)} ${$.toInfixString(inner)} ${argList.toString()}}`);
+                // return new Err(expr);
             };
         },
         setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void {
@@ -357,7 +361,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         is_real(expr: U): boolean {
-            return $.is(PREDICATE_IS_REAL, expr);
+            return $.is(ISREAL, expr);
         },
         isScalar(expr: U): boolean {
             const op = $.operatorFor(expr);

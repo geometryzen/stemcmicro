@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_and_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { makeList } from '../../makeList';
 import { mmod } from '../../mmul';
 import { nativeInt } from '../../nativeInt';

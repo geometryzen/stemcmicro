@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_and_integer } from '../../is_rat_integer';
+import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { multiply_items_factoring } from '../../multiply';
 import { factor_number } from '../../pollard';
 import { MAXPRIMETAB, primetab } from '../../runtime/constants';

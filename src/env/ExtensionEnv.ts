@@ -67,6 +67,7 @@ export enum Directive {
      * The default value is false.
      */
     evaluatingAsPolar,
+    evaluatingAsClock,
     /**
      * Determines whether trigonometric functions are converted to exponential form.
      * 
@@ -220,7 +221,13 @@ export interface ExtensionEnv {
      * @deprecated
      */
     factorize(poly: U, x: U): U;
+    /**
+     * @deprecated
+     */
     getChain(outer: Sym, inner: Sym): LambdaExpr;
+    /**
+     * @deprecated 
+     */
     setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void;
     getMode(): number;
     getCustomDirective(directive: string): boolean;

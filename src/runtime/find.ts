@@ -1,7 +1,7 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { equaln } from '../is';
-import { is_rat_and_integer } from '../is_rat_integer';
+import { is_rat_and_integer } from '../is_rat_and_integer';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_imu } from '../operators/imu/is_imu';
 import { caddr, cadr } from '../tree/helpers';

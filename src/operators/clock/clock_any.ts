@@ -6,7 +6,7 @@ import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
-import { clockform } from "./clock";
+import { clock } from "./clock";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -27,7 +27,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if ($.isExpanding()) {
-            const newExpr = clockform(arg, $);
+            const newExpr = clock(arg, $);
             return [TFLAG_DIFF, newExpr];
         }
         else {

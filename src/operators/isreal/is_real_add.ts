@@ -4,7 +4,7 @@ import { native_sym } from "../../native/native_sym";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { AbstractPredicateCons } from "./AbstractPredicateCons";
+import { AbstractChain } from "./AbstractChain";
 
 const ADD = native_sym(Native.add);
 const IS_REAL = native_sym(Native.is_real);
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class IsRealAdd extends AbstractPredicateCons {
+class IsRealAdd extends AbstractChain {
     constructor($: ExtensionEnv) {
         super(IS_REAL, ADD, $);
     }

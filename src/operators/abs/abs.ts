@@ -103,7 +103,7 @@ export function abs(x: U, $: ExtensionEnv): U {
  * They cannot be the entry point if the system is extensible regarding atoms.
  */
 export function abs(x: U, $: ExtensionEnv): U {
-    // console.lg("abs x=", render_as_sexpr(x, $));
+    // console.lg("abs", $.toSExprString(x));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`abs ${render_as_infix(x, $)} => ${render_as_infix(retval, $)} @ ${description}`);
@@ -167,17 +167,10 @@ export function abs(x: U, $: ExtensionEnv): U {
         }
     }
 
-    // TODO: This can be generalized e.g. to Tensor, Vec.
-    // abs(x) = sqrt(x*x), so we should ask if x squares to 1.
-    // If it does, return a one of the same shape.
-    // const xx = square(expr,$)
-    // $.isOne(xx);
-    // const ext = $.extensionOf(expr);
-    // const correctly_typed_one = ext.one(expr, $) 
-    // (abs (expt -1 Unknown)) => 1
-    // abs(-1^anything) = abs(-1)^anything = 1^anything = 1
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
+        // console.lg("detected abs(minus one to some power) and returning 1");
         // -1 to any power
+        // abs( (-1)^x ) = sqrt( (-1)^x * (-1)^x ) = sqrt( 1^x ) = 1
         return hook($.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one, "G");
     }
 

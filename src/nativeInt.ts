@@ -1,5 +1,5 @@
 import { in_safe_integer_range } from "./in_safe_integer_range";
-import { is_rat_and_integer } from "./is_rat_integer";
+import { is_rat_and_integer } from "./is_rat_and_integer";
 import { is_flt } from "./operators/flt/is_flt";
 import { is_rat } from "./operators/rat/is_rat";
 import { U } from "./tree/tree";

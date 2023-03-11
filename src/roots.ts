@@ -5,7 +5,7 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
 import { divide } from './helpers/divide';
-import { is_complex_number, is_poly_expanded_form, is_positive_integer } from './is';
+import { is_complex_number, is_poly_expanded_form, is_rat_and_positive_integer } from './is';
 import { Native } from './native/Native';
 import { native_sym } from './native/native_sym';
 import { coeff } from './operators/coeff/coeff';
@@ -223,7 +223,7 @@ function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
     if (
         is_power(poly) &&
         is_poly_expanded_form(cadr(poly), X, $) &&
-        is_positive_integer(caddr(poly))
+        is_rat_and_positive_integer(caddr(poly))
     ) {
         const n = normalized_coeff(cadr(poly), X, $);
         return mini_solve(n, $);

@@ -1,4 +1,4 @@
-import { is_positive_integer } from "../is";
+import { is_rat_and_positive_integer } from "../is";
 import { BCons } from "../operators/helpers/BCons";
 import { is_mul_2_any_any } from "../operators/mul/is_mul_2_any_any";
 import { is_pow_2_any_any } from "../operators/pow/is_pow_2_any_any";
@@ -10,7 +10,7 @@ import { Cons, is_cons, items_to_cons, U } from "../tree/tree";
 function is_pow_2_any_positive_integer(expr: Cons): expr is BCons<Sym, U, Rat> {
     if (is_pow_2_any_any(expr)) {
         const expo = expr.rhs;
-        return is_positive_integer(expo);
+        return is_rat_and_positive_integer(expo);
     }
     return false;
 }

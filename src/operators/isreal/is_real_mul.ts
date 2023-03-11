@@ -4,7 +4,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { AbstractPredicateCons } from "./AbstractPredicateCons";
+import { AbstractChain } from "./AbstractChain";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -12,7 +12,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class IsRealMul extends AbstractPredicateCons {
+class IsRealMul extends AbstractChain {
     constructor(innerOpr: Sym, $: ExtensionEnv) {
         super(PREDICATE_IS_REAL, innerOpr, $);
     }

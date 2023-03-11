@@ -1,78 +1,55 @@
 
 import { assert } from "chai";
-import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("isreal(i^(4/1)", function () {
+    it("isreal(x**(3/2))", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `isreal(i**(4/1))`
+            `isreal(x**(3/2))`,
         ];
-        const sourceText = lines.join('\n');
-
-        const context = create_script_context({});
-
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
-        assert.isArray(errors);
-        assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#t");
-        assert.strictEqual(context.renderAsInfix(values[0]), "true");
-        context.release();
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "false");
+        engine.release();
     });
-    it("isreal(i^(3/2)", function () {
+    xit("real((-1)**(1/3))", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `isreal(i**(3/2))`
+            `real((-1)**(1/3))`,
         ];
-        const sourceText = lines.join('\n');
-
-        const context = create_script_context({});
-
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
-        assert.isArray(errors);
-        assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#f");
-        assert.strictEqual(context.renderAsInfix(values[0]), "false");
-        context.release();
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1/2");
+        engine.release();
     });
-    it("isreal(i**(4/3)", function () {
+    xit("imag((-1)**(1/3))", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `isreal(i**(4/3))`
+            `imag((-1)**(1/3))`,
         ];
-        const sourceText = lines.join('\n');
-
-        const context = create_script_context({});
-
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
-        assert.isArray(errors);
-        assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#f");
-        assert.strictEqual(context.renderAsInfix(values[0]), "false");
-        context.release();
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1/2*sqrt(3)");
+        engine.release();
     });
-    it("isreal(x^(3/2)", function () {
+    xit("arg((-1)**(1/3))", function () {
         const lines: string[] = [
-            `isreal(x**(3/2))`
+            `arg((-1)**(1/3))`,
         ];
-        const sourceText = lines.join('\n');
-
-        const context = create_script_context({});
-
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
-        assert.isArray(errors);
-        assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#t");
-        assert.strictEqual(context.renderAsInfix(values[0]), "true");
-        context.release();
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1/3*pi");
+        engine.release();
     });
 });

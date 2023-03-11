@@ -4,7 +4,7 @@ import { condense, yycondense } from '../../condense';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
-import { equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
+import { is_num_and_equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { makeList } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
@@ -21,7 +21,7 @@ import { half, one, third, three, two, create_int, zero } from '../../tree/rat/R
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
-import { clockform } from '../clock/clock';
+import { clock } from '../clock/clock';
 import { denominator } from "../denominator/denominator";
 import { factor } from "../factor/factor";
 import { evaluate_as_float } from '../float/float';
@@ -368,7 +368,7 @@ function simplify_rect_to_clock(expr: U, $: ExtensionEnv): U {
         return oldExpr;
     }
 
-    const newExpr = clockform($.valueOf(oldExpr), $);
+    const newExpr = clock($.valueOf(oldExpr), $);
 
     // console.lg(`before simplification clockform: ${oldExpr} after: ${newExpr}`);
 
@@ -490,7 +490,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     // console.lg("possible double radical base: " + base)
     // console.lg("possible double radical exponent: " + exponent)
 
-    if ((is_num(expo) && expo.isMinusOne()) || !car(base).equals(ADD) || !(is_rat(expo) && expo.isFraction()) || (!equalq(expo, 1, 3) && !equalq(expo, 1, 2))) {
+    if ((is_num(expo) && expo.isMinusOne()) || !car(base).equals(ADD) || !(is_rat(expo) && expo.isFraction()) || (!is_num_and_equalq(expo, 1, 3) && !is_num_and_equalq(expo, 1, 2))) {
         return [p1, TFLAG_NONE];
     }
 
@@ -522,7 +522,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     const B = termsThatAreNotPowers.reduce($.multiply, one);
 
     let temp: U = nil;
-    if (equalq(expo, 1, 3)) {
+    if (is_num_and_equalq(expo, 1, 3)) {
         const checkSize1 = divide($.multiply($.negate(A), C), B, $); // 4th coeff
         const result1 = nativeDouble(evaluate_as_float(real(checkSize1, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
@@ -550,7 +550,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         ], $);
         temp = result;
     }
-    else if (equalq(expo, 1, 2)) {
+    else if (is_num_and_equalq(expo, 1, 2)) {
         const result1 = nativeDouble(evaluate_as_float(real(C, $), $));
         if (Math.abs(result1) > Math.pow(2, 32)) {
             return [p1, TFLAG_NONE];
@@ -605,11 +605,11 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     );
     const SOLUTION = possibleRationalSolutions[whichRationalSolution];
 
-    if (!equalq(expo, 1, 3) && !equalq(expo, 1, 2)) {
+    if (!is_num_and_equalq(expo, 1, 3) && !is_num_and_equalq(expo, 1, 2)) {
         return [p1, TFLAG_NONE];
     }
 
-    if (equalq(expo, 1, 3)) {
+    if (is_num_and_equalq(expo, 1, 3)) {
         const lowercase_b = $.power(
             divide(
                 A,
@@ -627,7 +627,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         return [result, TFLAG_DIFF];
     }
 
-    if (equalq(expo, 1, 2)) {
+    if (is_num_and_equalq(expo, 1, 2)) {
         const lowercase_b = $.power(
             divide(A, $.add($.power(SOLUTION, two), C), $),
             half
@@ -668,7 +668,7 @@ function _listAll(secondTerm: U, $: ExtensionEnv): { commonBases: U[]; termsThat
                 if (is_power(potentialPower)) {
                     const innerbase = cadr(potentialPower);
                     const innerexponent = caddr(potentialPower);
-                    if (equalq(innerexponent, 1, 2)) {
+                    if (is_num_and_equalq(innerexponent, 1, 2)) {
                         if (commonInnerExponent == null) {
                             commonInnerExponent = innerexponent;
                             commonBases.push(innerbase);
@@ -688,7 +688,7 @@ function _listAll(secondTerm: U, $: ExtensionEnv): { commonBases: U[]; termsThat
     else if (is_power(secondTerm)) {
         const innerbase = cadr(secondTerm);
         const innerexponent = caddr(secondTerm);
-        if (commonInnerExponent == null && equalq(innerexponent, 1, 2)) {
+        if (commonInnerExponent == null && is_num_and_equalq(innerexponent, 1, 2)) {
             commonInnerExponent = innerexponent;
             commonBases.push(innerbase);
         }

@@ -98,10 +98,14 @@ function abs(a: bigInt.BigInteger): bigInt.BigInteger {
     }
 }
 
+export interface IsInteger<T> {
+    isInteger(): T;
+}
+
 /**
  * "God gave us the integers, all else is the work of man" - Kronecker.
  */
-export class Rat extends Atom<'Rat'> {
+export class Rat extends Atom<'Rat'> implements IsInteger<boolean> {
     /**
      * @param a The numerator.
      * @param b The denominator.

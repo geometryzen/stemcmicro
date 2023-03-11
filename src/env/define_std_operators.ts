@@ -156,6 +156,7 @@ import { is_real_imag } from '../operators/isreal/is_real_imag';
 import { is_real_imu } from '../operators/isreal/is_real_imu';
 import { is_real_mul } from '../operators/isreal/is_real_mul';
 import { is_real_pow_imu_rat } from '../operators/isreal/is_real_pow_imu_rat';
+import { is_real_pow_sym_rat } from '../operators/isreal/is_real_pow_sym_rat';
 import { is_real_rat } from '../operators/isreal/is_real_rat';
 import { is_real_real } from '../operators/isreal/is_real_real';
 import { is_real_sin } from '../operators/isreal/is_real_sin';
@@ -243,6 +244,7 @@ import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { real_lambda } from '../operators/real/real';
 import { real_any } from '../operators/real/real_any';
+import { real_log_rat } from '../operators/real/real_log_rat';
 import { Eval_rect } from '../operators/rect/rect';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
@@ -694,6 +696,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineLegacyTransformer(QUOTE, Eval_quote);
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
+
+    $.defineOperator(real_log_rat);
     $.defineOperator(real_any);
 
     $.defineOperator(is_real_add);
@@ -702,6 +706,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(is_real_imag);
     $.defineOperator(is_real_imu);
     $.defineOperator(is_real_mul);
+    $.defineOperator(is_real_pow_sym_rat);
     $.defineOperator(is_real_pow_imu_rat);
     $.defineOperator(is_real_rat);
     $.defineOperator(is_real_real);

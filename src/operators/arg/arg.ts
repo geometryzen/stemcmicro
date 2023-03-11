@@ -1,7 +1,7 @@
 import { subtract } from '../../calculators/sub/subtract';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
-import { equaln, is_num_and_gt_zero, is_one_over_two } from '../../is';
+import { equaln, is_num_and_gt_zero, is_num_and_equal_one_half } from '../../is';
 import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
@@ -48,28 +48,43 @@ export function define_arg($: ExtensionEnv): void {
 }
 
 export function arg(z: U, $: ExtensionEnv): U {
+    // TODO: arg is being computed here by immediately going to real and imag parts.
+    // If z is in the form of a (power base expo) then it can make sense to equate to a polar form
+    // and solve for theta that way. The implementation of real is already using that approach.
+    // console.lg(`arg`, $.toInfixString(z));
     const y = imag(z, $);
     const x = real(z, $);
+    // console.lg(`x`, $.toInfixString(x));
+    // console.lg(`y`, $.toInfixString(y));
     // TODO: handle the undefined case when both x and y are zero.
     if ($.is_zero(x)) {
         if ($.is_zero(y)) {
+            // Undefined
             return new Err(items_to_cons(ARG, $.add(x, y)));
         }
+        else {
+            const k = is_negative(y) ? half.neg() : half;
+            const pi = DynamicConstants.Pi($);
+            return $.multiply(k, pi);
+        }
+        /*
         else if (is_negative(y)) {
-            return $.negate(DynamicConstants.Pi($));
+            return $.negate(pi);
         }
         else {
-            return DynamicConstants.Pi($);
+            return divide(pi,two,$);
         }
+        */
     }
     else {
         if (is_negative(x)) {
+            const pi = DynamicConstants.Pi($);
             if (is_negative(y)) {
-                return subtract(arctan(divide(y, x, $), $), DynamicConstants.Pi($), $);
+                return subtract(arctan(divide(y, x, $), $), pi, $);
             }
             else {
                 const lhs = arctan(divide(y, x, $), $);
-                const rhs = DynamicConstants.Pi($);
+                const rhs = pi;
                 const sum = $.add(lhs, rhs);
                 return sum;
             }
@@ -163,7 +178,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
         return arg;
     }
 
-    if (is_power(expr) && is_one_over_two(caddr(expr))) {
+    if (is_power(expr) && is_num_and_equal_one_half(caddr(expr))) {
         const arg1 = arg(cadr(expr), $);
         return $.multiply(arg1, caddr(expr));
     }

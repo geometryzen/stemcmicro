@@ -1,7 +1,7 @@
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Eval_filter } from "../../filter";
 import { invg } from "../../inv";
-import { is_rat_and_integer } from "../../is_rat_integer";
+import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { Eval_leading } from "../../leading";
 import { Eval_lookup } from "../../lookup";
 import { Eval_prime } from "../../prime";

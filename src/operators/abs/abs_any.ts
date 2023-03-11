@@ -1,4 +1,6 @@
 import { ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { is_atom, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -6,8 +8,9 @@ import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
 import { is_sym } from "../sym/is_sym";
 import { wrap_as_transform } from "../wrap_as_transform";
-import { Eval_abs } from "./eval_abs";
-import { MATH_ABS } from "./MATH_ABS";
+import { abs } from "./abs";
+
+export const ABS = native_sym(Native.abs);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -18,16 +21,10 @@ class Builder implements OperatorBuilder<U> {
 type ARG = U;
 type EXP = UCons<Sym, ARG>;
 
-/**
- * abs(X) => (expt (inner X X) 1/2)
- * 
- * This general replacement of the abs function with an inner product requires the concept of conjugation to unpack the inner product.
- * It should work for real numbers, complex numbers, blades, tensors and scalars.
- */
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
-        super('abs_any', MATH_ABS, is_any, $);
+        super('abs_any', ABS, is_any, $);
     }
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {
@@ -47,8 +44,9 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         }
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(arg));
         const $ = this.$;
-        const retval = Eval_abs(expr, $);
+        const retval = abs(arg, $);
         return wrap_as_transform(retval, expr);
     }
 }

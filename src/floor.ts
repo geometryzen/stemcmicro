@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_rat_and_integer } from './is_rat_integer';
+import { is_rat_and_integer } from './is_rat_and_integer';
 import { makeList } from './makeList';
 import { mdiv } from './mmul';
 import { is_flt } from './operators/flt/is_flt';

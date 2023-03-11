@@ -1,7 +1,7 @@
-import { clockform } from '../operators/clock/clock';
 import { ExtensionEnv } from '../env/ExtensionEnv';
+import { clock } from '../operators/clock/clock';
 import { cadr } from '../tree/helpers';
-import { U } from '../tree/tree';
+import { Cons, U } from '../tree/tree';
 
 /*
  Convert complex z to clock form
@@ -25,7 +25,7 @@ import { U } from '../tree/tree';
 //   2) it's very compact
 //   3) it's a straighforward notation for roots of 1 and -1
 
-export function Eval_clockform(p1: U, $: ExtensionEnv): U {
-    const result = clockform($.valueOf(cadr(p1)), $);
+export function Eval_clock(expr: Cons, $: ExtensionEnv): U {
+    const result = clock($.valueOf(cadr(expr)), $);
     return result;
 }

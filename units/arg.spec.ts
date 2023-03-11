@@ -62,7 +62,7 @@ describe("arg", function () {
         const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "pi");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/2 pi)");
         context.release();
     });
     it("arg(-1+0.1*i)", function () {
@@ -92,7 +92,7 @@ describe("arg", function () {
         const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1 pi)");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/2 pi)");
         context.release();
     });
     it("arg(1+i)", function () {

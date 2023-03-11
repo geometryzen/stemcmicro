@@ -1,7 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { PREDICATE_IS_REAL } from "../../runtime/constants";
-import { booT } from "../../tree/boo/Boo";
+import { booF } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
@@ -21,7 +21,8 @@ class IsRealAny extends Function1<U> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: U, expr: U): [TFLAGS, U] {
-        return [TFLAG_DIFF, booT];
+        // We could use fuzzy logic here...
+        return [TFLAG_DIFF, booF];
     }
 }
 

@@ -41,13 +41,11 @@ class SymMathPi implements Operator<Sym> {
     isKind(expr: U): expr is Sym {
         return is_pi(expr);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(expr: Sym): boolean {
-        throw new Error("SymMathPi.isMinusOne Method not implemented.");
+    isMinusOne(): boolean {
+        return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(expr: Sym): boolean {
-        throw new Error("SymMathPi.isOne Method not implemented.");
+    isOne(): boolean {
+        return false;
     }
     isReal(): boolean {
         return true;
@@ -55,8 +53,7 @@ class SymMathPi implements Operator<Sym> {
     isScalar(): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Sym): boolean {
+    isZero(): boolean {
         return false;
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {

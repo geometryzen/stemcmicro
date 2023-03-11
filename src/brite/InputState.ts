@@ -46,7 +46,7 @@ const scanConfig: ScanConfig = {
         '>=': MATH_GE,
         '>': MATH_GT,
         '!=': MATH_NE,
-        '==': native_sym(Native.testeq),
+        '==': native_sym(Native.test_eq),
         ':=': LANG_COLON_EQ,
         '=': ASSIGN,
         'abs': native_sym(Native.abs),

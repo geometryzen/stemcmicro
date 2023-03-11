@@ -640,10 +640,10 @@ function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): 
     else if (candidates.length > 0) {
         // The alternative here is that the first operator wins.
         // eslint-disable-next-line no-console
-        console.warn(`Ambiguous operators for expression ${$.toInfixString(expr)} ${JSON.stringify(candidates.map((candidate) => candidate.name))}`);
+        // console.warn(`Ambiguous operators for expression ${$.toInfixString(expr)} ${JSON.stringify(candidates.map((candidate) => candidate.name))}`);
         const using = candidates[0];
         // eslint-disable-next-line no-console
-        console.warn(`Using ${JSON.stringify(using.name)}`);
+        // console.warn(`Using ${JSON.stringify(using.name)}`);
         return using;
     }
     else {

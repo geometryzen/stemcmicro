@@ -27,6 +27,9 @@ class PredicateSym extends Function1<Sym> {
     }
 }
 
+/**
+ * Constructs an operator for predicate(arg: Sym). 
+ */
 export function make_predicate_sym_operator(predicate: Sym): OperatorBuilder<U> {
     return new Builder(predicate);
 }

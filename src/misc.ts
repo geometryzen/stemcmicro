@@ -63,7 +63,7 @@ export function sort_stack(n: number, $: ExtensionEnv) {
 }
 
 /**
- * @deprecated Ambiguous Get client to use either sort_terms or sort_factors.
+ * @deprecated Use a sort where the assumptions are explicit.
  * @param arr 
  * @param $ 
  */

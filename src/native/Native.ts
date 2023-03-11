@@ -19,6 +19,7 @@ export enum Native {
     exp,
     inner,
     inverse,
+    is_real,
     lco,
     multiply,
     outer,
@@ -27,5 +28,5 @@ export enum Native {
     sine,
     subtract,
     succ,
-    testeq
+    test_eq
 }

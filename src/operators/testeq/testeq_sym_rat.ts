@@ -11,7 +11,7 @@ import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
 
-const testeq = native_sym(Native.testeq);
+const testeq = native_sym(Native.test_eq);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

@@ -32,6 +32,7 @@ export function build_sym(code: Native): Sym {
         case Native.exp: return create_sym('exp');
         case Native.inner: return create_sym('inner');
         case Native.inverse: return create_sym('inv');
+        case Native.is_real: return create_sym('math.isreal');
         case Native.lco: return create_sym('<<');
         case Native.multiply: return create_sym('*');
         case Native.outer: return create_sym('outer');
@@ -40,7 +41,7 @@ export function build_sym(code: Native): Sym {
         case Native.sine: return create_sym('sin');
         case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');
-        case Native.testeq: return create_sym('testeq');
+        case Native.test_eq: return create_sym('testeq');
         default: throw new Error(`${code}`);
     }
 }

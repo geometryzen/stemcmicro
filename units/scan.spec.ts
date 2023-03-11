@@ -215,7 +215,7 @@ describe("scan", function () {
     describe("==", function () {
         it("a==b => (== a b)", function () {
             const expr = expect_cons(expect_one_tree(" a  ==  b "));
-            expect_sym(cadnr(expr, 0), native_sym(Native.testeq), '==', 4, 6);
+            expect_sym(cadnr(expr, 0), native_sym(Native.test_eq), '==', 4, 6);
             expect_sym(cadnr(expr, 1), NAME_A, 'a', 1, 2);
             expect_sym(cadnr(expr, 2), NAME_B, 'b', 8, 9);
         });

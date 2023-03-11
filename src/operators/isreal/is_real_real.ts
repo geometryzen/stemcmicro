@@ -1,5 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { IMAG, PREDICATE_IS_REAL } from "../../runtime/constants";
+import { PREDICATE_IS_REAL, REAL } from "../../runtime/constants";
 import { booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -11,9 +11,13 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class IsRealImag extends AbstractPredicateCons {
+
+/**
+ * isreal(real(z)) is always true because real(z) always return a real number.
+ */
+ class IsRealImag extends AbstractPredicateCons {
     constructor($: ExtensionEnv) {
-        super(PREDICATE_IS_REAL, IMAG, $);
+        super(PREDICATE_IS_REAL, REAL, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, add: Cons): [TFLAGS, U] {
@@ -21,4 +25,4 @@ class IsRealImag extends AbstractPredicateCons {
     }
 }
 
-export const is_real_imag = new Builder();
+export const is_real_real = new Builder();

@@ -19,7 +19,7 @@ import { native_sym } from "../../native/native_sym";
 import { ASSIGN } from "../../runtime/constants";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 
-const testeq = native_sym(Native.testeq);
+const testeq = native_sym(Native.test_eq);
 
 /**
  * Allows users to be lazy and use "=" as a test for equality.

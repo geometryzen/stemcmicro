@@ -12,7 +12,10 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class IsRealSin extends AbstractPredicateCons {
+/**
+ * isreal(sin(z)) => isreal(z)
+ */
+ class IsRealSin extends AbstractPredicateCons {
     constructor($: ExtensionEnv) {
         super(PREDICATE_IS_REAL, MATH_SIN, $);
     }

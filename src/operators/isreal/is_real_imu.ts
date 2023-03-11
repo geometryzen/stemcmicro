@@ -10,11 +10,11 @@ import { is_imu } from "../imu/is_imu";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new IsRealFlt($);
+        return new IsRealImu($);
     }
 }
 
-class IsRealFlt extends Function1<Imu> {
+class IsRealImu extends Function1<Imu> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super(`${PREDICATE_IS_REAL.text}(expr: ${HASH_IMU}) => ${HASH_BOO}`, PREDICATE_IS_REAL, is_imu, $);

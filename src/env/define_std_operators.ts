@@ -148,18 +148,20 @@ import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
+import { is_real_add } from '../operators/isreal/is_real_add';
+import { is_real_any } from '../operators/isreal/is_real_any';
+import { is_real_cos } from '../operators/isreal/is_real_cos';
+import { is_real_flt } from '../operators/isreal/is_real_flt';
+import { is_real_imag } from '../operators/isreal/is_real_imag';
+import { is_real_imu } from '../operators/isreal/is_real_imu';
+import { is_real_mul } from '../operators/isreal/is_real_mul';
+import { is_real_pow_imu_rat } from '../operators/isreal/is_real_pow_imu_rat';
+import { is_real_rat } from '../operators/isreal/is_real_rat';
+import { is_real_real } from '../operators/isreal/is_real_real';
+import { is_real_sin } from '../operators/isreal/is_real_sin';
+import { make_predicate_sym_operator } from '../operators/isreal/is_real_sym';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
-import { is_real_add } from '../operators/is_real/is_real_add';
-import { is_real_cos } from '../operators/is_real/is_real_cos';
-import { is_real_flt } from '../operators/is_real/is_real_flt';
-import { is_real_imag } from '../operators/is_real/is_real_imag';
-import { is_real_imu } from '../operators/is_real/is_real_imu';
-import { is_real_mul } from '../operators/is_real/is_real_mul';
-import { is_real_rat } from '../operators/is_real/is_real_rat';
-import { is_real_real } from '../operators/is_real/is_real_real';
-import { is_real_sin } from '../operators/is_real/is_real_sin';
-import { make_predicate_sym_operator } from '../operators/is_real/is_real_sym';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -322,7 +324,7 @@ import { ExtensionEnv } from "./ExtensionEnv";
 export function define_std_operators($: ExtensionEnv) {
     // 
     const MATH_ADD = native_sym(Native.add);
-    const testeq = native_sym(Native.testeq);
+    const testeq = native_sym(Native.test_eq);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
@@ -700,10 +702,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(is_real_imag);
     $.defineOperator(is_real_imu);
     $.defineOperator(is_real_mul);
+    $.defineOperator(is_real_pow_imu_rat);
     $.defineOperator(is_real_rat);
     $.defineOperator(is_real_real);
     $.defineOperator(is_real_sin);
     $.defineOperator(make_predicate_sym_operator(PREDICATE_IS_REAL));
+    $.defineOperator(is_real_any);
 
     $.defineLegacyTransformer(RECT, Eval_rect);
     $.defineOperator(roots_varargs);

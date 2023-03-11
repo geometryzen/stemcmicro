@@ -1,10 +1,13 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { PREDICATE_IS_REAL } from "../../runtime/constants";
-import { MATH_ADD } from "../../runtime/ns_math";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { AbstractPredicateCons } from "./AbstractPredicateCons";
+
+const ADD = native_sym(Native.add);
+const IS_REAL = native_sym(Native.is_real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -14,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 
 class IsRealAdd extends AbstractPredicateCons {
     constructor($: ExtensionEnv) {
-        super(PREDICATE_IS_REAL, MATH_ADD, $);
+        super(IS_REAL, ADD, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, add: Cons): [TFLAGS, U] {

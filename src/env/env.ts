@@ -626,6 +626,7 @@ function dependencies_satisfied(deps: FEATURE[] | undefined, includes: FEATURE[]
         return true;
     }
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): Operator<U> | undefined {
     // console.lg(`unambiguous_operator for ${$.toInfixString(expr)} from ${ops.length} choice(s).`);
     const candidates: Operator<U>[] = [];

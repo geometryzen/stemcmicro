@@ -1,14 +1,13 @@
 import { cadnr } from '../../calculators/cadnr';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
-import { makeList } from '../../makeList';
 import { ASSUME_REAL_VARIABLES, COS, RECT } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_add, is_multiply } from '../../runtime/helpers';
 import { MATH_SIN } from '../../runtime/ns_math';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, U } from '../../tree/tree';
+import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { abs } from '../abs/abs';
 import { arg } from '../arg/arg';
 import { cos } from '../cos/cosine';
@@ -38,7 +37,7 @@ export function rect(z: U, $: ExtensionEnv): U {
             return z;
         }
 
-        return makeList(RECT, z);
+        return items_to_cons(RECT, z);
 
         // TODO this is quite dirty, ideally we don't need this
         // but removing this creates a few failings in the tests
@@ -54,7 +53,7 @@ export function rect(z: U, $: ExtensionEnv): U {
 
     const assumeRealVariables = !$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES));
     // console.lg("assumeRealVariables", assumeRealVariables);
-    const hasExpForm = has_exp_form(z, $);
+    // const hasExpForm = has_exp_form(z, $);
     // console.lg("hasExpForm", hasExpForm);
 
     if (assumeRealVariables && !has_exp_form(z, $) && !has_clock_form(z, z, $) && !(z.contains(MATH_SIN) && z.contains(COS) && z.contains(imu))
@@ -82,7 +81,7 @@ export function rect(z: U, $: ExtensionEnv): U {
     // where theta is arg(p1)
     // abs(z) * (cos(arg(z)) + i sin(arg(z)))
     // console.lg("rect is computing abs(z)", $.toInfixString(z));
-    const A = arg(z, $);
+    // const A = arg(z, $);
     // console.lg("theta", $.toInfixString(A));
     const result = $.multiply(
         abs(z, $),

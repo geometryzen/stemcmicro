@@ -3,7 +3,6 @@ import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { booF } from "../../tree/boo/Boo";
 import { assert_rat } from "../../tree/rat/assert_rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
@@ -48,7 +47,7 @@ class Op extends AbstractChain {
         // console.lg("lhs", this.$.toInfixString(lhs));
         // console.lg("rhs", this.$.toInfixString(rhs));
         const rect_z = $.valueOf(items_to_cons(rect, rhs));
-        const rat_times_rect_z = $.valueOf(items_to_cons(mul, lhs,  rect_z));
+        const rat_times_rect_z = $.valueOf(items_to_cons(mul, lhs, rect_z));
 
         return [TFLAG_DIFF, rat_times_rect_z];
     }

@@ -11,6 +11,7 @@ import { abs_any } from '../operators/abs/abs_any';
 import { abs_blade } from '../operators/abs/abs_blade';
 import { abs_flt } from '../operators/abs/abs_flt';
 import { abs_imu } from '../operators/abs/abs_imu';
+import { abs_pow_any_negone } from '../operators/abs/abs_pow_any_negone';
 import { abs_rat } from '../operators/abs/abs_rat';
 import { abs_tensor } from '../operators/abs/abs_tensor';
 import { abs_uom } from '../operators/abs/abs_uom';
@@ -152,6 +153,7 @@ import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
+import { is_real_pow_any_negone } from '../operators/isreal/isreal_pow_any_negone';
 import { is_real_add } from '../operators/isreal/is_real_add';
 import { is_real_any } from '../operators/isreal/is_real_any';
 import { is_real_cos } from '../operators/isreal/is_real_cos';
@@ -573,6 +575,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(abs_add);
     $.defineOperator(abs_blade);
+    $.defineOperator(abs_pow_any_negone);
     $.defineOperator(abs_flt);
     $.defineOperator(abs_imu);
     $.defineOperator(abs_rat);
@@ -725,6 +728,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(is_real_mul);
     $.defineOperator(is_real_pow_sym_rat);
     $.defineOperator(is_real_pow_imu_rat);
+    $.defineOperator(is_real_pow_any_negone);
     $.defineOperator(is_real_rat);
     $.defineOperator(is_real_real);
     $.defineOperator(is_real_sin);

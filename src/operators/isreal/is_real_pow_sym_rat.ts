@@ -1,11 +1,14 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { booF } from "../../tree/boo/Boo";
+import { booF, booT, create_boo } from "../../tree/boo/Boo";
+import { assert_rat } from "../../tree/rat/assert_rat";
+import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
 import { is_rat } from "../rat/is_rat";
+import { assert_sym } from "../sym/assert_sym";
 import { is_sym } from "../sym/is_sym";
 import { AbstractChain } from "./AbstractChain";
 
@@ -41,12 +44,38 @@ class Op extends AbstractChain {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, pow: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
-        // const base = assert_sym(pow.lhs);
-        // const expo = assert_rat(pow.rhs);
-        // const numer = expo.numer();
+        const $ = this.$;
+        const base = assert_sym(pow.lhs);
+        const expo = assert_rat(pow.rhs);
+        const numer = expo.numer();
+        const denom = expo.denom();
+        if ($.is_real(base)) {
+            if (numer.div(two).isInteger()) {
+                if (denom.isOne()) {
+                    return [TFLAG_DIFF, booT];
+                }
+                else {
+                    return [TFLAG_DIFF, booF];
+                }
+            }
+            else if (numer.isMinusOne()) {
+                if (denom.isOne()) {
+                    // Duplicates rule in is_real_pow_ant_negone.
+                    return [TFLAG_DIFF, create_boo($.is_real(base))];
+                }
+                else {
+                    return [TFLAG_DIFF, booF];
+                }
+            }
+            else {
+                return [TFLAG_DIFF, booF];
+            }
+        }
+        else {
+            return [TFLAG_DIFF, booF];
+        }
         // const denom = expo.denom();
         // We can improve on this...
-        return [TFLAG_DIFF, booF];
     }
 }
 

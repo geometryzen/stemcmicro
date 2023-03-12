@@ -53,9 +53,6 @@ class Op extends AbstractChain {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
-        const $ = this.$;
-        // console.lg("YAY!!!  innerExpr", $.toInfixString(innerExpr));
-
         return [TFLAG_DIFF, expr];
     }
 }

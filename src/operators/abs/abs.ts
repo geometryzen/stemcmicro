@@ -21,7 +21,6 @@ import { is_num } from '../num/is_num';
 import { is_pi } from '../pi/is_pi';
 import { is_rat } from '../rat/is_rat';
 import { real } from '../real/real';
-import { rect } from '../rect/rect';
 import { simplify, simplify_trig } from '../simplify/simplify';
 import { is_tensor } from '../tensor/is_tensor';
 
@@ -105,7 +104,7 @@ export function abs(x: U, $: ExtensionEnv): U {
  * They cannot be the entry point if the system is extensible regarding atoms.
  */
 export function abs(x: U, $: ExtensionEnv): U {
-    // console.lg("abs", $.toSExprString(x));
+    // console.lg("abs", $.toInfixString(x));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`abs ${render_as_infix(x, $)} => ${render_as_infix(retval, $)} @ ${description}`);
@@ -149,14 +148,21 @@ export function abs(x: U, $: ExtensionEnv): U {
     // Note that for this routine to give a correct result, this
     // must be a sum where a complex number appears.
     // If we apply this to "a+b", we get an incorrect result.
+    // Note that addition of multivectors is handled in a different operator.
     if (is_cons(expr) && is_add(expr)) {
+        // console.lg("abs", $.toInfixString(expr));
+        // If it looks vaguely like a complex number perhaps?
         if (has_clock_form(expr, expr, $) || has_exp_form(expr, $) || expr.contains(imu)) {
 
-            const z = rect(expr, $); // convert polar terms, if any
+            // console.lg(`z? => ${$.toInfixString(expr)}`);
 
-            // console.lg(`z => ${$.toInfixString(z)}`)
+            const z = expr;
+            // const z = rect(expr, $); // convert polar terms, if any
+
+            // console.lg(`z => ${$.toInfixString(z)}`);
 
             const x = real(z, $);
+            // console.lg(`x => ${$.toInfixString(x)}`);
             const y = imag(z, $);
             const xx = $.power(x, two);
             const yy = $.power(y, two);
@@ -170,6 +176,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     }
 
     if (is_cons(expr) && is_power(expr) && equaln(car(expr.cdr), -1)) {
+        // console.lg("abs of -1 to some expo", $.toInfixString(expr));
         // console.lg("detected abs(minus one to some power) and returning 1");
         // -1 to any power
         // abs( (-1)^x ) = sqrt( (-1)^x * (-1)^x ) = sqrt( 1^x ) = 1
@@ -180,6 +187,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     // TODO: This needs more flexibility because (1/a)^(1/m) = a^(-1/m)
     // console.lg("expr", render_as_sexpr(expr, $));
     if (is_cons(expr) && is_power(expr)) {
+        // console.lg("abs of an exponential", $.toInfixString(expr));
         const base = cadr(expr);
         const expo = caddr(expr);
         if (is_num(expo)) {
@@ -211,6 +219,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     }
 
     if (is_cons(expr) && is_multiply(expr)) {
+        // console.lg("abs", $.toInfixString(expr));
         // product
         return hook(expr.tail().map(function (x) {
             return abs(x, $);

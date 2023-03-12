@@ -1,6 +1,6 @@
 import { ExtensionEnv, MODE_FACTORING } from '../../env/ExtensionEnv';
 import { is_num_and_eq_two } from '../../is';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { is_num } from '../num/is_num';
 import { is_tensor } from '../tensor/is_tensor';
@@ -102,9 +102,9 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
             // remove the default "dimensions to be switched"
             // parameters
             if ((!$.isOne(p2) || !is_num_and_eq_two(p3)) && (!$.isOne(p3) || !is_num_and_eq_two(p2))) {
-                return makeList(TRANSPOSE, p1, p2, p3);
+                return items_to_cons(TRANSPOSE, p1, p2, p3);
             }
-            return makeList(TRANSPOSE, p1);
+            return items_to_cons(TRANSPOSE, p1);
         }
         return zero;
     }

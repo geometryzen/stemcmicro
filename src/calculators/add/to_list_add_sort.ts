@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { is_num } from "../../operators/num/is_num";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_multiply } from "../../runtime/helpers";
@@ -121,7 +121,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
     if (terms.length > 0) {
         if (terms.length > 1) {
             // console.lg(`terms => ${items_to_infix(terms, $)}`)
-            return cons(MATH_ADD, makeList(...terms));
+            return cons(MATH_ADD, items_to_cons(...terms));
         }
         else {
             return terms[0];

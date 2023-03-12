@@ -2,7 +2,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { exp } from '../../exp';
 import { guess } from '../../guess';
 import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_eq_minus_one, is_num_and_equal_one_half } from '../../is';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { partition } from '../../partition';
 import { is_num } from '../num/is_num';
@@ -531,12 +531,12 @@ function integral_of_form(F: U, X: U, $: ExtensionEnv): U {
     if (!tab) {
         // breakpoint
         // italu_hashcode(p1, p2)
-        return makeList(INTEGRAL, F, X);
+        return items_to_cons(INTEGRAL, F, X);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [p3, _] = transform(F, X, tab, false, $);
     if (nil === p3) {
-        return makeList(INTEGRAL, F, X);
+        return items_to_cons(INTEGRAL, F, X);
     }
     return p3;
 }

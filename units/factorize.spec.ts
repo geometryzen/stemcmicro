@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { factorizeL } from "../src/calculators/factorizeL";
 import { imu } from "../src/env/imu";
-import { makeList } from "../src/makeList";
+import { items_to_cons } from "../src/makeList";
 import { is_rat } from "../src/operators/rat/is_rat";
 import { MATH_MUL } from "../src/runtime/ns_math";
 import { create_script_context } from "../src/runtime/script_engine";
@@ -77,37 +77,37 @@ describe("factorizeL", function () {
         check(retval, expectL, expectR);
     });
     it("a*b should be [a,b]", function () {
-        const retval = factorizeL(makeList(MATH_MUL, a, b));
+        const retval = factorizeL(items_to_cons(MATH_MUL, a, b));
         const expectL = a;
         const expectR = b;
         check(retval, expectL, expectR);
     });
     it("a*b*c should be [a,b*c]", function () {
-        const retval = factorizeL(makeList(MATH_MUL, makeList(MATH_MUL, a, b), c));
+        const retval = factorizeL(items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, a, b), c));
         const expectL = a;
-        const expectR = makeList(MATH_MUL, b, c);
+        const expectR = items_to_cons(MATH_MUL, b, c);
         check(retval, expectL, expectR);
     });
     it("a*b*c*d should be [a,b*c*d]", function () {
-        const retval = factorizeL(makeList(MATH_MUL, makeList(MATH_MUL, makeList(MATH_MUL, a, b), c), d));
+        const retval = factorizeL(items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, a, b), c), d));
         const expectL = a;
-        const expectR = makeList(MATH_MUL, makeList(MATH_MUL, b, c), d);
+        const expectR = items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, b, c), d);
         check(retval, expectL, expectR);
     });
     it("i*x*y", function () {
-        const input = makeList(MATH_MUL, makeList(MATH_MUL, imu, x), y);
+        const input = items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, imu, x), y);
         const retval = factorizeL(input);
         const expectL = imu;
-        const expectR = makeList(MATH_MUL, x, y);
+        const expectR = items_to_cons(MATH_MUL, x, y);
         check(retval, expectL, expectR);
     });
     it("-i*x*y", function () {
-        let input = makeList(MATH_MUL, negOne, imu);
-        input = makeList(MATH_MUL, input, x);
-        input = makeList(MATH_MUL, input, y);
+        let input = items_to_cons(MATH_MUL, negOne, imu);
+        input = items_to_cons(MATH_MUL, input, x);
+        input = items_to_cons(MATH_MUL, input, y);
         const retval = factorizeL(input);
         const expectL = negOne;
-        const expectR = makeList(MATH_MUL, makeList(MATH_MUL, imu, x), y);
+        const expectR = items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, imu, x), y);
         check(retval, expectL, expectR);
     });
 });
@@ -117,16 +117,16 @@ describe("is_rat_times", function () {
         assert.isFalse(is_rat_times_any(a));
     });
     it("2*a", function () {
-        assert.isTrue(is_rat_times_any(makeList(MATH_MUL, two, a)));
+        assert.isTrue(is_rat_times_any(items_to_cons(MATH_MUL, two, a)));
     });
     it("i*x*y", function () {
-        const expr = makeList(MATH_MUL, makeList(MATH_MUL, imu, x), y);
+        const expr = items_to_cons(MATH_MUL, items_to_cons(MATH_MUL, imu, x), y);
         assert.isFalse(is_rat_times_any(expr));
     });
     it("-i*x*y", function () {
-        const A = makeList(MATH_MUL, negOne, imu);
-        const B = makeList(MATH_MUL, A, x);
-        const C = makeList(MATH_MUL, B, y);
+        const A = items_to_cons(MATH_MUL, negOne, imu);
+        const B = items_to_cons(MATH_MUL, A, x);
+        const C = items_to_cons(MATH_MUL, B, y);
         const expr = C;
         assert.isTrue(is_rat_times_any(expr));
     });

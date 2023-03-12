@@ -1,5 +1,5 @@
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { makeList } from '../makeList';
+import { items_to_cons } from '../makeList';
 import { clear_patterns, patternsinfo } from "../pattern";
 import { PATTERN } from "../runtime/constants";
 import { defs, halt } from "../runtime/defs";
@@ -70,7 +70,7 @@ export function Eval_pattern(p1: U, $: ExtensionEnv): void {
 
     // return the pattern node itself so we can
     // give some printout feedback
-    stack_push(makeList(PATTERN, cdr(p1)));
+    stack_push(items_to_cons(PATTERN, cdr(p1)));
 }
 
 export function Eval_clearpatterns() {

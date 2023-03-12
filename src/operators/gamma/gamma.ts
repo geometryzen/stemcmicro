@@ -1,6 +1,5 @@
-import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { divide } from '../../helpers/divide';
 import { is_negative } from '../../predicates/is_negative';
 import { GAMMA, MEQUAL } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
@@ -48,7 +47,7 @@ function gammaf(p1: U, $: ExtensionEnv): U {
         return gamma_of_sum(p1, $);
     }
 
-    return makeList(GAMMA, p1);
+    return items_to_cons(GAMMA, p1);
 }
 
 function gamma_of_sum(p1: U, $: ExtensionEnv): U {

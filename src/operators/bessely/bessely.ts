@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { BESSELY } from '../../runtime/constants';
@@ -42,10 +42,10 @@ function yybessely(X: U, N: U, $: ExtensionEnv): U {
     }
 
     if (is_negative(N)) {
-        return $.multiply($.power(negOne, N), makeList(BESSELY, X, $.negate(N)));
+        return $.multiply($.power(negOne, N), items_to_cons(BESSELY, X, $.negate(N)));
     }
 
-    return makeList(BESSELY, X, N);
+    return items_to_cons(BESSELY, X, N);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

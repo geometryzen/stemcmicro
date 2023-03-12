@@ -1,7 +1,7 @@
 
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { is_flt } from "../flt/is_flt";
@@ -46,7 +46,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         if (rhs.isOne()) {
             return [TFLAG_DIFF, lhs];
         }
-        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];
     }
 }
 

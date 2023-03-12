@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { ARCSINH, SINH } from '../../runtime/constants';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
@@ -28,5 +28,5 @@ export function sinh(expr: U, $: ExtensionEnv): U {
     if ($.is_zero(expr)) {
         return zero;
     }
-    return makeList(SINH, expr);
+    return items_to_cons(SINH, expr);
 }

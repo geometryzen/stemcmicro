@@ -1,6 +1,6 @@
 import { bignum_factorial } from '../../bignum';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { FACTORIAL } from '../../runtime/constants';
 import { defs, move_top_of_stack, noexpand_unary } from '../../runtime/defs';
@@ -14,7 +14,7 @@ import { is_cons, nil, U } from '../../tree/tree';
 export function factorial(p1: U): U {
     const n = nativeInt(p1);
     if (n < 0 || isNaN(n)) {
-        return makeList(FACTORIAL, p1);
+        return items_to_cons(FACTORIAL, p1);
     }
     return bignum_factorial(n);
 }

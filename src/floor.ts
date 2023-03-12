@@ -1,7 +1,7 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_rat_and_integer } from './is_rat_and_integer';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { mdiv } from './mmul';
 import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
@@ -23,7 +23,7 @@ function yfloor(p1: U, $: ExtensionEnv): U {
 
 function yyfloor(p1: U, $: ExtensionEnv): U {
     if (!is_num(p1)) {
-        return makeList(FLOOR, p1);
+        return items_to_cons(FLOOR, p1);
     }
 
     if (is_flt(p1)) {

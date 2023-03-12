@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { ARCSINH, SINH } from '../../runtime/constants';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
@@ -41,5 +41,5 @@ export function arcsinh(x: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    return makeList(ARCSINH, x);
+    return items_to_cons(ARCSINH, x);
 }

@@ -1,6 +1,6 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_and_integer } from '../../is_rat_and_integer';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { is_num } from '../num/is_num';
 import { ROUND } from '../../runtime/constants';
 import { create_flt } from '../../tree/flt/Flt';
@@ -18,7 +18,7 @@ export function Eval_round(p1: Cons, $: ExtensionEnv): U {
 function yround(expr: U, $: ExtensionEnv): U {
 
     if (!is_num(expr)) {
-        return makeList(ROUND, expr);
+        return items_to_cons(ROUND, expr);
     }
 
     if (is_flt(expr)) {

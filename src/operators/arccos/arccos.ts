@@ -8,7 +8,7 @@ import {
     isoneoversqrttwo,
     isSqrtThreeOverTwo
 } from '../../is';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { ARCCOS, COS, PI, POWER } from '../../runtime/constants';
 import { is_multiply } from '../../runtime/helpers';
@@ -80,7 +80,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
     }
 
     if (!is_rat(x)) {
-        return makeList(ARCCOS, x);
+        return items_to_cons(ARCCOS, x);
     }
 
     const n = nativeInt($.multiply(x, two));
@@ -96,6 +96,6 @@ export function arccos(x: U, $: ExtensionEnv): U {
         case 2:
             return $.getNativeDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
         default:
-            return makeList(ARCCOS, x);
+            return items_to_cons(ARCCOS, x);
     }
 }

@@ -1,6 +1,6 @@
 
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { is_num } from "../num/is_num";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
@@ -36,7 +36,7 @@ class Op extends Function2<Sym, Num> implements Operator<BCons<Sym, Sym, Num>> {
         if (rhs.isOne()) {
             return [TFLAG_DIFF, lhs];
         }
-        return [TFLAG_DIFF, makeList(opr, rhs, lhs)];
+        return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];
     }
 }
 

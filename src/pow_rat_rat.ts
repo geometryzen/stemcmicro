@@ -5,7 +5,7 @@ import { imu } from './env/imu';
 import { in_safe_integer_range } from './in_safe_integer_range';
 import { is_num_and_eq_minus_one } from './is';
 import { is_rat_and_integer } from './is_rat_and_integer';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { mpow } from './mpow';
 import { mroot } from './mroot';
 import { nativeInt } from './nativeInt';
@@ -60,7 +60,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
         expoJs = nativeInt(expo);
         if (isNaN(expoJs)) {
             // expo greater than 32 bits
-            return hook(makeList(POWER, base, expo), "F");
+            return hook(items_to_cons(POWER, base, expo), "F");
         }
 
         x = mpow(base.a, Math.abs(expoJs));
@@ -109,7 +109,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
 
     // At this point base is a positive integer and EXPO is not an integer.
     if (!in_safe_integer_range(expo.a) || !in_safe_integer_range(expo.b)) {
-        return hook(makeList(POWER, base, expo), "L");
+        return hook(items_to_cons(POWER, base, expo), "L");
     }
 
     const { a, b } = expo;
@@ -117,7 +117,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
     x = mroot(base.a, b.toJSNumber());
 
     if (x === 0) {
-        return hook(makeList(POWER, base, expo), "M");
+        return hook(items_to_cons(POWER, base, expo), "M");
     }
 
     y = mpow(x, a);
@@ -177,7 +177,7 @@ function normalize_angle(A: Rat, $: ExtensionEnv): U {
     const R = $.subtract(A, Q);
 
     // remainder becomes new angle
-    let result: U = makeList(POWER, negOne, R);
+    let result: U = items_to_cons(POWER, negOne, R);
 
     // negate if quotient is odd
     if (Q.a.isOdd()) {

@@ -1,7 +1,7 @@
 import { rational } from '../../bignum';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { equaln, is_num_and_equalq } from '../../is';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, COS, PI, POWER, SIN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
@@ -82,5 +82,5 @@ export function arctan(x: U, $: ExtensionEnv): U {
         return $.multiply(third, DynamicConstants.Pi($));
     }
 
-    return makeList(ARCTAN, x);
+    return items_to_cons(ARCTAN, x);
 }

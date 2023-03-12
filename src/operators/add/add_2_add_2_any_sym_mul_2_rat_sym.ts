@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_EQ, SIGN_GT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -55,11 +55,11 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const k = rhs.lhs;
         switch (c.compare(b)) {
             case SIGN_GT: {
-                const retval = $.valueOf(makeList(MATH_ADD, $.valueOf(makeList(MATH_ADD, X, rhs)), c));
+                const retval = $.valueOf(items_to_cons(MATH_ADD, $.valueOf(items_to_cons(MATH_ADD, X, rhs)), c));
                 return [TFLAG_DIFF, retval];
             }
             default: {
-                const retval = $.valueOf(makeList(MATH_ADD, X, $.valueOf(makeList(MATH_MUL, k.succ(), c))));
+                const retval = $.valueOf(items_to_cons(MATH_ADD, X, $.valueOf(items_to_cons(MATH_MUL, k.succ(), c))));
                 return [TFLAG_DIFF, retval];
             }
         }

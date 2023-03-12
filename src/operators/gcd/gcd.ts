@@ -3,7 +3,7 @@ import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { isunivarpolyfactoredorexpandedform } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { is_negative_number } from '../../predicates/is_negative_number';
 import { MULTIPLY } from '../../runtime/constants';
 import { doexpand_binary } from '../../runtime/defs';
@@ -88,10 +88,10 @@ function gcd_polys(p1: U, p2: U, polyVar: U, $: ExtensionEnv) {
 
     if (is_multiply(p1) || is_multiply(p2)) {
         if (!is_multiply(p1)) {
-            p1 = makeList(MULTIPLY, p1, one);
+            p1 = items_to_cons(MULTIPLY, p1, one);
         }
         if (!is_multiply(p2)) {
-            p2 = makeList(MULTIPLY, p2, one);
+            p2 = items_to_cons(MULTIPLY, p2, one);
         }
     }
     if (is_multiply(p1) && is_multiply(p2)) {

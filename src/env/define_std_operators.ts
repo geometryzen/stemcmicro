@@ -6,7 +6,7 @@ import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { Eval_nroots } from '../nroots';
-import { abs_add } from '../operators/abs/abs_add';
+import { abs_add_blades } from '../operators/abs/abs_add_blades';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_blade } from '../operators/abs/abs_blade';
 import { abs_flt } from '../operators/abs/abs_flt';
@@ -70,9 +70,11 @@ import { clock_any } from '../operators/clock/clock_any';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { condense_varargs } from '../operators/condense/condense_varargs';
+import { conj_add } from '../operators/conj/conj_add';
+import { conj_any } from '../operators/conj/conj_any';
 import { conj_blade } from '../operators/conj/conj_blade';
 import { conj_flt } from '../operators/conj/conj_flt';
-import { conj_imaginary_unit } from '../operators/conj/conj_imag';
+import { conj_imu } from '../operators/conj/conj_imu';
 import { conj_inner } from '../operators/conj/conj_inner';
 import { conj_mul_2_any_any } from '../operators/conj/conj_mul_2_any_any';
 import { conj_rat } from '../operators/conj/conj_rat';
@@ -501,14 +503,15 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineLegacyTransformer(CLEAR, Eval_clear);
     $.defineKeyword(CLEARALL, Eval_clearall);
 
+    $.defineOperator(conj_add);
     $.defineOperator(conj_inner);
     $.defineOperator(conj_sym);
     $.defineOperator(conj_rat);
     $.defineOperator(conj_flt);
-    $.defineOperator(conj_imaginary_unit);
+    $.defineOperator(conj_imu);
     $.defineOperator(conj_blade);
     $.defineOperator(conj_mul_2_any_any);
-    // $.defineOperator(conj_any);
+    $.defineOperator(conj_any);
 
     $.defineOperator(degree_varargs);
 
@@ -573,7 +576,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(flt_extension);
     $.defineOperator(str_extension);
 
-    $.defineOperator(abs_add);
+    $.defineOperator(abs_add_blades);
     $.defineOperator(abs_blade);
     $.defineOperator(abs_pow_any_negone);
     $.defineOperator(abs_flt);

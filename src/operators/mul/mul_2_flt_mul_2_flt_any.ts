@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_FLT } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
@@ -33,7 +33,7 @@ class Op extends Function2<Flt, BCons<Sym, Flt, U>> implements Operator<Cons> {
         const num2 = rhs.lhs;
         const r1r2 = num1.mul(num2);
         const X = rhs.rhs;
-        const S = $.valueOf(makeList(MATH_MUL, r1r2, X));
+        const S = $.valueOf(items_to_cons(MATH_MUL, r1r2, X));
         return [TFLAG_DIFF, S];
     }
 }

@@ -1,7 +1,7 @@
 import { coeff } from './operators/coeff/coeff';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, is_poly_expanded_form } from './is';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply } from './runtime/helpers';
@@ -54,7 +54,7 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
         // of operators should be called so that the system is generic.
     }
     else if (is_cons(expr) && !car(expr).equals(FOR)) {
-        const bakeList = makeList(car(expr), ...expr.tail().map(function (x) {
+        const bakeList = items_to_cons(car(expr), ...expr.tail().map(function (x) {
             return bake(x, $);
         }));
         return hook(bakeList, "F");
@@ -69,7 +69,7 @@ export function polyform(p1: U, p2: U, $: ExtensionEnv): U {
         return bake_poly(p1, p2, $);
     }
     if (is_cons(p1)) {
-        return makeList(car(p1), ...p1.tail().map((el) => polyform(el, p2, $)));
+        return items_to_cons(car(p1), ...p1.tail().map((el) => polyform(el, p2, $)));
     }
 
     return p1;
@@ -103,7 +103,7 @@ function bake_poly(p: U, x: U, $: ExtensionEnv): U {
         result.push(...baked_beans);
     }
     if (result.length > 1) {
-        return cons(ADD, makeList(...result));
+        return cons(ADD, items_to_cons(...result));
     }
     if (result.length > 0) {
         return result[0];
@@ -143,10 +143,10 @@ function bake_poly_term(k: number, coefficient: U, term: U, $: ExtensionEnv): U[
         result.push(term);
     }
     else {
-        result.push(makeList(POWER, term, create_int(k)));
+        result.push(items_to_cons(POWER, term, create_int(k)));
     }
     if (result.length > 1) {
-        return [makeList(MULTIPLY, ...result)];
+        return [items_to_cons(MULTIPLY, ...result)];
     }
     return result;
 }

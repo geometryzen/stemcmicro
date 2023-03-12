@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import { hash_info } from '../src/hashing/hash_info';
-import { makeList } from '../src/makeList';
+import { items_to_cons } from '../src/makeList';
 import { MATH_ADD, MATH_INNER, MATH_MUL, MATH_OUTER } from '../src/runtime/ns_math';
 import { negOne } from '../src/tree/rat/Rat';
 import { create_sym } from '../src/tree/sym/Sym';
@@ -14,9 +14,9 @@ describe("hash_info", function () {
     it("B", function () {
         const a = create_sym('a');
         const b = create_sym('b');
-        const lhs = makeList(MATH_INNER, a, b);
-        const rhs = makeList(MATH_MUL, negOne, makeList(MATH_OUTER, a, b));
-        const expr = makeList(MATH_ADD, lhs, rhs);
+        const lhs = items_to_cons(MATH_INNER, a, b);
+        const rhs = items_to_cons(MATH_MUL, negOne, items_to_cons(MATH_OUTER, a, b));
+        const expr = items_to_cons(MATH_ADD, lhs, rhs);
         const hashes = hash_info(expr);
         assert.strictEqual(hashes.length, 5);
         // The idea here is that the lexical representation of symbols is the key() property of the symbol.

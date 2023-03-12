@@ -1,6 +1,5 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { divide } from './helpers/divide';
-import { makeList } from './makeList';
 import { adj } from './operators/adj/adj';
 import { det } from './operators/det/det';
 import { INV, INVG } from './runtime/constants';
@@ -67,7 +66,7 @@ export function inv(expr: U, $: ExtensionEnv): Cons | Sym | Tensor | Err {
     }
 
     if (!is_square_matrix(expr)) {
-        return hook(makeList(INV, expr));
+        return hook(items_to_cons(INV, expr));
     }
 
     if (is_num_or_tensor_or_identity_matrix(expr)) {

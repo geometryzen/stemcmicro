@@ -1,6 +1,6 @@
 import { divide } from '../../helpers/divide';
 import { ExtensionEnv, Sign } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { DET } from '../../runtime/constants';
 import { is_square_matrix } from '../../tensor';
 import { one, create_int, zero } from '../../tree/rat/Rat';
@@ -37,7 +37,7 @@ export function det(M: Tensor, $: ExtensionEnv): U {
 
     if (!is_square_matrix(M)) {
         // console.lg(`must be square M=${print_expr(M, $)}`);
-        return hook(makeList(DET, M));
+        return hook(items_to_cons(DET, M));
     }
 
     const elems = M.copyElements();

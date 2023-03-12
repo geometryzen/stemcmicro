@@ -1,7 +1,7 @@
 import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { TAYLOR } from '../../runtime/constants';
 import { stack_peek } from '../../runtime/stack';
@@ -60,7 +60,7 @@ export function Eval_taylor(p1: U, $: ExtensionEnv): U {
 function taylor(f: U, X: U, N: U, A: U, $: ExtensionEnv): U {
     const k = nativeInt(N);
     if (isNaN(k)) {
-        return makeList(TAYLOR, f, X, N, A);
+        return items_to_cons(TAYLOR, f, X, N, A);
     }
 
     const x_minus_a = $.subtract(X, A);

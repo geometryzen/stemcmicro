@@ -1,7 +1,7 @@
 import { add_terms } from './calculators/add/add_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { guess } from './guess';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { multiply_items } from './multiply';
 import { is_add, is_multiply } from './runtime/helpers';
 import { stack_push } from './runtime/stack';
@@ -27,7 +27,7 @@ export function Eval_decomp(p1: U, $: ExtensionEnv): void {
 
     const variable = nil.equals(p1) ? guess(arg) : p1;
     const result = decomp(false, arg, variable, $);
-    stack_push(makeList(nil, ...result));
+    stack_push(items_to_cons(nil, ...result));
 }
 
 function pushTryNotToDuplicateLocal(localStack: U[], item: U) {

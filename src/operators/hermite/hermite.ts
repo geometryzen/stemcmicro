@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { HERMITE, SECRETX } from '../../runtime/constants';
 import { subst } from '../subst/subst';
@@ -26,7 +26,7 @@ export function hermite(p1: U, p2: U, $: ExtensionEnv): U {
 function yyhermite(X: U, N: U, $: ExtensionEnv): U {
     const n = nativeInt(N);
     if (n < 0 || isNaN(n)) {
-        return makeList(HERMITE, X, N);
+        return items_to_cons(HERMITE, X, N);
     }
 
     if (is_sym(X)) {

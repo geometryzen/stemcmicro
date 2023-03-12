@@ -1,6 +1,6 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { inv } from './inv';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { nativeInt } from './nativeInt';
 import { derivative } from './operators/derivative/derivative';
 import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
@@ -74,7 +74,7 @@ export function assert_square_matrix_tensor(tensor: Tensor, $: ExtensionEnv): nu
 export function d_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
 
     if (p1.ndim + 1 >= MAXDIM) {
-        return makeList(MATH_DERIVATIVE, p1, p2);
+        return items_to_cons(MATH_DERIVATIVE, p1, p2);
     }
 
     const sizes = p1.copyDimensions();
@@ -127,13 +127,13 @@ export function power_tensor(p1: Tensor, p2: U, $: ExtensionEnv): Cons | Sym | T
     const k = p1.ndim - 1;
 
     if (p1.dim(0) !== p1.dim(k)) {
-        return makeList(POWER, p1, p2);
+        return items_to_cons(POWER, p1, p2);
     }
 
     let n = nativeInt(p2);
 
     if (isNaN(n)) {
-        return makeList(POWER, p1, p2);
+        return items_to_cons(POWER, p1, p2);
     }
 
     if (n === 0) {

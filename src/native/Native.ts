@@ -14,6 +14,7 @@ export enum Native {
     abs,
     add,
     arg,
+    conj,
     cosine,
     divide,
     exp,

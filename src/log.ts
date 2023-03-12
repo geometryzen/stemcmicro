@@ -1,6 +1,6 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { denominator } from './operators/denominator/denominator';
 import { is_flt } from './operators/flt/is_flt';
 import { numerator } from './operators/numerator/numerator';
@@ -70,5 +70,5 @@ export function logarithm(expr: U, $: ExtensionEnv): U {
         }, zero);
     }
 
-    return makeList(LOG, expr);
+    return items_to_cons(LOG, expr);
 }

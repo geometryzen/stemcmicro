@@ -277,7 +277,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         const terms = args_to_items(base);
         const everyTermIsScalar = terms.every(function (term) {
             // console.lg("term", $.toSExprString(term));
-            return $.isScalar(term);
+            return $.is_real(term);
         });
         // console.lg(`everyTermIsScalar=>${everyTermIsScalar}`);
         const n = nativeInt(expo);

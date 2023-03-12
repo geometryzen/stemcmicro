@@ -6,7 +6,7 @@ import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
 import { is_num_and_equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
 import { is_negative_number } from '../../predicates/is_negative_number';
 import { roots } from '../../roots';
@@ -54,7 +54,7 @@ function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
         // replace the evaled body
         const args = caddr(expr); // p5 is B
 
-        return makeList(FUNCTION, p3, args);
+        return items_to_cons(FUNCTION, p3, args);
     }
     else {
         return expr;
@@ -411,7 +411,7 @@ function polarRectAMinusOneBase(p1: U, $: ExtensionEnv): U {
             p1 = cdr(p1);
         }
 
-        return makeList(...arr);
+        return items_to_cons(...arr);
     }
     return p1;
 }
@@ -710,5 +710,5 @@ function _nestedCons(p1: U, $: ExtensionEnv): [U, TFLAGS] {
         });
         arr.push(...items);
     }
-    return [makeList(...arr), anyRadicalSimplificationWorked];
+    return [items_to_cons(...arr), anyRadicalSimplificationWorked];
 }

@@ -8,7 +8,7 @@ import {
     isoneoversqrttwo,
     isSqrtThreeOverTwo
 } from '../../is';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { ARCSIN, PI, POWER } from '../../runtime/constants';
 import { is_multiply, is_sin } from '../../runtime/helpers';
@@ -81,7 +81,7 @@ export function arcsin(x: U, $: ExtensionEnv): U {
     }
 
     if (!is_rat(x)) {
-        return makeList(ARCSIN, x);
+        return items_to_cons(ARCSIN, x);
     }
 
     const n = nativeInt(x.mul(two));
@@ -97,6 +97,6 @@ export function arcsin(x: U, $: ExtensionEnv): U {
         case 2:
             return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 2.0) : $.multiply(half, PI);
         default:
-            return makeList(ARCSIN, x);
+            return items_to_cons(ARCSIN, x);
     }
 }

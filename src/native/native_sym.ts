@@ -27,6 +27,7 @@ export function build_sym(code: Native): Sym {
         case Native.abs: return create_sym('math.abs');
         case Native.add: return create_sym('add');
         case Native.arg: return create_sym('arg');
+        case Native.conj: return create_sym('conj');
         case Native.cosine: return create_sym('cos');
         case Native.divide: return create_sym('/');
         case Native.exp: return create_sym('exp');

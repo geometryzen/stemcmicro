@@ -1,7 +1,7 @@
 import { polyform } from './bake';
 import { decomp } from './decomp';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { is_num } from './operators/num/is_num';
 import { subst } from './operators/subst/subst';
 import { METAA, METAB, METAX, SYMBOL_A_UNDERSCORE, SYMBOL_B_UNDERSCORE, SYMBOL_X_UNDERSCORE } from './runtime/constants';
@@ -168,7 +168,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                 // recreate the tree we were passed,
                 // but with all the terms being transformed
                 if (transformedTerms.length !== 0) {
-                    B = makeList(...transformedTerms);
+                    B = items_to_cons(...transformedTerms);
                 }
             }
         }

@@ -1,6 +1,6 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inv } from '../../inv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { is_negative } from '../../predicates/is_negative';
 import { SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
 import { is_add, is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from '../../runtime/helpers';
@@ -56,7 +56,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
         }
         else if (is_blade(p2)) {
             // TODO: We really would like to have this raise an error rather than be an acceptable expresssion
-            return hook(makeList(MATH_INNER, p1, p2), "D");
+            return hook(items_to_cons(MATH_INNER, p1, p2), "D");
         }
         else {
             // simple check if the two consecutive elements are one the (symbolic) inv
@@ -86,14 +86,14 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
                 return hook($.multiply(p1, p2), "I");
             }
             else {
-                return hook(makeList(MATH_INNER, p1, p2), "J");
+                return hook(items_to_cons(MATH_INNER, p1, p2), "J");
             }
         }
     }
     else if (is_blade(p1)) {
         if (is_tensor(p2)) {
             // TODO: We really would like to have this raise an error rather than be an acceptable expresssion
-            return hook(makeList(MATH_INNER, p1, p2), "K");
+            return hook(items_to_cons(MATH_INNER, p1, p2), "K");
         }
         else if (is_blade(p2)) {
             return hook($.valueOf(p1.scp(p2)), "L");
@@ -118,7 +118,7 @@ export function inner_v1(p1: U, p2: U, $: ExtensionEnv): U {
                 return hook($.multiply(p1, p2), "O");
             }
             else {
-                return hook(makeList(MATH_INNER, p1, p2), "P");
+                return hook(items_to_cons(MATH_INNER, p1, p2), "P");
             }
         }
     }

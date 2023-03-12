@@ -1,7 +1,7 @@
 import { rational } from '../../bignum';
 import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, TAN } from '../../runtime/constants';
@@ -51,7 +51,7 @@ function tangent(p1: U, $: ExtensionEnv): U {
     // happen for a round number of degrees. There are some exceptions
     // though, e.g. 22.5 degrees, which we don't capture here.
     if (n < 0 || isNaN(n)) {
-        return makeList(TAN, p1);
+        return items_to_cons(TAN, p1);
     }
 
     switch (n % 360) {
@@ -77,6 +77,6 @@ function tangent(p1: U, $: ExtensionEnv): U {
         case 300:
             return $.negate($.power(three, half));
         default:
-            return makeList(TAN, p1);
+            return items_to_cons(TAN, p1);
     }
 }

@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Rat, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -44,8 +44,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const m = lhs.rhs;
         const n = rhs;
         if (m.isPositiveInteger() && n.isPositiveInteger()) {
-            const mn = makeList(MATH_MUL, m, n);
-            const retval = makeList(MATH_POW, b, mn);
+            const mn = items_to_cons(MATH_MUL, m, n);
+            const retval = items_to_cons(MATH_POW, b, mn);
             return [TFLAG_DIFF, retval];
         }
         if (m.isHalf() && n.equalsRat(two)) {

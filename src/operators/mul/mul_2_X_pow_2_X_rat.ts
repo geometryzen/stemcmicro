@@ -1,6 +1,6 @@
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -52,7 +52,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         // console.lg(`${this.name} exp=${print_expr(exp, $)}`);
         const X = lhs;
         const k = rhs.rhs;
-        const p1 = makeList(rhs.opr, X, k.succ());
+        const p1 = items_to_cons(rhs.opr, X, k.succ());
         // console.lg(`p1=${print_expr(p1, $)}`);
         const p2 = $.valueOf(p1);
         return [TFLAG_DIFF, p2];

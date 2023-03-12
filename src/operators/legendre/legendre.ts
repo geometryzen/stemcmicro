@@ -1,6 +1,6 @@
 import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { COS, LEGENDRE, SECRETX, SIN } from '../../runtime/constants';
 import { square } from '../../square';
@@ -60,7 +60,7 @@ function __legendre(X: U, N: U, M: U, $: ExtensionEnv): U {
     const m = nativeInt(M);
 
     if (n < 0 || isNaN(n) || m < 0 || isNaN(m)) {
-        return makeList(LEGENDRE, X, N, M);
+        return items_to_cons(LEGENDRE, X, N, M);
     }
 
     let result: U;

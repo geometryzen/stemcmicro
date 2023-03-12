@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { EVAL, FUNCTION } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { caadr, caddr, cadr, cdadr } from '../../tree/helpers';
@@ -87,7 +87,7 @@ export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
     // which would need to otherwise
     // be solved by some scope device
     // somehow
-    B = makeList(FUNCTION, B, A);
+    B = items_to_cons(FUNCTION, B, A);
 
     $.setSymbolValue(F, B);
 

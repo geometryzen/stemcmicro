@@ -1,7 +1,7 @@
 
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_ADD, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
@@ -60,9 +60,9 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         const x: LRL = lhs.rhs.lhs;
         const a: LRR = lhs.rhs.rhs;
         const b: RR = rhs.rhs;
-        const p1 = $.valueOf(makeList(MATH_ADD, a, b));
-        const p2 = $.valueOf(makeList(MATH_POW, x, p1));
-        const p3 = $.valueOf(makeList(opr, A, p2));
+        const p1 = $.valueOf(items_to_cons(MATH_ADD, a, b));
+        const p2 = $.valueOf(items_to_cons(MATH_POW, x, p1));
+        const p3 = $.valueOf(items_to_cons(opr, A, p2));
         return [TFLAG_DIFF, p3];
     }
 }

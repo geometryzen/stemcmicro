@@ -22,4 +22,4 @@ class ConjImaginaryUnit extends Function1<U> implements Operator<U> {
     }
 }
 
-export const conj_imaginary_unit = new Builder();
+export const conj_imu = new Builder();

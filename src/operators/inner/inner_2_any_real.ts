@@ -1,5 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -38,8 +38,8 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const A = $.valueOf(makeList(opr, lhs, one));
-        const B = $.valueOf(makeList(MATH_MUL, A, rhs));
+        const A = $.valueOf(items_to_cons(opr, lhs, one));
+        const B = $.valueOf(items_to_cons(MATH_MUL, A, rhs));
         return [TFLAG_DIFF, B];
     }
 }

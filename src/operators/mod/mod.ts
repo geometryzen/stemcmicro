@@ -1,7 +1,7 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_and_integer } from '../../is_rat_and_integer';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { mmod } from '../../mmul';
 import { nativeInt } from '../../nativeInt';
 import { is_flt } from '../flt/is_flt';
@@ -24,7 +24,7 @@ function mod(p1: U, p2: U, $: ExtensionEnv): U {
     }
 
     if (!is_num(p1) || !is_num(p2)) {
-        return makeList(MOD, p1, p2);
+        return items_to_cons(MOD, p1, p2);
     }
 
     if (is_flt(p1)) {

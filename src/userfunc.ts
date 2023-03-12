@@ -1,5 +1,5 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { Eval_derivative } from './operators/derivative/Eval_derivative';
 import { is_num } from './operators/num/is_num';
 import { is_str } from './operators/str/is_str';
@@ -165,7 +165,7 @@ function rewrite_args($: ExtensionEnv) {
             // rewrite a function in
             // the body with the one
             // passed from the paramaters
-            stack_push(makeList(EVAL, car(cdr(p2))));
+            stack_push(items_to_cons(EVAL, car(cdr(p2))));
         }
         else {
             // if there is no match

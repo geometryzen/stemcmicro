@@ -1,7 +1,7 @@
 
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_HYP, HASH_SYM } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
@@ -33,7 +33,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;
-        return [TFLAG_DIFF, $.valueOf(makeList(opr, rhs, lhs))];
+        return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, rhs, lhs))];
     }
 }
 

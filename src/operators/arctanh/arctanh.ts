@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { is_flt } from '../flt/is_flt';
 import { ARCTANH, TANH } from '../../runtime/constants';
 import { create_flt } from '../../tree/flt/Flt';
@@ -44,5 +44,5 @@ function arctanh(x: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    return makeList(ARCTANH, x);
+    return items_to_cons(ARCTANH, x);
 }

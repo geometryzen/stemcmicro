@@ -1,5 +1,5 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { is_flt } from '../flt/is_flt';
 import { ARCCOSH, COSH } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
@@ -45,5 +45,5 @@ function arccosh(x: U, $: ExtensionEnv): U {
         return zero;
     }
 
-    return makeList(ARCCOSH, x);
+    return items_to_cons(ARCCOSH, x);
 }

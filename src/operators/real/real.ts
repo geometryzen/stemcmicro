@@ -6,7 +6,7 @@ import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
 import { ASSUME_REAL_VARIABLES } from '../../runtime/constants';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
-import { one, zero } from '../../tree/rat/Rat';
+import { negOne, one, zero } from '../../tree/rat/Rat';
 import { cons, Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
 import { is_sym } from '../sym/is_sym';
@@ -14,6 +14,7 @@ import { compute_r_from_base_and_expo } from './compute_r_from_base_and_expo';
 import { compute_theta_from_base_and_expo } from './compute_theta_from_base_and_expo';
 
 const MATH_ADD = native_sym(Native.add);
+const CONJ = native_sym(Native.conj);
 const COS = native_sym(Native.cosine);
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
@@ -115,6 +116,7 @@ export function real(expr: U, $: ExtensionEnv): U {
             // theta = imag(expo*log(base)) 
             // console.lg("base", $.toInfixString(base));
             // console.lg("expo", $.toInfixString(expo));
+            // console.lg("YIN");
             const r = compute_r_from_base_and_expo(base, expo, $);
             const theta = compute_theta_from_base_and_expo(base, expo, $);
             const cos_theta = $.valueOf(items_to_cons(COS, theta));
@@ -126,54 +128,65 @@ export function real(expr: U, $: ExtensionEnv): U {
         // console.lg("Computing Re of a * expression...", $.toSExprString(expr));
         const rs: U[] = []; // the real factors.
         const cs: U[] = []; // the complex factors
-        [...expr.argList].forEach(function (arg) {
+        [...expr.argList].forEach(function (factor) {
             // console.lg("testing the arg:", $.toInfixString(arg));
-            if ($.is_real(arg)) {
+            if ($.is_real(factor)) {
                 // console.lg("arg is real:", $.toInfixString(arg));
-                rs.push(arg);
+                rs.push(factor);
             }
             else {
                 // console.lg("arg is NOT real:", $.toInfixString(arg));
                 // console.lg("arg is NOT real:", $.toInfixString(arg));
                 // With no boolean response, we have to assume that the argument is not real valued.
                 // How do we make progress with the factors that are complex numbers?
-                if (is_sym(arg)) {
+                if (is_sym(factor)) {
                     // console.lg("arg is Sym and possibly complex", $.toInfixString(arg));
-                    const x = items_to_cons(REAL, arg);
-                    const y = items_to_cons(IMAG, arg);
+                    const x = items_to_cons(REAL, factor);
+                    const y = items_to_cons(IMAG, factor);
                     const iy = items_to_cons(MATH_MUL, imu, y);
                     const z = items_to_cons(MATH_ADD, x, iy);
                     // console.lg("Z=>", $.toInfixString(z));
                     cs.push(z);
                 }
-                else if (arg.equals(imu)) {
+                else if (factor.equals(imu)) {
                     // console.lg("arg is imu", $.toInfixString(arg));
-                    cs.push(arg);
+                    cs.push(factor);
                 }
-                else if (is_power(arg)) {
-                    const base = arg.lhs;
-                    const expo = arg.rhs;
-                    // console.lg("base", $.toInfixString(base));
-                    // console.lg("expo", $.toInfixString(expo));
-                    const r = compute_r_from_base_and_expo(base, expo, $);
-                    // console.lg("r", $.toInfixString(r));
-                    const theta = compute_theta_from_base_and_expo(base, expo, $);
-                    // console.lg("theta", $.toInfixString(theta));
-                    const i_times_theta = $.valueOf(items_to_cons(MATH_MUL, imu, theta));
-                    const cis_theta = $.valueOf(items_to_cons(EXP, i_times_theta));
-                    // console.lg("cis_theta", $.toInfixString(cis_theta));
-                    rs.push(r);
-                    cs.push(cis_theta);
+                else if (is_power(factor)) {
+                    const base = factor.lhs;
+                    const expo = factor.rhs;
+                    if (is_rat(expo) && expo.isMinusOne()) {
+                        // Get the complex number out of the denominator.
+                        const z_star = $.valueOf(items_to_cons(CONJ, base));
+                        const denom = $.valueOf(items_to_cons(MATH_MUL, z_star, base));
+                        const one_over_denom = $.valueOf(items_to_cons(MATH_POW, denom, negOne));
+                        const z = $.valueOf(items_to_cons(MATH_MUL, z_star, one_over_denom));
+                        cs.push(z);
+                    }
+                    else {
+                        // console.lg("base", $.toInfixString(base));
+                        // console.lg("expo", $.toInfixString(expo));
+                        // console.lg("YAN");
+                        const r = compute_r_from_base_and_expo(base, expo, $);
+                        // console.lg("r", $.toInfixString(r));
+                        const theta = compute_theta_from_base_and_expo(base, expo, $);
+                        // console.lg("theta", $.toInfixString(theta));
+                        const i_times_theta = $.valueOf(items_to_cons(MATH_MUL, imu, theta));
+                        const cis_theta = $.valueOf(items_to_cons(EXP, i_times_theta));
+                        // console.lg("cis_theta", $.toInfixString(cis_theta));
+                        rs.push(r);
+                        cs.push(cis_theta);
+                    }
                 }
-                else if (is_cons(arg) && is_sym(arg.opr)) {
-                    cs.push(arg);
+                else if (is_cons(factor) && is_sym(factor.opr)) {
+                    cs.push(factor);
                 }
                 else {
                     // console.lg("WT...");
                     // Here we might encounter a function.
                     // So far we've handled math.pow.
                     // How to handle arbitrary functions. e.g. abs, sin, ...
-                    throw new Error($.toSExprString(arg));
+                    throw new Error($.toSExprString(factor));
                 }
             }
         });

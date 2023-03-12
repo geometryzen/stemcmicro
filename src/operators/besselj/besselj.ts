@@ -1,6 +1,6 @@
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
 import { BESSELJ, MEQUAL, MSIGN, PI } from '../../runtime/constants';
@@ -108,18 +108,18 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
     if (is_negative(X)) {
         return $.multiply(
             $.multiply($.power($.negate(X), N), $.power(X, $.negate(N))),
-            makeList(BESSELJ, $.negate(X), N)
+            items_to_cons(BESSELJ, $.negate(X), N)
         );
     }
 
     if (is_negative(N)) {
         return $.multiply(
             $.power(negOne, N),
-            makeList(BESSELJ, X, $.negate(N))
+            items_to_cons(BESSELJ, X, $.negate(N))
         );
     }
 
-    return makeList(BESSELJ, X, N);
+    return items_to_cons(BESSELJ, X, N);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

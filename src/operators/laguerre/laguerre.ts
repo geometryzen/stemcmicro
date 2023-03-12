@@ -1,6 +1,6 @@
 import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { makeList } from '../../makeList';
+import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { LAGUERRE, SECRETX } from '../../runtime/constants';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
@@ -46,7 +46,7 @@ export function Eval_laguerre(p1: U, $: ExtensionEnv): U {
 function laguerre(X: U, N: U, K: U, $: ExtensionEnv): U {
     const n = nativeInt(N);
     if (n < 0 || isNaN(n)) {
-        return makeList(LAGUERRE, X, N, K);
+        return items_to_cons(LAGUERRE, X, N, K);
     }
 
     if (is_sym(X)) {

@@ -44,4 +44,4 @@ class Op extends AbstractChain {
     }
 }
 
-export const abs_add = new Builder();
+export const abs_add_blades = new Builder();

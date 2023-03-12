@@ -9,6 +9,8 @@ const MATH_MUL = native_sym(Native.multiply);
 const REAL = native_sym(Native.real);
 
 export function compute_r_from_base_and_expo(base: U, expo: U, $: ExtensionEnv): U {
+    // console.lg("compute_r_from_base_and_expo", $.toInfixString(base), $.toInfixString(expo));
+
     // console.lg("base", $.toInfixString(base));
     // console.lg("expo", $.toInfixString(expo));
     const log_base = $.valueOf(items_to_cons(MATH_LOG, base));

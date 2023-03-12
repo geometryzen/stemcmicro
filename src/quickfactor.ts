@@ -1,7 +1,7 @@
 import { bignum_power_number, bignum_truncate } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factor_small_number } from './operators/factor/factor';
-import { makeList } from './makeList';
+import { items_to_cons } from './makeList';
 import { multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';
 import { POWER } from './runtime/constants';
@@ -43,12 +43,12 @@ export function quickpower(BASE: Rat, EXPO: Rat, $: ExtensionEnv): [U] | [U, U] 
   let fractionalPart: U | undefined;
   // fractional part of EXPO
   if (!$.is_zero(p4)) {
-    fractionalPart = makeList(POWER, BASE, p4);
+    fractionalPart = items_to_cons(POWER, BASE, p4);
   }
 
   const expo = nativeInt(p3);
   if (isNaN(expo)) {
-    const result = makeList(POWER, BASE, p3);
+    const result = items_to_cons(POWER, BASE, p3);
     return fractionalPart ? [fractionalPart, result] : [result];
   }
 

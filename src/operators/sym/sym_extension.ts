@@ -92,7 +92,7 @@ class SymExtension implements Extension<Sym> {
         return sym.key();
     }
     toListString(sym: Sym): string {
-        const token = this.$.getSymbolToken(sym);
+        const token = this.$.getSymbolPrintName(sym);
         if (token) {
             return token;
         }

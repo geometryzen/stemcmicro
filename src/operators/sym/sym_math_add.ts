@@ -75,7 +75,7 @@ class SymMathAdd implements Operator<Sym> {
         return '+';
     }
     toListString(): string {
-        return this.$.getSymbolToken(MATH_ADD);
+        return this.$.getSymbolPrintName(MATH_ADD);
     }
     evaluate(opr: U, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(opr, argList));

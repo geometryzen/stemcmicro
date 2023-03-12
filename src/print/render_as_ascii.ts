@@ -21,7 +21,7 @@ import { one, Rat } from '../tree/rat/Rat';
 import { Str } from '../tree/str/Str';
 import { Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, is_cons, U } from '../tree/tree';
+import { car, cdr, Cons, is_cons, U } from '../tree/tree';
 import { render_using_non_sexpr_print_mode } from './print';
 
 /*
@@ -96,6 +96,7 @@ function printchar(character: string) {
 }
 
 export function render_as_ascii(p: U, $: ExtensionEnv): string {
+    // console.lg("render_as_ascii", $.toInfixString(p));
     yindex = 0;
     level = 0;
     emit_x = 0;
@@ -116,6 +117,7 @@ export function render_as_ascii(p: U, $: ExtensionEnv): string {
 }
 
 function emit_top_expr(p: U, $: ExtensionEnv): void {
+    // console.lg("emi_top_expr", $.toInfixString(p));
     if (car(p).equals(ASSIGN)) {
         emit_expr(cadr(p), $);
         __emit_str(' = ');
@@ -154,6 +156,7 @@ function will_be_displayed_as_fraction(p: U, $: ExtensionEnv): boolean {
 }
 
 function emit_expr(p: U, $: ExtensionEnv): void {
+    // console.lg("emit_expr", $.toInfixString(p));
     //  if (level > 0) {
     //    printexpr(p)
     //    return
@@ -236,6 +239,7 @@ function __is_negative(p: U): boolean {
 }
 
 function emit_term(p: U, $: ExtensionEnv) {
+    // console.lg("emit_term", $.toInfixString(p));
     if (is_multiply(p)) {
         const n = count_denominators(p, $);
         if (n && level === 0) {
@@ -479,6 +483,7 @@ function emit_denominators(p: U, $: ExtensionEnv) {
 }
 
 function emit_factor(p: U, $: ExtensionEnv) {
+    // console.lg("emit_factor", $.toInfixString(p));
     if (is_tensor(p)) {
         if (level === 0) {
             //emit_tensor(p)
@@ -705,33 +710,34 @@ function emit_denominator(p: U, n: number, $: ExtensionEnv) {
     fixup_power(k1, k2);
 }
 
-function emit_function(p: U, $: ExtensionEnv) {
-    if (car(p).equals(SYM_MATH_COMPONENT) && is_sym(cadr(p))) {
-        emit_index_function(p, $);
+function emit_function(expr: Cons, $: ExtensionEnv) {
+    // console.lg("emit_function", $.toInfixString(expr));
+    if (expr.opr.equals(SYM_MATH_COMPONENT) && is_sym(cadr(expr))) {
+        emit_index_function(expr, $);
         return;
     }
 
-    if (is_factorial(p)) {
-        emit_factorial_function(p, $);
+    if (is_factorial(expr)) {
+        emit_factorial_function(expr, $);
         return;
     }
 
-    if (car(p).equals(MATH_DERIVATIVE)) {
+    if (car(expr).equals(MATH_DERIVATIVE)) {
         __emit_char('d');
     }
     else {
-        emit_symbol(car(p) as Sym, $);
+        emit_symbol(car(expr) as Sym, $);
     }
     __emit_char('(');
-    p = cdr(p);
-    if (is_cons(p)) {
-        emit_expr(car(p), $);
-        p = cdr(p);
-        while (is_cons(p)) {
+    let argList: Cons = expr.cdr;
+    if (is_cons(argList)) {
+        emit_expr(argList.head, $);
+        argList = argList.cdr;
+        while (is_cons(argList)) {
             __emit_char(',');
             //__emit_char(' ')
-            emit_expr(car(p), $);
-            p = cdr(p);
+            emit_expr(argList.head, $);
+            argList = argList.cdr;
         }
     }
     __emit_char(')');
@@ -784,16 +790,17 @@ function emit_grouped_expr(p: U, $: ExtensionEnv) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function emit_symbol(p: Sym, $: ExtensionEnv): void {
-    if (is_base_of_natural_logarithm(p)) {
+function emit_symbol(sym: Sym, $: ExtensionEnv): void {
+    // console.lg("emit_symbol", $.toInfixString(sym), $.getSymbolPrintName(sym));
+    if (is_base_of_natural_logarithm(sym)) {
         __emit_str('exp(1)');
         return;
     }
 
-    const pPrintName = p.key();
+    const printName = $.getSymbolPrintName(sym);
 
-    for (let i = 0; i < pPrintName.length; i++) {
-        __emit_char(pPrintName[i]);
+    for (let i = 0; i < printName.length; i++) {
+        __emit_char(printName[i]);
     }
 }
 

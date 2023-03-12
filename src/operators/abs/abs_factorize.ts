@@ -1,16 +1,18 @@
-import { ExtensionEnv, Operator, OperatorBuilder, MODE_FACTORING, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, MODE_FACTORING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { makeList } from "../../makeList";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_pow_2_any_rat } from "../pow/is_pow_2_any_rat";
 import { is_rat } from "../rat/rat_extension";
-import { MATH_ABS } from "./MATH_ABS";
+
+export const abs = native_sym(Native.abs);
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -46,7 +48,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const m = lhs.rhs;
         const n = rhs;
         if (m.isTwo() && n.isHalf()) {
-            const factorized = makeList(MATH_ABS, x);
+            const factorized = items_to_cons(abs, x);
             return [TFLAG_DIFF, factorized];
         }
         else {

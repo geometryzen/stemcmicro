@@ -2,7 +2,7 @@ import { mp_denominator, mp_numerator } from '../bignum';
 import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { equaln, isfraction, isNumberOneOverSomething, is_num_and_eq_minus_one, is_num_and_eq_two, is_num_and_equal_one_half } from '../is';
+import { equaln, isfraction, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two } from '../is';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { abs } from '../operators/abs/abs';
@@ -716,12 +716,22 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_ABS_latex(p: U, $: ExtensionEnv): string {
-    let accumulator = '';
-    accumulator += print_str('\\left |');
-    accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
-    accumulator += print_str(' \\right |');
-    return accumulator;
+function print_abs_latex(expr: Cons, $: ExtensionEnv): string {
+    const arg = expr.argList.head;
+    let s = '';
+    s += print_str('\\left |');
+    s += render_using_non_sexpr_print_mode(arg, $);
+    s += print_str(' \\right |');
+    return s;
+}
+
+function print_abs_infix(expr: Cons, $: ExtensionEnv): string {
+    const arg = expr.argList.head;
+    let s = '';
+    s += print_str('abs(');
+    s += render_using_non_sexpr_print_mode(arg, $);
+    s += print_str(')');
+    return s;
 }
 
 function print_BINOMIAL_latex(p: U, $: ExtensionEnv): string {
@@ -1752,8 +1762,21 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     if (is_cons(expr) && is_factorial(expr)) {
         return print_factorial_function(expr, $);
     }
-    else if (is_cons(expr) && is_abs(expr) && defs.printMode === PRINTMODE_LATEX) {
-        return print_ABS_latex(expr, $);
+    else if (is_cons(expr) && is_abs(expr)) {
+        // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false} printMode: ${defs.printMode}`);
+        switch (defs.printMode) {
+            case PRINTMODE_HUMAN:
+            case PRINTMODE_INFIX: {
+                return print_abs_infix(expr, $);
+            }
+            case PRINTMODE_LATEX: {
+                return print_abs_latex(expr, $);
+            }
+            default: {
+                // PRINTMODE_ASCII and PRINTMODE_SEXPR is the other mode but that doesn't use this function.
+                throw new Error(defs.printMode);
+            }
+        }
     }
     else if (car(expr).equals(SQRT) && defs.printMode === PRINTMODE_LATEX) {
         let str = '';
@@ -2020,7 +2043,10 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return str;
         }
     }
+    return print_factor_fallback(expr, omtPrns, $);
+}
 
+function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): string {
     if (is_cons(expr)) {
         let str = '';
         str += print_factor(expr.car, false, false, $);
@@ -2072,7 +2098,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 return print_str('e');
             }
             else {
-                return print_str($.getSymbolToken(MATH_E));
+                return print_str($.getSymbolPrintName(MATH_E));
             }
         }
     }
@@ -2081,7 +2107,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return print_str('\\pi');
         }
         else {
-            return print_str($.getSymbolToken(MATH_PI));
+            return print_str($.getSymbolPrintName(MATH_PI));
         }
     }
     else {
@@ -2098,7 +2124,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return expr.printname;
         }
         if (is_nil(expr)) {
-            return print_str($.getSymbolToken(native_sym(Native.NIL)));
+            return print_str($.getSymbolPrintName(native_sym(Native.NIL)));
         }
         if (is_err(expr)) {
             return ENGLISH_UNDEFINED;
@@ -2108,7 +2134,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
                 return print_str('i');
             }
             else {
-                return print_str($.getSymbolToken(MATH_IMU));
+                return print_str($.getSymbolPrintName(MATH_IMU));
             }
         }
         throw new Error(`${expr} ???`);

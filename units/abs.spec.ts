@@ -9,7 +9,7 @@ describe("abs", function () {
         ];
         const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "math.abs(x)");
+        assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
         engine.release();
     });
     xit("abs(x)", function () {
@@ -27,7 +27,7 @@ describe("abs", function () {
         ];
         const engine = create_script_context({ useDefinitions: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "math.abs(y)");
+        assert.strictEqual(engine.renderAsInfix(value), "abs(y)");
         engine.release();
     });
     it("abs(x+i*y)", function () {
@@ -136,7 +136,7 @@ describe("abs", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         // assert.strictEqual(engine.renderAsSExpr(values[0]), "(abs x)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "math.abs(x)*math.abs(y)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "abs(x)*abs(y)");
         engine.release();
     });
     it("abs(x)*abs(x)", function () {
@@ -161,7 +161,7 @@ describe("abs", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         // assert.strictEqual(engine.renderAsSExpr(values[0]), "(abs x)");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "math.abs(x)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "abs(x)");
         engine.release();
     });
     it("abs(a+b+c*i)", function () {

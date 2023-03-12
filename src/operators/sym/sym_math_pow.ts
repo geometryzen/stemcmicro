@@ -88,7 +88,7 @@ class SymMathPow implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym): string {
-        return this.$.getSymbolToken(MATH_POW);
+        return this.$.getSymbolPrintName(MATH_POW);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

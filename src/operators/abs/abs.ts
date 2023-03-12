@@ -3,6 +3,8 @@ import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
 import { equaln, is_num_and_gt_zero } from '../../is';
+import { Native } from '../../native/Native';
+import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../../predicates/is_negative';
 import { is_negative_number } from '../../predicates/is_negative_number';
@@ -22,8 +24,8 @@ import { real } from '../real/real';
 import { rect } from '../rect/rect';
 import { simplify, simplify_trig } from '../simplify/simplify';
 import { is_tensor } from '../tensor/is_tensor';
-import { MATH_ABS } from './MATH_ABS';
 
+export const ABS = native_sym(Native.abs);
 //(docs are generated from top-level comments, keep an eye on the formatting!)
 
 /* abs =====================================================================
@@ -227,7 +229,7 @@ export function abs(x: U, $: ExtensionEnv): U {
 
     if (is_negative(expr) || (is_cons(expr) && is_add(expr) && is_negative(cadr(expr)))) {
         const neg_expr = $.negate(expr);
-        return hook(items_to_cons(MATH_ABS, neg_expr), "M");
+        return hook(items_to_cons(ABS, neg_expr), "M");
     }
 
     // But we haven't handled the sum of terms.
@@ -243,7 +245,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     else {
         // Here we have given up and simply wrap the expression.
         // Perhaps the real question is whether expr is a vector in an inner product space.
-        return hook(items_to_cons(MATH_ABS, expr), "O");
+        return hook(items_to_cons(ABS, expr), "O");
     }
 }
 

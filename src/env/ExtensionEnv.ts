@@ -236,7 +236,7 @@ export interface ExtensionEnv {
     /**
      * Used during rendering.
      */
-    getSymbolToken(sym: Sym): string;
+    getSymbolPrintName(sym: Sym): string;
     getSymbolValue(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[];
     /**
@@ -300,7 +300,7 @@ export interface ExtensionEnv {
     setNativeDirective(directive: Directive, value: boolean): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
-    setSymbolToken(sym: Sym, token: string): void;
+    setSymbolPrintName(sym: Sym, printName: string): void;
     setSymbolValue(sym: Sym, value: U): void;
     /**
      *

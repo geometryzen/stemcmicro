@@ -3,20 +3,18 @@ import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
-describe("polar", function () {
-    it("polar(3+4*i)", function () {
+describe("rendering", function () {
+    it("abs(x)", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `pi=tau(1/2)`,
-            `polar(3+4*i)`,
+            `abs(x)`,
         ];
-        const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
-        });
+        const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "5*e**(i*arctan(4/3))");
-        // assert.strictEqual(engine.renderAsInfix(value), "5*exp(i*arctan(4/3))");
+        assert.strictEqual(engine.renderAsAscii(value), "abs(x)");
+        assert.strictEqual(engine.renderAsHuman(value), "abs(x)");
+        assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
+        assert.strictEqual(engine.renderAsLaTeX(value), "\\left |x \\right |");
+        assert.strictEqual(engine.renderAsSExpr(value), "(abs x)");
         engine.release();
     });
 });

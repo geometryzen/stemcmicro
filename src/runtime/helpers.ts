@@ -1,4 +1,5 @@
-import { MATH_ABS } from "../operators/abs/MATH_ABS";
+import { Native } from "../native/Native";
+import { native_sym } from "../native/native_sym";
 import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
 import { is_num } from "../operators/num/is_num";
 import { is_tensor } from "../operators/tensor/is_tensor";
@@ -10,8 +11,10 @@ import { Cons, is_cons, U } from "../tree/tree";
 import { DOT, INV, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "./constants";
 import { MATH_FACTORIAL, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SIN } from "./ns_math";
 
-export function is_abs(expr: U): expr is Cons & { __ts_sym: 'MATH_ABS' } {
-    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_ABS);
+export const ABS = native_sym(Native.abs);
+
+export function is_abs(expr: U): expr is Cons & { __ts_sym: 'math.abs' } {
+    return is_cons(expr) && is_cons_opr_eq_sym(expr, ABS);
 }
 
 /**

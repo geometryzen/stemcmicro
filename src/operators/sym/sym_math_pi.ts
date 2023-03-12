@@ -66,7 +66,7 @@ class SymMathPi implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Sym): string {
-        return this.$.getSymbolToken(MATH_PI);
+        return this.$.getSymbolPrintName(MATH_PI);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toLatexString(expr: Sym): string {
@@ -74,7 +74,7 @@ class SymMathPi implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Sym): string {
-        return this.$.getSymbolToken(MATH_PI);
+        return this.$.getSymbolPrintName(MATH_PI);
     }
     valueOf(expr: Sym): Sym {
         return assert_sym(this.transform(expr)[1]);

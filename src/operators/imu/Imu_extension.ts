@@ -75,7 +75,7 @@ class ImuExtension implements Operator<Imu> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toListString(expr: Imu): string {
-        return this.$.getSymbolToken(MATH_IMU);
+        return this.$.getSymbolPrintName(MATH_IMU);
     }
     evaluate(expr: Imu, argList: Cons): [TFLAGS, U] {
         return [TFLAG_HALT, cons(expr, argList)];

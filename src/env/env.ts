@@ -110,9 +110,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     const custom_directives: { [directive: string]: boolean } = {};
 
     /**
-     * Override tokens for symbols used during rendering.
+     * Override printname(s) for symbols used during rendering.
      */
-    const sym_token: { [key: string]: string } = {};
+    const sym_key_to_printname: { [key: string]: string } = {};
 
     const sym_order: Record<string, ExprComparator> = {};
 
@@ -406,10 +406,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getNativeDirective(directive: Directive): boolean {
             return !!native_directives[directive];
         },
-        getSymbolToken(sym: Sym): string {
-            const token = sym_token[sym.key()];
-            // console.lg("getSymbolToken", JSON.stringify(sym), "=>", token);
-            return token;
+        getSymbolPrintName(sym: Sym): string {
+            const token = sym_key_to_printname[sym.key()];
+            if (typeof token === 'string') {
+                return token;
+            }
+            else {
+                return sym.key();
+            }
         },
         inner(lhs: U, rhs: U): U {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
@@ -482,8 +486,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void {
             symTab.setProps(sym, overrides);
         },
-        setSymbolToken(sym: Sym, token: string): void {
-            sym_token[sym.key()] = token;
+        setSymbolPrintName(sym: Sym, printname: string): void {
+            sym_key_to_printname[sym.key()] = printname;
         },
         setSymbolValue(sym: Sym, value: U): void {
             symTab.setValue(sym, value);
@@ -588,20 +592,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     };
 
     // TODO: Consistency in names used for symbols in symbolic expressions.
-    $.setSymbolToken(ADD, '+');        // changing will break  82 cases.
-    $.setSymbolToken(MULTIPLY, '*');  // changing will break 113 cases.
-    $.setSymbolToken(POWER, 'expt');
-    $.setSymbolToken(native_sym(Native.rco), '>>');
-    $.setSymbolToken(native_sym(Native.lco), '<<');
-    $.setSymbolToken(native_sym(Native.inner), '|');
-    $.setSymbolToken(native_sym(Native.outer), '^');
-    $.setSymbolToken(native_sym(Native.abs), 'abs');
+    $.setSymbolPrintName(ADD, '+');        // changing will break  82 cases.
+    $.setSymbolPrintName(MULTIPLY, '*');  // changing will break 113 cases.
+    $.setSymbolPrintName(POWER, 'expt');
+    $.setSymbolPrintName(native_sym(Native.rco), '>>');
+    $.setSymbolPrintName(native_sym(Native.lco), '<<');
+    $.setSymbolPrintName(native_sym(Native.inner), '|');
+    $.setSymbolPrintName(native_sym(Native.outer), '^');
+    $.setSymbolPrintName(native_sym(Native.abs), 'abs');
 
-    $.setSymbolToken(native_sym(Native.E), 'e');
-    $.setSymbolToken(native_sym(Native.PI), 'pi');
-    $.setSymbolToken(native_sym(Native.NIL), '()');
-    $.setSymbolToken(native_sym(Native.IMU), 'i');
-    $.setSymbolToken(native_sym(Native.exp), 'exp');
+    $.setSymbolPrintName(native_sym(Native.E), 'e');
+    $.setSymbolPrintName(native_sym(Native.PI), 'pi');
+    $.setSymbolPrintName(native_sym(Native.NIL), '()');
+    $.setSymbolPrintName(native_sym(Native.IMU), 'i');
+    $.setSymbolPrintName(native_sym(Native.exp), 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
     $.setNativeDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);

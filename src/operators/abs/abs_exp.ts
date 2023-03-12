@@ -1,4 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, U } from "../../tree/tree";
@@ -7,7 +9,8 @@ import { and } from "../helpers/and";
 import { Function1 } from "../helpers/Function1";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
 import { UCons } from "../helpers/UCons";
-import { MATH_ABS } from "./MATH_ABS";
+
+export const abs = native_sym(Native.abs);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -26,7 +29,7 @@ type EXP = UCons<Sym, ARG>;
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
-        super('abs_exp', MATH_ABS, and(is_cons, is_opr_1_any(MATH_EXP)), $);
+        super('abs_exp', abs, and(is_cons, is_opr_1_any(MATH_EXP)), $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {

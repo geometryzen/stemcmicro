@@ -1,5 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { ASSIGN, SYM_MATH_COMPONENT } from "../../runtime/constants";
+import { halt } from "../../runtime/defs";
 import { caadr } from "../../tree/helpers";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, nil, U } from "../../tree/tree";
@@ -55,7 +56,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
     }
 
     if (!is_sym(lhs)) {
-        throw new Error('symbol assignment: error in symbol');
+        halt('symbol assignment: error in symbol');
     }
 
     // TODO: The evaluation of the right hand side is not really necessary.

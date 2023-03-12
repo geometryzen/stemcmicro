@@ -127,15 +127,14 @@ export const defs = new Defs();
  * Otherwise, there should be a convenient way to throw structured Error(s).
  */
 export function halt(s: string): never {
-    defs.errorMessage += 'Halt: ';
+    defs.errorMessage += 'Stop: ';
     defs.errorMessage += s;
     const message = defs.errorMessage;
 
     defs.errorMessage = '';
     move_top_of_stack(0);
 
-    const e = new Error(message);
-    throw e;
+    throw new Error(message);
 }
 
 export function move_top_of_stack(stackPos: number) {

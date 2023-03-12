@@ -1,10 +1,10 @@
 import { run_test } from '../test-harness';
 
 run_test([
-  'clock(exp(i pi/3))',
+  'clock(exp(i * pi/3))',
   '(-1)^(1/3)',
 
-  'clock(exp(-i pi/3))',
+  'clock(exp(-i * pi/3))',
   //"-(-1)^(2/3)",
   '1/(-1)^(1/3)',
 

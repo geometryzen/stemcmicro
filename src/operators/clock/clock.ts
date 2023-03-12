@@ -16,7 +16,7 @@ import { arg } from '../arg/arg';
 
   clock(z) = abs(z) * (-1) ^ (arg(z) / pi)
 
-  For example, clock(exp(i pi/3)) gives the result (-1)^(1/3)
+  For example, clock(exp(i * pi/3)) gives the result (-1)^(1/3)
 */
 
 // P.S. I couldn't find independent definition/aknowledgment

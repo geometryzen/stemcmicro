@@ -112,4 +112,42 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "x/(x^2+y^2)");
         engine.release();
     });
+    it("real(log(i))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `real(log(i))`
+        ];
+        const engine = create_script_context({
+            useCaretForExponentiation: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
+        engine.release();
+    });
+    it("clock(real(log(i)))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `clock(real(log(clock(i))))`
+        ];
+        const engine = create_script_context({
+            useCaretForExponentiation: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
+        engine.release();
+    });
+    it("real(i*log(3))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1/2)`,
+            `real(i*log(3))`,
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "0");
+        engine.release();
+    });
 });

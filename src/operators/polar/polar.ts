@@ -2,7 +2,7 @@ import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { exp } from '../../exp';
 import { cadr } from '../../tree/helpers';
-import { U } from '../../tree/tree';
+import { Cons, U } from '../../tree/tree';
 import { abs } from '../abs/abs';
 import { arg } from '../arg/arg';
 
@@ -14,20 +14,23 @@ Convert complex z to polar form
 
   polar(z) = abs(z) * exp(i * arg(z))
 */
-export function Eval_polar(p1: U, $: ExtensionEnv): U {
-    const result = polar($.valueOf(cadr(p1)), $);
-    return result;
+export function Eval_polar(expr: Cons, $: ExtensionEnv): U {
+    return polar($.valueOf(cadr(expr)), $);
 }
 
-export function polar(p1: U, $: ExtensionEnv): U {
-    // there are points where we turn polar
-    // representations into rect, we set a "stack flag"
-    // here to avoid that, so we don't undo the
-    // work that we are trying to do.
+export function polar(z: U, $: ExtensionEnv): U {
     const mode = $.getNativeDirective(Directive.evaluatingAsPolar);
     $.setNativeDirective(Directive.evaluatingAsPolar, true);
     try {
-        return $.multiply(abs(p1, $), exp($.multiply(imu, arg(p1, $)), $));
+        const r = abs(z, $);
+        // console.lg("r", $.toInfixString(r));
+        const theta = arg(z, $);
+        // console.lg("theta", $.toInfixString(theta));
+        const imu_times_theta = $.multiply(imu, theta);
+        // console.lg("imu_times_theta", $.toInfixString(imu_times_theta));
+        const unit = exp(imu_times_theta, $);
+        // console.lg("unit", $.toInfixString(unit));
+        return $.multiply(r, unit);
     }
     finally {
         $.setNativeDirective(Directive.evaluatingAsPolar, mode);

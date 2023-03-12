@@ -1,7 +1,7 @@
 import { subtract } from '../../calculators/sub/subtract';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
-import { equaln, is_num_and_gt_zero, is_num_and_equal_one_half } from '../../is';
+import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from '../../is';
 import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
@@ -30,6 +30,8 @@ import { rect } from '../rect/rect';
 import { is_sym } from '../sym/is_sym';
 
 export const ARG = native_sym(Native.arg);
+export const IMAG = native_sym(Native.imag);
+export const REAL = native_sym(Native.real);
 
 /**
  * Example of inverting the registration 
@@ -51,11 +53,13 @@ export function arg(z: U, $: ExtensionEnv): U {
     // TODO: arg is being computed here by immediately going to real and imag parts.
     // If z is in the form of a (power base expo) then it can make sense to equate to a polar form
     // and solve for theta that way. The implementation of real is already using that approach.
-    // console.lg(`arg`, $.toInfixString(z));
-    const y = imag(z, $);
-    const x = real(z, $);
-    // console.lg(`x`, $.toInfixString(x));
+    // console.lg(`arg`, $.toSExprString(z));
+    const y = $.valueOf(items_to_cons(IMAG, z));
+    // const y = imag(z, $);
     // console.lg(`y`, $.toInfixString(y));
+    const x = $.valueOf(items_to_cons(REAL, z));
+    // const x = real(z, $);
+    // console.lg(`x`, $.toInfixString(x));
     // TODO: handle the undefined case when both x and y are zero.
     if ($.is_zero(x)) {
         if ($.is_zero(y)) {

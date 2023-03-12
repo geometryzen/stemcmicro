@@ -5,10 +5,10 @@ run_test([
   'e',
   'e',
 
-  // normally sqrt(-1) is shown as i or j
-  // but if user really wants to look inside
-  // i/j then we are going to show sqrt(-1)
   'i',
+  'i',
+
+  'clock(i)',
   '(-1)^(1/2)',
 
   'j',

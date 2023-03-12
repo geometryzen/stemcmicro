@@ -3,8 +3,20 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("polar", function () {
-    // TODO: polar should return the parts [r,theta] rather than being a formatting function.
-    // We could rebuild z using a complex_from_polar function.
+    it("polar(i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1/2)`,
+            `polar(i)`,
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "e**(1/2*i*pi)");
+        engine.release();
+    });
     xit("1+i", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,

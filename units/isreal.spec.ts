@@ -1,3 +1,4 @@
+import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
@@ -238,4 +239,17 @@ describe("isreal", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "b");
         engine.release();
     });
+    it("isreal(x**(3/2))", function () {
+        const lines: string[] = [
+            `isreal(x**(3/2))`,
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: true
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "false");
+        engine.release();
+    });
+
 });

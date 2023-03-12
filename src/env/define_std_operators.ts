@@ -128,6 +128,7 @@ import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp_extension } from '../operators/hyp/hyp_extension';
 import { imag_lambda } from '../operators/imag/imag';
 import { imag_any } from '../operators/imag/imag_any';
+import { imag_log_rat } from '../operators/imag/imag_log_rat';
 import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner_extension } from '../operators/inner/inner';
@@ -244,7 +245,9 @@ import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { real_lambda } from '../operators/real/real';
 import { real_any } from '../operators/real/real_any';
+import { real_log_imu } from '../operators/real/real_log_imu';
 import { real_log_rat } from '../operators/real/real_log_rat';
+import { real_mul } from '../operators/real/real_mul';
 import { Eval_rect } from '../operators/rect/rect';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
@@ -657,6 +660,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(hilbert_varargs);
 
+    $.defineOperator(imag_log_rat);
     $.defineOperator(imag_any);
 
     $.defineOperator(index_varargs);
@@ -697,7 +701,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
 
+    $.defineOperator(real_log_imu);
     $.defineOperator(real_log_rat);
+    $.defineOperator(real_mul);
     $.defineOperator(real_any);
 
     $.defineOperator(is_real_add);

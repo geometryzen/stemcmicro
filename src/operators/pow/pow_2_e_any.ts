@@ -73,7 +73,10 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(base), this.$.toInfixString(expo));
         const $ = this.$;
-        if ($.getNativeDirective(Directive.evaluatingTrigAsExp)) {
+        if ($.getNativeDirective(Directive.evaluatingAsPolar)) {
+            // Do nothing
+        }
+        else if ($.getNativeDirective(Directive.evaluatingTrigAsExp)) {
             // Do nothing
         }
         else {

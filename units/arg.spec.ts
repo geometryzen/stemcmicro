@@ -216,4 +216,18 @@ xdescribe("arg", function () {
         assert.strictEqual(engine.renderAsInfix(value), "1/3*pi");
         engine.release();
     });
+    it("arg((-1)**(1/3))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1/2)`,
+            `arg((-1)**(1/3))`,
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1/3*pi");
+        engine.release();
+    });
 });

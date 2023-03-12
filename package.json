@@ -29,6 +29,7 @@
         "lint": "eslint . --ext .ts",
         "tests": "mocha 'tests/**/*.ts' --sort",
         "units": "mocha 'units/**/*.spec.ts' --sort",
+        "unit-arg": "mocha 'units/arg.spec.ts'",
         "unit-clock": "mocha 'units/clock.spec.ts'",
         "unit-sandbox": "mocha 'units/sandbox.spec.ts'",
         "test-sandbox": "mocha 'tests/sandbox.ts'"

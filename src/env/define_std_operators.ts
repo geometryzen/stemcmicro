@@ -49,6 +49,7 @@ import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
 import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
 import { define_arg } from '../operators/arg/arg';
+import { arg_pow } from '../operators/arg/arg_pow';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
@@ -584,6 +585,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(arcsinh_any);
     $.defineOperator(arctan_varargs);
     $.defineOperator(arctanh_varargs);
+
+    $.defineOperator(arg_pow);
     define_arg($);
     // $.defineOperator(arg_varargs);
 

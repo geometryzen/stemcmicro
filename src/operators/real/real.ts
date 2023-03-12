@@ -10,12 +10,13 @@ import { one, zero } from '../../tree/rat/Rat';
 import { cons, Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
 import { is_sym } from '../sym/is_sym';
+import { compute_r_from_base_and_expo } from './compute_r_from_base_and_expo';
+import { compute_theta_from_base_and_expo } from './compute_theta_from_base_and_expo';
 
 const MATH_ADD = native_sym(Native.add);
 const COS = native_sym(Native.cosine);
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
-const MATH_LOG = native_sym(Native.log);
 const MATH_MUL = native_sym(Native.multiply);
 const MATH_POW = native_sym(Native.pow);
 const REAL = native_sym(Native.real);
@@ -227,24 +228,4 @@ function multiply_factors(factors: U[], $: ExtensionEnv): U {
     else {
         return one;
     }
-}
-
-export function compute_r_from_base_and_expo(base: U, expo: U, $: ExtensionEnv): U {
-    // console.lg("base", $.toInfixString(base));
-    // console.lg("expo", $.toInfixString(expo));
-    const log_base = $.valueOf(items_to_cons(MATH_LOG, base));
-    // console.lg("log_base", $.toInfixString(log_base));
-    const expo_times_log_base = $.valueOf(items_to_cons(MATH_MUL, expo, log_base));
-    // console.lg("expo_times_log_base", $.toInfixString(expo_times_log_base));
-    const real_expo_times_log_base = $.valueOf(items_to_cons(REAL, expo_times_log_base));
-    // console.lg("real_expo_times_log_base", $.toInfixString(real_expo_times_log_base));
-    const r = $.valueOf(items_to_cons(EXP, real_expo_times_log_base));
-    // console.lg("r", $.toInfixString(r));
-    return r;
-}
-export function compute_theta_from_base_and_expo(base: U, expo: U, $: ExtensionEnv): U {
-    const log_base = $.valueOf(items_to_cons(MATH_LOG, base));
-    const expo_times_log_base = $.valueOf(items_to_cons(MATH_MUL, expo, log_base));
-    const theta = $.valueOf(items_to_cons(IMAG, expo_times_log_base));
-    return theta;
 }

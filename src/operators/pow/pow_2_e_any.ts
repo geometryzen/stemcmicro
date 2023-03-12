@@ -2,8 +2,11 @@ import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { Directive, ExtensionEnv, keepFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { divide_by_imu } from "../../optimize/divide_by_imu";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
+import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { MATH_ADD, MATH_MUL, MATH_POW, MATH_SIN } from "../../runtime/ns_math";
 import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -142,6 +145,12 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                         const s_times_i = items_to_cons(MATH_MUL, s, imu);
                         return [TFLAG_DIFF, items_to_cons(MATH_ADD, c, s_times_i)];
                     }
+                    if (is_cons(expo_rhs) && is_cons_opr_eq_sym(expo_rhs, native_sym(Native.log))) {
+                        // exp(a*log(b)) = b^a
+                        const a = expo_lhs;
+                        const b = expo_rhs.argList.head;
+                        return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_POW, b, a))];
+                    }
                 }
                 if (is_cons(expo) && is_cons_opr_eq_mul(expo)) {
                     const N = count_imu_factors(expo);
@@ -168,3 +177,4 @@ function euler_formula(x: U, $: ExtensionEnv): U {
 }
 
 export const pow_2_e_any = new Builder();
+

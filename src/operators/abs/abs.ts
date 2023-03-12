@@ -240,7 +240,8 @@ export function abs(x: U, $: ExtensionEnv): U {
         // trying to remove the abs function by applying the Cauchy-Schwartz equality,
         // hoping for the case that all terms are positive.
         // https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality
-        return hook($.valueOf(simplify($.power($.inner(expr, expr), half), $)), "N");
+        // return hook($.valueOf(simplify($.power($.inner(expr, expr), half), $)), "N");
+        return hook(items_to_cons(ABS, expr), "N");
     }
     else {
         // Here we have given up and simply wrap the expression.

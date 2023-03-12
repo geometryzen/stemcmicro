@@ -6,6 +6,7 @@ import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { Eval_nroots } from '../nroots';
+import { abs_add } from '../operators/abs/abs_add';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_blade } from '../operators/abs/abs_blade';
 import { abs_flt } from '../operators/abs/abs_flt';
@@ -570,6 +571,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(flt_extension);
     $.defineOperator(str_extension);
 
+    $.defineOperator(abs_add);
     $.defineOperator(abs_blade);
     $.defineOperator(abs_flt);
     $.defineOperator(abs_imu);

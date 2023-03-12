@@ -241,4 +241,17 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "1.414214...");
         engine.release();
     });
+    it("rendering", function () {
+        const lines: string[] = [
+            `abs(x)`,
+        ];
+        const engine = create_script_context({});
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsAscii(value), "abs(x)");
+        assert.strictEqual(engine.renderAsHuman(value), "abs(x)");
+        assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
+        assert.strictEqual(engine.renderAsLaTeX(value), "\\left |x \\right |");
+        assert.strictEqual(engine.renderAsSExpr(value), "(abs x)");
+        engine.release();
+    });
 });

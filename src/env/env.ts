@@ -102,8 +102,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     let current_mode: number = MODE_EXPANDING;
 
-    let fieldKind: 'R' | undefined = 'R';
-
     let printHandler: PrintHandler = new NoopPrintHandler();
 
     const native_directives: { [directive: number]: boolean } = {};
@@ -154,24 +152,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getPrintHandler(): PrintHandler {
             return printHandler;
         },
-        setField(kind: 'R' | undefined): void {
-            fieldKind = kind;
-        },
         setPrintHandler(handler: PrintHandler): void {
             if (handler) {
                 printHandler = handler;
             }
             else {
                 printHandler = new NoopPrintHandler();
-            }
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        treatAsReal(sym: Sym): boolean {
-            if (fieldKind === 'R') {
-                return true;
-            }
-            else {
-                return false;
             }
         },
         add(lhs: U, rhs: U): U {

@@ -194,9 +194,7 @@ export interface SymbolProps {
 
 export interface ExtensionEnv {
     getPrintHandler(): PrintHandler;
-    setField(kind: 'R' | undefined): void;
     setPrintHandler(handler: PrintHandler): void;
-    treatAsReal(sym: Sym): boolean;
     /**
      *
      */

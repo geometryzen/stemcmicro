@@ -28,7 +28,7 @@ export function Eval_rect(p1: Cons, $: ExtensionEnv): U {
 }
 
 export function rect(z: U, $: ExtensionEnv): U {
-    // console.lg("rect", $.toInfixString(z));
+    // console.lg("rect", $.toSExprString(z));
     // if we assume real variables, then the
     // rect of any symbol is the symbol itself
     // (note that 'i' is not a symbol, it's made of (-1)^(1/2))
@@ -52,18 +52,25 @@ export function rect(z: U, $: ExtensionEnv): U {
         //
     }
 
-    if (!$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES)) && !has_exp_form(z, $) && !has_clock_form(z, z, $) &&
-        !(z.contains(MATH_SIN) && z.contains(COS) && z.contains(imu))
+    const assumeRealVariables = !$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES));
+    // console.lg("assumeRealVariables", assumeRealVariables);
+    const hasExpForm = has_exp_form(z, $);
+    // console.lg("hasExpForm", hasExpForm);
+
+    if (assumeRealVariables && !has_exp_form(z, $) && !has_clock_form(z, z, $) && !(z.contains(MATH_SIN) && z.contains(COS) && z.contains(imu))
     ) {
+        // console.lg("rect has no polar form", $.toSExprString(z));
         // no polar form?
         return z; // ib
     }
 
-    if (is_cons(z) && is_multiply(z) && is_imu(cadr(z)) && !$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
+    if (is_cons(z) && is_multiply(z) && is_imu(cadr(z)) && assumeRealVariables) {
+        // console.lg("rect is sum", $.toSExprString(z));
         return z; // sum
     }
 
     if (is_cons(z) && is_add(z)) {
+        // console.lg("rect is add", $.toSExprString(z));
         return z.tail().reduce((a: U, b: U) => $.add(a, rect(b, $)), zero);
     }
 
@@ -75,6 +82,8 @@ export function rect(z: U, $: ExtensionEnv): U {
     // where theta is arg(p1)
     // abs(z) * (cos(arg(z)) + i sin(arg(z)))
     // console.lg("rect is computing abs(z)", $.toInfixString(z));
+    const A = arg(z, $);
+    // console.lg("theta", $.toInfixString(A));
     const result = $.multiply(
         abs(z, $),
         $.add(cos(arg(z, $), $), $.multiply(imu, sin(arg(z, $), $)))

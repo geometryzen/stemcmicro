@@ -129,6 +129,7 @@ import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp_extension } from '../operators/hyp/hyp_extension';
 import { imag_lambda } from '../operators/imag/imag';
 import { imag_any } from '../operators/imag/imag_any';
+import { imag_arctan_rat } from '../operators/imag/imag_arctan_rat';
 import { imag_log_rat } from '../operators/imag/imag_log_rat';
 import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
@@ -229,6 +230,7 @@ import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { Eval_polar } from '../operators/polar/polar';
 import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
+import { pow_2_e_rat } from '../operators/pow/pow_2_e_rat';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
@@ -250,6 +252,8 @@ import { real_log_imu } from '../operators/real/real_log_imu';
 import { real_log_rat } from '../operators/real/real_log_rat';
 import { real_mul } from '../operators/real/real_mul';
 import { Eval_rect } from '../operators/rect/rect';
+import { rect_mul_rat_any } from '../operators/rect/rect_mul_rat_any';
+import { rect_pow_exp_imu } from '../operators/rect/rect_pow_exp_imu';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
@@ -402,6 +406,7 @@ export function define_std_operators($: ExtensionEnv) {
     // TODO: See what these do. Ensure unit tests. Remove.
     // $.defineOperator(pow_2_pow_2_e_any_rat);
     // $.defineOperator(pow_2_pow_2_any_rat_rat);
+    $.defineOperator(pow_2_e_rat);
     $.defineOperator(pow_2_e_any);      // Needed
     // $.defineOperator(pow_2_sym_rat);
     // $.defineOperator(pow_2_rat_rat);
@@ -663,6 +668,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(hilbert_varargs);
 
+    $.defineOperator(imag_arctan_rat);
     $.defineOperator(imag_log_rat);
     $.defineOperator(imag_any);
 
@@ -723,7 +729,10 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(make_predicate_sym_operator(PREDICATE_IS_REAL));
     $.defineOperator(is_real_any);
 
+    $.defineOperator(rect_mul_rat_any);
+    $.defineOperator(rect_pow_exp_imu);
     $.defineLegacyTransformer(RECT, Eval_rect);
+
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);
 

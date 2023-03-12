@@ -25,6 +25,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(arg));
         const $ = this.$;
         const retval = imag(arg, $);
         const changed = !retval.equals(expr);

@@ -40,6 +40,7 @@ export function build_sym(code: Native): Sym {
         case Native.outer: return create_sym('outer');
         case Native.pow: return create_sym('math.pow');
         case Native.real: return create_sym('real');
+        case Native.rect: return create_sym('rect');
         case Native.rco: return create_sym('>>');
         case Native.sine: return create_sym('sin');
         case Native.spread: return create_sym('...');

@@ -14,6 +14,7 @@ const E = native_sym(Native.E);
  */
 export function is_base_of_natural_logarithm(expr: U): expr is Sym & { __key: 'math.E' } {
     if (is_sym(expr)) {
+        // console.lg("is_base_of_natural_logarithm", expr.toString());
         return E.equals(expr);
     }
     else if (is_power(expr)) {

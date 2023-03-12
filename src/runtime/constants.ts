@@ -120,7 +120,7 @@ export const RCO = create_sym('rco');
 export const REAL = native_sym(Native.real);
 export const PREDICATE_IS_REAL = native_sym(Native.is_real);
 export const ROUND = create_sym('round');
-export const RECT = create_sym('rect');
+export const RECT = native_sym(Native.rect);
 export const ROOTS = create_sym('roots');
 export const ASSIGN = create_sym('=');
 export const SGN = create_sym('sgn');

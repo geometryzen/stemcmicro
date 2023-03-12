@@ -27,6 +27,7 @@ export enum Native {
     outer,
     pow,
     real,
+    rect,
     rco,
     sine,
     spread,

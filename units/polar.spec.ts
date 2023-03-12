@@ -17,7 +17,7 @@ describe("polar", function () {
         assert.strictEqual(engine.renderAsInfix(value), "e**(1/2*i*pi)");
         engine.release();
     });
-    xit("1+i", function () {
+    it("1+i", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,
@@ -28,8 +28,22 @@ describe("polar", function () {
             useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "???");
-        assert.strictEqual(engine.renderAsInfix(value), "2^(1/2)*exp(1/4*i*pi)");
+        assert.strictEqual(engine.renderAsInfix(value), "2**(1/2)*e**(1/4*i*pi)");
+        engine.release();
+    });
+    it("polar(3+4*i)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1/2)`,
+            `polar(3+4*i)`,
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "5*e**(i*arctan(4/3))");
+        // assert.strictEqual(engine.renderAsInfix(value), "5*exp(i*arctan(4/3))");
         engine.release();
     });
 });

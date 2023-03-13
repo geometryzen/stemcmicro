@@ -73,7 +73,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
+    transform2(opr: Sym, base: LHS, expo: RHS, outerExp: EXP): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(base), this.$.toInfixString(expo));
         const $ = this.$;
         if ($.getNativeDirective(Directive.evaluatingAsPolar)) {
@@ -120,8 +120,8 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                     // expo_rhs=i
                     if ($.is_real(expo_lhs) && is_imu(expo_rhs)) {
                         // console.lg(`Euler 3 ${render_as_infix(expr, $)} meta=${keepFlag(expr.meta)}`);
-                        if (keepFlag(expr.meta)) {
-                            return [TFLAG_NONE, expr];
+                        if (keepFlag(outerExp.meta)) {
+                            return [TFLAG_NONE, outerExp];
                         }
                         else {
                             const c = $.valueOf(items_to_cons(MATH_COS, expo_lhs));
@@ -164,7 +164,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
                 return [TFLAG_DIFF, items_to_cons(MATH_EXP, expo)];
             }
         }
-        return [TFLAG_NONE, expr];
+        return [TFLAG_NONE, outerExp];
     }
 }
 

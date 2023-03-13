@@ -4,7 +4,7 @@ import { native_sym } from "../../native/native_sym";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { AbstractChain } from "./AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 
 const ADD = native_sym(Native.add);
 const IS_REAL = native_sym(Native.is_real);
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class IsRealAdd extends AbstractChain {
+class IsRealAdd extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(IS_REAL, ADD, $);
     }

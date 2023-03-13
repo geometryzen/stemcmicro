@@ -1,14 +1,14 @@
-import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { ExtensionEnv } from "../env/ExtensionEnv";
+import { HASH_ANY, hash_unaop_atom } from "../hashing/hash_info";
+import { Sym } from "../tree/sym/Sym";
+import { Cons, is_cons, U } from "../tree/tree";
+import { Function1 } from "./helpers/Function1";
+import { UCons } from "./helpers/UCons";
 
-export abstract class AbstractChain extends Function1<Cons> {
+export abstract class CompositeOperator extends Function1<Cons> {
     readonly hash: string;
     constructor(outerOpr: Sym, private readonly innerOpr: Sym, $: ExtensionEnv) {
-        super(`${outerOpr.text}(expr: (${innerOpr.text}) => ${HASH_ANY}) => ${HASH_ANY}`, outerOpr, is_cons, $);
+        super(`${outerOpr}∘${innerOpr}`, outerOpr, is_cons, $);
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     isKind(expr: U): expr is UCons<Sym, Cons> {

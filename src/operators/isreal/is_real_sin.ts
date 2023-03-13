@@ -4,7 +4,7 @@ import { create_boo } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { MATH_SIN } from "../sin/MATH_SIN";
-import { AbstractChain } from "./AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * isreal(sin(z)) => isreal(z)
  */
- class IsRealSin extends AbstractChain {
+ class IsRealSin extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(PREDICATE_IS_REAL, MATH_SIN, $);
     }

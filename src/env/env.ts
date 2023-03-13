@@ -99,8 +99,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         ops_by_mode[mode] = {};
     }
 
-    const chains: Map<string, Map<string, LambdaExpr>> = new Map();
-
     let printHandler: PrintHandler = new NoopPrintHandler();
 
     const native_directives = new DirectiveStack();
@@ -165,8 +163,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 printHandler = new NoopPrintHandler();
             }
         },
-        add(lhs: U, rhs: U): U {
-            return $.evaluate(Native.add, lhs, rhs);
+        add(...args: U[]): U {
+            return $.evaluate(Native.add, ...args);
+        },
+        arctan(expr: U): U {
+            return $.evaluate(Native.arctan, expr);
+        },
+        arg(expr: U): U {
+            return $.evaluate(Native.arg, expr);
         },
         clearOperators(): void {
             builders.length = 0;
@@ -197,6 +201,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         defineAssociative(opr: Sym, id: Rat): void {
             // Do nothing.
         },
+        divide(lhs: U, rhs: U): U {
+            return $.multiply(lhs, $.power(rhs, negOne));
+        },
         clearBindings(): void {
             symTab.clear();
         },
@@ -214,10 +221,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
+        cos(expr: U): U {
+            return $.evaluate(Native.cos, expr);
+        },
         evaluate(opr: Native, ...args: U[]): U {
             const argList = items_to_cons(...args);
             const expr = cons(native_sym(opr), argList);
             return $.valueOf(expr);
+        },
+        exp(expr: U): U {
+            return $.evaluate(Native.exp, expr);
         },
         getSymbolProps(sym: Sym | string): SymbolProps {
             return symTab.getProps(sym);
@@ -227,44 +240,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         getSymbolsInfo() {
             return symTab.entries();
-        },
-        getChain(outer: Sym, inner: Sym): LambdaExpr {
-            const outerKey = outer.key();
-            const map = chains.get(outerKey);
-            if (map) {
-                const innerKey = inner.key();
-                const lambda = map.get(innerKey);
-                if (lambda) {
-                    return lambda;
-                }
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            return function (argList: Cons, $: ExtensionEnv): U {
-                // const i = cons(inner, argList);
-                // Don't evaluate here. This is a fallback for when no chain exists.
-                // const expr = items_to_cons(outer, i);
-                // We report that the expression is not defined.
-                throw new Error(`${$.toInfixString(outer)} ${$.toInfixString(inner)} ${argList.toString()}}`);
-                // return new Err(expr);
-            };
-        },
-        setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void {
-            const outerKey = outer.key();
-            const ensureOuterMap = function () {
-                const found = chains.get(outerKey);
-                if (found) {
-                    return found;
-                }
-                else {
-                    const minted = new Map<string, LambdaExpr>();
-                    chains.set(outerKey, minted);
-                    return minted;
-                }
-
-            };
-            const map = ensureOuterMap();
-            const innerKey = inner.key();
-            map.set(innerKey, lambda);
         },
         buildOperators(): void {
             for (const builder of builders) {
@@ -403,6 +378,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return sym.key();
             }
         },
+        imag(expr: U): U {
+            return $.evaluate(Native.imag, expr);
+        },
         inner(lhs: U, rhs: U): U {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
             const value_lhs = $.valueOf(lhs);
@@ -455,6 +433,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         power(base: U, expo: U): U {
             return $.evaluate(Native.pow, base, expo);
         },
+        real(expr: U): U {
+            return $.evaluate(Native.real, expr);
+        },
         remove(varName: Sym): void {
             symTab.delete(varName);
         },
@@ -478,6 +459,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         setSymbolValue(sym: Sym, value: U): void {
             symTab.setValue(sym, value);
+        },
+        sin(expr: U): U {
+            return $.evaluate(Native.sin, expr);
         },
         subtract(lhs: U, rhs: U): U {
             return $.add(lhs, $.negate(rhs));

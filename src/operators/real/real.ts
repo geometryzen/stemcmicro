@@ -15,7 +15,7 @@ import { compute_theta_from_base_and_expo } from './compute_theta_from_base_and_
 
 const MATH_ADD = native_sym(Native.add);
 const CONJ = native_sym(Native.conj);
-const COS = native_sym(Native.cosine);
+const COS = native_sym(Native.cos);
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
 const MATH_MUL = native_sym(Native.multiply);
@@ -204,18 +204,6 @@ export function real(expr: U, $: ExtensionEnv): U {
     }
     else if (expr.equals(imu)) {
         return zero;
-    }
-    else if (is_cons(expr)) {
-        const opr = expr.opr;
-        if (is_sym(opr)) {
-            return $.getChain(REAL, opr)(expr.argList, $);
-        }
-        else {
-            throw new Error(`const but opr is not Sym ${JSON.stringify(expr)} ${$.toSExprString(expr)}`);
-        }
-    }
-    else {
-        throw new Error(`Finally ${JSON.stringify(expr)} ${$.toSExprString(expr)}`);
     }
     /*
     // I'm not sure why this first step is necessary; it should not be.

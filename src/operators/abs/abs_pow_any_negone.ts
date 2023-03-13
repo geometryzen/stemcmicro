@@ -5,7 +5,7 @@ import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
 const POW = native_sym(Native.pow);
@@ -20,7 +20,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * abs(1/z) <=> 1/abs(z)
  */
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(ABS, POW, $);
     }

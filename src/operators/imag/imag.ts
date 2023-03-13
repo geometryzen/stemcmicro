@@ -1,11 +1,6 @@
 import { ExtensionEnv, LambdaExpr } from '../../env/ExtensionEnv';
-import { imu } from '../../env/imu';
 import { IMAG } from '../../runtime/constants';
-import { MATH_MUL } from '../../runtime/ns_math';
-import { negOne, zero } from '../../tree/rat/Rat';
 import { Cons, items_to_cons, U } from '../../tree/tree';
-import { real } from '../real/real';
-import { is_sym } from '../sym/is_sym';
 /**
  * expr = (real arg)
  * @param expr 
@@ -30,18 +25,11 @@ export const imag_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv)
     return imag(arg, $);
 };
 
-/**
- * Im(z) = Re(-i*z) is going to be our strategy in order to reuse the real implementation.
- */
-/**
- * 
- * @param z An expression that has already been evaluated.
- * @param $ 
- * @returns 
- */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function imag(z: U, $: ExtensionEnv): U {
+    return items_to_cons(IMAG, z);
+    /*
     // console.lg(`imag`, $.toInfixString(z));
-    // The use of the real() function is elegant but it introduces the risk of infinite recursion.
     if (is_sym(z)) {
         if ($.is_real(z)) {
             return zero;
@@ -50,9 +38,11 @@ export function imag(z: U, $: ExtensionEnv): U {
             return items_to_cons(IMAG, z);
         }
     }
+    // The use of the real() function is elegant but it introduces the risk of infinite recursion.
     const neg_imu = $.valueOf(items_to_cons(MATH_MUL, negOne, imu));
     // console.lg(`neg_imu`, $.toInfixString(neg_imu));
     const neg_imu_times_z = $.valueOf(items_to_cons(MATH_MUL, neg_imu, z));
     // console.lg(`neg_imu_times_z`, $.toInfixString(neg_imu_times_z));
     return real(neg_imu_times_z, $);
+    */
 }

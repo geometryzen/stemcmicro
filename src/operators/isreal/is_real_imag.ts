@@ -3,7 +3,7 @@ import { IMAG, PREDICATE_IS_REAL } from "../../runtime/constants";
 import { booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { AbstractChain } from "./AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -14,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * isreal(imag(z)) is always true because imag(z) always return a real number.
  */
-class IsRealImag extends AbstractChain {
+class IsRealImag extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(PREDICATE_IS_REAL, IMAG, $);
     }

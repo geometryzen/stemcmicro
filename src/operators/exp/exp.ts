@@ -10,23 +10,14 @@ import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
 
 const MATH_E = native_sym(Native.E);
-const MATH_EXP = native_sym(Native.exp);
-const MATH_POW = native_sym(Native.pow);
+const EXP = native_sym(Native.exp);
+const POW = native_sym(Native.pow);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
         return new Exp($);
     }
 }
-
-/*
-function Eval_exp(expr: Cons, $: ExtensionEnv): U {
-    const A = cadnr(expr, 1);
-    const B = $.valueOf(A);
-    const C = exp(B, $);
-    return C;
-}
-*/
 
 type ARG = U;
 type EXP = UCons<Sym, ARG>;
@@ -35,7 +26,7 @@ class Exp extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;
     // readonly phases = PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
-        super('exp_any', MATH_EXP, is_any, $);
+        super('exp', EXP, is_any, $);
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,7 +34,7 @@ class Exp extends Function1<ARG> implements Operator<EXP> {
         // console.lg(this.name, this.$.toSExprString(expr));
         const $ = this.$;
         if ($.isExpanding()) {
-            return [TFLAG_DIFF, binop(MATH_POW, MATH_E, arg, $)];
+            return [TFLAG_DIFF, binop(POW, MATH_E, arg, $)];
         }
         else {
             // The argument is evaluated by the base class in all other phases.
@@ -52,4 +43,4 @@ class Exp extends Function1<ARG> implements Operator<EXP> {
     }
 }
 
-export const exp_any = new Builder();
+export const exp = new Builder();

@@ -1,17 +1,39 @@
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { imu } from "../../env/imu";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
+import { is_power } from "../../runtime/helpers";
+import { negOne, one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { Cons, items_to_cons, U } from "../../tree/tree";
-import { UCons } from "../helpers/UCons";
+import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
+import { CompositeOperator } from "../CompositeOperator";
 import { is_imu } from "../imu/is_imu";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { is_rat } from "../rat/is_rat";
+import { is_sym } from "../sym/is_sym";
+import { compute_r_from_base_and_expo } from "./compute_r_from_base_and_expo";
+import { compute_theta_from_base_and_expo } from "./compute_theta_from_base_and_expo";
 
-const real = native_sym(Native.real);
-const multiply = native_sym(Native.multiply);
-const imag = native_sym(Native.imag);
+const ADD = native_sym(Native.add);
+const CONJ = native_sym(Native.conj);
+const EXP = native_sym(Native.exp);
+const IMAG = native_sym(Native.imag);
+const POW = native_sym(Native.pow);
+const REAL = native_sym(Native.real);
+const MUL = native_sym(Native.multiply);
+
+function multiply_factors(factors: U[], $: ExtensionEnv): U {
+    if (factors.length > 1) {
+        return $.valueOf(items_to_cons(MUL, ...factors));
+    }
+    else if (factors.length === 1) {
+        return $.valueOf(factors[0]);
+    }
+    else {
+        return one;
+    }
+}
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -20,27 +42,119 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * real(i*z) => -imag(z)
  */
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(real, multiply, $);
+        super(REAL, MUL, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
-        if (super.isKind(expr)) {
-            const innerExpr = expr.argList.head;
-            return count_factors(innerExpr, is_imu) === 1;
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
+        const $ = this.$;
+        // console.lg("innerExpr", this.$.toSExprString(innerExpr));
+        const count_imu = count_factors(innerExpr, is_imu);
+        if (count_imu > 0) {
+            const z = remove_factors(innerExpr, is_imu);
+            switch (count_imu % 4) {
+                case 0: {
+                    // This would cause an infinite loop if count_imu were 0.
+                    return [TFLAG_DIFF, $.real(z)];
+                }
+                case 1: {
+                    return [TFLAG_DIFF, $.negate($.imag(z))];
+                }
+                case 2: {
+                    return [TFLAG_DIFF, $.negate($.real(z))];
+                }
+                case 3: {
+                    return [TFLAG_DIFF, $.imag(z)];
+                }
+                default: {
+                    throw new Error(`${count_imu}`);
+                }
+            }
         }
-        else {
-            return false;
+        // console.lg("REAL MUL", this.$.toInfixString(outerExpr));
+        // console.lg("Computing Re of a * expression...", $.toSExprString(expr));
+        const rs: U[] = []; // the real factors.
+        const cs: U[] = []; // the complex factors
+        [...innerExpr.argList].forEach(function (factor) {
+            // console.lg("testing the factor using is_real:", $.toInfixString(factor));
+            if ($.is_real(factor)) {
+                // console.lg("factor is real:", $.toInfixString(factor));
+                rs.push(factor);
+            }
+            else {
+                // console.lg("factor is NOT real:", $.toInfixString(factor));
+                // console.lg("arg is NOT real:", $.toInfixString(arg));
+                // With no boolean response, we have to assume that the argument is not real valued.
+                // How do we make progress with the factors that are complex numbers?
+                if (is_sym(factor)) {
+                    // console.lg("arg is Sym and possibly complex", $.toInfixString(arg));
+                    const x = items_to_cons(REAL, factor);
+                    const y = items_to_cons(IMAG, factor);
+                    const iy = items_to_cons(MUL, imu, y);
+                    const z = items_to_cons(ADD, x, iy);
+                    // console.lg("Z=>", $.toInfixString(z));
+                    cs.push(z);
+                }
+                else if (factor.equals(imu)) {
+                    // console.lg("arg is imu", $.toInfixString(arg));
+                    cs.push(factor);
+                }
+                else if (is_power(factor)) {
+                    const base = factor.lhs;
+                    const expo = factor.rhs;
+                    if (is_rat(expo) && expo.isMinusOne()) {
+                        // Get the complex number out of the denominator.
+                        const z_star = $.valueOf(items_to_cons(CONJ, base));
+                        const denom = $.valueOf(items_to_cons(MUL, z_star, base));
+                        const one_over_denom = $.valueOf(items_to_cons(POW, denom, negOne));
+                        const z = $.valueOf(items_to_cons(MUL, z_star, one_over_denom));
+                        cs.push(z);
+                    }
+                    else {
+                        // console.lg("base", $.toInfixString(base));
+                        // console.lg("expo", $.toInfixString(expo));
+                        // console.lg("YAN");
+                        const r = compute_r_from_base_and_expo(base, expo, $);
+                        // console.lg("r", $.toInfixString(r));
+                        const theta = compute_theta_from_base_and_expo(base, expo, $);
+                        // console.lg("theta", $.toInfixString(theta));
+                        const i_times_theta = $.valueOf(items_to_cons(MUL, imu, theta));
+                        const cis_theta = $.valueOf(items_to_cons(EXP, i_times_theta));
+                        // console.lg("cis_theta", $.toInfixString(cis_theta));
+                        rs.push(r);
+                        cs.push(cis_theta);
+                    }
+                }
+                else if (is_cons(factor) && is_sym(factor.opr)) {
+                    cs.push(factor);
+                }
+                else {
+                    // console.lg("WT...");
+                    // Here we might encounter a function.
+                    // So far we've handled math.pow.
+                    // How to handle arbitrary functions. e.g. abs, sin, ...
+                    throw new Error($.toSExprString(factor));
+                }
+            }
+        });
+        const A = multiply_factors(rs, $);
+        // console.lg("A", $.toInfixString(A));
+        const B = multiply_factors(cs, $);
+        // console.lg("B", $.toInfixString(B));
+        if (B.equals(innerExpr)) {
+            // We didn't make any progress.
+            // We must avoid infinite recursion.
+            return [TFLAG_NONE, outerExpr];
         }
-    }
-    transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
-        // console.lg(this.name, this.$.toInfixString(innerExpr));
-        const z = remove_factors(innerExpr, is_imu);
-        const im_z = this.$.valueOf(items_to_cons(imag, z));
-        const neg_im_z = this.$.negate(im_z);
-        return [TFLAG_DIFF, neg_im_z];
+        // console.lg("exp", $.toInfixString(expr));
+        const C = $.valueOf(items_to_cons(REAL, B));
+        // console.lg("C", $.toSExprString(C));
+        const D = $.valueOf(items_to_cons(MUL, A, C));
+        // console.lg("D", $.toSExprString(D));
+        // console.lg("real of", $.toInfixString(expr), "is", $.toInfixString(D));
+
+        return [TFLAG_DIFF, D];
     }
 }
 

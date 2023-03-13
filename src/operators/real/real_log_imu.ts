@@ -6,7 +6,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 
 const real = native_sym(Native.real);
 const log = native_sym(Native.log);
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(real, log, $);
     }

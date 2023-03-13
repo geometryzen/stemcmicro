@@ -20,7 +20,6 @@ import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { QQ } from "../../tree/uom/QQ";
 import { abs } from "../abs/abs";
-import { arg } from "../arg/arg";
 import { cos } from "../cos/cosine";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
@@ -343,7 +342,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             const pi = $.getNativeDirective(Directive.evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
             let tmp = $.multiply(
                 $.power(abs(base, $), expo),
-                $.power(negOne, divide($.multiply(arg(base, $), expo), pi, $))
+                $.power(negOne, $.divide($.multiply($.arg(base), expo), pi))
             );
 
             // if we calculate the power making use of arctan:

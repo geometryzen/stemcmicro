@@ -26,9 +26,10 @@ export function build_sym(code: Native): Sym {
         // Functions (lower case)...
         case Native.abs: return create_sym('math.abs');
         case Native.add: return create_sym('add');
+        case Native.arctan: return create_sym('arctan');
         case Native.arg: return create_sym('arg');
         case Native.conj: return create_sym('conj');
-        case Native.cosine: return create_sym('cos');
+        case Native.cos: return create_sym('cos');
         case Native.divide: return create_sym('/');
         case Native.exp: return create_sym('exp');
         case Native.imag: return create_sym('imag');
@@ -43,7 +44,7 @@ export function build_sym(code: Native): Sym {
         case Native.real: return create_sym('real');
         case Native.rect: return create_sym('rect');
         case Native.rco: return create_sym('>>');
-        case Native.sine: return create_sym('sin');
+        case Native.sin: return create_sym('sin');
         case Native.spread: return create_sym('...');
         case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');

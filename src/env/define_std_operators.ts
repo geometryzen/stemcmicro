@@ -50,8 +50,14 @@ import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
 import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
 import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
-import { define_arg } from '../operators/arg/arg';
+import { arg_add } from '../operators/arg/arg_add';
+import { arg_any } from '../operators/arg/arg_any';
+import { arg_flt } from '../operators/arg/arg_flt';
+import { arg_imu } from '../operators/arg/arg_imu';
+import { arg_mul } from '../operators/arg/arg_mul';
 import { arg_pow } from '../operators/arg/arg_pow';
+import { arg_rat } from '../operators/arg/arg_rat';
+import { arg_sym } from '../operators/arg/arg_sym';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
@@ -86,8 +92,6 @@ import { cos_any } from '../operators/cos/cos_any';
 import { cos_hyp } from '../operators/cos/cos_hyp';
 import { cos_mul_2_any_imu } from '../operators/cos/cos_mul_2_any_imu';
 import { cos_sym } from '../operators/cos/cos_sym';
-import { MATH_COS } from '../operators/cos/MATH_COS';
-import { real_cos_lamba } from '../operators/cos/real_cos_lambda';
 import { cosh_sym } from '../operators/cosh/cosh_sym';
 import { cosh_varargs } from '../operators/cosh/cosh_varargs';
 import { cross_any_any } from '../operators/cross/cross_any_any';
@@ -113,7 +117,8 @@ import { erf_varargs } from '../operators/erf/erf_varargs';
 import { erfc_varargs } from '../operators/erfc/erfc_varargs';
 import { err_extension } from '../operators/err/err_extension';
 import { eval_varargs } from '../operators/eval/eval_varargs';
-import { exp_any } from '../operators/exp/exp_any';
+import { exp } from '../operators/exp/exp';
+import { exp_add } from '../operators/exp/exp_add';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_rat } from '../operators/exp/exp_rat';
 import { expand_extension } from '../operators/expand/expand_extension';
@@ -131,10 +136,22 @@ import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/het
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp_extension } from '../operators/hyp/hyp_extension';
-import { imag_lambda } from '../operators/imag/imag';
+import { imag_add } from '../operators/imag/imag_add';
 import { imag_any } from '../operators/imag/imag_any';
 import { imag_arctan_rat } from '../operators/imag/imag_arctan_rat';
+import { imag_cos } from '../operators/imag/imag_cos';
+import { imag_exp } from '../operators/imag/imag_exp';
+import { imag_flt } from '../operators/imag/imag_flt';
+import { imag_imu } from '../operators/imag/imag_imu';
 import { imag_log_rat } from '../operators/imag/imag_log_rat';
+import { imag_mul } from '../operators/imag/imag_mul';
+import { imag_mul_i_times_any } from '../operators/imag/imag_mul_i_times_any';
+import { imag_pow_e_rat } from '../operators/imag/imag_pow_e_rat';
+import { imag_pow_e_sym } from '../operators/imag/imag_pow_e_sym';
+import { imag_pow_rat_rat } from '../operators/imag/imag_pow_rat_rat';
+import { imag_rat } from '../operators/imag/imag_rat';
+import { imag_sin } from '../operators/imag/imag_sin';
+import { imag_sym } from '../operators/imag/imag_sym';
 import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { inner_extension } from '../operators/inner/inner';
@@ -156,6 +173,7 @@ import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { is_real_pow_any_negone } from '../operators/isreal/isreal_pow_any_negone';
+import { is_real_abs } from '../operators/isreal/is_real_abs';
 import { is_real_add } from '../operators/isreal/is_real_add';
 import { is_real_any } from '../operators/isreal/is_real_any';
 import { is_real_cos } from '../operators/isreal/is_real_cos';
@@ -251,11 +269,20 @@ import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
-import { real_lambda } from '../operators/real/real';
+import { real_add } from '../operators/real/real_add';
 import { real_any } from '../operators/real/real_any';
+import { real_cos } from '../operators/real/real_cos';
+import { real_exp } from '../operators/real/real_exp';
+import { real_flt } from '../operators/real/real_flt';
+import { real_imag } from '../operators/real/real_imag';
+import { real_imu } from '../operators/real/real_imu';
 import { real_log_imu } from '../operators/real/real_log_imu';
 import { real_log_rat } from '../operators/real/real_log_rat';
 import { real_mul } from '../operators/real/real_mul';
+import { real_pow_rat_rat } from '../operators/real/real_pow_rat_rat';
+import { real_rat } from '../operators/real/real_rat';
+import { real_real } from '../operators/real/real_real';
+import { real_sym } from '../operators/real/real_sym';
 import { Eval_rect } from '../operators/rect/rect';
 import { rect_mul_rat_any } from '../operators/rect/rect_mul_rat_any';
 import { rect_pow_exp_imu } from '../operators/rect/rect_pow_exp_imu';
@@ -329,7 +356,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, IMAG, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, REAL, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
@@ -343,11 +370,6 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
-
-    $.setChain(REAL, MATH_COS, real_cos_lamba);
-    $.setChain(REAL, REAL, real_lambda);
-    $.setChain(REAL, IMAG, imag_lambda);
-
 
     $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
@@ -596,12 +618,19 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(arccosh_varargs);
     $.defineOperator(arcsin_varargs);
     $.defineOperator(arcsinh_any);
+
     $.defineOperator(arctan_varargs);
+
     $.defineOperator(arctanh_varargs);
 
+    $.defineOperator(arg_add);
+    $.defineOperator(arg_flt);
+    $.defineOperator(arg_imu);
+    $.defineOperator(arg_mul);
     $.defineOperator(arg_pow);
-    define_arg($);
-    // $.defineOperator(arg_varargs);
+    $.defineOperator(arg_rat);
+    $.defineOperator(arg_sym);
+    $.defineOperator(arg_any);
 
     $.defineOperator(assign_sym_any);
     $.defineOperator(assign_any_any);
@@ -660,9 +689,10 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(eval_varargs);
 
+    $.defineOperator(exp_add);
     $.defineOperator(exp_flt);
     $.defineOperator(exp_rat);
-    $.defineOperator(exp_any);
+    $.defineOperator(exp);
 
     $.defineOperator(expand_extension);
     $.defineOperator(expcos_varargs);
@@ -676,8 +706,21 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(hilbert_varargs);
 
+    $.defineOperator(imag_add);
     $.defineOperator(imag_arctan_rat);
+    $.defineOperator(imag_cos);
+    $.defineOperator(imag_exp);
+    $.defineOperator(imag_flt);
+    $.defineOperator(imag_imu);
     $.defineOperator(imag_log_rat);
+    $.defineOperator(imag_rat);
+    $.defineOperator(imag_sin);
+    $.defineOperator(imag_sym);
+    $.defineOperator(imag_mul_i_times_any);
+    $.defineOperator(imag_mul);
+    $.defineOperator(imag_pow_e_rat);
+    $.defineOperator(imag_pow_e_sym);
+    $.defineOperator(imag_pow_rat_rat);
     $.defineOperator(imag_any);
 
     $.defineOperator(index_varargs);
@@ -718,11 +761,23 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
 
+    $.defineOperator(real_add);
+    $.defineOperator(real_cos);
+    $.defineOperator(real_exp);
+    $.defineOperator(real_flt);
+    $.defineOperator(real_imag);
+    $.defineOperator(real_imu);
     $.defineOperator(real_log_imu);
     $.defineOperator(real_log_rat);
+    // $.defineOperator(real_mul_i_times_any);
     $.defineOperator(real_mul);
+    $.defineOperator(real_pow_rat_rat);
+    $.defineOperator(real_rat);
+    $.defineOperator(real_real);
+    $.defineOperator(real_sym);
     $.defineOperator(real_any);
 
+    $.defineOperator(is_real_abs);
     $.defineOperator(is_real_add);
     $.defineOperator(is_real_cos);
     $.defineOperator(is_real_flt);

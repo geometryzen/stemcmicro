@@ -6,7 +6,7 @@ import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
 const imag = native_sym(Native.imag);
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(imag, ARCTAN, $);
     }

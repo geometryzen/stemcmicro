@@ -9,7 +9,7 @@ import { Cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
 import { is_rat } from "../rat/is_rat";
-import { AbstractChain } from "./AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 
 const POW = native_sym(Native.pow);
 const IS_REAL = native_sym(Native.is_real);
@@ -23,7 +23,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * isreal(z) <=> iszero(imag(z))
  */
-class IsRealPow extends AbstractChain {
+class IsRealPow extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(IS_REAL, POW, $);
     }

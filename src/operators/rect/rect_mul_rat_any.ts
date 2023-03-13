@@ -7,7 +7,7 @@ import { assert_rat } from "../../tree/rat/assert_rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
 const not_is_rat = (expr: U) => !is_rat(expr);
@@ -24,7 +24,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * rect(Rat*z) => rect(Rat * rect(z))
  */
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(rect, mul, $);
     }

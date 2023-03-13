@@ -1,6 +1,5 @@
 import { subtract } from '../../calculators/sub/subtract';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
-import { divide } from '../../helpers/divide';
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from '../../is';
 import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
@@ -16,7 +15,6 @@ import { piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
-import { arctan } from '../arctan/arctan';
 import { MATH_EXP } from '../exp/MATH_EXP';
 import { is_flt } from '../flt/is_flt';
 import { is_unaop } from '../helpers/is_unaop';
@@ -49,15 +47,15 @@ export function define_arg($: ExtensionEnv): void {
     });
 }
 
-export function arg(z: U, $: ExtensionEnv): U {
+function arg(z: U, $: ExtensionEnv): U {
     // TODO: arg is being computed here by immediately going to real and imag parts.
     // If z is in the form of a (power base expo) then it can make sense to equate to a polar form
     // and solve for theta that way. The implementation of real is already using that approach.
     // console.lg(`arg`, $.toSExprString(z));
-    const y = $.valueOf(items_to_cons(IMAG, z));
+    const y = $.imag(z);
     // const y = imag(z, $);
     // console.lg(`y`, $.toInfixString(y));
-    const x = $.valueOf(items_to_cons(REAL, z));
+    const x = $.real(z);
     // const x = real(z, $);
     // console.lg(`x`, $.toInfixString(x));
     // TODO: handle the undefined case when both x and y are zero.
@@ -84,10 +82,10 @@ export function arg(z: U, $: ExtensionEnv): U {
         if (is_negative(x)) {
             const pi = DynamicConstants.Pi($);
             if (is_negative(y)) {
-                return subtract(arctan(divide(y, x, $), $), pi, $);
+                return $.subtract($.arctan($.divide(y, x)), pi);
             }
             else {
-                const lhs = arctan(divide(y, x, $), $);
+                const lhs = $.arctan($.divide(y, x));
                 const rhs = pi;
                 const sum = $.add(lhs, rhs);
                 return sum;
@@ -95,7 +93,7 @@ export function arg(z: U, $: ExtensionEnv): U {
         }
         else {
             // TODO: We're getting arg(x) is zero because of assumptions that x is not negative.
-            return arctan(divide(y, x, $), $);
+            return $.arctan($.divide(y, x));
         }
     }
 
@@ -183,7 +181,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_power(expr) && is_num_and_equal_one_half(caddr(expr))) {
-        const arg1 = arg(cadr(expr), $);
+        const arg1 = $.arg(cadr(expr));
         return $.multiply(arg1, caddr(expr));
     }
 
@@ -191,14 +189,14 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     if (is_multiply(expr)) {
         // product of factors
         return expr.tail().map(function (x) {
-            return arg(x, $);
+            return $.arg(x);
         }).reduce(function (x, y) {
             return $.add(x, y);
         }, zero);
     }
 
     if (is_cons(expr) && is_add(expr)) {
-        return arg_of_sum(expr, $);
+        return arg_of_sum_old(expr, $);
     }
 
     if (!$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
@@ -211,7 +209,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     return items_to_cons(ARG, expr);
 }
 
-function arg_of_sum(expr: Cons, $: ExtensionEnv): U {
+function arg_of_sum_old(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`arg_of_sum(${expr})`);
     // sum of terms
     const z = rect(expr, $);
@@ -229,7 +227,7 @@ function arg_of_sum(expr: Cons, $: ExtensionEnv): U {
         }
     }
     else {
-        const arg1 = arctan(divide(y, x, $), $);
+        const arg1 = $.arctan($.divide(y, x));
         if (is_negative(x)) {
             if (is_negative(y)) {
                 return subtract(arg1, DynamicConstants.Pi($), $); // quadrant 1 -> 3

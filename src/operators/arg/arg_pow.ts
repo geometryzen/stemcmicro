@@ -3,11 +3,11 @@ import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 import { compute_theta_from_base_and_expo } from "../real/compute_theta_from_base_and_expo";
 
-const arg = native_sym(Native.arg);
-const pow = native_sym(Native.pow);
+const ARG = native_sym(Native.arg);
+const POW = native_sym(Native.pow);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -18,9 +18,9 @@ class Builder implements OperatorBuilder<U> {
 /**
  * 
  */
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(arg, pow, $);
+        super(ARG, POW, $);
     }
     transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;

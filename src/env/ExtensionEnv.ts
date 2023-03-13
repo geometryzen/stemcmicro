@@ -206,8 +206,12 @@ export interface ExtensionEnv {
     /**
      *
      */
-    add(lhs: U, rhs: U): U;
+    add(...args: U[]): U;
+    arctan(expr: U): U;
+    arg(expr: U): U;
+    cos(expr: U): U;
     evaluate(opr: Native, ...args: U[]): U;
+    exp(expr: U): U;
     clearBindings(): void;
     clearOperators(): void;
     compareFn(sym: Sym): CompareFn;
@@ -219,6 +223,7 @@ export interface ExtensionEnv {
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
+    divide(lhs: U, rhs: U): U;
     /**
      *
      */
@@ -227,14 +232,6 @@ export interface ExtensionEnv {
      * @deprecated
      */
     factorize(poly: U, x: U): U;
-    /**
-     * @deprecated
-     */
-    getChain(outer: Sym, inner: Sym): LambdaExpr;
-    /**
-     * @deprecated 
-     */
-    setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void;
     getCustomDirective(directive: string): boolean;
     getNativeDirective(directive: Directive): boolean;
     getSymbolProps(sym: Sym | string): SymbolProps;
@@ -248,6 +245,7 @@ export interface ExtensionEnv {
      * Used to make the environment ready after all operator builders have been added.
      */
     buildOperators(): void;
+    imag(expr: U): U;
     /**
      *
      */
@@ -299,6 +297,7 @@ export interface ExtensionEnv {
      *
      */
     power(base: U, expo: U): U;
+    real(expr: U): U;
     remove(varName: Sym): void;
     setCustomDirective(directive: string, value: boolean): void;
     pushNativeDirective(directive: Directive, value: boolean): void;
@@ -307,6 +306,7 @@ export interface ExtensionEnv {
     setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;
     setSymbolValue(sym: Sym, value: U): void;
+    sin(expr: U): U;
     /**
      *
      */

@@ -9,7 +9,7 @@ import { is_multiply, is_power } from '../../runtime/helpers';
 import { create_flt, piAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { third, zero } from '../../tree/rat/Rat';
-import { car, cdr, U } from '../../tree/tree';
+import { car, cdr, Cons, U } from '../../tree/tree';
 import { denominator } from '../denominator/denominator';
 import { is_flt } from '../flt/is_flt';
 import { numerator } from '../numerator/numerator';
@@ -29,11 +29,13 @@ General description
 Returns the inverse tangent of x.
 
 */
-export function Eval_arctan(x: U, $: ExtensionEnv): U {
-    return arctan($.valueOf(cadr(x)), $);
+export function Eval_arctan(expr: Cons, $: ExtensionEnv): U {
+    const x = expr.argList.head;
+    return arctan($.valueOf(x), $);
 }
 
-export function arctan(x: U, $: ExtensionEnv): U {
+function arctan(x: U, $: ExtensionEnv): U {
+    // console.lg("arctan", $.toInfixString(x), "expanding", $.isExpanding());
     if (car(x).equals(TAN)) {
         return cadr(x);
     }
@@ -47,7 +49,7 @@ export function arctan(x: U, $: ExtensionEnv): U {
     }
 
     if (is_negative(x)) {
-        return $.negate(arctan($.negate(x), $));
+        return $.negate($.arctan($.negate(x)));
     }
 
     // arctan(sin(a) / cos(a)) ?

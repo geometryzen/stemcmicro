@@ -3,7 +3,7 @@ import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 
 const conj = native_sym(Native.conj);
 const add = native_sym(Native.add);
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * conj(a + b + c ...) = conj(a) + conj(b) + conj(c) + ...
  */
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(conj, add, $);
     }

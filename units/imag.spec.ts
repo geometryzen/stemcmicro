@@ -1,6 +1,6 @@
-import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("imag", function () {
     it("imag(a)", function () {
@@ -77,5 +77,23 @@ describe("imag", function () {
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "-y/(x^2+y^2)");
         engine.release();
+    });
+    it("imag((-1)^(1/3))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1/2)`,
+            `imag((-1)^(1/3))`,
+        ];
+        const sourceText = lines.join('\n');
+        const context = create_script_context({
+            dependencies: ['Imu'],
+            useDefinitions: false,
+            useCaretForExponentiation: true
+        });
+        const { values } = context.executeScript(sourceText, {});
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "1/2*3^(1/2)");
+        context.release();
     });
 });

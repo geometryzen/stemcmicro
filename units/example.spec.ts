@@ -71,7 +71,7 @@ const versin_lambda: LambdaExpr = (argList: Cons, $: ExtensionEnv) => {
     }
     else {
         // versin(x) = 1 - cos(x)
-        return $.subtract(one, $.evaluate(Native.cosine, x));
+        return $.subtract(one, $.evaluate(Native.cos, x));
     }
     // If not expanding.
     // return cons(VERSIN, argList);

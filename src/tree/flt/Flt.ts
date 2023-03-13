@@ -81,6 +81,9 @@ export class Flt extends Atom<'Flt'> {
     isOne(): boolean {
         return this.d === 1;
     }
+    isPositive(): boolean {
+        return this.d > 0;
+    }
     isZero(): boolean {
         return this.d === 0;
     }
@@ -89,6 +92,9 @@ export class Flt extends Atom<'Flt'> {
     }
     neg(): Flt {
         return create_flt(-this.d);
+    }
+    sub(rhs: Flt): Flt {
+        return create_flt(this.d - rhs.d);
     }
     toInfixString(): string {
         return `${this.d}`;

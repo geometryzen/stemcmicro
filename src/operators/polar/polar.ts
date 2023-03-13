@@ -4,7 +4,6 @@ import { exp } from '../../exp';
 import { cadr } from '../../tree/helpers';
 import { Cons, U } from '../../tree/tree';
 import { abs } from '../abs/abs';
-import { arg } from '../arg/arg';
 
 /*
 Convert complex z to polar form
@@ -23,7 +22,7 @@ export function polar(z: U, $: ExtensionEnv): U {
     try {
         const r = abs(z, $);
         // console.lg("r", $.toInfixString(r));
-        const theta = arg(z, $);
+        const theta = $.arg(z);
         // console.lg("theta", $.toInfixString(theta));
         const imu_times_theta = $.multiply(imu, theta);
         // console.lg("imu_times_theta", $.toInfixString(imu_times_theta));

@@ -20,7 +20,7 @@ export const MATH_INNER = native_sym(Native.inner);
 export const MATH_INV = native_sym(Native.inverse);
 export const MATH_LCO = native_sym(Native.lco);
 export const MATH_RCO = native_sym(Native.rco);
-export const MATH_SIN = native_sym(Native.sine);
+export const MATH_SIN = native_sym(Native.sin);
 export const MATH_SUCC = native_sym(Native.succ);
 /**
  * pred

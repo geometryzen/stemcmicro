@@ -6,7 +6,7 @@ import { half } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { UCons } from "../helpers/UCons";
-import { AbstractChain } from "../isreal/AbstractChain";
+import { CompositeOperator } from "../CompositeOperator";
 import { simplify } from "../simplify/simplify";
 
 const abs = native_sym(Native.abs);
@@ -21,7 +21,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * 
  */
-class Op extends AbstractChain {
+class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(abs, add, $);
     }

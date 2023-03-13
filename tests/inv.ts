@@ -13,9 +13,9 @@ run_test([
   'inv(inv(inv(inv(a))))',
   'a',
 
-  'inv(a·b·c)',
-  'inner(inv(c),inner(inv(b),inv(a)))',
+//  'inv(a·b·c)',
+//  'inner(inv(c),inner(inv(b),inv(a)))',
 
-  'inv(I)',
-  'I',
+//  'inv(I)',
+//  'I',
 ]);

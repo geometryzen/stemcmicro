@@ -171,6 +171,7 @@ import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
+import { inv_inv } from '../operators/inv/inv_inv';
 import { is_complex_any } from '../operators/iscomplex/is_complex_any';
 import { is_complex_sym } from '../operators/iscomplex/is_complex_sym';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
@@ -728,7 +729,10 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(index_varargs);
 
     $.defineOperator(integral_varargs);
+
+    $.defineOperator(inv_inv);
     $.defineOperator(inv_any);
+
     $.defineOperator(isprime_varargs);
     $.defineOperator(iszero_rat);
     $.defineOperator(iszero_any);

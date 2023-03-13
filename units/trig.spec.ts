@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -11,8 +12,9 @@ describe("trig", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
-        assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
+        // assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
+        // assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
+        assert.strictEqual(engine.renderAsInfix(value), '1');
     });
 });
 
@@ -94,11 +96,17 @@ describe("trig", function () {
                 `cos(x)*cos(x)+sin(x)*sin(x)`
             ];
             const engine = create_script_context({
-                dependencies: []
+                assumes: {},
+                dependencies: [],
+                disable: [],
+                syntaxKind: SyntaxKind.Native,
+                useCaretForExponentiation: false,
+                useDefinitions: false
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
-            assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
+            // assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
+            // assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
+            assert.strictEqual(engine.renderAsInfix(value), '1');
         });
         it("sin(x)*sin(x)+cos(x)*cos(x)", function () {
             const lines: string[] = [
@@ -108,8 +116,9 @@ describe("trig", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
-            assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
+            // assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
+            // assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
+            assert.strictEqual(engine.renderAsInfix(value), '1');
         });
     });
 });

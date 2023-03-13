@@ -22,9 +22,12 @@ export interface ScriptExecuteOptions {
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
+    /**
+     * The assumptions about unbound symbols.
+     */
     assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: string[];
-    disable?: string[];
+    disable?: ('expand' | 'factor')[];
     /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
      * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
@@ -32,7 +35,7 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
      */
     useCaretForExponentiation?: boolean;
     /**
-     * @deprecated
+     *
      */
     useDefinitions?: boolean;
 }
@@ -98,7 +101,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
         const config: EnvOptions = {
             assumes: options.assumes,
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            disable: [],
+            disable: options.disable,
             noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions
@@ -159,6 +162,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
                 if (contextOptions.syntaxKind) {
                     options.syntaxKind = contextOptions.syntaxKind;
                 }
+                contextOptions.disable;
             }
             if (executeOptions) {
                 if (executeOptions.syntaxKind) {

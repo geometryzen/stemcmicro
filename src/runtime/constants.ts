@@ -157,6 +157,7 @@ export const LAST_SEXPR_PRINT = create_sym('lastSexprPrint');
 export const LAST_HUMAN_PRINT = create_sym('lastHumanPrint');
 
 export const AUTOEXPAND = create_sym('autoexpand');
+export const AUTOFACTOR = create_sym('autofactor');
 export const BAKE = create_sym('bake');
 export const ASSUME_REAL_VARIABLES = create_sym('assumeRealVariables');
 export const TRACE = create_sym('trace');

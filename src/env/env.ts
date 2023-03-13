@@ -42,7 +42,7 @@ class StableExprComparator implements ExprComparator {
 export interface EnvOptions {
     assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: FEATURE[];
-    disable?: ('factorize' | 'implicate')[];
+    disable?: ('expand' | 'factor')[];
     noOptimize?: boolean;
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -51,7 +51,7 @@ export interface EnvOptions {
 export interface EnvConfig {
     assumes: { [name: string]: Partial<SymbolProps> };
     dependencies: FEATURE[];
-    disable: ('factorize' | 'implicate')[];
+    disable: ('expand' | 'factor')[];
     noOptimize: boolean;
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
@@ -142,8 +142,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for key ${key}`);
         }
         else {
-            console.log("expand", native_directives.get(Directive.expand));
-            console.log("factor", native_directives.get(Directive.factor));
+            // eslint-disable-next-line no-console
+            console.warn("expand", native_directives.get(Directive.expand));
+            // eslint-disable-next-line no-console
+            console.warn("factor", native_directives.get(Directive.factor));
             throw new SystemError(`No operators for key ${key} in current mode}`);
         }
     }

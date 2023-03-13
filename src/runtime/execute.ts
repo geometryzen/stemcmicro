@@ -10,7 +10,7 @@ import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from '../tree/tree';
 import { Box } from "./Box";
-import { AUTOEXPAND, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
+import { AUTOEXPAND, AUTOFACTOR, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { defs, move_top_of_stack } from './defs';
 import { RESERVED_KEYWORD_LAST } from './ns_script';
@@ -155,6 +155,16 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
             $.popNativeDirective();
         }
     }
+    if (isNotDisabled(AUTOFACTOR, $)) {
+        $.pushNativeDirective(Directive.factor, true);
+        try {
+            // console.lg("Expanding...");
+            box.push(transform_with_reason(box.pop(), $, 'factoring'));
+        }
+        finally {
+            $.popNativeDirective();
+        }
+    }
 
     const transformed = box.pop();
     // console.lg();
@@ -201,7 +211,7 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  * @returns 
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'explicate' | 'bake     ' | 'cosmetics'): U {
+function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'bake     '): U {
     // console.lg(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)}`);
 
     const outExpr = transform(inExpr, $);

@@ -29,7 +29,7 @@ describe("laguerre", function () {
             `laguerre(x,2)`
         ];
         const engine = create_script_context({
-            disable: ['factorize']
+            disable: ['factor']
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1 (* -2 x) (* 1/2 (* x x)))");

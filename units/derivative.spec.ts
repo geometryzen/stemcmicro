@@ -22,7 +22,8 @@ describe("derivative", function () {
         ];
         const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "e**x");
+        // assert.strictEqual(engine.renderAsInfix(actual), "e**x");
+        assert.strictEqual(engine.renderAsInfix(actual), "exp(x)");
         engine.release();
     });
     it("d(a+b,x)", function () {

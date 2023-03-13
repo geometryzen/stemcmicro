@@ -75,7 +75,8 @@ describe("cos", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)+sin(a)*sin(b)');
+        // assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)+sin(a)*sin(b)');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a-b)');
     });
     it("cos(b-a)", function () {
         const lines: string[] = [
@@ -85,6 +86,7 @@ describe("cos", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)+sin(a)*sin(b)');
+        // assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)+sin(a)*sin(b)');
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a-b)');
     });
 });

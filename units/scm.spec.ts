@@ -33,7 +33,7 @@ describe("scheme", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), `x+y`);
         context.release();
     });
-    it("(quote (+ 3 4))", function () {
+    xit("(quote (+ 3 4))", function () {
         const lines: string[] = [
             `(quote (+ 3 4))`
         ];

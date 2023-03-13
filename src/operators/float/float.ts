@@ -12,8 +12,7 @@ import { is_tensor } from '../tensor/is_tensor';
 export function Eval_float(expr: Cons, $: ExtensionEnv): U {
     // console.lg("Eval_float", render_as_infix(expr, $));
     // console.lg("Eval_float", render_as_sexpr(expr, $));
-    const mode = $.getNativeDirective(Directive.evaluatingAsFloat);
-    $.setNativeDirective(Directive.evaluatingAsFloat, true);
+    $.pushNativeDirective(Directive.evaluatingAsFloat, true);
     try {
         const A = cadr(expr);
         // console.lg("A", render_as_infix(A, $), JSON.stringify(A));
@@ -32,7 +31,7 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): U {
         return D;
     }
     finally {
-        $.setNativeDirective(Directive.evaluatingAsFloat, mode);
+        $.popNativeDirective();
     }
 }
 
@@ -43,13 +42,12 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 export function zzfloat(expr: U, $: ExtensionEnv): U {
-    const mode = $.getNativeDirective(Directive.evaluatingAsFloat);
-    $.setNativeDirective(Directive.evaluatingAsFloat, true);
+    $.pushNativeDirective(Directive.evaluatingAsFloat, true);
     try {
         return $.valueOf(evaluate_as_float($.valueOf(expr), $));
     }
     finally {
-        $.setNativeDirective(Directive.evaluatingAsFloat, mode);
+        $.popNativeDirective();
     }
 }
 // zzfloat doesn't necessarily result in a double
@@ -64,13 +62,12 @@ export function zzfloat(expr: U, $: ExtensionEnv): U {
  */
 export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyfloat`, render_as_sexpr(expr, $));
-    const mode = $.getNativeDirective(Directive.evaluatingAsFloat);
-    $.setNativeDirective(Directive.evaluatingAsFloat, true);
+    $.pushNativeDirective(Directive.evaluatingAsFloat, true);
     try {
         return yyfloat_(expr, $);
     }
     finally {
-        $.setNativeDirective(Directive.evaluatingAsFloat, mode);
+        $.popNativeDirective();
     }
 }
 

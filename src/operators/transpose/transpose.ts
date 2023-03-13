@@ -1,9 +1,7 @@
-import { ExtensionEnv, MODE_FACTORING } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_num_and_eq_two } from '../../is';
 import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
-import { is_num } from '../num/is_num';
-import { is_tensor } from '../tensor/is_tensor';
 import { MAXDIM, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_add, is_identity_matrix, is_inner_or_dot, is_multiply, is_transpose } from '../../runtime/helpers';
@@ -11,6 +9,8 @@ import { cadddr, caddr, cadr, cddr } from '../../tree/helpers';
 import { one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
+import { is_num } from '../num/is_num';
+import { is_tensor } from '../tensor/is_tensor';
 
 
 // Transpose tensor indices
@@ -197,12 +197,11 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
 }
 
 export function transpose_factoring(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
-    $.setMode(MODE_FACTORING);
+    $.pushNativeDirective(Directive.factor, true);
     try {
         return transpose(p1, p2, p3, $);
     }
     finally {
-        $.setMode(phase);
+        $.popNativeDirective();
     }
 }

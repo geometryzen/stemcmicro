@@ -1,6 +1,6 @@
 import { binop } from './calculators/binop';
-import { ExtensionEnv, MODE_FACTORING } from './env/ExtensionEnv';
-import { noexpand_unary, noexpand_binary } from './runtime/defs';
+import { Directive, ExtensionEnv } from './env/ExtensionEnv';
+import { noexpand_binary, noexpand_unary } from './runtime/defs';
 import { MATH_MUL } from './runtime/ns_math';
 import { one } from './tree/rat/Rat';
 import { U } from './tree/tree';
@@ -47,13 +47,12 @@ export function multiply_items(items: U[], $: ExtensionEnv): U {
 
 // n an integer
 export function multiply_items_factoring(items: U[], $: ExtensionEnv): U {
-    const phase = $.getMode();
-    $.setMode(MODE_FACTORING);
+    $.pushNativeDirective(Directive.factor, true);
     try {
         return multiply_items(items, $);
     }
     finally {
-        $.setMode(phase);
+        $.popNativeDirective();
     }
 }
 

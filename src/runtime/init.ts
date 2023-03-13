@@ -1,5 +1,5 @@
 import { scan } from '../brite/scan';
-import { Directive, ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { clear_patterns } from '../pattern';
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs } from './defs';
@@ -68,8 +68,13 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
         try {
             if (scanned > 0) {
                 // Evaluating the tree for the side-effect which is to establish a binding.
-                $.setMode(MODE_EXPANDING);
-                $.valueOf(tree);
+                $.pushNativeDirective(Directive.expand, true);
+                try {
+                    $.valueOf(tree);
+                }
+                finally {
+                    $.popNativeDirective();
+                }
             }
         }
         catch (e) {

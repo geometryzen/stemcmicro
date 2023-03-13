@@ -2,7 +2,7 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
-import { Directive, ExtensionEnv, MODE_EXPANDING, MODE_FACTORING } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { Flt, negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
@@ -167,46 +167,42 @@ export function hard_reset() {
 }
 
 export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const mode = $.getMode();
-    $.setMode(MODE_FACTORING);
+    $.pushNativeDirective(Directive.expand, false);
     try {
         return func(arg, $);
     }
     finally {
-        $.setMode(mode);
+        $.popNativeDirective();
     }
 }
 
 export function noexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const mode = $.getMode();
-    $.setMode(MODE_FACTORING);
+    $.pushNativeDirective(Directive.expand, false);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setMode(mode);
+        $.popNativeDirective();
     }
 }
 
 export function doexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    const mode = $.getMode();
-    $.setMode(MODE_EXPANDING);
+    $.pushNativeDirective(Directive.expand, true);
     try {
         return func(arg, $);
     }
     finally {
-        $.setMode(mode);
+        $.popNativeDirective();
     }
 }
 
 export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    const mode = $.getMode();
-    $.setMode(MODE_EXPANDING);
+    $.pushNativeDirective(Directive.expand, true);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.setMode(mode);
+        $.popNativeDirective();
     }
 }
 

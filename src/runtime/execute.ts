@@ -1,6 +1,6 @@
 import { bake } from "../bake";
 import { ScanOptions } from '../brite/scan';
-import { Directive, ExtensionEnv, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
@@ -146,14 +146,13 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!
     if (isNotDisabled(AUTOEXPAND, $)) {
-        const mode = $.getMode();
+        $.pushNativeDirective(Directive.expand, true);
         try {
-            $.setMode(MODE_EXPANDING);
             // console.lg("Expanding...");
             box.push(transform_with_reason(box.pop(), $, 'expanding'));
         }
         finally {
-            $.setMode(mode);
+            $.popNativeDirective();
         }
     }
 

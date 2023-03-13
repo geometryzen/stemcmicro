@@ -16,7 +16,8 @@ import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
-import { CompareFn, decodeMode, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, LegacyExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { DirectiveStack } from "./DirectiveStack";
+import { CompareFn, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, LegacyExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_legacy_transformer, opr_from_match } from "./operator_from_legacy_transformer";
@@ -100,11 +101,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const chains: Map<string, Map<string, LambdaExpr>> = new Map();
 
-    let current_mode: number = MODE_EXPANDING;
-
     let printHandler: PrintHandler = new NoopPrintHandler();
 
-    const native_directives: { [directive: number]: boolean } = {};
+    const native_directives = new DirectiveStack();
     const custom_directives: { [directive: string]: boolean } = {};
 
     /**
@@ -115,19 +114,21 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     const sym_order: Record<string, ExprComparator> = {};
 
     function currentOps(): { [key: string]: Operator<U>[] } {
-        switch (current_mode) {
-            case MODE_EXPANDING:
-            case MODE_FACTORING: {
-                const ops = ops_by_mode[current_mode];
-                if (typeof ops === 'undefined') {
-                    throw new Error(`currentOps(${current_mode})`);
-                }
-                return ops;
+        if (native_directives.get(Directive.expand)) {
+            const ops = ops_by_mode[MODE_EXPANDING];
+            if (typeof ops === 'undefined') {
+                throw new Error(`currentOps(${MODE_EXPANDING})`);
             }
-            default: {
-                return {};
-            }
+            return ops;
         }
+        if (native_directives.get(Directive.factor)) {
+            const ops = ops_by_mode[MODE_FACTORING];
+            if (typeof ops === 'undefined') {
+                throw new Error(`currentOps(${MODE_FACTORING})`);
+            }
+            return ops;
+        }
+        return {};
     }
 
     function selectOperator(key: string, expr: U): Operator<U> {
@@ -141,7 +142,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for key ${key}`);
         }
         else {
-            throw new SystemError(`No operators for key ${key} in mode ${JSON.stringify(decodeMode(current_mode))}`);
+            console.log("expand", native_directives.get(Directive.expand));
+            console.log("factor", native_directives.get(Directive.factor));
+            throw new SystemError(`No operators for key ${key} in current mode}`);
         }
     }
 
@@ -261,9 +264,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const innerKey = inner.key();
             map.set(innerKey, lambda);
         },
-        getMode(): number {
-            return current_mode;
-        },
         buildOperators(): void {
             for (const builder of builders) {
                 const op = builder.create($, config);
@@ -318,10 +318,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             */
         },
         isExpanding(): boolean {
-            return current_mode == MODE_EXPANDING;
+            return native_directives.get(Directive.expand);
         },
         isFactoring(): boolean {
-            return current_mode === MODE_FACTORING;
+            return native_directives.get(Directive.factor);
         },
         is_imag(expr: U): boolean {
             const op = $.operatorFor(expr);
@@ -390,7 +390,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return !!custom_directives[directive];
         },
         getNativeDirective(directive: Directive): boolean {
-            return !!native_directives[directive];
+            return native_directives.get(directive);
         },
         getSymbolPrintName(sym: Sym): string {
             const token = sym_key_to_printname[sym.key()];
@@ -456,15 +456,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         remove(varName: Sym): void {
             symTab.delete(varName);
         },
-        setMode(focus: number): void {
-            // console.lg(`ExtensionEnv.setFocus(focus=${decodePhase(focus)})`);
-            current_mode = focus;
-        },
         setCustomDirective(directive: string, value: boolean): void {
             custom_directives[directive] = value;
         },
-        setNativeDirective(directive: Directive, value: boolean): void {
-            native_directives[directive] = value;
+        pushNativeDirective(directive: Directive, value: boolean): void {
+            native_directives.push(directive, value);
+        },
+        popNativeDirective(): void {
+            native_directives.pop();
         },
         setSymbolOrder(sym: Sym, order: ExprComparator): void {
             sym_order[sym.key()] = order;
@@ -594,7 +593,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolPrintName(native_sym(Native.exp), 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
-    $.setNativeDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
+    $.pushNativeDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
 
     return $;
 }

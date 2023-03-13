@@ -56,6 +56,10 @@ export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
 
 export enum Directive {
     /**
+     * Mutually exclusive with factor.
+     */
+    expand,
+    /**
      * Determines whether numeric types are converted to floating point numbers for numeric evaluation.
      * 
      * The default value as false.
@@ -81,6 +85,10 @@ export enum Directive {
      * The default value is false.
      */
     keepZeroTermsInSums,
+    /**
+     * Mutually exclusive with expand.
+     */
+    factor,
     /**
      * Determines whether floating point numbers are rendered as EcmaScript numbers.
      * If not, floating point numbers are rendered in a proprietary format.
@@ -227,7 +235,6 @@ export interface ExtensionEnv {
      * @deprecated 
      */
     setChain(outer: Sym, inner: Sym, lambda: LambdaExpr): void;
-    getMode(): number;
     getCustomDirective(directive: string): boolean;
     getNativeDirective(directive: Directive): boolean;
     getSymbolProps(sym: Sym | string): SymbolProps;
@@ -293,9 +300,9 @@ export interface ExtensionEnv {
      */
     power(base: U, expo: U): U;
     remove(varName: Sym): void;
-    setMode(mode: number): void;
     setCustomDirective(directive: string, value: boolean): void;
-    setNativeDirective(directive: Directive, value: boolean): void;
+    pushNativeDirective(directive: Directive, value: boolean): void;
+    popNativeDirective(): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;

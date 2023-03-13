@@ -1,5 +1,5 @@
 import { condense } from '../../condense';
-import { ExtensionEnv, MODE_FACTORING } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
 import { is_negative_number } from '../../predicates/is_negative_number';
@@ -21,13 +21,12 @@ export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
-    $.setMode(MODE_FACTORING);
+    $.pushNativeDirective(Directive.factor, true);
     try {
         return yyrationalize(argList, $);
     }
     finally {
-        $.setMode(phase);
+        $.popNativeDirective();
     }
 }
 

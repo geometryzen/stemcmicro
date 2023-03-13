@@ -35,8 +35,7 @@ import { arg } from '../arg/arg';
  * @returns 
  */
 export function clock(z: U, $: ExtensionEnv): U {
-    const original = $.getNativeDirective(Directive.evaluatingAsClock);
-    $.setNativeDirective(Directive.evaluatingAsClock, true);
+    $.pushNativeDirective(Directive.evaluatingAsClock, true);
     try {
         // console.lg();
         // console.lg(`clockform z=${print_expr(z, $)}`);
@@ -57,6 +56,6 @@ export function clock(z: U, $: ExtensionEnv): U {
         return clock_z;
     }
     finally {
-        $.setNativeDirective(Directive.evaluatingAsClock, original);
+        $.popNativeDirective();
     }
 }

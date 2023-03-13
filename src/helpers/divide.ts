@@ -1,6 +1,6 @@
 
 import { divide_numbers } from "../bignum";
-import { ExtensionEnv, MODE_EXPANDING } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { is_num } from "../operators/num/is_num";
 import { U } from "../tree/tree";
 import { inverse } from "./inverse";
@@ -19,12 +19,11 @@ export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
 }
 
 export function divide_expand(lhs: U, rhs: U, $: ExtensionEnv): U {
-    const phase = $.getMode();
-    $.setMode(MODE_EXPANDING);
+    $.pushNativeDirective(Directive.expand, true);
     try {
         return divide(lhs, rhs, $);
     }
     finally {
-        $.setMode(phase);
+        $.popNativeDirective();
     }
 }

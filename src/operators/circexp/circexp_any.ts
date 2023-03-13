@@ -26,8 +26,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const flag = $.getNativeDirective(Directive.evaluatingTrigAsExp);
-        $.setNativeDirective(Directive.evaluatingTrigAsExp, true);
+        $.pushNativeDirective(Directive.evaluatingTrigAsExp, true);
         try {
             const rawExpr = circexp(arg, $);
             const newExpr = $.valueOf(rawExpr);
@@ -38,7 +37,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
             return [changed ? TFLAG_DIFF : TFLAG_NONE, newExpr];
         }
         finally {
-            $.setNativeDirective(Directive.evaluatingTrigAsExp, flag);
+            $.popNativeDirective();
         }
     }
 }

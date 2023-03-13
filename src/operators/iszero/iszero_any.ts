@@ -1,6 +1,8 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { create_sym, Sym } from "../../tree/sym/Sym";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
+import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
@@ -12,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-const ISZERO = create_sym('iszero');
+const ISZERO = native_sym(Native.is_zero);
 
 class IsZero extends Function1<U> implements Operator<Cons> {
     readonly hash: string;

@@ -1,8 +1,10 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Rat } from "../../tree/rat/Rat";
-import { create_sym, Sym } from "../../tree/sym/Sym";
+import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/is_rat";
@@ -13,7 +15,7 @@ class ExpRatBuilder implements OperatorBuilder<U> {
     }
 }
 
-const ISZERO = create_sym('iszero');
+const ISZERO = native_sym(Native.is_zero);
 
 class IsZeroRat extends Function1<Rat> implements Operator<U> {
     readonly hash: string;

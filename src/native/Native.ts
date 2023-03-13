@@ -24,6 +24,7 @@ export enum Native {
     inverse,
     is_complex,
     is_real,
+    is_zero,
     lco,
     log,
     multiply,

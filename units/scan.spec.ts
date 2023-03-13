@@ -11,7 +11,7 @@ import { is_sym } from '../src/operators/sym/is_sym';
 import { is_tensor } from '../src/operators/tensor/is_tensor';
 import { ParseOptions, parse_script } from '../src/parser/parser';
 import { ASSIGN, QUOTE } from '../src/runtime/constants';
-import { MATH_ADD, MATH_COMPONENT, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
+import { MATH_ADD, MATH_COMPONENT, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
 import { Boo } from '../src/tree/boo/Boo';
 import { Flt } from '../src/tree/flt/Flt';
 import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
@@ -223,7 +223,7 @@ describe("scan", function () {
     describe("!=", function () {
         it("a!=b => (!= a b)", function () {
             const expr = expect_cons(expect_one_tree(" a  !=  b "));
-            expect_sym(cadnr(expr, 0), MATH_NE, '!=', 4, 6);
+            expect_sym(cadnr(expr, 0), native_sym(Native.test_ne), '!=', 4, 6);
             expect_sym(cadnr(expr, 1), NAME_A, 'a', 1, 2);
             expect_sym(cadnr(expr, 2), NAME_B, 'b', 8, 9);
         });
@@ -239,7 +239,7 @@ describe("scan", function () {
     describe(">=", function () {
         it("a>=b => (>= a b)", function () {
             const expr = expect_cons(expect_one_tree(" a  >=  b "));
-            expect_sym(cadnr(expr, 0), MATH_GE, '>=', 4, 6);
+            expect_sym(cadnr(expr, 0), native_sym(Native.test_ge), '>=', 4, 6);
             expect_sym(cadnr(expr, 1), NAME_A, 'a', 1, 2);
             expect_sym(cadnr(expr, 2), NAME_B, 'b', 8, 9);
         });
@@ -247,7 +247,7 @@ describe("scan", function () {
     describe("<", function () {
         it("a<b => (< a b)", function () {
             const expr = expect_cons(expect_one_tree(" a  <  b "));
-            expect_sym(cadnr(expr, 0), MATH_LT, '<', 4, 5);
+            expect_sym(cadnr(expr, 0), native_sym(Native.test_lt), '<', 4, 5);
             expect_sym(cadnr(expr, 1), NAME_A, 'a', 1, 2);
             expect_sym(cadnr(expr, 2), NAME_B, 'b', 7, 8);
         });

@@ -26,7 +26,7 @@ class Op extends CompositeOperator {
         const $ = this.$;
         const terms = innerExpr.tail();
         const mapped = terms.map(function (term) {
-            return $.valueOf(items_to_cons(conj, term));
+            return $.conj(term);
         });
         return [TFLAG_DIFF, $.valueOf(items_to_cons(add, ...mapped))];
     }

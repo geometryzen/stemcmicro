@@ -16,7 +16,6 @@ import { compute_r_from_base_and_expo } from "./compute_r_from_base_and_expo";
 import { compute_theta_from_base_and_expo } from "./compute_theta_from_base_and_expo";
 
 const ADD = native_sym(Native.add);
-const CONJ = native_sym(Native.conj);
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
 const POW = native_sym(Native.pow);
@@ -105,7 +104,7 @@ class Op extends CompositeOperator {
                     const expo = factor.rhs;
                     if (is_rat(expo) && expo.isMinusOne()) {
                         // Get the complex number out of the denominator.
-                        const z_star = $.valueOf(items_to_cons(CONJ, base));
+                        const z_star = $.conj(base);
                         const denom = $.valueOf(items_to_cons(MUL, z_star, base));
                         const one_over_denom = $.valueOf(items_to_cons(POW, denom, negOne));
                         const z = $.valueOf(items_to_cons(MUL, z_star, one_over_denom));

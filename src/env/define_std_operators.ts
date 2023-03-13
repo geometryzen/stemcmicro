@@ -171,6 +171,8 @@ import { inner_2_sym_sym } from '../operators/inner/inner_2_sym_sym';
 import { inner_2_vec_scalar } from '../operators/inner/inner_2_vec_scalar';
 import { integral_varargs } from '../operators/integral/integral_varargs';
 import { inv_any } from '../operators/inv/inv_any';
+import { is_complex_any } from '../operators/iscomplex/is_complex_any';
+import { is_complex_sym } from '../operators/iscomplex/is_complex_sym';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { is_real_pow_any_negone } from '../operators/isreal/isreal_pow_any_negone';
 import { is_real_abs } from '../operators/isreal/is_real_abs';
@@ -776,6 +778,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(real_real);
     $.defineOperator(real_sym);
     $.defineOperator(real_any);
+
+    $.defineOperator(is_complex_sym);
+    $.defineOperator(is_complex_any);
 
     $.defineOperator(is_real_abs);
     $.defineOperator(is_real_add);

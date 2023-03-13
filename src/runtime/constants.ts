@@ -39,7 +39,6 @@ export const COMPARE = create_sym('compare');
 export const COMPARE_FACTORS = create_sym('compare-factors');
 export const COMPARE_TERMS = create_sym('compare-terms');
 export const CONDENSE = create_sym('condense');
-export const CONJ = native_sym(Native.conj);
 export const CONTRACT = create_sym('contract');
 export const COS = create_sym('cos');
 export const COSH = create_sym('cosh');

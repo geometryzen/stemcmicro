@@ -14,7 +14,6 @@ import { compute_r_from_base_and_expo } from './compute_r_from_base_and_expo';
 import { compute_theta_from_base_and_expo } from './compute_theta_from_base_and_expo';
 
 const MATH_ADD = native_sym(Native.add);
-const CONJ = native_sym(Native.conj);
 const COS = native_sym(Native.cos);
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
@@ -157,10 +156,10 @@ export function real(expr: U, $: ExtensionEnv): U {
                     const expo = factor.rhs;
                     if (is_rat(expo) && expo.isMinusOne()) {
                         // Get the complex number out of the denominator.
-                        const z_star = $.valueOf(items_to_cons(CONJ, base));
+                        const z_star = $.conj(base);
                         const denom = $.valueOf(items_to_cons(MATH_MUL, z_star, base));
                         const one_over_denom = $.valueOf(items_to_cons(MATH_POW, denom, negOne));
-                        const z = $.valueOf(items_to_cons(MATH_MUL, z_star, one_over_denom));
+                        const z = $.multiply(z_star, one_over_denom);
                         cs.push(z);
                     }
                     else {

@@ -1,12 +1,16 @@
 
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
-import { MATH_PI, MATH_TAU } from "../../runtime/ns_math";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
+
+export const MATH_PI = native_sym(Native.PI);
+export const MATH_TAU = native_sym(Native.tau);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

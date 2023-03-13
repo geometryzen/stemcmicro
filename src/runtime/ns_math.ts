@@ -41,25 +41,17 @@ export const MATH_FACTORIAL = create_sym('factorial');
  */
 export const MATH_ISZERO = create_sym('iszero');
 /**
- * '!='
- */
-export const MATH_NE = create_sym('!=');
-/**
- * '>='
- */
-export const MATH_GE = create_sym('>=');
-/**
  * '<'
  */
-export const MATH_LT = create_sym('<');
+export const MATH_LT = native_sym(Native.test_lt);
 /**
  * '>'
  */
-export const MATH_GT = create_sym('>');
+export const MATH_GT = native_sym(Native.test_gt);
 /**
  * '<='
  */
-export const MATH_LE = create_sym('<=');
+export const MATH_LE = native_sym(Native.test_le);
 /**
  * ':'
  */
@@ -67,5 +59,5 @@ export const MATH_HAS_TYPE = create_sym(':');
 /**
 * tau(x) = 2 * pi * x
 */
-export const MATH_TAU = create_sym('tau');
+export const MATH_TAU = native_sym(Native.tau);
 export const MATH_IMU = native_sym(Native.IMU);

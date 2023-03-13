@@ -1,14 +1,12 @@
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
-import { MATH_EXP } from "../operators/exp/MATH_EXP";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { StrTokenParser } from "../operators/str/StrTokenParser";
 import { SymTokenParser } from "../operators/sym/SymTokenParser";
-import { ASSIGN, METAA, METAB, METAX, PREDICATE_IS_REAL } from "../runtime/constants";
+import { ASSIGN, METAA, METAB, METAX } from "../runtime/constants";
 import { defs } from "../runtime/defs";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
-import { MATH_ADD, MATH_DIV, MATH_GE, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_LT, MATH_MUL, MATH_NE, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NewLine, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
@@ -32,26 +30,29 @@ const scanConfig: ScanConfig = {
     // version 1.x : '^' is exponentiation, '**' is not defined.
     // version 2.x : '^' is outer product, '**' is exponentiation.
     lexicon: {
-        '+': MATH_ADD,
-        '-': MATH_SUB,
-        '*': MATH_MUL,
-        '/': MATH_DIV,
-        '^': MATH_OUTER,
-        '|': MATH_INNER,
-        '>>': MATH_RCO,
-        '<<': MATH_LCO,
-        '**': MATH_POW,
-        '<=': MATH_LE,
-        '<': MATH_LT,
-        '>=': MATH_GE,
-        '>': MATH_GT,
-        '!=': MATH_NE,
+        '+': native_sym(Native.add),
+        '-': native_sym(Native.subtract),
+        '*': native_sym(Native.multiply),
+        '/': native_sym(Native.divide),
+        '^': native_sym(Native.outer),
+        '|': native_sym(Native.inner),
+        '>>': native_sym(Native.rco),
+        '<<': native_sym(Native.lco),
+        '**': native_sym(Native.pow),
+        '<=': native_sym(Native.test_le),
+        '<': native_sym(Native.test_lt),
+        '>=': native_sym(Native.test_ge),
+        '>': native_sym(Native.test_gt),
+        '!=': native_sym(Native.test_ne),
         '==': native_sym(Native.test_eq),
         ':=': LANG_COLON_EQ,
         '=': ASSIGN,
         'abs': native_sym(Native.abs),
-        'exp': MATH_EXP,
-        'isreal': PREDICATE_IS_REAL
+        'cos': native_sym(Native.cos),
+        'exp': native_sym(Native.exp),
+        'iscomplex': native_sym(Native.is_complex),
+        'isreal': native_sym(Native.is_real),
+        'sin': native_sym(Native.sin),
     },
     meta: {
         'a': METAA,

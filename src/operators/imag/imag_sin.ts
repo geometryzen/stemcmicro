@@ -1,7 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { one, zero } from "../../tree/rat/Rat";
+import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";

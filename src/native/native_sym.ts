@@ -18,13 +18,13 @@ export function native_sym(code: Native): Sym {
 export function build_sym(code: Native): Sym {
     switch (code) {
         // Constants (upper case)...
-        case Native.E: return create_sym('math.e');
-        case Native.IMU: return create_sym('unit-imaginary-number');
-        case Native.MASH: return create_sym('math.MASH');
-        case Native.NIL: return create_sym('nil');
-        case Native.PI: return create_sym('math.PI');
+        case Native.E: return create_sym('E');
+        case Native.IMU: return create_sym('IMU');
+        case Native.MASH: return create_sym('MASH');
+        case Native.NIL: return create_sym('NIL');
+        case Native.PI: return create_sym('PI');
         // Functions (lower case)...
-        case Native.abs: return create_sym('math.abs');
+        case Native.abs: return create_sym('abs');
         case Native.add: return create_sym('add');
         case Native.arctan: return create_sym('arctan');
         case Native.arg: return create_sym('arg');
@@ -35,12 +35,13 @@ export function build_sym(code: Native): Sym {
         case Native.imag: return create_sym('imag');
         case Native.inner: return create_sym('inner');
         case Native.inverse: return create_sym('inv');
-        case Native.is_real: return create_sym('math.isreal');
+        case Native.is_complex: return create_sym('iscomplex');
+        case Native.is_real: return create_sym('isreal');
         case Native.lco: return create_sym('<<');
         case Native.log: return create_sym('log');
         case Native.multiply: return create_sym('*');
         case Native.outer: return create_sym('outer');
-        case Native.pow: return create_sym('math.pow');
+        case Native.pow: return create_sym('pow');
         case Native.real: return create_sym('real');
         case Native.rect: return create_sym('rect');
         case Native.rco: return create_sym('>>');
@@ -48,7 +49,13 @@ export function build_sym(code: Native): Sym {
         case Native.spread: return create_sym('...');
         case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');
-        case Native.test_eq: return create_sym('testeq');
+        case Native.tau: return create_sym('tau');
+        case Native.test_eq: return create_sym('==');
+        case Native.test_ge: return create_sym('>=');
+        case Native.test_gt: return create_sym('>');
+        case Native.test_le: return create_sym('<=');
+        case Native.test_lt: return create_sym('<');
+        case Native.test_ne: return create_sym('!=');
         default: throw new Error(`${code}`);
     }
 }

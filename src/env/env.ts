@@ -26,6 +26,7 @@ import { UnknownOperator } from "./UnknownOperator";
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POWER = native_sym(Native.pow);
+const ISCOMPLEX = native_sym(Native.is_complex);
 const ISREAL = native_sym(Native.is_real);
 
 class StableExprComparator implements ExprComparator {
@@ -221,6 +222,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
+        conj(expr: U): U {
+            return $.evaluate(Native.conj, expr);
+        },
         cos(expr: U): U {
             return $.evaluate(Native.cos, expr);
         },
@@ -322,6 +326,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             else {
                 throw new Error(`Unable to determine ${$.toInfixString(predicate)}(${$.toInfixString(expr)})`);
             }
+        },
+        is_complex(expr: U): boolean {
+            return $.is(ISCOMPLEX, expr);
         },
         is_real(expr: U): boolean {
             return $.is(ISREAL, expr);

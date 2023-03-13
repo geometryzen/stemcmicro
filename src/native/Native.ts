@@ -22,6 +22,7 @@ export enum Native {
     imag,
     inner,
     inverse,
+    is_complex,
     is_real,
     lco,
     log,
@@ -35,5 +36,14 @@ export enum Native {
     spread,
     subtract,
     succ,
-    test_eq
+    /**
+     * tau(x) = 2 * PI * x
+     */
+    tau,
+    test_eq,
+    test_ge,
+    test_gt,
+    test_le,
+    test_lt,
+    test_ne,
 }

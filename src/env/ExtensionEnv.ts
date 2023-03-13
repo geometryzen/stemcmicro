@@ -209,6 +209,7 @@ export interface ExtensionEnv {
     add(...args: U[]): U;
     arctan(expr: U): U;
     arg(expr: U): U;
+    conj(expr: U): U;
     cos(expr: U): U;
     evaluate(opr: Native, ...args: U[]): U;
     exp(expr: U): U;
@@ -265,6 +266,10 @@ export interface ExtensionEnv {
     isMinusOne(expr: U): boolean;
     isOne(expr: U): boolean;
     /**
+     * Corresponds to the 'real' property.
+     */
+     is_complex(expr: U): boolean;
+     /**
      * Corresponds to the 'real' property.
      */
     is_real(expr: U): boolean;

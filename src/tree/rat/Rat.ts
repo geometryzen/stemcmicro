@@ -53,11 +53,9 @@ function MZERO(p: bigInt.BigInteger): boolean {
     return p.isZero();
 }
 
-/*
 function MEQUAL(p: bigInt.BigInteger, n: number): boolean {
     return p.equals(n);
 }
-*/
 
 function makeSignSameAs(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
     if (a.isPositive()) {
@@ -212,6 +210,15 @@ export class Rat extends Atom<'Rat'> implements IsInteger<boolean> {
     isNegative(): boolean {
         return this.a.isNegative();
     }
+    isNonNegativeInteger(): boolean {
+        if (this.isInteger()) {
+            return MEQUAL(this.b, 1) && MSIGN(this.a) === 1;
+        }
+        else {
+            return false;
+        }
+        return this.isInteger() && this.isPositive();
+    }
     isNumer(n: number): boolean {
         return this.a.equals(n);
     }
@@ -225,7 +232,7 @@ export class Rat extends Atom<'Rat'> implements IsInteger<boolean> {
         return this.a.isPositive();
     }
     isPositiveInteger(): boolean {
-        return this.isPositive() && this.isInteger();
+        return this.isInteger() && this.isPositive();
     }
     isTwo(): boolean {
         return this.isIntegerNumber(2);

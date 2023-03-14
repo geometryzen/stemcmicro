@@ -1,12 +1,12 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { multiply_items_factoring } from '../../multiply';
-import { factor_number } from '../../pollard';
+import { factor_rat } from '../../pollard';
 import { MAXPRIMETAB, primetab } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_multiply } from '../../runtime/helpers';
-import { one, Rat, create_int } from '../../tree/rat/Rat';
+import { create_int, one, Rat } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
+import { is_rat } from '../rat/is_rat';
 
 export function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
     if (is_multiply(p1)) {
@@ -30,12 +30,12 @@ function factor_term(arr: U[], arg1: U, arg2: U, $: ExtensionEnv): void {
     arr.push(p1);
 }
 
-export function factor(p1: U, p2: U, $: ExtensionEnv): U {
-    if (is_rat_and_integer(p1)) {
-        return factor_number(p1); // see pollard.cpp
+export function factor(poly: U, x: U, $: ExtensionEnv): U {
+    if (is_rat(poly) && poly.isInteger()) {
+        return factor_rat(poly); // see pollard.cpp
     }
 
-    return $.factorize(p1, p2);
+    return $.factorize(poly, x);
 }
 
 // for factoring small integers (2^32 or less)

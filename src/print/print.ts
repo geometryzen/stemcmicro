@@ -2,7 +2,7 @@ import { mp_denominator, mp_numerator } from '../bignum';
 import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { equaln, isfraction, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two } from '../is';
+import { equaln, is_rat_and_fraction, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two } from '../is';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { abs } from '../operators/abs/abs';
@@ -23,7 +23,7 @@ import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_uom } from '../operators/uom/is_uom';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../predicates/is_negative';
-import { is_negative_number } from '../predicates/is_negative_number';
+import { is_num_and_negative } from '../predicates/is_negative_number';
 import {
     ADD,
     ARCCOS,
@@ -521,7 +521,7 @@ function print_multiply_when_no_denominators(expr: Cons, $: ExtensionEnv) {
                 if (caar(p).equals(POWER)) {
                     if (is_num(car(cdr(car(p))))) {
                         // rule out square root
-                        if (!isfraction(car(cdr(cdr(car(p)))))) {
+                        if (!is_rat_and_fraction(car(cdr(cdr(car(p)))))) {
                             str += ' \\cdot ';
                         }
                     }
@@ -701,7 +701,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
     let accumulator = '';
     p = cadr(p);
     if (
-        isfraction(p) ||
+        is_rat_and_fraction(p) ||
         is_add(p) ||
         is_multiply(p) ||
         is_power(p) ||
@@ -1435,7 +1435,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             }
         }
 
-        if (isfraction(expo) && defs.printMode === PRINTMODE_LATEX) {
+        if (is_rat_and_fraction(expo) && defs.printMode === PRINTMODE_LATEX) {
             str += print_str('\\sqrt');
             const denomExponent = denominator(expo, $);
             // we omit the "2" on the radical
@@ -1477,7 +1477,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
                 str += print_factor(base, true, false, $);
             }
         }
-        else if (is_negative_number(base)) {
+        else if (is_num_and_negative(base)) {
             // Prevent ambiguity when dealing with unary minus.
             // As an example, in JavaScript unary minus technically has higher precedence than exponentiation,
             // but compilers sometimes require parentheses to avoid errors.
@@ -1515,7 +1515,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             str += render_using_non_sexpr_print_mode(base, $);
             str += print_str(')');
         }
-        else if (is_num(base) && (lt_num_num(base, zero) || isfraction(base))) {
+        else if (is_num(base) && (lt_num_num(base, zero) || is_rat_and_fraction(base))) {
             str += print_str('(');
             str += print_factor(base, false, false, $);
             str += print_str(')');
@@ -1560,7 +1560,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
                 str += render_using_non_sexpr_print_mode(expo, $);
             }
         }
-        else if (is_cons(expo) || isfraction(expo) || (is_num(expo) && lt_num_num(expo, zero))) {
+        else if (is_cons(expo) || is_rat_and_fraction(expo) || (is_num(expo) && lt_num_num(expo, zero))) {
             str += print_str('(');
             str += render_using_non_sexpr_print_mode(expo, $);
             str += print_str(')');

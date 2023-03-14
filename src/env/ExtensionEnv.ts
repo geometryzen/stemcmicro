@@ -285,6 +285,10 @@ export interface ExtensionEnv {
     /**
      *
      */
+    log(expr: U): U;
+    /**
+     *
+     */
     multiply(...args: U[]): U;
     /**
      *

@@ -5,10 +5,11 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
 import { divide } from './helpers/divide';
-import { is_complex_number, is_poly_expanded_form, is_rat_and_positive_integer } from './is';
+import { is_complex_number, is_poly_expanded_form } from './is';
 import { Native } from './native/Native';
 import { native_sym } from './native/native_sym';
 import { coeff } from './operators/coeff/coeff';
+import { is_rat } from './operators/rat/is_rat';
 import { simplify } from './operators/simplify/simplify';
 import { ASSIGN, SECRETX } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
@@ -220,19 +221,23 @@ function roots2(P: U, X: U, $: ExtensionEnv): U[] {
 
 function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
     // console.lg(`roots3 ${render_as_infix(poly, $)} in variable ${render_as_infix(X, $)}`);
-    if (
-        is_power(poly) &&
-        is_poly_expanded_form(cadr(poly), X, $) &&
-        is_rat_and_positive_integer(caddr(poly))
-    ) {
-        const n = normalized_coeff(cadr(poly), X, $);
-        return mini_solve(n, $);
+    if (is_power(poly)) {
+        const base = poly.base;
+        if (is_poly_expanded_form(base, X, $)) {
+            const expo = poly.expo;
+            if (is_rat(expo) && expo.isPositiveInteger()) {
+                const n = normalized_coeff(base, X, $);
+                return mini_solve(n, $);
+            }
+        }
     }
     if (is_poly_expanded_form(poly, X, $)) {
         const n = normalized_coeff(poly, X, $);
         return mini_solve(n, $);
     }
-    return [];
+    else {
+        return [];
+    }
 }
 
 // note that for many quadratic, cubic and quartic polynomials we don't

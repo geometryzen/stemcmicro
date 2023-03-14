@@ -1,5 +1,4 @@
-import { is_flt } from "../operators/flt/is_flt";
-import { is_rat } from "../operators/rat/is_rat";
+import { is_num } from "../operators/num/is_num";
 import { Num } from "../tree/num/Num";
 import { U } from "../tree/tree";
 
@@ -8,14 +7,6 @@ import { U } from "../tree/tree";
  * Returns true if expr < 0.
  * @param expr The expression being tested.
  */
-export function is_negative_number(expr: U): expr is Num & { __ts_sign: -1 } {
-    if (is_rat(expr)) {
-        return expr.isNegative();
-    }
-    else if (is_flt(expr)) {
-        return expr.isNegative();
-    }
-    else {
-        return false;
-    }
+export function is_num_and_negative(expr: U): expr is Num & { __ts_sign: -1 } {
+    return is_num(expr) && expr.isNegative();
 }

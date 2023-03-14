@@ -6,7 +6,7 @@ import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
 import { is_negative } from '../../predicates/is_negative';
-import { is_negative_number } from '../../predicates/is_negative_number';
+import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -139,7 +139,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
         return is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
     }
 
-    if (is_negative_number(expr)) {
+    if (is_num_and_negative(expr)) {
         const pi = is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI;
         return $.negate(pi);
     }
@@ -158,11 +158,11 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_power(expr)) {
-        const base = cadr(expr);
+        const base = expr.base;
         // Implementation in which imaginary unit is (expt -1 1/2).
         if (equaln(base, -1)) {
             // -1 to a power
-            return $.multiply(DynamicConstants.Pi($), caddr(expr));
+            return $.multiply(DynamicConstants.Pi($), expr.expo);
         }
 
         // (expt e X) => imag(X)
@@ -170,7 +170,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
             // exponential
             // arg(a^(1/2)) is always equal to 1/2 * arg(a)
             // this can obviously be made more generic TODO
-            return imag(caddr(expr), $);
+            return imag(expr.expo, $);
         }
     }
 

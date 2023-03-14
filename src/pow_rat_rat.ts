@@ -9,7 +9,7 @@ import { items_to_cons } from './makeList';
 import { mpow } from './mpow';
 import { mroot } from './mroot';
 import { nativeInt } from './nativeInt';
-import { is_negative_number } from './predicates/is_negative_number';
+import { is_num_and_negative } from './predicates/is_negative_number';
 import { quickfactor } from './quickfactor';
 import { POWER } from './runtime/constants';
 import { negOne, one, Rat, zero } from './tree/rat/Rat';
@@ -41,7 +41,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
 
     // if base is zero then return 0
     if ($.is_zero(base)) {
-        if (is_negative_number(expo)) {
+        if (is_num_and_negative(expo)) {
             throw new Error(`divide by zero for base => ${base} and exponent => ${expo}`);
         }
         return hook(zero, "D");
@@ -84,7 +84,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
     }
 
     // if base is negative then (-N)^M -> N^M * (-1)^M
-    if (is_negative_number(base)) {
+    if (is_num_and_negative(base)) {
         return hook($.multiply(pow_rat_rat($.negate(base) as Rat, expo, $), pow_rat_rat(negOne, expo, $)), "I");
     }
 
@@ -168,7 +168,7 @@ function normalize_angle(A: Rat, $: ExtensionEnv): U {
 
     // floor
     let Q = bignum_truncate(A);
-    if (is_negative_number(A)) {
+    if (is_num_and_negative(A)) {
         Q = Q.add(negOne);
     }
 

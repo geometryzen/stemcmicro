@@ -6,7 +6,7 @@
  */
 
 import { ExtensionEnv } from "../env/ExtensionEnv";
-import { is_integer_or_integer_float } from "../is";
+import { is_num_and_integer } from "../is";
 import { is_rat } from "../operators/rat/is_rat";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { Tensor } from "../tree/tensor/Tensor";
@@ -45,7 +45,7 @@ export function get_component(M: Tensor, indices: U, $: ExtensionEnv): U {
             const expr = remaining.car;
             const num = $.valueOf(expr);
             stack.push(num);
-            if (!is_integer_or_integer_float(num)) {
+            if (!is_num_and_integer(num)) {
                 // TODO: Improve the message by keeping track of where we are.
                 throw new Error(`index with something other than an integer`);
             }

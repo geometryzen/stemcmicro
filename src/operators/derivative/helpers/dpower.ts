@@ -1,7 +1,4 @@
-import { divide } from "../../../helpers/divide";
 import { ExtensionEnv } from "../../../env/ExtensionEnv";
-import { logarithm } from "../../../log";
-import { caddr, cadr } from "../../../tree/helpers";
 import { Cons, U } from "../../../tree/tree";
 import { derivative } from "../derivative";
 //-----------------------------------------------------------------------------
@@ -25,16 +22,16 @@ import { derivative } from "../derivative";
 //
 //-----------------------------------------------------------------------------
 export function dpower(u_pow_v: Cons, x: U, $: ExtensionEnv): U {
-    const u = cadr(u_pow_v);
-    const v = caddr(u_pow_v);
+    const u = u_pow_v.base;
+    const v = u_pow_v.expo;
     // v/u
-    const v_div_u = divide(v, u, $);
+    const v_div_u = $.divide(v, u);
 
     // du/dx
     const du_by_dx = derivative(u, x, $);
 
     // log u
-    const log_u = logarithm(u, $);
+    const log_u = $.log(u);
 
     // dv/dx
     const dv_by_dx = derivative(v, x, $);

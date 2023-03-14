@@ -399,6 +399,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const value_inner_lhs_rhs = $.valueOf(inner_lhs_rhs);
             return value_inner_lhs_rhs;
         },
+        log(expr: U): U {
+            return $.evaluate(Native.log, expr);
+        },
         multiply(...args: U[]): U {
             return $.evaluate(Native.multiply, ...args);
         },

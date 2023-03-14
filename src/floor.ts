@@ -1,11 +1,11 @@
 import bigInt from 'big-integer';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_rat_and_integer } from './is_rat_and_integer';
 import { items_to_cons } from './makeList';
 import { mdiv } from './mmul';
 import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
-import { is_negative_number } from './predicates/is_negative_number';
+import { is_rat } from './operators/rat/is_rat';
+import { is_num_and_negative } from './predicates/is_negative_number';
 import { FLOOR } from './runtime/constants';
 import { create_flt } from './tree/flt/Flt';
 import { cadr } from './tree/helpers';
@@ -21,23 +21,26 @@ function yfloor(p1: U, $: ExtensionEnv): U {
     return yyfloor(p1, $);
 }
 
-function yyfloor(p1: U, $: ExtensionEnv): U {
-    if (!is_num(p1)) {
-        return items_to_cons(FLOOR, p1);
+function yyfloor(x: U, $: ExtensionEnv): U {
+    if (!is_num(x)) {
+        return items_to_cons(FLOOR, x);
     }
 
-    if (is_flt(p1)) {
-        return create_flt(Math.floor(p1.d));
+    if (is_flt(x)) {
+        return create_flt(Math.floor(x.d));
     }
 
-    if (is_rat_and_integer(p1)) {
-        return p1;
+    if (is_rat(x) && x.isInteger()) {
+        return x;
     }
 
-    let p3: U = new Rat(mdiv(p1.a, p1.b), bigInt.one);
+    const p3: U = new Rat(mdiv(x.a, x.b), bigInt.one);
 
-    if (is_negative_number(p1)) {
-        p3 = $.add(p3, negOne);
+    if (is_num_and_negative(x)) {
+        return $.add(p3, negOne);
     }
-    return p3;
+    else {
+        return p3;
+
+    }
 }

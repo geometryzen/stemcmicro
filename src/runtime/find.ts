@@ -2,49 +2,51 @@ import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { equaln } from '../is';
 import { is_rat_and_integer } from '../is_rat_and_integer';
-import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_imu } from '../operators/imu/is_imu';
-import { caddr, cadr } from '../tree/helpers';
 import { is_tensor } from '../operators/tensor/is_tensor';
+import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
+import { caddr, cadr } from '../tree/helpers';
 import { is_cons, U } from '../tree/tree';
 import { is_power } from './helpers';
 
 /**
- * find stuff like (-1)^(something (but disregard
- * imaginary units which are in the form (-1)^(1/2))
- * @param p 
- * @param p1 
+ * find stuff like (-1)^(something), but disregard imaginary units which are in the form (-1)^(1/2))
+ * @param expr 
+ * @param mysteryArg 
  * @param $ 
  * @returns 
  */
-export function has_clock_form(p: U, p1: U, $: ExtensionEnv): boolean {
-    if (is_imu(p)) {
+export function has_clock_form(expr: U, mysteryArg: U, $: ExtensionEnv): boolean {
+
+    if (is_imu(expr)) {
         return false;
     }
 
-    if (is_power(p) && !is_rat_and_integer(caddr(p1))) {
-        if (cadr(p).contains(imu)) {
+    const rhs = caddr(mysteryArg);
+
+    if (is_power(expr) && !is_rat_and_integer(rhs)) {
+        if (cadr(expr).contains(imu)) {
             // console.lg "found i^fraction " + p
             return true;
         }
     }
 
-    if (is_power(p) && equaln(cadr(p), -1) && !is_rat_and_integer(caddr(p1))) {
+    if (is_power(expr) && equaln(cadr(expr), -1) && !is_rat_and_integer(rhs)) {
         // console.lg "found -1^fraction in " + p
         return true;
     }
 
-    if (is_tensor(p)) {
-        for (let i = 0; i < p.nelem; i++) {
-            if (has_clock_form(p.elem(i), p1, $)) {
+    if (is_tensor(expr)) {
+        for (let i = 0; i < expr.nelem; i++) {
+            if (has_clock_form(expr.elem(i), mysteryArg, $)) {
                 return true;
             }
         }
         return false;
     }
 
-    if (is_cons(p)) {
-        return [...p].some((el) => has_clock_form(el, p1, $));
+    if (is_cons(expr)) {
+        return [...expr].some((el) => has_clock_form(el, mysteryArg, $));
     }
 
     return false;

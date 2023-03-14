@@ -28,7 +28,7 @@ export function dirac(p1: U, $: ExtensionEnv): U {
     }
 
     if (is_power(p1)) {
-        return items_to_cons(DIRAC, cadr(p1));
+        return items_to_cons(DIRAC, p1.base);
     }
 
     if (is_negative(p1)) {

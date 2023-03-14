@@ -69,6 +69,9 @@ export class Flt extends Atom<'Flt'> {
     inv(): Flt {
         return new Flt(1 / this.d, this.pos, this.end);
     }
+    isInteger(): boolean {
+        return this.d === Math.round(this.d);
+    }
     /**
      * Returns true if this number is less than zero.
      */

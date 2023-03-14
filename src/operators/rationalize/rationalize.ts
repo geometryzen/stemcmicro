@@ -2,7 +2,7 @@ import { condense } from '../../condense';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
-import { is_negative_number } from '../../predicates/is_negative_number';
+import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
 import { one, zero } from '../../tree/rat/Rat';
@@ -99,12 +99,12 @@ function multiply_denominators_factor(p: U, p2: U, $: ExtensionEnv): U {
     p = caddr(p);
 
     // like x^(-2) ?
-    if (is_negative_number(p)) {
+    if (is_num_and_negative(p)) {
         return __lcm(p2, inverse(arg2, $), $);
     }
 
     // like x^(-a) ?
-    if (is_multiply(p) && is_negative_number(cadr(p))) {
+    if (is_multiply(p) && is_num_and_negative(cadr(p))) {
         return __lcm(p2, inverse(arg2, $), $);
     }
 

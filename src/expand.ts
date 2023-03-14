@@ -16,7 +16,7 @@ import { divpoly } from './quotient';
 import { doexpand_binary, doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
-import { one, create_int, zero } from './tree/rat/Rat';
+import { create_int, one, zero } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { nil, U } from './tree/tree';
 
@@ -306,8 +306,8 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
     }
     const p8 = doexpand_binary(trivial_divide, p2, p5, $);
     if (is_power(p5)) {
-        n = nativeInt(caddr(p5));
-        p6 = cadr(p5);
+        n = nativeInt(p5.expo);
+        p6 = p5.base;
     }
     else {
         n = 1;
@@ -385,8 +385,8 @@ function expand_get_AF(p5: U, X: U, $: ExtensionEnv): U[] {
         return [];
     }
     if (is_power(p5)) {
-        n = nativeInt(caddr(p5));
-        p5 = cadr(p5);
+        n = nativeInt(p5.expo);
+        p5 = p5.base;
     }
     const results: U[] = [];
     const d = nativeInt(degree(p5, X, $));

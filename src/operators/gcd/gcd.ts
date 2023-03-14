@@ -4,7 +4,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { isunivarpolyfactoredorexpandedform } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { items_to_cons } from '../../makeList';
-import { is_negative_number } from '../../predicates/is_negative_number';
+import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { MULTIPLY } from '../../runtime/constants';
 import { doexpand_binary } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
@@ -203,7 +203,7 @@ function gcd_powers_with_same_base(base1: U, base2: U, $: ExtensionEnv): U {
 
     // can't be equal because of test near beginning
     // TODO NumExtension.isNegative
-    const exponent = is_negative_number(expo1_minus_expo2) ? exponent1 : exponent2;
+    const exponent = is_num_and_negative(expo1_minus_expo2) ? exponent1 : exponent2;
     return $.power(base1, exponent);
 }
 

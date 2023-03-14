@@ -122,6 +122,18 @@ export class Cons implements U {
     get argList(): Cons {
         return this.cdr;
     }
+    /**
+     * An convenience for cdr.car for use with (power base expo) expressions.
+     */
+    get base(): U {
+        return this.argList.head;
+    }
+    /**
+     * An convenience for cdr.cdr.car for use with (power base expo) expressions.
+     */
+     get expo(): U {
+        return this.cdr.cdr.car;
+    }
     contains(needle: U): boolean {
         if (this === needle || this.equals(needle)) {
             return true;

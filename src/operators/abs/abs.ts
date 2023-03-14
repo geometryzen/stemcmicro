@@ -7,7 +7,6 @@ import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../../predicates/is_negative';
-import { is_negative_number } from '../../predicates/is_negative_number';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_abs, is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { oneAsFlt } from '../../tree/flt/Flt';
@@ -122,7 +121,7 @@ export function abs(x: U, $: ExtensionEnv): U {
         return hook(expr, "B");
     }
 
-    if (is_negative_number(expr)) {
+    if (is_num(expr) && expr.isNegative()) {
         return hook($.negate(expr), "C");
     }
 

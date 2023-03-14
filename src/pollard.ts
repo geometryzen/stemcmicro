@@ -13,7 +13,7 @@ import { cons, items_to_cons, nil, U } from './tree/tree';
 
 let n_factor_number = bigInt(0);
 
-export function factor_number(p1: Rat): U {
+export function factor_rat(p1: Rat): U {
     // 0 or 1?
     if (equaln(p1, 0) || equaln(p1, 1) || equaln(p1, -1)) {
         return p1;

@@ -8,7 +8,7 @@ import { is_num_and_equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { items_to_cons } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
-import { is_negative_number } from '../../predicates/is_negative_number';
+import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';
@@ -638,7 +638,7 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
             $.add($.multiply(lowercase_b, $.power(C, half)), lowercase_a), $
         );
         const possibleNewExpressionValue = evaluate_as_float(real(possibleNewExpression, $), $);
-        if (!is_negative_number(possibleNewExpressionValue)) {
+        if (!is_num_and_negative(possibleNewExpressionValue)) {
             return [possibleNewExpression, TFLAG_DIFF];
         }
 

@@ -1,5 +1,4 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
 import { create_flt } from '../../tree/flt/Flt';
 import { one, two, zero } from '../../tree/rat/Rat';
@@ -250,7 +249,7 @@ export function convertMetricToNative(tensor: U): U[] {
             else if (is_num(e)) {
                 return e;
             }
-            else if (is_rat_and_integer(e)) {
+            else if (is_rat(e) && e.isInteger()) {
                 return e;
             }
             else {

@@ -7,13 +7,13 @@ import { is_flt } from './operators/flt/is_flt';
 import { is_num } from './operators/num/is_num';
 import { is_rat } from './operators/rat/is_rat';
 import { is_sym } from './operators/sym/is_sym';
-import { is_negative_number } from './predicates/is_negative_number';
+import { is_num_and_negative } from './predicates/is_negative_number';
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
 import { Num } from './tree/num/Num';
-import { IsInteger, Rat } from './tree/rat/Rat';
-import { car, cdr, is_cons, nil, U } from './tree/tree';
+import { Rat } from './tree/rat/Rat';
+import { is_cons, nil, U } from './tree/tree';
 
 //
 // TODO: In order not to torture our future selves, these should be documented and have coverage unit testing.
@@ -70,30 +70,14 @@ export function is_plus_or_minus_one(x: U, $: ExtensionEnv): boolean {
     return $.isOne(x) || is_num_and_eq_minus_one(x);
 }
 
-export function is_integer_or_integer_float(p: U): p is Num & { __ts_integer: true } {
+export function is_num_and_integer(p: U): p is Num & { __ts_integer: true } {
     if (is_flt(p)) {
-        if (p.d === Math.round(p.d)) {
-            return true;
-        }
-        return false;
+        return p.isInteger();
     }
     if (is_rat(p)) {
         return p.isInteger();
     }
-    return is_rat_and_integer(p);
-}
-
-export function isnonnegativeinteger(p: U): p is Rat & IsInteger<true> & { __ts_integer: true; __ts_sign: 1 } {
-    return is_rat(p) && MEQUAL(p.b, 1) && MSIGN(p.a) === 1;
-}
-
-export function is_rat_and_positive_integer(p: U): p is Rat & { __ts_integer: true; __ts_sign: 1 } {
-    if (is_rat_and_integer(p)) {
-        return p.isPositiveInteger();
-    }
-    else {
-        return false;
-    }
+    return false;
 }
 
 // --------------------------------------
@@ -139,7 +123,9 @@ function ispolyfactoredorexpandedform_factor(p: U, x: U, $: ExtensionEnv): boole
 
 function ispolyfactoredorexpandedform_power(p: U, x: U, $: ExtensionEnv): boolean {
     if (is_power(p)) {
-        return is_rat_and_positive_integer(caddr(p)) && is_poly_expanded_form_expr(cadr(p), x, $);
+        const base = p.base;
+        const expo = p.expo;
+        return is_rat(expo) && expo.isPositiveInteger() && is_poly_expanded_form_expr(base, x, $);
     }
     else {
         return is_poly_expanded_form_expr(p, x, $);
@@ -192,8 +178,9 @@ function is_poly_expanded_form_factor(p: U, x: U, $: ExtensionEnv): boolean {
     if (p.equals(x)) {
         return true;
     }
-    if (is_power(p) && cadr(p).equals(x)) {
-        return is_rat_and_positive_integer(caddr(p));
+    if (is_power(p) && p.base.equals(x)) {
+        const expo = p.expo;
+        return is_rat(expo) && expo.isPositiveInteger();
     }
     if (p.contains(x)) {
         return false;
@@ -203,11 +190,11 @@ function is_poly_expanded_form_factor(p: U, x: U, $: ExtensionEnv): boolean {
     }
 }
 
-function has_negative_rational_exponent(expr: U): boolean {
+function is_power_and_has_rational_exponent_and_negative_base(expr: U): boolean {
     if (is_power(expr)) {
-        if (is_rat(car(cdr(cdr(expr))))) {
-            if (is_negative_number(car(cdr(expr)))) {
-                // (expt)
+        const expo = expr.expo;
+        if (is_rat(expo)) {
+            if (is_num_and_negative(expr.base)) {
                 return true;
             }
         }
@@ -220,7 +207,7 @@ function isimaginarynumberdouble(p: U, $: ExtensionEnv): boolean {
         (is_multiply(p) &&
             length_of_cons_otherwise_zero(p) === 3 &&
             is_flt(cadr(p)) &&
-            has_negative_rational_exponent(caddr(p))) ||
+            is_power_and_has_rational_exponent_and_negative_base(caddr(p))) ||
         $.equals(p, imu)
     );
 }
@@ -241,7 +228,7 @@ export function is_imaginary_number(expr: U): boolean {
                 // Probbaly dead code because i => (expt -1 1/2), which isn't a (multiply )
                 return true;
             }
-            if (has_negative_rational_exponent(caddr(expr))) {
+            if (is_power_and_has_rational_exponent_and_negative_base(caddr(expr))) {
                 return true;
             }
         }
@@ -326,9 +313,9 @@ export function isoneover(p: U): boolean {
 }
 
 /**
- * @deprecated Use is_rat(expr) && expr.isFraction()
+ *
  */
-export function isfraction(p: U): p is Rat {
+export function is_rat_and_fraction(p: U): p is Rat {
     return is_rat(p) && p.isFraction();
 }
 

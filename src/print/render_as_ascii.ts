@@ -1,6 +1,6 @@
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { isfraction, is_num_and_eq_minus_one } from '../is';
+import { is_rat_and_fraction, is_num_and_eq_minus_one } from '../is';
 import { abs } from '../operators/abs/abs';
 import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
 import { is_flt } from '../operators/flt/is_flt';
@@ -10,7 +10,7 @@ import { is_str } from '../operators/str/is_str';
 import { is_sym } from '../operators/sym/is_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
-import { is_negative_number } from '../predicates/is_negative_number';
+import { is_num_and_negative } from '../predicates/is_negative_number';
 import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER, SYM_MATH_COMPONENT } from '../runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from '../runtime/helpers';
 import { number_to_floating_point_string } from '../runtime/number_to_floating_point_string';
@@ -137,13 +137,13 @@ function will_be_displayed_as_fraction(p: U, $: ExtensionEnv): boolean {
     if (level > 0) {
         return false;
     }
-    if (isfraction(p)) {
+    if (is_rat_and_fraction(p)) {
         return true;
     }
     if (!is_multiply(p)) {
         return false;
     }
-    if (isfraction(cadr(p))) {
+    if (is_rat_and_fraction(cadr(p))) {
         return true;
     }
     while (is_cons(p)) {
@@ -229,10 +229,10 @@ function emit_unsigned_expr(p: U, $: ExtensionEnv) {
 }
 
 function __is_negative(p: U): boolean {
-    if (is_negative_number(p)) {
+    if (is_num_and_negative(p)) {
         return true;
     }
-    if (is_multiply(p) && is_negative_number(cadr(p))) {
+    if (is_multiply(p) && is_num_and_negative(cadr(p))) {
         return true;
     }
     return false;
@@ -297,7 +297,7 @@ function emit_multiply(p: U, n: number, $: ExtensionEnv) {
         emit_numerators(p, $);
         __emit_char('/');
         // need grouping if more than one denominator
-        if (n > 1 || isfraction(cadr(p))) {
+        if (n > 1 || is_rat_and_fraction(cadr(p))) {
             __emit_char('(');
             emit_denominators(p, $);
             __emit_char(')');
@@ -463,7 +463,7 @@ function emit_denominators(p: U, $: ExtensionEnv) {
 
     p = cdr(p);
 
-    if (isfraction(car(p))) {
+    if (is_rat_and_fraction(car(p))) {
         const p1 = mp_denominator(car(p));
         emit_number(p1, 0, $);
         n++;
@@ -582,10 +582,10 @@ function isfactor(p: U): boolean {
     if (is_sym(p)) {
         return true;
     }
-    if (isfraction(p)) {
+    if (is_rat_and_fraction(p)) {
         return false;
     }
-    if (is_negative_number(p)) {
+    if (is_num_and_negative(p)) {
         return false;
     }
     if (is_num(p)) {
@@ -769,7 +769,7 @@ function emit_index_function(p: U, $: ExtensionEnv) {
 function emit_factorial_function(p: U, $: ExtensionEnv) {
     p = cadr(p);
     if (
-        isfraction(p) ||
+        is_rat_and_fraction(p) ||
         is_add(p) ||
         is_multiply(p) ||
         is_power(p) ||

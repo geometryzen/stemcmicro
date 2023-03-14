@@ -159,7 +159,7 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     const sourceText = '"' + text + '"';
     // TOOD: Need a better routing to initialize the ScanOptions.
     const [scanned, tree] = scan(sourceText, {
-        useCaretForExponentiation: $.getNativeDirective(Directive.useCaretForExponentiation),
+        useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
         explicitAssocAdd: false,
         explicitAssocMul: false
     });
@@ -1526,7 +1526,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
 
         // print the power symbol
         if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
-            if ($.getNativeDirective(Directive.useCaretForExponentiation)) {
+            if ($.getDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {
@@ -1538,7 +1538,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
             str += print_str('^');
         }
         else {
-            if ($.getNativeDirective(Directive.useCaretForExponentiation)) {
+            if ($.getDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }
             else {

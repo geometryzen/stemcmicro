@@ -235,7 +235,7 @@ export interface ExtensionEnv {
      */
     factorize(poly: U, x: U): U;
     getCustomDirective(directive: string): boolean;
-    getNativeDirective(directive: Directive): boolean;
+    getDirective(directive: Directive): boolean;
     getSymbolProps(sym: Sym | string): SymbolProps;
     /**
      * Used during rendering.
@@ -306,8 +306,8 @@ export interface ExtensionEnv {
     real(expr: U): U;
     remove(varName: Sym): void;
     setCustomDirective(directive: string, value: boolean): void;
-    pushNativeDirective(directive: Directive, value: boolean): void;
-    popNativeDirective(): void;
+    pushDirective(directive: Directive, value: boolean): void;
+    popDirective(): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;

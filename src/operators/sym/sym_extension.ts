@@ -27,7 +27,7 @@ class SymExtension implements Extension<Sym> {
         // console.lg("SymExtension.valueOf");
         // Doing the dirty work for PI. Why do we need a special case?
         // What about E from the math namespace?
-        if (is_pi(sym) && $.getNativeDirective(Directive.evaluatingAsFloat)) {
+        if (is_pi(sym) && $.getDirective(Directive.evaluatingAsFloat)) {
             return piAsFlt;
         }
 

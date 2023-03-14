@@ -67,17 +67,17 @@ export function arcsin(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 2) &&
             is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 4.0) : $.multiply(rational(-1, 4), PI);
+        return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 4.0) : $.multiply(rational(-1, 4), PI);
     }
 
     // if x == sqrt(3)/2 then return 1/3*pi (60 degrees)
     if (isSqrtThreeOverTwo(x)) {
-        return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 3.0) : $.multiply(third, PI);
+        return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 3.0) : $.multiply(third, PI);
     }
 
     // if x == -sqrt(3)/2 then return -1/3*pi (-60 degrees)
     if (isMinusSqrtThreeOverTwo(x)) {
-        return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 3.0) : $.multiply(rational(-1, 3), PI);
+        return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 3.0) : $.multiply(rational(-1, 3), PI);
     }
 
     if (!is_rat(x)) {
@@ -87,15 +87,15 @@ export function arcsin(x: U, $: ExtensionEnv): U {
     const n = nativeInt(x.mul(two));
     switch (n) {
         case -2:
-            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 2.0) : $.multiply(rational(-1, 2), PI);
+            return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 2.0) : $.multiply(rational(-1, 2), PI);
         case -1:
-            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 6.0) : $.multiply(rational(-1, 6), PI);
+            return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(-Math.PI / 6.0) : $.multiply(rational(-1, 6), PI);
         case 0:
-            return $.getNativeDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
+            return $.getDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
         case 1:
-            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 6.0) : $.multiply(rational(1, 6), PI);
+            return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 6.0) : $.multiply(rational(1, 6), PI);
         case 2:
-            return $.getNativeDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 2.0) : $.multiply(half, PI);
+            return $.getDirective(Directive.evaluatingAsFloat) ? create_flt(Math.PI / 2.0) : $.multiply(half, PI);
         default:
             return items_to_cons(ARCSIN, x);
     }

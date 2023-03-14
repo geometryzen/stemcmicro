@@ -5,13 +5,13 @@ import { TreeTransformer } from './Transformer';
 
 export class ExpandingTransformer implements TreeTransformer {
     transform(tree: U, $: ExtensionEnv): U {
-        $.pushNativeDirective(Directive.expand, true);
+        $.pushDirective(Directive.expand, true);
         try {
 
             return transform(tree, $);
         }
         finally {
-            $.popNativeDirective();
+            $.popDirective();
         }
     }
 }

@@ -34,7 +34,7 @@ import { abs } from '../abs/abs';
  * @returns 
  */
 export function clock(z: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.evaluatingAsClock, true);
+    $.pushDirective(Directive.evaluatingAsClock, true);
     try {
         // console.lg();
         // console.lg(`clockform z=${print_expr(z, $)}`);
@@ -55,6 +55,6 @@ export function clock(z: U, $: ExtensionEnv): U {
         return clock_z;
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }

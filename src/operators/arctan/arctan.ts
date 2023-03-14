@@ -71,7 +71,7 @@ function arctan(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 3) &&
             is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return $.multiply(rational(1, 6), $.getNativeDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI);
+        return $.multiply(rational(1, 6), $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI);
     }
 
     // arctan(1) -> pi/4

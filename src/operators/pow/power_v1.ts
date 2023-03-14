@@ -57,7 +57,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     //  1 ^ a    ->  1
     //  a ^ 0    ->  1
     if ($.equals(base, one) || $.is_zero(expo)) {
-        const dynOne = $.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one;
+        const dynOne = $.getDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one;
         return hook(dynOne, "A");
     }
 
@@ -68,13 +68,13 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     //   -1 ^ -1    ->  -1
     if (is_num_and_eq_minus_one(base) && is_num_and_eq_minus_one(expo)) {
-        const negOne = $.negate($.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one);
+        const negOne = $.negate($.getDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one);
         return hook(negOne, "C");
     }
 
     //   -1 ^ 1/2  ->  i
     if (is_num_and_eq_minus_one(base) && is_num_and_equal_one_half(expo)) {
-        if ($.getNativeDirective(Directive.evaluatingAsClock)) {
+        if ($.getDirective(Directive.evaluatingAsClock)) {
             return items_to_cons(POWER, base, expo);
         }
         else {
@@ -84,7 +84,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     //   -1 ^ -1/2  ->  -i
     if (is_num_and_eq_minus_one(base) && is_num_and_equal_minus_half(expo)) {
-        if ($.getNativeDirective(Directive.evaluatingAsClock)) {
+        if ($.getDirective(Directive.evaluatingAsClock)) {
             return items_to_cons(POWER, base, expo);
         }
         else {
@@ -100,7 +100,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         is_rat(expo) &&
         !is_rat_and_integer(expo) &&
         is_num_and_gt_zero(expo) &&
-        !$.getNativeDirective(Directive.evaluatingAsFloat)
+        !$.getDirective(Directive.evaluatingAsFloat)
     ) {
         // console.lg("base", $.toInfixString(base));
         // console.lg("expo", $.toInfixString(expo));
@@ -193,7 +193,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // complex number in exponential form, get it to rectangular
     // but only if we are not in the process of calculating a polar form,
     // otherwise we'd just undo the work we want to do
-    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getNativeDirective(Directive.evaluatingAsPolar)) {
+    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getDirective(Directive.evaluatingAsPolar)) {
         // TODO: We could simply use origExpr now that it is an agument.
         const tmp = items_to_cons(POWER, base, expo);
         const hopefullySimplified = rect(tmp, $); // put new (hopefully simplified expr) in exponent
@@ -339,7 +339,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             // need to evaluate PI to its actual double
             // value
 
-            const pi = $.getNativeDirective(Directive.evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
+            const pi = $.getDirective(Directive.evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
             let tmp = $.multiply(
                 $.power(abs(base, $), expo),
                 $.power(negOne, $.divide($.multiply($.arg(base), expo), pi))

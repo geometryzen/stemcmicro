@@ -17,7 +17,7 @@ import { RESERVED_KEYWORD_LAST } from './ns_script';
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
-        useCaretForExponentiation: $.getNativeDirective(Directive.useCaretForExponentiation),
+        useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
         explicitAssocAdd: false,
         explicitAssocMul: false,
     };
@@ -146,23 +146,23 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     // isZero operating on Sym returns false. Therefore expanding will be true.
     // i.e. the default value of AUTOEXPAND is true!
     if (isNotDisabled(AUTOEXPAND, $)) {
-        $.pushNativeDirective(Directive.expand, true);
+        $.pushDirective(Directive.expand, true);
         try {
             // console.lg("Expanding...");
             box.push(transform_with_reason(box.pop(), $, 'expanding'));
         }
         finally {
-            $.popNativeDirective();
+            $.popDirective();
         }
     }
     if (isNotDisabled(AUTOFACTOR, $)) {
-        $.pushNativeDirective(Directive.factor, true);
+        $.pushDirective(Directive.factor, true);
         try {
             // console.lg("Expanding...");
             box.push(transform_with_reason(box.pop(), $, 'factoring'));
         }
         finally {
-            $.popNativeDirective();
+            $.popDirective();
         }
     }
 

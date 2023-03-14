@@ -79,7 +79,7 @@ class RatExtension implements Extension<Rat> {
     transform(expr: U): [TFLAGS, U] {
         if (expr instanceof Rat) {
             // console.lg(`RatExtension.transform ${expr}`);
-            if (this.$.getNativeDirective(Directive.evaluatingAsFloat)) {
+            if (this.$.getDirective(Directive.evaluatingAsFloat)) {
                 return [TFLAG_DIFF, create_flt(expr.toNumber())];
             }
             else {

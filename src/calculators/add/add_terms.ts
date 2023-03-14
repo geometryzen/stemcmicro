@@ -24,7 +24,7 @@ export function append_terms(terms: U[], term: U, $: ExtensionEnv): void {
         });
     }
     else if ($.is_zero(term)) {
-        if ($.getNativeDirective(Directive.keepZeroTermsInSums)) {
+        if ($.getDirective(Directive.keepZeroTermsInSums)) {
             terms.push(term);
         }
     }

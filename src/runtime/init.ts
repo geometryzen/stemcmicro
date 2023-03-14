@@ -61,19 +61,19 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
     defs.codeGen = false;
     try {
         const [scanned, tree] = scan(sourceText, {
-            useCaretForExponentiation: $.getNativeDirective(Directive.useCaretForExponentiation),
+            useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
             explicitAssocAdd: false,
             explicitAssocMul: false
         });
         try {
             if (scanned > 0) {
                 // Evaluating the tree for the side-effect which is to establish a binding.
-                $.pushNativeDirective(Directive.expand, true);
+                $.pushDirective(Directive.expand, true);
                 try {
                     $.valueOf(tree);
                 }
                 finally {
-                    $.popNativeDirective();
+                    $.popDirective();
                 }
             }
         }

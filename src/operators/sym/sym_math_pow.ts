@@ -75,7 +75,7 @@ class SymMathPow implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(expr: Sym): string {
-        if (this.$.getNativeDirective(Directive.useCaretForExponentiation)) {
+        if (this.$.getDirective(Directive.useCaretForExponentiation)) {
             return '^';
         }
         else {

@@ -376,7 +376,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getCustomDirective(directive: string): boolean {
             return !!custom_directives[directive];
         },
-        getNativeDirective(directive: Directive): boolean {
+        getDirective(directive: Directive): boolean {
             return native_directives.get(directive);
         },
         getSymbolPrintName(sym: Sym): string {
@@ -452,10 +452,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setCustomDirective(directive: string, value: boolean): void {
             custom_directives[directive] = value;
         },
-        pushNativeDirective(directive: Directive, value: boolean): void {
+        pushDirective(directive: Directive, value: boolean): void {
             native_directives.push(directive, value);
         },
-        popNativeDirective(): void {
+        popDirective(): void {
             native_directives.pop();
         },
         setSymbolOrder(sym: Sym, order: ExprComparator): void {
@@ -589,7 +589,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolPrintName(native_sym(Native.exp), 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
-    $.pushNativeDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
+    $.pushDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
 
     return $;
 }

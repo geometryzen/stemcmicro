@@ -18,7 +18,7 @@ export function Eval_polar(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function polar(z: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.evaluatingAsPolar, true);
+    $.pushDirective(Directive.evaluatingAsPolar, true);
     try {
         const r = abs(z, $);
         // console.lg("r", $.toInfixString(r));
@@ -31,6 +31,6 @@ export function polar(z: U, $: ExtensionEnv): U {
         return $.multiply(r, unit);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }

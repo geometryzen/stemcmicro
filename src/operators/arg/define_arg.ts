@@ -136,11 +136,11 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     // console.lg("yyarg", $.toSExprString(expr));
     // case of plain number
     if (is_num_and_gt_zero(expr) || is_pi(expr)) {
-        return is_flt(expr) || $.getNativeDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
+        return is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? zeroAsFlt : zero;
     }
 
     if (is_negative_number(expr)) {
-        const pi = is_flt(expr) || $.getNativeDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI;
+        const pi = is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI;
         return $.negate(pi);
     }
 

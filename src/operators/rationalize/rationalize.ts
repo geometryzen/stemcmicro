@@ -21,12 +21,12 @@ export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.factor, true);
+    $.pushDirective(Directive.factor, true);
     try {
         return yyrationalize(argList, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }
 

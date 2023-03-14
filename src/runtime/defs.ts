@@ -167,42 +167,42 @@ export function hard_reset() {
 }
 
 export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.expand, false);
+    $.pushDirective(Directive.expand, false);
     try {
         return func(arg, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }
 
 export function noexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.expand, false);
+    $.pushDirective(Directive.expand, false);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }
 
 export function doexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.expand, true);
+    $.pushDirective(Directive.expand, true);
     try {
         return func(arg, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }
 
 export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.expand, true);
+    $.pushDirective(Directive.expand, true);
     try {
         return func(lhs, rhs, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }
 
@@ -211,9 +211,9 @@ export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lh
  */
 export class DynamicConstants {
     public static NegOne($: ExtensionEnv): Flt | Rat {
-        return $.getNativeDirective(Directive.evaluatingAsFloat) ? negOneAsFlt : negOne;
+        return $.getDirective(Directive.evaluatingAsFloat) ? negOneAsFlt : negOne;
     }
     public static Pi($: ExtensionEnv): Sym | Flt {
-        return $.getNativeDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
+        return $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
     }
 }

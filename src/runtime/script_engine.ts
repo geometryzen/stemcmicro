@@ -206,7 +206,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
     if (options) {
         return {
             syntaxKind: options.syntaxKind,
-            useCaretForExponentiation: $.getNativeDirective(Directive.useCaretForExponentiation),
+            useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
             explicitAssocAdd: false,
             explicitAssocMul: false
         };

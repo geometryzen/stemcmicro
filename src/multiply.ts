@@ -47,12 +47,12 @@ export function multiply_items(items: U[], $: ExtensionEnv): U {
 
 // n an integer
 export function multiply_items_factoring(items: U[], $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.factor, true);
+    $.pushDirective(Directive.factor, true);
     try {
         return multiply_items(items, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }
 

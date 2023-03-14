@@ -11,7 +11,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
     // when generating code, print out
     // the standard JS Number printout
     let str: string;
-    if (defs.codeGen || $.getNativeDirective(Directive.renderFloatAsEcmaScript)) {
+    if (defs.codeGen || $.getDirective(Directive.renderFloatAsEcmaScript)) {
         return `${d}`;
     }
 

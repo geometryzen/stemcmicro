@@ -625,7 +625,7 @@ function emit_power(p: U, $: ExtensionEnv) {
             else {
                 emit_grouped_expr(cadr(p), $);
             }
-            if ($.getNativeDirective(Directive.useCaretForExponentiation)) {
+            if ($.getDirective(Directive.useCaretForExponentiation)) {
                 __emit_char('^');
             }
             else {

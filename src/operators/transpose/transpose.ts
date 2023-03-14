@@ -197,11 +197,11 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
 }
 
 export function transpose_factoring(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.factor, true);
+    $.pushDirective(Directive.factor, true);
     try {
         return transpose(p1, p2, p3, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }

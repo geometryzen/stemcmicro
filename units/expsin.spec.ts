@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 
-xdescribe("expsin", function () {
+describe("expsin", function () {
     it("expsin(x)", function () {
         const lines: string[] = [
             `expsin(x)`
@@ -9,7 +9,7 @@ xdescribe("expsin", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "1/2*(-exp(x*i)+exp(-x*i))*i");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/2*i*exp(-i*x)-1/2*i*exp(i*x)");
         engine.release();
     });
 });

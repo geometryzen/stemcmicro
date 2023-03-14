@@ -19,11 +19,11 @@ export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
 }
 
 export function divide_expand(lhs: U, rhs: U, $: ExtensionEnv): U {
-    $.pushNativeDirective(Directive.expand, true);
+    $.pushDirective(Directive.expand, true);
     try {
         return divide(lhs, rhs, $);
     }
     finally {
-        $.popNativeDirective();
+        $.popDirective();
     }
 }

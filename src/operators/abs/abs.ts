@@ -180,7 +180,7 @@ export function abs(x: U, $: ExtensionEnv): U {
         // console.lg("detected abs(minus one to some power) and returning 1");
         // -1 to any power
         // abs( (-1)^x ) = sqrt( (-1)^x * (-1)^x ) = sqrt( 1^x ) = 1
-        return hook($.getNativeDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one, "G");
+        return hook($.getDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one, "G");
     }
 
     // abs(base^expo) is equal to abs(base)^expo IF expo is positive.

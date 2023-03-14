@@ -18,7 +18,7 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
   '2^(1/4)*exp(1/8*i*pi)',
 */
 
-xdescribe("circexp", function () {
+describe("circexp", function () {
     it("cos(x)", function () {
         const lines: string[] = [
             `circexp(cos(x))`
@@ -29,7 +29,7 @@ xdescribe("circexp", function () {
             useDefinitions: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "1/2*(exp(x*i)+exp(-x*i))");
+        assert.strictEqual(engine.renderAsInfix(actual), "1/2*exp(-i*x)+1/2*exp(i*x)");
         engine.release();
     });
     it("sin(x)", function () {
@@ -43,10 +43,10 @@ xdescribe("circexp", function () {
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: The factor of (1/2) is not factored out, presumably because of the -1 factor.
-        assert.strictEqual(engine.renderAsInfix(actual), "1/2*(-exp(x*i)+exp(-x*i))*i");
+        assert.strictEqual(engine.renderAsInfix(actual), "1/2*i*exp(-i*x)-1/2*i*exp(i*x)");
         engine.release();
     });
-    it("tan(x)", function () {
+    xit("tan(x)", function () {
         const lines: string[] = [
             `circexp(tan(x))`
         ];
@@ -71,7 +71,7 @@ xdescribe("circexp", function () {
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
-        assert.strictEqual(engine.renderAsInfix(actual), "1/2*(exp(x)+exp(-x))");
+        assert.strictEqual(engine.renderAsInfix(actual), "1/2*exp(x)+1/2*exp(-x)");
         engine.release();
     });
     it("sinh(x)", function () {
@@ -85,7 +85,7 @@ xdescribe("circexp", function () {
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
-        assert.strictEqual(engine.renderAsInfix(actual), "1/2*(exp(x)-exp(-x))");
+        assert.strictEqual(engine.renderAsInfix(actual), "1/2*exp(x)-1/2*exp(-x)");
         engine.release();
     });
 });

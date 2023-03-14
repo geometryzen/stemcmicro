@@ -94,7 +94,6 @@ export const LEADING = create_sym('leading');
 export const LEGENDRE = create_sym('legendre');
 export const LOG = native_sym(Native.log);
 export const LOOKUP = create_sym('lookup');
-export const MOD = create_sym('mod');
 export const MULTIPLY = MATH_MUL;
 export const NOT = create_sym('not');
 export const NROOTS = create_sym('nroots');

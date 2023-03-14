@@ -1,9 +1,12 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { Eval_mod } from "./mod";
-import { MOD } from "../../runtime/constants";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { Eval_mod } from "./mod";
+
+const MOD = native_sym(Native.mod);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

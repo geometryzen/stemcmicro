@@ -27,6 +27,10 @@ export enum Native {
     is_zero,
     lco,
     log,
+    /**
+     * mod(a,b) returns the remainder of the result of a divided by b.
+     */
+    mod,
     multiply,
     outer,
     pow,

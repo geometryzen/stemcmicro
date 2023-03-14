@@ -258,6 +258,7 @@ import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { Eval_polar } from '../operators/polar/polar';
 import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
+import { pow_2_e_log } from '../operators/pow/pow_2_e_log';
 import { pow_2_e_rat } from '../operators/pow/pow_2_e_rat';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
@@ -440,6 +441,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(pow_2_pow_2_e_any_rat);
     // $.defineOperator(pow_2_pow_2_any_rat_rat);
     $.defineOperator(pow_2_e_rat);
+    $.defineOperator(pow_2_e_log);
     $.defineOperator(pow_2_e_any);      // Needed
     // $.defineOperator(pow_2_sym_rat);
     // $.defineOperator(pow_2_rat_rat);

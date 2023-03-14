@@ -134,4 +134,21 @@ describe("imag", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2*3^(1/2)");
         context.release();
     });
+    it("imag(1/(a+i*b))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `imag(1/(a+i*b))`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({ useCaretForExponentiation: true });
+
+        const { values, errors } = context.executeScript(sourceText, {});
+        assert.isArray(errors);
+        assert.strictEqual(errors.length, 0);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "-b/(a^2+b^2)");
+        context.release();
+    });
 });

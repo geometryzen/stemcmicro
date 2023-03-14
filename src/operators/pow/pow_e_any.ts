@@ -176,5 +176,5 @@ function euler_formula(x: U, $: ExtensionEnv): U {
 
 }
 
-export const pow_2_e_any = new Builder();
+export const pow_e_any = new Builder();
 

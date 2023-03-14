@@ -203,6 +203,7 @@ export interface SymbolProps {
 export interface ExtensionEnv {
     getPrintHandler(): PrintHandler;
     setPrintHandler(handler: PrintHandler): void;
+    abs(expr: U): U;
     /**
      *
      */
@@ -268,10 +269,10 @@ export interface ExtensionEnv {
     /**
      * Corresponds to the 'real' property.
      */
-     is_complex(expr: U): boolean;
-     /**
-     * Corresponds to the 'real' property.
-     */
+    is_complex(expr: U): boolean;
+    /**
+    * Corresponds to the 'real' property.
+    */
     is_real(expr: U): boolean;
     /**
      * Determines whether expr is scalar-valued.
@@ -284,7 +285,7 @@ export interface ExtensionEnv {
     /**
      *
      */
-    multiply(lhs: U, rhs: U): U;
+    multiply(...args: U[]): U;
     /**
      *
      */

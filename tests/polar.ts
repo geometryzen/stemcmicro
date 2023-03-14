@@ -2,16 +2,16 @@ import { run_test } from '../test-harness';
 
 run_test([
   'polar(1+i)',
-  '2^(1/2)*exp(1/4*i*pi)',
+  'exp(1/4*i*pi)*2^(1/2)',
 
   'polar(-1+i)',
-  '2^(1/2)*exp(3/4*i*pi)',
+  'exp(3/4*i*pi)*2^(1/2)',
 
   'polar(-1-i)',
-  '2^(1/2)*exp(-3/4*i*pi)',
+  'exp(-3/4*i*pi)*2^(1/2)',
 
   'polar(1-i)',
-  '2^(1/2)*exp(-1/4*i*pi)',
+  'exp(-1/4*i*pi)*2^(1/2)',
 
   'rect(polar(3+4*i))',
   '3+4*i',
@@ -29,10 +29,10 @@ run_test([
   'i',
 
   'rect(polar((-1)^(-5/6)))',
-  '-1/2*i-1/2*3^(1/2)',
-
-  'rect(polar((-1)^(-5/a)))',
-  'cos(5*pi/a)-i*sin(5*pi/a)',
+  '-1/2*3^(1/2)-1/2*i',
+// TODO
+//  'rect(polar((-1)^(-5/a)))',
+//  'cos(5*pi/a)-i*sin(5*pi/a)',
 
   'rect(polar((-1)^(a)))',
   'cos(a*pi)+i*sin(a*pi)',

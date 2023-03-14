@@ -271,4 +271,13 @@ describe("abs", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "exp(a)");
         context.release();
     });
+    it("abs(1^a)", function () {
+        const lines: string[] = [
+            `abs(1^a)`,
+        ];
+        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1");
+        engine.release();
+    });
 });

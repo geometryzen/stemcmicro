@@ -1,3 +1,4 @@
-import { create_sym } from "../../tree/sym/Sym";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 
-export const MATH_CONJ = create_sym('conj');
+export const MATH_CONJ = native_sym(Native.conj);

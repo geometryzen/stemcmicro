@@ -48,4 +48,13 @@ describe("polar", function () {
         assert.strictEqual(engine.renderAsInfix(value), "5*exp(i*arctan(4/3))");
         engine.release();
     });
+    it("polar((-1)^a)", function () {
+        const lines: string[] = [
+            `polar((-1)^a)`,
+        ];
+        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "exp(i*pi*a)");
+        engine.release();
+    });
 });

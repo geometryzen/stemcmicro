@@ -164,6 +164,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 printHandler = new NoopPrintHandler();
             }
         },
+        abs(expr: U): U {
+            return $.evaluate(Native.abs, expr);
+        },
         add(...args: U[]): U {
             return $.evaluate(Native.add, ...args);
         },
@@ -396,8 +399,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const value_inner_lhs_rhs = $.valueOf(inner_lhs_rhs);
             return value_inner_lhs_rhs;
         },
-        multiply(lhs: U, rhs: U): U {
-            return $.evaluate(Native.multiply, lhs, rhs);
+        multiply(...args: U[]): U {
+            return $.evaluate(Native.multiply, ...args);
         },
         /**
          * The universal unary minus function meaning multiplication by -1.

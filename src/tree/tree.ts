@@ -349,11 +349,13 @@ export function is_cons(expr: U): expr is Cons {
 }
 
 export function is_nil(expr: U): boolean {
-    return expr.equals(nil);
-}
-
-export function is_cons_not_nil(expr: Cons): boolean {
-    return !expr.equals(nil);
+    if (expr instanceof Cons) {
+        return expr.equals(nil);
+    }
+    else {
+        return expr.equals(nil);
+        // return false;
+    }
 }
 
 /**

@@ -82,7 +82,7 @@ import { conj_blade } from '../operators/conj/conj_blade';
 import { conj_flt } from '../operators/conj/conj_flt';
 import { conj_imu } from '../operators/conj/conj_imu';
 import { conj_inner } from '../operators/conj/conj_inner';
-import { conj_mul_2_any_any } from '../operators/conj/conj_mul_2_any_any';
+import { conj_mul } from '../operators/conj/conj_mul';
 import { conj_rat } from '../operators/conj/conj_rat';
 import { conj_sym } from '../operators/conj/conj_sym';
 import { cons_extension } from '../operators/cons/cons_extension';
@@ -149,6 +149,7 @@ import { imag_mul_i_times_any } from '../operators/imag/imag_mul_i_times_any';
 import { imag_pow_e_rat } from '../operators/imag/imag_pow_e_rat';
 import { imag_pow_e_sym } from '../operators/imag/imag_pow_e_sym';
 import { imag_pow_rat_rat } from '../operators/imag/imag_pow_rat_rat';
+import { imag_pow_z_negone } from '../operators/imag/imag_pow_z_negone';
 import { imag_rat } from '../operators/imag/imag_rat';
 import { imag_sin } from '../operators/imag/imag_sin';
 import { imag_sym } from '../operators/imag/imag_sym';
@@ -257,11 +258,12 @@ import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_s
 import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { Eval_polar } from '../operators/polar/polar';
-import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
-import { pow_2_e_log } from '../operators/pow/pow_2_e_log';
-import { pow_2_e_rat } from '../operators/pow/pow_2_e_rat';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
+import { pow_e_any } from '../operators/pow/pow_e_any';
+import { pow_e_log } from '../operators/pow/pow_e_log';
+import { pow_e_rat } from '../operators/pow/pow_e_rat';
+import { pow_rat_sym } from '../operators/pow/pow_rat_sym';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
 import { make_printmode_keyword } from '../operators/printing/make_printmode_keyword';
@@ -278,9 +280,11 @@ import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
 import { real_add } from '../operators/real/real_add';
 import { real_any } from '../operators/real/real_any';
+import { real_arctan_rat } from '../operators/real/real_arctan_rat';
 import { real_cos } from '../operators/real/real_cos';
 import { real_exp } from '../operators/real/real_exp';
 import { real_flt } from '../operators/real/real_flt';
+import { real_holomorphic } from '../operators/real/real_holomorphic';
 import { real_imag } from '../operators/real/real_imag';
 import { real_imu } from '../operators/real/real_imu';
 import { real_log_imu } from '../operators/real/real_log_imu';
@@ -373,6 +377,7 @@ import { ExtensionEnv } from "./ExtensionEnv";
 export function define_std_operators($: ExtensionEnv) {
     // 
     const MATH_ADD = native_sym(Native.add);
+    const SIN = native_sym(Native.sin);
     const testeq = native_sym(Native.test_eq);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
@@ -437,17 +442,18 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineAssociative(MATH_ADD, zero);
     $.defineAssociative(MATH_MUL, one);
 
-    // TODO: See what these do. Ensure unit tests. Remove.
+    // TODO: See what these do.
     $.defineOperator(pow_2_pow_2_e_any_rat);
     // $.defineOperator(pow_2_pow_2_any_rat_rat);
-    $.defineOperator(pow_2_e_rat);
-    $.defineOperator(pow_2_e_log);
-    $.defineOperator(pow_2_e_any);      // Needed
+    $.defineOperator(pow_e_rat);
+    $.defineOperator(pow_e_log);
+    $.defineOperator(pow_e_any);
+    $.defineOperator(pow_rat_sym);
     // $.defineOperator(pow_2_sym_rat);
     // $.defineOperator(pow_2_rat_rat);
     // $.defineOperator(pow_2_rat_mul_2_rat_rat);
     // $.defineOperator(pow_2_flt_rat);
-    $.defineOperator(pow_2_imu_rat);    // Needed
+    $.defineOperator(pow_2_imu_rat);
     // $.defineOperator(pow_2_uom_rat);
     // $.defineOperator(pow_2_blade_rat);
     // $.defineOperator(pow_2_any_rat);
@@ -540,7 +546,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(conj_flt);
     $.defineOperator(conj_imu);
     $.defineOperator(conj_blade);
-    $.defineOperator(conj_mul_2_any_any);
+    $.defineOperator(conj_mul);
     $.defineOperator(conj_any);
 
     $.defineOperator(degree_varargs);
@@ -729,6 +735,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(imag_pow_e_rat);
     $.defineOperator(imag_pow_e_sym);
     $.defineOperator(imag_pow_rat_rat);
+    $.defineOperator(imag_pow_z_negone);
     $.defineOperator(imag_any);
 
     $.defineOperator(index_varargs);
@@ -773,6 +780,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(rationalize_fn);
 
     $.defineOperator(real_add);
+    $.defineOperator(real_arctan_rat);
     $.defineOperator(real_cos);
     $.defineOperator(real_exp);
     $.defineOperator(real_flt);
@@ -785,6 +793,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(real_pow_rat_rat);
     $.defineOperator(real_rat);
     $.defineOperator(real_real);
+    $.defineOperator(real_holomorphic(SIN));
     $.defineOperator(real_sym);
     $.defineOperator(real_any);
 

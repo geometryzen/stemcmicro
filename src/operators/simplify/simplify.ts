@@ -17,7 +17,7 @@ import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/he
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
 import { caddr, cadr } from '../../tree/helpers';
-import { half, one, third, three, two, create_int, zero } from '../../tree/rat/Rat';
+import { create_int, half, one, third, three, two, zero } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
@@ -517,9 +517,10 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
         return [p1, TFLAG_NONE];
     }
 
+    const binary_multiply = (lhs: U, rhs: U) => $.multiply(lhs, rhs);
     const A = firstTerm;
-    const C = commonBases.reduce($.multiply, one);
-    const B = termsThatAreNotPowers.reduce($.multiply, one);
+    const C = commonBases.reduce(binary_multiply, one);
+    const B = termsThatAreNotPowers.reduce(binary_multiply, one);
 
     let temp: U = nil;
     if (is_num_and_equalq(expo, 1, 3)) {

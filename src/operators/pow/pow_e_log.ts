@@ -53,5 +53,5 @@ class Op extends Function2X<LHS, RHS> {
     }
 }
 
-export const pow_2_e_log = new Builder();
+export const pow_e_log = new Builder();
 

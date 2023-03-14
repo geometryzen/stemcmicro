@@ -221,9 +221,9 @@ export function abs(x: U, $: ExtensionEnv): U {
     if (is_cons(expr) && is_multiply(expr)) {
         // console.lg("abs", $.toInfixString(expr));
         // product
-        return hook(expr.tail().map(function (x) {
-            return abs(x, $);
-        }).reduce($.multiply), "J");
+        // abs(a * b * c ...) = abs(a) * abs(b) * abs(c) ...
+        const binary_multiply = (lhs: U, rhs: U) => $.multiply(lhs, rhs);
+        return hook(expr.tail().map($.abs).reduce(binary_multiply), "J");
     }
 
     // abs(abs(x)) => abs(x) (abs is a projection operator).

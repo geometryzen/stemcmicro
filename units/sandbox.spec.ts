@@ -1,25 +1,37 @@
 
 import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("arg((-1)^(1/6)*exp(i*pi/6))", function () {
+    it("abs(1^a)*b", function () {
         const lines: string[] = [
-            `autofactor=0`,
+            `abs(1^a)*b`,
+        ];
+        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "b");
+        engine.release();
+    });
+    xit("exp(i*a*pi)", function () {
+        const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1)/2`,
-            `arg((-1)^(1/6)*exp(i*pi/6))`
+            `exp(i*a*pi)`,
         ];
-        const sourceText = lines.join('\n');
-
-        const context = create_script_context({ useCaretForExponentiation: true });
-
-        const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
-        assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsInfix(values[0]), "1/3*pi");
-        context.release();
+        const engine = create_script_context({ useDefinitions: true });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        // exp should not be eagerly expanding using the Euler formula.
+        assert.strictEqual(engine.renderAsInfix(value), "exp(i*a*pi)");
+        engine.release();
+    });
+    it("polar((-1)^a)", function () {
+        const lines: string[] = [
+            `polar((-1)^a)`,
+        ];
+        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "exp(i*pi*a)");
+        engine.release();
     });
 });

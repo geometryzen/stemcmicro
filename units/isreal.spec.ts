@@ -1,7 +1,7 @@
-import { assert_one_value_execute } from "./assert_one_value_execute";
 import { assert } from "chai";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("isreal", function () {
     it("isreal(i^(4/1)", function () {
@@ -251,5 +251,42 @@ describe("isreal", function () {
         assert.strictEqual(engine.renderAsInfix(value), "false");
         engine.release();
     });
+    it("isreal(exp(a))", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `i=sqrt(-1)`,
+            `pi=tau(1)/2`,
+            `isreal(exp(a))`
+        ];
+        const sourceText = lines.join('\n');
 
+        const context = create_script_context({ useCaretForExponentiation: true });
+
+        const { values, errors } = context.executeScript(sourceText, {});
+        assert.isArray(errors);
+        assert.strictEqual(errors.length, 0);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "true");
+        context.release();
+    });
+    it("isreal(3^(1/2))", function () {
+        const lines: string[] = [
+            `autofactor=0`,
+            `i=sqrt(-1)`,
+            `pi=tau(1)/2`,
+            `isreal(3^(1/2))`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({ useCaretForExponentiation: true });
+
+        const { values, errors } = context.executeScript(sourceText, {});
+        assert.isArray(errors);
+        assert.strictEqual(errors.length, 0);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "true");
+        context.release();
+    });
 });

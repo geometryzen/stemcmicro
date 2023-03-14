@@ -184,7 +184,9 @@ import { is_real_flt } from '../operators/isreal/is_real_flt';
 import { is_real_imag } from '../operators/isreal/is_real_imag';
 import { is_real_imu } from '../operators/isreal/is_real_imu';
 import { is_real_mul } from '../operators/isreal/is_real_mul';
+import { is_real_pow_e_sym } from '../operators/isreal/is_real_pow_e_syml';
 import { is_real_pow_imu_rat } from '../operators/isreal/is_real_pow_imu_rat';
+import { is_real_pow_rat_rat } from '../operators/isreal/is_real_pow_rat_rat';
 import { is_real_pow_sym_rat } from '../operators/isreal/is_real_pow_sym_rat';
 import { is_real_rat } from '../operators/isreal/is_real_rat';
 import { is_real_real } from '../operators/isreal/is_real_real';
@@ -258,6 +260,7 @@ import { Eval_polar } from '../operators/polar/polar';
 import { pow_2_e_any } from '../operators/pow/pow_2_e_any';
 import { pow_2_e_rat } from '../operators/pow/pow_2_e_rat';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
+import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
 import { make_printmode_keyword } from '../operators/printing/make_printmode_keyword';
@@ -434,7 +437,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineAssociative(MATH_MUL, one);
 
     // TODO: See what these do. Ensure unit tests. Remove.
-    // $.defineOperator(pow_2_pow_2_e_any_rat);
+    $.defineOperator(pow_2_pow_2_e_any_rat);
     // $.defineOperator(pow_2_pow_2_any_rat_rat);
     $.defineOperator(pow_2_e_rat);
     $.defineOperator(pow_2_e_any);      // Needed
@@ -793,6 +796,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(is_real_imag);
     $.defineOperator(is_real_imu);
     $.defineOperator(is_real_mul);
+    $.defineOperator(is_real_pow_e_sym);
+    $.defineOperator(is_real_pow_rat_rat);
     $.defineOperator(is_real_pow_sym_rat);
     $.defineOperator(is_real_pow_imu_rat);
     $.defineOperator(is_real_pow_any_negone);

@@ -23,7 +23,7 @@ class Op extends CompositeOperator {
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        //console.lg("IMAG MUL", this.$.toInfixString(outerExpr));
+        // console.lg("IMAG MUL", this.$.toInfixString(outerExpr));
         // console.lg("Computing Re of a * expression...", $.toSExprString(expr));
         const rs: U[] = []; // the real factors.
         const cs: U[] = []; // the complex factors
@@ -34,6 +34,7 @@ class Op extends CompositeOperator {
                 rs.push(factor);
             }
             else {
+                // console.lg("factor is NOT real:", $.toInfixString(factor));
                 cs.push(factor);
             }
         });

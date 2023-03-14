@@ -5,6 +5,7 @@ run_test([
   // a and b, we have to leave this unevaluated
   // turning this into a normal multiplication (which is
   // commutative) would not be OK
+  // But we know that they are real, or complex, DGH
   'inner(a,b)',
   'inner(a,b)',
 

@@ -1,9 +1,12 @@
 import { cadnr } from '../../calculators/cadnr';
+import { count_factors } from '../../calculators/count_factors';
+import { remove_factors } from '../../calculators/remove_factors';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
+import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { ASSUME_REAL_VARIABLES, COS, RECT } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
-import { is_add, is_multiply } from '../../runtime/helpers';
+import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { MATH_SIN } from '../../runtime/ns_math';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
@@ -27,6 +30,7 @@ export function Eval_rect(p1: Cons, $: ExtensionEnv): U {
 
 export function rect(z: U, $: ExtensionEnv): U {
     // console.lg("rect", $.toSExprString(z));
+    // console.lg("rect", $.toInfixString(z));
     // if we assume real variables, then the
     // rect of any symbol is the symbol itself
     // (note that 'i' is not a symbol, it's made of (-1)^(1/2))
@@ -48,6 +52,24 @@ export function rect(z: U, $: ExtensionEnv): U {
         // note that these matches can be quite sloppy, one can find expressions
         // which shouldn't match but do
         //
+    }
+
+    if (is_power(z)) {
+        // console.lg("power");
+        const base = z.base;
+        if (is_base_of_natural_logarithm(base)) {
+            // console.lg("base is E");
+            const expo = z.expo;
+            // TODO: address case when expo is imu.
+            if (is_cons(expo) && count_factors(expo, is_imu) === 1) {
+                // console.lg("i in expo");
+                const theta = remove_factors(expo, is_imu);
+                // console.lg("theta", $.toInfixString(theta));
+                const c = $.cos(theta);
+                const s = $.sin(theta);
+                return $.add(c, $.multiply(imu, s));
+            }
+        }
     }
 
     const assumeRealVariables = !$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES));

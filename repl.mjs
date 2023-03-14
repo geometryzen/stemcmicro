@@ -11,7 +11,7 @@ function isRecoverableError(error) {
 }
 
 function prompt(syntaxKind) {
-    return `symbolic-math:${human_readable_syntax_kind(syntaxKind).toLowerCase()}> `;
+    return `jsxmath:${human_readable_syntax_kind(syntaxKind).toLowerCase()}> `;
 }
 
 const contextOptions = {

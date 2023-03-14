@@ -1,6 +1,6 @@
-[![npm version](https://badge.fury.io/js/symbolic-math.svg)](https://badge.fury.io/js/symbolic-math)
+[![npm version](https://badge.fury.io/js/jsxmath.svg)](https://badge.fury.io/js/jsxmath)
 
-symbolic-math is a Javascript (Typescript) library for symbolic mathematics.
+jsxmath is a Javascript (Typescript) library for symbolic mathematics.
 
 ## Example
 
@@ -20,7 +20,7 @@ import {
     ScriptContextOptions,
     SyntaxKind,
     U
-} from "symbolic-math";
+} from "jsxmath";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("example", function () {
@@ -148,15 +148,15 @@ describe("versin", function () {
 
 ## Getting Started
 
-Please take a look at the [tutorial](https://github.com/geometryzen/symbolic-math/blob/master/TUTORIAL.md) file.
+Please take a look at the [tutorial](https://github.com/geometryzen/jsxmath/blob/master/TUTORIAL.md) file.
 
 ## Contributing
 
-Please take a look at the [contributing](https://github.com/geometryzen/symbolic-math/blob/master/CONTRIBUTING.md) file.
+Please take a look at the [contributing](https://github.com/geometryzen/jsxmath/blob/master/CONTRIBUTING.md) file.
 
 ## References
 
-symbolic-math is a fork of [Algebrite by Davide Della Casa](https://github.com/davidedc/Algebrite).
+jsxmath is a fork of [Algebrite by Davide Della Casa](https://github.com/davidedc/Algebrite).
 The fork adds Geometric Algebra, S.I. Units of Measure, and changes the way that expressions are matched and transformed.  
 
 Algebrite started as a port of [the EigenMath CAS by George Weigt](http://eigenmath.sourceforge.net/Eigenmath.pdf) to TypeScript.

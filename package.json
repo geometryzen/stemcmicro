@@ -1,6 +1,6 @@
 {
-    "name": "symbolic-math",
-    "version": "0.9.103",
+    "name": "jsxmath",
+    "version": "0.0.1",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
         ".": {
@@ -39,7 +39,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/geometryzen/symbolic-math.git"
+        "url": "git+https://github.com/geometryzen/jsxmath.git"
     },
     "keywords": [
         "algebrite",
@@ -60,9 +60,9 @@
     },
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/geometryzen/symbolic-math/issues"
+        "url": "https://github.com/geometryzen/jsxmath/issues"
     },
-    "homepage": "https://github.com/geometryzen/symbolic-math#readme",
+    "homepage": "https://github.com/geometryzen/jsxmath#readme",
     "dependencies": {
         "big-integer": "^1.6.51",
         "generic-rbtree": "^1.1.2",

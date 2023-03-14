@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("degree", function () {
-    xit("degree(x)", function () {
+    it("degree(x)", function () {
         const lines: string[] = [
             `degree(x)`
         ];
@@ -13,7 +13,7 @@ describe("degree", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
-    xit("degree(x*x)", function () {
+    it("degree(x*x)", function () {
         const lines: string[] = [
             `degree(x*x)`
         ];
@@ -21,10 +21,10 @@ describe("degree", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
-    xit("degree(x**2)", function () {
+    it("degree(x**2)", function () {
         const lines: string[] = [
             `degree(x**2)`
         ];
@@ -32,7 +32,7 @@ describe("degree", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
 });

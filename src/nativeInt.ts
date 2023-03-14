@@ -4,17 +4,24 @@ import { is_flt } from "./operators/flt/is_flt";
 import { is_rat } from "./operators/rat/is_rat";
 import { U } from "./tree/tree";
 
-export function nativeInt(p1: U): number {
-    let n = NaN;
-    if (is_rat(p1)) {
-        if (is_rat_and_integer(p1) && in_safe_integer_range(p1.a)) {
-            n = p1.a.toJSNumber();
+export function nativeInt(expr: U): number {
+    if (is_rat(expr)) {
+        if (is_rat_and_integer(expr) && in_safe_integer_range(expr.a)) {
+            return expr.a.toJSNumber();
+        }
+        else {
+            return NaN;
         }
     }
-    else if (is_flt(p1)) {
-        if (Math.floor(p1.d) === p1.d) {
-            n = p1.d;
+    else if (is_flt(expr)) {
+        if (Math.floor(expr.d) === expr.d) {
+            return expr.d;
+        }
+        else {
+            return NaN;
         }
     }
-    return n;
+    else {
+        return NaN;
+    }
 }

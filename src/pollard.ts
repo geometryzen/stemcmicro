@@ -13,12 +13,12 @@ import { cons, items_to_cons, nil, U } from './tree/tree';
 
 let n_factor_number = bigInt(0);
 
-export function factor_rat(p1: Rat): U {
+export function factor_rat(q: Rat): U {
     // 0 or 1?
-    if (equaln(p1, 0) || equaln(p1, 1) || equaln(p1, -1)) {
-        return p1;
+    if (equaln(q, 0) || equaln(q, 1) || equaln(q, -1)) {
+        return q;
     }
-    n_factor_number = p1.a;
+    n_factor_number = q.a;
 
     const factors = factor_a();
     if (factors.length === 0) {

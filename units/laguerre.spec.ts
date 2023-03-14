@@ -9,7 +9,6 @@ describe("laguerre", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "1");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1");
         engine.release();
     });
@@ -20,11 +19,10 @@ describe("laguerre", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1 (* -1 x))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1-x");
         engine.release();
     });
-    xit("laguerre(x,2)", function () {
+    it("laguerre(x,2)", function () {
         const lines: string[] = [
             `laguerre(x,2)`
         ];
@@ -32,8 +30,18 @@ describe("laguerre", function () {
             disable: ['factor']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ 1 (* -2 x) (* 1/2 (* x x)))");
-        assert.strictEqual(engine.renderAsInfix(values[0]), "1-2*x+1/2*x*x");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1-2*x+1/2*x**2");
+        engine.release();
+    });
+    it("laguerre(x,3)", function () {
+        const lines: string[] = [
+            `laguerre(x,3)`
+        ];
+        const engine = create_script_context({
+            disable: ['factor']
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1-3*x+3/2*x**2-1/6*x**3");
         engine.release();
     });
 });

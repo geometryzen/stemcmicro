@@ -185,7 +185,7 @@ describe("Exponentiation", function () {
             `1/((a+b*x)^2)`
         ];
         const engine = create_script_context({
-            // directives: [Directive.expandPowerSum],
+            disables: [Directive.expandPowerSum],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

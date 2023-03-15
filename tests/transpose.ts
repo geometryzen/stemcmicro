@@ -25,7 +25,7 @@ run_test([
   'transpose([[a,d],[b,e],[c,f]],1,2)',
   '[[a,b,c],[d,e,f]]',
 
-  // not how one-dimensional vectors
+  // note how one-dimensional vectors
   // don't have a transposition.
   'transpose([a,b,c])',
   '[a,b,c]',

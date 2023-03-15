@@ -1,23 +1,23 @@
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { scan_meta } from '../../brite/scan';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { exp } from '../../exp';
 import { guess } from '../../guess';
-import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_eq_minus_one, is_num_and_equal_one_half } from '../../is';
+import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from '../../is';
 import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { partition } from '../../partition';
-import { is_num } from '../num/is_num';
 import { ADD, EXP, INTEGRAL, METAX, MULTIPLY, POWER, SQRT } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_add, is_multiply } from '../../runtime/helpers';
-import { scan_meta } from '../../brite/scan';
-import { simplify } from '../simplify/simplify';
 import { transform } from '../../transform';
 import { create_flt } from '../../tree/flt/Flt';
-import { caddr, cadr } from '../../tree/helpers';
+import { cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
 import { Sym } from '../../tree/sym/Sym';
-import { car, cdr, Cons, is_cons, nil, U } from '../../tree/tree';
+import { car, cdr, Cons, is_cons, is_nil, nil, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';
+import { is_num } from '../num/is_num';
+import { simplify } from '../simplify/simplify';
 import { is_sym } from '../sym/is_sym';
 
 /*
@@ -375,15 +375,35 @@ const itab: string[] = [
     'f(x**3*exp(a*x+b),exp(a*x+b)*x**3/a-3/a*integral(x**2*exp(a*x+b),x))',
 ];
 
+/**
+ * A special implementation of evaluation that keeps the integrand simple by not expanding power sums
+ * that could throw off symbolic integration.
+ */
+function value_of_integrand(expr: U, $: ExtensionEnv): U {
+    $.pushDirective(Directive.expandPowerSum, false);
+    try {
+        return $.valueOf(expr);
+    }
+    finally {
+        $.popDirective();
+    }
+}
+
+/**
+ * (integral f x)
+ */
 export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_integral", $.toInfixString(expr));
+
     let n = 0;
 
     // evaluate 1st arg to get function F
-    let p1 = cdr(expr);
+    const argList = expr.argList;
     /**
      * The function to be integrated.
      */
-    let F = $.valueOf(car(p1));
+    const F = value_of_integrand(argList.head, $);
+    // console.lg("F", $.toInfixString(F));
     /**
      * The measure variable. 
      */
@@ -397,11 +417,11 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
     // example    result of 2nd arg  what to do
     //
     // integral(f)    NIL      guess X, N = NIL
-    // integral(f,2)  2      guess X, N = 2
-    // integral(f,x)  x      X = x, N = NIL
+    // integral(f,2)  2        guess X, N = 2
+    // integral(f,x)  x        X = x, N = NIL
     // integral(f,x,2)  x      X = x, N = 2
     // integral(f,x,y)  x      X = x, N = y
-    p1 = cdr(p1);
+    let p1 = cdr(argList);
 
     const p2 = $.valueOf(car(p1));
     if (nil === p2) {
@@ -417,11 +437,14 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         p1 = cdr(p1);
         N = $.valueOf(car(p1));
     }
+    // console.lg("X", $.toInfixString(X));
+    // console.lg("N", $.toInfixString(N));
 
     // console.lg(`F=${F}`);
     // console.lg(`X=${X}`);
     // console.lg(`N=${N}`);
 
+    let retval = F;
     // eslint-disable-next-line no-constant-condition
     while (true) {
         // N might be a symbol instead of a number
@@ -434,6 +457,8 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         else {
             n = 1;
         }
+
+        // console.lg("n", JSON.stringify(n));
 
         let temp: U = F;
         if (n >= 0) {
@@ -448,10 +473,10 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
             }
         }
 
-        F = temp;
+        retval = temp;
 
         // if N is NIL then arglist is exhausted
-        if (nil === N) {
+        if (is_nil(N)) {
             break;
         }
 
@@ -468,7 +493,7 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
         if (is_num(N)) {
             p1 = cdr(p1);
             N = $.valueOf(car(p1));
-            if (nil === N) {
+            if (is_nil(N)) {
                 break; // arglist exhausted
             }
             if (!is_num(N)) {
@@ -483,11 +508,11 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
             N = $.valueOf(car(p1));
         }
     }
-    return F;
+    return retval;
 }
 
 export function integral(F: U, X: U, $: ExtensionEnv): U {
-    // console.lg(`integral(F=${F}, X=${X})`);
+    // console.lg("integral", $.toSExprString(F), $.toInfixString(X));
     let integ: U;
     if (is_add(F)) {
         integ = integral_of_sum(F, X, $);
@@ -523,22 +548,24 @@ function integral_of_product(F: U, X: U, $: ExtensionEnv): U {
 }
 
 function integral_of_form(F: U, X: U, $: ExtensionEnv): U {
-    // console.lg(`integral_of_form(F=${F}, X=${X})`);
+    // console.lg("integral_of_form", $.toInfixString(F), $.toInfixString(X));
     const hc = italu_hashcode(F, X, $).toFixed(6);
     // console.lg(`hc=${hc}`);
     const tab = hashed_itab[hc];
-    // console.lg(`tab=${tab}`);
+    // console.lg(`tab=${JSON.stringify(tab)}`);
     if (!tab) {
         // breakpoint
-        // italu_hashcode(p1, p2)
+        italu_hashcode(F, X, $);
         return items_to_cons(INTEGRAL, F, X);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [p3, _] = transform(F, X, tab, false, $);
-    if (nil === p3) {
+    const [retval, flag] = transform(F, X, tab, false, $);
+    // console.lg("retval", $.toInfixString(retval));
+    // console.lg("flag", JSON.stringify(flag));
+    if (is_nil(retval)) {
         return items_to_cons(INTEGRAL, F, X);
     }
-    return p3;
+    return retval;
 }
 
 // Implementation of hash codes based on ITALU (An Integral Table Look-Up)
@@ -572,33 +599,41 @@ const hashcode_values: { [name: string]: number } = {
     erf: 1.0825269225702916,
 };
 
-function italu_hashcode(u: U, x: U, $: ExtensionEnv): number {
-    if (is_sym(u)) {
-        if (is_sym(x) && u.equals(x)) {
+/**
+ * Integral Table Lookup
+ * @param F 
+ * @param x 
+ * @param $ 
+ * @returns 
+ */
+function italu_hashcode(F: U, x: U, $: ExtensionEnv): number {
+    // console.lg("italu_hashcode", $.toInfixString(F));
+    if (is_sym(F)) {
+        if (is_sym(x) && F.equals(x)) {
             return hashcode_values.x;
         }
         else {
             return hashcode_values.constant;
         }
     }
-    else if (is_cons(u)) {
-        const opr = u.car;
+    else if (is_cons(F)) {
+        const opr = F.car;
         if (opr.equals(ADD)) {
-            return hash_addition(cdr(u), x, $);
+            return hash_addition(F.argList, x, $);
         }
         if (opr.equals(MULTIPLY)) {
-            return hash_multiplication(cdr(u), x, $);
+            return hash_multiplication(F.argList, x, $);
         }
         if (opr.equals(POWER)) {
-            return hash_power(cadr(u), caddr(u), x, $);
+            return hash_power(F.base, F.expo, x, $);
         }
         if (opr.equals(EXP)) {
-            return hash_power(exp(one, $), cadr(u), x, $);
+            return hash_power(exp(one, $), F.argList.head, x, $);
         }
         if (opr.equals(SQRT)) {
-            return hash_power(cadr(u), create_flt(0.5), x, $);
+            return hash_power(F.argList.head, create_flt(0.5), x, $);
         }
-        return hash_function(u, x, $);
+        return hash_function(F, x, $);
     }
 
     return hashcode_values.constant;
@@ -648,45 +683,45 @@ function hash_addition(terms: U, x: U, $: ExtensionEnv): number {
     return sum;
 }
 
-function hash_multiplication(terms: U, x: U, $: ExtensionEnv): number {
+function hash_multiplication(factors: U, x: U, $: ExtensionEnv): number {
     let product = 1;
-    if (is_cons(terms)) {
-        [...terms].forEach((term) => {
-            if (term.contains(x)) {
-                product = product * italu_hashcode(term, x, $);
+    if (is_cons(factors)) {
+        [...factors].forEach((factor) => {
+            if (factor.contains(x)) {
+                product = product * italu_hashcode(factor, x, $);
             }
         });
     }
     return product;
 }
 
-function hash_power(base: U, power_number: U, x: U, $: ExtensionEnv): number {
+function hash_power(base: U, expo: U, x: U, $: ExtensionEnv): number {
     let base_hash = hashcode_values.constant;
     let exp_hash = hashcode_values.constexp;
     if (base.contains(x)) {
         base_hash = italu_hashcode(base, x, $);
     }
-    if (power_number.contains(x)) {
-        exp_hash = italu_hashcode(power_number, x, $);
+    if (expo.contains(x)) {
+        exp_hash = italu_hashcode(expo, x, $);
     }
     else {
         // constant to constant = constant
         if (base_hash === hashcode_values.constant) {
             return hashcode_values.constant;
         }
-        if (is_num_and_eq_minus_one(power_number)) {
+        if (is_num_and_eq_minus_one(expo)) {
             exp_hash = -1;
         }
-        else if (is_num_and_equal_one_half(power_number)) {
+        else if (is_num_and_equal_one_half(expo)) {
             exp_hash = 0.5;
         }
-        else if (is_num_and_equal_minus_half(power_number)) {
+        else if (is_num_and_equal_minus_half(expo)) {
             exp_hash = -0.5;
         }
-        else if (is_num_and_equalq(power_number, 2, 1)) {
+        else if (is_num_and_equalq(expo, 2, 1)) {
             exp_hash = 2;
         }
-        else if (is_num_and_equalq(power_number, -2, 1)) {
+        else if (is_num_and_equalq(expo, -2, 1)) {
             exp_hash = -2;
         }
     }
@@ -694,7 +729,8 @@ function hash_power(base: U, power_number: U, x: U, $: ExtensionEnv): number {
 }
 
 /**
- * This function is not currently used.
+ * This function is not currently used directly.
+ * However, its purpose is to build the hash table.
  */
 export function make_hashed_itab($: ExtensionEnv): { [index: string]: string[] } {
     const tab: { [key: string]: string[] } = {};

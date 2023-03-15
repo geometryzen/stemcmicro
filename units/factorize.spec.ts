@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { factorizeL } from "../src/calculators/factorizeL";
+import { Directive } from "../src/env/ExtensionEnv";
 import { imu } from "../src/env/imu";
 import { items_to_cons } from "../src/makeList";
 import { is_rat } from "../src/operators/rat/is_rat";
@@ -279,7 +280,7 @@ describe("factorize", function () {
             ];
             const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-                disable: ['factor']
+                disables: [Directive.factor]
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "x**2");

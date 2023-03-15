@@ -152,8 +152,8 @@ export function real(expr: U, $: ExtensionEnv): U {
                     cs.push(factor);
                 }
                 else if (is_power(factor)) {
-                    const base = factor.lhs;
-                    const expo = factor.rhs;
+                    const base = factor.base;
+                    const expo = factor.expo;
                     if (is_rat(expo) && expo.isMinusOne()) {
                         // Get the complex number out of the denominator.
                         const z_star = $.conj(base);

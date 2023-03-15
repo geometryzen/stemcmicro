@@ -29,7 +29,6 @@ import { add_2_imu_flt } from '../operators/add/add_2_imu_flt';
 import { add_2_mul_2_any_imu_sym } from '../operators/add/add_2_mul_2_any_imu_sym';
 import { add_2_mul_2_rat_X_mul_2_rat_X } from '../operators/add/add_2_mul_2_rat_X_mul_2_rat_X';
 import { add_2_mul_2_rat_zzz_aaa } from '../operators/add/add_2_mul_2_rat_zzz_aaa';
-import { add_2_pow_2_any_any_mul_2_any_any } from '../operators/add/add_2_pow_2_any_any_mul_2_any_any';
 import { add_2_rat_blade } from '../operators/add/add_2_rat_blade';
 import { add_2_rat_flt } from '../operators/add/add_2_rat_flt';
 import { add_2_rat_rat } from '../operators/add/add_2_rat_rat';
@@ -431,7 +430,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring);
     $.defineOperator(add_2_mul_2_rat_cos_sin_mul_2_mul_2_cos_sin_factoring);
     $.defineOperator(add_2_pow_2_cos_rat_pow_2_sin_rat);
-    $.defineOperator(add_2_pow_2_any_any_mul_2_any_any);
 
     $.defineOperator(add_2_sym_sym);
 
@@ -863,7 +861,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(sum_varargs);
 
     $.defineOperator(taylor_varargs);
+    
     $.defineOperator(tan_varargs);
+
     $.defineOperator(tanh_varargs);
     $.defineOperator(tau);
 

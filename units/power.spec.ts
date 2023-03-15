@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -166,6 +167,137 @@ describe("Exponentiation", function () {
         const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1");
+        engine.release();
+    });
+    it("1/(a+b*x)", function () {
+        const lines: string[] = [
+            `1/(a+b*x)`
+        ];
+        const engine = create_script_context({
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/(a+b*x)");
+        engine.release();
+    });
+    it("1/((a+b*x)^2)", function () {
+        const lines: string[] = [
+            `1/((a+b*x)^2)`
+        ];
+        const engine = create_script_context({
+            // directives: [Directive.expandPowerSum],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/((a+b*x)^2)");
+        engine.release();
+    });
+    it("1/((a+b*x)^2)", function () {
+        const lines: string[] = [
+            `1/((a+b*x)^2)`
+        ];
+        const engine = create_script_context({
+            enables: [Directive.expandPowerSum],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/(2*a*b*x+b^2*x^2+a^2)");
+        engine.release();
+    });
+    it("1/(-a-b)", function () {
+        const lines: string[] = [
+            `1/(-a-b)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-1/(a+b)");
+        engine.release();
+    });
+    it("1/(a+b)", function () {
+        const lines: string[] = [
+            `1/(a+b)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/(a+b)");
+        engine.release();
+    });
+    it("-1/(a+b)", function () {
+        const lines: string[] = [
+            `-1/(a+b)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-1/(a+b)");
+        engine.release();
+    });
+    it("1/(a-b)", function () {
+        const lines: string[] = [
+            `1/(a-b)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "1/(a-b)");
+        engine.release();
+    });
+    it("1/(b-a)", function () {
+        const lines: string[] = [
+            `1/(b-a)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-1/(a-b)");
+        engine.release();
+    });
+    it("1/(-a-b)", function () {
+        const lines: string[] = [
+            `1/(-a-b)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-1/(a+b)");
+        engine.release();
+    });
+    it("1/(-a*b-x*b^2)+1/(a*b+x*b^2)", function () {
+        const lines: string[] = [
+            `1/(-a*b-x*b^2)+1/(a*b+x*b^2)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        engine.release();
+    });
+    it("1/(b*(a+b*x))+1/(-a*b-x*b^2)", function () {
+        const lines: string[] = [
+            `1/(b*(a+b*x))+1/(-a*b-x*b^2)`
+        ];
+        const engine = create_script_context({
+            disables: [Directive.factor],
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
 });

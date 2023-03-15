@@ -21,6 +21,7 @@ export enum Native {
     exp,
     imag,
     inner,
+    integral,
     inverse,
     is_complex,
     is_real,

@@ -19,6 +19,14 @@ export interface ScriptExecuteOptions {
      * Determines what kind of parser is used for the sourceText.
      */
     syntaxKind?: SyntaxKind
+    /**
+     * Directives that become enabled by setting to true.
+     */
+    enables?: Directive[];
+    /**
+     * Directives that become disabled by setting to false.
+     */
+    disables?: Directive[];
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
@@ -27,7 +35,6 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
      */
     assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: string[];
-    disable?: ('expand' | 'factor')[];
     /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
      * The alternative is to use '**', freeing the caret character for use with outer products which is convenient
@@ -107,7 +114,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
         const config: EnvOptions = {
             assumes: options.assumes,
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            disable: options.disable,
+            enables: options.enables,
+            disables: options.disables,
             noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions,
@@ -119,7 +127,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
         const config: EnvOptions = {
             assumes: {},
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            disable: [],
+            enables: [],
+            disables: [],
             noOptimize: false,
             useCaretForExponentiation: false,
             useDefinitions: false,
@@ -170,7 +179,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
                 if (contextOptions.syntaxKind) {
                     options.syntaxKind = contextOptions.syntaxKind;
                 }
-                contextOptions.disable;
+                contextOptions.disables;
             }
             if (executeOptions) {
                 if (executeOptions.syntaxKind) {

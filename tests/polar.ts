@@ -35,7 +35,7 @@ run_test([
 //  'cos(5*pi/a)-i*sin(5*pi/a)',
 
   'rect(polar((-1)^(a)))',
-  'cos(a*pi)+i*sin(a*pi)',
+  'cos(pi*a)+i*sin(pi*a)',
 
   '-i*(-2*rect(polar((-1)^(1/6)))/rect(polar((3^(1/2))))+2*rect(polar((-1)^(5/6)))/rect(polar((3^(1/2)))))^(1/4)*(2*rect(polar((-1)^(1/6)))/rect(polar((3^(1/2))))-2*rect(polar((-1)^(5/6)))/rect(polar((3^(1/2)))))^(1/4)/(2^(1/2))',
   //"-(-1)^(3/4)",

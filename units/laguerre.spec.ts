@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("laguerre", function () {
@@ -27,7 +28,7 @@ describe("laguerre", function () {
             `laguerre(x,2)`
         ];
         const engine = create_script_context({
-            disable: ['factor']
+            disables: [Directive.factor]
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "1-2*x+1/2*x**2");
@@ -38,7 +39,7 @@ describe("laguerre", function () {
             `laguerre(x,3)`
         ];
         const engine = create_script_context({
-            disable: ['factor']
+            disables: [Directive.factor]
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "1-3*x+3/2*x**2-1/6*x**3");

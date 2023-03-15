@@ -4,8 +4,8 @@ import { native_sym } from "../../native/native_sym";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { UCons } from "../helpers/UCons";
 import { CompositeOperator } from "../CompositeOperator";
+import { UCons } from "../helpers/UCons";
 import { is_rat } from "../rat/is_rat";
 
 const POW = native_sym(Native.pow);
@@ -27,7 +27,7 @@ class Op extends CompositeOperator {
     isKind(expr: U): expr is UCons<Sym, Cons> {
         if (super.isKind(expr)) {
             const pow = expr.argList.head;
-            const expo = pow.rhs;
+            const expo = pow.expo;
             return is_rat(expo) && expo.isMinusOne();
         }
         else {

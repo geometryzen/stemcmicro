@@ -6,10 +6,11 @@ import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
 import { iscomplexnumberdouble, iseveninteger, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one } from "../../is";
 import { is_rat_and_integer } from "../../is_rat_and_integer";
-import { nativeInt } from "../../nativeInt";
+import { is_integer_and_in_safe_number_range, nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { pow_rat_rat } from "../../pow_rat_rat";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
+import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
 import { defs } from "../../runtime/defs";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
@@ -210,6 +211,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // sqrt(x*y) != x^(1/2) y^(1/2) (counterexample" x = -1 and y = -1)
     // BUT we can carve-out here some cases where this
     // transformation is correct.
+    // TODO Do we need Directive.expandPowerProduct, like expandPowerSum?
     if ($.isExpanding()) {
         // console.lg(`isExpanding=${$.isExpanding()}`);
         // console.lg(`base=>${render_as_infix(base, $)}`);
@@ -269,24 +271,17 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         }
     }
 
-    //  when expanding,
-    //  (a + b + ...) ^ n  ->  (a + b + ...) * (a + b + ...) ...
-    // We check to see if 
-    if ($.isExpanding() && is_add(base) && is_num(expo)) {
-        const terms = args_to_items(base);
-        const everyTermIsScalar = terms.every(function (term) {
-            // console.lg("term", $.toSExprString(term));
-            return $.is_real(term);
-        });
-        // console.lg(`everyTermIsScalar=>${everyTermIsScalar}`);
-        const n = nativeInt(expo);
-        if (n > 1 && !isNaN(n)) {
-            if (everyTermIsScalar) {
+    // A power sum is possible if the terms are real and the exponent is a positive integer in safe number range.
+    // (a + b + ...) ^ n  ->  (a + b + ...) * (a + b + ...) ...
+    // The exponent must be an integer and convertable to a JavaScript number.
+    // We don't always want to do this. It can make otherwise simple expressions explode and can throw off symbolic integration.
+    if ($.isExpanding() && $.getDirective(Directive.expandPowerSum)) {
+        if (is_add(base) && is_num(expo) && is_integer_and_in_safe_number_range(expo) && expo.isPositive()) {
+            const terms = args_to_items(base);
+            if (terms.every($.is_real)) {
+                const n = nativeInt(expo);
                 const result = power_sum(n, base, $);
                 return hook(result, "T");
-            }
-            else {
-                // Explicit multiplication?
             }
         }
     }
@@ -363,5 +358,22 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         return hook(polarResult, "Y");
     }
 
+    // Normalize so that a manifestly negative base is always made positive
+    if (is_one_over_something_negative(base, expo)) {
+        return hook($.negate($.power($.negate(base), expo)), 'ZZ');
+    }
     return hook(items_to_cons(POWER, base, expo), "Z");
+}
+
+export function is_one_over_something(base: U, expo: U): boolean {
+    return is_rat(expo) && expo.isMinusOne();
+}
+
+export function is_one_over_something_negative(base: U, expo: U): boolean {
+    if (is_one_over_something(base, expo)) {
+        return is_negative(base);
+    }
+    else {
+        return false;
+    }
 }

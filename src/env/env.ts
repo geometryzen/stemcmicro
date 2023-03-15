@@ -44,7 +44,8 @@ class StableExprComparator implements ExprComparator {
 export interface EnvOptions {
     assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: FEATURE[];
-    disable?: ('expand' | 'factor')[];
+    enables?: Directive[];
+    disables?: Directive[];
     noOptimize?: boolean;
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -56,7 +57,8 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         const config: EnvConfig = {
             assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
-            disable: Array.isArray(options.disable) ? options.disable : [],
+            enables: Array.isArray(options.enables) ? options.enables : [],
+            disables: Array.isArray(options.disables) ? options.disables : [],
             noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
@@ -68,7 +70,8 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         const config: EnvConfig = {
             assumes: {},
             dependencies: [],
-            disable: [],
+            enables: [],
+            disables: [],
             noOptimize: false,
             useCaretForExponentiation: false,
             useDefinitions: false,
@@ -593,7 +596,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     if ($.getDirective(Directive.useIntegersForPredicates) !== config.useIntegersForPredicates) {
         $.pushDirective(Directive.useIntegersForPredicates, config.useIntegersForPredicates);
     }
-
+    for (const directive of config.enables) {
+        if ($.getDirective(directive) !== true) {
+            $.pushDirective(directive, true);
+        }
+    }
+    for (const directive of config.disables) {
+        if ($.getDirective(directive) !== false) {
+            $.pushDirective(directive, false);
+        }
+    }
     return $;
 }
 

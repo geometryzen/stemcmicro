@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("hermite", function () {
@@ -28,7 +29,7 @@ describe("hermite", function () {
             `hermite(x,2)`
         ];
         const engine = create_script_context({
-            disable: ['factor']
+            disables: [Directive.factor]
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "-2+4*x**2");
@@ -39,7 +40,7 @@ describe("hermite", function () {
             `hermite(x,3)`
         ];
         const engine = create_script_context({
-            disable: ['factor']
+            disables: [Directive.factor]
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "-12*x+8*x**3");
@@ -50,7 +51,7 @@ describe("hermite", function () {
             `hermite(x,4)`
         ];
         const engine = create_script_context({
-            disable: ['factor']
+            disables: [Directive.factor]
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "12-48*x**2+16*x**4");

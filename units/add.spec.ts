@@ -107,4 +107,26 @@ describe("add", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "2*a+2*b+2*c");
         engine.release();
     });
+    it("x^2+(-x^2)", function () {
+        const lines: string[] = [
+            `x^2+(-x^2)`
+        ];
+        const engine = create_script_context({
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        engine.release();
+    });
+    it("1/(b*(a+b*x))+1/(-a*b-x*b^2)", function () {
+        const lines: string[] = [
+            `1/(b*(a+b*x))+1/(-a*b-x*b^2)`
+        ];
+        const engine = create_script_context({
+            useCaretForExponentiation: true
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        engine.release();
+    });
 });

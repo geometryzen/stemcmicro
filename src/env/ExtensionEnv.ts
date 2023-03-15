@@ -54,11 +54,18 @@ export function keepFlag(flags: TFLAGS): boolean {
  */
 export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
 
+/**
+ * Determines how an expression is evaluated.
+ */
 export enum Directive {
     /**
      * Mutually exclusive with factor.
      */
     expand,
+    /**
+     * Determines whether (a + b + c ...) raised to a positive integer exponent is expanded.
+     */
+    expandPowerSum,
     /**
      * Determines whether numeric types are converted to floating point numbers for numeric evaluation.
      * 

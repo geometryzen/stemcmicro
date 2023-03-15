@@ -131,7 +131,7 @@ export class Cons implements U {
     /**
      * An convenience for cdr.cdr.car for use with (power base expo) expressions.
      */
-     get expo(): U {
+    get expo(): U {
         return this.cdr.cdr.car;
     }
     contains(needle: U): boolean {
@@ -366,7 +366,6 @@ export function is_nil(expr: U): boolean {
     }
     else {
         return expr.equals(nil);
-        // return false;
     }
 }
 

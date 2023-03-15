@@ -4,8 +4,10 @@ import { extract_single_blade } from "../../calculators/compare/extract_single_b
 import { canonical_factor_num_rhs } from "../../calculators/factorize/canonical_factor_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { is_add, is_multiply } from "../../runtime/helpers";
-import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
+import { MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_nil, items_to_cons, U } from "../../tree/tree";
@@ -17,19 +19,23 @@ import { is_num } from "../num/is_num";
 import { is_tensor } from "../tensor/is_tensor";
 import { add_tensor_tensor } from "../tensor/tensor_extension";
 
+const ADD = native_sym(Native.add);
+
 export function Eval_add(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_add", $.toSExprString(expr));
+    // console.lg("Eval_add", $.toInfixString(expr));
     const terms: U[] = [];
     const args = expr.argList;
     const vals = args.map($.valueOf);
     if (vals.equals(args)) {
         const values = [...vals];
         const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
-        for (const value of values) {
-            if (some_term_is_zero_float) {
+        if (some_term_is_zero_float) {
+            for (const value of values) {
                 push_terms(terms, evaluate_as_float(value, $));
             }
-            else {
+        }
+        else {
+            for (const value of values) {
                 push_terms(terms, $.valueOf(value));
             }
         }
@@ -57,16 +63,16 @@ function push_terms(terms: U[], term: U): void {
 }
 
 function add_terms(terms: U[], $: ExtensionEnv): U {
-    // console.lg("add_terms");
+    // console.lg("===============================");
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     terms.forEach(function (term) {
-        // console.lg("term", render_as_infix(term, $));
+        // console.lg("term", $.toInfixString(term));
     });
 
     /**
      * The canonical comparator function for comparing terms.
      */
-    const cmp_terms = $.compareFn(MATH_ADD);
+    const cmp_terms = $.compareFn(ADD);
 
     // ensure no infinite loop, use "for"
     for (let i = 0; i < 10; i++) {
@@ -87,6 +93,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
             // if the numerical factors are the same (even though this might be reasonable).
             const lhs = canonical_factor_num_rhs(rawL);
             const rhs = canonical_factor_num_rhs(rawR);
+
             if (is_tensor(lhs) && is_tensor(rhs)) {
                 if (lhs.ndim < rhs.ndim) {
                     return SIGN_LT;
@@ -166,7 +173,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
             return terms[0];
         }
         default: {
-            terms.unshift(MATH_ADD);
+            terms.unshift(ADD);
             return items_to_cons(...terms);
         }
     }

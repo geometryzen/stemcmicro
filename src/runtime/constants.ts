@@ -81,7 +81,7 @@ export const HILBERT = create_sym('hilbert');
 export const IF = create_sym('if');
 export const IMAG = native_sym(Native.imag);
 export const SYM_MATH_COMPONENT = MATH_COMPONENT;
-export const INTEGRAL = create_sym('integral');
+export const INTEGRAL = native_sym(Native.integral);
 export const INV = MATH_INV;
 export const INVG = create_sym('invg');
 export const ISINTEGER = create_sym('isinteger');
@@ -162,10 +162,10 @@ export const FORCE_FIXED_PRINTOUT = create_sym('forceFixedPrintout');
 export const VARNAME_MAX_FIXED_PRINTOUT_DIGITS = create_sym('maxFixedPrintoutDigits');
 export const DEFAULT_MAX_FIXED_PRINTOUT_DIGITS = 6;
 
-export const DRAWX = create_sym('$DRAWX');
 export const METAA = create_sym('$METAA');
 export const METAB = create_sym('$METAB');
 export const METAX = create_sym('$METAX');
+
 export const SECRETX = create_sym('$SECRETX');
 
 export const VERSION = create_sym('version');

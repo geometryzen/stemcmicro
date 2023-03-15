@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("taylor", function () {
@@ -31,7 +32,7 @@ describe("taylor", function () {
             `taylor(1/(5+4*cos(x)),x,2,0)`
         ];
         const engine = create_script_context({
-            disable: ['factor'],
+            disables: [Directive.factor],
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

@@ -107,8 +107,8 @@ export function arg_old(z: U, $: ExtensionEnv): U {
             const lhs = argList.item(0);
             const rhs = argList.item(1);
             if (is_cons(rhs) && is_pow(rhs)) {
-                const base = rhs.lhs;
-                const expo = rhs.rhs;
+                const base = rhs.base;
+                const expo = rhs.expo;
                 if (is_rat(expo) && expo.isMinusOne()) {
                     // console.lg(`z => ${render_as_infix(z, $)} is in the form a/b`);
                     const numer = lhs; // numerator(z, $);

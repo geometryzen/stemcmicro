@@ -27,7 +27,7 @@ class Op extends CompositeOperator {
     isKind(expr: U): expr is UCons<Sym, Cons> {
         if (super.isKind(expr)) {
             const pow = expr.argList.head;
-            const expo = pow.rhs;
+            const expo = pow.expo;
             return is_rat(expo) && expo.isMinusOne();
         }
         else {

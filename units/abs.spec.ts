@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -59,10 +60,23 @@ describe("abs", function () {
             `abs(a+b+i*c)`,
         ];
         const engine = create_script_context({
+            enables: [Directive.expandPowerSum],
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(2*a*b+a**2+b**2+c**2)**(1/2)");
+        engine.release();
+    });
+    it("abs(a+b+i*c)", function () {
+        const lines: string[] = [
+            `abs(a+b+i*c)`,
+        ];
+        const engine = create_script_context({
+            disables: [Directive.expandPowerSum],
+            useDefinitions: true
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "(c**2+(a+b)**2)**(1/2)");
         engine.release();
     });
     it("x * i", function () {
@@ -169,6 +183,8 @@ describe("abs", function () {
             `abs(a+b+c*i)`,
         ];
         const engine = create_script_context({
+            enables: [Directive.expandPowerSum],
+            useCaretForExponentiation: false,
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

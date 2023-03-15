@@ -27,7 +27,7 @@ class Op extends CompositeOperator {
         if (super.isKind(expr)) {
             const innerExpr = expr.argList.head;
             // const base = innerExpr.lhs;
-            const expo = innerExpr.rhs;
+            const expo = innerExpr.expo;
             // TODO: check that the base is complex... 
             return is_rat(expo) && expo.isMinusOne();
         }

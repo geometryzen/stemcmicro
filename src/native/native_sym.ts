@@ -34,6 +34,7 @@ export function build_sym(code: Native): Sym {
         case Native.exp: return create_sym('exp');
         case Native.imag: return create_sym('imag');
         case Native.inner: return create_sym('inner');
+        case Native.integral: return create_sym('integral');
         case Native.inverse: return create_sym('inv');
         case Native.is_complex: return create_sym('iscomplex');
         case Native.is_real: return create_sym('isreal');

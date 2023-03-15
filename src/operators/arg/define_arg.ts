@@ -36,7 +36,7 @@ export const REAL = native_sym(Native.real);
  */
 export function define_arg($: ExtensionEnv): void {
     // If we also want to control the name as it appears in the script 
-    $.defineLegacyTransformer(ARG, function (expr: Cons, $: ExtensionEnv): U {
+    $.defineConsTransformer(ARG, function (expr: Cons, $: ExtensionEnv): U {
         const z = cadr(expr);
         // console.lg("z", $.toInfixString(z));
         const value_of_z = $.valueOf(z);

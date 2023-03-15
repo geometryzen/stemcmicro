@@ -1,20 +1,24 @@
-import { ExtensionEnv, Sign, SIGN_EQ } from './env/ExtensionEnv';
+import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from './env/ExtensionEnv';
+import { Native } from './native/Native';
+import { native_sym } from './native/native_sym';
 import { evaluate_as_float } from './operators/float/float';
 import { is_flt } from './operators/flt/is_flt';
 import { is_rat } from './operators/rat/is_rat';
 import { simplify } from './operators/simplify/simplify';
 import { MSIGN } from './runtime/constants';
-import { stack_push } from './runtime/stack';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
-import { caddr, cadr, cddr } from './tree/helpers';
+import { cadr, cddr } from './tree/helpers';
 import { one, zero } from './tree/rat/Rat';
-import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
+import { car, cdr, cons, Cons, is_cons, items_to_cons, nil, U } from './tree/tree';
+
+const NOT = native_sym(Native.not);
+const TESTEQ = native_sym(Native.test_eq);
 
 // If the number of args is odd then the last arg is the default result.
 // Works like a switch statement. Could also be used for piecewise
 // functions? TODO should probably be called "switch"?
-export function Eval_test(p1: U, $: ExtensionEnv): void {
-    stack_push(_test(p1, $));
+export function Eval_test(expr: Cons, $: ExtensionEnv): U {
+    return _test(expr, $);
 }
 
 function _test(p1: U, $: ExtensionEnv): U {
@@ -53,15 +57,21 @@ function _test(p1: U, $: ExtensionEnv): U {
     return zero;
 }
 
+export function Eval_testne(expr: Cons, $: ExtensionEnv): U {
+    const argList = expr.argList;
+    return $.valueOf(items_to_cons(NOT, cons(TESTEQ, argList)));
+}
+
 // we test A==B by first subtracting and checking if we symbolically
 // get zero. If not, we evaluate to float and check if we get a zero.
 // If we get another NUMBER then we know they are different.
 // If we get something else, then we don't know and we return the
 // unaveluated test, which is the same as saying "maybe".
-export function Eval_testeq(p1: Cons, $: ExtensionEnv): U {
+export function Eval_testeq(expr: Cons, $: ExtensionEnv): U {
     // first try without simplifyng both sides
-    const orig = p1;
-    let subtractionResult = $.subtract($.valueOf(cadr(p1)), $.valueOf(caddr(p1)));
+    const orig = expr;
+    const lhs = $.valueOf(orig.lhs);
+    const rhs = $.valueOf(orig.rhs);
 
     // OK so we are doing something tricky here
     // we are using isZeroLikeOrNonZeroLikeOrUndetermined to check if the result
@@ -70,7 +80,7 @@ export function Eval_testeq(p1: Cons, $: ExtensionEnv): U {
     // to determine the zero-ness/non-zero-ness or
     // undeterminate-ness of things so we use
     // that here and down below.
-    let checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(subtractionResult, $);
+    let checkResult = isZeroLikeOrNonZeroLikeOrUndetermined($.subtract(lhs, rhs), $);
     if (checkResult) {
         return zero;
     }
@@ -81,11 +91,10 @@ export function Eval_testeq(p1: Cons, $: ExtensionEnv): U {
     // we didn't get a simple numeric result but
     // let's try again after doing
     // a simplification on both sides
-    const arg1 = simplify($.valueOf(cadr(p1)), $);
-    const arg2 = simplify($.valueOf(caddr(p1)), $);
-    subtractionResult = $.subtract(arg1, arg2);
+    const simpleLhs = simplify(lhs, $);
+    const simpleRhs = simplify(rhs, $);
 
-    checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(subtractionResult, $);
+    checkResult = isZeroLikeOrNonZeroLikeOrUndetermined($.subtract(simpleLhs, simpleRhs), $);
     if (checkResult) {
         return zero;
     }
@@ -100,9 +109,9 @@ export function Eval_testeq(p1: Cons, $: ExtensionEnv): U {
 }
 
 // Relational operators expect a numeric result for operand difference.
-export function Eval_testge(p1: U, $: ExtensionEnv): U {
-    const orig = p1;
-    const comparison = cmp_args(p1, $);
+export function Eval_testge(expr: Cons, $: ExtensionEnv): U {
+    const orig = expr;
+    const comparison = cmp_args(expr, $);
 
     if (comparison == null) {
         return orig;
@@ -116,9 +125,9 @@ export function Eval_testge(p1: U, $: ExtensionEnv): U {
     }
 }
 
-export function Eval_testgt(p1: Cons, $: ExtensionEnv): U {
-    const orig = p1;
-    const comparison = cmp_args(p1, $);
+export function Eval_testgt(expr: Cons, $: ExtensionEnv): U {
+    const orig = expr;
+    const comparison = cmp_args(expr, $);
 
     if (comparison == null) {
         return orig;
@@ -132,9 +141,9 @@ export function Eval_testgt(p1: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function Eval_testle(p1: Cons, $: ExtensionEnv): U {
-    const orig = p1;
-    const comparison = cmp_args(p1, $);
+export function Eval_testle(expr: Cons, $: ExtensionEnv): U {
+    const orig = expr;
+    const comparison = cmp_args(expr, $);
 
     if (comparison == null) {
         return orig;
@@ -148,9 +157,9 @@ export function Eval_testle(p1: Cons, $: ExtensionEnv): U {
     }
 }
 
-export function Eval_testlt(arg: Cons, $: ExtensionEnv): U {
-    const orig = arg;
-    const comparison = cmp_args(arg, $);
+export function Eval_testlt(expr: Cons, $: ExtensionEnv): U {
+    const orig = expr;
+    const comparison = cmp_args(expr, $);
     // console.lg(`comparison => ${comparison}`);
 
     if (comparison == null) {
@@ -166,13 +175,15 @@ export function Eval_testlt(arg: Cons, $: ExtensionEnv): U {
     }
 }
 
-// not definition
+/**
+ * not is used to implement testne by using testeq.
+ */
 export function Eval_not(expr: Cons, $: ExtensionEnv): U {
-    const wholeAndExpression = expr;
-    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(cadr(expr), $);
+    const valueOrPredicate = expr.argList.head;
+    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate, $);
     if (checkResult == null) {
         // inconclusive test on predicate
-        return wholeAndExpression;
+        return expr;
     }
     else if (checkResult) {
         // true -> false
@@ -299,18 +310,19 @@ export function Eval_or(p1: U, $: ExtensionEnv): U {
 // of "relational operator: cannot determine..."
 // a bit like we do in Eval_testeq
 /**
- * 
- * @param args 
- * @param $ 
- * @returns 
+ * Supports testge, testgt, testle, testlt
+ * @param expr An binary expression containing (testxx lhs rhs) whre xx is one of ge,gt,le,lt.
  */
-function cmp_args(args: U, $: ExtensionEnv): Sign | null {
-    let t: Sign | null = SIGN_EQ;
-    const arg1 = simplify($.valueOf(cadr(args)), $);
+function cmp_args(expr: Cons, $: ExtensionEnv): Sign | null {
+    // console.lg("cmp_args", $.toInfixString(expr));
+    const lhs = simplify($.valueOf(expr.lhs), $);
+    const rhs = simplify($.valueOf(expr.rhs), $);
+    // console.lg("lhs", $.toInfixString(lhs));
+    // console.lg("rhs", $.toInfixString(rhs));
 
-    const arg2 = simplify($.valueOf(caddr(args)), $);
+    let diff = $.subtract(lhs, rhs);
 
-    let diff = $.subtract(arg1, arg2);
+    // console.lg("diff", $.toInfixString(diff));
 
     // try floating point if necessary
     // This will go recursive and you will think your values are being promoted.
@@ -319,28 +331,29 @@ function cmp_args(args: U, $: ExtensionEnv): Sign | null {
         diff = $.valueOf(evaluate_as_float(diff, $));
     }
 
+    // console.lg("diff", $.toInfixString(diff));
+
     if ($.is_zero(diff)) {
-        return 0;
+        return SIGN_EQ;
     }
 
     if (is_rat(diff)) {
         if (MSIGN(diff.a) === -1) {
-            t = -1;
+            return SIGN_LT;
         }
         else {
-            t = 1;
+            return SIGN_GT;
         }
     }
     else if (is_flt(diff)) {
         if (diff.d < 0.0) {
-            t = -1;
+            return SIGN_LT;
         }
         else {
-            t = 1;
+            return SIGN_GT;
         }
     }
     else {
-        t = null;
+        return null;
     }
-    return t;
 }

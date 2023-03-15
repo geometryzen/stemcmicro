@@ -24,7 +24,7 @@ run_test([
     'a+i*b',
 
     'rect(exp(a+i*b))',
-    'exp(a)*cos(b)+i*exp(a)*sin(b)',
+    'cos(b)*exp(a)+i*exp(a)*sin(b)',
 
     'rect(1+exp(i*pi/3))',
     '3/2+1/2*i*3^(1/2)',

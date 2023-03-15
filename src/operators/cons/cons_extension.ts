@@ -1,23 +1,7 @@
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Eval_filter } from "../../filter";
-import { invg } from "../../inv";
-import { is_rat_and_integer } from "../../is_rat_and_integer";
-import { Eval_leading } from "../../leading";
-import { Eval_lookup } from "../../lookup";
-import { Eval_prime } from "../../prime";
 import { to_infix_string } from "../../print/to_infix_string";
-import { BINDING, CLEARPATTERNS, FACTORPOLY, FILTER, IF, INVG, ISINTEGER, LEADING, LOOKUP, OPERATOR, PATTERN, PATTERNSINFO, PRIME, SILENTPATTERN, STOP, SYMBOLSINFO, TEST, TESTGE, TESTGT, TESTLE } from "../../runtime/constants";
-import { stack_pop, stack_push } from "../../runtime/stack";
-import { Eval_if } from "../../scripting/eval_if";
-import { Eval_clearpatterns, Eval_pattern, Eval_patternsinfo, Eval_silentpattern } from "../../scripting/eval_pattern";
-import { Eval_symbolsinfo } from "../../scripting/eval_symbolsinfo";
-import { Eval_test, Eval_testge, Eval_testgt, Eval_testle } from "../../test";
-import { cadr } from "../../tree/helpers";
-import { one, zero } from "../../tree/rat/Rat";
-import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, nil, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
+import { cons, Cons, is_cons, is_nil, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
-import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
 
 /**
@@ -144,88 +128,9 @@ class ConsExtension implements Extension<Cons> {
         else {
             return expr;
         }
-        /*
-        if (MATH_ADD.contains(op)) {
-            return expr;
-        }
-        */
-
-        // TODO: This switch will fail because Sym is no longer interred.
-        switch (op) {
-            case BINDING:
-                Eval_binding(expr, $);
-                return stack_pop();
-            case CLEARPATTERNS:
-                Eval_clearpatterns();
-                return stack_pop();
-            case FACTORPOLY:
-                Eval_factorpoly(expr, $);
-                return stack_pop();
-            case FILTER:
-                Eval_filter(expr, $);
-                return stack_pop();
-            case IF:
-                Eval_if(expr, $);
-                return stack_pop();
-            case INVG:
-                Eval_invg(expr, $);
-                return stack_pop();
-            case ISINTEGER:
-                Eval_isinteger(expr, $);
-                return stack_pop();
-            case LEADING:
-                Eval_leading(expr, $);
-                return stack_pop();
-            case LOOKUP:
-                Eval_lookup(expr, $);
-                return stack_pop();
-            case OPERATOR:
-                Eval_operator(expr, $);
-                return stack_pop();
-            case PATTERN:
-                Eval_pattern(expr, $);
-                return stack_pop();
-            case PATTERNSINFO:
-                Eval_patternsinfo();
-                return stack_pop();
-            case PRIME:
-                Eval_prime(expr, $);
-                return stack_pop();
-            case SILENTPATTERN:
-                Eval_silentpattern(expr, $);
-                return stack_pop();
-            case STOP:
-                Eval_stop();
-                return stack_pop();
-            case SYMBOLSINFO:
-                Eval_symbolsinfo($);
-                return stack_pop();
-            case TEST:
-                Eval_test(expr, $);
-                return stack_pop();
-            case TESTGE:
-                Eval_testge(expr, $);
-                return stack_pop();
-            case TESTGT:
-                Eval_testgt(expr, $);
-                return stack_pop();
-            case TESTLE:
-                Eval_testle(expr, $);
-                return stack_pop();
-            default:
-                throw new Error();
-        }
-
-        throw new Error(`ConsExtension.valueOf ${$.toInfixString(expr)} method not implemented.`);
-        return expr;
     }
 }
-
-/**
- * TODO; We're not using this.
- * @param expr 
- * @param $ 
- */
+/*
 function Eval_binding(expr: Cons, $: ExtensionEnv) {
     const argList = expr.argList;
     if (is_cons(argList)) {
@@ -241,7 +146,8 @@ function Eval_binding(expr: Cons, $: ExtensionEnv) {
         // stack_push(new Error(`expr.argList MUST be a Cons. binding(expr => ${$.toInfixString(expr)})`));
     }
 }
-
+*/
+/*
 function Eval_factorpoly(p1: U, $: ExtensionEnv) {
     p1 = cdr(p1);
     const arg1 = $.valueOf(car(p1));
@@ -253,18 +159,21 @@ function Eval_factorpoly(p1: U, $: ExtensionEnv) {
     }
     stack_push(temp);
 }
-
+*/
+/*
 function Eval_invg(p1: U, $: ExtensionEnv): void {
     const arg = $.valueOf(cadr(p1));
     stack_push(invg(arg, $));
 }
-
+*/
+/*
 function Eval_isinteger(p1: U, $: ExtensionEnv) {
     p1 = $.valueOf(cadr(p1));
     const result = _isinteger(p1);
     stack_push(result);
 }
-
+*/
+/*
 function _isinteger(p1: U): U {
     if (is_rat(p1)) {
         return is_rat_and_integer(p1) ? one : zero;
@@ -275,16 +184,19 @@ function _isinteger(p1: U): U {
     }
     return items_to_cons(ISINTEGER), p1;
 }
-
+*/
+/*
 function Eval_operator(p1: U, $: ExtensionEnv) {
     const mapped = is_cons(p1) ? p1.tail().map($.valueOf) : [];
     const result = items_to_cons(OPERATOR, ...mapped);
     stack_push(result);
 }
-
+*/
+/*
 function Eval_stop() {
     throw new Error('user stop');
 }
+*/
 
 export const cons_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
     return new ConsExtension($);

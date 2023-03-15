@@ -102,7 +102,13 @@ export enum Directive {
      * 
      * The default value is false.
      */
-    useCaretForExponentiation
+    useCaretForExponentiation,
+    /**
+     * Determines whether test funtions will return Boo or Rat values.
+     * 
+     * The default value is false.
+     */
+    useIntegersForPredicates
 }
 
 export interface PrintHandler {
@@ -125,7 +131,7 @@ export type LambdaExpr = (argList: Cons, $: ExtensionEnv) => U;
  * Not to be confused with a LambdaExpr.
  * Here the first argument is the expression including the operator.
  */
-export type LegacyExpr = (expr: Cons, $: ExtensionEnv) => U;
+export type ConsExpr = (expr: Cons, $: ExtensionEnv) => U;
 
 export type KeywordRunner = ($: ExtensionEnv) => void;
 
@@ -220,7 +226,7 @@ export interface ExtensionEnv {
     /**
      * Defines the implementation of a function that is used to transform (name ...) expressions.
      */
-    defineLegacyTransformer(opr: Sym, transformer: LegacyExpr): void;
+    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void;
     defineFunction(match: U, lambda: LambdaExpr): void;
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineOperator(builder: OperatorBuilder<U>): void;

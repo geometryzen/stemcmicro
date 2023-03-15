@@ -15,10 +15,16 @@ import { is_num_or_tensor_or_identity_matrix } from "../runtime/helpers";
 import { U } from "../tree/tree";
 import { float_eval_abs_eval } from "./float_eval_abs_eval";
 
-// routine is sufficient.
+/**
+ * The value or predicate is evaluated after assignment has been replaced with testeq.
+ * FIXME: It would be better for the evaluation to be externalized.
+ * @param valueOrPredicate 
+ */
 export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: ExtensionEnv): boolean | null {
     // just like Eval but turns assignments into equality checks
     const value = $.valueOf(replace_assign_with_testeq(valueOrPredicate));
+
+    // console.lg("value", $.toInfixString(value));
 
     // OK first check if we already have
     // a simple zero (or simple zero tensor)

@@ -252,6 +252,7 @@ export interface TestOptions {
     dependencies?: DEPENDENCY[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
+    useIntegersForPredicates?: boolean;
     verbose?: boolean;
     name?: string;
 }
@@ -261,6 +262,7 @@ interface TestConfig {
     dependencies: DEPENDENCY[];
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
+    useIntegersForPredicates: boolean;
     verbose: boolean;
 }
 
@@ -272,6 +274,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
+            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
         return config;
@@ -282,6 +285,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             dependencies: [],
             useCaretForExponentiation: true,
             useDefinitions: true,
+            useIntegersForPredicates: true,
             verbose: false
         };
         return config;
@@ -297,6 +301,7 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
             assumes: options.assumes,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
+            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
             syntaxKind: SyntaxKind.Native
         };
     }
@@ -304,6 +309,7 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
         return {
             useCaretForExponentiation: true,
             useDefinitions: true,
+            useIntegersForPredicates: true,
             syntaxKind: SyntaxKind.Native
         };
     }

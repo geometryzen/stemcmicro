@@ -371,14 +371,16 @@ import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, NROOTS, POLAR, PREDICATE_IS_R
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Eval_power } from '../scripting/eval_power';
-import { Eval_and, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt } from '../test';
+import { Eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt, Eval_testne } from '../test';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 export function define_std_operators($: ExtensionEnv) {
     // 
     const MATH_ADD = native_sym(Native.add);
     const SIN = native_sym(Native.sin);
-    const testeq = native_sym(Native.test_eq);
+    const TEST = native_sym(Native.test);
+    const TESTEQ = native_sym(Native.test_eq);
+    const TESTNE = native_sym(Native.test_ne);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
@@ -459,7 +461,7 @@ export function define_std_operators($: ExtensionEnv) {
     // $.defineOperator(pow_2_any_rat);
     // $.defineOperator(pow_2_any_any);
     // $.defineOperator(pow);
-    $.defineLegacyTransformer(MATH_POW, Eval_power);
+    $.defineConsTransformer(MATH_POW, Eval_power);
 
     $.defineOperator(mul_2_sym_blade);
     // $.defineOperator(mul_cons_sym);
@@ -531,12 +533,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_sin_cos);
     $.defineOperator(mul_varargs);
 
-    $.defineLegacyTransformer(APPROXRATIO, Eval_approxratio);
+    $.defineConsTransformer(APPROXRATIO, Eval_approxratio);
     $.defineOperator(binomial_varargs);
-    $.defineLegacyTransformer(CHECK, Eval_check);
+    $.defineConsTransformer(CHECK, Eval_check);
 
     $.defineOperator(choose_varargs);
-    $.defineLegacyTransformer(CLEAR, Eval_clear);
+    $.defineConsTransformer(CLEAR, Eval_clear);
     $.defineKeyword(CLEARALL, Eval_clearall);
 
     $.defineOperator(conj_add);
@@ -627,7 +629,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(adj_any);
 
     $.defineOperator(algebra_2_tensor_tensor);
-    $.defineLegacyTransformer(AND, Eval_and);
+    $.defineConsTransformer(AND, Eval_and);
     $.defineOperator(arccos_varargs);
     $.defineOperator(arccosh_varargs);
     $.defineOperator(arcsin_varargs);
@@ -752,12 +754,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(not_fn);
     $.defineOperator(number_fn);
     $.defineOperator(numerator_fn);
-    $.defineLegacyTransformer(NROOTS, Eval_nroots);
+    $.defineConsTransformer(NROOTS, Eval_nroots);
     $.defineOperator(or_varargs);
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
-    $.defineLegacyTransformer(POLAR, Eval_polar);
+    $.defineConsTransformer(POLAR, Eval_polar);
 
     $.defineOperator(make_printmode_operator('print', () => defs.printMode));
     $.defineOperator(make_printmode_operator('printascii', () => PRINTMODE_ASCII));
@@ -775,7 +777,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(product_varargs);
 
-    $.defineLegacyTransformer(QUOTE, Eval_quote);
+    $.defineConsTransformer(QUOTE, Eval_quote);
     $.defineOperator(quotient_varargs);
     $.defineOperator(rationalize_fn);
 
@@ -820,7 +822,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(rect_mul_rat_any);
     $.defineOperator(rect_pow_exp_imu);
-    $.defineLegacyTransformer(RECT, Eval_rect);
+    $.defineConsTransformer(RECT, Eval_rect);
 
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);
@@ -869,22 +871,26 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(typeof_blade);
     $.defineOperator(typeof_any);
 
+    $.defineConsTransformer(TEST, Eval_test);
 
     $.defineOperator(testeq_sym_rat);
-    $.defineLegacyTransformer(testeq, Eval_testeq);
-    $.defineLegacyTransformer(TESTLE, Eval_testle);
+    $.defineConsTransformer(TESTEQ, Eval_testeq);
+    $.defineConsTransformer(TESTLE, Eval_testle);
 
     $.defineOperator(testlt_flt_rat);
     $.defineOperator(testlt_rat_rat);
     $.defineOperator(testlt_sym_rat);
     $.defineOperator(testlt_mul_2_any_any_rat);
-    $.defineLegacyTransformer(TESTLT, Eval_testlt);
+    $.defineConsTransformer(TESTLT, Eval_testlt);
 
-    $.defineLegacyTransformer(TESTGE, Eval_testge);
+    $.defineConsTransformer(TESTGE, Eval_testge);
+
     $.defineOperator(testgt_rat_rat);
     $.defineOperator(testgt_sym_rat);
     $.defineOperator(testgt_mul_2_any_any_rat);
-    $.defineLegacyTransformer(TESTGT, Eval_testgt);
+    $.defineConsTransformer(TESTGT, Eval_testgt);
+
+    $.defineConsTransformer(TESTNE, Eval_testne);
 
     $.defineOperator(transpose_varargs);
 

@@ -38,6 +38,12 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
      *
      */
     useDefinitions?: boolean;
+    /**
+     * Determines whether test functions will return boolean or integer values.
+     * 
+     * The default is false.
+     */
+    useIntegersForPredicates?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -104,7 +110,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             disable: options.disable,
             noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
-            useDefinitions: options.useDefinitions
+            useDefinitions: options.useDefinitions,
+            useIntegersForPredicates: options.useIntegersForPredicates
         };
         return hook(config, "A");
     }
@@ -115,7 +122,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
-            useDefinitions: false
+            useDefinitions: false,
+            useIntegersForPredicates: false
         };
         return hook(config, "B");
     }

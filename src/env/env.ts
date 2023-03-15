@@ -17,10 +17,10 @@ import { Sym } from "../tree/sym/Sym";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
 import { DirectiveStack } from "./DirectiveStack";
-import { CompareFn, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, LegacyExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, ConsExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
-import { hash_from_match, operator_from_legacy_transformer, opr_from_match } from "./operator_from_legacy_transformer";
+import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
 import { UnknownOperator } from "./UnknownOperator";
 
 const ADD = native_sym(Native.add);
@@ -47,6 +47,7 @@ export interface EnvOptions {
     noOptimize?: boolean;
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
+    useIntegersForPredicates?: boolean;
 }
 
 export interface EnvConfig {
@@ -56,6 +57,7 @@ export interface EnvConfig {
     noOptimize: boolean;
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
+    useIntegersForPredicates: boolean;
 }
 
 function config_from_options(options: EnvOptions | undefined): EnvConfig {
@@ -66,7 +68,8 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             disable: Array.isArray(options.disable) ? options.disable : [],
             noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false
+            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
+            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
         };
         return config;
     }
@@ -77,7 +80,8 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
-            useDefinitions: false
+            useDefinitions: false,
+            useIntegersForPredicates: false
         };
         return config;
     }
@@ -185,8 +189,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        defineLegacyTransformer(opr: Sym, transformer: LegacyExpr): void {
-            $.defineOperator(operator_from_legacy_transformer(opr, transformer));
+        defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
+            $.defineOperator(operator_from_cons_expression(opr, consExpr));
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         defineFunction(match: U, impl: LambdaExpr): void {
@@ -592,7 +596,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolPrintName(native_sym(Native.exp), 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
-    $.pushDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
+    if ($.getDirective(Directive.useCaretForExponentiation) !== config.useCaretForExponentiation) {
+        $.pushDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
+    }
+    if ($.getDirective(Directive.useIntegersForPredicates) !== config.useIntegersForPredicates) {
+        $.pushDirective(Directive.useIntegersForPredicates, config.useIntegersForPredicates);
+    }
 
     return $;
 }

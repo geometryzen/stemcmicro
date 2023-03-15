@@ -52,6 +52,7 @@ const scanConfig: ScanConfig = {
         'exp': native_sym(Native.exp),
         'iscomplex': native_sym(Native.is_complex),
         'isreal': native_sym(Native.is_real),
+        'not': native_sym(Native.not),
         'sin': native_sym(Native.sin),
     },
     meta: {

@@ -3,10 +3,10 @@ import { FunctionVarArgs } from "../operators/helpers/FunctionVarArgs";
 import { is_sym } from "../operators/sym/is_sym";
 import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, U } from "../tree/tree";
-import { ExtensionEnv, LambdaExpr, LegacyExpr, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { ExtensionEnv, LambdaExpr, ConsExpr, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 
 class PluggableBuilder implements OperatorBuilder<U> {
-    constructor(private readonly opr: Sym, private readonly hash: string, private readonly evaluator: LegacyExpr) {
+    constructor(private readonly opr: Sym, private readonly hash: string, private readonly evaluator: ConsExpr) {
     }
     create($: ExtensionEnv): Operator<U> {
         return new PluggableOperator(this.opr, this.hash, this.evaluator, $);
@@ -15,7 +15,7 @@ class PluggableBuilder implements OperatorBuilder<U> {
 
 class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
     readonly #hash: string;
-    constructor(opr: Sym, hash: string, private readonly evaluator: LegacyExpr, $: ExtensionEnv) {
+    constructor(opr: Sym, hash: string, private readonly evaluator: ConsExpr, $: ExtensionEnv) {
         super(opr.text, opr, $);
         this.#hash = hash;
     }
@@ -36,12 +36,12 @@ class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export function operator_from_legacy_transformer(opr: Sym, transformer: LegacyExpr): OperatorBuilder<U> {
+export function operator_from_cons_expression(opr: Sym, transformer: ConsExpr): OperatorBuilder<U> {
     const hash = hash_nonop_cons(opr);
     return new PluggableBuilder(opr, hash, transformer);
 }
 
-export function operator_from_modern_transformer(match: U, lambda: LambdaExpr): OperatorBuilder<U> {
+export function operator_from_lambda_expression(match: U, lambda: LambdaExpr): OperatorBuilder<U> {
     const opr = opr_from_match(match);
     const hash = hash_from_match(match);
     const transformer = transformer_from_lambda(lambda);
@@ -80,7 +80,7 @@ export function hash_from_match(pattern: U): string {
     }
 }
 
-function transformer_from_lambda(lambda: LambdaExpr): LegacyExpr {
+function transformer_from_lambda(lambda: LambdaExpr): ConsExpr {
     return function (expr: Cons, $: ExtensionEnv) {
         // The lambda operates on the argument list.
         // The arguments in the argument list are not evaluated.

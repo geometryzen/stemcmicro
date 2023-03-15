@@ -32,6 +32,7 @@ export enum Native {
      */
     mod,
     multiply,
+    not,
     outer,
     pow,
     real,
@@ -45,6 +46,7 @@ export enum Native {
      * tau(x) = 2 * PI * x
      */
     tau,
+    test,
     test_eq,
     test_ge,
     test_gt,

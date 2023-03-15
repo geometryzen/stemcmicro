@@ -65,16 +65,14 @@ const versin_lambda: LambdaExpr = (argList: Cons, $: ExtensionEnv) => {
     const x = argList.head;
     // versin(n*pi) = 1 - (-1)**n
     const pi = native_sym(Native.PI);
-    const n = $.evaluate(Native.divide, x, pi);
+    const n = $.divide(x, pi);
     if (is_rat(n) && n.isInteger()) {
         return $.subtract(one, $.power(negOne, n));
     }
     else {
         // versin(x) = 1 - cos(x)
-        return $.subtract(one, $.evaluate(Native.cos, x));
+        return $.subtract(one, $.cos(x));
     }
-    // If not expanding.
-    // return cons(VERSIN, argList);
 };
 
 describe("versin", function () {

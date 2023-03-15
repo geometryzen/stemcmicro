@@ -2,7 +2,7 @@ import { Native } from "../native/Native";
 import { Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { Cons, U } from "../tree/tree";
-import { EnvConfig } from "./env";
+import { EnvConfig } from "./EnvConfig";
 
 export type Sign = -1 | 0 | 1;
 export const SIGN_LT = -1;
@@ -50,7 +50,7 @@ export function keepFlag(flags: TFLAGS): boolean {
 
 // TODO: Need to be able to handle positive and negative cases (like Vector).
 /**
- * @hidden
+ *
  */
 export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
 

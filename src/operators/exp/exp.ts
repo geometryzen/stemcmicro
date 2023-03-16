@@ -1,5 +1,5 @@
 import { binop } from "../../calculators/binop";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -31,9 +31,10 @@ class Exp extends Function1<ARG> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        // console.lg(this.name, this.$.toSExprString(expr));
+        // return [TFLAG_NONE, expr];
+        // console.lg(this.name, this.$.toInfixString(expr), "isExpanding", this.$.isExpanding(), "isFactoring", this.$.isExpanding());
         const $ = this.$;
-        if ($.isExpanding()) {
+        if ($.getDirective(Directive.canonicalize)) {
             return [TFLAG_DIFF, binop(POW, MATH_E, arg, $)];
         }
         else {

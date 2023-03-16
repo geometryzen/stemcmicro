@@ -60,7 +60,7 @@ describe("abs", function () {
             `abs(a+b+i*c)`,
         ];
         const engine = create_script_context({
-            enables: [Directive.expandPowerSum],
+            enable: [Directive.expandPowerSum],
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -72,7 +72,7 @@ describe("abs", function () {
             `abs(a+b+i*c)`,
         ];
         const engine = create_script_context({
-            disables: [Directive.expandPowerSum],
+            disable: [Directive.expandPowerSum],
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -183,7 +183,7 @@ describe("abs", function () {
             `abs(a+b+c*i)`,
         ];
         const engine = create_script_context({
-            enables: [Directive.expandPowerSum],
+            enable: [Directive.expandPowerSum],
             useCaretForExponentiation: false,
             useDefinitions: true
         });

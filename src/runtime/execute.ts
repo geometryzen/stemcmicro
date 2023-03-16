@@ -2,18 +2,27 @@ import { bake } from "../bake";
 import { ScanOptions } from '../brite/scan';
 import { Directive, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
+import { items_to_cons } from "../makeList";
+import { Native } from "../native/Native";
+import { native_sym } from "../native/native_sym";
 import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
+import { is_sym } from "../operators/sym/is_sym";
 import { ParseOptions, parse_script } from "../parser/parser";
 import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
-import { is_nil, nil, U } from '../tree/tree';
+import { Cons, is_cons, is_nil, nil, U } from '../tree/tree';
 import { Box } from "./Box";
 import { AUTOEXPAND, AUTOFACTOR, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
-import { defs, move_top_of_stack } from './defs';
+import { move_top_of_stack } from './defs';
 import { RESERVED_KEYWORD_LAST } from './ns_script';
+
+const CLOCK = native_sym(Native.clock);
+const FACTOR = native_sym(Native.factor);
+const POLAR = native_sym(Native.polar);
+const RATIONALIZE = native_sym(Native.rationalize);
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
@@ -32,6 +41,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  * @returns The return values, print outputs, and errors.
  */
 export function execute_script(fileName: string, sourceText: string, options: ParseOptions, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
+    // console.lg(sourceText);
     const { trees, errors } = parse_script(fileName, sourceText, options);
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
@@ -42,7 +52,7 @@ export function execute_script(fileName: string, sourceText: string, options: Pa
     try {
         for (const tree of trees) {
             // console.lg("tree", render_as_sexpr(tree, $));
-            // console.lg("tree", render_as_infix(tree, $));
+            // console.lg("tree", $.toInfixString(tree));
             const data = transform_tree(tree, $);
             if (data.value) {
                 if (!is_nil(data.value)) {
@@ -136,11 +146,13 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
  */
 export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
 
+    const wrappers: Sym[] = detect_wrappers(tree);
+
+    tree = remove_wrappers(tree);
+
     move_top_of_stack(0);
 
     const box = new Box(tree);
-
-    defs.trigmode = 0;
 
     // AUTOEXPAND, by default is unbound. i.e. only bound to it's own symbol.
     // isZero operating on Sym returns false. Therefore expanding will be true.
@@ -148,22 +160,40 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     if (isNotDisabled(AUTOEXPAND, $)) {
         $.pushDirective(Directive.expand, true);
         try {
-            // console.lg("Expanding...");
-            box.push(transform_with_reason(box.pop(), $, 'expanding'));
+            box.push(transform(apply_wrappers(box.pop(), wrappers), $));
         }
         finally {
             $.popDirective();
         }
     }
+
+    // console.lg("Canonicalize...");
+    $.pushDirective(Directive.canonicalize, true);
+    try {
+        box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+    }
+    finally {
+        $.popDirective();
+    }
+
     if (isNotDisabled(AUTOFACTOR, $)) {
         $.pushDirective(Directive.factor, true);
         try {
-            // console.lg("Expanding...");
-            box.push(transform_with_reason(box.pop(), $, 'factoring'));
+            // console.lg("Factoring...");
+            box.push(transform(apply_wrappers(box.pop(), wrappers), $));
         }
         finally {
             $.popDirective();
         }
+    }
+
+    // console.lg("Familiarize...");
+    $.pushDirective(Directive.familiarize, true);
+    try {
+        box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+    }
+    finally {
+        $.popDirective();
     }
 
     const transformed = box.pop();
@@ -181,7 +211,7 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
             // console.lg("Baking...");
             let expr = bake(box.pop(), $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.
-            expr = transform_with_reason(expr, $, 'bake     ');
+            expr = transform(expr, $);
             // console.lg(`baked     : ${print_list(expr, $)}`);
             box.push(expr);
         }
@@ -195,30 +225,84 @@ export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
     return box.pop();
 }
 
+function detect_wrappers(tree: U): Sym[] {
+    const wrappers: Sym[] = [];
+    if (is_cons(tree)) {
+        let expr: Cons = tree;
+        while (is_cons(expr)) {
+            const opr = expr.opr;
+            if (is_sym(opr)) {
+                if (is_wrapper_opr(opr)) {
+                    wrappers.push(opr);
+                    const innerExpr = expr.argList.head;
+                    if (is_cons(innerExpr)) {
+                        expr = innerExpr;
+                        continue;
+                    }
+                }
+            }
+            break;
+        }
+    }
+    return wrappers.reverse();
+}
+
+function remove_wrappers(tree: U): U {
+    if (is_cons(tree)) {
+        let expr: Cons = tree;
+        while (is_cons(expr)) {
+            const opr = expr.opr;
+            if (is_sym(opr)) {
+                if (is_wrapper_opr(opr)) {
+                    const innerExpr = expr.argList.head;
+                    if (is_cons(innerExpr)) {
+                        expr = innerExpr;
+                        continue;
+                    }
+                }
+            }
+            break;
+        }
+        return expr;
+    }
+    else {
+        return tree;
+    }
+}
+
+function is_wrapper_opr(sym: Sym): boolean {
+    if (CLOCK.equalsSym(sym)) {
+        return true;
+    }
+    else if (FACTOR.equalsSym(sym)) {
+        return true;
+    }
+    else if (POLAR.equalsSym(sym)) {
+        return true;
+    }
+    else if (RATIONALIZE.equalsSym(sym)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function apply_wrappers(tree: U, wrappers: Sym[]): U {
+    let expr = tree;
+    for (const wrapper of wrappers) {
+        expr = items_to_cons(wrapper, expr);
+    }
+    return expr;
+}
+
+
 function store_in_script_last(expr: U, $: ExtensionEnv): void {
     // This feels like a bit of a hack.
     if (!is_nil(expr)) {
         // console.lg(`store_in_script_last ${render_as_human(expr, $)}`);
         $.setSymbolValue(RESERVED_KEYWORD_LAST, expr);
     }
-}
-
-/**
- * Runs in a loop until the output becomes stable.
- * This behavior allows top-level expressions to be transformed.
- * @param inExpr 
- * @param $ 
- * @returns 
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function transform_with_reason(inExpr: U, $: ExtensionEnv, reason: 'expanding' | 'factoring' | 'bake     '): U {
-    // console.lg(`Entering ${reason.toUpperCase()} ${render_as_infix(inExpr, $)}`);
-
-    const outExpr = transform(inExpr, $);
-
-    // console.lg(`Leaving ${reason.toUpperCase()} ${render_as_infix(outExpr, $)}`);
-
-    return outExpr;
 }
 
 /**

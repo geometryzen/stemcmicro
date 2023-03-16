@@ -34,6 +34,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
+        // console.lg(this.name, $.toInfixString(arg));
         // TODO: Perhaps we should qualify that we are unpacking functions.
         // console.lg(`expr=${print_expr(expr, $)}`);
         const A = $.inner(arg, arg);

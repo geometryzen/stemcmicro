@@ -1,9 +1,12 @@
 import { ExtensionEnv, MODE_FLAGS_ALL, Operator, OperatorBuilder, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { RATIONALIZE } from "../../runtime/constants";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { Eval_rationalize } from "./rationalize";
+
+export const RATIONALIZE = native_sym(Native.rationalize);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

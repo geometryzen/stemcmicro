@@ -278,7 +278,7 @@ export function is_complex_number(expr: U, $: ExtensionEnv): boolean {
     return false;
 }
 
-export function iseveninteger(expr: U): boolean {
+export function is_rat_and_even_integer(expr: U): boolean {
     return is_rat_and_integer(expr) && expr.a.isEven();
 }
 

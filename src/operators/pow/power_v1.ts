@@ -4,7 +4,7 @@ import { complex_conjugate } from "../../complex_conjugate";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
-import { iscomplexnumberdouble, iseveninteger, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one } from "../../is";
+import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
 import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { is_integer_and_in_safe_number_range, nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
@@ -12,7 +12,6 @@ import { pow_rat_rat } from "../../pow_rat_rat";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
-import { defs } from "../../runtime/defs";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { power_tensor } from "../../tensor";
 import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
@@ -21,12 +20,10 @@ import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { QQ } from "../../tree/uom/QQ";
 import { abs } from "../abs/abs";
-import { cos } from "../cos/cosine";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
 import { rect } from "../rect/rect";
-import { sin } from "../sin/sine";
 import { is_tensor } from "../tensor/is_tensor";
 import { is_uom } from "../uom/uom_extension";
 import { dpow } from "./dpow";
@@ -48,7 +45,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg(`power ${render_as_infix(base, $)} ${render_as_infix(expo, $)} => ${render_as_infix(retval, $)} made by power_v1 at ${description}`);
+        // console.lg(`power base=>${$.toInfixString(base)} expo=>${$.toInfixString(expo)} => ${$.toInfixString(retval)} made by power_v1 at ${description}`);
         // console.lg(`HOOK power ${render_as_sexpr(base, $)} ${render_as_sexpr(expo, $)} => ${render_as_sexpr(retval, $)} made by power_v1 at ${description}`);
         return retval;
     };
@@ -158,7 +155,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // console.lg("power_v1", $.toSExprString(base), $.toSExprString(expo));
     if (is_cons(base)) {
         if (is_abs(base)) {
-            if (iseveninteger(expo)) {
+            if (is_rat_and_even_integer(expo)) {
                 // Be careful doing this as the result could be unknown.
                 /*
                 if ($.is_real(base)) {
@@ -265,7 +262,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
 
     let b_isEven_and_c_isItsInverse = false;
-    if (iseveninteger(caddr(base))) {
+    if (is_rat_and_even_integer(caddr(base))) {
         const isThisOne = $.multiply(caddr(base), expo);
         if (is_plus_or_minus_one(isThisOne, $)) {
             b_isEven_and_c_isItsInverse = true;
@@ -298,20 +295,18 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
 
     //  sin(x) ^ 2n -> (1 - cos(x) ^ 2) ^ n
-    if (defs.trigmode === 1 && car(base).equals(SIN) && iseveninteger(expo)) {
-        const result = $.power(
-            $.subtract(one, $.power(cos(cadr(base), $), two)),
-            $.multiply(expo, half)
-        );
+    if ($.getDirective(Directive.convertSinToCos) && is_cons(base) && car(base).equals(SIN) && is_rat_and_even_integer(expo)) {
+        const x = base.argList.head;
+        const n = $.multiply(expo, half);
+        const result = $.power($.subtract(one, $.power($.cos(x), two)), n);
         return hook(result, "U");
     }
 
-    //  cos(x) ^ 2n -> (1 - sin(x) ^ 2) ^ n
-    if (defs.trigmode === 2 && car(base).equals(COS) && iseveninteger(expo)) {
-        const result = $.power(
-            $.subtract(one, $.power(sin(cadr(base), $), two)),
-            $.multiply(expo, half)
-        );
+    // cos(x) ^ 2n -> (1 - sin(x) ^ 2) ^ n
+    if ($.getDirective(Directive.convertCosToSin) && is_cons(base) && car(base).equals(COS) && is_rat_and_even_integer(expo)) {
+        const x = base.argList.head;
+        const n = $.multiply(expo, half);
+        const result = $.power($.subtract(one, $.power($.sin(x), two)), n);
         return hook(result, "V");
     }
 

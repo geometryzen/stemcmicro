@@ -3,8 +3,8 @@ import { Directive, FEATURE, SymbolProps } from "./ExtensionEnv";
 export interface EnvConfig {
     assumes: { [name: string]: Partial<SymbolProps> };
     dependencies: FEATURE[];
-    enables: Directive[];
-    disables: Directive[];
+    enable: Directive[];
+    disable: Directive[];
     noOptimize: boolean;
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;

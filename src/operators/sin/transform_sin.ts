@@ -1,6 +1,6 @@
 import { rational } from '../../bignum';
-import { divide } from '../../helpers/divide';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { divide } from '../../helpers/divide';
 import { is_multiple_of_pi } from '../../is_multiple_of_pi';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
@@ -9,11 +9,9 @@ import { DynamicConstants } from '../../runtime/defs';
 import { is_add } from '../../runtime/helpers';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from "../../tree/helpers";
-import { half, negOne, one, three, two, create_int, zero } from '../../tree/rat/Rat';
-import { car, cdr, Cons, is_cons, U } from "../../tree/tree";
-import { cos } from '../cos/cosine';
+import { create_int, half, negOne, one, three, two, zero } from '../../tree/rat/Rat';
+import { car, Cons, is_cons, U } from "../../tree/tree";
 import { is_flt } from '../flt/is_flt';
-import { sin } from './sine';
 
 export function transform_sin(x: U, origExpr: U, $: ExtensionEnv): [TFLAGS, U] {
     // console.lg(`transform_sin x=${x}, origExpr=${origExpr}`);
@@ -25,20 +23,26 @@ export function transform_sin(x: U, origExpr: U, $: ExtensionEnv): [TFLAGS, U] {
     return sine_of_angle(x, origExpr, $);
 }
 
-function sine_of_angle_sum(x: Cons, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
-    let p2 = cdr(x);
-    while (is_cons(p2)) {
-        const B = car(p2);
+/**
+ * Note that this function does not perform an unconditional expansion.
+ * Rather, it detects terms which are multiples of pi to perform simplifications.
+ */
+function sine_of_angle_sum(addExpr: Cons, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
+    // console.lg("sine_of_angle_sum", $.toInfixString(addExpr));
+    let argList = addExpr.argList;
+    while (is_cons(argList)) {
+        const B = argList.head;
         if (is_multiple_of_pi(B, $)) {
-            const A = $.subtract(x, B);
-            return [TFLAG_DIFF, $.add($.multiply(sin(A, $), cos(B, $)), $.multiply(cos(A, $), sin(B, $)))];
+            const A = $.subtract(addExpr, B);
+            return [TFLAG_DIFF, $.add($.multiply($.sin(A), $.cos(B)), $.multiply($.cos(A), $.sin(B)))];
         }
-        p2 = cdr(p2);
+        argList = argList.argList;
     }
-    return sine_of_angle(x, oldExpr, $);
+    return sine_of_angle(addExpr, oldExpr, $);
 }
 
 function sine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
+    // console.lg("sine_of_angle", $.toInfixString(x));
     if (car(x).equals(ARCSIN)) {
         return [TFLAG_DIFF, cadr(x)];
     }
@@ -53,7 +57,7 @@ function sine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
 
     // sine function is antisymmetric, sin(-x) = -sin(x)
     if (is_negative(x)) {
-        return [TFLAG_DIFF, $.negate(sin($.negate(x), $))];
+        return [TFLAG_DIFF, $.negate($.sin($.negate(x)))];
     }
 
     // sin(arctan(x)) = x / sqrt(1 + x^2)
@@ -65,6 +69,11 @@ function sine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
             $.power($.add(one, $.power(cadr(x), two)), rational(-1, 2))
         )];
     }
+
+    return sin_special_angles(x, oldExpr, $);
+}
+
+export function sin_special_angles(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
 
     // multiply by 180/pi to go from radians to degrees.
     // we go from radians to degrees because it's much

@@ -30,6 +30,7 @@
         "tests": "mocha 'tests/**/*.ts' --sort",
         "units": "mocha 'units/**/*.spec.ts' --sort",
         "test-polar": "mocha 'tests/polar.ts'",
+        "unit-abs": "mocha 'units/abs.spec.ts'",
         "unit-arg": "mocha 'units/arg.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
         "unit-clock": "mocha 'units/clock.spec.ts'",
@@ -90,12 +91,12 @@
         "gh-pages": "^5.0.0",
         "mocha": "^10.2.0",
         "nyc": "^15.1.0",
-        "release-it": "^15.8.0",
+        "release-it": "^15.9.0",
         "rollup": "^3.19.1",
         "rollup-plugin-dts": "^5.2.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.1",
-        "typedoc": "^0.23.26",
+        "typedoc": "^0.23.27",
         "typescript": "^4.9.5"
     }
 }

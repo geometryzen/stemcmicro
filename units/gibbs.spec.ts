@@ -16,7 +16,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "Ax*Bx+Ay*By+Az*Bz");
@@ -50,7 +50,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(Ax**2+Ay**2+Az**2)**(1/2)");
@@ -128,7 +128,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            enables: [Directive.expandPowerSum]
+            enable: [Directive.expandPowerSum]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -153,7 +153,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            enables: [Directive.expandPowerSum]
+            enable: [Directive.expandPowerSum]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -177,7 +177,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
@@ -189,7 +189,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "Ax**2*By**2");
@@ -213,7 +213,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz-2*Ay*Az*By*Bz+Ax**2*By**2+Ax**2*Bz**2+Ay**2*Bx**2+Ay**2*Bz**2+Az**2*Bx**2+Az**2*By**2");
@@ -236,7 +236,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "-2*Ax*Ay*Bx*By-2*Ax*Az*Bx*Bz-2*Ay*Az*By*Bz+Ax**2*By**2+Ax**2*Bz**2+Ay**2*Bx**2+Ay**2*Bz**2+Az**2*Bx**2+Az**2*By**2");
@@ -259,7 +259,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2+Az**2");
@@ -280,7 +280,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "(expt Ax 2)");
@@ -302,7 +302,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "(+ (expt Ax 2) (expt Ay 2))");
@@ -320,7 +320,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            disables: [Directive.factor]
+            disable: [Directive.factor]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "Ax**2+Ay**2+Az**2");
@@ -521,7 +521,7 @@ describe("gibbs", function () {
             ];
             const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-                disables: [Directive.factor]
+                disable: [Directive.factor]
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsSExpr(value), "(* Bz (derivative Az z) e3)");
@@ -546,7 +546,7 @@ describe("gibbs", function () {
             ];
             const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-                disables: [Directive.factor]
+                disable: [Directive.factor]
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -571,7 +571,7 @@ describe("gibbs", function () {
             ];
             const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-                disables: [Directive.factor]
+                disable: [Directive.factor]
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");

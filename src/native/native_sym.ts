@@ -28,10 +28,14 @@ export function build_sym(code: Native): Sym {
         case Native.add: return create_sym('add');
         case Native.arctan: return create_sym('arctan');
         case Native.arg: return create_sym('arg');
+        case Native.clock: return create_sym('clock');
+        case Native.condense: return create_sym('condense');
         case Native.conj: return create_sym('conj');
         case Native.cos: return create_sym('cos');
         case Native.divide: return create_sym('/');
         case Native.exp: return create_sym('exp');
+        case Native.expsin: return create_sym('expsin');
+        case Native.factor: return create_sym('factor');
         case Native.factorial: return create_sym('factorial');
         case Native.imag: return create_sym('imag');
         case Native.inner: return create_sym('inner');
@@ -46,7 +50,9 @@ export function build_sym(code: Native): Sym {
         case Native.multiply: return create_sym('*');
         case Native.not: return create_sym('not');
         case Native.outer: return create_sym('outer');
+        case Native.polar: return create_sym('polar');
         case Native.pow: return create_sym('pow');
+        case Native.rationalize: return create_sym('rationalize');
         case Native.real: return create_sym('real');
         case Native.rect: return create_sym('rect');
         case Native.rco: return create_sym('>>');

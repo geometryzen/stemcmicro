@@ -30,11 +30,24 @@ function copy_directives(directives: Directives): Directives {
 
 function update_directives(directives: Directives, directive: Directive, value: boolean): void {
     switch (directive) {
+        case Directive.canonicalize: {
+            if (value) {
+                directives[Directive.familiarize] = false;
+            }
+            break;
+        }
+        case Directive.familiarize: {
+            if (value) {
+                directives[Directive.canonicalize] = false;
+            }
+            break;
+        }
         case Directive.expand: {
             if (value) {
                 directives[Directive.factor] = false;
             }
             else {
+                // console.lg("Directive.expand has been set to false, Directive.factor becoming true");
                 directives[Directive.factor] = true;
             }
             break;
@@ -44,7 +57,20 @@ function update_directives(directives: Directives, directive: Directive, value: 
                 directives[Directive.expand] = false;
             }
             else {
+                // console.lg("Directive.factor has been set to false, Directive.expand becoming true");
                 directives[Directive.expand] = true;
+            }
+            break;
+        }
+        case Directive.convertCosToSin: {
+            if (value) {
+                directives[Directive.convertSinToCos] = false;
+            }
+            break;
+        }
+        case Directive.convertSinToCos: {
+            if (value) {
+                directives[Directive.convertCosToSin] = false;
             }
             break;
         }
@@ -52,13 +78,22 @@ function update_directives(directives: Directives, directive: Directive, value: 
     directives[directive] = value;
 }
 
+// TODO: Table-drive approach to declaring which expressions are mutually exclusive.
+/*
+function mutex(directives: Directives, value: boolean, a: Directive, b: Directive): void {
+    if (value) {
+        directives[Directive.convertCosToSin] = false;
+    }
+}
+*/
+
 function initial_directives(): Directives {
     const directives: Directives = {};
     update_directives(directives, Directive.evaluatingAsClock, false);
     update_directives(directives, Directive.evaluatingAsFloat, false);
     update_directives(directives, Directive.evaluatingAsPolar, false);
     update_directives(directives, Directive.evaluatingTrigAsExp, false);
-    update_directives(directives, Directive.expand, true);
+    update_directives(directives, Directive.expand, false);
     update_directives(directives, Directive.expandPowerSum, false);
     update_directives(directives, Directive.factor, false);
     update_directives(directives, Directive.keepZeroTermsInSums, false);

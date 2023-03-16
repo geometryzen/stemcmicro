@@ -59,6 +59,22 @@ export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
  */
 export enum Directive {
     /**
+     * Convert familiar expressions to canonical form. Mutually exclusive with familiarize.
+     */
+    canonicalize,
+    /**
+     * Replace sin with cos. Mutually exclusive with convertCosToSim.
+     */
+    convertSinToCos,
+    /**
+     * Replace cos with sin. Mutually exclusive with convertSinToCos.
+     */
+    convertCosToSin,
+    /**
+     * Convert canonical expressions to familiar form. Mutually exclusive with canonicalize.
+     */
+    familiarize,
+    /**
      * Mutually exclusive with factor.
      */
     expand,

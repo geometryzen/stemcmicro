@@ -8,10 +8,8 @@ import { create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { create_int, half, negOne, one, two, zero } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
-import { cos } from '../cos/cosine';
 import { is_flt } from '../flt/is_flt';
 import { is_rat } from '../rat/is_rat';
-import { sin } from '../sin/sine';
 
 /* besselj =====================================================================
 
@@ -83,13 +81,13 @@ function yybesselj(X: U, N: U, $: ExtensionEnv): U {
         // n = 1/2
         if (MEQUAL(N.a, 1)) {
             const twoOverPi = $.getDirective(Directive.evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
-            return $.multiply($.power(divide(twoOverPi, X, $), half), sin(X, $));
+            return $.multiply($.power(divide(twoOverPi, X, $), half), $.sin(X));
         }
 
         // n = -1/2
         if (MEQUAL(N.a, -1)) {
             const twoOverPi = $.getDirective(Directive.evaluatingAsFloat) ? create_flt(2.0 / Math.PI) : divide(two, PI, $);
-            return $.multiply($.power(divide(twoOverPi, X, $), half), cos(X, $));
+            return $.multiply($.power(divide(twoOverPi, X, $), half), $.cos(X));
         }
 
         // besselj(x,n) = (2/x) (n-sgn(n)) besselj(x,n-sgn(n)) - besselj(x,n-2*sgn(n))

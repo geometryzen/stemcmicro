@@ -32,7 +32,7 @@ describe("taylor", function () {
             `taylor(1/(5+4*cos(x)),x,2,0)`
         ];
         const engine = create_script_context({
-            disables: [Directive.factor],
+            disable: [Directive.factor],
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

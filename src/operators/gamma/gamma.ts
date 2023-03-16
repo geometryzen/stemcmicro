@@ -8,7 +8,6 @@ import { cadr } from '../../tree/helpers';
 import { half, negOne, Rat } from '../../tree/rat/Rat';
 import { car, cdr, items_to_cons, U } from '../../tree/tree';
 import { is_rat } from '../rat/is_rat';
-import { sin } from '../sin/sine';
 
 export function Eval_gamma(p1: U, $: ExtensionEnv): U {
     return gamma($.valueOf(cadr(p1)), $);
@@ -37,7 +36,7 @@ function gammaf(p1: U, $: ExtensionEnv): U {
         return divide(
             $.multiply(DynamicConstants.Pi($), negOne),
             $.multiply(
-                $.multiply(sin($.multiply(DynamicConstants.Pi($), p1), $), p1),
+                $.multiply($.sin($.multiply(DynamicConstants.Pi($), p1)), p1),
                 gamma($.negate(p1), $)
             )
             , $);

@@ -106,7 +106,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     // console.lg("abs", $.toSExprString(x));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg(`abs ${render_as_infix(x, $)} => ${render_as_infix(retval, $)} @ ${description}`);
+        // console.lg(`abs ${$.toInfixString(x)} => ${$.toInfixString(retval)} @ ${description}`);
         return retval;
     };
 

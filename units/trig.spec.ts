@@ -98,7 +98,7 @@ describe("trig", function () {
             const engine = create_script_context({
                 assumes: {},
                 dependencies: [],
-                disables: [],
+                disable: [],
                 syntaxKind: SyntaxKind.Native,
                 useCaretForExponentiation: false,
                 useDefinitions: false

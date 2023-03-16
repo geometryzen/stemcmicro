@@ -1,10 +1,13 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { PREDICATE_IS_REAL } from "../../runtime/constants";
 import { create_boo } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { MATH_SIN } from "../sin/MATH_SIN";
 import { CompositeOperator } from "../CompositeOperator";
+
+export const MATH_SIN = native_sym(Native.sin);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -15,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
 /**
  * isreal(sin(z)) => isreal(z)
  */
- class IsRealSin extends CompositeOperator {
+class IsRealSin extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(PREDICATE_IS_REAL, MATH_SIN, $);
     }

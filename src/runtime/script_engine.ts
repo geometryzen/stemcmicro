@@ -22,11 +22,11 @@ export interface ScriptExecuteOptions {
     /**
      * Directives that become enabled by setting to true.
      */
-    enables?: Directive[];
+    enable?: Directive[];
     /**
      * Directives that become disabled by setting to false.
      */
-    disables?: Directive[];
+    disable?: Directive[];
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
@@ -114,8 +114,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
         const config: EnvOptions = {
             assumes: options.assumes,
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            enables: options.enables,
-            disables: options.disables,
+            enable: options.enable,
+            disable: options.disable,
             noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions,
@@ -127,8 +127,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
         const config: EnvOptions = {
             assumes: {},
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
-            enables: [],
-            disables: [],
+            enable: [],
+            disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
             useDefinitions: false,
@@ -179,7 +179,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
                 if (contextOptions.syntaxKind) {
                     options.syntaxKind = contextOptions.syntaxKind;
                 }
-                contextOptions.disables;
+                contextOptions.disable;
             }
             if (executeOptions) {
                 if (executeOptions.syntaxKind) {

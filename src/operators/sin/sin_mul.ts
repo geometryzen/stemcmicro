@@ -1,12 +1,13 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
+import { is_negative } from "../../predicates/is_negative";
 import { Sym } from "../../tree/sym/Sym";
-import { cons, Cons, U } from "../../tree/tree";
+import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
+import { sin_special_angles } from "./transform_sin";
 
-const ADD = native_sym(Native.add);
-const EXP = native_sym(Native.exp);
+const SIN = native_sym(Native.sin);
 const MUL = native_sym(Native.multiply);
 
 class Builder implements OperatorBuilder<U> {
@@ -16,19 +17,19 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * exp(a + b + ...) = exp(a) * exp(b) * ...
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(EXP, ADD, $);
+        super(SIN, MUL, $);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(this.name, $.toInfixString(innerExpr));
-        return [TFLAG_DIFF, $.valueOf(cons(MUL, innerExpr.argList.map($.exp)))];
+        // sine function is antisymmetric, sin(-x) = -sin(x)
+        if (is_negative(innerExpr)) {
+            return [TFLAG_DIFF, $.negate($.sin($.negate(innerExpr)))];
+        }
+        return sin_special_angles(innerExpr, outerExpr, $);
     }
 }
 
-export const exp_add = new Builder();
-
+export const sin_mul = new Builder();

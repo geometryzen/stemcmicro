@@ -1,6 +1,7 @@
-import { create_sym } from "../../tree/sym/Sym";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 
 /**
  * sin(x) = ...
  */
-export const MATH_SIN = create_sym('sin');
+export const MATH_SIN = native_sym(Native.sin);

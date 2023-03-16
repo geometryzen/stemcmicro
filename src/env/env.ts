@@ -44,8 +44,8 @@ class StableExprComparator implements ExprComparator {
 export interface EnvOptions {
     assumes?: { [name: string]: Partial<SymbolProps> };
     dependencies?: FEATURE[];
-    enables?: Directive[];
-    disables?: Directive[];
+    enable?: Directive[];
+    disable?: Directive[];
     noOptimize?: boolean;
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -57,8 +57,8 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         const config: EnvConfig = {
             assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
-            enables: Array.isArray(options.enables) ? options.enables : [],
-            disables: Array.isArray(options.disables) ? options.disables : [],
+            enable: Array.isArray(options.enable) ? options.enable : [],
+            disable: Array.isArray(options.disable) ? options.disable : [],
             noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
@@ -70,8 +70,8 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         const config: EnvConfig = {
             assumes: {},
             dependencies: [],
-            enables: [],
-            disables: [],
+            enable: [],
+            disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
             useDefinitions: false,
@@ -596,12 +596,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     if ($.getDirective(Directive.useIntegersForPredicates) !== config.useIntegersForPredicates) {
         $.pushDirective(Directive.useIntegersForPredicates, config.useIntegersForPredicates);
     }
-    for (const directive of config.enables) {
+    for (const directive of config.enable) {
         if ($.getDirective(directive) !== true) {
             $.pushDirective(directive, true);
         }
     }
-    for (const directive of config.disables) {
+    for (const directive of config.disable) {
         if ($.getDirective(directive) !== false) {
             $.pushDirective(directive, false);
         }

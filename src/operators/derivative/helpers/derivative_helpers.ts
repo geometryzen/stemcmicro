@@ -35,17 +35,15 @@ import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
 import { MATH_ADD, MATH_E, MATH_PI } from '../../../runtime/ns_math';
 import { caddr, cadr } from '../../../tree/helpers';
-import { negOne, one, two, create_int, zero } from '../../../tree/rat/Rat';
+import { create_int, negOne, one, two, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
 import { car, Cons, is_cons, items_to_cons, nil, U } from '../../../tree/tree';
 import { besselj } from '../../besselj/besselj';
 import { bessely } from '../../bessely/bessely';
-import { cos } from '../../cos/cosine';
 import { ycosh } from '../../cosh/cosh';
 import { hermite } from '../../hermite/hermite';
 import { sgn } from '../../sgn/sgn_any';
 import { simplify } from '../../simplify/simplify';
-import { sin } from '../../sin/sine';
 import { sinh } from '../../sinh/sinh';
 import { subst } from '../../subst/subst';
 import { is_sym } from '../../sym/is_sym';
@@ -235,19 +233,23 @@ function dfunction(F: Cons, X: Sym, $: ExtensionEnv): U {
     }
 }
 
-function dsin(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative(cadr(p1), p2, $);
-    return $.multiply(deriv, cos(cadr(p1), $));
+/**
+ * (d (sin u) x) = du/dx * cos(u) 
+ */
+function dsin(F: Cons, X: Sym, $: ExtensionEnv): U {
+    const u = F.argList.head;
+    const deriv = derivative(u, X, $);
+    return $.multiply(deriv, $.cos(u));
 }
 
 function dcos(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative(cadr(p1), p2, $);
-    return $.negate($.multiply(deriv, sin(cadr(p1), $)));
+    return $.negate($.multiply(deriv, $.sin(cadr(p1))));
 }
 
 function dtan(p1: U, p2: Sym, $: ExtensionEnv): U {
     const deriv = derivative(cadr(p1), p2, $);
-    return $.multiply(deriv, $.power(cos(cadr(p1), $), create_int(-2)));
+    return $.multiply(deriv, $.power($.cos(cadr(p1)), create_int(-2)));
 }
 
 function darcsin(p1: U, p2: Sym, $: ExtensionEnv): U {

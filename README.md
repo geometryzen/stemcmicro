@@ -1,6 +1,6 @@
 [![npm version](https://badge.fury.io/js/jsxmath.svg)](https://badge.fury.io/js/jsxmath)
 
-jsxmath is a Javascript (Typescript) library for symbolic mathematics.
+JsxMath is a Javascript (Typescript) library for symbolic mathematics.
 
 ## Example
 

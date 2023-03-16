@@ -1,10 +1,13 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { EXPSIN } from "../../runtime/constants";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { cadr } from "../../tree/helpers";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { expsin } from "./expsin";
+
+export const EXPSIN = native_sym(Native.expsin);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

@@ -76,13 +76,6 @@ export class Defs {
     public tos = 0;
 
     /**
-     * Initialized to zero at the start of top level evaluation.
-     * trigmode 1 causes sin squared terms to be replaced by cos squared during power operator application.
-     * trigmode 2 causes cos squared terms to be replaced by sin squared during power operator application.
-     */
-    public trigmode: 0 | 1 | 2 = 0;
-
-    /**
      * The program execution stack.
      * TODO: This should be moved to the $ to achieve isolation of executions.
      * It should also not allow undefined and null values as this requires casting elsewhere.

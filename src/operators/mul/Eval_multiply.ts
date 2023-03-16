@@ -174,12 +174,12 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         // If the head elements are the same then the bases will be the same.
         // On the other hand, the heads can be different but the bases the same.
         // e.g. head1 = x, head2 = 1/x = (expt x -1)
-        if (baseL.equals(baseR)) {
+        if (is_both_bases_equal(baseL, baseR, $)) {
             combine_exponentials_with_common_base(factors, baseL, expoL, expoR, $);
             p1 = p1.cdr;
             p2 = p2.cdr;
         }
-        else if (is_both_exponents_minus_one(expoL, expoR, $)) {
+        else if (is_both_expos_minus_one(expoL, expoR, $)) {
             combine_exponentials_with_common_expo(factors, baseL, baseR, expoL, $);
             p1 = p1.cdr;
             p2 = p2.cdr;
@@ -345,6 +345,10 @@ function combine_with_factors(factors: U[], X: U): void {
     }
 }
 
+function is_both_bases_equal(baseL: U, baseR: U, $: ExtensionEnv): boolean {
+    return baseL.equals(baseR);
+}
+
 /**
  * By restricting to the case that both exponents are -1 we avoid issues over whether the bases commute under multiplication.
  * e.g. a^(-n) * b^(-n) = 1/(a*a*a...) * 1/(b*b*b...) which is not generally the same as 1/(ab)^(-n) = 1/(ab*ab*ab...).
@@ -354,7 +358,7 @@ function combine_with_factors(factors: U[], X: U): void {
  * @param $ 
  * @returns 
  */
-function is_both_exponents_minus_one(expoL: U, expoR: U, $: ExtensionEnv): boolean {
+function is_both_expos_minus_one(expoL: U, expoR: U, $: ExtensionEnv): boolean {
     if ($.isExpanding()) {
         // return false;
         return is_rat(expoL) && is_rat(expoR) && expoL.isMinusOne() && expoR.isMinusOne();

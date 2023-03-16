@@ -1,7 +1,7 @@
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
-import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
 import { is_num_and_equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
@@ -269,14 +269,9 @@ export function simplify_trig(expr: U, $: ExtensionEnv): U {
         return hook(expr, "A");
     }
 
-    // TODO: This should be done through the environment, $.
-    defs.trigmode = 1;
-    const expr1 = $.valueOf(expr);
+    const expr1 = convert_sin_to_cos(expr, $);
 
-    defs.trigmode = 2;
-    const expr2 = $.valueOf(expr);
-
-    defs.trigmode = 0;
+    const expr2 = convert_cos_to_sin(expr, $);
 
     if (count(expr2) < count(expr1) || nterms(expr2) < nterms(expr1)) {
         if (count(expr2) < count(expr) || nterms(expr2) < nterms(expr)) {
@@ -293,6 +288,26 @@ export function simplify_trig(expr: U, $: ExtensionEnv): U {
         else {
             return hook(expr, "C");
         }
+    }
+}
+
+function convert_sin_to_cos(expr: U, $: ExtensionEnv): U {
+    $.pushDirective(Directive.convertSinToCos, true);
+    try {
+        return $.valueOf(expr);
+    }
+    finally {
+        $.popDirective();
+    }
+}
+
+function convert_cos_to_sin(expr: U, $: ExtensionEnv): U {
+    $.pushDirective(Directive.convertCosToSin, true);
+    try {
+        return $.valueOf(expr);
+    }
+    finally {
+        $.popDirective();
     }
 }
 

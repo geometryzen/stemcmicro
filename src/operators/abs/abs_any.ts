@@ -44,6 +44,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         }
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
+        // TODO: Ultimately we want this to do nothing for extensibility.
         // console.lg(this.name, this.$.toInfixString(arg));
         const $ = this.$;
         const retval = abs(arg, $);

@@ -35,7 +35,7 @@ export const MATH_COMPONENT = create_sym('component');
 /**
  * factorial
  */
-export const MATH_FACTORIAL = create_sym('factorial');
+export const MATH_FACTORIAL = native_sym(Native.factorial);
 /**
  * iszero
  */

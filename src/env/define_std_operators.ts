@@ -13,6 +13,7 @@ import { abs_flt } from '../operators/abs/abs_flt';
 import { abs_imu } from '../operators/abs/abs_imu';
 import { abs_pow_any_negone } from '../operators/abs/abs_pow_any_negone';
 import { abs_rat } from '../operators/abs/abs_rat';
+import { abs_sym } from '../operators/abs/abs_sym';
 import { abs_tensor } from '../operators/abs/abs_tensor';
 import { abs_uom } from '../operators/abs/abs_uom';
 import { add_2_add_2_any_any_any_factorize_rhs } from '../operators/add/add_2_add_2_any_any_any_factorize_rhs';
@@ -179,7 +180,7 @@ import { is_real_pow_any_negone } from '../operators/isreal/isreal_pow_any_negon
 import { is_real_abs } from '../operators/isreal/is_real_abs';
 import { is_real_add } from '../operators/isreal/is_real_add';
 import { is_real_any } from '../operators/isreal/is_real_any';
-import { is_real_cos } from '../operators/isreal/is_real_cos';
+import { isreal_holomorphic, is_real_cos } from '../operators/isreal/is_real_cos';
 import { is_real_flt } from '../operators/isreal/is_real_flt';
 import { is_real_imag } from '../operators/isreal/is_real_imag';
 import { is_real_imu } from '../operators/isreal/is_real_imu';
@@ -376,6 +377,9 @@ import { ExtensionEnv } from "./ExtensionEnv";
 export function define_std_operators($: ExtensionEnv) {
     // 
     const MATH_ADD = native_sym(Native.add);
+    const COS = native_sym(Native.cos);
+    const EXP = native_sym(Native.exp);
+    const FACTORIAL = native_sym(Native.factorial);
     const SIN = native_sym(Native.sin);
     const TEST = native_sym(Native.test);
     const TESTEQ = native_sym(Native.test_eq);
@@ -620,7 +624,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(abs_rat);
     $.defineOperator(abs_tensor);
     $.defineOperator(abs_uom);
-    // $.defineOperator(abs_sym_real);
+    $.defineOperator(abs_sym);
     // $.defineOperator(abs_factorize);
     $.defineOperator(abs_any);
 
@@ -802,6 +806,9 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(is_real_abs);
     $.defineOperator(is_real_add);
+    $.defineOperator(isreal_holomorphic(COS));
+    $.defineOperator(isreal_holomorphic(EXP));
+    $.defineOperator(isreal_holomorphic(FACTORIAL));
     $.defineOperator(is_real_cos);
     $.defineOperator(is_real_flt);
     $.defineOperator(is_real_imag);
@@ -861,7 +868,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(sum_varargs);
 
     $.defineOperator(taylor_varargs);
-    
+
     $.defineOperator(tan_varargs);
 
     $.defineOperator(tanh_varargs);

@@ -59,7 +59,7 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.evaluatingAsPolar, false);
     update_directives(directives, Directive.evaluatingTrigAsExp, false);
     update_directives(directives, Directive.expand, true);
-    update_directives(directives, Directive.expandPowerSum, true);
+    update_directives(directives, Directive.expandPowerSum, false);
     update_directives(directives, Directive.factor, false);
     update_directives(directives, Directive.keepZeroTermsInSums, false);
     // TODO: These two don't seem like Directive(s).

@@ -1,10 +1,9 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { MATH_POW } from "../../runtime/ns_math";
 import { half, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
-import { items_to_cons, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Function1X } from "../helpers/Function1X";
 import { UCons } from "../helpers/UCons";
 import { is_sym } from "../sym/is_sym";
@@ -18,26 +17,33 @@ class Builder implements OperatorBuilder<U> {
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cross($: ExtensionEnv) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return function (arg: Sym): boolean {
-        return $.is_real(arg) && $.isExpanding();
+        return true;
     };
 }
 
 /**
- * abs(x) => (sqrt (expt x 1/2))
+ * abs(x) => (sqrt (expt x 2))
  */
 class Op extends Function1X<Sym> implements Operator<UCons<Sym, Sym>> {
     constructor($: ExtensionEnv) {
-        super('abs_sym_real', abs, is_sym, cross($), $);
+        super('abs_sym', abs, is_sym, cross($), $);
     }
     transform1(opr: Sym, x: Sym, origExpr: UCons<Sym, Sym>): [TFLAGS, U] {
-        const $ = this.$;
+        // We'' be satisfied with using this operator to evaluate the symbol for now.
+        // const $ = this.$;
+        /*
         if ($.isExpanding()) {
-            return [TFLAG_DIFF, items_to_cons(MATH_POW, items_to_cons(MATH_POW, x, two), half)];
+            if ($.is_real(x)) {
+                return [TFLAG_DIFF, $.power($.power(x, two), half)];
+            }
         }
+        */
         return [TFLAG_NONE, origExpr];
     }
 }
 
-export const abs_sym_real = new Builder();
+export const abs_sym = new Builder();

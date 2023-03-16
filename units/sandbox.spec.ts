@@ -2,30 +2,30 @@
 import { assert } from "chai";
 import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("1/(-a*b-x*b^2)+1/(a*b+x*b^2)", function () {
+    it("sgn(a*b)", function () {
         const lines: string[] = [
-            `1/(-a*b-x*b^2)+1/(a*b+x*b^2)`
+            `sgn(a*b)`
         ];
         const engine = create_script_context({
-            disables: [Directive.factor],
-            useCaretForExponentiation: true
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "a*b/(abs(a)*abs(b))");
         engine.release();
     });
-    it("1/(b*(a+b*x))+1/(-a*b-x*b^2)", function () {
+    xit("1/b*1/(a+b*x)", function () {
         const lines: string[] = [
-            `1/(b*(a+b*x))+1/(-a*b-x*b^2)`
+            `autofactor=0`,
+            `1/b*1/(a+b*x)`
         ];
         const engine = create_script_context({
             disables: [Directive.factor],
             useCaretForExponentiation: true
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "1/(a*b+x*b^2)");
         engine.release();
     });
 });

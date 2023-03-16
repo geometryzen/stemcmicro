@@ -10,21 +10,28 @@ const is_real = native_sym(Native.is_real);
 const cosine = native_sym(Native.cos);
 
 class Builder implements OperatorBuilder<U> {
+    constructor(readonly innerOpr: Sym) {
+
+    }
     create($: ExtensionEnv): Operator<U> {
-        return new IsRealCos($);
+        return new Op(this.innerOpr, $);
     }
 }
 
-class IsRealCos extends CompositeOperator {
-    constructor($: ExtensionEnv) {
-        super(is_real, cosine, $);
+class Op extends CompositeOperator {
+    constructor(innerOpr: Sym, $: ExtensionEnv) {
+        super(is_real, innerOpr, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, cosExpr: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        const x = cosExpr.argList.head;
+        const x = innerExpr.argList.head;
         return [TFLAG_DIFF, create_boo($.is_real(x))];
     }
 }
 
-export const is_real_cos = new Builder();
+export function isreal_holomorphic(innerOpr: Sym) {
+    return new Builder(innerOpr);
+}
+
+export const is_real_cos = isreal_holomorphic(cosine);

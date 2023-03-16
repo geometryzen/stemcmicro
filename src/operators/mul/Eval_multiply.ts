@@ -7,7 +7,7 @@ import { render_as_infix } from "../../print/render_as_infix";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { caddr, cadr, cdddr } from "../../tree/helpers";
+import { cddr } from "../../tree/helpers";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
@@ -25,7 +25,7 @@ import { is_uom } from "../uom/is_uom";
  */
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
-    // console.lg("Eval_multiply", $.toSExprString(expr));
+    // console.lg("Eval_multiply", $.toInfixString(expr), $.isExpanding(), $.isFactoring());
     const args = expr.argList;
     const vals = args.map($.valueOf);
     if (vals.equals(args)) {
@@ -56,8 +56,8 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
-    // console.lg("lhs", render_as_sexpr(lhs, $));
-    // console.lg("rhs", render_as_sexpr(rhs, $));
+    // console.lg("lhs", $.toInfixString(lhs));
+    // console.lg("rhs", $.toInfixString(rhs));
     // TODO: Optimize handling of numbers, 0, 1.
 
     // TODO: This function should not known anything about Flt(s) and Rat(s).
@@ -158,24 +158,29 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
             continue;
         }
 
-        const [baseL, powerL] = base_and_power(head1, $);
-        const [baseR, powerR] = base_and_power(head2, $);
+        const [baseL, expoL] = base_and_expo(head1, $);
+        const [baseR, expoR] = base_and_expo(head2, $);
 
         // We can get the ordering wrong here. e.g. lhs = (expt 2 1/2), rhs = imu
         // We end up comparing 2 and i and the 2 gets pushed first and the i waits
         // for the next loop iteration.
         // console.lg("head1", render_as_infix(head1, $));
         // console.lg("head2", render_as_infix(head2, $));
-        // console.lg("baseL", render_as_infix(baseL, $));
-        // console.lg("baseR", render_as_infix(baseR, $));
-        // console.lg("powerL", render_as_infix(powerL, $));
-        // console.lg("powerR", render_as_infix(powerR, $));
+        // console.lg("baseL", $.toInfixString(baseL));
+        // console.lg("baseR", $.toInfixString(baseR));
+        // console.lg("expoL", $.toInfixString(expoL));
+        // console.lg("expoR", $.toInfixString(expoR));
 
         // If the head elements are the same then the bases will be the same.
         // On the other hand, the heads can be different but the bases the same.
         // e.g. head1 = x, head2 = 1/x = (expt x -1)
         if (baseL.equals(baseR)) {
-            combine_factors(factors, baseR, powerL, powerR, $);
+            combine_exponentials_with_common_base(factors, baseL, expoL, expoR, $);
+            p1 = p1.cdr;
+            p2 = p2.cdr;
+        }
+        else if (is_both_exponents_minus_one(expoL, expoR, $)) {
+            combine_exponentials_with_common_expo(factors, baseL, baseR, expoL, $);
             p1 = p1.cdr;
             p2 = p2.cdr;
         }
@@ -197,7 +202,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
                     // So we definitely can't combine assuming base equality.
                     // This can happen for non-commuting elements. e.g. Blade(s), Tensor(s).
                     // Remove factors that don't commute earlier? Or do we handle them here?
-                    throw new Error(`${render_as_infix(baseL, $)} ${render_as_infix(powerL, $)} ${render_as_infix(baseR, $)} ${render_as_infix(powerR, $)}`);
+                    throw new Error(`${render_as_infix(baseL, $)} ${render_as_infix(expoL, $)} ${render_as_infix(baseR, $)} ${render_as_infix(expoR, $)}`);
                 }
             }
         }
@@ -265,11 +270,10 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
  * Decomposes an expression into a base and power (expt may be one).
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function base_and_power(expr: U, $: ExtensionEnv): [base: U, power: U] {
+function base_and_expo(expr: U, $: ExtensionEnv): [base: U, expo: U] {
     // console.lg("base_and_power", render_as_infix(expr, $));
     if (is_power(expr)) {
-        const argList = expr.cdr;
-        return [car(argList), cadr(argList)];
+        return [expr.base, expr.expo];
     }
     else {
         return [expr, one];
@@ -301,19 +305,36 @@ export function multiply_all(n: U[], $: ExtensionEnv): U {
     return temp;
 }
 
-function combine_factors(factors: U[], base: U, powerL: U, powerR: U, $: ExtensionEnv): void {
-    const X = $.power(base, $.add(powerL, powerR));
+/**
+ * Computes base^(expoL+expoR) then finds the most efficient way to add the result to the list of factors.
+ */
+function combine_exponentials_with_common_base(factors: U[], base: U, expoL: U, expoR: U, $: ExtensionEnv): void {
+    const X = $.power(base, $.add(expoL, expoR));
+    combine_with_factors(factors, X);
+}
+
+/**
+ * Computes (baseL*baseR)^expo then finds the most efficient way to add the result to the list of factors.
+ */
+function combine_exponentials_with_common_expo(factors: U[], baseL: U, baseR: U, expo: U, $: ExtensionEnv): void {
+    const X = $.power($.multiply(baseL, baseR), expo);
+    combine_with_factors(factors, X);
+}
+
+function combine_with_factors(factors: U[], X: U): void {
     if (is_num(X)) {
         factors[0] = multiply_num_num(assert_is_num(factors[0]), X);
     }
     else if (is_multiply(X)) {
         // power can return number * factor (i.e. -1 * i)
-        const candidate = cadr(X);
-        if (is_num(candidate) && is_nil(cdddr(X))) {
-            const arg1 = assert_is_num(factors[0]);
-            const arg2 = candidate;
-            factors[0] = multiply_num_num(arg1, arg2);
-            factors.push(caddr(X));
+        const argList = X.argList;
+        const lhs = argList.head;
+        // We now look to see if this multiplication is a binary expression with the lhs being a number.
+        // This will allow us to make a simplification.
+        if (is_num(lhs) && is_nil(cddr(argList))) {
+            const rhs = X.rhs;
+            factors[0] = multiply_num_num(assert_is_num(factors[0]), lhs);
+            factors.push(rhs);
         }
         else {
             factors.push(X);
@@ -321,6 +342,25 @@ function combine_factors(factors: U[], base: U, powerL: U, powerR: U, $: Extensi
     }
     else {
         factors.push(X);
+    }
+}
+
+/**
+ * By restricting to the case that both exponents are -1 we avoid issues over whether the bases commute under multiplication.
+ * e.g. a^(-n) * b^(-n) = 1/(a*a*a...) * 1/(b*b*b...) which is not generally the same as 1/(ab)^(-n) = 1/(ab*ab*ab...).
+ * N.B. power_v1 is trying to go in the other direction when $.isFactoring().
+ * @param expoL 
+ * @param expoR 
+ * @param $ 
+ * @returns 
+ */
+function is_both_exponents_minus_one(expoL: U, expoR: U, $: ExtensionEnv): boolean {
+    if ($.isExpanding()) {
+        // return false;
+        return is_rat(expoL) && is_rat(expoR) && expoL.isMinusOne() && expoR.isMinusOne();
+    }
+    else {
+        return false;
     }
 }
 

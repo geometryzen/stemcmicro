@@ -19,6 +19,7 @@ export enum Native {
     cos,
     divide,
     exp,
+    factorial,
     imag,
     inner,
     integral,

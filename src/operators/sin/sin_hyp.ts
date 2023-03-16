@@ -1,12 +1,15 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_HYP, hash_unaop_atom } from "../../hashing/hash_info";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
 import { is_hyp } from "../hyp/is_hyp";
-import { MATH_SIN } from "./MATH_SIN";
+
+export const MATH_SIN = native_sym(Native.sin);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

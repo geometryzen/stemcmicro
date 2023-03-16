@@ -306,12 +306,11 @@ import { sgn_rat } from '../operators/sgn/sgn_rat';
 import { shape_varargs } from '../operators/shape/shape_varargs';
 import { simplify_varargs } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
-import { sin_add_2_any_any } from '../operators/sin/sin_add_2_any_any';
+import { sin_add } from '../operators/sin/sin_add';
 import { sin_any } from '../operators/sin/sin_any';
 import { sin_flt } from '../operators/sin/sin_flt';
 import { sin_hyp } from '../operators/sin/sin_hyp';
 import { sin_mul } from '../operators/sin/sin_mul';
-import { sin_mul_2_any_imu } from '../operators/sin/sin_mul_2_any_imu';
 import { sin_rat } from '../operators/sin/sin_rat';
 import { sin_sym } from '../operators/sin/sin_sym';
 import { sinh_any } from '../operators/sinh/sinh_any';
@@ -852,13 +851,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(succ_rat);
     $.defineOperator(succ_any);
 
-    $.defineOperator(sin_add_2_any_any);
+    $.defineOperator(sin_add);
     $.defineOperator(sin_flt);
     $.defineOperator(sin_hyp);
     $.defineOperator(sin_rat);
     $.defineOperator(sin_sym);
     $.defineOperator(sin_mul);
-    $.defineOperator(sin_mul_2_any_imu);
     $.defineOperator(sin_any);
 
     $.defineOperator(sqrt_1_rat);

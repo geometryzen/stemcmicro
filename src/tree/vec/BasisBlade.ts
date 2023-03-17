@@ -68,7 +68,13 @@ export interface BasisBlade<T, K> extends U {
     __neg__(): K;
     __tilde__(): K;
     add(rhs: BasisBlade<T, K>): K;
-    asString(names: string[], wedge: string): string;
+    /**
+     * 
+     * @param n The dimensionality of the vector space (not the algebra space).
+     * @param names The names of the basis vectors (n) or algebra elements (2^n).
+     * @param wedge The token to use to denote the outer product.
+     */
+    asString(n: number, names: string[], wedge: string): string;
     cliffordConjugate(): K;
     /**
      * This doesn't really make sense now that this structure is a blade.

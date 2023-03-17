@@ -532,43 +532,55 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
                 throw new Error(`sqrt on arbitrary multivectors is not yet supported.`);
             }
         },
-        asString(names: string[], wedge: string): string {
-            let bladePart = "";
-            let i = 1;
-            let x = bitmap;
-            while (x !== 0) {
-                if ((x & 1) !== 0) {
-                    if (bladePart.length > 0) bladePart += wedge;
-                    // TODO: redundancy here with isUndefined and the explicit comparison to void 0. TypeScript prefers the latter.
-                    // Can isUndefined be better typed? 
-                    if (typeof names === 'undefined' || (names === null) || (names === void 0) || (i > names.length) || (names[i - 1] == null)) {
-                        bladePart = bladePart + "e" + i;
+        asString(n: number, names: string[], wedge: string): string {
+            if (names.length === n) {
+                let bladePart = "";
+                let i = 1;
+                let x = bitmap;
+                while (x !== 0) {
+                    if ((x & 1) !== 0) {
+                        if (bladePart.length > 0) bladePart += wedge;
+                        // TODO: redundancy here with isUndefined and the explicit comparison to void 0. TypeScript prefers the latter.
+                        // Can isUndefined be better typed? 
+                        if (typeof names === 'undefined' || (names === null) || (names === void 0) || (i > names.length) || (names[i - 1] == null)) {
+                            bladePart = bladePart + "e" + i;
+                        }
+                        else {
+                            bladePart = bladePart + names[i - 1];
+                        }
                     }
-                    else {
-                        bladePart = bladePart + names[i - 1];
-                    }
+                    x >>= 1;
+                    i++;
                 }
-                x >>= 1;
-                i++;
+                if (bladePart.length > 0) {
+                    return bladePart;
+                }
+                else {
+                    throw new Error(`Expecting something for bitmap ${bitmap}`);
+                }
             }
-            if (bladePart.length > 0) {
-                return bladePart;
+            else if (Math.pow(2, n) === names.length) {
+                return names[bitmap];
             }
             else {
-                throw new Error(`Expecting something for bitmap ${bitmap}`);
+                throw new Error();
             }
         },
         toInfixString(): string {
-            return theBlade.asString(labels, '^');
+            const n = dim(metric, algebra.field);
+            return theBlade.asString(n, labels, '^');
         },
         toListString(): string {
-            return theBlade.asString(labels, '^');
+            const n = dim(metric, algebra.field);
+            return theBlade.asString(n, labels, '^');
         },
         toLatexString(): string {
-            return theBlade.asString(labels, ' \\wedge ');
+            const n = dim(metric, algebra.field);
+            return theBlade.asString(n, labels, ' \\wedge ');
         },
         toString(): string {
-            return theBlade.asString(labels, '^');
+            const n = dim(metric, algebra.field);
+            return theBlade.asString(n, labels, '^');
         }
     };
     return theBlade;
@@ -577,22 +589,34 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
 /**
  * Verify that the basis vector labels are strings and that there are the correct number.
  */
-function checkBasisLabels(name: string, labels: string[], n: number): void {
+function check_algebra_labels(name: string, labels: string[], n: number): void {
+    // console.lg("check_algebra_labels", "name", JSON.stringify(name), "labels", JSON.stringify(labels), "n", n);
     if (labels) {
         if (Array.isArray(labels)) {
-            if (labels.length !== n) {
-                throw new Error(`${name}.length must match the dimensionality of the vector space.`);
-            }
             for (let i = 0; i < labels.length; i++) {
                 const label = labels[i];
                 if (typeof label !== 'string') {
                     throw new Error(`${name}[${i}] must be a string.`);
                 }
             }
+            check_labels_length(labels, n);
         }
         else {
             throw new Error(`${name} must be a string[]`);
         }
+    }
+}
+
+function check_labels_length(labels: string[], n: number): void | never {
+    if (labels.length === n) {
+        // The labels are describing only the basis vectors of the algebra.
+    }
+    else if (labels.length === Math.pow(2, n)) {
+        // The labels are describing all the elements of the algebra.
+    }
+    else {
+        console.warn("Count of labels", labels.length, "does not match size of metric", n);
+        throw new Error(`${name}.length must match the dimensionality of the vector space.`);
     }
 }
 
@@ -604,7 +628,7 @@ export function algebra<T extends U, K extends U>(metric: T | T[] | Metric<T>, f
 
     mustBeDefined('field', field);
 
-    checkBasisLabels('labels', labels, n);
+    check_algebra_labels('labels', labels, n);
 
     /**
      * A cache of the basis vectors.

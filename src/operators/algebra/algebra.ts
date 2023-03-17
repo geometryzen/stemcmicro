@@ -262,6 +262,9 @@ export function convertMetricToNative(tensor: U): U[] {
     }
 }
 
+/**
+ * Converts the tensor of Str values to a JavaScript native array of strings.
+ */
 export function convertLabelsToNative(tensor: U): string[] {
     if (is_tensor(tensor)) {
         return tensor.mapElements(function (element) {

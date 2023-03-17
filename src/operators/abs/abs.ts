@@ -99,8 +99,7 @@ export function abs(x: U, $: ExtensionEnv): U {
 */
 
 /**
- * What should be the role of these generic functions?
- * They cannot be the entry point if the system is extensible regarding atoms.
+ * This code exists only for reference purposes. It should be replaced by specialized operators.
  */
 export function abs(x: U, $: ExtensionEnv): U {
     // console.lg("abs", $.toSExprString(x));
@@ -191,7 +190,7 @@ export function abs(x: U, $: ExtensionEnv): U {
         const expo = caddr(expr);
         if (is_num(expo)) {
             if (is_num_and_gt_zero(expo)) {
-                const abs_base = abs(base, $);
+                const abs_base = $.abs(base);
                 return hook($.power(abs_base, expo), "H");
             }
             if (is_rat(expo)) {

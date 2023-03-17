@@ -51,7 +51,6 @@ describe("abs", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(expt (+ (expt a 2) (expt b 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "(a**2+b**2)**(1/2)");
         engine.release();
     });

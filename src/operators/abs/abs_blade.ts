@@ -9,8 +9,9 @@ import { is_blade } from "../blade/is_blade";
 import { Function1 } from "../helpers/Function1";
 import { GUARD } from "../helpers/GUARD";
 import { UCons } from "../helpers/UCons";
-import { MATH_SQRT } from "../sqrt/MATH_SQRT";
 import { wrap_as_transform } from "../wrap_as_transform";
+
+export const MATH_SQRT = native_sym(Native.sqrt);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

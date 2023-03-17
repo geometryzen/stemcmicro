@@ -57,6 +57,7 @@ export function build_sym(code: Native): Sym {
         case Native.rect: return create_sym('rect');
         case Native.rco: return create_sym('>>');
         case Native.sin: return create_sym('sin');
+        case Native.sqrt: return create_sym('sqrt');
         case Native.spread: return create_sym('...');
         case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');

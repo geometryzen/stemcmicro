@@ -48,6 +48,7 @@ export enum Native {
     rco,
     sin,
     spread,
+    sqrt,
     subtract,
     succ,
     /**

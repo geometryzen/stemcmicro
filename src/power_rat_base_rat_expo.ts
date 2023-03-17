@@ -1,6 +1,6 @@
 import bigInt from 'big-integer';
 import { bignum_truncate, makePositive, makeSignSameAs } from './bignum';
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { in_safe_integer_range } from './in_safe_integer_range';
 import { is_num_and_eq_minus_one } from './is';
@@ -8,16 +8,22 @@ import { is_rat_and_integer } from './is_rat_and_integer';
 import { items_to_cons } from './makeList';
 import { mpow } from './mpow';
 import { mroot } from './mroot';
+import { Native } from './native/Native';
+import { native_sym } from './native/native_sym';
 import { nativeInt } from './nativeInt';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { quickfactor } from './quickfactor';
-import { POWER } from './runtime/constants';
-import { negOne, one, Rat, zero } from './tree/rat/Rat';
+import { half, negOne, one, Rat, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Cons, U } from './tree/tree';
 
+export const E = native_sym(Native.E);
+export const PI = native_sym(Native.PI);
+export const POWER = native_sym(Native.pow);
+
 // Rational power function
-export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat | Sym | U {
+export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat | Sym | U {
+    // console.lg("power_rat_base_rat_expo", $.toInfixString(base), $.toLatexString(expo));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg("pow_rat_rat", render_as_sexpr(base, $), render_as_sexpr(expo, $), render_as_sexpr(retval, $), description);
@@ -31,10 +37,17 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
         return hook(one, "A");
     }
 
-    // (expt -1 1/2) is replaced by the imaginary unit.
+    // (expt -1 1/2) is recognized as being the imaginary unit, but we transform according to how complex numbers are being handled.
     if (base.isMinusOne() && expo.isHalf()) {
-        // console.lg(`power(base => ${base}, expo => ${expo}) => i`);
-        return hook(imu, "B");
+        if ($.getDirective(Directive.complexAsClock)) {
+            return hook(items_to_cons(POWER, base, expo), "B-clock");
+        }
+        else if ($.getDirective(Directive.complexAsPolar)) {
+            return hook($.exp($.multiply(half, imu, PI)), "B-power");
+        }
+        else {
+            return hook(imu, "B");
+        }
     }
 
     // console.lg(`power(base => ${base}, expo => ${expo}) => ?`);
@@ -85,7 +98,7 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
 
     // if base is negative then (-N)^M -> N^M * (-1)^M
     if (is_num_and_negative(base)) {
-        return hook($.multiply(pow_rat_rat($.negate(base) as Rat, expo, $), pow_rat_rat(negOne, expo, $)), "I");
+        return hook($.multiply(power_rat_base_rat_expo($.negate(base) as Rat, expo, $), power_rat_base_rat_expo(negOne, expo, $)), "I");
     }
 
     // if base is not an integer then power numerator and denominator
@@ -94,9 +107,9 @@ export function pow_rat_rat(base: Rat, expo: Rat, $: ExtensionEnv): Cons | Rat |
         const m = base.numer();
         const n = base.denom();
         const a = expo;
-        const pow_m_a = pow_rat_rat(m, a, $);
+        const pow_m_a = power_rat_base_rat_expo(m, a, $);
         const minus_a = a.neg();
-        const pow_n_minus_a = pow_rat_rat(n, minus_a, $);
+        const pow_n_minus_a = power_rat_base_rat_expo(n, minus_a, $);
         return hook($.multiply(pow_m_a, pow_n_minus_a), "J");
     }
 

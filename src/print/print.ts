@@ -2,10 +2,9 @@ import { mp_denominator, mp_numerator } from '../bignum';
 import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { equaln, is_rat_and_fraction, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two } from '../is';
+import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
-import { abs } from '../operators/abs/abs';
 import { is_boo } from '../operators/boo/is_boo';
 import { denominator } from '../operators/denominator/denominator';
 import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
@@ -269,7 +268,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
     let p2 = car(p1);
 
     if (is_rat(p2)) {
-        A = abs(mp_numerator(p2), $);
+        A = $.abs(mp_numerator(p2));
         B = mp_denominator(p2);
         if (!$.isOne(A)) {
             n++;

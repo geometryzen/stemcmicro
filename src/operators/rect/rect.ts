@@ -11,7 +11,6 @@ import { MATH_SIN } from '../../runtime/ns_math';
 import { cadr } from '../../tree/helpers';
 import { zero } from '../../tree/rat/Rat';
 import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
-import { abs } from '../abs/abs';
 import { is_imu } from '../imu/is_imu';
 import { is_sym } from '../sym/is_sym';
 
@@ -103,7 +102,7 @@ export function rect(z: U, $: ExtensionEnv): U {
     // const A = arg(z, $);
     // console.lg("theta", $.toInfixString(A));
     const result = $.multiply(
-        abs(z, $),
+        $.abs(z),
         $.add($.cos($.arg(z)), $.multiply(imu, $.sin($.arg(z))))
     );
 

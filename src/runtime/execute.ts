@@ -9,7 +9,7 @@ import { is_imu } from '../operators/imu/is_imu';
 import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
 import { is_sym } from "../operators/sym/is_sym";
-import { ParseOptions, parse_script } from "../parser/parser";
+import { parse_script } from "../parser/parser";
 import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, is_nil, nil, U } from '../tree/tree';
@@ -18,11 +18,13 @@ import { AUTOEXPAND, AUTOFACTOR, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { move_top_of_stack } from './defs';
 import { RESERVED_KEYWORD_LAST } from './ns_script';
+import { ExprTransformOptions, ScriptExecuteOptions } from "./script_engine";
 
 const CLOCK = native_sym(Native.clock);
 const FACTOR = native_sym(Native.factor);
 const POLAR = native_sym(Native.polar);
 const RATIONALIZE = native_sym(Native.rationalize);
+const RECT = native_sym(Native.rect);
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
@@ -40,7 +42,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  * @param $ The environment that defines the operators.
  * @returns The return values, print outputs, and errors.
  */
-export function execute_script(fileName: string, sourceText: string, options: ParseOptions, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
+export function execute_script(fileName: string, sourceText: string, options: ScriptExecuteOptions, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
     // console.lg(sourceText);
     const { trees, errors } = parse_script(fileName, sourceText, options);
     if (errors.length > 0) {
@@ -53,7 +55,7 @@ export function execute_script(fileName: string, sourceText: string, options: Pa
         for (const tree of trees) {
             // console.lg("tree", render_as_sexpr(tree, $));
             // console.lg("tree", $.toInfixString(tree));
-            const data = transform_tree(tree, $);
+            const data = transform_tree(tree, options, $);
             if (data.value) {
                 if (!is_nil(data.value)) {
                     // console.lg(`value = ${data.value}`);
@@ -99,10 +101,11 @@ export function transform_script(fileName: string, sourceText: string, transform
 /**
  * Evaluates the parse tree using the operators defined in the environment.
  * @param tree The parse tree.
+ * @param options The opti
  * @param $ The environment defining the operators.
  * @returns The return values (zero or one), print outputs, and errors.
  */
-export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: string[], errors: Error[] } {
+export function transform_tree(tree: U, options: ExprTransformOptions, $: ExtensionEnv): { value: U, prints: string[], errors: Error[] } {
     /**
      * The outputs from print satements for each pass of the scanner.
      */
@@ -116,7 +119,7 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
     const printHandler = new DefaultPrintHandler();
     $.setPrintHandler(printHandler);
     try {
-        const value = multi_pass_transform(tree, $);
+        const value = multi_pass_transform(tree, options, $);
 
         prints.push(...printHandler.prints);
 
@@ -144,7 +147,7 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
 /**
  * This should not be needed when we can define our own transformer pipelines.
  */
-export function multi_pass_transform(tree: U, $: ExtensionEnv): U {
+export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: ExtensionEnv,): U {
 
     const wrappers: Sym[] = detect_wrappers(tree);
 
@@ -160,6 +163,7 @@ export function multi_pass_transform(tree: U, $: ExtensionEnv): U {
     if (isNotDisabled(AUTOEXPAND, $)) {
         $.pushDirective(Directive.expand, true);
         try {
+            // console.lg("Expanding...");
             box.push(transform(apply_wrappers(box.pop(), wrappers), $));
         }
         finally {
@@ -167,16 +171,18 @@ export function multi_pass_transform(tree: U, $: ExtensionEnv): U {
         }
     }
 
-    // console.lg("Canonicalize...");
+    /*
     $.pushDirective(Directive.canonicalize, true);
     try {
+        // console.lg("Canonicalize...");
         box.push(transform(apply_wrappers(box.pop(), wrappers), $));
     }
     finally {
         $.popDirective();
     }
+    */
 
-    if (isNotDisabled(AUTOFACTOR, $)) {
+    if (options.autofactor && isNotDisabled(AUTOFACTOR, $)) {
         $.pushDirective(Directive.factor, true);
         try {
             // console.lg("Factoring...");
@@ -187,14 +193,16 @@ export function multi_pass_transform(tree: U, $: ExtensionEnv): U {
         }
     }
 
-    // console.lg("Familiarize...");
+    /*
     $.pushDirective(Directive.familiarize, true);
     try {
+        // console.lg("Familiarize...");
         box.push(transform(apply_wrappers(box.pop(), wrappers), $));
     }
     finally {
         $.popDirective();
     }
+    */
 
     const transformed = box.pop();
     // console.lg();
@@ -225,6 +233,9 @@ export function multi_pass_transform(tree: U, $: ExtensionEnv): U {
     return box.pop();
 }
 
+/**
+ * FIXME: This only needs to detect the topmost wrapper in order to preserve the output in a multipass transformation.
+ */
 function detect_wrappers(tree: U): Sym[] {
     const wrappers: Sym[] = [];
     if (is_cons(tree)) {
@@ -281,6 +292,9 @@ function is_wrapper_opr(sym: Sym): boolean {
         return true;
     }
     else if (RATIONALIZE.equalsSym(sym)) {
+        return true;
+    }
+    else if (RECT.equalsSym(sym)) {
         return true;
     }
     else {

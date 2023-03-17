@@ -266,6 +266,7 @@ import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
 import { pow_e_any } from '../operators/pow/pow_e_any';
 import { pow_e_log } from '../operators/pow/pow_e_log';
 import { pow_e_rat } from '../operators/pow/pow_e_rat';
+import { pow_rat_rat } from '../operators/pow/pow_rat_rat';
 import { pow_rat_sym } from '../operators/pow/pow_rat_sym';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
@@ -320,8 +321,8 @@ import { sinh_any } from '../operators/sinh/sinh_any';
 import { sinh_flt } from '../operators/sinh/sinh_flt';
 import { sinh_rat } from '../operators/sinh/sinh_rat';
 import { sinh_sym } from '../operators/sinh/sinh_sym';
-import { sqrt_1_any } from '../operators/sqrt/sqrt_1_any';
-import { sqrt_1_rat } from '../operators/sqrt/sqrt_1_rat';
+import { sqrt_any } from '../operators/sqrt/sqrt_any';
+import { sqrt_rat } from '../operators/sqrt/sqrt_rat';
 import { st_add_2_any_hyp } from '../operators/st/st_add_2_any_hyp';
 import { st_any } from '../operators/st/st_any';
 import { st_mul_2_rat_any } from '../operators/st/st_mul_2_rat_any';
@@ -459,7 +460,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(pow_e_any);
     $.defineOperator(pow_rat_sym);
     // $.defineOperator(pow_2_sym_rat);
-    // $.defineOperator(pow_2_rat_rat);
+    $.defineOperator(pow_rat_rat);
     // $.defineOperator(pow_2_rat_mul_2_rat_rat);
     // $.defineOperator(pow_2_flt_rat);
     $.defineOperator(pow_2_imu_rat);
@@ -866,8 +867,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(sin_mul);
     $.defineOperator(sin_any);
 
-    $.defineOperator(sqrt_1_rat);
-    $.defineOperator(sqrt_1_any);
+    $.defineOperator(sqrt_rat);
+    $.defineOperator(sqrt_any);
 
     $.defineOperator(st_add_2_any_hyp);
     $.defineOperator(st_mul_2_rat_any);

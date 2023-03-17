@@ -78,6 +78,7 @@ export enum Directive {
      * Mutually exclusive with factor.
      */
     expand,
+    expandAbsSum,
     /**
      * Determines whether (a + b + c ...) raised to a positive integer exponent is expanded.
      */

@@ -8,7 +8,7 @@ import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, 
 import { is_rat_and_integer } from "../../is_rat_and_integer";
 import { is_integer_and_in_safe_number_range, nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
-import { pow_rat_rat } from "../../pow_rat_rat";
+import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
@@ -19,7 +19,6 @@ import { caddr, cadr } from "../../tree/helpers";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { QQ } from "../../tree/uom/QQ";
-import { abs } from "../abs/abs";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
@@ -123,7 +122,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     // both base and exponent are rational numbers?
     if (is_rat(base) && is_rat(expo)) {
-        const result = pow_rat_rat(base, expo, $);
+        const result = power_rat_base_rat_expo(base, expo, $);
         return hook(result, "G");
     }
 
@@ -263,6 +262,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
 
     let b_isEven_and_c_isItsInverse = false;
+    // 
     if (is_rat_and_even_integer(caddr(base))) {
         const isThisOne = $.multiply(caddr(base), expo);
         if (is_plus_or_minus_one(isThisOne, $)) {
@@ -272,7 +272,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     if (is_power(base) && b_isEven_and_c_isItsInverse) {
         if ($.isFactoring()) {
-            const result = abs(cadr(base), $);
+            const result = $.abs(cadr(base));
             return hook(result, "S");
         }
         else {
@@ -343,7 +343,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
             const pi = $.getDirective(Directive.evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
             let tmp = $.multiply(
-                $.power(abs(base, $), expo),
+                $.power($.abs(base), expo),
                 $.power(negOne, $.divide($.multiply($.arg(base), expo), pi))
             );
 

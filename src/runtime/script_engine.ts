@@ -14,11 +14,9 @@ import { hard_reset } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { execute_definition, execute_std_definitions } from "./init";
 
-export interface ScriptExecuteOptions {
-    /**
-     * Determines what kind of parser is used for the sourceText.
-     */
-    syntaxKind?: SyntaxKind
+export interface ExprTransformOptions {
+    autoexpand?: boolean;
+    autofactor?: boolean;
     /**
      * Directives that become enabled by setting to true.
      */
@@ -27,6 +25,13 @@ export interface ScriptExecuteOptions {
      * Directives that become disabled by setting to false.
      */
     disable?: Directive[];
+}
+
+export interface ScriptExecuteOptions extends ExprTransformOptions {
+    /**
+     * Determines what kind of parser is used for the sourceText.
+     */
+    syntaxKind?: SyntaxKind
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
@@ -92,7 +97,7 @@ export interface ScriptContext {
     getSymbolProps(sym: Sym | string): SymbolProps;
     getSymbolValue(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
-    evaluate(tree: U): { value: U, prints: string[], errors: Error[] };
+    evaluate(tree: U, options?: ExprTransformOptions): { value: U, prints: string[], errors: Error[] };
     useStandardDefinitions(): void;
     executeScript(sourceText: string, options?: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] };
     renderAsAscii(expr: U): string;
@@ -165,28 +170,28 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         getSymbolsInfo(): { sym: Sym, value: U }[] {
             return $.getSymbolsInfo();
         },
-        evaluate(tree: U): { value: U, prints: string[], errors: Error[] } {
-            // This is like a fixed pipeline.
-            return transform_tree(tree, $);
+        evaluate(tree: U, options?: ExprTransformOptions): { value: U, prints: string[], errors: Error[] } {
+            const merged = merge_options(options, contextOptions);
+            return transform_tree(tree, merged, $);
         },
         useStandardDefinitions(): void {
             execute_std_definitions($);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        executeScript(sourceText: string, executeOptions: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
-            const options: Pick<ScriptContextOptions, 'syntaxKind'> = { syntaxKind: SyntaxKind.Native };
+        executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
+            const picks: Pick<ScriptContextOptions, 'syntaxKind'> = { syntaxKind: SyntaxKind.Native };
             if (contextOptions) {
                 if (contextOptions.syntaxKind) {
-                    options.syntaxKind = contextOptions.syntaxKind;
+                    picks.syntaxKind = contextOptions.syntaxKind;
                 }
                 contextOptions.disable;
             }
-            if (executeOptions) {
-                if (executeOptions.syntaxKind) {
-                    options.syntaxKind = executeOptions.syntaxKind;
+            if (options) {
+                if (options.syntaxKind) {
+                    picks.syntaxKind = options.syntaxKind;
                 }
             }
-            return execute_script("", sourceText, parse_options_from_script_context_options(options, $), $);
+            return execute_script("", sourceText, parse_options_from_script_context_options(picks, $), $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);
@@ -214,6 +219,39 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         }
     };
     return theEngine;
+}
+
+function merge_options(options: ExprTransformOptions | undefined, contextOptions: ScriptContextOptions | undefined): ExprTransformOptions {
+    const merged: ExprTransformOptions = {};
+    if (contextOptions) {
+        if (typeof contextOptions.autoexpand === 'boolean') {
+            merged.autoexpand = contextOptions.autoexpand;
+        }
+        if (typeof contextOptions.autofactor === 'boolean') {
+            merged.autofactor = contextOptions.autofactor;
+        }
+        if (Array.isArray(contextOptions.disable)) {
+            merged.disable = contextOptions.disable;
+        }
+        if (Array.isArray(contextOptions.enable)) {
+            merged.enable = contextOptions.enable;
+        }
+    }
+    if (options) {
+        if (typeof options.autoexpand === 'boolean') {
+            merged.autoexpand = options.autoexpand;
+        }
+        if (typeof options.autofactor === 'boolean') {
+            merged.autofactor = options.autofactor;
+        }
+        if (Array.isArray(options.disable)) {
+            merged.disable = options.disable;
+        }
+        if (Array.isArray(options.enable)) {
+            merged.enable = options.enable;
+        }
+    }
+    return merged;
 }
 
 /**

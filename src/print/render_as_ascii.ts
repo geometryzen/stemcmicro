@@ -1,7 +1,6 @@
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { is_rat_and_fraction, is_num_and_eq_minus_one } from '../is';
-import { abs } from '../operators/abs/abs';
+import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
 import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
 import { is_flt } from '../operators/flt/is_flt';
 import { is_num } from '../operators/num/is_num';
@@ -322,12 +321,12 @@ function emit_fraction(p: U, d: number, $: ExtensionEnv) {
 
     // handle numerical coefficient
     if (is_rat(cadr(p))) {
-        A = abs(mp_numerator(cadr(p)), $);
+        A = $.abs(mp_numerator(cadr(p)));
         B = mp_denominator(cadr(p));
     }
 
     if (is_flt(cadr(p))) {
-        A = abs(cadr(p), $);
+        A = $.abs(cadr(p));
     }
 
     // count numerators
@@ -426,11 +425,11 @@ function emit_numerators(p: U, $: ExtensionEnv) {
     p = cdr(p);
 
     if (is_rat(car(p))) {
-        p1 = abs(mp_numerator(car(p)), $);
+        p1 = $.abs(mp_numerator(car(p)));
         p = cdr(p);
     }
     else if (is_flt(car(p))) {
-        p1 = abs(car(p), $);
+        p1 = $.abs(car(p));
         p = cdr(p);
     }
 

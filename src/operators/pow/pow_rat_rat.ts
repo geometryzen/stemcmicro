@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT } from "../../hashing/hash_info";
-import { pow_rat_rat } from "../../pow_rat_rat";
+import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -22,7 +22,7 @@ type EXPR = BCons<Sym, LHS, RHS>;
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('pow_2_rat_rat', MATH_POW, is_rat, is_rat, $);
+        super('pow_rat_rat', MATH_POW, is_rat, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_RAT, HASH_RAT);
     }
     isReal(expr: EXPR): boolean {
@@ -42,9 +42,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
         // const $ = this.$;
         // console.lg(`${this.name}  ${print_expr(expr, $)}`);
-        const retval = pow_rat_rat(lhs, rhs, this.$);
+        const retval = power_rat_base_rat_expo(lhs, rhs, this.$);
         return [!retval.equals(expr) ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }
 
-export const pow_2_rat_rat = new Builder();
+export const pow_rat_rat = new Builder();

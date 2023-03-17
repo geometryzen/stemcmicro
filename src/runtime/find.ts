@@ -79,7 +79,7 @@ export function has_exp_form(expr: U, $: ExtensionEnv): boolean {
         });
     }
 
-    // Lok for elements of matrix that contain same thing.
+    // Look for elements of matrix that contain same thing.
     if (is_tensor(expr)) {
         for (let i = 0; i < expr.nelem; i++) {
             if (has_exp_form(expr.elem(i), $)) {

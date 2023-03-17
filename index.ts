@@ -32,7 +32,7 @@ export { is_tensor } from './src/operators/tensor/is_tensor';
 export { is_uom } from './src/operators/uom/is_uom';
 export { create_uom } from './src/operators/uom/uom';
 export { human_readable_syntax_kind, ParseOptions, parse_expr, parse_script, SyntaxKind, syntaxKinds } from './src/parser/parser';
-export { create_script_context, ScriptContext, ScriptContextOptions, ScriptExecuteOptions } from './src/runtime/script_engine';
+export { create_script_context, ExprTransformOptions, ScriptContext, ScriptContextOptions, ScriptExecuteOptions } from './src/runtime/script_engine';
 export { Atom } from './src/tree/atom/Atom';
 export { Boo, booF, booT, create_boo } from './src/tree/boo/Boo';
 export { create_flt, Flt, oneAsFlt, zeroAsFlt } from './src/tree/flt/Flt';

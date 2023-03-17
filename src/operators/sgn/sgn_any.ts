@@ -1,11 +1,9 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
 import { HASH_ANY, hash_unaop_atom } from '../../hashing/hash_info';
-import { divide } from '../../helpers/divide';
 import { SGN } from '../../runtime/constants';
 import { cadr } from '../../tree/helpers';
 import { Sym } from '../../tree/sym/Sym';
 import { U } from '../../tree/tree';
-import { abs } from '../abs/abs';
 import { is_flt } from '../flt/is_flt';
 import { Function1 } from '../helpers/Function1';
 import { is_any } from '../helpers/is_any';
@@ -57,6 +55,6 @@ export function sgn(X: U, $: ExtensionEnv): U {
     // TODO: The definition is undefined when abs(x) is zero.
     // But in the case of numbers, sgn evaluates to zero.
     const numer = X;
-    const denom = abs(X, $);
-    return divide(numer, denom, $);
+    const denom = $.abs(X);
+    return $.divide(numer, denom);
 }

@@ -1,6 +1,6 @@
 
 import { Imu } from "../../..";
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { MATH_IMU } from "../../runtime/ns_math";
@@ -78,13 +78,22 @@ class ImuExtension implements Operator<Imu> {
         return this.$.getSymbolPrintName(MATH_IMU);
     }
     evaluate(expr: Imu, argList: Cons): [TFLAGS, U] {
+        // console.lg(this.name, "evaluate");
         return [TFLAG_HALT, cons(expr, argList)];
     }
     transform(expr: Imu): [TFLAGS, U] {
-        return [TFLAG_HALT, expr];
+        // console.lg(this.name, "transform");
+        return [TFLAG_HALT, this.valueOf(expr)];
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: Imu): U {
+        // console.lg(this.name, "valueOf");
+        // It seems as though we could respond to requests to convert the imaginary unit
+        // into either clock or polar form at this level, but in the case of polar that
+        // would lead to infinite recursion of i => exp(1/2*i*pi) => exp(1/2*exp(1/2*i*pi)*pi).
+        // Or would it? The exp function, acting on a product is already in polar form and so
+        // recursion should terminate. 
+        // console.lg("clock?", this.$.getDirective(Directive.complexAsClock));
+        // console.lg("polar?", this.$.getDirective(Directive.complexAsPolar));
         return expr;
     }
 }

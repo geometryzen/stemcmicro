@@ -6,6 +6,7 @@ import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { Eval_nroots } from '../nroots';
+import { abs_add } from '../operators/abs/abs_add';
 import { abs_add_blades } from '../operators/abs/abs_add_blades';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_blade } from '../operators/abs/abs_blade';
@@ -621,6 +622,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(str_extension);
 
     $.defineOperator(abs_add_blades);
+    $.defineOperator(abs_add);
     $.defineOperator(abs_blade);
     $.defineOperator(abs_pow_any_negone);
     $.defineOperator(abs_flt);
@@ -767,6 +769,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
+
     $.defineConsTransformer(POLAR, Eval_polar);
 
     $.defineOperator(make_printmode_operator('print', () => defs.printMode));

@@ -14,7 +14,6 @@ import { compute_r_from_base_and_expo } from './compute_r_from_base_and_expo';
 import { compute_theta_from_base_and_expo } from './compute_theta_from_base_and_expo';
 
 const MATH_ADD = native_sym(Native.add);
-const COS = native_sym(Native.cos);
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
 const MATH_MUL = native_sym(Native.multiply);
@@ -118,8 +117,8 @@ export function real(expr: U, $: ExtensionEnv): U {
             // console.lg("YIN");
             const r = compute_r_from_base_and_expo(base, expo, $);
             const theta = compute_theta_from_base_and_expo(base, expo, $);
-            const cos_theta = $.valueOf(items_to_cons(COS, theta));
-            const retval = $.valueOf(items_to_cons(MATH_MUL, r, cos_theta));
+            const cos_theta = $.cos(theta);
+            const retval = $.multiply(r, cos_theta);
             return hook(retval, 'D');
         }
     }

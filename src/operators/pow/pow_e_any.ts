@@ -85,7 +85,7 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
 }
 
 function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
-    if ($.getDirective(Directive.evaluatingAsPolar)) {
+    if ($.getDirective(Directive.complexAsPolar)) {
         // Do nothing
     }
     else if ($.getDirective(Directive.convertTrigToExp)) {

@@ -30,8 +30,9 @@ Returns the inverse tangent of x.
 
 */
 export function Eval_arctan(expr: Cons, $: ExtensionEnv): U {
-    const x = expr.argList.head;
-    return arctan($.valueOf(x), $);
+    const x = $.valueOf(expr.argList.head);
+    // console.lg("Eval_arctan", $.toInfixString(x));
+    return arctan(x, $);
 }
 
 function arctan(x: U, $: ExtensionEnv): U {

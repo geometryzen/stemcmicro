@@ -72,7 +72,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     //   -1 ^ 1/2  ->  i
     if (is_num_and_eq_minus_one(base) && is_num_and_equal_one_half(expo)) {
-        if ($.getDirective(Directive.evaluatingAsClock)) {
+        if ($.getDirective(Directive.complexAsClock)) {
             return items_to_cons(POWER, base, expo);
         }
         else {
@@ -82,7 +82,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     //   -1 ^ -1/2  ->  -i
     if (is_num_and_eq_minus_one(base) && is_num_and_equal_minus_half(expo)) {
-        if ($.getDirective(Directive.evaluatingAsClock)) {
+        if ($.getDirective(Directive.complexAsClock)) {
             return items_to_cons(POWER, base, expo);
         }
         else {
@@ -191,13 +191,14 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // complex number in exponential form, get it to rectangular
     // but only if we are not in the process of calculating a polar form,
     // otherwise we'd just undo the work we want to do
-    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getDirective(Directive.evaluatingAsPolar)) {
-        // TODO: We could simply use origExpr now that it is an agument.
+    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getDirective(Directive.complexAsPolar)) {
+        // TODO: We could simply use origExpr now that it is an argument.
+        // TODO: Given that we have exp(i*pi*something), why don't we remove the imu and use Euler's formula? 
         const tmp = items_to_cons(POWER, base, expo);
-        const hopefullySimplified = rect(tmp, $); // put new (hopefully simplified expr) in exponent
-        if (!hopefullySimplified.contains(PI)) {
+        const retval = rect(tmp, $); // put new (hopefully simplified expr) in exponent
+        if (!retval.contains(PI)) {
             // console.lg(`hopefullySimplified=${hopefullySimplified}`);
-            return hook(hopefullySimplified, "O");
+            return hook(retval, "O");
         }
     }
 

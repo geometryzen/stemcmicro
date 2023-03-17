@@ -1,6 +1,5 @@
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
-import { cadr } from '../../tree/helpers';
 import { Cons, U } from '../../tree/tree';
 
 /*
@@ -12,16 +11,18 @@ Convert complex z to polar form
   polar(z) = abs(z) * exp(i * arg(z))
 */
 export function Eval_polar(expr: Cons, $: ExtensionEnv): U {
-    return polar($.valueOf(cadr(expr)), $);
+    const z = $.valueOf(expr.argList.head);
+    return polar(z, $);
 }
 
 export function polar(z: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.evaluatingAsPolar, true);
+    // console.lg("polar", $.toInfixString(z));
+    $.pushDirective(Directive.complexAsPolar, true);
     try {
         const r = $.abs(z);
-        // console.lg("r", $.toInfixString(r));
+        // console.lg("r =", $.toInfixString(r));
         const theta = $.arg(z);
-        // console.lg("theta", $.toInfixString(theta));
+        // console.lg("theta =", $.toInfixString(theta));
         const imu_times_theta = $.multiply(imu, theta);
         // console.lg("imu_times_theta", $.toInfixString(imu_times_theta));
         const unit = $.exp(imu_times_theta);

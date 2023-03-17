@@ -101,9 +101,9 @@ function mutex(directives: Directives, value: boolean, a: Directive, b: Directiv
 
 function initial_directives(): Directives {
     const directives: Directives = {};
-    update_directives(directives, Directive.evaluatingAsClock, false);
+    update_directives(directives, Directive.complexAsClock, false);
+    update_directives(directives, Directive.complexAsPolar, false);
     update_directives(directives, Directive.evaluatingAsFloat, false);
-    update_directives(directives, Directive.evaluatingAsPolar, false);
     update_directives(directives, Directive.convertTrigToExp, false);
     update_directives(directives, Directive.expand, false);
     update_directives(directives, Directive.expandPowerSum, false);

@@ -131,4 +131,15 @@ describe("exp", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2**(1/2)-1/2*i*2**(1/2)");
         engine.release();
     });
+    it("exp(1/3*i*pi)", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1)/2`,
+            `exp(1/3*i*pi)`
+        ];
+        const engine = create_script_context({});
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "1/2+1/2*i*3**(1/2)");
+        engine.release();
+    });
 });

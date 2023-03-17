@@ -1,15 +1,15 @@
 
 import { rational } from '../../bignum';
-import { divide } from '../../helpers/divide';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from '../../env/ExtensionEnv';
+import { divide } from '../../helpers/divide';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
-import { ARCCOS, ARCTAN, COS } from '../../runtime/constants';
+import { ARCCOS, ARCTAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { half, negOne, one, three, two, create_int, zero } from '../../tree/rat/Rat';
-import { car, items_to_cons, U } from '../../tree/tree';
+import { create_int, half, negOne, one, three, two, zero } from '../../tree/rat/Rat';
+import { car, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 
 
@@ -31,7 +31,7 @@ export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] 
     // cosine function is symmetric, cos(-x) = cos(x)
 
     if (is_negative(x)) {
-        return [TFLAG_DIFF, $.valueOf(items_to_cons(COS, $.negate(x)))];
+        return [TFLAG_DIFF, $.cos($.negate(x))];
     }
 
     // cos(arctan(x)) = 1 / sqrt(1 + x^2)

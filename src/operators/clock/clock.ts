@@ -34,7 +34,7 @@ import { abs } from '../abs/abs';
  * @returns 
  */
 export function clock(z: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.evaluatingAsClock, true);
+    $.pushDirective(Directive.complexAsClock, true);
     try {
         // console.lg();
         // console.lg(`clockform z=${print_expr(z, $)}`);

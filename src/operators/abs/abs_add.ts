@@ -1,13 +1,13 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const EXP = native_sym(Native.exp);
-const IMAG = native_sym(Native.imag);
+const ABS = native_sym(Native.abs);
+const ADD = native_sym(Native.add);
+const MUL = native_sym(Native.multiply);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -16,23 +16,19 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * imag(exp(z)) = 0 when z is real
+ * abs(a + b + ...)
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IMAG, EXP, $);
+        super(ABS, ADD, $);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        // console.lg(this.name);
         const $ = this.$;
-        const z = innerExpr.argList.head;
-        if ($.is_real(z)) {
-            return [TFLAG_DIFF, zero];
-        }
-        else {
-            return [TFLAG_NONE, outerExpr];
-        }
+        // console.lg(this.name, $.toInfixString(innerExpr));
+        return [TFLAG_NONE, outerExpr];
     }
 }
 
-export const imag_exp = new Builder();
+export const abs_add = new Builder();
+

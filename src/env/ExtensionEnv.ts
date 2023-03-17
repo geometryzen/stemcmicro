@@ -89,12 +89,22 @@ export enum Directive {
      */
     evaluatingAsFloat,
     /**
-     * Determines whether complex numbers are driven towards rectangular or polar notation.
+     * Determines whether complex numbers are driven towards clock form.
+     * The other possibilities are rectanglular and polar.
      * 
      * The default value is false.
      */
-    evaluatingAsPolar,
-    evaluatingAsClock,
+    complexAsClock,
+    /**
+     * Determines whether complex numbers are driven towards polar form.
+     * The other possibilities are rectanglular and clock.
+     * 
+     * The default value is false.
+     */
+    complexAsPolar,
+    /**
+     * Determines whether exponential functions are converted ti exponential form.
+     */
     convertExpToTrig,
     /**
      * Determines whether trigonometric functions are converted to exponential form.

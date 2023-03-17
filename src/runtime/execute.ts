@@ -116,7 +116,7 @@ export function transform_tree(tree: U, $: ExtensionEnv): { value: U, prints: st
     const printHandler = new DefaultPrintHandler();
     $.setPrintHandler(printHandler);
     try {
-        const value = multi_phase_transform(tree, $);
+        const value = multi_pass_transform(tree, $);
 
         prints.push(...printHandler.prints);
 
@@ -144,7 +144,7 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
 /**
  * This should not be needed when we can define our own transformer pipelines.
  */
-export function multi_phase_transform(tree: U, $: ExtensionEnv): U {
+export function multi_pass_transform(tree: U, $: ExtensionEnv): U {
 
     const wrappers: Sym[] = detect_wrappers(tree);
 

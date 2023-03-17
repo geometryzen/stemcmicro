@@ -284,7 +284,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // (a + b + ...) ^ n  ->  (a + b + ...) * (a + b + ...) ...
     // The exponent must be an integer and convertable to a JavaScript number.
     // We don't always want to do this. It can make otherwise simple expressions explode and can throw off symbolic integration.
-    if ($.isExpanding() && $.getDirective(Directive.expandPowerSum)) {
+    if ($.isExpanding() && $.getDirective(Directive.expandPowSum)) {
         if (is_add(base) && is_num(expo) && is_integer_and_in_safe_number_range(expo) && expo.isPositive()) {
             const terms = args_to_items(base);
             if (terms.every($.is_real)) {

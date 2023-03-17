@@ -128,7 +128,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            enable: [Directive.expandPowerSum]
+            enable: [Directive.expandPowSum]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -153,7 +153,7 @@ describe("gibbs", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-            enable: [Directive.expandPowerSum]
+            enable: [Directive.expandPowSum]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0");

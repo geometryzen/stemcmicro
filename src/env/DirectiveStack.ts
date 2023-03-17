@@ -104,9 +104,13 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.complexAsClock, false);
     update_directives(directives, Directive.complexAsPolar, false);
     update_directives(directives, Directive.evaluatingAsFloat, false);
+    update_directives(directives, Directive.convertExpToTrig, false);
     update_directives(directives, Directive.convertTrigToExp, false);
     update_directives(directives, Directive.expand, false);
-    update_directives(directives, Directive.expandPowerSum, false);
+    update_directives(directives, Directive.expandAbsSum, true);
+    update_directives(directives, Directive.expandCosSum, false);
+    update_directives(directives, Directive.expandPowSum, true);
+    update_directives(directives, Directive.expandSinSum, false);
     update_directives(directives, Directive.factor, false);
     update_directives(directives, Directive.keepZeroTermsInSums, false);
     // TODO: These two don't seem like Directive(s).

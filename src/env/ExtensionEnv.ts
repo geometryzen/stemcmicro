@@ -78,16 +78,27 @@ export enum Directive {
      * Mutually exclusive with factor.
      */
     expand,
+    /**
+     * Determines whether abs(a + b + c ...) is expanded.
+     */
     expandAbsSum,
     /**
-     * Determines whether (a + b + c ...) raised to a positive integer exponent is expanded.
+     * Determines whether cos(a + b + c ...) is expanded.
      */
-    expandPowerSum,
+    expandCosSum,
     /**
-     * Determines whether numeric types are converted to floating point numbers for numeric evaluation.
-     * 
-     * The default value as false.
+    * Determines whether (a + b + c ...) raised to a positive integer exponent is expanded.
+    */
+    expandPowSum,
+    /**
+     * Determines whether cos(a + b + c ...) is expanded.
      */
+    expandSinSum,
+    /**
+    * Determines whether numeric types are converted to floating point numbers for numeric evaluation.
+    * 
+    * The default value as false.
+    */
     evaluatingAsFloat,
     /**
      * Determines whether complex numbers are driven towards clock form.

@@ -13,7 +13,6 @@ import { simplify_trig } from "../simplify/simplify";
 
 const ABS = native_sym(Native.abs);
 const ADD = native_sym(Native.add);
-const MUL = native_sym(Native.multiply);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

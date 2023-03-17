@@ -3,6 +3,7 @@ import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
+import { algebra } from "../operators/algebra/algebra";
 import { is_boo } from "../operators/boo/is_boo";
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { is_rat } from "../operators/rat/is_rat";
@@ -14,6 +15,7 @@ import { SystemError } from "../runtime/SystemError";
 import { Lambda } from "../tree/lambda/Lambda";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
+import { Tensor } from "../tree/tensor/Tensor";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_user_function } from "../userfunc";
 import { DirectiveStack } from "./DirectiveStack";
@@ -164,6 +166,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         abs(expr: U): U {
             return $.evaluate(Native.abs, expr);
+        },
+        algebra(metric: Tensor<U>, labels: Tensor<U>): Tensor<U> {
+            return algebra(metric, labels, $);
         },
         add(...args: U[]): U {
             return $.evaluate(Native.add, ...args);

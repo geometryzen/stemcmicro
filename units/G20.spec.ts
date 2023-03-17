@@ -69,4 +69,15 @@ describe("G20", function () {
         assert.strictEqual(context.renderAsInfix(values[3]), "Spin");
         context.release();
     });
+    it("Using G20 as the representation of the Complex Plane", function () {
+        const lines: string[] = [
+            `G20=algebra([1,1],["unused","e1","e2","i"])`,
+            `i=G20[1]^G20[2]`,
+            `i`
+        ];
+        const context = create_script_context({});
+        const { values } = context.executeScript(lines.join('\n'));
+        assert.strictEqual(context.renderAsInfix(values[0]), "i");
+        context.release();
+    });
 });

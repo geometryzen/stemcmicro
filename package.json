@@ -38,11 +38,13 @@
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-G20": "mocha 'units/G20.spec.ts'",
         "unit-integral": "mocha 'units/integral.spec.ts'",
+        "unit-log": "mocha 'units/log.spec.ts'",
         "unit-not": "mocha 'units/not.spec.ts'",
         "unit-testle": "mocha 'units/testle.spec.ts'",
         "unit-testne": "mocha 'units/testne.spec.ts'",
         "unit-iscomplex": "mocha 'units/iscomplex.spec.ts'",
         "unit-sandbox": "mocha 'units/sandbox.spec.ts'",
+        "test-log": "mocha 'tests/log.ts'",
         "test-sandbox": "mocha 'tests/sandbox.ts'"
     },
     "repository": {

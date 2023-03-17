@@ -615,12 +615,11 @@ function check_labels_length(labels: string[], n: number): void | never {
         // The labels are describing all the elements of the algebra.
     }
     else {
-        console.warn("Count of labels", labels.length, "does not match size of metric", n);
-        throw new Error(`${name}.length must match the dimensionality of the vector space.`);
+        throw new Error(`labels length must be compatible with the dimensionality of the vector space.`);
     }
 }
 
-export function algebra<T extends U, K extends U>(metric: T | T[] | Metric<T>, field: Adapter<T, K>, labels: string[]): Algebra<T, K> {
+export function createAlgebra<T extends U, K extends U>(metric: T | T[] | Metric<T>, field: Adapter<T, K>, labels: string[]): Algebra<T, K> {
 
     mustBeDefined('metric', metric);
 

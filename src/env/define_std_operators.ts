@@ -122,6 +122,7 @@ import { exp } from '../operators/exp/exp';
 import { exp_add } from '../operators/exp/exp_add';
 import { exp_flt } from '../operators/exp/exp_flt';
 import { exp_imu } from '../operators/exp/exp_imu';
+import { exp_log } from '../operators/exp/exp_log';
 import { exp_mul } from '../operators/exp/exp_mul';
 import { exp_rat } from '../operators/exp/exp_rat';
 import { expand_extension } from '../operators/expand/expand_extension';
@@ -203,6 +204,12 @@ import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
 import { legendre_varargs } from '../operators/legendre/legendre_varargs';
+import { log_exp } from '../operators/log/log_exp';
+import { log_flt } from '../operators/log/log_flt';
+import { log_mul } from '../operators/log/log_mul';
+import { log_pow } from '../operators/log/log_pow';
+import { log_rat } from '../operators/log/log_rat';
+import { log_sym } from '../operators/log/log_sym';
 import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
 import { mul_2_any_flt } from '../operators/mul/mul_2_any_flt';
@@ -594,7 +601,14 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(legendre_varargs);
 
+    $.defineOperator(log_exp);
+    $.defineOperator(log_flt);
+    $.defineOperator(log_mul);
+    $.defineOperator(log_pow);
+    $.defineOperator(log_rat);
+    $.defineOperator(log_sym);
     $.defineOperator(log_varargs);
+
     $.defineOperator(mod_varargs);
 
     $.defineOperator(outer_2_blade_blade);
@@ -717,6 +731,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(exp_add);
     $.defineOperator(exp_flt);
     $.defineOperator(exp_imu);
+    $.defineOperator(exp_log);
     $.defineOperator(exp_mul);
     $.defineOperator(exp_rat);
     $.defineOperator(exp);

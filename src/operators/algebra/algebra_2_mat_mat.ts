@@ -5,7 +5,7 @@ import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
 import { Function2 } from "../helpers/Function2";
 import { is_tensor } from "../tensor/is_tensor";
-import { algebraAsTensor, convertLabelsToNative, convertMetricToNative } from "./algebra";
+import { algebra } from "./algebra";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -26,12 +26,8 @@ class Op extends Function2<Tensor, Tensor> implements Operator<U> {
         super('algebra_2_tensor_tensor', create_sym('algebra'), is_tensor, is_tensor, $);
         this.hash = hash_binop_atom_atom(create_sym('algebra'), HASH_TENSOR, HASH_TENSOR);
     }
-    transform2(opr: Sym, lhs: Tensor<U>, rhs: Tensor<U>): [TFLAGS, U] {
-        const $ = this.$;
-        const metric = convertMetricToNative(lhs);
-        const labels = convertLabelsToNative(rhs);
-        const newExpr = algebraAsTensor(metric, labels, $);
-        return [TFLAG_DIFF, newExpr];
+    transform2(opr: Sym, metric: Tensor<U>, labels: Tensor<U>): [TFLAGS, U] {
+        return [TFLAG_DIFF, algebra(metric, labels, this.$)];
     }
 }
 

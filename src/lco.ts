@@ -1,5 +1,5 @@
 import { U } from "./tree/tree";
-import { is_blade } from "./tree/vec/Algebra";
+import { is_blade } from "./tree/vec/createAlgebra";
 
 /**
  * Left Contraction (<<)

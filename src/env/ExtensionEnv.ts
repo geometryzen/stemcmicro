@@ -1,6 +1,7 @@
 import { Native } from "../native/Native";
 import { Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
+import { Tensor } from "../tree/tensor/Tensor";
 import { Cons, U } from "../tree/tree";
 import { EnvConfig } from "./EnvConfig";
 
@@ -256,6 +257,7 @@ export interface ExtensionEnv {
     getPrintHandler(): PrintHandler;
     setPrintHandler(handler: PrintHandler): void;
     abs(expr: U): U;
+    algebra(metric: Tensor<U>, labels: Tensor<U>): Tensor<U>
     /**
      *
      */

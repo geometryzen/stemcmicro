@@ -2,7 +2,7 @@ import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } 
 import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { is_blade } from "../../tree/vec/Algebra";
+import { is_blade } from "../../tree/vec/createAlgebra";
 import { Blade } from "../../tree/vec/Blade";
 import { TYPE_NAME_BLADE } from "../blade/TYPE_NAME_BLADE";
 import { Function1 } from "../helpers/Function1";

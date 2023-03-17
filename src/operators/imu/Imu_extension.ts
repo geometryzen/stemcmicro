@@ -1,6 +1,6 @@
 
 import { Imu } from "../../..";
-import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { MATH_IMU } from "../../runtime/ns_math";

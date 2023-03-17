@@ -120,6 +120,8 @@ import { eval_varargs } from '../operators/eval/eval_varargs';
 import { exp } from '../operators/exp/exp';
 import { exp_add } from '../operators/exp/exp_add';
 import { exp_flt } from '../operators/exp/exp_flt';
+import { exp_imu } from '../operators/exp/exp_imu';
+import { exp_mul } from '../operators/exp/exp_mul';
 import { exp_rat } from '../operators/exp/exp_rat';
 import { expand_extension } from '../operators/expand/expand_extension';
 import { expcos_varargs } from '../operators/expcos/expcos_varargs';
@@ -711,6 +713,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(exp_add);
     $.defineOperator(exp_flt);
+    $.defineOperator(exp_imu);
+    $.defineOperator(exp_mul);
     $.defineOperator(exp_rat);
     $.defineOperator(exp);
 

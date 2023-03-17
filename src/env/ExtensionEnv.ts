@@ -95,12 +95,13 @@ export enum Directive {
      */
     evaluatingAsPolar,
     evaluatingAsClock,
+    convertExpToTrig,
     /**
      * Determines whether trigonometric functions are converted to exponential form.
      * 
      * The default is false.
      */
-    evaluatingTrigAsExp,
+    convertTrigToExp,
     /**
      * Determines whether zero terms are kept in sums in attempt to preserve the dynamic type.
      * The alternative is to use a canonical zero value, usually that for rational numbers.

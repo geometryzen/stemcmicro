@@ -345,6 +345,7 @@ function combine_with_factors(factors: U[], X: U): void {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function is_both_bases_equal(baseL: U, baseR: U, $: ExtensionEnv): boolean {
     return baseL.equals(baseR);
 }

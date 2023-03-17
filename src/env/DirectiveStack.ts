@@ -74,6 +74,18 @@ function update_directives(directives: Directives, directive: Directive, value: 
             }
             break;
         }
+        case Directive.convertExpToTrig: {
+            if (value) {
+                directives[Directive.convertTrigToExp] = false;
+            }
+            break;
+        }
+        case Directive.convertTrigToExp: {
+            if (value) {
+                directives[Directive.convertExpToTrig] = false;
+            }
+            break;
+        }
     }
     directives[directive] = value;
 }
@@ -92,7 +104,7 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.evaluatingAsClock, false);
     update_directives(directives, Directive.evaluatingAsFloat, false);
     update_directives(directives, Directive.evaluatingAsPolar, false);
-    update_directives(directives, Directive.evaluatingTrigAsExp, false);
+    update_directives(directives, Directive.convertTrigToExp, false);
     update_directives(directives, Directive.expand, false);
     update_directives(directives, Directive.expandPowerSum, false);
     update_directives(directives, Directive.factor, false);

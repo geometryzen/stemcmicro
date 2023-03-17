@@ -88,7 +88,7 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
     if ($.getDirective(Directive.evaluatingAsPolar)) {
         // Do nothing
     }
-    else if ($.getDirective(Directive.evaluatingTrigAsExp)) {
+    else if ($.getDirective(Directive.convertTrigToExp)) {
         // Do nothing
     }
     else {

@@ -2,18 +2,20 @@
 import { assert } from "chai";
 import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
+import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("???", function () {
+    it("exp(-i*x)", function () {
         const lines: string[] = [
-            `exp(1.0)`
+            `i=sqrt(-1)`,
+            `exp(-i*x)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
-            useCaretForExponentiation: false
+            enable: [Directive.convertExpToTrig],
+            useDefinitions: false
         });
-        const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "2.718282...");
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)-i*sin(x)");
         engine.release();
     });
 });

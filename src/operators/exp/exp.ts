@@ -24,14 +24,12 @@ type EXP = UCons<Sym, ARG>;
 
 class Exp extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;
-    // readonly phases = PHASE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('exp', EXP, is_any, $);
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        // return [TFLAG_NONE, expr];
         // console.lg(this.name, this.$.toInfixString(expr), "isExpanding", this.$.isExpanding(), "isFactoring", this.$.isExpanding());
         const $ = this.$;
         if ($.getDirective(Directive.canonicalize)) {

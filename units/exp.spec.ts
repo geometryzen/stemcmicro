@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { create_script_context } from "../index";
+import { Directive } from "../src/env/ExtensionEnv";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("exp", function () {
@@ -52,6 +53,7 @@ describe("exp", function () {
             `exp(i*x)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -63,6 +65,7 @@ describe("exp", function () {
             `exp(-i*x)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -74,6 +77,7 @@ describe("exp", function () {
             `exp(x*i)+exp(-x*i)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -85,6 +89,7 @@ describe("exp", function () {
             `exp(-x*i)+exp(x*i)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -96,6 +101,7 @@ describe("exp", function () {
             `exp(x*i)-exp(-x*i)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
@@ -107,6 +113,7 @@ describe("exp", function () {
             `exp(-x*i)-exp(x*i)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);

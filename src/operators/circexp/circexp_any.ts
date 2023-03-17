@@ -26,7 +26,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        $.pushDirective(Directive.evaluatingTrigAsExp, true);
+        $.pushDirective(Directive.convertTrigToExp, true);
         try {
             const rawExpr = circexp(arg, $);
             const newExpr = $.valueOf(rawExpr);

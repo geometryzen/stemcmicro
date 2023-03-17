@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { create_script_context } from "../index";
+import { create_script_context, Directive } from "../index";
 
 describe("euler", function () {
     it("exp(0)", function () {
@@ -40,6 +40,7 @@ describe("euler", function () {
             `exp(i)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -51,6 +52,7 @@ describe("euler", function () {
             `exp(-i)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -62,6 +64,7 @@ describe("euler", function () {
             `exp(i*x)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -73,6 +76,7 @@ describe("euler", function () {
             `exp(-i*x)`
         ];
         const engine = create_script_context({
+            enable: [Directive.convertExpToTrig],
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

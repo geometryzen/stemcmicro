@@ -19,6 +19,7 @@ import {
     COSH,
     ERF,
     ERFC,
+    EXP,
     HERMITE,
     INTEGRAL,
     LOG,
@@ -120,6 +121,9 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     }
     if (opr.equals(COS)) {
         return dcos(F, X, $);
+    }
+    if (opr.equals(EXP)) {
+        return dexp(F, X, $);
     }
     if (opr.equals(TAN)) {
         return dtan(F, X, $);
@@ -242,9 +246,22 @@ function dsin(F: Cons, X: Sym, $: ExtensionEnv): U {
     return $.multiply(deriv, $.cos(u));
 }
 
-function dcos(p1: U, p2: Sym, $: ExtensionEnv): U {
-    const deriv = derivative(cadr(p1), p2, $);
-    return $.negate($.multiply(deriv, $.sin(cadr(p1))));
+/**
+ * (d (cos u) x) = - du/dx * sin(u) 
+ */
+function dcos(F: Cons, X: Sym, $: ExtensionEnv): U {
+    const u = F.argList.head;
+    const deriv = derivative(u, X, $);
+    return $.negate($.multiply(deriv, $.sin(u)));
+}
+
+/**
+ * (d (exp u) x) = du/dx * exp(u) 
+ */
+function dexp(F: Cons, X: Sym, $: ExtensionEnv): U {
+    const u = F.argList.head;
+    const deriv = derivative(u, X, $);
+    return $.multiply(deriv, $.exp(u));
 }
 
 function dtan(p1: U, p2: Sym, $: ExtensionEnv): U {

@@ -209,9 +209,8 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // BUT we can carve-out here some cases where this
     // transformation is correct.
     // TODO Do we need Directive.expandPowerProduct, like expandPowerSum?
-    // Originally done when isExpanding but factoring makes more sense.
-    // N.B Eval_multiply is going in the reverse direction when $.isExpanding().
-    if ($.isFactoring()) {
+    // N.B Eval_multiply or mul_varargs is going in the reverse direction when $.isExpanding().
+    if ($.isExpanding()) {
         // console.lg(`isExpanding=${$.isExpanding()}`);
         // console.lg(`base=>${render_as_infix(base, $)}`);
         // console.lg(`expo=>${render_as_infix(expo, $)}`);

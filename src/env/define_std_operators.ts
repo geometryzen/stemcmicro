@@ -10,6 +10,7 @@ import { abs_add } from '../operators/abs/abs_add';
 import { abs_add_blades } from '../operators/abs/abs_add_blades';
 import { abs_any } from '../operators/abs/abs_any';
 import { abs_blade } from '../operators/abs/abs_blade';
+import { abs_exp } from '../operators/abs/abs_exp';
 import { abs_flt } from '../operators/abs/abs_flt';
 import { abs_imu } from '../operators/abs/abs_imu';
 import { abs_pow_any_negone } from '../operators/abs/abs_pow_any_negone';
@@ -639,6 +640,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(abs_add_blades);
     $.defineOperator(abs_add);
     $.defineOperator(abs_blade);
+    $.defineOperator(abs_exp);
     $.defineOperator(abs_pow_any_negone);
     $.defineOperator(abs_flt);
     $.defineOperator(abs_imu);

@@ -1693,11 +1693,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     }
 
     if (is_power(expr)) {
-        let str = '';
-        const base = cadr(expr);
-        const exponent = caddr(expr);
-        str += print_power(base, exponent, $);
-        return str;
+        return print_power(expr.base, expr.expo, $);
     }
 
     //  if (car(p) == _list) {

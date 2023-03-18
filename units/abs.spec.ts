@@ -13,15 +13,6 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
         engine.release();
     });
-    xit("abs(x)", function () {
-        const lines: string[] = [
-            `abs(x)`,
-        ];
-        const engine = create_script_context({});
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(x**2)**(1/2)");
-        engine.release();
-    });
     it("abs(i*y)", function () {
         const lines: string[] = [
             `abs(i*y)`,
@@ -127,8 +118,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "2.236068...");
         engine.release();
     });
-    // FIXME
-    xit("exp(i*pi/3)", function () {
+    it("exp(i*pi/3)", function () {
         const lines: string[] = [
             `exp(i*pi/3)`,
         ];
@@ -223,7 +213,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "0.0");
         engine.release();
     });
-    xit("1.0*(-1)^(1/2)", function () {
+    it("1.0*(-1)^(1/2)", function () {
         const lines: string[] = [
             `1.0*(-1)^(1/2)`
         ];
@@ -245,7 +235,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "1.0+1.0*i");
         engine.release();
     });
-    xit("abs(1+1.0*(-1)^(1/2))", function () {
+    it("abs(1+1.0*(-1)^(1/2))", function () {
         const lines: string[] = [
             `abs(1+1.0*(-1)^(1/2))`
         ];
@@ -268,6 +258,23 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsLaTeX(value), "\\left |x \\right |");
         assert.strictEqual(engine.renderAsSExpr(value), "(abs x)");
         engine.release();
+    });
+    it("abs(exp(i*x))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `abs(exp(i*x))`
+        ];
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values, errors } = context.executeScript(sourceText, {});
+        assert.isArray(errors);
+        assert.strictEqual(errors.length, 0);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "1");
+        context.release();
     });
     it("abs(exp(a+i*b))", function () {
         const lines: string[] = [

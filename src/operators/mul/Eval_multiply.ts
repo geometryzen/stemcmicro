@@ -19,9 +19,7 @@ import { is_uom } from "../uom/is_uom";
 
 /**
  * TODO: A better name might be transform_multiplicative_expr
- * @param expr 
- * @param $ 
- * @returns 
+ * @param expr
  */
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
@@ -127,8 +125,8 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     const factors: U[] = [];
 
     // handle numerical coefficients
-    const c1 = car(p1);
-    const c2 = car(p2);
+    const c1 = p1.head;
+    const c2 = p2.head;
     if (is_num(c1) && is_num(c2)) {
         factors.push(multiply_num_num(c1, c2));
         p1 = p1.cdr;
@@ -179,7 +177,8 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
             p1 = p1.cdr;
             p2 = p2.cdr;
         }
-        else if (is_both_expos_minus_one(expoL, expoR, $)) {
+        // TODO: There should be a check here that baseL and baseR commute under multiplication...
+        else if ($.isFactoring() && is_both_expos_minus_one(expoL, expoR)) {
             combine_exponentials_with_common_expo(factors, baseL, baseR, expoL, $);
             p1 = p1.cdr;
             p2 = p2.cdr;
@@ -359,14 +358,8 @@ function is_both_bases_equal(baseL: U, baseR: U, $: ExtensionEnv): boolean {
  * @param $ 
  * @returns 
  */
-function is_both_expos_minus_one(expoL: U, expoR: U, $: ExtensionEnv): boolean {
-    if ($.isExpanding()) {
-        // return false;
-        return is_rat(expoL) && is_rat(expoR) && expoL.isMinusOne() && expoR.isMinusOne();
-    }
-    else {
-        return false;
-    }
+function is_both_expos_minus_one(expoL: U, expoR: U): boolean {
+    return is_rat(expoL) && is_rat(expoR) && expoL.isMinusOne() && expoR.isMinusOne();
 }
 
 /**

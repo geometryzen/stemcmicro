@@ -1,18 +1,23 @@
 
 import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
-import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("log(-x)", function () {
+    it("abs(exp(i*x))", function () {
         const lines: string[] = [
-            `log(-x)`,
+            `i=sqrt(-1)`,
+            `abs(exp(i*x))`
         ];
-        const engine = create_script_context({
-            useDefinitions: false
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "log(x)+i*pi");
-        engine.release();
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values, errors } = context.executeScript(sourceText, {});
+        assert.isArray(errors);
+        assert.strictEqual(errors.length, 0);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "1");
+        context.release();
     });
 });

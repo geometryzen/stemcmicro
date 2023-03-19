@@ -381,9 +381,12 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { get_last_print_mode_symbol, store_text_in_binding } from '../print/print';
+import { render_using_print_mode } from '../print/render_using_print_mode';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, FACTOR, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
+import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { Eval_power } from '../scripting/eval_power';
 import { Eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt, Eval_testne } from '../test';
 import { one, zero } from '../tree/rat/Rat';
@@ -568,6 +571,19 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(conj_any);
 
     $.defineOperator(degree_varargs);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    $.defineKeyword(FACTOR, function ($: ExtensionEnv) {
+        const last = $.getSymbolValue(RESERVED_KEYWORD_LAST);
+        const factored = $.factor(last);
+        $.setSymbolValue(RESERVED_KEYWORD_LAST, factored);
+
+        const str = render_using_print_mode(factored, defs.printMode, $);
+        const printHandler = $.getPrintHandler();
+        printHandler.print(str);
+
+        store_text_in_binding(str, get_last_print_mode_symbol(defs.printMode), $);
+    });
 
     $.defineOperator(gamma_varargs);
 

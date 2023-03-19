@@ -45,6 +45,7 @@
         "unit-testne": "mocha 'units/testne.spec.ts'",
         "unit-iscomplex": "mocha 'units/iscomplex.spec.ts'",
         "unit-sandbox": "mocha 'units/sandbox.spec.ts'",
+        "test-bake": "mocha 'tests/bake.ts'",
         "test-cos": "mocha 'tests/cos.ts'",
         "test-sin": "mocha 'tests/sin.ts'",
         "test-log": "mocha 'tests/log.ts'",

@@ -286,6 +286,7 @@ export interface ExtensionEnv {
      *
      */
     equals(lhs: U, rhs: U): boolean;
+    factor(expr: U): U;
     /**
      *
      */

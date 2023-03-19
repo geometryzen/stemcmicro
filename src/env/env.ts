@@ -242,6 +242,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         exp(expr: U): U {
             return $.evaluate(Native.exp, expr);
         },
+        factor(expr: U): U {
+            return $.evaluate(Native.factor, expr);
+        },
         float(expr: U): U {
             return $.evaluate(Native.float, expr);
         },

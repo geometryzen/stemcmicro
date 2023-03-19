@@ -9,7 +9,7 @@ import { defs } from "../runtime/defs";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NewLine, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_BANG, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NewLine, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
 import { consume_num } from "./consume_num";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
@@ -451,6 +451,12 @@ export class InputState {
                         this.#token.code = T_NTEQ;
                         this.#token.txt = '!=';
                         this.#token.end += 2;
+                        return;
+                    }
+                    default: {
+                        this.#token.code = T_BANG;
+                        this.#token.txt = '!';
+                        this.#token.end += 1;
                         return;
                     }
                 }

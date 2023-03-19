@@ -707,8 +707,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(condense_varargs);
     $.defineOperator(contract_varargs);
 
-    $.defineOperator(cos_add_2_any_any);
-    $.defineOperator(cos_mul_2_any_imu);
     $.defineOperator(cos_sym);
     $.defineOperator(cos_hyp);
     $.defineOperator(cos_any);
@@ -895,9 +893,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(sin_add);
     $.defineOperator(sin_flt);
     $.defineOperator(sin_hyp);
+    $.defineOperator(sin_mul);
     $.defineOperator(sin_rat);
     $.defineOperator(sin_sym);
-    $.defineOperator(sin_mul);
     $.defineOperator(sin_any);
 
     $.defineOperator(sqrt_rat);

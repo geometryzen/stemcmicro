@@ -38,3 +38,4 @@ export const T_END = next_code('End');
 export const T_COMMA = next_code(',');
 export const T_LSQB = next_code('[');
 export const T_RSQB = next_code(']');
+export const T_BANG = next_code('!');

@@ -101,6 +101,7 @@ class SymExtension implements Extension<Sym> {
         }
     }
     evaluate(sym: Sym, argList: Cons): [TFLAGS, U] {
+        // console.lg("SymExtension.evaluate", this.$.toInfixString(sym));
         return this.transform(cons(sym, argList));
     }
     transform(expr: U): [TFLAGS, U] {

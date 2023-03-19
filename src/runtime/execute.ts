@@ -6,7 +6,6 @@ import { items_to_cons } from "../makeList";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { is_imu } from '../operators/imu/is_imu';
-import { is_rat } from "../operators/rat/is_rat";
 import { subst } from '../operators/subst/subst';
 import { is_sym } from "../operators/sym/is_sym";
 import { parse_script } from "../parser/parser";
@@ -134,6 +133,7 @@ export function transform_tree(tree: U, options: ExprTransformOptions, $: Extens
 /**
  * 
  */
+/*
 function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
     const binding = $.getSymbolValue(sym);
     if (is_nil(binding)) {
@@ -144,19 +144,13 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
     }
     return true;
 }
-
+*/
 /**
  * This should not be needed when we can define our own transformer pipelines.
  */
 export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: ExtensionEnv,): U {
 
     const wrappers: Sym[] = detect_wrappers(tree);
-    if ($.getDirective(Directive.autoExpand)) {
-        wrappers.push(EXPAND);
-    }
-    if ($.getDirective(Directive.autoFactor)) {
-        wrappers.push(FACTOR);
-    }
     wrappers.reverse();
 
     tree = remove_wrappers(tree);
@@ -165,7 +159,28 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
 
     const box = new Box(tree);
 
-    box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+    if (options.autoExpand) {
+        $.pushDirective(Directive.expanding, true);
+        try {
+            box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+        }
+        finally {
+            $.popDirective();
+        }
+    }
+    else {
+        box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+    }
+
+    if (options.autoFactor) {
+        $.pushDirective(Directive.factoring, true);
+        try {
+            box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+        }
+        finally {
+            $.popDirective();
+        }
+    }
 
     const transformed = box.pop();
     // console.lg();
@@ -246,6 +261,9 @@ function remove_wrappers(tree: U): U {
 
 function is_wrapper_opr(sym: Sym): boolean {
     if (CLOCK.equalsSym(sym)) {
+        return true;
+    }
+    else if (EXPAND.equalsSym(sym)) {
         return true;
     }
     else if (FACTOR.equalsSym(sym)) {

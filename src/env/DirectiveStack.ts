@@ -42,23 +42,23 @@ function update_directives(directives: Directives, directive: Directive, value: 
             }
             break;
         }
-        case Directive.expand: {
+        case Directive.expanding: {
             if (value) {
-                directives[Directive.factor] = false;
+                directives[Directive.factoring] = false;
             }
             else {
                 // console.lg("Directive.expand has been set to false, Directive.factor becoming true");
-                directives[Directive.factor] = true;
+                directives[Directive.factoring] = true;
             }
             break;
         }
-        case Directive.factor: {
+        case Directive.factoring: {
             if (value) {
-                directives[Directive.expand] = false;
+                directives[Directive.expanding] = false;
             }
             else {
                 // console.lg("Directive.factor has been set to false, Directive.expand becoming true");
-                directives[Directive.expand] = true;
+                directives[Directive.expanding] = true;
             }
             break;
         }
@@ -101,19 +101,17 @@ function mutex(directives: Directives, value: boolean, a: Directive, b: Directiv
 
 function initial_directives(): Directives {
     const directives: Directives = {};
-    update_directives(directives, Directive.autoExpand, false);
-    update_directives(directives, Directive.autoFactor, false);
     update_directives(directives, Directive.complexAsClock, false);
     update_directives(directives, Directive.complexAsPolar, false);
     update_directives(directives, Directive.evaluatingAsFloat, false);
     update_directives(directives, Directive.convertExpToTrig, false);
     update_directives(directives, Directive.convertTrigToExp, false);
-    update_directives(directives, Directive.expand, false);
+    update_directives(directives, Directive.expanding, false);
     update_directives(directives, Directive.expandAbsSum, false);
     update_directives(directives, Directive.expandCosSum, false);
     update_directives(directives, Directive.expandPowSum, true);
     update_directives(directives, Directive.expandSinSum, false);
-    update_directives(directives, Directive.factor, false);
+    update_directives(directives, Directive.factoring, false);
     update_directives(directives, Directive.keepZeroTermsInSums, false);
     // TODO: These two don't seem like Directive(s).
     update_directives(directives, Directive.renderFloatAsEcmaScript, false);

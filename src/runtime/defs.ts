@@ -160,7 +160,7 @@ export function hard_reset() {
 }
 
 export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.expand, false);
+    $.pushDirective(Directive.expanding, false);
     try {
         return func(arg, $);
     }
@@ -170,7 +170,7 @@ export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: 
 }
 
 export function noexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.expand, false);
+    $.pushDirective(Directive.expanding, false);
     try {
         return func(lhs, rhs, $);
     }
@@ -180,7 +180,7 @@ export function noexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lh
 }
 
 export function doexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.expand, true);
+    $.pushDirective(Directive.expanding, true);
     try {
         return func(arg, $);
     }
@@ -190,7 +190,7 @@ export function doexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: 
 }
 
 export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.expand, true);
+    $.pushDirective(Directive.expanding, true);
     try {
         return func(lhs, rhs, $);
     }

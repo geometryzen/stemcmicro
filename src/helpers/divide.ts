@@ -19,7 +19,7 @@ export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
 }
 
 export function divide_expand(lhs: U, rhs: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.expand, true);
+    $.pushDirective(Directive.expanding, true);
     try {
         return divide(lhs, rhs, $);
     }

@@ -49,7 +49,7 @@ describe("rationalize", function () {
             `rationalize(a/b+b/a)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);

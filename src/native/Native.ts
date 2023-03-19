@@ -23,6 +23,9 @@ export enum Native {
     exp,
     expand,
     expsin,
+    /**
+     * Factor a polynomial or integer.
+     */
     factor,
     factorial,
     float,

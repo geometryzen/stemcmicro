@@ -5,7 +5,7 @@ import { TreeTransformer } from './Transformer';
 
 export class ExpandingTransformer implements TreeTransformer {
     transform(tree: U, $: ExtensionEnv): U {
-        $.pushDirective(Directive.expand, true);
+        $.pushDirective(Directive.expanding, true);
         try {
 
             return transform(tree, $);

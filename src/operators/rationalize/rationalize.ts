@@ -21,7 +21,7 @@ export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.factor, true);
+    $.pushDirective(Directive.factoring, true);
     try {
         return yyrationalize(argList, $);
     }

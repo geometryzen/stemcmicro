@@ -15,8 +15,8 @@ import { execute_script, transform_tree } from "./execute";
 import { execute_definition, execute_std_definitions } from "./init";
 
 export interface ExprTransformOptions {
-    autoexpand?: boolean;
-    autofactor?: boolean;
+    autoExpand?: boolean;
+    autoFactor?: boolean;
     /**
      * Directives that become enabled by setting to true.
      */
@@ -224,11 +224,11 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
 function merge_options(options: ExprTransformOptions | undefined, contextOptions: ScriptContextOptions | undefined): ExprTransformOptions {
     const merged: ExprTransformOptions = {};
     if (contextOptions) {
-        if (typeof contextOptions.autoexpand === 'boolean') {
-            merged.autoexpand = contextOptions.autoexpand;
+        if (typeof contextOptions.autoExpand === 'boolean') {
+            merged.autoExpand = contextOptions.autoExpand;
         }
-        if (typeof contextOptions.autofactor === 'boolean') {
-            merged.autofactor = contextOptions.autofactor;
+        if (typeof contextOptions.autoFactor === 'boolean') {
+            merged.autoFactor = contextOptions.autoFactor;
         }
         if (Array.isArray(contextOptions.disable)) {
             merged.disable = contextOptions.disable;
@@ -238,11 +238,11 @@ function merge_options(options: ExprTransformOptions | undefined, contextOptions
         }
     }
     if (options) {
-        if (typeof options.autoexpand === 'boolean') {
-            merged.autoexpand = options.autoexpand;
+        if (typeof options.autoExpand === 'boolean') {
+            merged.autoExpand = options.autoExpand;
         }
-        if (typeof options.autofactor === 'boolean') {
-            merged.autofactor = options.autofactor;
+        if (typeof options.autoFactor === 'boolean') {
+            merged.autoFactor = options.autoFactor;
         }
         if (Array.isArray(options.disable)) {
             merged.disable = options.disable;

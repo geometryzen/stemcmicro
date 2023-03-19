@@ -209,7 +209,7 @@ describe("Exponentiation", function () {
             `1/(-a-b)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -221,7 +221,7 @@ describe("Exponentiation", function () {
             `1/(a+b)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -233,7 +233,7 @@ describe("Exponentiation", function () {
             `-1/(a+b)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -245,7 +245,7 @@ describe("Exponentiation", function () {
             `1/(a-b)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -257,7 +257,7 @@ describe("Exponentiation", function () {
             `1/(b-a)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -269,7 +269,7 @@ describe("Exponentiation", function () {
             `1/(-a-b)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -281,7 +281,7 @@ describe("Exponentiation", function () {
             `1/(-a*b-x*b^2)+1/(a*b+x*b^2)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -293,7 +293,7 @@ describe("Exponentiation", function () {
             `1/(b*(a+b*x))+1/(-a*b-x*b^2)`
         ];
         const engine = create_script_context({
-            disable: [Directive.factor],
+            disable: [Directive.factoring],
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

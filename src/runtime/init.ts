@@ -68,7 +68,7 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
         try {
             if (scanned > 0) {
                 // Evaluating the tree for the side-effect which is to establish a binding.
-                $.pushDirective(Directive.expand, true);
+                $.pushDirective(Directive.expanding, true);
                 try {
                     $.valueOf(tree);
                 }

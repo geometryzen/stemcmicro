@@ -113,14 +113,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     const sym_order: Record<string, ExprComparator> = {};
 
     function currentOps(): { [key: string]: Operator<U>[] } {
-        if (native_directives.get(Directive.expand)) {
+        if (native_directives.get(Directive.expanding)) {
             const ops = ops_by_mode[MODE_EXPANDING];
             if (typeof ops === 'undefined') {
                 throw new Error(`currentOps(${MODE_EXPANDING})`);
             }
             return ops;
         }
-        if (native_directives.get(Directive.factor)) {
+        if (native_directives.get(Directive.factoring)) {
             const ops = ops_by_mode[MODE_FACTORING];
             if (typeof ops === 'undefined') {
                 throw new Error(`currentOps(${MODE_FACTORING})`);
@@ -142,9 +142,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         }
         else {
             // eslint-disable-next-line no-console
-            console.warn("expand", native_directives.get(Directive.expand));
+            console.warn("expand", native_directives.get(Directive.expanding));
             // eslint-disable-next-line no-console
-            console.warn("factor", native_directives.get(Directive.factor));
+            console.warn("factor", native_directives.get(Directive.factoring));
             throw new SystemError(`No operators for key ${key} in current mode}`);
         }
     }
@@ -311,10 +311,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             */
         },
         isExpanding(): boolean {
-            return native_directives.get(Directive.expand);
+            return native_directives.get(Directive.expanding);
         },
         isFactoring(): boolean {
-            return native_directives.get(Directive.factor);
+            return native_directives.get(Directive.factoring);
         },
         is_imag(expr: U): boolean {
             const op = $.operatorFor(expr);

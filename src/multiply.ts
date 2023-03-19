@@ -47,7 +47,7 @@ export function multiply_items(items: U[], $: ExtensionEnv): U {
 
 // n an integer
 export function multiply_items_factoring(items: U[], $: ExtensionEnv): U {
-    $.pushDirective(Directive.factor, true);
+    $.pushDirective(Directive.factoring, true);
     try {
         return multiply_items(items, $);
     }

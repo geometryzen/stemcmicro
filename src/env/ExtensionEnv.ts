@@ -59,8 +59,6 @@ export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
  * Determines how an expression is evaluated.
  */
 export enum Directive {
-    autoExpand,
-    autoFactor,
     /**
      * Convert familiar expressions to canonical form. Mutually exclusive with familiarize.
      */
@@ -78,9 +76,10 @@ export enum Directive {
      */
     familiarize,
     /**
-     * Mutually exclusive with factor.
+     * Is not the same as the expand function.
+     * Mutually exclusive with factoring.
      */
-    expand,
+    expanding,
     /**
      * Determines whether abs(a + b + c ...) is expanded.
      */
@@ -135,9 +134,10 @@ export enum Directive {
      */
     keepZeroTermsInSums,
     /**
-     * Mutually exclusive with expand.
+     * Is not the same as the factor function.
+     * Mutually exclusive with expanding.
      */
-    factor,
+    factoring,
     /**
      * Determines whether floating point numbers are rendered as EcmaScript numbers.
      * If not, floating point numbers are rendered in a proprietary format.

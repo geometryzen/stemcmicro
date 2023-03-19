@@ -43,7 +43,7 @@ export function Eval_add(expr: Cons, $: ExtensionEnv): U {
     }
     else {
         // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.
-        return $.valueOf(cons(expr.car, vals));
+        return $.add(...vals);
     }
 }
 
@@ -155,7 +155,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
             break;
         }
 
-        add_sorted_terms(terms, $);
+        combine_terms(terms, $);
     }
 
     switch (terms.length) {
@@ -175,7 +175,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
     }
 }
 
-function add_sorted_terms(terms: U[], $: ExtensionEnv): void {
+function combine_terms(terms: U[], $: ExtensionEnv): void {
     let addedZeroAsFlt = false;
     let i = 0;
     while (i < terms.length - 1) {

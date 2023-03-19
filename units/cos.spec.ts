@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -55,6 +56,17 @@ describe("cos", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), 'cos(a+b)');
+    });
+    it("cos(a+b)", function () {
+        const lines: string[] = [
+            `cos(a+b)`
+        ];
+        const engine = create_script_context({
+            enable: [Directive.expandCosSum],
+            dependencies: []
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), 'cos(a)*cos(b)-sin(a)*sin(b)');
     });
     it("cos(b+a)", function () {
@@ -62,6 +74,7 @@ describe("cos", function () {
             `cos(b+a)`
         ];
         const engine = create_script_context({
+            enable: [Directive.expandCosSum],
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

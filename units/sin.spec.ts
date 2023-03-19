@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -8,6 +9,7 @@ describe("sin", function () {
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
         ];
         const engine = create_script_context({
+            enable: [Directive.expandSinSum],
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -76,6 +78,7 @@ describe("sin", function () {
             `sin(a-b)`
         ];
         const engine = create_script_context({
+            enable: [Directive.expandSinSum],
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -97,6 +100,7 @@ describe("sin", function () {
             `sin(b-a)`
         ];
         const engine = create_script_context({
+            enable: [Directive.expandSinSum],
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -119,6 +123,7 @@ describe("sin", function () {
             `sin(a+b)-(sin(a)*cos(b)+cos(a)*sin(b))`
         ];
         const engine = create_script_context({
+            enable: [Directive.expandSinSum],
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -129,6 +134,7 @@ describe("sin", function () {
             `sin(a)*cos(b)+cos(a)*sin(b)-sin(a+b)`
         ];
         const engine = create_script_context({
+            enable: [Directive.expandSinSum],
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -139,6 +145,7 @@ describe("sin", function () {
             `cos(b)*sin(a)+cos(a)*sin(b)-sin(a+b)`
         ];
         const engine = create_script_context({
+            enable: [Directive.expandSinSum],
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

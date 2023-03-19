@@ -1,4 +1,4 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { is_multiple_of_pi } from "../../is_multiple_of_pi";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -15,16 +15,23 @@ const ADD = native_sym(Native.add);
  */
 function sine_of_angle_sum(addExpr: Cons, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] {
     // console.lg("sine_of_angle_sum", $.toInfixString(addExpr));
-    let argList = addExpr.argList;
-    while (is_cons(argList)) {
-        const B = argList.head;
-        if (is_multiple_of_pi(B, $)) {
-            const A = $.subtract(addExpr, B);
-            return [TFLAG_DIFF, $.add($.multiply($.sin(A), $.cos(B)), $.multiply($.cos(A), $.sin(B)))];
-        }
-        argList = argList.argList;
+    if ($.getDirective(Directive.expandSinSum)) {
+        const a = addExpr.argList.head;
+        const b = $.add(...addExpr.argList.tail());
+        return [TFLAG_DIFF, $.add($.multiply($.sin(a), $.cos(b)), $.multiply($.cos(a), $.sin(b)))];
     }
-    return [TFLAG_NONE, oldExpr];
+    else {
+        let argList = addExpr.argList;
+        while (is_cons(argList)) {
+            const B = argList.head;
+            if (is_multiple_of_pi(B, $)) {
+                const A = $.subtract(addExpr, B);
+                return [TFLAG_DIFF, $.add($.multiply($.sin(A), $.cos(B)), $.multiply($.cos(A), $.sin(B)))];
+            }
+            argList = argList.argList;
+        }
+        return [TFLAG_NONE, oldExpr];
+    }
 }
 
 class Builder implements OperatorBuilder<U> {

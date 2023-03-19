@@ -14,13 +14,14 @@ import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, is_nil, nil, U } from '../tree/tree';
 import { Box } from "./Box";
-import { AUTOEXPAND, AUTOFACTOR, BAKE, SYMBOL_I, SYMBOL_J } from './constants';
+import { BAKE, SYMBOL_I, SYMBOL_J } from './constants';
 import { DefaultPrintHandler } from "./DefaultPrintHandler";
 import { move_top_of_stack } from './defs';
 import { RESERVED_KEYWORD_LAST } from './ns_script';
 import { ExprTransformOptions, ScriptExecuteOptions } from "./script_engine";
 
 const CLOCK = native_sym(Native.clock);
+const EXPAND = native_sym(Native.expand);
 const FACTOR = native_sym(Native.factor);
 const POLAR = native_sym(Native.polar);
 const RATIONALIZE = native_sym(Native.rationalize);
@@ -150,6 +151,13 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
 export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: ExtensionEnv,): U {
 
     const wrappers: Sym[] = detect_wrappers(tree);
+    if ($.getDirective(Directive.autoExpand)) {
+        wrappers.push(EXPAND);
+    }
+    if ($.getDirective(Directive.autoFactor)) {
+        wrappers.push(FACTOR);
+    }
+    wrappers.reverse();
 
     tree = remove_wrappers(tree);
 
@@ -157,52 +165,7 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
 
     const box = new Box(tree);
 
-    // AUTOEXPAND, by default is unbound. i.e. only bound to it's own symbol.
-    // isZero operating on Sym returns false. Therefore expanding will be true.
-    // i.e. the default value of AUTOEXPAND is true!
-    if (isNotDisabled(AUTOEXPAND, $)) {
-        $.pushDirective(Directive.expand, true);
-        try {
-            // console.lg("Expanding...");
-            box.push(transform(apply_wrappers(box.pop(), wrappers), $));
-        }
-        finally {
-            $.popDirective();
-        }
-    }
-
-    /*
-    $.pushDirective(Directive.canonicalize, true);
-    try {
-        // console.lg("Canonicalize...");
-        box.push(transform(apply_wrappers(box.pop(), wrappers), $));
-    }
-    finally {
-        $.popDirective();
-    }
-    */
-
-    if (options.autofactor && isNotDisabled(AUTOFACTOR, $)) {
-        $.pushDirective(Directive.factor, true);
-        try {
-            // console.lg("Factoring...");
-            box.push(transform(apply_wrappers(box.pop(), wrappers), $));
-        }
-        finally {
-            $.popDirective();
-        }
-    }
-
-    /*
-    $.pushDirective(Directive.familiarize, true);
-    try {
-        // console.lg("Familiarize...");
-        box.push(transform(apply_wrappers(box.pop(), wrappers), $));
-    }
-    finally {
-        $.popDirective();
-    }
-    */
+    box.push(transform(apply_wrappers(box.pop(), wrappers), $));
 
     const transformed = box.pop();
     // console.lg();
@@ -255,7 +218,7 @@ function detect_wrappers(tree: U): Sym[] {
             break;
         }
     }
-    return wrappers.reverse();
+    return wrappers;
 }
 
 function remove_wrappers(tree: U): U {

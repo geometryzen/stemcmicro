@@ -31,12 +31,12 @@ export function Eval_add(expr: Cons, $: ExtensionEnv): U {
         const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
         if (some_term_is_zero_float) {
             for (const value of values) {
-                push_terms(terms, evaluate_as_float(value, $));
+                push_terms(terms, evaluate_as_float(value, $), $);
             }
         }
         else {
             for (const value of values) {
-                push_terms(terms, $.valueOf(value));
+                push_terms(terms, $.valueOf(value), $);
             }
         }
         return add_terms(terms, $);
@@ -50,12 +50,14 @@ export function Eval_add(expr: Cons, $: ExtensionEnv): U {
 /**
  * Pushes a term onto the terms array with side effects that association is removed and zeros are omitted. 
  */
-function push_terms(terms: U[], term: U): void {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function push_terms(terms: U[], term: U, $: ExtensionEnv): void {
     if (is_add(term)) {
         terms.push(...term.tail());
     }
     else if (is_num(term) && term.isZero()) {
         // omit zeros
+        // console.lg("omitting", $.toInfixString(term));
     }
     else {
         terms.push(term);
@@ -63,12 +65,6 @@ function push_terms(terms: U[], term: U): void {
 }
 
 function add_terms(terms: U[], $: ExtensionEnv): U {
-    // console.lg("===============================");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    terms.forEach(function (term) {
-        // console.lg("term", $.toInfixString(term));
-    });
-
     /**
      * The canonical comparator function for comparing terms.
      */
@@ -159,7 +155,7 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
             break;
         }
 
-        combine_terms(terms, $);
+        add_sorted_terms(terms, $);
     }
 
     switch (terms.length) {
@@ -179,15 +175,8 @@ function add_terms(terms: U[], $: ExtensionEnv): U {
     }
 }
 
-function combine_terms(terms: U[], $: ExtensionEnv): void {
-    // console.lg("combine_terms");
-    // I had to turn the coffeescript for loop into
-    // a more mundane while loop because the i
-    // variable was changed from within the body,
-    // which is something that is not supposed to
-    // happen in the coffeescript 'vector' form.
-    // Also this means I had to add a 'i++' jus before
-    // the end of the body and before the "continue"s
+function add_sorted_terms(terms: U[], $: ExtensionEnv): void {
+    let addedZeroAsFlt = false;
     let i = 0;
     while (i < terms.length - 1) {
         let lhs = terms[i];
@@ -211,8 +200,7 @@ function combine_terms(terms: U[], $: ExtensionEnv): void {
 
         if (is_num(lhs) && is_num(rhs)) {
             const sum = add_num_num(lhs, rhs);
-            // console.lg("sum", render_as_infix(sum, $));
-            if (is_num_or_tensor_and_zero(sum, $)) {
+            if (sum.isZero()) {
                 // At this point we are in danger of forgetting if the zero was a Flt (as opposed to a Rat).
                 // If there are exactly two terms, keep the sum as a zero with a particular type.
                 // console.lg("terms.length", terms.length);
@@ -220,6 +208,9 @@ function combine_terms(terms: U[], $: ExtensionEnv): void {
                     terms.splice(i, 2, sum);
                 }
                 else {
+                    if (is_flt(sum)) {
+                        addedZeroAsFlt = true;
+                    }
                     terms.splice(i, 2);
                 }
             }
@@ -288,6 +279,11 @@ function combine_terms(terms: U[], $: ExtensionEnv): void {
 
         // this i++ is to match the while
         i++;
+    }
+    if (addedZeroAsFlt) {
+        for (let i = 0; i < terms.length; i++) {
+            terms[i] = $.float(terms[i]);
+        }
     }
 }
 

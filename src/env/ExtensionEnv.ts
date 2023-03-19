@@ -59,6 +59,8 @@ export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
  * Determines how an expression is evaluated.
  */
 export enum Directive {
+    autoExpand,
+    autoFactor,
     /**
      * Convert familiar expressions to canonical form. Mutually exclusive with familiarize.
      */
@@ -285,9 +287,10 @@ export interface ExtensionEnv {
      */
     equals(lhs: U, rhs: U): boolean;
     /**
-     * @deprecated
+     *
      */
     factorize(poly: U, x: U): U;
+    float(expr: U): U;
     getCustomDirective(directive: string): boolean;
     getDirective(directive: Directive): boolean;
     getSymbolProps(sym: Sym | string): SymbolProps;

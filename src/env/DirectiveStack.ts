@@ -101,13 +101,15 @@ function mutex(directives: Directives, value: boolean, a: Directive, b: Directiv
 
 function initial_directives(): Directives {
     const directives: Directives = {};
+    update_directives(directives, Directive.autoExpand, false);
+    update_directives(directives, Directive.autoFactor, false);
     update_directives(directives, Directive.complexAsClock, false);
     update_directives(directives, Directive.complexAsPolar, false);
     update_directives(directives, Directive.evaluatingAsFloat, false);
     update_directives(directives, Directive.convertExpToTrig, false);
     update_directives(directives, Directive.convertTrigToExp, false);
     update_directives(directives, Directive.expand, false);
-    update_directives(directives, Directive.expandAbsSum, true);
+    update_directives(directives, Directive.expandAbsSum, false);
     update_directives(directives, Directive.expandCosSum, false);
     update_directives(directives, Directive.expandPowSum, true);
     update_directives(directives, Directive.expandSinSum, false);

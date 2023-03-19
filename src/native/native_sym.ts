@@ -34,9 +34,11 @@ export function build_sym(code: Native): Sym {
         case Native.cos: return create_sym('cos');
         case Native.divide: return create_sym('/');
         case Native.exp: return create_sym('exp');
+        case Native.expand: return create_sym('expand');
         case Native.expsin: return create_sym('expsin');
         case Native.factor: return create_sym('factor');
         case Native.factorial: return create_sym('factorial');
+        case Native.float: return create_sym('float');
         case Native.imag: return create_sym('imag');
         case Native.inner: return create_sym('inner');
         case Native.integral: return create_sym('integral');

@@ -242,6 +242,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         exp(expr: U): U {
             return $.evaluate(Native.exp, expr);
         },
+        float(expr: U): U {
+            return $.evaluate(Native.float, expr);
+        },
         getSymbolProps(sym: Sym | string): SymbolProps {
             return symTab.getProps(sym);
         },

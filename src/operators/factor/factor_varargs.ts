@@ -2,11 +2,14 @@ import { cadnr } from "../../calculators/cadnr";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { FACTOR } from "../../runtime/constants";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { cdddr } from "../../tree/helpers";
 import { Cons, is_cons, nil, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { factor, factor_again } from "./factor";
+
+export const FACTOR = native_sym(Native.factor);
 
 // factor a polynomial or integer
 export function Eval_factor(expr: Cons, $: ExtensionEnv): U {

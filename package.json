@@ -45,6 +45,8 @@
         "unit-testne": "mocha 'units/testne.spec.ts'",
         "unit-iscomplex": "mocha 'units/iscomplex.spec.ts'",
         "unit-sandbox": "mocha 'units/sandbox.spec.ts'",
+        "test-cos": "mocha 'tests/cos.ts'",
+        "test-sin": "mocha 'tests/sin.ts'",
         "test-log": "mocha 'tests/log.ts'",
         "test-sandbox": "mocha 'tests/sandbox.ts'"
     },
@@ -98,7 +100,7 @@
         "nyc": "^15.1.0",
         "release-it": "^15.9.0",
         "rollup": "^3.19.1",
-        "rollup-plugin-dts": "^5.2.0",
+        "rollup-plugin-dts": "^5.3.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.1",
         "typedoc": "^0.23.27",

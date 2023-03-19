@@ -284,12 +284,31 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // The exponent must be an integer and convertable to a JavaScript number.
     // We don't always want to do this. It can make otherwise simple expressions explode and can throw off symbolic integration.
     if ($.isExpanding() && $.getDirective(Directive.expandPowSum)) {
-        if (is_add(base) && is_num(expo) && is_integer_and_in_safe_number_range(expo) && expo.isPositive()) {
-            const terms = args_to_items(base);
-            if (terms.every($.is_real)) {
-                const n = nativeInt(expo);
-                const result = power_sum(n, base, $);
-                return hook(result, "T");
+        if (is_add(base) && is_num(expo) && is_integer_and_in_safe_number_range(expo)) {
+            if (expo.isOne()) {
+                // Do nothing.
+            }
+            else if (expo.isMinusOne()) {
+                // Do nothing.
+            }
+            else if (expo.isZero()) {
+                // Do nothing, but the result is one.
+            }
+            else if (expo.isPositive()) {
+                const terms = args_to_items(base);
+                if (terms.every($.is_real)) {
+                    const n = nativeInt(expo);
+                    const result = power_sum(n, base, $);
+                    return hook(result, "T");
+                }
+            }
+            else if (expo.isNegative()) {
+                const terms = args_to_items(base);
+                if (terms.every($.is_real)) {
+                    const n = nativeInt(expo);
+                    const result = $.divide(one, power_sum(-n, base, $));
+                    return hook(result, "T");
+                }
             }
         }
     }

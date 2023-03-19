@@ -3,22 +3,15 @@ import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    it("integral(1/sqrt(a+x^2),x)", function () {
+    it("d(1/(5+4*cos(x)),x)", function () {
         const lines: string[] = [
-            `integral(1/sqrt(a+x^2),x)`,
+            `d(1/(5+4*cos(x)),x)`
         ];
-        const sourceText = lines.join('\n');
-
-        const context = create_script_context({
-            useCaretForExponentiation: true
+        const engine = create_script_context({
+            useCaretForExponentiation: false
         });
-
-        const { values, errors } = context.executeScript(sourceText, {});
-        assert.isArray(errors);
-        assert.strictEqual(errors.length, 0);
-        assert.isArray(values);
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsInfix(values[0]), "log(x+(a+x^2)^(1/2))");
-        context.release();
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "4*sin(x)/((5+4*cos(x))**2)");
+        engine.release();
     });
 });

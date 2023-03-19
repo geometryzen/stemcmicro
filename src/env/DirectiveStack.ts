@@ -109,7 +109,7 @@ function initial_directives(): Directives {
     update_directives(directives, Directive.expanding, false);
     update_directives(directives, Directive.expandAbsSum, false);
     update_directives(directives, Directive.expandCosSum, false);
-    update_directives(directives, Directive.expandPowSum, true);
+    update_directives(directives, Directive.expandPowSum, false);
     update_directives(directives, Directive.expandSinSum, false);
     update_directives(directives, Directive.factoring, false);
     update_directives(directives, Directive.keepZeroTermsInSums, false);

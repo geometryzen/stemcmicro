@@ -1,7 +1,7 @@
 import { polyform } from './bake';
 import { scan_meta } from './brite/scan';
 import { decomp } from './decomp';
-import { ExtensionEnv } from './env/ExtensionEnv';
+import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { items_to_cons } from './makeList';
 import { is_num } from './operators/num/is_num';
 import { subst } from './operators/subst/subst';
@@ -161,7 +161,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                     // console.lg("C:", $.toSExprString(C));
 
                     if (f_equals_a([one, ...results], generalTransform, F, A, C, $)) {
-                        // there is a successful transformation, transformed result is in p6
+                        // The result is in B, which must be evaluated to convert the meta variables to the correct values.
                         retvalFlag = true;
                         break;
                     }
@@ -256,12 +256,17 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
                 return $.valueOf(x);
             }, A, $) : $.valueOf(A);
 
-            // console.lg("F", $.toInfixString(F));
+
+            // console.lg("-----------------------");
+            // console.lg("expanding", $.getDirective(Directive.expanding));
+            // console.lg("F   ", $.toInfixString(F), $.toInfixString($.valueOf(F)));
             // console.lg("arg2", $.toInfixString(arg2));
 
+            $.pushDirective(Directive.expandPowSum, true);
             const diff = $.subtract(F, arg2);
+            $.popDirective();
 
-            // console.lg("diff", $.toSExprString(diff));
+            // console.lg("diff", $.toInfixString(diff));
 
             if ($.is_zero(diff)) {
                 return true;

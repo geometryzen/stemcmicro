@@ -150,7 +150,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                 if (sourceText) {
                     // console.lg("sourceText:", JSON.stringify(sourceText));
                     // Note that expr is (f A B C1 C2 C3 ...),
-                    // where A is the expressionto be integrated, B is the integral solution, Cn are optional conditions.
+                    // where A is the expression to be integrated, B is the integral solution, Cn are optional conditions.
                     const expr = assert_cons(scan_meta(sourceText));
                     const argList = expr.argList;
                     const A = argList.head;
@@ -168,8 +168,19 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                 }
             }
         }
-        const retval = retvalFlag ? $.valueOf(B) : generalTransform ? F : nil;
-        return [retval, retvalFlag];
+        // console.lg("retvalFlag", retvalFlag);
+        // console.lg("B:", $.toInfixString(B));
+        if (retvalFlag) {
+            // console.lg("METAA", $.toInfixString($.getSymbolValue(METAA)));
+            // console.lg("METAX", $.toInfixString($.getSymbolValue(METAX)));
+            const retval = $.valueOf(B);
+            // console.lg("retval:", $.toInfixString(retval));
+            return [retval, retvalFlag];
+        }
+        else {
+            const retval = generalTransform ? F : nil;
+            return [retval, retvalFlag];
+        }
     }
     finally {
         restoreMetaBindings(state, $);

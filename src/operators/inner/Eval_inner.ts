@@ -5,8 +5,7 @@ import { SYMBOL_IDENTITY_MATRIX } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_inner_or_dot, is_num_or_tensor_or_identity_matrix } from '../../runtime/helpers';
 import { MATH_INNER } from '../../runtime/ns_math';
-import { stack_push } from '../../runtime/stack';
-import { car, cdr, is_cons, nil, U } from '../../tree/tree';
+import { car, cdr, Cons, is_cons, nil, U } from '../../tree/tree';
 
 /* dot =====================================================================
 
@@ -81,7 +80,7 @@ But here they do the same thing.
 /**
  * 
  */
-export function Eval_inner(p1: U, $: ExtensionEnv): void {
+export function Eval_inner(p1: Cons, $: ExtensionEnv): U {
     // if there are more than two arguments then
     // reduce it to a more standard version
     // of two arguments, which means we need to
@@ -113,8 +112,7 @@ export function Eval_inner(p1: U, $: ExtensionEnv): void {
         for (let i = 2; i < args.length; i++) {
             temp = items_to_cons(MATH_INNER, args[args.length - i - 1], temp);
         }
-        Eval_inner(temp, $);
-        return;
+        return Eval_inner(temp, $);
     }
 
     // TODO we have to take a look at the whole
@@ -194,18 +192,17 @@ export function Eval_inner(p1: U, $: ExtensionEnv): void {
     // console.lg "rebuilding the argument ----"
 
     if (operands.length === 0) {
-        stack_push(SYMBOL_IDENTITY_MATRIX);
-        return;
+        return SYMBOL_IDENTITY_MATRIX;
     }
 
     p1 = items_to_cons(MATH_INNER, ...operands);
 
-    p1 = cdr(p1);
+    p1 = p1.argList;
     let result = $.valueOf(car(p1));
     if (is_cons(p1)) {
         result = p1.tail().reduce((acc: U, p: U) => $.inner(acc, $.valueOf(p)), result);
     }
-    stack_push(result);
+    return result;
 }
 
 export function get_innerprod_factors(tree: U, factors_accumulator: U[]): void {

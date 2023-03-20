@@ -160,6 +160,7 @@ import { imag_sin } from '../operators/imag/imag_sin';
 import { imag_sym } from '../operators/imag/imag_sym';
 import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
+import { Eval_inner } from '../operators/inner/Eval_inner';
 import { inner_extension } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
 import { inner_2_any_rat } from '../operators/inner/inner_2_any_rat';
@@ -388,7 +389,7 @@ import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { get_last_print_mode_symbol, store_text_in_binding } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, FACTOR, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -744,6 +745,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(divisors_varargs);
 
     $.defineOperator(do_varargs);
+
+    $.defineConsTransformer(DOT, Eval_inner);
 
     $.defineOperator(eigen_varargs);
     $.defineOperator(eigenval_varargs);

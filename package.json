@@ -37,6 +37,7 @@
         "unit-conj": "mocha 'units/conj.spec.ts'",
         "unit-cos": "mocha 'units/cos.spec.ts'",
         "unit-derivative": "mocha 'units/derivative.spec.ts'",
+        "unit-dot": "mocha 'units/dot.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-factor": "mocha 'units/factor.spec.ts'",
         "unit-G20": "mocha 'units/G20.spec.ts'",

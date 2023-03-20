@@ -220,23 +220,6 @@ function getBasisVector<T extends U, K extends U>(index: number, algebra: Algebr
     return create_blade(1 << index, algebra, metric, labels);
 }
 
-/*
-function create_zero_blade<T, K>(algebra: Algebra<T, K>, metric: METRIC<T>, labels: string[]): BasisBlade<T, K> {
-    mustBeDefined('algebra', algebra);
-    const field = algebra.field;
-    const B = create_zero_mask_and_weight(field);
-    return create_blade(0, algebra, metric, labels);
-}
-*/
-/*
-function create_scalar_blade<T, K>(weight: T, algebra: Algebra<T, K>, metric: METRIC<T>, labels: string[]): BasisBlade<T, K> {
-    mustBeDefined('algebra', algebra);
-    const field = algebra.field;
-    mustSatisfy('weight', field.isField(weight), () => { return `be a field value`; });
-    const B = create_scalar_mask_and_weight(weight, field);
-    return create_blade(0, algebra, metric, labels);
-}
-*/
 /**
  * The bitmap MUST not be zero.
  * @param bitmap

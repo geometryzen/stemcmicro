@@ -2,38 +2,33 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
-import { one, create_int } from '../../tree/rat/Rat';
+import { create_int, one } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 
-// 'product' function
-
-//define A p3
-//define B p4
-//define I p5
-//define X p6
-
-// leaves the product at the top of the stack
-export function Eval_product(p1: U, $: ExtensionEnv): U {
+/**
+ * product(body:U, index:Sym, lower:Num, upper:Num): U
+ */
+export function Eval_product(expr: U, $: ExtensionEnv): U {
     // 1st arg
-    const body = cadr(p1);
+    const body = cadr(expr);
 
     // 2nd arg (index)
-    const indexVariable = caddr(p1);
+    const indexVariable = caddr(expr);
     if (!is_sym(indexVariable)) {
-        halt('sum: 2nd arg?');
+        halt('product: 2nd arg?');
     }
 
     // 3rd arg (lower limit)
-    const j = evaluate_integer(cadddr(p1), $);
+    const j = evaluate_integer(cadddr(expr), $);
     if (isNaN(j)) {
-        return p1;
+        return expr;
     }
 
     // 4th arg (upper limit)
-    const k = evaluate_integer(caddddr(p1), $);
+    const k = evaluate_integer(caddddr(expr), $);
     if (isNaN(k)) {
-        return p1;
+        return expr;
     }
 
     // remember contents of the index

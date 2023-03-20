@@ -26,10 +26,6 @@ const defn_strings = [
     'i=sqrt(-1)',
     'pi=tau(1)/2',
     'autoexpand=1',
-    // TODO: Is setting this to zero really respected?
-    // The converse is that variables may be complex.
-    // We really need a better way to specify the types of symbols.
-    'assumeRealVariables=1',
     // TODO: remove these and make sure it still works when these are not bound.
     'last=0',
     'trace=0',

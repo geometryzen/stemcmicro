@@ -153,7 +153,6 @@ export const LAST_HUMAN_PRINT = create_sym('lastHumanPrint');
 export const AUTOEXPAND = create_sym('autoexpand');
 export const AUTOFACTOR = create_sym('autofactor');
 export const BAKE = create_sym('bake');
-export const ASSUME_REAL_VARIABLES = create_sym('assumeRealVariables');
 export const TRACE = create_sym('trace');
 export const FORCE_FIXED_PRINTOUT = create_sym('forceFixedPrintout');
 export const VARNAME_MAX_FIXED_PRINTOUT_DIGITS = create_sym('maxFixedPrintoutDigits');

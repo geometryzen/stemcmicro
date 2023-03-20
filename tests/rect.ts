@@ -1,22 +1,6 @@
 import { run_test } from '../test-harness';
 
 run_test([
-    // check when not assuming real variables ----------
-    'assumeRealVariables = 0',
-    '',
-
-    'rect(a)',
-    'rect(a)',
-
-    // same as rect(a) + i*rect(b)
-    // where rect(b) is abs(b)*(cos(arg(b)) + i*sin(arg(b)))
-    'rect(a+i*b)',
-    '-abs(b)*sin(arg(b))+rect(a)+i*abs(b)*cos(arg(b))',
-
-    'assumeRealVariables = 1',
-    '',
-    // --------------------------------------------------
-
     'rect(a)',
     'a',
 

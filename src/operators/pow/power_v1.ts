@@ -11,7 +11,7 @@ import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
-import { ARCTAN, ASSUME_REAL_VARIABLES, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
+import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { power_tensor } from "../../tensor";
 import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
@@ -154,17 +154,9 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     if (is_cons(base)) {
         if (is_abs(base)) {
             if (is_rat_and_even_integer(expo)) {
-                // Be careful doing this as the result could be unknown.
-                /*
-                if ($.is_real(base)) {
-                    // console.lg($.toSExprString(base), "is real");
-                }
-                else {
-                    // console.lg($.toSExprString(base), "is NOT real");
-                }
-                */
-                if (!$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
-                    const result = $.power(cadr(base), expo);
+                const a = base.argList.head;
+                if ($.is_real(a)) {
+                    const result = $.power(a, expo);
                     return hook(result, "L");
                 }
             }

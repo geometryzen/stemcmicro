@@ -4,7 +4,6 @@ import { imu } from '../../env/imu';
 import { divide } from '../../helpers/divide';
 import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
-import { ASSUME_REAL_VARIABLES } from '../../runtime/constants';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { negOne, one, zero } from '../../tree/rat/Rat';
 import { cons, Cons, is_cons, items_to_cons, U } from '../../tree/tree';
@@ -66,8 +65,7 @@ export function real(expr: U, $: ExtensionEnv): U {
         return expr;
     }
     else if (is_sym(expr)) {
-        const flag = $.getSymbolValue(ASSUME_REAL_VARIABLES);
-        if (is_rat(flag) && flag.isOne()) {
+        if ($.is_real(expr)) {
             return expr;
         }
         else {

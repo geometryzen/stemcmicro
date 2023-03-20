@@ -3,15 +3,15 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("simplify", function () {
-    xit("simplify(exp(-3/4*i*pi))", function () {
+    it("simplify(exp(-3/4*i*pi))", function () {
         const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1)/2`,
             `simplify(exp(-3/4*i*pi))`
         ];
-        const engine = create_script_context();
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // Expecting -(1+i)/(2^(1/2))
-        assert.strictEqual(engine.renderAsSExpr(actual), "(expt e (* -3/4 i pi))");
-        assert.strictEqual(engine.renderAsInfix(actual), "e**(-3/4*i*pi)");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1/2*(1+i)*2^(1/2)");
 
         engine.release();
     });

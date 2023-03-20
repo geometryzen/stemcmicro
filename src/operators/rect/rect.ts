@@ -4,7 +4,7 @@ import { remove_factors } from '../../calculators/remove_factors';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
-import { ASSUME_REAL_VARIABLES, COS, RECT } from '../../runtime/constants';
+import { COS, RECT } from '../../runtime/constants';
 import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { MATH_SIN } from '../../runtime/ns_math';
@@ -39,7 +39,7 @@ export function rect(z: U, $: ExtensionEnv): U {
     // (note that 'i' is not a symbol, it's made of (-1)^(1/2))
     // otherwise we have to leave unevalled
     if (is_sym(z)) {
-        if (!$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
+        if ($.is_real(z)) {
             return z;
         }
 
@@ -75,19 +75,15 @@ export function rect(z: U, $: ExtensionEnv): U {
         }
     }
 
-    const assumeRealVariables = !$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES));
-    // console.lg("assumeRealVariables", assumeRealVariables);
-    // const hasExpForm = has_exp_form(z, $);
-    // console.lg("hasExpForm", hasExpForm);
-
-    if (assumeRealVariables && !has_exp_form(z, $) && !has_clock_form(z, z, $) && !(z.contains(MATH_SIN) && z.contains(COS) && z.contains(imu))
+    // We are assuming real variables...
+    if (!has_exp_form(z, $) && !has_clock_form(z, z, $) && !(z.contains(MATH_SIN) && z.contains(COS) && z.contains(imu))
     ) {
         // console.lg("rect has no polar form", $.toSExprString(z));
         // no polar form?
         return z; // ib
     }
 
-    if (is_cons(z) && is_multiply(z) && is_imu(cadr(z)) && assumeRealVariables) {
+    if (is_cons(z) && is_multiply(z) && is_imu(cadr(z))) {
         // console.lg("rect is sum", $.toSExprString(z));
         return z; // sum
     }

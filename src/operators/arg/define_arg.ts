@@ -7,7 +7,7 @@ import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natura
 import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
 import { is_negative } from '../../predicates/is_negative';
 import { is_num_and_negative } from '../../predicates/is_negative_number';
-import { ASSUME_REAL_VARIABLES, PI } from '../../runtime/constants';
+import { PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { Err } from '../../tree/err/Err';
@@ -198,8 +198,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
         return arg_of_sum_old(expr, $);
     }
 
-    if (!$.is_zero($.getSymbolValue(ASSUME_REAL_VARIABLES))) {
-        // if we assume all passed values are real
+    if ($.is_real(expr)) {
         return zero;
     }
 

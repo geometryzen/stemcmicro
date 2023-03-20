@@ -57,4 +57,22 @@ describe("polar", function () {
         assert.strictEqual(engine.renderAsInfix(value), "exp(i*pi*a)");
         engine.release();
     });
+    it("polar(x+i*y)", function () {
+        const lines: string[] = [
+            `polar(x+i*y)`,
+        ];
+        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "exp(i*arctan(y/x))*(x^2+y^2)^(1/2)");
+        engine.release();
+    });
+    it("polar(x-i*y)", function () {
+        const lines: string[] = [
+            `polar(x-i*y)`,
+        ];
+        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "exp(-i*arctan(y/x))*(x^2+y^2)^(1/2)");
+        engine.release();
+    });
 });

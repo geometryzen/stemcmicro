@@ -1,69 +1,36 @@
-import { run_test, xrun_test } from '../test-harness';
+import { run_test } from '../test-harness';
 
 run_test([
-  // wrong
-  //"arg(-1)",
-  //"-pi",
-
-  'arg(pi)',
-  '0',
-
-  'arg(1+i)',
-  '1/4*pi',
-
-  'arg(1-i)',
-  '-1/4*pi',
-
-  'arg(-1+i)',
-  '3/4*pi',
-
-  'arg(-1-i)',
-  '-3/4*pi',
-
-  'arg((-1)^(1/3))',
-  '1/3*pi',
-
-  'arg(1+exp(i*pi/3))',
-  '1/6*pi',
-
-  'arg((-1)^(1/6)*exp(i*pi/6))',
-  '1/3*pi',
-]);
-
-// check when not assuming real variables ----------
-xrun_test([
-    'assumeRealVariables = 0',
-    '',
-
-    'arg(a)',
-    'arg(a)',
-
-    // TODO this is wrong
-    //"arg(a*exp(b+i*pi/5))",
-    //"1/5*pi",
-
-    // this is wrong
+    // wrong
     //"arg(-1)",
     //"-pi",
 
-    // this is also highly debatable
-    // take the example
-    // a = -1-i
-    // then arg(a) - arg(-a) should give pi
-    // but arg(1+i) - arg(-1-i) gives -pi instead
-    // "arg(-a)",
-    // "-pi+arg(a)",
+    'arg(pi)',
+    '0',
 
-    'assumeRealVariables = 1',
-    '',
+    'arg(1+i)',
+    '1/4*pi',
 
+    'arg(1-i)',
+    '-1/4*pi',
+
+    'arg(-1+i)',
+    '3/4*pi',
+
+    'arg(-1-i)',
+    '-3/4*pi',
+
+    'arg((-1)^(1/3))',
+    '1/3*pi',
+
+    'arg(1+exp(i*pi/3))',
+    '1/6*pi',
+
+    'arg((-1)^(1/6)*exp(i*pi/6))',
+    '1/3*pi',
 ]);
 
 run_test([
-    'assumeRealVariables = 1',
-    '',
-    // --------------------------------------------------
-
     // TODO this is wrong.
     //"arg(a*exp(b+i*pi/5))",
     //"1/5*pi",

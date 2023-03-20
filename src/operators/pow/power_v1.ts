@@ -22,7 +22,6 @@ import { QQ } from "../../tree/uom/QQ";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
-import { rect } from "../rect/rect";
 import { is_tensor } from "../tensor/is_tensor";
 import { is_uom } from "../uom/uom_extension";
 import { dpow } from "./dpow";
@@ -194,7 +193,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         // TODO: We could simply use origExpr now that it is an argument.
         // TODO: Given that we have exp(i*pi*something), why don't we remove the imu and use Euler's formula? 
         const tmp = items_to_cons(POWER, base, expo);
-        const retval = rect(tmp, $); // put new (hopefully simplified expr) in exponent
+        const retval = $.rect(tmp); // put new (hopefully simplified expr) in exponent
         if (!retval.contains(PI)) {
             // console.lg(`hopefullySimplified=${hopefullySimplified}`);
             return hook(retval, "O");

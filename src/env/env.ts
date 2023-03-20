@@ -464,6 +464,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         real(expr: U): U {
             return $.evaluate(Native.real, expr);
         },
+        rect(expr: U): U {
+            return $.evaluate(Native.rect, expr);
+        },
         remove(varName: Sym): void {
             symTab.delete(varName);
         },

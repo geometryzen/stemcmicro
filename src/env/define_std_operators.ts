@@ -310,6 +310,7 @@ import { real_rat } from '../operators/real/real_rat';
 import { real_real } from '../operators/real/real_real';
 import { real_sym } from '../operators/real/real_sym';
 import { Eval_rect } from '../operators/rect/rect';
+import { rect_mul } from '../operators/rect/rect_mul';
 import { rect_mul_rat_any } from '../operators/rect/rect_mul_rat_any';
 import { rect_pow_exp_imu } from '../operators/rect/rect_pow_exp_imu';
 import { roots_varargs } from '../operators/roots/roots_varargs';
@@ -323,6 +324,7 @@ import { simplify_varargs } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
 import { sin_add } from '../operators/sin/sin_add';
 import { sin_any } from '../operators/sin/sin_any';
+import { sin_arctan } from '../operators/sin/sin_arctan';
 import { sin_flt } from '../operators/sin/sin_flt';
 import { sin_hyp } from '../operators/sin/sin_hyp';
 import { sin_mul } from '../operators/sin/sin_mul';
@@ -876,6 +878,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(is_real_any);
 
     $.defineOperator(rect_mul_rat_any);
+    $.defineOperator(rect_mul);
     $.defineOperator(rect_pow_exp_imu);
     $.defineConsTransformer(RECT, Eval_rect);
 
@@ -900,6 +903,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(succ_any);
 
     $.defineOperator(sin_add);
+    $.defineOperator(sin_arctan);
     $.defineOperator(sin_flt);
     $.defineOperator(sin_hyp);
     $.defineOperator(sin_mul);

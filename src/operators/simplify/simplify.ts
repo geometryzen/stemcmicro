@@ -33,7 +33,6 @@ import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
 import { is_rat } from '../rat/is_rat';
 import { rationalize_factoring } from '../rationalize/rationalize';
 import { real } from '../real/real';
-import { rect } from '../rect/rect';
 import { is_tensor } from '../tensor/is_tensor';
 import { transpose_factoring } from '../transpose/transpose';
 
@@ -415,7 +414,7 @@ function polarRectAMinusOneBase(p1: U, $: ExtensionEnv): U {
         // exponent
         const exponent = polarRectAMinusOneBase(caddr(p1), $);
         // try to simplify it using polar and rect
-        return rect($.polar($.power(base, exponent)), $);
+        return $.rect($.polar($.power(base, exponent)));
     }
     if (is_cons(p1)) {
         const arr = [];

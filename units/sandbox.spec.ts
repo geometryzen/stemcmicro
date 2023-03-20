@@ -4,16 +4,19 @@ import { assert } from "chai";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("sandbox", function () {
-    it("log(clock(i))", function () {
+    it("rect(polar(3+4*i))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `log(clock(i))`
+            `pi=tau(1/2)`,
+            `e=exp(1)`,
+            `rect(polar(3+4*i))`,
         ];
         const engine = create_script_context({
-            useCaretForExponentiation: true
+            dependencies: ['Imu'],
+            useDefinitions: false
         });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "1/2*i*pi");
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "3+4*i");
         engine.release();
     });
     xit("clock(i)", function () {
@@ -26,18 +29,6 @@ describe("sandbox", function () {
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "(-1)^(1/2)");
-        engine.release();
-    });
-    it("clock(real(log(i)))", function () {
-        const lines: string[] = [
-            `i=sqrt(-1)`,
-            `clock(real(log(clock(i))))`
-        ];
-        const engine = create_script_context({
-            useCaretForExponentiation: true
-        });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "0");
         engine.release();
     });
 });

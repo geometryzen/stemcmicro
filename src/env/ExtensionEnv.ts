@@ -368,6 +368,7 @@ export interface ExtensionEnv {
      */
     power(base: U, expo: U): U;
     real(expr: U): U;
+    rect(expr: U): U;
     remove(varName: Sym): void;
     setCustomDirective(directive: string, value: boolean): void;
     pushDirective(directive: Directive, value: boolean): void;

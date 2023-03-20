@@ -1,7 +1,7 @@
 import { cadnr } from '../../calculators/cadnr';
 import { count_factors } from '../../calculators/count_factors';
 import { remove_factors } from '../../calculators/remove_factors';
-import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { ASSUME_REAL_VARIABLES, COS, RECT } from '../../runtime/constants';
@@ -16,13 +16,19 @@ import { is_sym } from '../sym/is_sym';
 
 /**
  * Convert complex z to rectanglar from.
- * @param p1 (rect z)
+ * @param expr (rect z)
  */
-export function Eval_rect(p1: Cons, $: ExtensionEnv): U {
-    const arg = cadnr(p1, 1);
-    const valueOfArg = $.valueOf(arg);
-    const result = rect(valueOfArg, $);
-    return result;
+export function Eval_rect(expr: Cons, $: ExtensionEnv): U {
+    const arg = cadnr(expr, 1);
+    $.pushDirective(Directive.convertExpToTrig, true);
+    try {
+        const valueOfArg = $.valueOf(arg);
+        const result = rect(valueOfArg, $);
+        return result;
+    }
+    finally {
+        $.popDirective();
+    }
 }
 
 export function rect(z: U, $: ExtensionEnv): U {
@@ -88,7 +94,7 @@ export function rect(z: U, $: ExtensionEnv): U {
 
     if (is_cons(z) && is_add(z)) {
         // console.lg("rect is add", $.toSExprString(z));
-        return z.tail().reduce((a: U, b: U) => $.add(a, rect(b, $)), zero);
+        return z.tail().reduce((a: U, b: U) => $.add(a, $.rect(b)), zero);
     }
 
     // TODO: Shouldn't the final statement be the wrapping of the arg in (rect ...)?

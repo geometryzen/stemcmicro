@@ -87,4 +87,16 @@ describe("log", function () {
         assert.strictEqual(engine.renderAsInfix(value), "log(x)+i*pi");
         engine.release();
     });
+    it("log(clock(i))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `log(clock(i))`
+        ];
+        const engine = create_script_context({
+            useCaretForExponentiation: true
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "1/2*i*pi");
+        engine.release();
+    });
 });

@@ -11,12 +11,11 @@ import { coeff } from './operators/coeff/coeff';
 import { denominator } from './operators/denominator/denominator';
 import { ydivisors } from './operators/divisors/divisors';
 import { lcm } from './operators/lcm/lcm';
-import { rect } from './operators/rect/rect';
 import { is_negative } from './predicates/is_negative';
 import { divpoly } from './quotient';
 import { defs, halt, move_top_of_stack, noexpand_unary } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
-import { negOne, one, create_int, zero } from './tree/rat/Rat';
+import { create_int, negOne, one, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { U } from './tree/tree';
 
@@ -353,7 +352,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
 
     // trying -1^(2/3) which generates a polynomial in Z
     // generates x^2 + 2x + 1
-    p4 = rect($.power(negOne, rational(2, 3)), $);
+    p4 = $.rect($.power(negOne, rational(2, 3)));
     p3 = p4;
     stack_push(p3);
     [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
@@ -365,7 +364,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     // trying 1^(2/3) which generates a polynomial in Z
     // http://www.wolframalpha.com/input/?i=(1)%5E(2%2F3)
     // generates x^2 - 2x + 1
-    p4 = rect($.power(one, rational(2, 3)), $);
+    p4 = $.rect($.power(one, rational(2, 3)));
     p3 = p4;
     stack_push(p3);
     [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
@@ -378,12 +377,11 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     // generate polynomials in Z
     for (let rootsTries_i = -10; rootsTries_i <= 10; rootsTries_i++) {
         for (let rootsTries_j = 1; rootsTries_j <= 5; rootsTries_j++) {
-            p4 = rect(
+            p4 = $.rect(
                 $.add(
                     create_int(rootsTries_i),
                     $.multiply(create_int(rootsTries_j), imu)
-                ),
-                $
+                )
             );
 
             const p3 = p4;

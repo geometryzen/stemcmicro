@@ -24,7 +24,6 @@ import { is_pi } from '../pi/is_pi';
 import { is_pow } from '../pow/is_pow';
 import { is_rat } from '../rat/is_rat';
 import { real } from '../real/real';
-import { rect } from '../rect/rect';
 import { is_sym } from '../sym/is_sym';
 
 export const ARG = native_sym(Native.arg);
@@ -212,7 +211,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
 function arg_of_sum_old(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`arg_of_sum(${expr})`);
     // sum of terms
-    const z = rect(expr, $);
+    const z = $.rect(expr);
     // console.lg(`z => ${z}`);
     const x = real(z, $);
     const y = imag(z, $);

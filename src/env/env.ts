@@ -228,6 +228,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
+        clock(expr: U): U {
+            return $.evaluate(Native.clock, expr);
+        },
         conj(expr: U): U {
             return $.evaluate(Native.conj, expr);
         },
@@ -451,6 +454,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         outer(lhs: U, rhs: U): U {
             return $.evaluate(Native.outer, lhs, rhs);
+        },
+        polar(expr: U): U {
+            return $.evaluate(Native.polar, expr);
         },
         power(base: U, expo: U): U {
             return $.evaluate(Native.pow, base, expo);

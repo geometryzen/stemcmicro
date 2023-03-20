@@ -1,10 +1,14 @@
+import { count_imu_factors } from "../../calculators/count_imu_factors";
+import { remove_imu_factors } from "../../calculators/remove_imu_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { zero } from "../../tree/rat/Rat";
+import { is_multiply } from "../../runtime/helpers";
+import { one, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
+import { is_imu } from "../imu/is_imu";
 
 const EXP = native_sym(Native.exp);
 const IMAG = native_sym(Native.imag);
@@ -29,8 +33,22 @@ class Op extends CompositeOperator {
         if ($.is_real(z)) {
             return [TFLAG_DIFF, zero];
         }
+        else if (is_imu(z)) {
+            return [TFLAG_NONE, $.sin(one)];
+        }
         else {
-            return [TFLAG_NONE, outerExpr];
+            if (is_multiply(z) && count_imu_factors(z) === 1) {
+                const x = remove_imu_factors(z);
+                if ($.is_real(x)) {
+                    return [TFLAG_NONE, $.sin(x)];
+                }
+                else {
+                    return [TFLAG_NONE, outerExpr];
+                }
+            }
+            else {
+                return [TFLAG_NONE, outerExpr];
+            }
         }
     }
 }

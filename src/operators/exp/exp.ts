@@ -1,4 +1,3 @@
-import { binop } from "../../calculators/binop";
 import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
@@ -11,7 +10,6 @@ import { UCons } from "../helpers/UCons";
 
 const MATH_E = native_sym(Native.E);
 const EXP = native_sym(Native.exp);
-const POW = native_sym(Native.pow);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -33,7 +31,7 @@ class Exp extends Function1<ARG> implements Operator<EXP> {
         // console.lg(this.name, this.$.toInfixString(expr), "isExpanding", this.$.isExpanding(), "isFactoring", this.$.isExpanding());
         const $ = this.$;
         if ($.getDirective(Directive.canonicalize)) {
-            return [TFLAG_DIFF, binop(POW, MATH_E, arg, $)];
+            return [TFLAG_DIFF, $.power(MATH_E, arg)];
         }
         else {
             // The argument is evaluated by the base class in all other phases.

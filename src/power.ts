@@ -1,12 +1,11 @@
-import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
-import { exp } from './exp';
+import { divide } from './helpers/divide';
 import { is_quarter_turn } from './is_quarter_turn';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
 import { factorial } from './operators/factorial/factorial';
 import { is_add } from './runtime/helpers';
-import { negOne, one, create_int, zero } from './tree/rat/Rat';
+import { create_int, negOne, one, zero } from './tree/rat/Rat';
 import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
@@ -160,7 +159,7 @@ export function simplify_polar(exponent: U, $: ExtensionEnv): U | undefined {
                 arg1 = $.negate(imu);
                 break;
         }
-        return $.multiply(arg1, exp($.subtract(exponent, car(p3)), $));
+        return $.multiply(arg1, $.exp($.subtract(exponent, car(p3))));
     }
 
     return undefined;

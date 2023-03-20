@@ -168,4 +168,49 @@ describe("real", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "1/2");
         context.release();
     });
+    it("real(exp(i*x))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `real(exp(i*x))`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useCaretForExponentiation: false,
+            useDefinitions: false
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // TODO: Can this be presented better?
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(x)");
+        engine.release();
+    });
+    it("real(exp(a*i*x))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `real(exp(a*i*x))`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useCaretForExponentiation: false,
+            useDefinitions: false
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // TODO: Can this be presented better?
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(a*x)");
+        engine.release();
+    });
+    it("real(exp(i))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `real(exp(i))`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useCaretForExponentiation: false,
+            useDefinitions: false
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // TODO: Can this be presented better?
+        assert.strictEqual(engine.renderAsInfix(actual), "cos(1)");
+        engine.release();
+    });
 });

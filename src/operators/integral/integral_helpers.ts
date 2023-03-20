@@ -1,6 +1,5 @@
 import { scan_meta } from '../../brite/scan';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
-import { exp } from '../../exp';
 import { guess } from '../../guess';
 import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from '../../is';
 import { items_to_cons } from '../../makeList';
@@ -628,7 +627,7 @@ function italu_hashcode(F: U, x: U, $: ExtensionEnv): number {
             return hash_power(F.base, F.expo, x, $);
         }
         if (opr.equals(EXP)) {
-            return hash_power(exp(one, $), F.argList.head, x, $);
+            return hash_power($.exp(one), F.argList.head, x, $);
         }
         if (opr.equals(SQRT)) {
             return hash_power(F.argList.head, create_flt(0.5), x, $);

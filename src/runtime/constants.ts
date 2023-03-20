@@ -32,7 +32,6 @@ export const CIRCEXP = create_sym('circexp');
 export const CLEAR = create_sym('clear');
 export const CLEARALL = create_sym('clearall');
 export const CLEARPATTERNS = create_sym('clearpatterns');
-export const CLOCK = native_sym(Native.clock);
 export const COEFF = create_sym('coeff');
 export const COFACTOR = create_sym('cofactor');
 export const COMPARE = create_sym('compare');

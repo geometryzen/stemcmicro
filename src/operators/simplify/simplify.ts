@@ -21,7 +21,6 @@ import { create_int, half, one, third, three, two, zero } from '../../tree/rat/R
 import { Sym } from '../../tree/sym/Sym';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, nil, U } from '../../tree/tree';
-import { clock } from '../clock/clock';
 import { denominator } from "../denominator/denominator";
 import { factor } from "../factor/factor";
 import { evaluate_as_float } from '../float/float';
@@ -30,7 +29,6 @@ import { BCons } from '../helpers/BCons';
 import { is_imu } from '../imu/is_imu';
 import { is_num } from '../num/is_num';
 import { numerator } from "../numerator/numerator";
-import { polar } from '../polar/polar';
 import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
 import { is_rat } from '../rat/is_rat';
 import { rationalize_factoring } from '../rationalize/rationalize';
@@ -383,7 +381,7 @@ function simplify_rect_to_clock(expr: U, $: ExtensionEnv): U {
         return oldExpr;
     }
 
-    const newExpr = clock($.valueOf(oldExpr), $);
+    const newExpr = $.clock($.valueOf(oldExpr));
 
     // console.lg(`before simplification clockform: ${oldExpr} after: ${newExpr}`);
 
@@ -417,7 +415,7 @@ function polarRectAMinusOneBase(p1: U, $: ExtensionEnv): U {
         // exponent
         const exponent = polarRectAMinusOneBase(caddr(p1), $);
         // try to simplify it using polar and rect
-        return rect(polar($.power(base, exponent), $), $);
+        return rect($.polar($.power(base, exponent)), $);
     }
     if (is_cons(p1)) {
         const arr = [];

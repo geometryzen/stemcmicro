@@ -1,7 +1,6 @@
 import { complex_conjugate } from '../../complex_conjugate';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
-import { exp } from '../../exp';
 import { equaln, is_num_and_gt_zero } from '../../is';
 import { Native } from '../../native/Native';
 import { native_sym } from '../../native/native_sym';
@@ -213,7 +212,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     const base = cadr(expr);
     if (is_power(expr) && is_base_of_natural_logarithm(base)) {
         // exponential
-        return hook(exp(real(caddr(expr), $), $), "I");
+        return hook($.exp(real(caddr(expr), $)), "I");
     }
 
     if (is_cons(expr) && is_multiply(expr)) {

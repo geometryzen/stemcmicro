@@ -15,7 +15,7 @@ export function Eval_polar(expr: Cons, $: ExtensionEnv): U {
     return polar(z, $);
 }
 
-export function polar(z: U, $: ExtensionEnv): U {
+function polar(z: U, $: ExtensionEnv): U {
     // console.lg("polar", $.toInfixString(z));
     $.pushDirective(Directive.complexAsPolar, true);
     try {

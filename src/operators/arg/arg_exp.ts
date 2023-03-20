@@ -4,14 +4,12 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_multiply } from "../../runtime/helpers";
-import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
-import { is_imu } from "../imu/is_imu";
 
+const ARG = native_sym(Native.arg);
 const EXP = native_sym(Native.exp);
-const REAL = native_sym(Native.real);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -20,36 +18,22 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * 
+ *
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(REAL, EXP, $);
+        super(ARG, EXP, $);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
-        const $ = this.$;
+        // console.lg(this.name, this.$.toInfixString(innerExpr));
         const z = innerExpr.argList.head;
-        if ($.is_real(z)) {
-            return [TFLAG_DIFF, innerExpr];
+        if (is_multiply(z) && count_imu_factors(z) === 1) {
+            const x = remove_imu_factors(z);
+            return [TFLAG_DIFF, x];
         }
-        else if (is_imu(z)) {
-            return [TFLAG_NONE, $.cos(one)];
-        }
-        else {
-            if (is_multiply(z) && count_imu_factors(z) === 1) {
-                const x = remove_imu_factors(z);
-                if ($.is_real(x)) {
-                    return [TFLAG_NONE, $.cos(x)];
-                }
-                else {
-                    return [TFLAG_NONE, outerExpr];
-                }
-            }
-            else {
-                return [TFLAG_NONE, outerExpr];
-            }
-        }
+        return [TFLAG_NONE, outerExpr];
     }
 }
 
-export const real_exp = new Builder();
+export const arg_exp = new Builder();

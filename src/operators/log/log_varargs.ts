@@ -1,8 +1,10 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { hash_nonop_cons } from "../../hashing/hash_info";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { LOG } from "../../runtime/constants";
+import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { Function1 } from "../helpers/Function1";
+import { is_any } from "../helpers/is_any";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -10,14 +12,14 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class Op extends FunctionVarArgs implements Operator<Cons> {
+class Op extends Function1<U> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('log_varargs', LOG, $);
-        this.hash = hash_nonop_cons(this.opr);
+        super('log_any', LOG, is_any, $);
+        this.hash = hash_unaop_atom(LOG, HASH_ANY);
     }
-    transform(expr: Cons): [number, U] {
-        return [TFLAG_NONE, expr];
+    transform1(opr: Sym, arg: U, orig: Cons): [TFLAGS, U] {
+        return [TFLAG_NONE, orig];
     }
 }
 

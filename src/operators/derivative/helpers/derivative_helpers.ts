@@ -3,7 +3,6 @@ import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
 import { dirac } from '../../../dirac';
 import { ExtensionEnv } from '../../../env/ExtensionEnv';
-import { exp } from '../../../exp';
 import { divide } from '../../../helpers/divide';
 import { inverse } from '../../../helpers/inverse';
 import {
@@ -361,7 +360,7 @@ export function derf(p1: U, p2: Sym, $: ExtensionEnv): U {
     return $.multiply(
         $.multiply(
             $.multiply(
-                exp($.multiply($.power(cadr(p1), two), negOne), $),
+                $.exp($.multiply($.power(cadr(p1), two), negOne)),
                 $.power(DynamicConstants.Pi($), rational(-1, 2))
             ),
             two
@@ -375,7 +374,7 @@ export function derfc(p1: U, p2: Sym, $: ExtensionEnv): U {
     return $.multiply(
         $.multiply(
             $.multiply(
-                exp($.multiply($.power(cadr(p1), two), negOne), $),
+                $.exp($.multiply($.power(cadr(p1), two), negOne)),
                 $.power(DynamicConstants.Pi($), rational(-1, 2))
             ),
             create_int(-2)

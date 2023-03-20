@@ -3,7 +3,7 @@ import { ARCCOSH, COSH } from '../../runtime/constants';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { one } from '../../tree/rat/Rat';
-import { car, items_to_cons, U } from '../../tree/tree';
+import { car, Cons, items_to_cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 
 /* cosh =====================================================================
@@ -27,8 +27,8 @@ Returns the hyperbolic cosine of x
 ```
 
 */
-export function Eval_cosh(p1: U, $: ExtensionEnv): U {
-    return ycosh($.valueOf(cadr(p1)), $);
+export function Eval_cosh(expr: Cons, $: ExtensionEnv): U {
+    return ycosh($.valueOf(cadr(expr)), $);
 }
 
 export function ycosh(p1: U, $: ExtensionEnv): U {

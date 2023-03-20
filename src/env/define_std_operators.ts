@@ -54,6 +54,7 @@ import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
 import { arg_add } from '../operators/arg/arg_add';
 import { arg_any } from '../operators/arg/arg_any';
+import { arg_exp } from '../operators/arg/arg_exp';
 import { arg_flt } from '../operators/arg/arg_flt';
 import { arg_imu } from '../operators/arg/arg_imu';
 import { arg_mul } from '../operators/arg/arg_mul';
@@ -75,6 +76,7 @@ import { Eval_check } from '../operators/check/Eval_check';
 import { choose_varargs } from '../operators/choose/choose_varargs';
 import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
+import { clock_imu } from '../operators/clock/clock_imu';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { condense_varargs } from '../operators/condense/condense_varargs';
@@ -206,6 +208,7 @@ import { legendre_varargs } from '../operators/legendre/legendre_varargs';
 import { log_add } from '../operators/log/log_add';
 import { log_exp } from '../operators/log/log_exp';
 import { log_flt } from '../operators/log/log_flt';
+import { log_imu } from '../operators/log/log_imu';
 import { log_mul } from '../operators/log/log_mul';
 import { log_pow } from '../operators/log/log_pow';
 import { log_rat } from '../operators/log/log_rat';
@@ -268,6 +271,7 @@ import { outer_2_mul_2_scalar_any_any } from '../operators/outer/outer_2_mul_2_s
 import { outer_2_sym_sym } from '../operators/outer/outer_2_sym_sym';
 import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor';
 import { Eval_polar } from '../operators/polar/polar';
+import { polar_imu } from '../operators/polar/polar_imu';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
 import { pow_e_any } from '../operators/pow/pow_e_any';
@@ -620,6 +624,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(log_add);
     $.defineOperator(log_exp);
     $.defineOperator(log_flt);
+    $.defineOperator(log_imu);
     $.defineOperator(log_mul);
     $.defineOperator(log_pow);
     $.defineOperator(log_rat);
@@ -681,6 +686,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(arctanh_varargs);
 
     $.defineOperator(arg_add);
+    $.defineOperator(arg_exp);
     $.defineOperator(arg_flt);
     $.defineOperator(arg_imu);
     $.defineOperator(arg_mul);
@@ -701,7 +707,9 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(circexp_any);
 
+    $.defineOperator(clock_imu);
     $.defineOperator(clock_any);
+
     $.defineOperator(coeff_varargs);
     $.defineOperator(cofactor_varargs);
     $.defineOperator(condense_varargs);
@@ -802,6 +810,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(pred_rat);
     $.defineOperator(pred_any);
 
+    $.defineOperator(polar_imu);
     $.defineConsTransformer(POLAR, Eval_polar);
 
     $.defineOperator(make_printmode_operator('print', () => defs.printMode));

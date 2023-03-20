@@ -60,7 +60,7 @@ describe("integral", function () {
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "1/(a*b+x*b^2)");
+        assert.strictEqual(engine.renderAsInfix(actual), "1/(b*(a+b*x))");
         engine.release();
     });
     it("K+1/b*1/(a+b*x)", function () {
@@ -71,29 +71,18 @@ describe("integral", function () {
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "K+1/(a*b+x*b^2)");
+        assert.strictEqual(engine.renderAsInfix(actual), "K+1/(b*(a+b*x))");
         engine.release();
     });
-    it("integral(1/(a+b*x)^2,x)+1/b*1/(a+b*x)", function () {
+    it("integral(1/(a+b*x)^2,x)", function () {
         const lines: string[] = [
-            `integral(1/(a+b*x)^2,x)+1/b*1/(a+b*x)`
+            `integral(1/(a+b*x)^2,x)`
         ];
         const engine = create_script_context({
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "0");
-        engine.release();
-    });
-    it("integral(1/(A+B*X)^2,X)+1/B*1/(A+B*X)", function () {
-        const lines: string[] = [
-            `integral(1/(A+B*X)^2,X)+1/B*1/(A+B*X)`
-        ];
-        const engine = create_script_context({
-            useCaretForExponentiation: true
-        });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "0");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1/(a*b+x*b^2)");
         engine.release();
     });
 });

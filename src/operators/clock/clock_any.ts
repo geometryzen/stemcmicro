@@ -1,12 +1,15 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { CLOCK } from "../../runtime/constants";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
 import { clock } from "./clock";
+
+export const CLOCK = native_sym(Native.clock);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -17,7 +20,7 @@ class Builder implements OperatorBuilder<U> {
 type ARG = U;
 type EXP = UCons<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('clock_any', CLOCK, is_any, $);
@@ -25,6 +28,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(arg));
         const $ = this.$;
         if ($.isExpanding()) {
             const newExpr = clock(arg, $);

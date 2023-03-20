@@ -151,4 +151,49 @@ describe("imag", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "-b/(a^2+b^2)");
         context.release();
     });
+    it("imag(exp(i*x))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `imag(exp(i*x))`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useCaretForExponentiation: false,
+            useDefinitions: false
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // TODO: Can this be presented better?
+        assert.strictEqual(engine.renderAsInfix(actual), "sin(x)");
+        engine.release();
+    });
+    it("imag(exp(a*i*x))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `imag(exp(a*i*x))`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useCaretForExponentiation: false,
+            useDefinitions: false
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // TODO: Can this be presented better?
+        assert.strictEqual(engine.renderAsInfix(actual), "sin(a*x)");
+        engine.release();
+    });
+    it("imag(exp(i))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `imag(exp(i))`
+        ];
+        const engine = create_script_context({
+            dependencies: ['Imu'],
+            useCaretForExponentiation: false,
+            useDefinitions: false
+        });
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // TODO: Can this be presented better?
+        assert.strictEqual(engine.renderAsInfix(actual), "sin(1)");
+        engine.release();
+    });
 });

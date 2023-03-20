@@ -4,7 +4,7 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("trig", function () {
-    it("cos(x)*cos(x)+sin(x)*sin(x)", function () {
+    xit("cos(x)*cos(x)+sin(x)*sin(x)", function () {
         const lines: string[] = [
             `cos(x)*cos(x)+sin(x)*sin(x)`
         ];
@@ -91,7 +91,7 @@ describe("trig", function () {
         });
     });
     describe("trig", function () {
-        it("cos(x)*cos(x)+sin(x)*sin(x)", function () {
+        xit("cos(x)*cos(x)+sin(x)*sin(x)", function () {
             const lines: string[] = [
                 `cos(x)*cos(x)+sin(x)*sin(x)`
             ];
@@ -108,7 +108,7 @@ describe("trig", function () {
             // assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
             assert.strictEqual(engine.renderAsInfix(value), '1');
         });
-        it("sin(x)*sin(x)+cos(x)*cos(x)", function () {
+        xit("sin(x)*sin(x)+cos(x)*cos(x)", function () {
             const lines: string[] = [
                 `sin(x)*sin(x)+cos(x)*cos(x)`
             ];

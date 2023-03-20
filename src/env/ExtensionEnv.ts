@@ -266,6 +266,7 @@ export interface ExtensionEnv {
     add(...args: U[]): U;
     arctan(expr: U): U;
     arg(expr: U): U;
+    clock(expr: U): U;
     conj(expr: U): U;
     cos(expr: U): U;
     evaluate(opr: Native, ...args: U[]): U;
@@ -361,6 +362,7 @@ export interface ExtensionEnv {
      *
      */
     outer(lhs: U, rhs: U): U;
+    polar(expr: U): U;
     /**
      *
      */

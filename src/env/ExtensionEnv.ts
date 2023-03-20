@@ -264,6 +264,8 @@ export interface ExtensionEnv {
      *
      */
     add(...args: U[]): U;
+    arccos(expr: U): U;
+    arcsin(expr: U): U;
     arctan(expr: U): U;
     arg(expr: U): U;
     clock(expr: U): U;

@@ -173,6 +173,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         add(...args: U[]): U {
             return $.evaluate(Native.add, ...args);
         },
+        arccos(expr: U): U {
+            return $.evaluate(Native.arccos, expr);
+        },
+        arcsin(expr: U): U {
+            return $.evaluate(Native.arcsin, expr);
+        },
         arctan(expr: U): U {
             return $.evaluate(Native.arctan, expr);
         },

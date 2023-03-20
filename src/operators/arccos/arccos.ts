@@ -1,16 +1,17 @@
 import { rational } from '../../bignum';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import {
-    equaln,
-    is_num_and_equalq,
-    isminusoneoversqrttwo,
+    equaln, isminusoneoversqrttwo,
     isMinusSqrtThreeOverTwo,
     isoneoversqrttwo,
-    isSqrtThreeOverTwo
+    isSqrtThreeOverTwo, is_num_and_equalq
 } from '../../is';
 import { items_to_cons } from '../../makeList';
+import { Native } from '../../native/Native';
+import { native_sym } from '../../native/native_sym';
 import { nativeInt } from '../../nativeInt';
-import { ARCCOS, COS, PI, POWER } from '../../runtime/constants';
+import { is_negative } from '../../predicates/is_negative';
+import { ARCCOS, POWER } from '../../runtime/constants';
 import { is_multiply } from '../../runtime/helpers';
 import { create_flt, piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
@@ -18,6 +19,9 @@ import { half, third, two, zero } from '../../tree/rat/Rat';
 import { car, cdr, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 import { is_rat } from '../rat/is_rat';
+
+export const COS = native_sym(Native.cos);
+export const PI = native_sym(Native.PI);
 
 /* arccos =====================================================================
 
@@ -41,6 +45,10 @@ export function arccos(x: U, $: ExtensionEnv): U {
 
     if (is_flt(x)) {
         return create_flt(Math.acos(x.d));
+    }
+
+    if (is_negative(x)) {
+        return $.subtract(PI, $.arccos($.negate(x)));
     }
 
     // if x == 1/sqrt(2) then return 1/4*pi (45 degrees)
@@ -83,6 +91,7 @@ export function arccos(x: U, $: ExtensionEnv): U {
         return items_to_cons(ARCCOS, x);
     }
 
+    // 
     const n = nativeInt($.multiply(x, two));
     switch (n) {
         case -2:

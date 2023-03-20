@@ -13,6 +13,8 @@ export enum Native {
     // Functions (lower case)
     abs,
     add,
+    arccos,
+    arcsin,
     arctan,
     arg,
     clock,

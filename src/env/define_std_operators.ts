@@ -325,6 +325,8 @@ import { simplify_varargs } from '../operators/simplify/simplify_fn';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
 import { sin_add } from '../operators/sin/sin_add';
 import { sin_any } from '../operators/sin/sin_any';
+import { sin_arccos } from '../operators/sin/sin_arccos';
+import { sin_arcsin } from '../operators/sin/sin_arcsin';
 import { sin_arctan } from '../operators/sin/sin_arctan';
 import { sin_flt } from '../operators/sin/sin_flt';
 import { sin_hyp } from '../operators/sin/sin_hyp';
@@ -906,6 +908,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(succ_any);
 
     $.defineOperator(sin_add);
+    $.defineOperator(sin_arccos);
+    $.defineOperator(sin_arcsin);
     $.defineOperator(sin_arctan);
     $.defineOperator(sin_flt);
     $.defineOperator(sin_hyp);

@@ -26,6 +26,8 @@ export function build_sym(code: Native): Sym {
         // Functions (lower case)...
         case Native.abs: return create_sym('abs');
         case Native.add: return create_sym('add');
+        case Native.arccos: return create_sym('arccos');
+        case Native.arcsin: return create_sym('arcsin');
         case Native.arctan: return create_sym('arctan');
         case Native.arg: return create_sym('arg');
         case Native.clock: return create_sym('clock');

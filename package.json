@@ -31,6 +31,7 @@
         "units": "mocha 'units/**/*.spec.ts' --sort",
         "test-polar": "mocha 'tests/polar.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
+        "unit-arccos": "mocha 'units/arccos.spec.ts'",
         "unit-arg": "mocha 'units/arg.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
         "unit-clock": "mocha 'units/clock.spec.ts'",

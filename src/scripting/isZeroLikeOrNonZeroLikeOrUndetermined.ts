@@ -18,7 +18,6 @@ import { float_eval_abs_eval } from "./float_eval_abs_eval";
 /**
  * The value or predicate is evaluated after assignment has been replaced with testeq.
  * FIXME: It would be better for the evaluation to be externalized.
- * @param valueOrPredicate 
  */
 export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: ExtensionEnv): boolean | null {
     // just like Eval but turns assignments into equality checks

@@ -3,6 +3,7 @@ import { Native } from './native/Native';
 import { native_sym } from './native/native_sym';
 import { evaluate_as_float } from './operators/float/float';
 import { is_flt } from './operators/flt/is_flt';
+import { replace_assign_with_testeq } from './operators/predicate/replace_assign_with_testeq';
 import { is_rat } from './operators/rat/is_rat';
 import { simplify } from './operators/simplify/simplify';
 import { MSIGN } from './runtime/constants';
@@ -32,7 +33,8 @@ function _test(p1: U, $: ExtensionEnv): U {
             return $.valueOf(car(p1)); // default case
         }
 
-        const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(car(p1), $);
+        const value = $.valueOf(replace_assign_with_testeq(car(p1)));
+        const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
         if (checkResult == null) {
             // we couldn't determine the result
             // of a test. This means we can't conclude
@@ -80,7 +82,8 @@ export function Eval_testeq(expr: Cons, $: ExtensionEnv): U {
     // to determine the zero-ness/non-zero-ness or
     // undeterminate-ness of things so we use
     // that here and down below.
-    let checkResult = isZeroLikeOrNonZeroLikeOrUndetermined($.subtract(lhs, rhs), $);
+    const value = $.valueOf(replace_assign_with_testeq($.subtract(lhs, rhs)));
+    let checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
     if (checkResult) {
         return zero;
     }
@@ -179,8 +182,9 @@ export function Eval_testlt(expr: Cons, $: ExtensionEnv): U {
  * not is used to implement testne by using testeq.
  */
 export function Eval_not(expr: Cons, $: ExtensionEnv): U {
-    const valueOrPredicate = expr.argList.head;
-    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate, $);
+    const value = $.valueOf(replace_assign_with_testeq(expr.argList.head));
+    // console.lg("Eval_not", $.toInfixString(value));
+    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
     if (checkResult == null) {
         // inconclusive test on predicate
         return expr;
@@ -217,8 +221,8 @@ export function Eval_and(p1: U, $: ExtensionEnv): U {
     let andPredicates = cdr(wholeAndExpression);
     let somePredicateUnknown = false;
     while (is_cons(andPredicates)) {
-        // eval each predicate
-        const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(car(andPredicates), $);
+        const value = $.valueOf(replace_assign_with_testeq(car(andPredicates)));
+        const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
 
         if (checkResult == null) {
             // here we have stuff that is not reconducible to any
@@ -264,7 +268,8 @@ export function Eval_or(p1: U, $: ExtensionEnv): U {
     let somePredicateUnknown = false;
     while (is_cons(orPredicates)) {
         // eval each predicate
-        const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(car(orPredicates), $);
+        const value = $.valueOf(replace_assign_with_testeq(car(orPredicates)));
+        const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
 
         if (checkResult == null) {
             // here we have stuff that is not reconducible to any

@@ -2,6 +2,7 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from "../../scripting/isZeroLikeOrNonZeroLikeOrUndetermined";
 import { create_int, Rat } from "../../tree/rat/Rat";
 import { Cons } from "../../tree/tree";
+import { replace_assign_with_testeq } from "../predicate/replace_assign_with_testeq";
 
 /* check =====================================================================
  
@@ -28,8 +29,8 @@ Potential improvements: "check" can't evaluate strings yet.
 export function Eval_check(expr: Cons, $: ExtensionEnv): Rat | Cons {
     // Don't evaluate the arguments! We don't want assignment as a side effect.
     const arg = expr.argList.head;
-
-    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(arg, $);
+    const value = $.valueOf(replace_assign_with_testeq(arg));
+    const checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
 
     if (typeof checkResult === 'boolean') {
         // returned JavaScript true or false -> 1 or 0

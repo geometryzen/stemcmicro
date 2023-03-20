@@ -1,14 +1,10 @@
 import bigInt from 'big-integer';
 import { mdiv, mmul } from './mmul';
 import { mpow } from './mpow';
-import { nativeInt } from './nativeInt';
-import { is_num } from './operators/num/is_num';
-import { halt } from './runtime/defs';
-import { stack_pop, stack_push } from './runtime/stack';
-import { create_flt, Flt } from './tree/flt/Flt';
 import { is_flt } from './operators/flt/is_flt';
-import { Num } from './tree/num/Num';
 import { is_rat } from './operators/rat/is_rat';
+import { create_flt, Flt } from './tree/flt/Flt';
+import { Num } from './tree/num/Num';
 import { one, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
@@ -141,30 +137,10 @@ export function convert_rat_to_number(p: Rat): number {
     return result;
 }
 
-/*
-export function integer(n: number): Num {
-  return new Num(bigInt(n));
-}
-*/
-
-export function push_rational(a: number | bigInt.BigInteger, b: number | bigInt.BigInteger): void {
-    stack_push(rational(a, b));
-}
-
 export function rational(a: number | bigInt.BigInteger, b: number | bigInt.BigInteger): Rat {
     // `as any as number` cast added because bigInt(number) and bigInt(bigInt.BigInteger)
     // are both accepted signatures, but bigInt(number|bigInt.BigInteger) is not
     return new Rat(bigInt((a as unknown) as number), bigInt((b as unknown) as number));
-}
-
-export function pop_integer(): number {
-    const p1 = stack_pop();
-    return nativeInt(p1);
-}
-
-export function pop_double(): number {
-    const p1 = stack_pop();
-    return nativeDouble(p1);
 }
 
 export function nativeDouble(p1: U): number {
@@ -179,21 +155,10 @@ export function nativeDouble(p1: U): number {
     }
 }
 
-export function pop_number(): Num {
-    const n = stack_pop();
-    if (!is_num(n)) {
-        halt('not a number');
-    }
-    return n;
-}
-
-
 export function rat_to_flt(n: Rat): Flt {
     const d = n.toNumber();
     return create_flt(d);
 }
-
-//static unsigned int *__factorial(int)
 
 // n is an int
 export function bignum_factorial(n: number): Rat {
@@ -203,7 +168,6 @@ export function bignum_factorial(n: number): Rat {
 // n is an int
 function __factorial(n: number): bigInt.BigInteger {
     let a: bigInt.BigInteger;
-    // unsigned int *a, *b, *t
 
     if (n === 0 || n === 1) {
         a = bigInt(1);
@@ -223,49 +187,3 @@ function __factorial(n: number): bigInt.BigInteger {
 
     return a;
 }
-
-/*
-const mask = [
-  0x00000001,
-  0x00000002,
-  0x00000004,
-  0x00000008,
-  0x00000010,
-  0x00000020,
-  0x00000040,
-  0x00000080,
-  0x00000100,
-  0x00000200,
-  0x00000400,
-  0x00000800,
-  0x00001000,
-  0x00002000,
-  0x00004000,
-  0x00008000,
-  0x00010000,
-  0x00020000,
-  0x00040000,
-  0x00080000,
-  0x00100000,
-  0x00200000,
-  0x00400000,
-  0x00800000,
-  0x01000000,
-  0x02000000,
-  0x04000000,
-  0x08000000,
-  0x10000000,
-  0x20000000,
-  0x40000000,
-  0x80000000,
-];
-*/
-
-// unsigned int *x, unsigned int k
-/*
-function mp_clr_bit(x: bigInt.BigInteger, k: number) {
-  console.lg('not implemented yet');
-  breakpoint;
-  return (x[k / 32] &= ~mask[k % 32]);
-}
-*/

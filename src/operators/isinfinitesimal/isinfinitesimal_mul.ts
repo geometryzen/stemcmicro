@@ -1,25 +1,28 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { ISREAL } from "../../runtime/constants";
-import { MATH_MUL } from "../../runtime/ns_math";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
+const ISINIFINITESIMAL = native_sym(Native.isinfinitesimal);
+const MULTIPLY = native_sym(Native.multiply);
+
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new Op(MATH_MUL, $);
+        return new Op(MULTIPLY, $);
     }
 }
 
 class Op extends CompositeOperator {
     constructor(innerOpr: Sym, $: ExtensionEnv) {
-        super(ISREAL, innerOpr, $);
+        super(ISINIFINITESIMAL, innerOpr, $);
     }
     transform1(opr: Sym, add: Cons): [TFLAGS, U] {
         const $ = this.$;
-        if ([...add.argList].every(function (arg) {
-            return $.isreal(arg);
+        if ([...add.argList].some(function (arg) {
+            return $.isinfinitesimal(arg);
         })) {
             return [TFLAG_DIFF, booT];
         }
@@ -29,4 +32,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const is_real_mul = new Builder();
+export const isinfinitesimal_mul = new Builder();

@@ -57,7 +57,7 @@ const DEFAULT_PROPS: Props = Object.freeze({
     'nonnegative': true,
     'nonpositive': false,
     'nonzero': true,
-    'positive': true,
+    'positive': false,
     'rational': true,
     'real': true,
     'transcendental': false,

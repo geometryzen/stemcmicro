@@ -1,12 +1,17 @@
-import { imu } from '../../env/imu';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { imu } from '../../env/imu';
+import { Native } from '../../native/Native';
+import { native_sym } from '../../native/native_sym';
+import { Err } from '../../tree/err/Err';
 import { create_flt } from '../../tree/flt/Flt';
+import { items_to_cons, U } from '../../tree/tree';
 
 // power function for double precision floating point
-export function dpow(base: number, expo: number, $: ExtensionEnv) {
+export function dpow(base: number, expo: number, $: ExtensionEnv): U {
 
     if (base === 0.0 && expo < 0.0) {
-        throw new Error('divide by zero');
+        // throw new Error('divide by zero');
+        return new Err(items_to_cons(native_sym(Native.pow), create_flt(base), create_flt(expo)));
     }
 
     // nonnegative base or integer power?

@@ -35,6 +35,7 @@ export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
 export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Native, SyntaxKind.Python, SyntaxKind.Scheme];
 
 export interface ParseOptions {
+    catchExceptions?: boolean,
     syntaxKind?: SyntaxKind;
     /**
      * Determines whether the caret symbol '^' is used to denote exponentiation.

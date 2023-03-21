@@ -29,9 +29,13 @@ export interface ExprTransformOptions {
 
 export interface ScriptExecuteOptions extends ExprTransformOptions {
     /**
+     * Determines whether execptions are caught and returned in the errors property.
+     */
+    catchExceptions?: boolean;
+    /**
      * Determines what kind of parser is used for the sourceText.
      */
-    syntaxKind?: SyntaxKind
+    syntaxKind?: SyntaxKind;
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
@@ -183,14 +187,20 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
-            const picks: Pick<ScriptContextOptions, 'syntaxKind'> = { syntaxKind: SyntaxKind.Native };
+            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> = { syntaxKind: SyntaxKind.Native };
             if (contextOptions) {
+                if (typeof contextOptions.catchExceptions === 'boolean') {
+                    picks.catchExceptions = contextOptions.catchExceptions;
+                }
                 if (contextOptions.syntaxKind) {
                     picks.syntaxKind = contextOptions.syntaxKind;
                 }
                 contextOptions.disable;
             }
             if (options) {
+                if (typeof options.catchExceptions === 'boolean') {
+                    picks.catchExceptions = options.catchExceptions;
+                }
                 if (options.syntaxKind) {
                     picks.syntaxKind = options.syntaxKind;
                 }
@@ -261,9 +271,10 @@ function merge_options(options: ExprTransformOptions | undefined, contextOptions
 /**
  * Makes use of the extension environment because this is called prior to each script execution.
  */
-function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, 'syntaxKind'> | undefined, $: ExtensionEnv): ParseOptions {
+function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> | undefined, $: ExtensionEnv): ParseOptions {
     if (options) {
         return {
+            catchExceptions: options.catchExceptions,
             syntaxKind: options.syntaxKind,
             useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
             explicitAssocAdd: false,
@@ -272,6 +283,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
     }
     else {
         return {
+            catchExceptions: false,
             syntaxKind: SyntaxKind.Native,
             useCaretForExponentiation: false,
             explicitAssocAdd: false,

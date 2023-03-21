@@ -8,7 +8,11 @@ describe("abs", function () {
         const lines: string[] = [
             `abs(x)`,
         ];
-        const engine = create_script_context({});
+        const engine = create_script_context({
+            assumes: {
+                'x': { real: false }
+            }
+        });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
         engine.release();
@@ -17,7 +21,12 @@ describe("abs", function () {
         const lines: string[] = [
             `abs(i*y)`,
         ];
-        const engine = create_script_context({ useDefinitions: true });
+        const engine = create_script_context({
+            assumes: {
+                'y': { real: false }
+            },
+            useDefinitions: true
+        });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "abs(y)");
         engine.release();
@@ -134,6 +143,10 @@ describe("abs", function () {
             `abs(x*y)`
         ];
         const engine = create_script_context({
+            assumes: {
+                'x': { real: false },
+                'y': { real: false }
+            },
             useDefinitions: true,
             useCaretForExponentiation: false
         });
@@ -159,6 +172,9 @@ describe("abs", function () {
             `abs(x*i)`
         ];
         const engine = create_script_context({
+            assumes: {
+                'x': { real: false }
+            },
             useDefinitions: true,
             useCaretForExponentiation: false
         });
@@ -250,7 +266,11 @@ describe("abs", function () {
         const lines: string[] = [
             `abs(x)`,
         ];
-        const engine = create_script_context({});
+        const engine = create_script_context({
+            assumes: {
+                'x': { real: false }
+            }
+        });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsAscii(value), "abs(x)");
         assert.strictEqual(engine.renderAsHuman(value), "abs(x)");
@@ -300,6 +320,22 @@ describe("abs", function () {
         const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1");
+        engine.release();
+    });
+    it("abs(a/b)", function () {
+        const lines: string[] = [
+            `abs(a/b)`
+        ];
+        const engine = create_script_context({
+            assumes: {
+                'a': { real: false },
+                'b': { real: false }
+            },
+            useDefinitions: true,
+            useCaretForExponentiation: false
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "abs(a)/abs(b)");
         engine.release();
     });
 });

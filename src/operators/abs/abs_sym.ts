@@ -1,6 +1,7 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
+import { two, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1X } from "../helpers/Function1X";
@@ -32,15 +33,22 @@ class Op extends Function1X<Sym> implements Operator<UCons<Sym, Sym>> {
         super('abs_sym', abs, is_sym, cross($), $);
     }
     transform1(opr: Sym, x: Sym, origExpr: UCons<Sym, Sym>): [TFLAGS, U] {
-        // We'll be satisfied with using this operator to evaluate the symbol for now.
-        // const $ = this.$;
-        /*
-        if ($.isExpanding()) {
-            if ($.is_real(x)) {
-                return [TFLAG_DIFF, $.power($.power(x, two), half)];
+        const $ = this.$;
+        const props = $.getSymbolProps(x);
+        if (props.positive) {
+            return [TFLAG_DIFF, x];
+        }
+        if (props.negative) {
+            return [TFLAG_DIFF, $.negate(x)];
+        }
+        if (props.zero) {
+            return [TFLAG_DIFF, zero];
+        }
+        if (props.real) {
+            if ($.getDirective(Directive.expanding)) {
+                return [TFLAG_DIFF, $.sqrt($.power(x, two))];
             }
         }
-        */
         return [TFLAG_NONE, origExpr];
     }
 }

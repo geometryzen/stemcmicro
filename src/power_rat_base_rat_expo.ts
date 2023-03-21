@@ -13,6 +13,7 @@ import { native_sym } from './native/native_sym';
 import { nativeInt } from './nativeInt';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { quickfactor } from './quickfactor';
+import { Err } from './tree/err/Err';
 import { half, negOne, one, Rat, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Cons, U } from './tree/tree';
@@ -55,7 +56,8 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
     // if base is zero then return 0
     if ($.iszero(base)) {
         if (is_num_and_negative(expo)) {
-            throw new Error(`divide by zero for base => ${base} and exponent => ${expo}`);
+            // throw new Error(`divide by zero for base => ${base} and exponent => ${expo}`);
+            return hook(new Err(items_to_cons(POWER, base, expo)), 'D0');
         }
         return hook(zero, "D");
     }

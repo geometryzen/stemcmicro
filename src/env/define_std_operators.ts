@@ -141,6 +141,7 @@ import { heterogenous_canonical_order_lhs_assoc } from '../operators/helpers/het
 import { hermite_varargs } from '../operators/hermite/hermite_varargs';
 import { hilbert_varargs } from '../operators/hilbert/hilbert_varargs';
 import { hyp_extension } from '../operators/hyp/hyp_extension';
+import { infinitesimal_1_str } from '../operators/hyp/infinitesimal_1_str';
 import { imag_add } from '../operators/imag/imag_add';
 import { imag_any } from '../operators/imag/imag_any';
 import { imag_arctan_rat } from '../operators/imag/imag_arctan_rat';
@@ -150,6 +151,7 @@ import { imag_exp } from '../operators/imag/imag_exp';
 import { imag_flt } from '../operators/imag/imag_flt';
 import { imag_imu } from '../operators/imag/imag_imu';
 import { imag_log_rat } from '../operators/imag/imag_log_rat';
+import { imag_log_sym } from '../operators/imag/imag_log_sym';
 import { imag_mul } from '../operators/imag/imag_mul';
 import { imag_mul_i_times_any } from '../operators/imag/imag_mul_i_times_any';
 import { imag_pow_e_rat } from '../operators/imag/imag_pow_e_rat';
@@ -182,6 +184,11 @@ import { inv_any } from '../operators/inv/inv_any';
 import { inv_inv } from '../operators/inv/inv_inv';
 import { is_complex_any } from '../operators/iscomplex/is_complex_any';
 import { is_complex_sym } from '../operators/iscomplex/is_complex_sym';
+import { isinfinitesimal_any } from '../operators/isinfinitesimal/isinfinitesimal_any';
+import { isinfinitesimal_hyp } from '../operators/isinfinitesimal/isinfinitesimal_hyp';
+import { isinfinitesimal_mul } from '../operators/isinfinitesimal/isinfinitesimal_mul';
+import { isinfinitesimal_rat } from '../operators/isinfinitesimal/isinfinitesimal_rat';
+import { isinfinitesimal_sym } from '../operators/isinfinitesimal/isinfinitesimal_sym';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { is_real_pow_any_negone } from '../operators/isreal/isreal_pow_any_negone';
 import { is_real_abs } from '../operators/isreal/is_real_abs';
@@ -780,6 +787,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(imag_flt);
     $.defineOperator(imag_imu);
     $.defineOperator(imag_log_rat);
+    $.defineOperator(imag_log_sym);
     $.defineOperator(imag_rat);
     $.defineOperator(imag_sin);
     $.defineOperator(imag_sym);
@@ -792,11 +800,18 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(imag_any);
 
     $.defineOperator(index_varargs);
+    $.defineOperator(infinitesimal_1_str);
 
     $.defineOperator(integral_varargs);
 
     $.defineOperator(inv_inv);
     $.defineOperator(inv_any);
+
+    $.defineOperator(isinfinitesimal_hyp);
+    $.defineOperator(isinfinitesimal_mul);
+    $.defineOperator(isinfinitesimal_rat);
+    $.defineOperator(isinfinitesimal_sym);
+    $.defineOperator(isinfinitesimal_any);
 
     $.defineOperator(isprime_varargs);
     $.defineOperator(iszero_rat);

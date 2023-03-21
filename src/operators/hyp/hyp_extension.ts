@@ -63,13 +63,14 @@ class HypExtension implements Extension<Hyp> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toInfixString(hyp: Hyp, $: ExtensionEnv): string {
-        throw new Error("HypExtension.toInfixString Method not implemented.");
+        return hyp.printname;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toLatexString(hyp: Hyp, $: ExtensionEnv): string {
-        throw new Error("HypExtension.toLatexString Method not implemented.");
+        return hyp.printname;
     }
-    toListString(hyp: Hyp): string {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toListString(hyp: Hyp, $: ExtensionEnv): string {
         return hyp.printname;
     }
 }

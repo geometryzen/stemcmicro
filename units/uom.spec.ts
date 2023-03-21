@@ -288,6 +288,7 @@ describe("uom", function () {
                 `6.0 + kg`
             ];
             const engine = create_script_context({
+                catchExceptions: true,
                 dependencies: ['Flt', 'Uom']
             });
             const { errors } = engine.executeScript(lines.join('\n'));
@@ -300,6 +301,7 @@ describe("uom", function () {
                 `kg + 5.0`
             ];
             const engine = create_script_context({
+                catchExceptions: true,
                 dependencies: ['Flt', 'Uom']
             });
             const { errors } = engine.executeScript(lines.join('\n'));
@@ -311,7 +313,9 @@ describe("uom", function () {
                 `kg = uom("kilogram")`,
                 `2 + kg`
             ];
-            const engine = create_script_context();
+            const engine = create_script_context({
+                catchExceptions: true
+            });
             const { errors } = engine.executeScript(lines.join('\n'));
             assert.strictEqual(errors[0].message, "2+kg");
             engine.release();
@@ -322,6 +326,7 @@ describe("uom", function () {
                 `kg + 2`
             ];
             const engine = create_script_context({
+                catchExceptions: true,
                 dependencies: ['Uom']
             });
             const { errors } = engine.executeScript(lines.join('\n'));

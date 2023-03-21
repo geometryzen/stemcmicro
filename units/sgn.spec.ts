@@ -75,6 +75,9 @@ describe("sgn", function () {
             `sgn(a)`
         ];
         const engine = create_script_context({
+            assumes: {
+                'a': { real: false }
+            }
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "a/abs(a)");
@@ -85,6 +88,10 @@ describe("sgn", function () {
             `sgn(a*b)`
         ];
         const engine = create_script_context({
+            assumes: {
+                'a': { real: false },
+                'b': { real: false }
+            }
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "a*b/(abs(a)*abs(b))");
@@ -97,6 +104,9 @@ describe("sgn", function () {
             `sgn(5*b)`
         ];
         const engine = create_script_context({
+            assumes: {
+                'b': { real: false }
+            }
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "b/abs(b)");

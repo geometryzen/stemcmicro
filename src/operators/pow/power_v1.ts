@@ -251,24 +251,22 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         return hook(result, "R");
     }
 
-    let b_isEven_and_c_isItsInverse = false;
-    // 
-    if (is_rat_and_even_integer(caddr(base))) {
-        const isThisOne = $.multiply(caddr(base), expo);
-        if (is_plus_or_minus_one(isThisOne, $)) {
-            b_isEven_and_c_isItsInverse = true;
+    if (is_power(base)) {
+        // console.lg("base", $.toSExprString(base));
+        if (is_rat_and_even_integer(base.expo)) {
+            const expoProduct = $.multiply(base.expo, expo);
+            if (is_rat(expoProduct) && expoProduct.isOne()) {
+                if ($.getDirective(Directive.factoring)) {
+                    const result = $.abs(base.base);
+                    return hook(result, "S");
+                }
+                else {
+                    return hook(items_to_cons(POWER, base, expo), "S");
+                }
+            }
         }
     }
 
-    if (is_power(base) && b_isEven_and_c_isItsInverse) {
-        if ($.isFactoring()) {
-            const result = $.abs(cadr(base));
-            return hook(result, "S");
-        }
-        else {
-            return hook(items_to_cons(POWER, base, expo), "S");
-        }
-    }
 
     // A power sum is possible if the terms are real and the exponent is a positive integer in safe number range.
     // (a + b + ...) ^ n  ->  (a + b + ...) * (a + b + ...) ...

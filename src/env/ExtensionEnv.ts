@@ -241,6 +241,10 @@ export interface SymbolProps {
     nonnegative: boolean,
     nonpositive: boolean,
     nonzero: boolean,
+    /**
+     * A real number that is greater than zero.
+     * All positive numbers are finite so infinity is not positive.
+     */
     positive: boolean,
     rational: boolean,
     real: boolean,
@@ -332,6 +336,7 @@ export interface ExtensionEnv {
      * Meaning is imaginary valued. i.e. evaluates to i times a real number.
      */
     isimag(expr: U): boolean;
+    isinfinitesimal(expr: U): boolean;
     isminusone(expr: U): boolean;
     isone(expr: U): boolean;
     /**
@@ -388,6 +393,7 @@ export interface ExtensionEnv {
     setSymbolValue(sym: Sym, value: U): void;
     simplify(expr: U): U;
     sin(expr: U): U;
+    sqrt(expr: U): U;
     st(expr: U): U;
     subst(newExpr: U, oldExpr: U, expr: U): U;
     /**

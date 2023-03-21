@@ -106,6 +106,9 @@ export class Rat extends Atom<'Rat'> {
      */
     constructor(public a: bigInt.BigInteger, public b: bigInt.BigInteger, pos?: number, end?: number) {
         super('Rat', pos, end);
+        if (b.isZero()) {
+            throw new Error("denominator must not be zero");
+        }
         // TODO: Encapsulate by making a,b private.
         // Nothing to see here (yet), but gcd processing would be nice.
         // Maybe we need a valueOf(...) static or module level function?

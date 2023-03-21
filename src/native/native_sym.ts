@@ -44,10 +44,12 @@ export function build_sym(code: Native): Sym {
         case Native.factorial: return create_sym('factorial');
         case Native.float: return create_sym('float');
         case Native.imag: return create_sym('imag');
+        case Native.infinitesimal: return create_sym('infinitesimal');
         case Native.inner: return create_sym('inner');
         case Native.integral: return create_sym('integral');
         case Native.inverse: return create_sym('inv');
         case Native.iscomplex: return create_sym('iscomplex');
+        case Native.isinfinitesimal: return create_sym('isinfinitesimal');
         case Native.isreal: return create_sym('isreal');
         case Native.iszero: return create_sym('iszero');
         case Native.lco: return create_sym('<<');

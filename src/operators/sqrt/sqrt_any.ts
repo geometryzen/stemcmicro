@@ -26,6 +26,7 @@ class Sqrt extends Function1<U> {
         this.hash = hash_unaop_atom(this.opr, HASH_ANY);
     }
     transform1(opr: Sym, arg: U): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(arg));
         return [TFLAG_DIFF, this.$.power(arg, half)];
     }
 }

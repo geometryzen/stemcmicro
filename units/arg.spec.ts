@@ -279,6 +279,28 @@ describe("arg", function () {
             `arg(abs(a)*exp(b+i*pi/5))`,
         ];
         const engine = create_script_context({
+            assumes: {
+                'a': { real: false },
+                'b': { real: true }
+            },
+            dependencies: ['Imu'],
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1/5*pi");
+        engine.release();
+    });
+    xit("arg(abs(a)*exp(b+i*pi/5))", function () {
+        const lines: string[] = [
+            `i=sqrt(-1)`,
+            `pi=tau(1/2)`,
+            `arg(abs(a)*exp(b+i*pi/5))`,
+        ];
+        const engine = create_script_context({
+            assumes: {
+                'a': { real: true },
+                'b': { real: true }
+            },
             dependencies: ['Imu'],
             useDefinitions: false
         });

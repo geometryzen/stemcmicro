@@ -30,6 +30,7 @@ const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POWER = native_sym(Native.pow);
 const ISCOMPLEX = native_sym(Native.iscomplex);
+const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
 const ISREAL = native_sym(Native.isreal);
 
 class StableExprComparator implements ExprComparator {
@@ -334,6 +335,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
+        isinfinitesimal(expr: U): boolean {
+            return $.is(ISINFINITESIMAL, expr);
+        },
         isminusone(expr: U): boolean {
             return $.operatorFor(expr).isMinusOne(expr);
         },
@@ -505,6 +509,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         sin(expr: U): U {
             return $.evaluate(Native.sin, expr);
+        },
+        sqrt(expr: U): U {
+            return $.evaluate(Native.sqrt, expr);
         },
         st(expr: U): U {
             return $.evaluate(Native.st, expr);

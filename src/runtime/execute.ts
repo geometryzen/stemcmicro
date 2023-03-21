@@ -51,34 +51,44 @@ export function execute_script(fileName: string, sourceText: string, options: Sc
     const values: U[] = [];
     const prints: string[] = [];
     // console.lg(`trees.length = ${trees.length}`);
-    try {
-        for (const tree of trees) {
-            // console.lg("tree", render_as_sexpr(tree, $));
-            // console.lg("tree", $.toInfixString(tree));
-            const data = transform_tree(tree, options, $);
-            if (data.value) {
-                if (!is_nil(data.value)) {
-                    // console.lg(`value = ${data.value}`);
-                    values.push(data.value);
-                }
-            }
-            for (const p of data.prints) {
-                prints.push(p);
-            }
-            for (const e of data.errors) {
+    // console.lg("catchExceptions", options.catchExceptions);
+    if (options.catchExceptions) {
+        try {
+            transform_trees(trees, values, prints, errors, options, $);
+        }
+        catch (e) {
+            if (e instanceof Error) {
                 errors.push(e);
             }
+            else {
+                errors.push(new Error(`${e}`));
+            }
         }
     }
-    catch (e) {
-        if (e instanceof Error) {
-            errors.push(e);
-        }
-        else {
-            errors.push(new Error(`${e}`));
-        }
+    else {
+        transform_trees(trees, values, prints, errors, options, $);
     }
     return { values, prints, errors };
+}
+
+function transform_trees(trees: U[], values: U[], prints: string[], errors: Error[], options: ExprTransformOptions, $: ExtensionEnv) {
+    for (const tree of trees) {
+        // console.lg("tree", render_as_sexpr(tree, $));
+        // console.lg("tree", $.toInfixString(tree));
+        const data = transform_tree(tree, options, $);
+        if (data.value) {
+            if (!is_nil(data.value)) {
+                // console.lg(`value = ${data.value}`);
+                values.push(data.value);
+            }
+        }
+        for (const p of data.prints) {
+            prints.push(p);
+        }
+        for (const e of data.errors) {
+            errors.push(e);
+        }
+    }
 }
 
 export function transform_script(fileName: string, sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {

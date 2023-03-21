@@ -35,7 +35,7 @@ describe("assumptions", function () {
         assert.strictEqual(aProps.nonnegative, true);           // 19
         assert.strictEqual(aProps.nonpositive, false);          // 20
         assert.strictEqual(aProps.nonzero, true);               // 21
-        assert.strictEqual(aProps.positive, true);              // 22
+        assert.strictEqual(aProps.positive, false);             // 22
         assert.strictEqual(aProps.rational, true);              // 23
         assert.strictEqual(aProps.real, true);                  // 24
         assert.strictEqual(aProps.transcendental, false);       // 25

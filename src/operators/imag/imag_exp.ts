@@ -30,7 +30,7 @@ class Op extends CompositeOperator {
         // console.lg(this.name);
         const $ = this.$;
         const z = innerExpr.argList.head;
-        if ($.is_real(z)) {
+        if ($.isreal(z)) {
             return [TFLAG_DIFF, zero];
         }
         else if (is_imu(z)) {
@@ -39,7 +39,7 @@ class Op extends CompositeOperator {
         else {
             if (is_multiply(z) && count_imu_factors(z) === 1) {
                 const x = remove_imu_factors(z);
-                if ($.is_real(x)) {
+                if ($.isreal(x)) {
                     return [TFLAG_NONE, $.sin(x)];
                 }
                 else {

@@ -12,7 +12,7 @@ import { is_rat } from "../rat/is_rat";
 import { CompositeOperator } from "../CompositeOperator";
 
 const POW = native_sym(Native.pow);
-const IS_REAL = native_sym(Native.is_real);
+const IS_REAL = native_sym(Native.isreal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

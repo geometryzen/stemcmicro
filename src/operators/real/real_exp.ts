@@ -29,7 +29,7 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const z = innerExpr.argList.head;
-        if ($.is_real(z)) {
+        if ($.isreal(z)) {
             return [TFLAG_DIFF, innerExpr];
         }
         else if (is_imu(z)) {
@@ -38,7 +38,7 @@ class Op extends CompositeOperator {
         else {
             if (is_multiply(z) && count_imu_factors(z) === 1) {
                 const x = remove_imu_factors(z);
-                if ($.is_real(x)) {
+                if ($.isreal(x)) {
                     return [TFLAG_NONE, $.cos(x)];
                 }
                 else {

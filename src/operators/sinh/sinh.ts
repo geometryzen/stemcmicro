@@ -25,7 +25,7 @@ export function sinh(expr: U, $: ExtensionEnv): U {
         }
         return create_flt(d);
     }
-    if ($.is_zero(expr)) {
+    if ($.iszero(expr)) {
         return zero;
     }
     return items_to_cons(SINH, expr);

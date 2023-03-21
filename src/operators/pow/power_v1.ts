@@ -52,7 +52,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     //  1 ^ a    ->  1
     //  a ^ 0    ->  1
-    if ($.equals(base, one) || $.is_zero(expo)) {
+    if ($.equals(base, one) || $.iszero(expo)) {
         const dynOne = $.getDirective(Directive.evaluatingAsFloat) ? oneAsFlt : one;
         return hook(dynOne, "A");
     }
@@ -155,7 +155,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         if (is_abs(base)) {
             if (is_rat_and_even_integer(expo)) {
                 const a = base.argList.head;
-                if ($.is_real(a)) {
+                if ($.isreal(a)) {
                     const result = $.power(a, expo);
                     return hook(result, "L");
                 }
@@ -213,7 +213,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                 const factors = base.tail();
                 // This is a bit too restrictive. e.g. complex numbers would work.
                 // We really do need to ask about how they commute under multiplication.
-                if (factors.every($.is_real)) {
+                if (factors.every($.isreal)) {
                     const aList = base.argList;
 
                     if (is_cons(aList)) {
@@ -287,7 +287,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             }
             else if (expo.isPositive()) {
                 const terms = args_to_items(base);
-                if (terms.every($.is_real)) {
+                if (terms.every($.isreal)) {
                     const n = nativeInt(expo);
                     const result = power_sum(n, base, $);
                     return hook(result, "T");
@@ -295,7 +295,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             }
             else if (expo.isNegative()) {
                 const terms = args_to_items(base);
-                if (terms.every($.is_real)) {
+                if (terms.every($.isreal)) {
                     const n = nativeInt(expo);
                     const result = $.divide(one, power_sum(-n, base, $));
                     return hook(result, "T");

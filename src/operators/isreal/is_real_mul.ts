@@ -1,5 +1,5 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
-import { PREDICATE_IS_REAL } from "../../runtime/constants";
+import { ISREAL } from "../../runtime/constants";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
@@ -14,12 +14,12 @@ class Builder implements OperatorBuilder<U> {
 
 class IsRealMul extends CompositeOperator {
     constructor(innerOpr: Sym, $: ExtensionEnv) {
-        super(PREDICATE_IS_REAL, innerOpr, $);
+        super(ISREAL, innerOpr, $);
     }
     transform1(opr: Sym, add: Cons): [TFLAGS, U] {
         const $ = this.$;
         if ([...add.argList].every(function (arg) {
-            return $.is_real(arg);
+            return $.isreal(arg);
         })) {
             return [TFLAG_DIFF, booT];
         }

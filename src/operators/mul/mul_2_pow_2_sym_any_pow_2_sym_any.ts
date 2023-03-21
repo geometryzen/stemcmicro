@@ -34,12 +34,12 @@ function cross($: ExtensionEnv) {
             if (k1_equals_k2) {
                 // console.lg(`lhs=${lhs}, rhs=${rhs}`);
                 const x = lhs.lhs;
-                const x_is_scalar = $.isScalar(x);
+                const x_is_scalar = $.isscalar(x);
                 // console.lg(`x=${x}`);
                 // console.lg(`x_is_scalar=${x_is_scalar}`);
                 const y = rhs.lhs;
                 // console.lg(`y=${y}`);
-                const y_is_scalar = $.isScalar(y);
+                const y_is_scalar = $.isscalar(y);
                 // console.lg(`y_is_scalar=${y_is_scalar}`);
                 return k1_equals_k2 && x_is_scalar && y_is_scalar;
             }

@@ -41,7 +41,7 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
     }
 
     // transposition goes away for identity matrix
-    if (($.isOne(p2) && is_num_and_eq_two(p3)) || ($.isOne(p3) && is_num_and_eq_two(p2))) {
+    if (($.isone(p2) && is_num_and_eq_two(p3)) || ($.isone(p3) && is_num_and_eq_two(p2))) {
         if (is_identity_matrix(p1)) {
             return p1;
         }
@@ -58,7 +58,7 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
             ($.equals(innerTranspSwitch2, p3) && $.equals(innerTranspSwitch1, p2)) ||
             ($.equals(innerTranspSwitch1, nil) &&
                 $.equals(innerTranspSwitch2, nil) &&
-                (($.isOne(p3) && is_num_and_eq_two(p2)) || ($.isOne(p2) && is_num_and_eq_two(p3))))
+                (($.isone(p3) && is_num_and_eq_two(p2)) || ($.isone(p2) && is_num_and_eq_two(p3))))
         ) {
             return car(cdr(p1));
         }
@@ -97,11 +97,11 @@ export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
     }
 
     if (!is_tensor(p1)) {
-        if (!$.is_zero(p1)) {
+        if (!$.iszero(p1)) {
             //stop("transpose: tensor expected, 1st arg is not a tensor")
             // remove the default "dimensions to be switched"
             // parameters
-            if ((!$.isOne(p2) || !is_num_and_eq_two(p3)) && (!$.isOne(p3) || !is_num_and_eq_two(p2))) {
+            if ((!$.isone(p2) || !is_num_and_eq_two(p3)) && (!$.isone(p3) || !is_num_and_eq_two(p2))) {
                 return items_to_cons(TRANSPOSE, p1, p2, p3);
             }
             return items_to_cons(TRANSPOSE, p1);

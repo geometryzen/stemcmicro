@@ -22,7 +22,7 @@ export function numerator(p1: U, $: ExtensionEnv): U {
     // console.lg(`rationalized=${$.toInfixString(p1)}`);
     // console.lg(`rationalized=${$.toSExprString(p1)}`);
 
-    if (is_multiply(p1) && !$.isOne(car(cdr(p1)))) {
+    if (is_multiply(p1) && !$.isone(car(cdr(p1)))) {
         // console.lg "p1 inside multiply: " + p1
         // console.lg "first term: " + car(p1)
         return multiply_items(p1.tail().map(function (x) {

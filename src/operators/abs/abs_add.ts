@@ -57,7 +57,7 @@ class Op extends CompositeOperator {
             return [TFLAG_DIFF, retval];
         }
         if ($.getDirective(Directive.expandAbsSum)) {
-            if (addExpr.tail().every($.is_real)) {
+            if (addExpr.tail().every($.isreal)) {
                 return [TFLAG_DIFF, $.power(addExpr, two)];
             }
         }

@@ -22,7 +22,7 @@ function crossGuard($: ExtensionEnv) {
         // console.lg(`lhs.RHS: ${render_as_infix(lhs.rhs, $)}, rhs=${render_as_infix(rhs, $)}`);
         const candidate = lhs.rhs.opr;
         if (is_sym(candidate) && candidate.equalsSym(MATH_DERIVATIVE)) {
-            return $.isScalar(rhs);
+            return $.isscalar(rhs);
         }
         else {
             return false;

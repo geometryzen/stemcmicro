@@ -31,6 +31,7 @@ export function build_sym(code: Native): Sym {
         case Native.arctan: return create_sym('arctan');
         case Native.arg: return create_sym('arg');
         case Native.clock: return create_sym('clock');
+        case Native.component: return create_sym('component');
         case Native.condense: return create_sym('condense');
         case Native.conj: return create_sym('conj');
         case Native.cos: return create_sym('cos');
@@ -45,9 +46,9 @@ export function build_sym(code: Native): Sym {
         case Native.inner: return create_sym('inner');
         case Native.integral: return create_sym('integral');
         case Native.inverse: return create_sym('inv');
-        case Native.is_complex: return create_sym('iscomplex');
-        case Native.is_real: return create_sym('isreal');
-        case Native.is_zero: return create_sym('iszero');
+        case Native.iscomplex: return create_sym('iscomplex');
+        case Native.isreal: return create_sym('isreal');
+        case Native.iszero: return create_sym('iszero');
         case Native.lco: return create_sym('<<');
         case Native.log: return create_sym('log');
         case Native.mod: return create_sym('mod');
@@ -60,6 +61,7 @@ export function build_sym(code: Native): Sym {
         case Native.real: return create_sym('real');
         case Native.rect: return create_sym('rect');
         case Native.rco: return create_sym('>>');
+        case Native.simplify: return create_sym('simplify');
         case Native.sin: return create_sym('sin');
         case Native.sqrt: return create_sym('sqrt');
         case Native.spread: return create_sym('...');

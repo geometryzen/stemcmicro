@@ -41,10 +41,10 @@ export function extract_grade(arg: U, grade: number, $: ExtensionEnv): U {
     else if (is_cons(arg) && is_mul_2_any_any(arg)) {
         const lhs = arg.lhs;
         const rhs = arg.rhs;
-        if ($.isScalar(lhs)) {
+        if ($.isscalar(lhs)) {
             return $.multiply(lhs, extract_grade(rhs, grade, $));
         }
-        if ($.isScalar(rhs)) {
+        if ($.isscalar(rhs)) {
             return $.multiply(extract_grade(lhs, grade, $), rhs);
         }
         throw new Error(`extractGrade   ${lhs} * ${rhs}`);

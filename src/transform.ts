@@ -242,7 +242,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
             while (is_cons(cList)) {
                 const cFlag = $.valueOf(cList.head);
                 // TODO: We're checking for zero, presumambly boolean false is more general?
-                if ($.is_zero(cFlag)) {
+                if ($.iszero(cFlag)) {
                     break;
                 }
                 cList = cList.cdr;
@@ -268,7 +268,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
 
             // console.lg("diff", $.toInfixString(diff));
 
-            if ($.is_zero(diff)) {
+            if ($.iszero(diff)) {
                 return true;
             }
         }

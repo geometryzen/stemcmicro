@@ -276,6 +276,7 @@ export interface ExtensionEnv {
     clearBindings(): void;
     clearOperators(): void;
     compareFn(sym: Sym): CompareFn;
+    component(tensor: Tensor<U>, indices: U): U;
     /**
      * Defines the implementation of a function that is used to transform (name ...) expressions.
      */
@@ -319,30 +320,36 @@ export interface ExtensionEnv {
      * @param expr 
      */
     is(predicate: Sym, expr: U): boolean;
+    /**
+     * @deprecated Use getDirective(Directive.expanding)
+     */
     isExpanding(): boolean;
+    /**
+     * @deprecated Use getDirective(Directive.factoring)
+     */
     isFactoring(): boolean;
     /**
      * Meaning is imaginary valued. i.e. evaluates to i times a real number.
      */
-    is_imag(expr: U): boolean;
-    isMinusOne(expr: U): boolean;
-    isOne(expr: U): boolean;
+    isimag(expr: U): boolean;
+    isminusone(expr: U): boolean;
+    isone(expr: U): boolean;
     /**
      * Corresponds to the 'real' property.
      */
-    is_complex(expr: U): boolean;
+    iscomplex(expr: U): boolean;
     /**
     * Corresponds to the 'real' property.
     */
-    is_real(expr: U): boolean;
+    isreal(expr: U): boolean;
     /**
      * Determines whether expr is scalar-valued.
      */
-    isScalar(expr: U): boolean;
+    isscalar(expr: U): boolean;
     /**
      * A convenience for appling the predicate function to the expression.
      */
-    is_zero(expr: U): boolean;
+    iszero(expr: U): boolean;
     /**
      *
      */
@@ -363,7 +370,7 @@ export interface ExtensionEnv {
     /**
      *
      */
-    outer(lhs: U, rhs: U): U;
+    outer(...args: U[]): U;
     polar(expr: U): U;
     /**
      *
@@ -379,6 +386,7 @@ export interface ExtensionEnv {
     setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;
     setSymbolValue(sym: Sym, value: U): void;
+    simplify(expr: U): U;
     sin(expr: U): U;
     /**
      *

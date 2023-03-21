@@ -24,7 +24,7 @@ function tanh(p1: U, $: ExtensionEnv): U {
         }
         return create_flt(d);
     }
-    if ($.is_zero(p1)) {
+    if ($.iszero(p1)) {
         return zero;
     }
     return items_to_cons(TANH, p1);

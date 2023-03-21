@@ -144,6 +144,7 @@ import { hyp_extension } from '../operators/hyp/hyp_extension';
 import { imag_add } from '../operators/imag/imag_add';
 import { imag_any } from '../operators/imag/imag_any';
 import { imag_arctan_rat } from '../operators/imag/imag_arctan_rat';
+import { imag_blade } from '../operators/imag/imag_blade';
 import { imag_cos } from '../operators/imag/imag_cos';
 import { imag_exp } from '../operators/imag/imag_exp';
 import { imag_flt } from '../operators/imag/imag_flt';
@@ -297,6 +298,7 @@ import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_
 import { real_add } from '../operators/real/real_add';
 import { real_any } from '../operators/real/real_any';
 import { real_arctan_rat } from '../operators/real/real_arctan_rat';
+import { real_blade } from '../operators/real/real_blade';
 import { real_cos } from '../operators/real/real_cos';
 import { real_exp } from '../operators/real/real_exp';
 import { real_flt } from '../operators/real/real_flt';
@@ -391,7 +393,7 @@ import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { get_last_print_mode_symbol, store_text_in_binding } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, NROOTS, POLAR, PREDICATE_IS_REAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, NROOTS, POLAR, ISREAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -781,6 +783,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(imag_add);
     $.defineOperator(imag_arctan_rat);
+    $.defineOperator(imag_blade);
     $.defineOperator(imag_cos);
     $.defineOperator(imag_exp);
     $.defineOperator(imag_flt);
@@ -842,6 +845,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(real_add);
     $.defineOperator(real_arctan_rat);
+    $.defineOperator(real_blade);
     $.defineOperator(real_cos);
     $.defineOperator(real_exp);
     $.defineOperator(real_flt);
@@ -879,7 +883,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(is_real_rat);
     $.defineOperator(is_real_real);
     $.defineOperator(is_real_sin);
-    $.defineOperator(make_predicate_sym_operator(PREDICATE_IS_REAL));
+    $.defineOperator(make_predicate_sym_operator(ISREAL));
     $.defineOperator(is_real_any);
 
     $.defineOperator(rect_mul_rat_any);

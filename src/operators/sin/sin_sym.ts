@@ -24,7 +24,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         this.hash = hash_unaop_atom(MATH_SIN, HASH_SYM);
     }
     isReal(exp: EXP): boolean {
-        return this.$.is_real(exp.arg);
+        return this.$.isreal(exp.arg);
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

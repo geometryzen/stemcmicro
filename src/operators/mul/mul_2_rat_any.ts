@@ -55,15 +55,15 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     isImag(expr: EXP): boolean {
         const $ = this.$;
-        return $.is_imag(expr.rhs);
+        return $.isimag(expr.rhs);
     }
     isReal(expr: EXP): boolean {
         const $ = this.$;
-        return $.is_real(expr.rhs);
+        return $.isreal(expr.rhs);
     }
     isScalar(expr: EXP): boolean {
         const $ = this.$;
-        return $.isScalar(expr.rhs);
+        return $.isscalar(expr.rhs);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         return multiply_rat_any(lhs, rhs, expr);

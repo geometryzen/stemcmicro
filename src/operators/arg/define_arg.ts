@@ -58,8 +58,8 @@ function arg(z: U, $: ExtensionEnv): U {
     // const x = real(z, $);
     // console.lg(`x`, $.toInfixString(x));
     // TODO: handle the undefined case when both x and y are zero.
-    if ($.is_zero(x)) {
-        if ($.is_zero(y)) {
+    if ($.iszero(x)) {
+        if ($.iszero(y)) {
             // Undefined
             return new Err(items_to_cons(ARG, $.add(x, y)));
         }
@@ -198,7 +198,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
         return arg_of_sum_old(expr, $);
     }
 
-    if ($.is_real(expr)) {
+    if ($.isreal(expr)) {
         return zero;
     }
 
@@ -216,7 +216,7 @@ function arg_of_sum_old(expr: Cons, $: ExtensionEnv): U {
     const y = imag(z, $);
     // console.lg(`x => ${$.toListString(x)}`);
     // console.lg(`y => ${$.toListString(y)}`);
-    if ($.is_zero(x)) {
+    if ($.iszero(x)) {
         if (is_negative(y)) {
             return $.negate(DynamicConstants.Pi($));
         }

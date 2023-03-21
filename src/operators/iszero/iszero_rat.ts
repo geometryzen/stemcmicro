@@ -15,7 +15,7 @@ class ExpRatBuilder implements OperatorBuilder<U> {
     }
 }
 
-const ISZERO = native_sym(Native.is_zero);
+const ISZERO = native_sym(Native.iszero);
 
 class IsZeroRat extends Function1<Rat> implements Operator<U> {
     readonly hash: string;

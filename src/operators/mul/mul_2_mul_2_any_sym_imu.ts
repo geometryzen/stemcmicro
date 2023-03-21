@@ -33,7 +33,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     isImag(expr: EXP): boolean {
         const $ = this.$;
         const X = expr.lhs.lhs;
-        return $.is_real(X);
+        return $.isreal(X);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

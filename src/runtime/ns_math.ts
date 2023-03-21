@@ -31,7 +31,7 @@ export const MATH_PI = native_sym(Native.PI);
 /**
  * component e.g. (indexing into a tensor).
  */
-export const MATH_COMPONENT = create_sym('component');
+export const MATH_COMPONENT = native_sym(Native.component);
 /**
  * factorial
  */

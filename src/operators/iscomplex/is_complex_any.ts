@@ -7,7 +7,7 @@ import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 
-export const IS_COMPLEX = native_sym(Native.is_complex);
+export const IS_COMPLEX = native_sym(Native.iscomplex);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

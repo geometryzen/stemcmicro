@@ -15,7 +15,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
         return `${d}`;
     }
 
-    if ($.is_zero($.getSymbolValue(FORCE_FIXED_PRINTOUT))) {
+    if ($.iszero($.getSymbolValue(FORCE_FIXED_PRINTOUT))) {
         str = '' + d;
         // manipulate the string so that it can be parsed by
         // by ourselves (something like 1.23e-123 wouldn't cut it because
@@ -91,7 +91,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function shouldForceFixed($: ExtensionEnv): boolean {
     const forceFixedBinding = $.getSymbolValue(FORCE_FIXED_PRINTOUT);
-    return is_rat(forceFixedBinding) ? !$.is_zero(forceFixedBinding) : false;
+    return is_rat(forceFixedBinding) ? !$.iszero(forceFixedBinding) : false;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

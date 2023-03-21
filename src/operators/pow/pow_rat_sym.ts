@@ -31,7 +31,7 @@ class Op extends Function2<LHS, RHS> {
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if (base.isOne()) {
-            if ($.is_real(expo)) {
+            if ($.isreal(expo)) {
                 return [TFLAG_DIFF, one];
             }
             else {

@@ -79,10 +79,10 @@ function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
     if (ks.length <= 2) {
         return false;
     }
-    if ($.is_zero(ks[0])) {
+    if ($.iszero(ks[0])) {
         return false;
     }
-    return ks.slice(1, ks.length - 1).every((el) => $.is_zero(el));
+    return ks.slice(1, ks.length - 1).every((el) => $.iszero(el));
 }
 
 /**
@@ -358,7 +358,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
     // log.dbg(`cubic: DETERMINANT: ${toInfixString(R_determinant)}`);
     // log.dbg(`cubic: D1: ${toInfixString(R_DELTA1)}`);
 
-    if ($.is_zero(R_determinant)) {
+    if ($.iszero(R_determinant)) {
         const data = {
             R_DELTA0_toBeCheckedIfZero,
             R_m_b_over_3a,
@@ -382,7 +382,7 @@ function _solveDegree3(A: U, B: U, C: U, D: U, $: ExtensionEnv): U[] {
         // log.dbg(`cubic: C: ${toInfixString(R_C)}`);
         // log.dbg(`cubic: C as absval and float: ${toInfixString(R_C_simplified_toCheckIfZero)}`);
 
-        if ($.is_zero(R_C_simplified_toCheckIfZero)) {
+        if ($.iszero(R_C_simplified_toCheckIfZero)) {
             // log.dbg(' cubic: C IS ZERO flipping the sign');
             flipSignOFQSoCIsNotZero = true;
         }
@@ -443,7 +443,7 @@ function _solveDegree3ZeroRDeterminant(
         R_b3,
         R_a_b_c,
     } = common;
-    if ($.is_zero(R_DELTA0_toBeCheckedIfZero)) {
+    if ($.iszero(R_DELTA0_toBeCheckedIfZero)) {
         // log.dbg(' cubic: DETERMINANT IS ZERO and delta0 is zero');
         return [R_m_b_over_3a]; // just same solution three times
     }
@@ -472,15 +472,15 @@ function _solveDegree4(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] {
     // log.dbg('>>>>>>>>>>>>>>>> actually using quartic formula <<<<<<<<<<<<<<< ');
 
     if (
-        $.is_zero(B) &&
-        $.is_zero(D) &&
-        !$.is_zero(C) &&
-        !$.is_zero(E)
+        $.iszero(B) &&
+        $.iszero(D) &&
+        !$.iszero(C) &&
+        !$.iszero(E)
     ) {
         return _solveDegree4Biquadratic(A, B, C, D, E, $);
     }
 
-    if (!$.is_zero(B)) {
+    if (!$.iszero(B)) {
         return _solveDegree4NonzeroB(A, B, C, D, E, $);
     }
     else {
@@ -548,7 +548,7 @@ function _solveDegree4ZeroB(A: U, B: U, C: U, D: U, E: U, $: ExtensionEnv): U[] 
         const toBeCheckedIfZero = float_eval_abs_eval($.add($.multiply(sol, two), R_p), $);
         // log.dbg(`abs value is: ${toInfixString(sol)}`);
 
-        if (!$.is_zero(toBeCheckedIfZero)) {
+        if (!$.iszero(toBeCheckedIfZero)) {
             R_m = sol;
             break;
         }

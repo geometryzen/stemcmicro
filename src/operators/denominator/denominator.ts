@@ -45,7 +45,7 @@ export function denominator(expr: U, $: ExtensionEnv): U {
     if (is_cons(expr)) {
         const argList = expr.cdr;
         // TODO: Why do I care about whether a1 is one?
-        if (is_multiply(expr) && !$.isOne(car(argList))) {
+        if (is_multiply(expr) && !$.isone(car(argList))) {
             // console.lg("(denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)");
             const xs = expr.tail();
             // console.lg(`xs => ${items_to_infix(xs, $)}`);

@@ -158,7 +158,7 @@ export function power_tensor(p1: Tensor, p2: U, $: ExtensionEnv): Cons | Sym | T
     let prev: U = p3;
     for (let i = 1; i < n; i++) {
         prev = $.inner(prev, p3);
-        if ($.is_zero(prev)) {
+        if ($.iszero(prev)) {
             break;
         }
     }

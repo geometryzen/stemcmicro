@@ -30,12 +30,12 @@ class Op extends CompositeOperator {
         if (is_multiply(z)) {
             if (count_imu_factors(z) === 1) {
                 const remaining = remove_imu_factors(z);
-                if ($.is_real(remaining)) {
+                if ($.isreal(remaining)) {
                     return [TFLAG_DIFF, one];
                 }
             }
         }
-        if ($.is_real(z)) {
+        if ($.isreal(z)) {
             return [TFLAG_DIFF, innerExpr];
         }
         return [TFLAG_NONE, outerExpr];

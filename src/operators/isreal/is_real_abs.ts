@@ -7,7 +7,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const ABS = native_sym(Native.abs);
-const IS_REAL = native_sym(Native.is_real);
+const ISREAL = native_sym(Native.isreal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 
 class IsRealAdd extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IS_REAL, ABS, $);
+        super(ISREAL, ABS, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {

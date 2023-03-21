@@ -11,7 +11,7 @@ import { assert_sym } from "../sym/assert_sym";
 import { is_sym } from "../sym/is_sym";
 
 const POW = native_sym(Native.pow);
-const IS_REAL = native_sym(Native.is_real);
+const IS_REAL = native_sym(Native.isreal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -41,7 +41,7 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, innerExpr: Cons, outerExpr: UCons<Sym, Cons>): [TFLAGS, U] {
         const $ = this.$;
         const expo = assert_sym(innerExpr.rhs);
-        if ($.is_real(expo)) {
+        if ($.isreal(expo)) {
             return [TFLAG_DIFF, booT];
         }
         else {

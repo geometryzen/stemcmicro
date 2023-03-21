@@ -24,7 +24,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        if ($.is_real(arg)) {
+        if ($.isreal(arg)) {
             return [TFLAG_DIFF, arg];
         }
         else {

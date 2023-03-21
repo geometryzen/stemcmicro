@@ -270,10 +270,10 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
     if (is_rat(p2)) {
         A = $.abs(mp_numerator(p2));
         B = mp_denominator(p2);
-        if (!$.isOne(A)) {
+        if (!$.isone(A)) {
             n++;
         }
-        if (!$.isOne(B)) {
+        if (!$.isone(B)) {
             d++;
         }
         p1 = cdr(p1);
@@ -308,7 +308,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
         if (is_rat(car(p1))) {
             p1 = cdr(p1);
         }
-        if (!$.isOne(A)) {
+        if (!$.isone(A)) {
             str += print_factor(A, false, false, $);
             flag = 1;
         }
@@ -346,7 +346,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
         p1 = cdr(p1);
     }
 
-    if (!$.isOne(B)) {
+    if (!$.isone(B)) {
         str += print_factor(B, false, false, $);
         flag = 1;
     }
@@ -1451,7 +1451,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         }
     }
 
-    if (defs.printMode === PRINTMODE_LATEX && $.isOne(expo)) {
+    if (defs.printMode === PRINTMODE_LATEX && $.isone(expo)) {
         // if we are in latex mode we turn many
         // radicals into a radix sign with a power
         // underneath, and the power is often one

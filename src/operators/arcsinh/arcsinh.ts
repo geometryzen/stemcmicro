@@ -37,7 +37,7 @@ export function arcsinh(x: U, $: ExtensionEnv): U {
         return create_flt(d);
     }
 
-    if ($.is_zero(x)) {
+    if ($.iszero(x)) {
         return zero;
     }
 

@@ -38,7 +38,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
     isScalar(expr: EXP): boolean {
         const $ = this.$;
-        return $.isScalar(expr.lhs);
+        return $.isscalar(expr.lhs);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

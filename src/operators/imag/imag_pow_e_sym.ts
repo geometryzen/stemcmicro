@@ -40,7 +40,7 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const expo = assert_sym(innerExpr.rhs);
-        if ($.is_real(expo)) {
+        if ($.isreal(expo)) {
             return [TFLAG_DIFF, zero];
         }
         else {

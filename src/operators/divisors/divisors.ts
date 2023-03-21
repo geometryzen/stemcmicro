@@ -143,7 +143,7 @@ function __factor_add(p1: U, $: ExtensionEnv): U[] {
     const stack: U[] = [];
     // check gcd
     let p2 = temp1;
-    if ($.isOne(p2)) {
+    if ($.isone(p2)) {
         stack.push(p1, one);
         return stack;
     }

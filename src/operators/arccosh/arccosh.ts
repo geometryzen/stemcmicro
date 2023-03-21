@@ -41,7 +41,7 @@ function arccosh(x: U, $: ExtensionEnv): U {
         return create_flt(d);
     }
 
-    if ($.isOne(x)) {
+    if ($.isone(x)) {
         return zero;
     }
 

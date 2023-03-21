@@ -1,15 +1,16 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { zero } from "../../tree/rat/Rat";
+import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
+import { Blade } from "../../tree/vec/Blade";
+import { is_blade } from "../blade/is_blade";
 import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
-import { is_sym } from "../sym/is_sym";
 
-const IMAG = native_sym(Native.imag);
+export const IMAG = native_sym(Native.imag);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -17,24 +18,19 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-type ARG = Sym;
+type ARG = Blade;
 type EXP = UCons<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('imag_sym', IMAG, is_sym, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_SYM);
+        super('imag_blade', IMAG, is_blade, $);
+        this.hash = hash_unaop_atom(this.opr, HASH_BLADE);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        const $ = this.$;
-        if ($.isreal(arg)) {
-            return [TFLAG_NONE, zero];
-        }
-        else {
-            return [TFLAG_NONE, expr];
-        }
+        return [TFLAG_DIFF, one];
     }
 }
 
-export const imag_sym = new Builder();
+export const imag_blade = new Builder();

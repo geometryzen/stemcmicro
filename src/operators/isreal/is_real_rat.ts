@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { PREDICATE_IS_REAL } from "../../runtime/constants";
+import { ISREAL } from "../../runtime/constants";
 import { booT } from "../../tree/boo/Boo";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
@@ -19,7 +19,7 @@ type ARG = Rat;
 class IsRealRat extends Function1<ARG> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('is_real_rat', PREDICATE_IS_REAL, is_rat, $);
+        super('is_real_rat', ISREAL, is_rat, $);
         this.hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

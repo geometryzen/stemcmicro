@@ -100,7 +100,7 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
             //  (n + 1) n!  ->  (n + 1)!
             if (is_factorial(p2)) {
                 const p3 = $.subtract(p1, cadr(p2));
-                if ($.isOne(p3)) {
+                if ($.isone(p3)) {
                     stack[i] = factorial(p1);
                     stack[j] = one;
                     return true;
@@ -116,7 +116,7 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
                 caadr(p2).equals(FACTORIAL)
             ) {
                 const p3 = $.subtract(cadr(p1), cadr(cadr(p2)));
-                if ($.isOne(p3)) {
+                if ($.isone(p3)) {
                     stack[i] = inverse(factorial(cadr(p1)), $);
                     stack[j] = one;
                     return true;
@@ -133,7 +133,7 @@ function yysimfac(stack: U[], $: ExtensionEnv): boolean {
                 caadr(p2).equals(FACTORIAL)
             ) {
                 const p3 = $.subtract(cadr(p1), cadr(cadr(p2)));
-                if ($.isOne(p3)) {
+                if ($.isone(p3)) {
                     stack[i] = cadr(p1);
                     stack[j] = one;
                     return true;

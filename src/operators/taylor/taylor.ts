@@ -76,7 +76,7 @@ function taylor(f: U, X: U, N: U, A: U, $: ExtensionEnv): U {
         // F now contains the i-th derivative
         dfi = derivative(dfi, X, $); // F: f = f'
 
-        if ($.is_zero(dfi)) {
+        if ($.iszero(dfi)) {
             break;
         }
 

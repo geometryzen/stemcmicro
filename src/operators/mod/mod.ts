@@ -21,7 +21,7 @@ export function Eval_mod(p1: Cons, $: ExtensionEnv): U {
 }
 
 function mod(a: U, b: U, $: ExtensionEnv): U {
-    if ($.is_zero(b)) {
+    if ($.iszero(b)) {
         halt('mod function: divide by zero');
     }
 

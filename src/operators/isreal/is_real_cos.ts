@@ -6,7 +6,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const is_real = native_sym(Native.is_real);
+const is_real = native_sym(Native.isreal);
 const cosine = native_sym(Native.cos);
 
 class Builder implements OperatorBuilder<U> {
@@ -26,7 +26,7 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const x = innerExpr.argList.head;
-        return [TFLAG_DIFF, create_boo($.is_real(x))];
+        return [TFLAG_DIFF, create_boo($.isreal(x))];
     }
 }
 

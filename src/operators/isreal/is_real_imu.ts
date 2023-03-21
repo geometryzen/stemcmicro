@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_BOO, HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
-import { PREDICATE_IS_REAL } from "../../runtime/constants";
+import { ISREAL } from "../../runtime/constants";
 import { booF } from "../../tree/boo/Boo";
 import { Imu } from "../../tree/imu/Imu";
 import { Sym } from "../../tree/sym/Sym";
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 class IsRealImu extends Function1<Imu> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super(`${PREDICATE_IS_REAL.text}(expr: ${HASH_IMU}) => ${HASH_BOO}`, PREDICATE_IS_REAL, is_imu, $);
+        super(`${ISREAL.text}(expr: ${HASH_IMU}) => ${HASH_BOO}`, ISREAL, is_imu, $);
         this.hash = hash_unaop_atom(this.opr, HASH_IMU);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

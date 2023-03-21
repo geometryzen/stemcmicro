@@ -23,7 +23,7 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const z = innerExpr.argList.head;
-        if ($.is_real(z)) {
+        if ($.isreal(z)) {
             return [TFLAG_DIFF, innerExpr];
         }
         else {

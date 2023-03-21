@@ -19,10 +19,10 @@ type EXP = BCons<Sym, LHS, RHS>;
 
 function is_real($: ExtensionEnv) {
     return function (expr: LHS): expr is U {
-        if ($.isOne(expr)) {
+        if ($.isone(expr)) {
             return false;
         }
-        const retval = $.is_real(expr);
+        const retval = $.isreal(expr);
         return retval;
     };
 }

@@ -36,7 +36,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         else if (arg.equalsSym(PI)) {
             return [TFLAG_DIFF, zero];
         }
-        else if ($.is_real(arg)) {
+        else if ($.isreal(arg)) {
             // The arg could still be zero, undefined, or pi.
             return [TFLAG_DIFF, expr];
         }

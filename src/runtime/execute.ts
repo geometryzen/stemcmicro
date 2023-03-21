@@ -193,7 +193,7 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
         // console.lg(`tranned   : ${print_expr(transformed, $)}`);
         // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
         box.push(transformed);
-        if ($.isOne($.getSymbolValue(BAKE))) {
+        if ($.isone($.getSymbolValue(BAKE))) {
             // console.lg("Baking...");
             let expr = bake(box.pop(), $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.

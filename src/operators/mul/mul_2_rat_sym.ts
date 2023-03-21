@@ -41,13 +41,13 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         }
     }
     isReal(expr: EXP): boolean {
-        return this.$.is_real(expr.rhs);
+        return this.$.isreal(expr.rhs);
     }
     isImag(expr: EXP): boolean {
-        return this.$.is_imag(expr.rhs);
+        return this.$.isimag(expr.rhs);
     }
     isScalar(expr: EXP): boolean {
-        return this.$.isScalar(expr.rhs);
+        return this.$.isscalar(expr.rhs);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {

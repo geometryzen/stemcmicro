@@ -1,6 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_BOO, HASH_FLT, hash_unaop_atom } from "../../hashing/hash_info";
-import { PREDICATE_IS_REAL } from "../../runtime/constants";
+import { ISREAL } from "../../runtime/constants";
 import { booT } from "../../tree/boo/Boo";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 class IsRealFlt extends Function1<Flt> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super(`${PREDICATE_IS_REAL.text}(expr: ${HASH_FLT}) => ${HASH_BOO}`, PREDICATE_IS_REAL, is_flt, $);
+        super(`${ISREAL.text}(expr: ${HASH_FLT}) => ${HASH_BOO}`, ISREAL, is_flt, $);
         this.hash = hash_unaop_atom(this.opr, HASH_FLT);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

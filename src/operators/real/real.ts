@@ -58,14 +58,14 @@ export function real(expr: U, $: ExtensionEnv): U {
         return retval;
     };
 
-    if ($.is_real(expr)) {
+    if ($.isreal(expr)) {
         return hook(expr, 'A');
     }
     else if (is_rat(expr)) {
         return expr;
     }
     else if (is_sym(expr)) {
-        if ($.is_real(expr)) {
+        if ($.isreal(expr)) {
             return expr;
         }
         else {
@@ -126,7 +126,7 @@ export function real(expr: U, $: ExtensionEnv): U {
         const cs: U[] = []; // the complex factors
         [...expr.argList].forEach(function (factor) {
             // console.lg("testing the arg:", $.toInfixString(arg));
-            if ($.is_real(factor)) {
+            if ($.isreal(factor)) {
                 // console.lg("arg is real:", $.toInfixString(arg));
                 rs.push(factor);
             }

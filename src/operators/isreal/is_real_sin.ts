@@ -1,7 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { PREDICATE_IS_REAL } from "../../runtime/constants";
+import { ISREAL } from "../../runtime/constants";
 import { create_boo } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
@@ -20,13 +20,13 @@ class Builder implements OperatorBuilder<U> {
  */
 class IsRealSin extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(PREDICATE_IS_REAL, MATH_SIN, $);
+        super(ISREAL, MATH_SIN, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, sinExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const x = sinExpr.argList.head;
-        return [TFLAG_DIFF, create_boo($.is_real(x))];
+        return [TFLAG_DIFF, create_boo($.isreal(x))];
     }
 }
 

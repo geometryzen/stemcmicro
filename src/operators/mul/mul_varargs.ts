@@ -26,7 +26,7 @@ class MulOperator extends FunctionVarArgs implements Operator<Cons> {
     isScalar(expr: Cons): boolean {
         const $ = this.$;
         const argList = expr.argList;
-        return [...argList].every((arg) => $.isScalar(arg));
+        return [...argList].every((arg) => $.isscalar(arg));
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;

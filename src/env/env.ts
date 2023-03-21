@@ -29,8 +29,8 @@ import { UnknownOperator } from "./UnknownOperator";
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POWER = native_sym(Native.pow);
-const ISCOMPLEX = native_sym(Native.is_complex);
-const ISREAL = native_sym(Native.is_real);
+const ISCOMPLEX = native_sym(Native.iscomplex);
+const ISREAL = native_sym(Native.isreal);
 
 class StableExprComparator implements ExprComparator {
     constructor(private readonly opr: Sym) {
@@ -234,6 +234,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 };
             }
         },
+        component(tensor: Tensor<U>, indices: U): U {
+            return $.evaluate(Native.component, tensor, indices);
+        },
         clock(expr: U): U {
             return $.evaluate(Native.clock, expr);
         },
@@ -325,16 +328,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isFactoring(): boolean {
             return native_directives.get(Directive.factoring);
         },
-        is_imag(expr: U): boolean {
+        isimag(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isImag(expr);
             // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
             return retval;
         },
-        isMinusOne(expr: U): boolean {
+        isminusone(expr: U): boolean {
             return $.operatorFor(expr).isMinusOne(expr);
         },
-        isOne(expr: U): boolean {
+        isone(expr: U): boolean {
             return $.operatorFor(expr).isOne(expr);
         },
         is(predicate: Sym, expr: U): boolean {
@@ -348,19 +351,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 throw new Error(`Unable to determine ${$.toInfixString(predicate)}(${$.toInfixString(expr)})`);
             }
         },
-        is_complex(expr: U): boolean {
+        iscomplex(expr: U): boolean {
             return $.is(ISCOMPLEX, expr);
         },
-        is_real(expr: U): boolean {
+        isreal(expr: U): boolean {
             return $.is(ISREAL, expr);
         },
-        isScalar(expr: U): boolean {
+        isscalar(expr: U): boolean {
             const op = $.operatorFor(expr);
             const retval = op.isScalar(expr);
             // console.lg(`${op.name} isScalar ${$.toInfixString(expr)} => ${retval}`);
             return retval;
         },
-        is_zero(expr: U): boolean {
+        iszero(expr: U): boolean {
             // TODO: This should be done using predicate functions rather than hard-coding
             // predicates into the operators.
             const op = $.operatorFor(expr);
@@ -458,8 +461,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return selectOperator(expr.name, expr);
             }
         },
-        outer(lhs: U, rhs: U): U {
-            return $.evaluate(Native.outer, lhs, rhs);
+        outer(...args: U[]): U {
+            return $.evaluate(Native.outer, ...args);
         },
         polar(expr: U): U {
             return $.evaluate(Native.polar, expr);
@@ -496,6 +499,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         setSymbolValue(sym: Sym, value: U): void {
             symTab.setValue(sym, value);
+        },
+        simplify(expr: U): U {
+            return $.evaluate(Native.simplify, expr);
         },
         sin(expr: U): U {
             return $.evaluate(Native.sin, expr);

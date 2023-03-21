@@ -29,7 +29,7 @@ class Op extends CompositeOperator {
         const cs: U[] = []; // the complex factors
         [...innerExpr.argList].forEach(function (factor) {
             // console.lg("testing the factor using is_real:", $.toInfixString(factor));
-            if ($.is_real(factor)) {
+            if ($.isreal(factor)) {
                 // console.lg("factor is real:", $.toInfixString(factor));
                 rs.push(factor);
             }

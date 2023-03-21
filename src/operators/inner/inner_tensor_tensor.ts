@@ -41,7 +41,7 @@ export function inner_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U 
     // new method copied from ginac http://www.ginac.de/
     for (let i = 0; i < ak; i++) {
         for (let j = 0; j < n; j++) {
-            if ($.is_zero(p1.elem(i * n + j))) {
+            if ($.iszero(p1.elem(i * n + j))) {
                 continue;
             }
             for (let k = 0; k < bk; k++) {

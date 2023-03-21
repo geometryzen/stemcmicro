@@ -111,11 +111,11 @@ export function abs(x: U, $: ExtensionEnv): U {
     // Just to prove that the argument is not re-assigned.
     const expr: U = x;
 
-    if ($.is_zero(expr)) {
+    if ($.iszero(expr)) {
         return hook(expr, "A");
     }
 
-    if ($.isOne(expr)) {
+    if ($.isone(expr)) {
         return hook(expr, "B");
     }
 

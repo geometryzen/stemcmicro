@@ -13,7 +13,7 @@ import { is_sym } from "../sym/is_sym";
 import { CompositeOperator } from "../CompositeOperator";
 
 const POW = native_sym(Native.pow);
-const IS_REAL = native_sym(Native.is_real);
+const IS_REAL = native_sym(Native.isreal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -49,7 +49,7 @@ class Op extends CompositeOperator {
         const expo = assert_rat(pow.rhs);
         const numer = expo.numer();
         const denom = expo.denom();
-        if ($.is_real(base)) {
+        if ($.isreal(base)) {
             if (numer.div(two).isInteger()) {
                 if (denom.isOne()) {
                     return [TFLAG_DIFF, booT];
@@ -61,7 +61,7 @@ class Op extends CompositeOperator {
             else if (numer.isMinusOne()) {
                 if (denom.isOne()) {
                     // Duplicates rule in is_real_pow_ant_negone.
-                    return [TFLAG_DIFF, create_boo($.is_real(base))];
+                    return [TFLAG_DIFF, create_boo($.isreal(base))];
                 }
                 else {
                     return [TFLAG_DIFF, booF];

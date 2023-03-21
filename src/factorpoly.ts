@@ -77,7 +77,7 @@ export function yyfactorpoly(P: U, X: Sym, $: ExtensionEnv): U {
         // console.lg("coeffIdx", coeffIdx);
         let foundComplexRoot = false;
         let foundRealRoot = false;
-        if ($.is_zero(coefficients[0])) {
+        if ($.iszero(coefficients[0])) {
             p4 = one;
             p5 = zero;
         }
@@ -131,7 +131,7 @@ export function yyfactorpoly(P: U, X: Sym, $: ExtensionEnv): U {
                 // polynomial part still left to factor.
                 yydivpoly(p4 as U, p5 as U, coefficients, coeffIdx, $);
 
-                while (coeffIdx && $.is_zero(coefficients[coeffIdx])) {
+                while (coeffIdx && $.iszero(coefficients[coeffIdx])) {
                     coeffIdx--;
                 }
 
@@ -315,7 +315,7 @@ function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, p4: U,
             // TODO: Why is this typed to return a single element array?
             const [neg_poly] = Evalpoly(neg_p5_div_p4, coeffs, coeffIdx, $);
 
-            if ($.is_zero(neg_poly)) {
+            if ($.iszero(neg_poly)) {
                 move_top_of_stack(h);
                 return [true, p4, p5];
             }
@@ -326,7 +326,7 @@ function get_factor_from_real_root(coeffs: U[], coeffIdx: number, X: Sym, p4: U,
 
             const [pos_poly] = Evalpoly(p5_div_p4, coeffs, coeffIdx, $);
 
-            if ($.is_zero(pos_poly)) {
+            if ($.iszero(pos_poly)) {
                 move_top_of_stack(h);
                 return [true, p4, p5];
             }
@@ -356,7 +356,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     p3 = p4;
     stack_push(p3);
     [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
-    if ($.is_zero(p6)) {
+    if ($.iszero(p6)) {
         move_top_of_stack(h);
         return [true, p4];
     }
@@ -368,7 +368,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
     p3 = p4;
     stack_push(p3);
     [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
-    if ($.is_zero(p6)) {
+    if ($.iszero(p6)) {
         move_top_of_stack(h);
         return [true, p4];
     }
@@ -390,7 +390,7 @@ function get_factor_from_complex_root(remainingPoly: U, polycoeff: U[], factpoly
 
             const [p6] = Evalpoly(p3, polycoeff, factpoly_expo, $);
 
-            if ($.is_zero(p6)) {
+            if ($.iszero(p6)) {
                 move_top_of_stack(h);
                 return [true, p4];
             }

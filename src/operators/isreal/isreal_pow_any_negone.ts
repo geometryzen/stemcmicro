@@ -9,7 +9,7 @@ import { is_rat } from "../rat/is_rat";
 import { CompositeOperator } from "../CompositeOperator";
 
 const POW = native_sym(Native.pow);
-const IS_REAL = native_sym(Native.is_real);
+const IS_REAL = native_sym(Native.isreal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -38,7 +38,7 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, pow: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
         const $ = this.$;
         const z = pow.lhs;
-        return [TFLAG_DIFF, create_boo($.is_real(z))];
+        return [TFLAG_DIFF, create_boo($.isreal(z))];
     }
 }
 

@@ -39,7 +39,7 @@ export function rect(z: U, $: ExtensionEnv): U {
     // (note that 'i' is not a symbol, it's made of (-1)^(1/2))
     // otherwise we have to leave unevalled
     if (is_sym(z)) {
-        if ($.is_real(z)) {
+        if ($.isreal(z)) {
             return z;
         }
 

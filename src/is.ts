@@ -67,7 +67,7 @@ export function is_num_and_eq_minus_one(p: U): p is Num & { __ts_sign: -1; __ts_
  *
  */
 export function is_plus_or_minus_one(x: U, $: ExtensionEnv): boolean {
-    return $.isOne(x) || is_num_and_eq_minus_one(x);
+    return $.isone(x) || is_num_and_eq_minus_one(x);
 }
 
 export function is_num_and_integer(p: U): p is Num & { __ts_integer: true } {

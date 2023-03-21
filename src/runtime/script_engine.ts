@@ -92,6 +92,7 @@ export function env_term($: ExtensionEnv) {
 }
 
 export interface ScriptContext {
+    readonly $: ExtensionEnv;
     clearBindings(): void;
     defineFunction(pattern: U, impl: LambdaExpr): ScriptContext;
     getSymbolProps(sym: Sym | string): SymbolProps;
@@ -154,6 +155,9 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
     const $ = create_env(envOptions);
     init_env($, contextOptions);
     const theEngine: ScriptContext = {
+        get $(): ExtensionEnv {
+            return $;
+        },
         clearBindings(): void {
             $.clearBindings();
         },

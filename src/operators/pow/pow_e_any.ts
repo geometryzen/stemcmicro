@@ -115,7 +115,7 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
                         // console.lg(`Euler 1`);
                         return [TFLAG_DIFF, negOne];
                     }
-                    if ($.is_real(expo_rhs)) {
+                    if ($.isreal(expo_rhs)) {
                         // console.lg(`Euler 2`);
                         const c = items_to_cons(MATH_COS, expo_rhs);
                         const s = items_to_cons(MATH_SIN, expo_rhs);
@@ -127,7 +127,7 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
                 // exp(X*i) = cos(X) + i * sin(X)
                 // expo_lhs=X
                 // expo_rhs=i
-                if ($.is_real(expo_lhs) && is_imu(expo_rhs)) {
+                if ($.isreal(expo_lhs) && is_imu(expo_rhs)) {
                     // console.lg(`Euler 3 ${render_as_infix(expr, $)} meta=${keepFlag(expr.meta)}`);
                     if (keepFlag(outerExpr.meta)) {
                         return [TFLAG_NONE, outerExpr];
@@ -144,7 +144,7 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
                 // (k * X) * i
                 // expo_lhs=k*X
                 // expo_rhs=i
-                if (is_cons(expo_lhs) && is_opr_2_lhs_any(MATH_MUL, is_rat)(expo_lhs) && $.is_real(expo_lhs.rhs) && is_imu(expo_rhs)) {
+                if (is_cons(expo_lhs) && is_opr_2_lhs_any(MATH_MUL, is_rat)(expo_lhs) && $.isreal(expo_lhs.rhs) && is_imu(expo_rhs)) {
                     // console.lg(`Euler 4`);
                     //
                     // const k = expo_lhs.lhs;

@@ -82,7 +82,7 @@ function expand(F: U, X: U, $: ExtensionEnv): U {
     B = $.subtract(B, $.multiply(A, Q));
 
     // if the remainder is zero then we're done
-    if ($.is_zero(B)) {
+    if ($.iszero(B)) {
         return Q;
     }
 

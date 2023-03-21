@@ -11,7 +11,7 @@ import { is_rat } from "../rat/is_rat";
 
 const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
-const IS_REAL = native_sym(Native.is_real);
+const IS_REAL = native_sym(Native.isreal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -49,7 +49,7 @@ class Op extends CompositeOperator {
             // x+iy = exp(i*expo*pi) = cos(expo*pi)+i*sin(expo*pi) 
             const expo = assert_rat(innerExpr.rhs);
             const imag = $.sin($.multiply(expo, PI));
-            if ($.is_zero(imag)) {
+            if ($.iszero(imag)) {
                 return [TFLAG_DIFF, booT];
             }
             else {

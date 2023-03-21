@@ -280,7 +280,7 @@ function count_denominators(p: U, $: ExtensionEnv) {
 function emit_multiply(p: U, n: number, $: ExtensionEnv) {
     if (n === 0) {
         p = cdr(p);
-        if ($.isOne(car(p)) || is_num_and_eq_minus_one(car(p))) {
+        if ($.isone(car(p)) || is_num_and_eq_minus_one(car(p))) {
             p = cdr(p);
         }
         emit_factor(car(p), $);
@@ -330,7 +330,7 @@ function emit_fraction(p: U, d: number, $: ExtensionEnv) {
     }
 
     // count numerators
-    n = $.isOne(A) ? 0 : 1;
+    n = $.isone(A) ? 0 : 1;
     p1 = cdr(p);
     if (is_num(car(p1))) {
         p1 = cdr(p1);
@@ -351,7 +351,7 @@ function emit_fraction(p: U, d: number, $: ExtensionEnv) {
     count = 0;
 
     // emit numerical coefficient
-    if (!$.isOne(A)) {
+    if (!$.isone(A)) {
         // p3 is A
         emit_number(A, 0, $); // p3 is A
         count++;
@@ -391,7 +391,7 @@ function emit_fraction(p: U, d: number, $: ExtensionEnv) {
 
     count = 0;
 
-    if (!$.isOne(B)) {
+    if (!$.isone(B)) {
         emit_number(B, 0, $);
         count++;
         d++;
@@ -435,7 +435,7 @@ function emit_numerators(p: U, $: ExtensionEnv) {
 
     let n = 0;
 
-    if (!$.isOne(p1)) {
+    if (!$.isone(p1)) {
         emit_number(p1, 0, $);
         n++;
     }

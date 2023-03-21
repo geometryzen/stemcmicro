@@ -16,7 +16,7 @@ import { is_tensor } from '../tensor/is_tensor';
 import { extract_grade } from './extract_grade';
 
 function blade_times_weight(blade: Blade, weight: U, $: ExtensionEnv): Cons | Blade {
-    if ($.isOne(weight)) {
+    if ($.isone(weight)) {
         return blade;
     }
     else {
@@ -40,8 +40,8 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         throw new Error('abs Method not implemented.');
     }
     add(lhs: U, rhs: U): U {
-        if (this.$.isOne(lhs)) {
-            if (this.$.isOne(rhs)) {
+        if (this.$.isone(lhs)) {
+            if (this.$.isone(rhs)) {
                 return two;
             }
             else {
@@ -137,7 +137,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
         throw new Error('isOne Method not implemented.');
     }
     isZero(arg: U): boolean {
-        return this.$.is_zero(arg);
+        return this.$.iszero(arg);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     sin(arg: U): U {

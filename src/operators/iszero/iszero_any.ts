@@ -14,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-const ISZERO = native_sym(Native.is_zero);
+const ISZERO = native_sym(Native.iszero);
 
 class IsZero extends Function1<U> implements Operator<Cons> {
     readonly hash: string;

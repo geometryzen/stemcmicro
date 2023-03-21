@@ -7,7 +7,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const ADD = native_sym(Native.add);
-const IS_REAL = native_sym(Native.is_real);
+const IS_REAL = native_sym(Native.isreal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -23,7 +23,7 @@ class IsRealAdd extends CompositeOperator {
     transform1(opr: Sym, add: Cons): [TFLAGS, U] {
         const $ = this.$;
         if ([...add.argList].every(function (arg) {
-            return $.is_real(arg);
+            return $.isreal(arg);
         })) {
             return [TFLAG_DIFF, booT];
         }

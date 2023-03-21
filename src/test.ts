@@ -338,7 +338,7 @@ function cmp_args(expr: Cons, $: ExtensionEnv): Sign | null {
 
     // console.lg("diff", $.toInfixString(diff));
 
-    if ($.is_zero(diff)) {
+    if ($.iszero(diff)) {
         return SIGN_EQ;
     }
 

@@ -34,7 +34,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_HYP, HASH_RAT);
     }
     isScalar(expr: EXP): boolean {
-        return this.$.isScalar(expr.lhs);
+        return this.$.isscalar(expr.lhs);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         // If the base class binds the symbol to something else then none of this code below will be called.

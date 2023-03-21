@@ -49,7 +49,7 @@ export function degree(P: U, X: U, $: ExtensionEnv): U {
 
 function yydegree(P: U, X: U, d: Num, $: ExtensionEnv): Num {
     if (P.equals(X)) {
-        if ($.is_zero(d)) {
+        if ($.iszero(d)) {
             return one;
         }
         else {

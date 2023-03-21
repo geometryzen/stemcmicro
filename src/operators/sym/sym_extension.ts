@@ -68,7 +68,7 @@ class SymExtension implements Extension<Sym> {
         return false;
     }
     isReal(sym: Sym, $: ExtensionEnv): boolean {
-        return $.is_real(sym);
+        return $.isreal(sym);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(sym: Sym, $: ExtensionEnv): boolean {

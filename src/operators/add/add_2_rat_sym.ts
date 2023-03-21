@@ -35,7 +35,7 @@ class Op extends Function2<Rat, Sym> implements Operator<Cons> {
         const rhs = expr.rhs;
         // console.lg(`lhs=${lhs}`);
         // console.lg(`rhs=${rhs}`);
-        return this.$.isScalar(lhs) && this.$.isScalar(rhs);
+        return this.$.isscalar(lhs) && this.$.isscalar(rhs);
     }
     override isReal(expr: EXP): boolean {
         const lhs = expr.lhs;
@@ -43,7 +43,7 @@ class Op extends Function2<Rat, Sym> implements Operator<Cons> {
         // console.lg(`lhs=${lhs}`);
         // console.lg(`rhs=${rhs}`);
         // Stronger than needed...
-        return this.$.is_real(lhs) && this.$.is_real(rhs);
+        return this.$.isreal(lhs) && this.$.isreal(rhs);
     }
     override transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {

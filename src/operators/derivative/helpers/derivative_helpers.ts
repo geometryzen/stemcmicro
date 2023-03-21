@@ -67,14 +67,13 @@ export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
 
 function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     // console.lg(`d_scalar_scalar_1 F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
-    // d(x,x)
+    // d(x,x)?
     if (F.equals(X)) {
         return one;
     }
 
     // console.lg(`f=>${render_as_infix(F, $)} is_sym(F)=>${is_sym(F)}`);
 
-    // d(a,x)?
     if (is_sym(F)) {
         if (F.equals(MATH_E)) {
             return zero;
@@ -86,8 +85,7 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
         return items_to_cons(MATH_DERIVATIVE, F, X);
     }
 
-    // TODO: Better to check for types explicitly (extensibility required).
-    // We are really checking for constantness here.
+    // d(a,x)?
     if (!is_cons(F)) {
         return zero;
     }
@@ -172,9 +170,11 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     if (opr.equals(BESSELY)) {
         return dbessely(F, X, $);
     }
+
     if (car(F).equals(INTEGRAL) && caddr(F).equals(X)) {
         return derivative_of_integral(F);
     }
+
     return dfunction(F, X, $);
 }
 

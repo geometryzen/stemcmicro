@@ -33,6 +33,12 @@ const defn_strings = [
     `${VARNAME_MAX_FIXED_PRINTOUT_DIGITS}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`,
     'printLeaveEAlone=1',
     'printLeaveXAlone=0',
+    // cross definition
+    'cross(u,v)=[u[2]*v[3]-u[3]*v[2],u[3]*v[1]-u[1]*v[3],u[1]*v[2]-u[2]*v[1]]',
+    // curl definition
+    'curl(v)=[d(v[3],y)-d(v[2],z),d(v[1],z)-d(v[3],x),d(v[2],x)-d(v[1],y)]',
+    // div definition
+    'div(v)=d(v[1],x)+d(v[2],y)+d(v[3],z)'
 ];
 
 export function execute_std_definitions($: ExtensionEnv): void {

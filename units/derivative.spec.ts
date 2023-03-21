@@ -13,6 +13,17 @@ describe("derivative-sandbox", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "-sin(x)");
         engine.release();
     });
+    xit("A", function () {
+        const lines: string[] = [
+            `P=[x,y,z]`,
+            `d(P,x)`,
+        ];
+        const engine = create_script_context({
+        });
+        const { values } = engine.executeScript(lines.join('\n'));
+        assert.strictEqual(engine.renderAsInfix(values[0]), "[1,0,0]");
+        engine.release();
+    });
 });
 
 describe("derivative", function () {

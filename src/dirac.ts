@@ -8,8 +8,8 @@ import { cadr } from './tree/helpers';
 import { one, zero } from './tree/rat/Rat';
 import { is_cons, items_to_cons, U } from './tree/tree';
 
-export function Eval_dirac(p1: U, $: ExtensionEnv): U {
-    return dirac($.valueOf(cadr(p1)), $);
+export function Eval_dirac(diracExpr: U, $: ExtensionEnv): U {
+    return dirac($.valueOf(cadr(diracExpr)), $);
 }
 
 export function dirac(p1: U, $: ExtensionEnv): U {

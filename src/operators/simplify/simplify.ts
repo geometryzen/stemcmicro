@@ -12,7 +12,7 @@ import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { roots } from '../../roots';
 import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';
-import { DEBUG, defs, noexpand_unary } from '../../runtime/defs';
+import { defs, noexpand_unary } from '../../runtime/defs';
 import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/helpers';
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
@@ -199,10 +199,6 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
         // both operands a transpose?
 
         if (car(car(cdr(p1))).equals(TRANSPOSE) && car(car(cdr(cdr(p1)))).equals(TRANSPOSE)) {
-            if (DEBUG) {
-                // eslint-disable-next-line no-console
-                // console.lg(`maybe collecting a transpose ${p1}`);
-            }
             const a = cadr(car(cdr(p1)));
             const b = cadr(car(cdr(cdr(p1))));
             let arg1: U;
@@ -220,10 +216,6 @@ function simplify_by_i_dunno_what(p1: U, $: ExtensionEnv): U {
 
             if (count(p2) < count(p1)) {
                 p1 = p2;
-            }
-            if (DEBUG) {
-                // eslint-disable-next-line no-console
-                // console.lg(`collecting a transpose ${p2}`);
             }
         }
     }
@@ -437,10 +429,6 @@ function nterms(p: U) {
 
 function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
     if (defs.recursionLevelNestedRadicalsRemoval > 0) {
-        if (DEBUG) {
-            // eslint-disable-next-line no-console
-            // console.lg('denesting bailing out because of too much recursion');
-        }
         return [TFLAG_NONE, p1];
     }
 
@@ -476,10 +464,6 @@ function simplify_nested_radicals(p1: U, $: ExtensionEnv): [TFLAGS, U] {
 
 function take_care_of_nested_radicals(p1: U, $: ExtensionEnv): [U, TFLAGS] {
     if (defs.recursionLevelNestedRadicalsRemoval > 0) {
-        if (DEBUG) {
-            // eslint-disable-next-line no-console
-            // console.lg('denesting bailing out because of too much recursion');
-        }
         return [p1, TFLAG_NONE];
     }
 
@@ -587,10 +571,6 @@ function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] 
     const r = roots(temp, SECRETX, $);
     defs.recursionLevelNestedRadicalsRemoval--;
     if (r.ndim === 0) {
-        if (DEBUG) {
-            // eslint-disable-next-line no-console
-            // console.lg('roots bailed out because of too much recursion');
-        }
         return [p1, TFLAG_NONE];
     }
 

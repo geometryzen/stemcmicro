@@ -22,6 +22,7 @@ export enum Native {
     condense,
     conj,
     cos,
+    derivative,
     divide,
     exp,
     expand,
@@ -58,6 +59,13 @@ export enum Native {
     sin,
     spread,
     sqrt,
+    /**
+     * Standard part function
+     * 
+     * https://en.wikipedia.org/wiki/Standard_part_function
+     */
+    st,
+    subst,
     subtract,
     succ,
     /**

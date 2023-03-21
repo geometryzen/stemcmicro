@@ -6,7 +6,7 @@ import { is_str } from './operators/str/is_str';
 import { is_sym } from './operators/sym/is_sym';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { EVAL, FUNCTION, SYMBOL_D } from './runtime/constants';
-import { DEBUG, defs, halt } from './runtime/defs';
+import { defs, halt } from './runtime/defs';
 import { stack_list, stack_pop, stack_push } from './runtime/stack';
 import { cadr, cddr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
@@ -43,10 +43,6 @@ Returns the partial derivative of f with respect to x. x can be a vector e.g. [x
 */
 export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
     // Use "derivative" instead of "d" if there is no user function "d"
-    if (DEBUG) {
-        // eslint-disable-next-line no-console
-        // console.lg(`Eval_user_function evaluating: ${car(expr)}`);
-    }
     if (car(expr).equals(SYMBOL_D) && $.getSymbolValue(SYMBOL_D).equals(SYMBOL_D)) {
         const retval = Eval_derivative(expr, $);
         return retval;

@@ -388,6 +388,8 @@ export interface ExtensionEnv {
     setSymbolValue(sym: Sym, value: U): void;
     simplify(expr: U): U;
     sin(expr: U): U;
+    st(expr: U): U;
+    subst(newExpr: U, oldExpr: U, expr: U): U;
     /**
      *
      */

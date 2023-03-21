@@ -506,6 +506,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         sin(expr: U): U {
             return $.evaluate(Native.sin, expr);
         },
+        st(expr: U): U {
+            return $.evaluate(Native.st, expr);
+        },
+        subst(newExpr: U, oldExpr: U, expr: U): U {
+            return $.evaluate(Native.subst, newExpr, oldExpr, expr);
+        },
         subtract(lhs: U, rhs: U): U {
             return $.add(lhs, $.negate(rhs));
         },

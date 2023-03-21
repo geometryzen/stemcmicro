@@ -15,7 +15,6 @@ import { MATH_PI } from "./ns_math";
 
 export const TOS = 100000;
 
-export const DEBUG = false;
 export const PRINTOUTRESULT = false;
 
 /**
@@ -90,10 +89,6 @@ export class Defs {
     public codeGen = false;
     public userSimplificationsInListForm: U[] = [];
     public userSimplificationsInStringForm: string[] = [];
-    // ========================================================================
-    // Behavior Settings
-    // ========================================================================
-    public imuToken: 'i' | 'j' = 'i';
 
     get printMode(): PrintMode {
         return this.$printMode;

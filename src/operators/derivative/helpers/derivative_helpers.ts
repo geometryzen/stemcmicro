@@ -437,6 +437,6 @@ export function dbesselyn(p1: U, p2: Sym, $: ExtensionEnv): U {
     return $.multiply(deriv, G);
 }
 
-export function derivative_of_integral(p1: U): U {
-    return cadr(p1);
+export function derivative_of_integral(integralExpr: Cons): U {
+    return integralExpr.argList.head;
 }

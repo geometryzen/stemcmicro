@@ -1,6 +1,7 @@
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
+import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
@@ -57,3 +58,13 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
 }
 
 export const derivative_2_mul_any = new Builder();
+
+export function non_standard_analysis_derivative(F: U, X: U, $: ExtensionEnv): U {
+    // Here, we evaluate the derivative using nonstandard analyis.
+    // https://en.wikipedia.org/wiki/Nonstandard_analysis 
+    const dX = new Hyp(`d${X}`, X.pos, X.end);
+    const X_plus_dX = $.add(X, dX);
+    const F_plus_dF = $.subst(X_plus_dX, X, F);
+    const dF = $.subtract(F_plus_dF, F);
+    return $.st($.divide(dF, dX));
+}

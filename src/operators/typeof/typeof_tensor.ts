@@ -10,11 +10,11 @@ import { TYPE_NAME_TENSOR } from "../tensor/TYPE_NAME_TENSOR";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new TypeofAny($);
+        return new Op($);
     }
 }
 
-class TypeofAny extends Function1<Tensor> implements Operator<Cons> {
+class Op extends Function1<Tensor> implements Operator<Cons> {
     readonly hash: string;
     readonly dependencies: FEATURE[] = [];
     constructor($: ExtensionEnv) {

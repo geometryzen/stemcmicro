@@ -371,12 +371,9 @@ import { testlt_mul_2_any_any_rat } from '../operators/testlt/testlt_mul_2_any_a
 import { testlt_rat_rat } from '../operators/testlt/testlt_rat_rat';
 import { testlt_sym_rat } from '../operators/testlt/testlt_sym_rat';
 import { transpose_varargs } from '../operators/transpose/transpose_varargs';
-import { add_2_mul_2_cos_cos_mul_2_mul_2_rat_sin_sin } from '../operators/trig/add_2_mul_2_cos_cos_mul_2_mul_2_rat_sin_sin';
-import { add_2_mul_2_cos_cos_mul_2_sin_sin } from '../operators/trig/add_2_mul_2_cos_cos_mul_2_sin_sin';
 import { add_2_mul_2_cos_sin_mul_2_cos_sin_factoring } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_cos_sin_factoring';
 import { add_2_mul_2_cos_sin_mul_2_cos_sin_ordering } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_cos_sin_ordering';
 import { add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring';
-import { add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_ordering } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_ordering';
 import { add_2_mul_2_cos_sin_mul_2_mul_2_rat_sin_cos } from '../operators/trig/add_2_mul_2_cos_sin_mul_2_mul_2_rat_sin_cos';
 import { add_2_mul_2_rat_cos_sin_mul_2_mul_2_cos_sin_factoring } from '../operators/trig/add_2_mul_2_rat_cos_sin_mul_2_mul_2_cos_sin_factoring';
 import { add_2_mul_2_sin_cos_mul_2_cos_sin } from '../operators/trig/add_2_mul_2_sin_cos_mul_2_cos_sin';
@@ -393,7 +390,7 @@ import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
 import { get_last_print_mode_symbol, store_text_in_binding } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, NROOTS, POLAR, ISREAL, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -443,9 +440,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_blade_mul_2_rat_blade);
     $.defineOperator(add_2_add_2_any_any_any_factorize_rhs);
 
-    // Not needed because it only works for binary expressions.
-    // $.defineOperator(add_2_add_any);
-
     $.defineOperator(add_2_mul_2_rat_X_mul_2_rat_X);
     $.defineOperator(add_2_mul_2_rat_zzz_aaa);
     $.defineOperator(add_2_mul_2_any_imu_sym);
@@ -454,10 +448,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_cos_sin_factoring);
     $.defineOperator(add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin);
     $.defineOperator(add_2_mul_2_sin_cos_mul_2_rat_mul_2_cos_sin);
-    $.defineOperator(add_2_mul_2_cos_cos_mul_2_mul_2_rat_sin_sin);
-    $.defineOperator(add_2_mul_2_cos_cos_mul_2_sin_sin);
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_sin_cos);
-    $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_ordering);
     $.defineOperator(add_2_mul_2_cos_sin_mul_2_mul_2_rat_cos_sin_factoring);
     $.defineOperator(add_2_mul_2_rat_cos_sin_mul_2_mul_2_cos_sin_factoring);
     $.defineOperator(add_2_pow_2_cos_rat_pow_2_sin_rat);

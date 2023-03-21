@@ -9,7 +9,7 @@ import { defs } from "../runtime/defs";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_BANG, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NewLine, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { T_ASTRX, T_CARET, T_ASTRX_ASTRX, T_BANG, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
 import { consume_num } from "./consume_num";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
@@ -181,7 +181,7 @@ export class InputState {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             this.get_token();
-            if (this.#token.code === T_NewLine) {
+            if (this.#token.code === T_NEWLINE) {
                 this.newLine = true;
             }
             else {
@@ -252,7 +252,7 @@ export class InputState {
         // skip spaces
         while (is_space(this.curr)) {
             if (this.curr === '\n' || this.curr === '\r') {
-                this.#token.code = T_NewLine;
+                this.#token.code = T_NEWLINE;
                 this.#token.end++;
                 return;
             }
@@ -347,7 +347,7 @@ export class InputState {
             if (this.curr) {
                 this.#token.end++;
             }
-            this.#token.code = T_NewLine;
+            this.#token.code = T_NEWLINE;
             return;
         }
 
@@ -362,7 +362,7 @@ export class InputState {
                     }
                     default: {
                         this.#token.txt = '*';
-                        this.#token.code = AsteriskToken;
+                        this.#token.code = T_ASTRX;
                         this.#token.end += 1;
                         return;
                     }
@@ -530,7 +530,7 @@ export class InputState {
 
         if (this.curr === '^') {
             this.#token.txt = this.curr;
-            this.#token.code = CaretToken;
+            this.#token.code = T_CARET;
             this.#token.end += 1;
             return;
         }

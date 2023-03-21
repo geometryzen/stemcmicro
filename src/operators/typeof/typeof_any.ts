@@ -8,11 +8,11 @@ import { UCons } from "../helpers/UCons";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new TypeofAny($);
+        return new Op($);
     }
 }
 
-class TypeofAny extends Function1<U> implements Operator<Cons> {
+class Op extends Function1<U> implements Operator<Cons> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('typeof_any', create_sym('typeof'), is_any, $);

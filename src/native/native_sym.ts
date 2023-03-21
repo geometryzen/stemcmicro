@@ -35,6 +35,7 @@ export function build_sym(code: Native): Sym {
         case Native.condense: return create_sym('condense');
         case Native.conj: return create_sym('conj');
         case Native.cos: return create_sym('cos');
+        case Native.derivative: return create_sym('derivative');
         case Native.divide: return create_sym('/');
         case Native.exp: return create_sym('exp');
         case Native.expand: return create_sym('expand');
@@ -65,6 +66,8 @@ export function build_sym(code: Native): Sym {
         case Native.sin: return create_sym('sin');
         case Native.sqrt: return create_sym('sqrt');
         case Native.spread: return create_sym('...');
+        case Native.st: return create_sym('st');
+        case Native.subst: return create_sym('subst');
         case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');
         case Native.tau: return create_sym('tau');

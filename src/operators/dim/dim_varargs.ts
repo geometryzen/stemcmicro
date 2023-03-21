@@ -17,10 +17,10 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
         super('dim', DIM, $);
         this.hash = hash_nonop_cons(this.opr);
     }
-    transform(expr: Cons): [number, U] {
+    transform(dimExpr: Cons): [number, U] {
         const $ = this.$;
-        const retval = Eval_dim(expr, $);
-        const changed = !retval.equals(expr);
+        const retval = Eval_dim(dimExpr, $);
+        const changed = !retval.equals(dimExpr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }
 }

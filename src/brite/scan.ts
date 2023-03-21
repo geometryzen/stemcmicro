@@ -21,7 +21,7 @@ import { Tensor } from '../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
-import { AsteriskToken, CaretToken, T_ASTRX_ASTRX, T_BANG, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
+import { T_ASTRX, T_CARET, T_ASTRX_ASTRX, T_BANG, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
 import { create_tensor } from './create_tensor';
 import { InputState } from './InputState';
 import { one_divided_by } from './one_divided_by';
@@ -345,7 +345,7 @@ function scan_additive_expr_explicit(state: InputState): U {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
     switch (code) {
-        case AsteriskToken:
+        case T_ASTRX:
         case T_FWDSLASH: {
             return true;
         }
@@ -394,7 +394,7 @@ export function scan_multiplicative_expr_implicit(state: InputState): U {
     */
 
     while (is_multiplicative(state.code, state.newLine)) {
-        if (state.code === AsteriskToken) {
+        if (state.code === T_ASTRX) {
             state.advance();
             results.push(scan_outer_expr(state));
         }
@@ -459,7 +459,7 @@ export function scan_multiplicative_expr_explicit(state: InputState): U {
 
     while (is_multiplicative(state.code, state.newLine)) {
         switch (state.code) {
-            case AsteriskToken: {
+            case T_ASTRX: {
                 const opr = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
                 state.advance();
                 result = items_to_cons(opr, result, scan_outer_expr(state));
@@ -495,7 +495,7 @@ export function scan_multiplicative_expr_explicit(state: InputState): U {
  */
 function is_outer(code: TokenCode, newline_flag: boolean, useCaretForExponentiation: boolean): boolean {
     if (!newline_flag) {
-        if (code === CaretToken) {
+        if (code === T_CARET) {
             if (useCaretForExponentiation) {
                 return false;
             }
@@ -574,7 +574,7 @@ function is_power(code: TokenCode, newLine: boolean, useCaretForExponentiation: 
         return false;
     }
     if (useCaretForExponentiation) {
-        return code === CaretToken;
+        return code === T_CARET;
     }
     else {
         return code === T_ASTRX_ASTRX;

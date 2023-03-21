@@ -1,6 +1,14 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { cons, is_cons, U } from '../../tree/tree';
 
+/**
+ * BEWARE: The order of parameters does not match the scripting language which is (subst newExpr, oldExpr, expr).
+ * @param expr 
+ * @param oldExpr 
+ * @param newExpr 
+ * @param $ 
+ * @returns 
+ */
 export function subst(expr: U, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
     if (expr.equals(oldExpr)) {
         return newExpr;

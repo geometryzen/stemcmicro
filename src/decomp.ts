@@ -4,7 +4,6 @@ import { guess } from './guess';
 import { items_to_cons } from './makeList';
 import { multiply_items } from './multiply';
 import { is_add, is_multiply } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
 import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 
@@ -18,16 +17,16 @@ import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 // defined via PATTERN, again patterns are applied to
 // either the whole expression or any of its parts.
 
-// unclear to me at the momentI
+// unclear to me at the moment
 // why this is exposed as something that can
 // be evalled. Never called.
-export function Eval_decomp(p1: U, $: ExtensionEnv): void {
+export function Eval_decomp(p1: U, $: ExtensionEnv): U {
     const arg = $.valueOf(cadr(p1));
     p1 = $.valueOf(caddr(p1));
 
     const variable = nil.equals(p1) ? guess(arg) : p1;
     const result = decomp(false, arg, variable, $);
-    stack_push(items_to_cons(nil, ...result));
+    return items_to_cons(nil, ...result);
 }
 
 function pushTryNotToDuplicateLocal(localStack: U[], item: U) {

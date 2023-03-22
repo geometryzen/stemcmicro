@@ -2,10 +2,8 @@ import { ExtensionEnv } from './env/ExtensionEnv';
 import { nativeInt } from './nativeInt';
 import { MAXPRIMETAB, primetab } from './runtime/constants';
 import { halt } from './runtime/defs';
-import { stack_push } from './runtime/stack';
-import { cadr } from './tree/helpers';
 import { create_int, Rat } from './tree/rat/Rat';
-import { U } from './tree/tree';
+import { Cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
 //
@@ -16,16 +14,15 @@ import { U } from './tree/tree';
 //  Output:    nth prime
 //
 //-----------------------------------------------------------------------------
-export function Eval_prime(p1: U, $: ExtensionEnv): void {
-    const result = prime($.valueOf(cadr(p1)));
-    stack_push(result);
+export function Eval_prime(primeExpr: Cons, $: ExtensionEnv): Rat {
+    return prime($.valueOf(primeExpr.argList.head));
 }
 
 export function prime(p1: U): Rat {
-    let n = nativeInt(p1);
+    const n = nativeInt(p1);
     if (n < 1 || n > MAXPRIMETAB) {
         halt('prime: Argument out of range.');
     }
-    n = primetab[n - 1];
-    return create_int(n);
+    const p = primetab[n - 1];
+    return create_int(p);
 }

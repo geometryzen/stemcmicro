@@ -1,9 +1,8 @@
-import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { filter } from './filter';
 import { guess } from './guess';
+import { divide } from './helpers/divide';
 import { degree } from './operators/degree/degree';
-import { stack_push } from './runtime/stack';
 import { caddr, cadr } from './tree/helpers';
 import { nil, U } from './tree/tree';
 
@@ -20,11 +19,11 @@ Result
 
 The result is undefined if P is not a polynomial.
 */
-export function Eval_leading(p1: U, $: ExtensionEnv): void {
+export function Eval_leading(p1: U, $: ExtensionEnv): U {
     const P = $.valueOf(cadr(p1));
     p1 = $.valueOf(caddr(p1));
     const X = nil === p1 ? guess(P) : p1;
-    stack_push(leading(P, X, $));
+    return leading(P, X, $);
 }
 
 function leading(P: U, X: U, $: ExtensionEnv) {

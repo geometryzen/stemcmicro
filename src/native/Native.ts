@@ -32,6 +32,7 @@ export enum Native {
      */
     factor,
     factorial,
+    filter,
     float,
     /**
      * (function body paramList)
@@ -48,7 +49,9 @@ export enum Native {
     isreal,
     iszero,
     lco,
+    leading,
     log,
+    lookup,
     /**
      * mod(a,b) returns the remainder of the result of a divided by b.
      */
@@ -58,6 +61,7 @@ export enum Native {
     outer,
     polar,
     pow,
+    prime,
     rationalize,
     real,
     rect,

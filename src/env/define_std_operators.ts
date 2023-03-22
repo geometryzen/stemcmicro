@@ -2,7 +2,10 @@ import { Eval_approxratio } from '../approxratio';
 import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
 import { Eval_clear, Eval_clearall } from '../clear';
+import { Eval_filter } from '../filter';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
+import { Eval_leading } from '../leading';
+import { Eval_lookup } from '../lookup';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { Eval_nroots } from '../nroots';
@@ -395,6 +398,7 @@ import { unit_any } from '../operators/unit/unit_any';
 import { uom_1_str } from '../operators/uom/uom_1_str';
 import { is_uom, uom_extension } from '../operators/uom/uom_extension';
 import { zero_varargs } from '../operators/zero/zero_varargs';
+import { Eval_prime } from '../prime';
 import { get_last_print_mode_symbol, store_text_in_binding } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
 import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
@@ -411,6 +415,10 @@ export function define_std_operators($: ExtensionEnv) {
     const COS = native_sym(Native.cos);
     const EXP = native_sym(Native.exp);
     const FACTORIAL = native_sym(Native.factorial);
+    const FILTER = native_sym(Native.filter);
+    const LEADING = native_sym(Native.leading);
+    const LOOKUP = native_sym(Native.lookup);
+    const PRIME = native_sym(Native.prime);
     const SIN = native_sym(Native.sin);
     const TEST = native_sym(Native.test);
     const TESTEQ = native_sym(Native.testeq);
@@ -593,6 +601,8 @@ export function define_std_operators($: ExtensionEnv) {
         store_text_in_binding(str, get_last_print_mode_symbol(defs.printMode), $);
     });
 
+    $.defineConsTransformer(FILTER, Eval_filter);
+
     $.defineOperator(gamma_varargs);
 
     $.defineOperator(gcd_varargs);
@@ -619,6 +629,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(lcm_varargs);
 
+    $.defineConsTransformer(LEADING, Eval_leading);
+
     $.defineOperator(lco_2_blade_blade);
     $.defineOperator(make_lhs_distrib_expand_law(MATH_LCO, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_LCO, MATH_ADD));
@@ -636,6 +648,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(log_sym);
     $.defineOperator(log_varargs);
 
+    $.defineConsTransformer(LOOKUP, Eval_lookup);
+
     $.defineOperator(mod_varargs);
 
     $.defineOperator(outer_2_blade_blade);
@@ -648,6 +662,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(outer_2_sym_sym);
     $.defineOperator(outer_2_any_mul_2_scalar_any);
     $.defineOperator(outer_2_any_any);
+
+    $.defineConsTransformer(PRIME, Eval_prime);
 
     $.defineOperator(rank_varargs);
 

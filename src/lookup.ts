@@ -1,8 +1,7 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_sym } from './operators/sym/is_sym';
-import { stack_push } from './runtime/stack';
 import { cadr } from './tree/helpers';
-import { car, Cons, is_cons, nil } from './tree/tree';
+import { car, Cons, is_cons, nil, U } from './tree/tree';
 
 // now this might be a little confusing, so a
 // clarification is in order.
@@ -60,7 +59,7 @@ import { car, Cons, is_cons, nil } from './tree/tree';
 //   a = 1
 //   b = 2
 // to put a structure in x that is easy to see whether
-// it's avaulated or not.
+// it's evaulated or not.
 //
 // So lookup allows this:
 //   x = quote(1+2)
@@ -117,7 +116,7 @@ import { car, Cons, is_cons, nil } from './tree/tree';
 // when assigned to x.
 //    lookup(x)
 //       => gives z
-export function Eval_lookup(expr: Cons, $: ExtensionEnv): void {
+export function Eval_lookup(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     const arg0 = car(argList);
     // TODO: 
@@ -128,13 +127,13 @@ export function Eval_lookup(expr: Cons, $: ExtensionEnv): void {
         const op = expr.car;
         if (is_sym(op)) {
             const binding = $.getSymbolValue(op);
-            stack_push(binding);
+            return binding;
         }
         else {
-            stack_push(nil);
+            return nil;
         }
     }
     else {
-        stack_push(arg0);
+        return arg0;
     }
 }

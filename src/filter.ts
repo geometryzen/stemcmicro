@@ -1,7 +1,6 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { is_add } from './runtime/helpers';
-import { stack_push } from './runtime/stack';
 import { zero } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, U } from './tree/tree';
@@ -13,14 +12,14 @@ Remove terms that involve a given symbol or expression. For example...
 
   filter(x^2 + x + 1, x^2)  =>  x + 1
 */
-export function Eval_filter(p1: U, $: ExtensionEnv): void {
+export function Eval_filter(p1: U, $: ExtensionEnv): U {
     p1 = cdr(p1);
     let result = $.valueOf(car(p1));
 
     if (is_cons(p1)) {
         result = p1.tail().reduce((acc: U, p: U) => filter(acc, $.valueOf(p), $), result);
     }
-    stack_push(result);
+    return result;
 }
 
 /**

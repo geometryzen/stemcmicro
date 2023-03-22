@@ -4,40 +4,30 @@ import { create_script_context } from "../index";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("arg(abs(a))", function () {
+    it("f(x)", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `pi=tau(1/2)`,
-            `arg(abs(a))`,
+            `f(x)=2*x`,
+            `f`
         ];
         const engine = create_script_context({
-            assumes: {
-                'a': { real: true },
-                'b': { real: true }
-            },
-            dependencies: ['Imu'],
             useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "0");
+        assert.strictEqual(engine.renderAsInfix(value), "function (x) -> 2*x");
+        assert.strictEqual(engine.renderAsSExpr(value), "(function (* 2 x) (x))");
         engine.release();
     });
-    xit("arg(abs(a)*exp(b+i*pi/5))", function () {
+    it("f(a)", function () {
         const lines: string[] = [
-            `i=sqrt(-1)`,
-            `pi=tau(1/2)`,
-            `arg(abs(a)*exp(b+i*pi/5))`,
+            `f(x)=2*x`,
+            `f(a)`
         ];
         const engine = create_script_context({
-            assumes: {
-                'a': { real: true },
-                'b': { real: true }
-            },
-            dependencies: ['Imu'],
             useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "1/5*pi");
+        assert.strictEqual(engine.renderAsInfix(value), "2*a");
+        assert.strictEqual(engine.renderAsSExpr(value), "(* 2 a)");
         engine.release();
     });
 });

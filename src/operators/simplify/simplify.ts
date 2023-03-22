@@ -42,16 +42,16 @@ function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
     // a function, so we resolve all variables
     // indirections and we simplify everything
     // we can given the current assignments.
-    if (defs.codeGen && car(expr).equals(FUNCTION)) {
-        const fbody = cadr(expr);
-        // let's simplify the body so we give it a
-        // compact form
-        const p3 = simplify($.valueOf(fbody), $);
+    if (defs.codeGen && is_cons(expr) && expr.opr.equals(FUNCTION)) {
+        const argList = expr.argList;
+        const fbody = argList.head;
+        // let's simplify the body so we give it a compact form
+        const body = simplify($.valueOf(fbody), $);
 
         // replace the evaled body
-        const args = caddr(expr); // p5 is B
+        const paramList = cadr(argList);
 
-        return items_to_cons(FUNCTION, p3, args);
+        return items_to_cons(FUNCTION, body, paramList);
     }
     else {
         return expr;

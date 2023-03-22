@@ -20,7 +20,7 @@ import { create_int, eight, four, half, negFour, negOne, nine, one, third, three
 import { Tensor } from './tree/tensor/Tensor';
 import { car, Cons, nil, U } from './tree/tree';
 
-const testeq = native_sym(Native.test_eq);
+const testeq = native_sym(Native.testeq);
 
 // define POLY p1
 // define X p2

@@ -43,6 +43,8 @@ export function build_sym(code: Native): Sym {
         case Native.factor: return create_sym('factor');
         case Native.factorial: return create_sym('factorial');
         case Native.float: return create_sym('float');
+        case Native.function: return create_sym('function');
+        case Native.gcd: return create_sym('gcd');
         case Native.imag: return create_sym('imag');
         case Native.infinitesimal: return create_sym('infinitesimal');
         case Native.inner: return create_sym('inner');
@@ -73,13 +75,14 @@ export function build_sym(code: Native): Sym {
         case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');
         case Native.tau: return create_sym('tau');
+        case Native.taylor: return create_sym('taylor');
         case Native.test: return create_sym('test');
-        case Native.test_eq: return create_sym('==');
-        case Native.test_ge: return create_sym('>=');
-        case Native.test_gt: return create_sym('>');
-        case Native.test_le: return create_sym('<=');
-        case Native.test_lt: return create_sym('<');
-        case Native.test_ne: return create_sym('!=');
+        case Native.testeq: return create_sym('==');
+        case Native.testge: return create_sym('>=');
+        case Native.testgt: return create_sym('>');
+        case Native.testle: return create_sym('<=');
+        case Native.testlt: return create_sym('<');
+        case Native.testne: return create_sym('!=');
         default: throw new Error(`${code}`);
     }
 }

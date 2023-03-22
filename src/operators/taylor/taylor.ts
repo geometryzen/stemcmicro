@@ -1,12 +1,12 @@
-import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
+import { divide } from '../../helpers/divide';
 import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { TAYLOR } from '../../runtime/constants';
 import { stack_peek } from '../../runtime/stack';
-import { one, create_int, zero } from '../../tree/rat/Rat';
-import { car, cdr, nil, U } from '../../tree/tree';
+import { create_int, one, zero } from '../../tree/rat/Rat';
+import { car, Cons, nil, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';
 import { factorial } from '../factorial/factorial';
 import { subst } from '../subst/subst';
@@ -20,23 +20,25 @@ Taylor expansion of a function
   push(A)
   taylor()
 */
-export function Eval_taylor(p1: U, $: ExtensionEnv): U {
+export function Eval_taylor(p1: Cons, $: ExtensionEnv): U {
     // 1st arg
-    p1 = cdr(p1);
+    p1 = p1.argList;
     const F = $.valueOf(car(p1));
 
     // 2nd arg
-    p1 = cdr(p1);
+    p1 = p1.argList;
     let p2 = $.valueOf(car(p1));
+    // What is on the stack?
     const X = nil === p2 ? guess(stack_peek()) : p2; // TODO: should this be `top()`?
 
     // 3rd arg
-    p1 = cdr(p1);
+    p1 = p1.argList;
     p2 = $.valueOf(car(p1));
+    // TODO: Magic Number.
     const N = nil === p2 ? create_int(24) : p2; // 24: default number of terms
 
     // 4th arg
-    p1 = cdr(p1);
+    p1 = p1.argList;
     p2 = $.valueOf(car(p1));
     const A = nil === p2 ? zero : p2; // 0: default expansion point
 

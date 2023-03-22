@@ -33,6 +33,11 @@ export enum Native {
     factor,
     factorial,
     float,
+    /**
+     * (function body paramList)
+     */
+    function,
+    gcd,
     imag,
     infinitesimal,
     inner,
@@ -74,11 +79,12 @@ export enum Native {
      * tau(x) = 2 * PI * x
      */
     tau,
+    taylor,
     test,
-    test_eq,
-    test_ge,
-    test_gt,
-    test_le,
-    test_lt,
-    test_ne,
+    testeq,
+    testge,
+    testgt,
+    testle,
+    testlt,
+    testne,
 }

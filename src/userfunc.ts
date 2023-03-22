@@ -1,4 +1,5 @@
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { StackU } from './env/StackU';
 import { items_to_cons } from './makeList';
 import { Eval_derivative } from './operators/derivative/Eval_derivative';
 import { is_num } from './operators/num/is_num';
@@ -6,8 +7,7 @@ import { is_str } from './operators/str/is_str';
 import { is_sym } from './operators/sym/is_sym';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { EVAL, FUNCTION, SYMBOL_D } from './runtime/constants';
-import { defs, halt } from './runtime/defs';
-import { stack_list, stack_pop, stack_push } from './runtime/stack';
+import { halt } from './runtime/defs';
 import { cadr, cddr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, U } from './tree/tree';
@@ -41,10 +41,14 @@ General description
 Returns the partial derivative of f with respect to x. x can be a vector e.g. [x,y].
 
 */
-export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
+export function Eval_function(functionCallExpr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_function");
+
+
     // Use "derivative" instead of "d" if there is no user function "d"
-    if (car(expr).equals(SYMBOL_D) && $.getSymbolValue(SYMBOL_D).equals(SYMBOL_D)) {
-        const retval = Eval_derivative(expr, $);
+    // TODO: This needs to be checked because of the way getSymbolValue behaves.
+    if (car(functionCallExpr).equals(SYMBOL_D) && $.getSymbolValue(SYMBOL_D).equals(SYMBOL_D)) {
+        const retval = Eval_derivative(functionCallExpr, $);
         return retval;
     }
 
@@ -59,7 +63,8 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
     // has not been defined yet, then the
     // function will just contain its own name, as
     // all undefined variables do.
-    const bodyAndFormalArguments = $.valueOf(car(expr));
+    const bodyAndFormalArguments = $.valueOf(car(functionCallExpr));
+    // console.lg("bodyAndFormalArguments", $.toInfixString(bodyAndFormalArguments));
 
     if (is_num(bodyAndFormalArguments)) {
         halt(
@@ -76,11 +81,16 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
     }
 
     const F = car(cdr(bodyAndFormalArguments));
-    // p4 is the formal argument list
+    // console.lg("F", $.toInfixString(F));
+    // A is the formal argument list i.e. the list or parameters.
     // that is also contained here in the FUNCTION node
     const A = car(cdr(cdr(bodyAndFormalArguments)));
+    // console.lg("A", $.toInfixString(A));
 
-    const B = cdr(expr);
+    /**
+     * The argument list.
+     */
+    const B = cdr(functionCallExpr);
 
     // example:
     //  f(x) = x+2
@@ -93,27 +103,31 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
     if (
         !car(bodyAndFormalArguments).equals(FUNCTION) ||
         // next check is whether evaluation did nothing, so the function is undefined
-        bodyAndFormalArguments.equals(car(expr))
+        bodyAndFormalArguments.equals(car(functionCallExpr))
     ) {
         // leave everything as it was and return
-        const h = defs.tos;
-        stack_push(bodyAndFormalArguments);
+        const stack = new StackU();
+        const h = stack.tos;
+        stack.push(bodyAndFormalArguments);
         let p1 = B;
         while (is_cons(p1)) {
-            stack_push($.valueOf(car(p1)));
+            stack.push($.valueOf(car(p1)));
             p1 = cdr(p1);
         }
-        stack_list(defs.tos - h);
-        return stack_pop();
+        stack.list(stack.tos - h);
+        return stack.pop();
     }
 
     // Create the argument substitution list S
+    // console.lg("A", A.toString());
+    // console.lg("B", B.toString());
     let p1 = A;
     let p2 = B;
-    const h = defs.tos;
+    const stack = new StackU();
+    const h = stack.tos;
     while (is_cons(p1) && is_cons(p2)) {
-        stack_push(car(p1));
-        stack_push(car(p2));
+        stack.push(car(p1));
+        stack.push(car(p2));
         // why explicitly Eval the parameters when
         // the body of the function is
         // evalled anyways? Commenting it out. All tests pass...
@@ -122,63 +136,63 @@ export function Eval_user_function(expr: Cons, $: ExtensionEnv): U {
         p2 = cdr(p2);
     }
 
-    stack_list(defs.tos - h);
-    const S = stack_pop();
+    stack.list(stack.tos - h);
+    const S = stack.pop();
 
     // Evaluate the function body
-    stack_push(F);
+    stack.push(F);
     if (is_cons(S)) {
-        stack_push(S);
-        rewrite_args($);
+        stack.push(S);
+        rewrite_args(stack, $);
     }
     // console.lg "rewritten body: " + stack[tos-1]
-    return $.valueOf(stack_pop());
+    return $.valueOf(stack.pop());
 }
 
 // Rewrite by expanding symbols that contain args
-function rewrite_args($: ExtensionEnv) {
+function rewrite_args(stack: StackU, $: ExtensionEnv) {
     let n = 0;
 
     // subst. list which is a list
     // where each consecutive pair
     // is what needs to be substituted and with what
-    const p2 = stack_pop();
+    const p2 = stack.pop();
     // console.lg "subst. list " + p2
 
     // expr to substitute in i.e. the
     // function body
-    let p1 = stack_pop();
+    let p1 = stack.pop();
     // console.lg "expr: " + p1
 
     if (is_tensor(p1)) {
-        n = rewrite_args_tensor(p1, p2, $);
+        n = rewrite_args_tensor(p1, p2, stack, $);
         return n;
     }
 
     if (is_cons(p1)) {
-        const h = defs.tos;
+        const h = stack.tos;
         if (car(p1).equals(car(p2))) {
             // rewrite a function in
             // the body with the one
             // passed from the paramaters
-            stack_push(items_to_cons(EVAL, car(cdr(p2))));
+            stack.push(items_to_cons(EVAL, car(cdr(p2))));
         }
         else {
             // if there is no match
             // then no substitution necessary
-            stack_push(car(p1));
+            stack.push(car(p1));
         }
 
         // continue recursively to
         // rewrite the rest of the body
         p1 = cdr(p1);
         while (is_cons(p1)) {
-            stack_push(car(p1));
-            stack_push(p2);
-            n += rewrite_args($);
+            stack.push(car(p1));
+            stack.push(p2);
+            n += rewrite_args(stack, $);
             p1 = cdr(p1);
         }
-        stack_list(defs.tos - h);
+        stack.list(stack.tos - h);
         return n;
     }
 
@@ -191,7 +205,7 @@ function rewrite_args($: ExtensionEnv) {
     // If not a symbol then no
     // substitution to be done
     if (!is_sym(p1)) {
-        stack_push(p1);
+        stack.push(p1);
         return 0;
     }
 
@@ -203,7 +217,7 @@ function rewrite_args($: ExtensionEnv) {
     let p3 = p2;
     while (is_cons(p3)) {
         if (p1.equals(car(p3))) {
-            stack_push(cadr(p3));
+            stack.push(cadr(p3));
             return 1;
         }
         p3 = cddr(p3);
@@ -212,28 +226,28 @@ function rewrite_args($: ExtensionEnv) {
     // Get the symbol's content, if _that_
     // matches then do the substitution
     p3 = $.getSymbolValue(p1);
-    stack_push(p3);
+    stack.push(p3);
     if (p1 !== p3) {
-        stack_push(p2); // subst. list
-        n = rewrite_args($);
+        stack.push(p2); // subst. list
+        n = rewrite_args(stack, $);
         if (n === 0) {
-            stack_pop();
-            stack_push(p1); // restore if not rewritten with arg
+            stack.pop();
+            stack.push(p1); // restore if not rewritten with arg
         }
     }
 
     return n;
 }
 
-function rewrite_args_tensor(M: Tensor, other: U, $: ExtensionEnv) {
+function rewrite_args_tensor(M: Tensor, other: U, stack: StackU, $: ExtensionEnv) {
     let rewrite_args_counter = 0;
     const elems = M.mapElements((m) => {
-        stack_push(m);
-        stack_push(other);
-        rewrite_args_counter += rewrite_args($);
-        return stack_pop();
+        stack.push(m);
+        stack.push(other);
+        rewrite_args_counter += rewrite_args(stack, $);
+        return stack.pop();
     });
 
-    stack_push(M.withElements(elems));
+    stack.push(M.withElements(elems));
     return rewrite_args_counter;
 }

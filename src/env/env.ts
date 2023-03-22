@@ -17,7 +17,7 @@ import { negOne, Rat } from "../tree/rat/Rat";
 import { Sym } from "../tree/sym/Sym";
 import { Tensor } from "../tree/tensor/Tensor";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
-import { Eval_user_function } from "../userfunc";
+import { Eval_function } from "../userfunc";
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
 import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
@@ -591,9 +591,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                 const binding = $.getSymbolValue(opr);
                                 if (!is_nil(binding)) {
                                     if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
-                                        const newExpr = Eval_user_function(expr, $);
+                                        const newExpr = Eval_function(expr, $);
                                         // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
                                         return [TFLAG_DIFF, newExpr];
+                                    }
+                                    else {
+                                        // If it's not a (function body paramList) expression.
                                     }
                                 }
                             }

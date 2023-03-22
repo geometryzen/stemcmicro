@@ -43,15 +43,15 @@ export const MATH_ISZERO = create_sym('iszero');
 /**
  * '<'
  */
-export const MATH_LT = native_sym(Native.test_lt);
+export const MATH_LT = native_sym(Native.testlt);
 /**
  * '>'
  */
-export const MATH_GT = native_sym(Native.test_gt);
+export const MATH_GT = native_sym(Native.testgt);
 /**
  * '<='
  */
-export const MATH_LE = native_sym(Native.test_le);
+export const MATH_LE = native_sym(Native.testle);
 /**
  * ':'
  */

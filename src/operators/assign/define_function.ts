@@ -12,11 +12,11 @@ import { is_sym } from '../sym/is_sym';
 //
 // Example:
 //
-//      f(x,y)=x^y
+//      f(x,y) = x^y or f paramList = body
 //
-// For this definition, p1 points to the following structure.
+// For this definition, assignExpr points to the following structure.
 //
-//     p1
+//     assignExpr
 //      |
 //   ___v__    ______                        ______
 //  |CONS  |->|CONS  |--------------------->|CONS  |
@@ -44,22 +44,22 @@ import { is_sym } from '../sym/is_sym';
 /**
  * The assignment is converted info a binding of f to (function body argList).
  * 
- * @param p1 (= (f argList) body)
+ * @param assignExpr (= (f paramList) body)
  */
-export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
-    // console.lg(`define_user_function ${print_list(p1, $)}`);
+export function define_function(assignExpr: BCons<Sym, U, U>, $: ExtensionEnv): U {
+    // console.lg("define_function", $.toSExprString(assignExpr));
     /**
      * The function name.
      */
-    const F = caadr(p1);
+    const F = caadr(assignExpr);
     /**
-     * The argument list.
+     * The parameter list.
      */
-    const A = cdadr(p1);
+    const paramList = cdadr(assignExpr);
     /**
      * The function body.
      */
-    let B = caddr(p1);
+    let body = caddr(assignExpr);
 
     // console.lg(`F => ${F}`);
     // console.lg(`A => ${A}`);
@@ -71,8 +71,8 @@ export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
 
     // evaluate function body (maybe)
 
-    if (car(B).equals(EVAL)) {
-        B = $.valueOf(cadr(B));
+    if (car(body).equals(EVAL)) {
+        body = $.valueOf(cadr(body));
     }
 
     // note how, unless explicitly forced by an eval,
@@ -87,9 +87,9 @@ export function define_user_function(p1: BCons<Sym, U, U>, $: ExtensionEnv): U {
     // which would need to otherwise
     // be solved by some scope device
     // somehow
-    B = items_to_cons(FUNCTION, B, A);
+    const functionExpr = items_to_cons(FUNCTION, body, paramList);
 
-    $.setSymbolValue(F, B);
+    $.setSymbolValue(F, functionExpr);
 
     return nil;
 }

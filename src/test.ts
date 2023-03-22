@@ -13,7 +13,7 @@ import { one, zero } from './tree/rat/Rat';
 import { car, cdr, cons, Cons, is_cons, items_to_cons, nil, U } from './tree/tree';
 
 const NOT = native_sym(Native.not);
-const TESTEQ = native_sym(Native.test_eq);
+const TESTEQ = native_sym(Native.testeq);
 
 // If the number of args is odd then the last arg is the default result.
 // Works like a switch statement. Could also be used for piecewise

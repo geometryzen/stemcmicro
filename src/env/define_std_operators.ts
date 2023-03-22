@@ -413,8 +413,8 @@ export function define_std_operators($: ExtensionEnv) {
     const FACTORIAL = native_sym(Native.factorial);
     const SIN = native_sym(Native.sin);
     const TEST = native_sym(Native.test);
-    const TESTEQ = native_sym(Native.test_eq);
-    const TESTNE = native_sym(Native.test_ne);
+    const TESTEQ = native_sym(Native.testeq);
+    const TESTNE = native_sym(Native.testne);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());

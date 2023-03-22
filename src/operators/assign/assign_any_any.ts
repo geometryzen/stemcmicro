@@ -8,7 +8,7 @@ import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_sym } from "../sym/is_sym";
-import { define_user_function } from "./define";
+import { define_function } from "./define_function";
 import { setq_indexed } from "./setq_indexed";
 
 class Builder implements OperatorBuilder<U> {
@@ -51,7 +51,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
 
     // case of function definition
     if (is_cons(lhs)) {
-        define_user_function(expr, $);
+        define_function(expr, $);
         return nil;
     }
 

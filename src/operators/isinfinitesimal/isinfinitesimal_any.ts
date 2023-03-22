@@ -11,11 +11,11 @@ export const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new IsRealAny($);
+        return new Op($);
     }
 }
 
-class IsRealAny extends Function1<U> {
+class Op extends Function1<U> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('isinfinitesimal_any', ISINFINITESIMAL, is_any, $);
@@ -23,7 +23,7 @@ class IsRealAny extends Function1<U> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: U, expr: U): [TFLAGS, U] {
-        console.log(this.name, this.$.toInfixString(arg));
+        // console.lg(this.name, this.$.toInfixString(arg));
         // We could use fuzzy logic here...
         return [TFLAG_NONE, expr];
     }

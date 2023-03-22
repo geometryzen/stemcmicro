@@ -10,7 +10,7 @@ import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/is_rat";
 
-export const MATH_LT = native_sym(Native.test_lt);
+export const MATH_LT = native_sym(Native.testlt);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

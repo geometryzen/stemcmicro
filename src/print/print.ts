@@ -78,7 +78,7 @@ const ENGLISH_UNDEFINED = 'undefined';
 const MATH_E = native_sym(Native.E);
 const MATH_IMU = native_sym(Native.IMU);
 const MATH_PI = native_sym(Native.PI);
-const testeq = native_sym(Native.test_eq);
+const testeq = native_sym(Native.testeq);
 
 export function get_script_last($: ExtensionEnv): U {
     return $.valueOf(RESERVED_KEYWORD_LAST);
@@ -1712,6 +1712,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     //    return
     //  }
 
+    
     if (car(expr).equals(FUNCTION)) {
         let str = '';
         const fbody = cadr(expr);

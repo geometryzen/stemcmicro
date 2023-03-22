@@ -71,9 +71,12 @@ export const FILTER = create_sym('filter');
 export const FLOAT = native_sym(Native.float);
 export const FLOOR = create_sym('floor');
 export const FOR = create_sym('for');
-export const FUNCTION = create_sym('function');
+/**
+ * (function body paramList)
+ */
+export const FUNCTION = native_sym(Native.function);
 export const GAMMA = create_sym('gamma');
-export const GCD = create_sym('gcd');
+export const GCD = native_sym(Native.gcd);
 export const HERMITE = create_sym('hermite');
 export const HILBERT = create_sym('hilbert');
 export const IF = create_sym('if');
@@ -131,12 +134,12 @@ export const SUM = create_sym('sum');
 export const SYMBOLSINFO = create_sym('symbolsinfo');
 export const TAN = create_sym('tan');
 export const TANH = create_sym('tanh');
-export const TAYLOR = create_sym('taylor');
-export const TEST = create_sym('test');
-export const TESTGE = native_sym(Native.test_ge);
-export const TESTGT = native_sym(Native.test_gt);
-export const TESTLE = native_sym(Native.test_le);
-export const TESTLT = native_sym(Native.test_lt);
+export const TAYLOR = native_sym(Native.taylor);
+export const TEST = native_sym(Native.test);
+export const TESTGE = native_sym(Native.testge);
+export const TESTGT = native_sym(Native.testgt);
+export const TESTLE = native_sym(Native.testle);
+export const TESTLT = native_sym(Native.testlt);
 export const TRANSPOSE = create_sym('transpose');
 export const UNIT = create_sym('unit');
 export const UOM = create_sym('uom');

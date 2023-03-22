@@ -23,7 +23,7 @@ export function soft_reset($: ExtensionEnv): void {
  */
 const defn_strings = [
     'e=exp(1)',
-    'i=sqrt(-1)',
+    'i=sqrt(-1)',   // TODO: This is ambiguous when blades are considered.
     'pi=tau(1)/2',
     'autoexpand=1',
     // TODO: remove these and make sure it still works when these are not bound.
@@ -33,12 +33,13 @@ const defn_strings = [
     `${VARNAME_MAX_FIXED_PRINTOUT_DIGITS}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`,
     'printLeaveEAlone=1',
     'printLeaveXAlone=0',
+    // TODO: Function definitions here will mask the standard operators.
     // cross definition
-    'cross(u,v)=[u[2]*v[3]-u[3]*v[2],u[3]*v[1]-u[1]*v[3],u[1]*v[2]-u[2]*v[1]]',
+    // 'cross(u,v)=[u[2]*v[3]-u[3]*v[2],u[3]*v[1]-u[1]*v[3],u[1]*v[2]-u[2]*v[1]]',
     // curl definition
-    'curl(v)=[d(v[3],y)-d(v[2],z),d(v[1],z)-d(v[3],x),d(v[2],x)-d(v[1],y)]',
+    // 'curl(v)=[d(v[3],y)-d(v[2],z),d(v[1],z)-d(v[3],x),d(v[2],x)-d(v[1],y)]',
     // div definition
-    'div(v)=d(v[1],x)+d(v[2],y)+d(v[3],z)'
+    // 'div(v)=d(v[1],x)+d(v[2],y)+d(v[3],z)'
 ];
 
 export function execute_std_definitions($: ExtensionEnv): void {

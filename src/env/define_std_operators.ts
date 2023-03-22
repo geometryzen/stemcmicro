@@ -409,6 +409,7 @@ import { Eval_power } from '../scripting/eval_power';
 import { Eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt, Eval_testne } from '../test';
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
+
 export function define_std_operators($: ExtensionEnv) {
     // 
     const MATH_ADD = native_sym(Native.add);

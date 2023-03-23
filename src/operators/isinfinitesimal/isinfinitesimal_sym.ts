@@ -26,7 +26,8 @@ class Op extends Function1<Sym> {
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         const $ = this.$;
         const props = $.getSymbolPredicates(arg);
-        if (props.zero) {
+        // Note that zero is also infinitesimal, but this should be implied.
+        if (props.infinitesimal) {
             return [TFLAG_DIFF, booT];
         }
         return [TFLAG_DIFF, booF];

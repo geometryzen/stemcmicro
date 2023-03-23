@@ -169,78 +169,95 @@ describe("predicate", function () {
             assert.strictEqual(predicates.integer, false, "integer");
         });
     });
-    it("x==0 when x is nonzero", function () {
-        const lines: string[] = [
-            `x==0`
-        ];
-        const context = create_script_context({
-            assumes: {
-                'x': { nonzero: true }
-            }
+    describe("relational", function () {
+        it("x==0 when x is nonzero", function () {
+            const lines: string[] = [
+                `x==0`
+            ];
+            const context = create_script_context({
+                assumes: {
+                    'x': { nonzero: true }
+                }
+            });
+            const value = assert_one_value_execute(lines.join('\n'), context);
+            assert.strictEqual(context.renderAsSExpr(value), "#f");
+            assert.strictEqual(context.renderAsInfix(value), 'false');
         });
-        const value = assert_one_value_execute(lines.join('\n'), context);
-        assert.strictEqual(context.renderAsSExpr(value), "#f");
-        assert.strictEqual(context.renderAsInfix(value), 'false');
+        it("x==0 when x is zero", function () {
+            const lines: string[] = [
+                `x==0`
+            ];
+            const context = create_script_context({
+                assumes: {
+                    'x': { zero: true }
+                }
+            });
+            const value = assert_one_value_execute(lines.join('\n'), context);
+            assert.strictEqual(context.renderAsSExpr(value), "#t");
+            assert.strictEqual(context.renderAsInfix(value), 'true');
+        });
+        it("x>0", function () {
+            const lines: string[] = [
+                `x>0`
+            ];
+            const engine = create_script_context({
+                dependencies: []
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            assert.strictEqual(engine.renderAsSExpr(value), "#t");
+            assert.strictEqual(engine.renderAsInfix(value), 'true');
+        });
+        it("x<0", function () {
+            const lines: string[] = [
+                `x<0`
+            ];
+            const engine = create_script_context({
+                dependencies: []
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            // TODO: Why the different capitalization?
+            assert.strictEqual(engine.renderAsSExpr(value), "#f");
+            assert.strictEqual(engine.renderAsInfix(value), 'false');
+        });
+        it("x * y < 0", function () {
+            const lines: string[] = [
+                `x * y < 0`
+            ];
+            const engine = create_script_context({
+                dependencies: []
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            // TODO: Why the different capitalization?
+            assert.strictEqual(engine.renderAsSExpr(value), "#f");
+            assert.strictEqual(engine.renderAsInfix(value), 'false');
+        });
+        it("x * y > 0", function () {
+            const lines: string[] = [
+                `x * y > 0`
+            ];
+            const engine = create_script_context({
+                dependencies: []
+            });
+            const value = assert_one_value_execute(lines.join('\n'), engine);
+            // TODO: Why the different capitalization?
+            assert.strictEqual(engine.renderAsSExpr(value), "#t");
+            assert.strictEqual(engine.renderAsInfix(value), 'true');
+        });
     });
-    it("x==0 when x is zero", function () {
-        const lines: string[] = [
-            `x==0`
-        ];
-        const context = create_script_context({
-            assumes: {
-                'x': { zero: true }
-            }
+    describe("", function () {
+        xit("eps", function () {
+            const lines: string[] = [
+                `isinfinitesimal(eps)`,
+                `isfinite(eps)`
+            ];
+            const context = create_script_context({
+                assumes: {
+                    'eps': { positive: true, infinitesimal: true }
+                }
+            });
+            const { values } = context.executeScript(lines.join('\n'));
+            assert.strictEqual(context.renderAsInfix(values[0]), "true");
+            assert.strictEqual(context.renderAsInfix(values[1]), "true");
         });
-        const value = assert_one_value_execute(lines.join('\n'), context);
-        assert.strictEqual(context.renderAsSExpr(value), "#t");
-        assert.strictEqual(context.renderAsInfix(value), 'true');
-    });
-    it("x>0", function () {
-        const lines: string[] = [
-            `x>0`
-        ];
-        const engine = create_script_context({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "#t");
-        assert.strictEqual(engine.renderAsInfix(value), 'true');
-    });
-    it("x<0", function () {
-        const lines: string[] = [
-            `x<0`
-        ];
-        const engine = create_script_context({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "#f");
-        assert.strictEqual(engine.renderAsInfix(value), 'false');
-    });
-    it("x * y < 0", function () {
-        const lines: string[] = [
-            `x * y < 0`
-        ];
-        const engine = create_script_context({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "#f");
-        assert.strictEqual(engine.renderAsInfix(value), 'false');
-    });
-    it("x * y > 0", function () {
-        const lines: string[] = [
-            `x * y > 0`
-        ];
-        const engine = create_script_context({
-            dependencies: []
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        // TODO: Why the different capitalization?
-        assert.strictEqual(engine.renderAsSExpr(value), "#t");
-        assert.strictEqual(engine.renderAsInfix(value), 'true');
     });
 });

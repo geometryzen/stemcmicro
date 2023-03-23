@@ -19,9 +19,10 @@ class Op extends CompositeOperator {
     constructor(innerOpr: Sym, $: ExtensionEnv) {
         super(ISINIFINITESIMAL, innerOpr, $);
     }
-    transform1(opr: Sym, add: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, mulExpr: Cons): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(mulExpr));
         const $ = this.$;
-        if ([...add.argList].some(function (arg) {
+        if ([...mulExpr.argList].some(function (arg) {
             return $.isinfinitesimal(arg);
         })) {
             return [TFLAG_DIFF, booT];

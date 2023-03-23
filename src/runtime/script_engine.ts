@@ -129,7 +129,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions,
-            useIntegersForPredicates: options.useIntegersForPredicates
+            useIntegersForPredicates: options.useIntegersForPredicates,
+            syntaxKind: options.syntaxKind
         };
         return hook(config, "A");
     }
@@ -142,7 +143,8 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             noOptimize: false,
             useCaretForExponentiation: false,
             useDefinitions: false,
-            useIntegersForPredicates: false
+            useIntegersForPredicates: false,
+            syntaxKind: SyntaxKind.Native
         };
         return hook(config, "B");
     }
@@ -278,7 +280,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
             syntaxKind: options.syntaxKind,
             useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
             explicitAssocAdd: false,
-            explicitAssocMul: false
+            explicitAssocMul: false,
         };
     }
     else {

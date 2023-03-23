@@ -9,6 +9,7 @@ import { is_lambda } from "../operators/lambda/is_lambda";
 import { is_rat } from "../operators/rat/is_rat";
 import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
+import { SyntaxKind } from "../parser/parser";
 import { FUNCTION } from "../runtime/constants";
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
@@ -54,6 +55,7 @@ export interface EnvOptions {
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
     useIntegersForPredicates?: boolean;
+    syntaxKind?: SyntaxKind;
 }
 
 function config_from_options(options: EnvOptions | undefined): EnvConfig {
@@ -67,6 +69,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
+            syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Native,
         };
         return config;
     }
@@ -79,7 +82,8 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             noOptimize: false,
             useCaretForExponentiation: false,
             useDefinitions: false,
-            useIntegersForPredicates: false
+            useIntegersForPredicates: false,
+            syntaxKind: SyntaxKind.Native
         };
         return config;
     }

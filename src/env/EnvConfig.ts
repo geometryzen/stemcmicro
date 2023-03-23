@@ -1,3 +1,4 @@
+import { SyntaxKind } from "../parser/parser";
 import { Directive, FEATURE, Predicates } from "./ExtensionEnv";
 
 export interface EnvConfig {
@@ -9,4 +10,5 @@ export interface EnvConfig {
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
     useIntegersForPredicates: boolean;
+    syntaxKind: SyntaxKind;
 }

@@ -1,5 +1,5 @@
 /**
- * imaginary unit, (expt -1 1/2)
+ * imaginary unit, (pow -1 1/2)
  */
 export { imu } from '../tree/imu/Imu';
 

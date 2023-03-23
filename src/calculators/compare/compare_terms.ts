@@ -117,7 +117,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             return hook(SIGN_LT, "G");
         }
         if (is_num(rhs)) {
-            // Comparing (expt x 1) to (expt x 0)
+            // Comparing (pow x 1) to (pow x 0)
             return hook(compare_num_num(one, zero), "H");
         }
         if (is_cons(rhs) && is_pow_2_any_any(rhs)) {
@@ -136,7 +136,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             return hook(SIGN_GT, "K");
         }
         if (is_num(lhs)) {
-            // Comparing (expt x 0) to (expt x 1)
+            // Comparing (pow x 0) to (pow x 1)
             return hook(compare_num_num(zero, one), "L");
         }
         if (is_cons(lhs) && is_pow_2_any_any(lhs)) {

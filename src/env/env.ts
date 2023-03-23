@@ -28,7 +28,7 @@ import { UnknownOperator } from "./UnknownOperator";
 
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
-const POWER = native_sym(Native.pow);
+const POW = native_sym(Native.pow);
 const ISCOMPLEX = native_sym(Native.iscomplex);
 const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
 const ISREAL = native_sym(Native.isreal);
@@ -620,7 +620,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     // TODO: Consistency in names used for symbols in symbolic expressions.
     $.setSymbolPrintName(ADD, '+');        // changing will break  82 cases.
     $.setSymbolPrintName(MULTIPLY, '*');  // changing will break 113 cases.
-    $.setSymbolPrintName(POWER, 'expt');
+    $.setSymbolPrintName(POW, 'pow');
     $.setSymbolPrintName(native_sym(Native.rco), '>>');
     $.setSymbolPrintName(native_sym(Native.lco), '<<');
     $.setSymbolPrintName(native_sym(Native.inner), '|');

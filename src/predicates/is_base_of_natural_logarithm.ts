@@ -10,7 +10,7 @@ import { U } from "../tree/tree";
 const E = native_sym(Native.E);
 
 /**
- * @param expr The base found in e.g. (expt base exponent).
+ * @param expr The base found in e.g. (pow base exponent).
  */
 export function is_base_of_natural_logarithm(expr: U): expr is Sym & { __key: 'math.E' } {
     if (is_sym(expr)) {

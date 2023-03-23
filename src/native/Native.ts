@@ -65,6 +65,7 @@ export enum Native {
     outer,
     polar,
     pow,
+    pred,
     prime,
     rationalize,
     /**

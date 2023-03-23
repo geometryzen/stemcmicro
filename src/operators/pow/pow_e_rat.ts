@@ -38,7 +38,7 @@ type RHS = Rat;
 type EXP = BCons<Sym, LHS, RHS>;
 
 /**
- * (expt e X) is equivalent to exp(X)
+ * (pow e X) is equivalent to exp(X)
  */
 class Op extends Function2X<LHS, RHS> {
     readonly hash: string;

@@ -39,7 +39,7 @@ describe("abs", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(pow (+ (pow x 2) (pow y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "(x**2+y**2)**(1/2)");
         engine.release();
     });
@@ -110,7 +110,7 @@ describe("abs", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(+ (expt x 2) (expt y 2))");
+        assert.strictEqual(engine.renderAsSExpr(value), "(+ (pow x 2) (pow y 2))");
         assert.strictEqual(engine.renderAsInfix(value), "x**2+y**2");
         engine.release();
     });

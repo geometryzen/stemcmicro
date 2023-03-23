@@ -34,7 +34,7 @@ function cross(lhs: LHS, rhs: RHS): boolean {
 }
 
 /**
- * (expt (expt e (* 2 x)) 1/2) => (expt e x)
+ * (pow (pow e (* 2 x)) 1/2) => (pow e x)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;

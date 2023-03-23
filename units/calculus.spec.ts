@@ -98,7 +98,7 @@ describe("calculus", function () {
             });
             const { values } = context.executeScript(lines.join('\n'));
             // This could be improved upon...
-            assert.strictEqual(context.renderAsSExpr(values[0]), "(expt c 1/2)");
+            assert.strictEqual(context.renderAsSExpr(values[0]), "(pow c 1/2)");
             assert.strictEqual(context.renderAsInfix(values[0]), "c**(1/2)");
             context.release();
         });

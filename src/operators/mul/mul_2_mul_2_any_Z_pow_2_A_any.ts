@@ -36,9 +36,9 @@ function cross($: ExtensionEnv) {
 }
 
 /**
- * This fails for the example X = 2, Z = (expt x 2), A = x, Y = -1
+ * This fails for the example X = 2, Z = (pow x 2), A = x, Y = -1
  * Perhaps restrict Z and A to being symbols?
- * (X * Z) * (expt A Y) => (X * (expt A Y)) * Z  
+ * (X * Z) * (pow A Y) => (X * (pow A Y)) * Z  
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;

@@ -11,7 +11,7 @@ describe("not", function () {
             useIntegersForPredicates: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(expt i 1/2)");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(pow i 1/2)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "i**(1/2)");
         engine.release();
     });
@@ -24,7 +24,7 @@ describe("not", function () {
             useIntegersForPredicates: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* -1 (expt i 1/2))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* -1 (pow i 1/2))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "-i**(1/2)");
         engine.release();
     });

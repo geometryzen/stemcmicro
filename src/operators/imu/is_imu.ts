@@ -12,7 +12,7 @@ export type IMU_TYPE = Imu;
 // export type IMU_TYPE = BCons<Sym, Rat, Rat>;
 
 /**
- * Determines whether expr is the imaginary unit (imu), (expt -1 1/2).
+ * Determines whether expr is the imaginary unit (imu), (pow -1 1/2).
  * @param expr The expression to test.
  */
 export function is_imu(expr: U): expr is IMU_TYPE {

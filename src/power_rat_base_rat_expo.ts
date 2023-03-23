@@ -38,7 +38,7 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
         return hook(one, "A");
     }
 
-    // (expt -1 1/2) is recognized as being the imaginary unit, but we transform according to how complex numbers are being handled.
+    // (pow -1 1/2) is recognized as being the imaginary unit, but we transform according to how complex numbers are being handled.
     if (base.isMinusOne() && expo.isHalf()) {
         if ($.getDirective(Directive.complexAsClock)) {
             return hook(items_to_cons(POWER, base, expo), "B-clock");

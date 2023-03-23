@@ -82,7 +82,7 @@ describe("transform", function () {
         const { values } = engine.executeScript(lines.join('\n'));
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (expt a -1) (expt b -1) (expt c -1))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(+ (pow a -1) (pow b -1) (pow c -1))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1/a+1/b+1/c");
         engine.release();
     });
@@ -94,7 +94,7 @@ describe("transform", function () {
         const { values } = engine.executeScript(lines.join('\n'));
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(expt a -1)");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(pow a -1)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1/a");
         engine.release();
     });
@@ -107,7 +107,7 @@ describe("transform", function () {
         const { values } = engine.executeScript(lines.join('\n'));
         assert.isTrue(Array.isArray(values));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (expt a -1))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(foo (pow a -1))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "foo(1/a)");
         engine.release();
     });

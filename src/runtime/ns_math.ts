@@ -22,31 +22,13 @@ export const MATH_LCO = native_sym(Native.lco);
 export const MATH_RCO = native_sym(Native.rco);
 export const MATH_SIN = native_sym(Native.sin);
 export const MATH_SUCC = native_sym(Native.succ);
-/**
- * pred
- */
-export const MATH_PRED = create_sym('pred');
+export const MATH_PRED = native_sym(Native.pred);
 export const MATH_E = native_sym(Native.E);
 export const MATH_PI = native_sym(Native.PI);
-/**
- * factorial
- */
 export const MATH_FACTORIAL = native_sym(Native.factorial);
-/**
- * iszero
- */
-export const MATH_ISZERO = create_sym('iszero');
-/**
- * '<'
- */
+export const MATH_ISZERO = native_sym(Native.iszero);
 export const MATH_LT = native_sym(Native.testlt);
-/**
- * '>'
- */
 export const MATH_GT = native_sym(Native.testgt);
-/**
- * '<='
- */
 export const MATH_LE = native_sym(Native.testle);
 /**
  * ':'

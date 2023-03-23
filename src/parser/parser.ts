@@ -115,7 +115,7 @@ function scheme_parse_options(options?: ParseOptions): SchemeParseOptions {
                 '+': MATH_ADD,
                 '*': MATH_MUL,
                 'exp': MATH_EXP,
-                'expt': MATH_POW,
+                'pow': MATH_POW,
                 'quote': QUOTE,
                 'real?': ISREAL
             },

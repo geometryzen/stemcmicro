@@ -30,7 +30,7 @@ const guardL = and(is_cons, is_pow_2_any_rat);
 const guardR = is_rat;
 
 /**
- * (expt (expt x 2) 1/2) => abs(x)
+ * (pow (pow x 2) 1/2) => abs(x)
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;

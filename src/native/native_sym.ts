@@ -66,6 +66,7 @@ export function build_sym(code: Native): Sym {
         case Native.outer: return create_sym('outer');
         case Native.polar: return create_sym('polar');
         case Native.pow: return create_sym('pow');
+        case Native.pred: return create_sym('pred');
         case Native.prime: return create_sym('prime');
         case Native.rationalize: return create_sym('rationalize');
         case Native.re: return create_sym('re');

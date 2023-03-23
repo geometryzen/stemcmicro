@@ -266,14 +266,14 @@ describe("mixedprint", function () {
         assert.strictEqual(engine.renderAsHuman(values[0]), "-1/2 2^(1/2)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "-1/2*2^(1/2)");
         assert.strictEqual(engine.renderAsLaTeX(values[0]), "-\\frac{\\sqrt{2}}{2}");
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* -1/2 (expt 2 1/2))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* -1/2 (pow 2 1/2))");
         assert.isArray(prints);
         assert.strictEqual(prints.length, 5, "prints.length");
         assert.strictEqual(prints[0], "   1   1/2\n- --- 2\n   2");
         assert.strictEqual(prints[1], "-1/2 2^(1/2)");
         assert.strictEqual(prints[2], "-1/2*2^(1/2)");
         assert.strictEqual(prints[3], "-\\frac{\\sqrt{2}}{2}");
-        assert.strictEqual(prints[4], "(* -1/2 (expt 2 1/2))");
+        assert.strictEqual(prints[4], "(* -1/2 (pow 2 1/2))");
         engine.release();
     });
 });

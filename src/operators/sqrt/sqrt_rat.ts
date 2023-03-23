@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * sqrt(x: Rat) => (expt x 1/2)
+ * sqrt(x: Rat) => (pow x 1/2)
  */
 class Op extends Function1<Rat> implements Operator<Cons> {
     readonly hash: string;

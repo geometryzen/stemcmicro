@@ -40,7 +40,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
             return [TFLAG_DIFF, base];
         }
         else if (expo.isZero()) {
-            // TODO: Some debate here about how (expt 0 0) should be handled.
+            // TODO: Some debate here about how (pow 0 0) should be handled.
             return [TFLAG_DIFF, one];
         }
         else {

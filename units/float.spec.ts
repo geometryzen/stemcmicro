@@ -41,7 +41,7 @@ describe("float", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "(expt (+ 1 (* 2 i)) 1/2)");
+        assert.strictEqual(engine.renderAsSExpr(actual), "(pow (+ 1 (* 2 i)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(actual), "(1+2*i)^(1/2)");
         engine.release();
     });
@@ -54,7 +54,7 @@ describe("float", function () {
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(actual), "(expt (add 1.0 (multiply 2.0 i)) 0.5)");
+        // assert.strictEqual(engine.renderAsSExpr(actual), "(pow (add 1.0 (multiply 2.0 i)) 0.5)");
         assert.strictEqual(engine.renderAsInfix(actual), "1.272020...+0.786151...*i");
         engine.release();
     });

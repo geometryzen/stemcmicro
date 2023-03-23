@@ -225,7 +225,7 @@ export function is_imaginary_number(expr: U): boolean {
                 return true;
             }
             if (expr.equals(imu)) {
-                // Probbaly dead code because i => (expt -1 1/2), which isn't a (multiply )
+                // Probbaly dead code because i => (pow -1 1/2), which isn't a (multiply )
                 return true;
             }
             if (is_power_and_has_rational_exponent_and_negative_base(caddr(expr))) {

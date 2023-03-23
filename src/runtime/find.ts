@@ -58,7 +58,7 @@ export function has_clock_form(expr: U, mysteryArg: U, $: ExtensionEnv): boolean
 export function has_exp_form(expr: U, $: ExtensionEnv): boolean {
 
     if (is_cons(expr)) {
-        // (expt e (...))
+        // (pow e (...))
         if (is_power(expr)) {
             const argList_expr = expr.cdr;
             if (is_cons(argList_expr)) {

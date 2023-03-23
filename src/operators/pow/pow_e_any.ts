@@ -92,7 +92,7 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
         // Do nothing
     }
     else {
-        // Conversion of (expt e to trigonometric form, when expanding.
+        // Conversion of (pow e to trigonometric form, when expanding.
         if ($.isExpanding()) {
             // TODO: We could also consider the case of blades whose square is -1.
             if (is_imu(expo)) {

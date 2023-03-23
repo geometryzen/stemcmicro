@@ -33,7 +33,7 @@ describe("binomial", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (expt (factorial k) -1) (expt (factorial (* -1 k)) -1))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (pow (factorial k) -1) (pow (factorial (* -1 k)) -1))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1/(k!*(-k)!)");
         engine.release();
     });
@@ -46,7 +46,7 @@ describe("binomial", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (factorial n) (expt (factorial n) -1))");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "(* (factorial n) (pow (factorial n) -1))");
         assert.strictEqual(engine.renderAsInfix(values[0]), "1");
         engine.release();
     });

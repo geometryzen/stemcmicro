@@ -195,7 +195,7 @@ describe("scripts", function () {
             assert.strictEqual(context.renderAsHuman(values[0]), `x^y`);
             assert.strictEqual(context.renderAsInfix(values[0]), `x^y`);
             assert.strictEqual(context.renderAsLaTeX(values[0]), `x^y`);
-            assert.strictEqual(context.renderAsSExpr(values[0]), `(expt x y)`);
+            assert.strictEqual(context.renderAsSExpr(values[0]), `(pow x y)`);
             context.release();
         });
         it("Python", function () {
@@ -213,12 +213,12 @@ describe("scripts", function () {
             assert.strictEqual(context.renderAsHuman(values[0]), `x**y`);
             assert.strictEqual(context.renderAsInfix(values[0]), `x**y`);
             assert.strictEqual(context.renderAsLaTeX(values[0]), `x^y`);
-            assert.strictEqual(context.renderAsSExpr(values[0]), `(expt x y)`);
+            assert.strictEqual(context.renderAsSExpr(values[0]), `(pow x y)`);
             context.release();
         });
         it("Scheme", function () {
             const lines: string[] = [
-                `(expt x y)`
+                `(pow x y)`
             ];
             const sourceText = lines.join('\n');
             const context = create_script_context({
@@ -231,7 +231,7 @@ describe("scripts", function () {
             assert.strictEqual(context.renderAsHuman(values[0]), `x**y`);
             assert.strictEqual(context.renderAsInfix(values[0]), `x**y`);
             assert.strictEqual(context.renderAsLaTeX(values[0]), `x^y`);
-            assert.strictEqual(context.renderAsSExpr(values[0]), `(expt x y)`);
+            assert.strictEqual(context.renderAsSExpr(values[0]), `(pow x y)`);
             context.release();
         });
     });

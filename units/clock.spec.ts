@@ -51,7 +51,7 @@ xdescribe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(pow (+ (pow x 2) (pow y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "(-1)**(1/2)*3**(1/2)");
         engine.release();
     });
@@ -64,7 +64,7 @@ xdescribe("clock", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(print_list(value, $), "(expt (+ (expt x 2) (expt y 2)) 1/2)");
+        // assert.strictEqual(print_list(value, $), "(pow (+ (pow x 2) (pow y 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "(-1)**(1/3)");
         engine.release();
     });

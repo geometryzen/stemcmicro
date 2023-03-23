@@ -17,7 +17,7 @@ describe("canon", function () {
             engine.release();
         });
     });
-    it("Powers of x should be Num (x^0), Sym (x^1), x^n (expt x n) with n ascending", function () {
+    it("Powers of x should be Num (x^0), Sym (x^1), x^n (pow x n) with n ascending", function () {
         const lines: string[] = [
             `1/x^2+1/x+1+x+x^2+x^3`
         ];

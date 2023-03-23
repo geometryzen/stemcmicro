@@ -44,7 +44,7 @@ describe("assumptions", function () {
         assert.strictEqual(aProps.zero, false);                 // 28
 
         const actual = assert_one_value_execute(lines.join('\n'), context);
-        assert.strictEqual(context.renderAsSExpr(actual), '(expt a 1/2)');
+        assert.strictEqual(context.renderAsSExpr(actual), '(pow a 1/2)');
         assert.strictEqual(context.renderAsInfix(actual), 'a**(1/2)');
         context.release();
     });

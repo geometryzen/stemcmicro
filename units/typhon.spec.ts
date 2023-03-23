@@ -221,7 +221,7 @@ describe("typhon", function () {
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
-        assert.strictEqual(context.renderAsSExpr(values[0]), `(expt a b)`);
+        assert.strictEqual(context.renderAsSExpr(values[0]), `(pow a b)`);
         // TODO
         assert.strictEqual(context.renderAsInfix(values[0]), `a**b`);
         context.release();

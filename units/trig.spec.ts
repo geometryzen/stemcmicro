@@ -12,7 +12,7 @@ describe("trig", function () {
             dependencies: []
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
+        // assert.strictEqual(engine.renderAsSExpr(value), '(+ (pow (cos x) 2) (pow (sin x) 2))');
         // assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
         assert.strictEqual(engine.renderAsInfix(value), '1');
     });
@@ -104,7 +104,7 @@ describe("trig", function () {
                 useDefinitions: false
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
+            // assert.strictEqual(engine.renderAsSExpr(value), '(+ (pow (cos x) 2) (pow (sin x) 2))');
             // assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
             assert.strictEqual(engine.renderAsInfix(value), '1');
         });
@@ -116,7 +116,7 @@ describe("trig", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            // assert.strictEqual(engine.renderAsSExpr(value), '(+ (expt (cos x) 2) (expt (sin x) 2))');
+            // assert.strictEqual(engine.renderAsSExpr(value), '(+ (pow (cos x) 2) (pow (sin x) 2))');
             // assert.strictEqual(engine.renderAsInfix(value), 'cos(x)**2+sin(x)**2');
             assert.strictEqual(engine.renderAsInfix(value), '1');
         });

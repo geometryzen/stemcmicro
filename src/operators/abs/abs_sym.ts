@@ -26,7 +26,7 @@ function cross($: ExtensionEnv) {
 }
 
 /**
- * abs(x) => (sqrt (expt x 2))
+ * abs(x) => (sqrt (pow x 2))
  */
 class Op extends Function1X<Sym> implements Operator<UCons<Sym, Sym>> {
     constructor($: ExtensionEnv) {

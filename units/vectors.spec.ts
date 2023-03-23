@@ -33,7 +33,7 @@ describe("vectors", function () {
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(expt (+ (expt Ax 2) (expt Ay 2) (expt Az 2)) 1/2)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(pow (+ (pow Ax 2) (pow Ay 2) (pow Az 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "(Ax**2+Ay**2+Az**2)**(1/2)");
         engine.release();
     });
@@ -216,7 +216,7 @@ describe("vectors", function () {
             dependencies: ['Blade']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsSExpr(value), "(expt (+ (expt Ax 2) (expt Ay 2) (expt Az 2)) 1/2)");
+        assert.strictEqual(engine.renderAsSExpr(value), "(pow (+ (pow Ax 2) (pow Ay 2) (pow Az 2)) 1/2)");
         assert.strictEqual(engine.renderAsInfix(value), "(Ax**2+Ay**2+Az**2)**(1/2)");
         engine.release();
     });

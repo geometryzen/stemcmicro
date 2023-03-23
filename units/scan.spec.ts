@@ -11,13 +11,15 @@ import { is_sym } from '../src/operators/sym/is_sym';
 import { is_tensor } from '../src/operators/tensor/is_tensor';
 import { ParseOptions, parse_script } from '../src/parser/parser';
 import { ASSIGN, QUOTE } from '../src/runtime/constants';
-import { MATH_ADD, MATH_COMPONENT, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
+import { MATH_ADD, MATH_GT, MATH_INNER, MATH_LCO, MATH_LE, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../src/runtime/ns_math';
 import { Boo } from '../src/tree/boo/Boo';
 import { Flt } from '../src/tree/flt/Flt';
 import { negOne, Rat, three, two, zero } from '../src/tree/rat/Rat';
 import { Str } from '../src/tree/str/Str';
 import { create_sym, Sym } from '../src/tree/sym/Sym';
 import { Cons, is_cons, items_to_cons, U } from '../src/tree/tree';
+
+const COMPONENT = native_sym(Native.component);
 
 const NAME_A = create_sym('a');
 const NAME_B = create_sym('b');
@@ -382,7 +384,7 @@ describe("scan", function () {
     describe("a[b]", function () {
         it("a[b] => (component a b)", function () {
             const expr = expect_cons(expect_one_tree("  a  [  b  ] "));
-            expect_sym_no_info(cadnr(expr, 0), MATH_COMPONENT);
+            expect_sym_no_info(cadnr(expr, 0), COMPONENT);
             expect_sym(cadnr(expr, 1), NAME_A, 'a', 2, 3);
             expect_sym(cadnr(expr, 2), NAME_B, 'b', 8, 9);
         });
@@ -390,9 +392,9 @@ describe("scan", function () {
     describe("a[b][c]", function () {
         it("a[b][c] => (component (component a b) c)", function () {
             const expr = expect_cons(expect_one_tree("  a  [  b  ] [  c  ]"));
-            expect_sym_no_info(cadnr(expr, 0), MATH_COMPONENT);
+            expect_sym_no_info(cadnr(expr, 0), COMPONENT);
             const a_index_b = expect_cons(cadnr(expr, 1));
-            expect_sym_no_info(cadnr(a_index_b, 0), MATH_COMPONENT);
+            expect_sym_no_info(cadnr(a_index_b, 0), COMPONENT);
             expect_sym(cadnr(a_index_b, 1), NAME_A, 'a', 2, 3);
             expect_sym(cadnr(a_index_b, 2), NAME_B, 'b', 8, 9);
             expect_sym(cadnr(expr, 2), NAME_C, 'c', 16, 17);
@@ -401,7 +403,7 @@ describe("scan", function () {
     describe("a[b,c]", function () {
         it("a[b,c] => (component a b c)", function () {
             const expr = expect_cons(expect_one_tree("  a  [  b  ,  c  ]"));
-            expect_sym_no_info(cadnr(expr, 0), MATH_COMPONENT);
+            expect_sym_no_info(cadnr(expr, 0), COMPONENT);
             expect_sym(cadnr(expr, 1), NAME_A, 'a', 2, 3);
             expect_sym(cadnr(expr, 2), NAME_B, 'b', 8, 9);
             expect_sym(cadnr(expr, 3), NAME_C, 'c', 14, 15);

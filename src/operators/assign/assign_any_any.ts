@@ -1,5 +1,7 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { ASSIGN, SYM_MATH_COMPONENT } from "../../runtime/constants";
+import { Native } from "../../native/Native";
+import { native_sym } from "../../native/native_sym";
+import { ASSIGN } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { caadr } from "../../tree/helpers";
 import { Sym } from "../../tree/sym/Sym";
@@ -10,6 +12,8 @@ import { is_any } from "../helpers/is_any";
 import { is_sym } from "../sym/is_sym";
 import { define_function } from "./define_function";
 import { setq_indexed } from "./setq_indexed";
+
+export const COMPONENT = native_sym(Native.component);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -45,7 +49,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
     const lhs = expr.lhs;
 
     // case of tensor
-    if (caadr(expr).equals(SYM_MATH_COMPONENT)) {
+    if (caadr(expr).equals(COMPONENT)) {
         return setq_indexed(expr, $);
     }
 

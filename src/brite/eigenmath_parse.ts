@@ -1,4 +1,4 @@
-import { defs, hard_reset } from "../runtime/defs";
+import { move_top_of_stack } from "../runtime/defs";
 import { normalize_unicode_dots } from "../runtime/normalize_dots";
 import { U } from "../tree/tree";
 import { scan } from "./scan";
@@ -80,7 +80,7 @@ export function eigenmath_parse(fileName: string, sourceText: string, options?: 
                 else {
                     errors.push(new Error(`${error}`));
                 }
-                hard_reset();
+                move_top_of_stack(0);
 
                 break;
             }
@@ -107,7 +107,6 @@ export function eigenmath_parse(fileName: string, sourceText: string, options?: 
 }
 
 function scan_substring(sourceText: string, start: number, config: ScanConfig): [scanned: number, tree: U] {
-    defs.errorMessage = '';
     return scan(sourceText.substring(start), {
         useCaretForExponentiation: config.useCaretForExponentiation,
         explicitAssocAdd: config.explicitAssocAdd,

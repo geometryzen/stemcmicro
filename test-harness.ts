@@ -234,7 +234,6 @@ export function run_shardable_test(s: string[], prefix = '') {
         setup_test(() => {
             for (let i = 0; i < s.length; i += 2) {
                 test((prefix || `${testIndex}: `) + s[i], t => {
-                    defs.out_count = 0;
                     t.is(s[i + 1], engine.renderAsInfix(engine.executeScript(s[i]).values[0]));
                 });
             }
@@ -341,7 +340,6 @@ export function run_test(s: string[], options?: TestOptions): void {
         setup_test(() => {
             test(name_from_harness_options(options) || `${testIndex}`, t => {
                 for (let i = 0; i < s.length; i += 2) {
-                    defs.out_count = 0;
                     const sourceText = s[i];
                     // eslint-disable-next-line no-constant-condition
                     if (true/*config.verbose*/) {

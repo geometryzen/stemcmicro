@@ -26,11 +26,11 @@ import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { defs } from "../../runtime/defs";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
 import { cadadr, caddr, cdadr } from "../../tree/helpers";
-import { is_cons, nil, U } from "../../tree/tree";
+import { Cons, is_cons, nil, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 
 //-----------------------------------------------------------------------------
-export function setq_indexed(p1: U, $: ExtensionEnv): U {
+export function setq_indexed(p1: Cons, $: ExtensionEnv): U {
     const p4 = cadadr(p1);
     // console.lg(`p4: ${toInfixString(p4)}`);
     if (!is_sym(p4)) {

@@ -1,6 +1,8 @@
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
+import { Native } from '../native/Native';
+import { native_sym } from '../native/native_sym';
 import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
 import { is_flt } from '../operators/flt/is_flt';
 import { is_num } from '../operators/num/is_num';
@@ -10,7 +12,7 @@ import { is_sym } from '../operators/sym/is_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_num_and_negative } from '../predicates/is_negative_number';
-import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER, SYM_MATH_COMPONENT } from '../runtime/constants';
+import { ADD, ASSIGN, FACTORIAL, MULTIPLY, POWER } from '../runtime/constants';
 import { is_add, is_factorial, is_multiply, is_power } from '../runtime/helpers';
 import { number_to_floating_point_string } from '../runtime/number_to_floating_point_string';
 import { Flt } from '../tree/flt/Flt';
@@ -22,6 +24,8 @@ import { Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, U } from '../tree/tree';
 import { render_using_non_sexpr_print_mode } from './print';
+
+const COMPONENT = native_sym(Native.component);
 
 /*
 
@@ -711,7 +715,7 @@ function emit_denominator(p: U, n: number, $: ExtensionEnv) {
 
 function emit_function(expr: Cons, $: ExtensionEnv) {
     // console.lg("emit_function", $.toInfixString(expr));
-    if (expr.opr.equals(SYM_MATH_COMPONENT) && is_sym(cadr(expr))) {
+    if (expr.opr.equals(COMPONENT) && is_sym(cadr(expr))) {
         emit_index_function(expr, $);
         return;
     }

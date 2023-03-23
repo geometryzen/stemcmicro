@@ -29,10 +29,6 @@ export const MATH_PRED = create_sym('pred');
 export const MATH_E = native_sym(Native.E);
 export const MATH_PI = native_sym(Native.PI);
 /**
- * component e.g. (indexing into a tensor).
- */
-export const MATH_COMPONENT = native_sym(Native.component);
-/**
  * factorial
  */
 export const MATH_FACTORIAL = native_sym(Native.factorial);

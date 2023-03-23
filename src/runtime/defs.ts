@@ -9,12 +9,6 @@ import { Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { MATH_PI } from "./ns_math";
 
-// TOS cannot be arbitrarily large because the OS seg faults on deep recursion.
-// For example, a circular evaluation like x=x+1 can cause a seg fault.
-// At this setting (100,000) the evaluation stack overruns before seg fault.
-
-export const TOS = 100000;
-
 export const PRINTOUTRESULT = false;
 
 /**
@@ -61,13 +55,11 @@ export class Defs {
     }
 
     public recursionLevelNestedRadicalsRemoval = 0;
-    public errorMessage = '';
 
     public symbolsDependencies: { [key: string]: string[] } = {};
 
     public symbolsHavingReassignments: string[] = [];
     public symbolsInExpressionsWithoutAssignments: string[] = [];
-    public patternHasBeenFound = false;
 
     /**
      * top of stack
@@ -82,7 +74,6 @@ export class Defs {
      */
     public stack: (U | undefined | null)[] = [];
 
-    public out_count = 0;
     /**
      * Causes the print output to render JavaScript.
      */
@@ -115,14 +106,8 @@ export const defs = new Defs();
  * Otherwise, there should be a convenient way to throw structured Error(s).
  */
 export function halt(s: string): never {
-    defs.errorMessage += 'Stop: ';
-    defs.errorMessage += s;
-    const message = defs.errorMessage;
-
-    defs.errorMessage = '';
     move_top_of_stack(0);
-
-    throw new Error(message);
+    throw new Error(`Stop: ${s}`);
 }
 
 export function move_top_of_stack(stackPos: number) {
@@ -141,17 +126,6 @@ export function move_top_of_stack(stackPos: number) {
         defs.stack[defs.tos] = null;
         defs.tos--;
     }
-}
-
-/**
- * This is a good function to call after an abnormal program termination.
- * It is called 
- * 
- * 1. Resets the stack pointer.
- */
-export function hard_reset() {
-    // console.lg('hard_reset()');
-    move_top_of_stack(0);
 }
 
 export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {

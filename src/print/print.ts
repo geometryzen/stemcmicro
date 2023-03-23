@@ -49,7 +49,6 @@ import {
     SIN,
     SQRT,
     SUM,
-    SYM_MATH_COMPONENT,
     TAN,
     TEST,
     TESTGE,
@@ -78,7 +77,8 @@ const ENGLISH_UNDEFINED = 'undefined';
 const MATH_E = native_sym(Native.E);
 const MATH_IMU = native_sym(Native.IMU);
 const MATH_PI = native_sym(Native.PI);
-const testeq = native_sym(Native.testeq);
+const TESTEQ = native_sym(Native.testeq);
+const COMPONENT = native_sym(Native.component);
 
 export function get_script_last($: ExtensionEnv): U {
     return $.valueOf(RESERVED_KEYWORD_LAST);
@@ -1712,7 +1712,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     //    return
     //  }
 
-    
+
     if (car(expr).equals(FUNCTION)) {
         let str = '';
         const fbody = cadr(expr);
@@ -1747,7 +1747,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         return str;
     }
 
-    if (car(expr).equals(SYM_MATH_COMPONENT) && is_sym(cadr(expr))) {
+    if (car(expr).equals(COMPONENT) && is_sym(cadr(expr))) {
         let str = '';
         str += print_index_function(expr, $);
         return str;
@@ -1981,7 +1981,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             return str;
         }
     }
-    else if (is_cons(expr) && expr.opr.equals(testeq)) {
+    else if (is_cons(expr) && expr.opr.equals(TESTEQ)) {
         if (defs.codeGen) {
             let str = '';
             str +=

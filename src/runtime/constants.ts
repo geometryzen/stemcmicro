@@ -2,7 +2,7 @@ import { BigInteger } from 'big-integer';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { create_sym } from '../tree/sym/Sym';
-import { MATH_COMPONENT, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
+import { MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
 
 export const dontCreateNewRadicalsInDenominatorWhenEvalingMultiplication = true;
 export const do_simplify_nested_radicals = true;
@@ -80,7 +80,6 @@ export const HERMITE = create_sym('hermite');
 export const HILBERT = create_sym('hilbert');
 export const IF = create_sym('if');
 export const IMAG = native_sym(Native.imag);
-export const SYM_MATH_COMPONENT = MATH_COMPONENT;
 export const INTEGRAL = native_sym(Native.integral);
 export const INV = MATH_INV;
 export const INVG = create_sym('invg');

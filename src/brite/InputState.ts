@@ -5,11 +5,10 @@ import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { StrTokenParser } from "../operators/str/StrTokenParser";
 import { SymTokenParser } from "../operators/sym/SymTokenParser";
 import { ASSIGN, METAA, METAB, METAX } from "../runtime/constants";
-import { defs } from "../runtime/defs";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { T_ASTRX, T_CARET, T_ASTRX_ASTRX, T_BANG, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
 import { consume_num } from "./consume_num";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
@@ -572,25 +571,6 @@ export class InputState {
         // console.lg(`update_token_buf(pos => ${pos}, end => ${end}), token.buf => ${JSON.stringify(token.buf)}`);
     }
     public scan_error(errmsg: string): never {
-        // console.lg(`scan_error ${JSON.stringify(micro(state))} ${errmsg})`);
-        defs.errorMessage = '';
-
-        // try not to put question mark on orphan line
-        while (this.input_str !== this.#token.end) {
-            if ((this.sourceText[this.input_str] === '\n' || this.sourceText[this.input_str] === '\r') && (this.input_str + 1 === this.#token.end)) {
-                break;
-            }
-            defs.errorMessage += this.sourceText[this.input_str++];
-        }
-
-        defs.errorMessage += ' ? ';
-
-        while (this.sourceText[this.input_str] && this.sourceText[this.input_str] !== '\n' && this.sourceText[this.input_str] !== '\r') {
-            defs.errorMessage += this.sourceText[this.input_str++];
-        }
-
-        defs.errorMessage += '\n';
-
         throw new TokenError(errmsg, this.#token.pos, this.#token.end);
     }
     tokenCharCode(): number | undefined {

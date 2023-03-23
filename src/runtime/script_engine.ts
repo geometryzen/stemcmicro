@@ -10,7 +10,7 @@ import { render_as_sexpr } from "../print/render_as_sexpr";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
-import { hard_reset } from "./defs";
+import { move_top_of_stack } from "./defs";
 import { execute_script, transform_tree } from "./execute";
 import { execute_definition, execute_std_definitions } from "./init";
 
@@ -65,7 +65,7 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
 
-    hard_reset();
+    move_top_of_stack(0);
 
     $.clearBindings();
     $.clearOperators();

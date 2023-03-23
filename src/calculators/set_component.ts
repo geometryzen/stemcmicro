@@ -34,9 +34,7 @@ export function set_component(n: number): void {
     const lhs: Tensor = defs.stack[s + 1] as Tensor;
 
     if (!is_tensor(lhs)) {
-        halt(
-            'error in indexed assign: assigning to something that is not a tensor'
-        );
+        halt('error in indexed assign: assigning to something that is not a tensor');
     }
 
     const m = n - 2;

@@ -5,28 +5,27 @@ import { is_rat } from '../operators/rat/rat_extension';
 import { assert_sym } from '../operators/sym/assert_sym';
 import {
     ASSIGN,
-    FACTORIAL,
-    PATTERN,
-    predefinedSymbolsInGlobalScope_doNotTrackInDependencies,
+    FACTORIAL, predefinedSymbolsInGlobalScope_doNotTrackInDependencies,
     QUOTE,
     TRANSPOSE,
     TRANSPOSE_CHAR_CODE
 } from '../runtime/constants';
 import { defs } from '../runtime/defs';
-import { MATH_COMPONENT, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
+import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { Boo } from '../tree/boo/Boo';
 import { negOne, one } from '../tree/rat/Rat';
-import { create_sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../tree/tree';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
-import { T_ASTRX, T_CARET, T_ASTRX_ASTRX, T_BANG, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
+import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
 import { create_tensor } from './create_tensor';
 import { InputState } from './InputState';
 import { one_divided_by } from './one_divided_by';
 import { scanner_negate } from './scanner_negate';
 import { TokenCode } from './Token';
+
+export const COMPONENT = native_sym(Native.component);
 
 export interface ScanOptions {
     useCaretForExponentiation: boolean;
@@ -745,7 +744,7 @@ function scan_factor(state: InputState): U {
 function scan_index(indexable: U, state: InputState): U {
     state.expect(T_LSQB);
     state.advance();
-    const items: U[] = [MATH_COMPONENT, indexable];
+    const items: U[] = [COMPONENT, indexable];
     if (state.code !== T_RSQB) {
         items.push(scan_additive_expr(state));
         while (state.code === T_COMMA) {
@@ -1004,10 +1003,6 @@ function scan_function_call_with_function_name(state: InputState): U {
 
     if (is_special_function(functionName)) {
         state.functionInvokationsScanningStack.pop();
-    }
-
-    if (PATTERN.equals(create_sym(functionName))) {
-        defs.patternHasBeenFound = true;
     }
 
     // console.lg('-- scan_function_call_with_function_name end');

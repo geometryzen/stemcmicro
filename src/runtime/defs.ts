@@ -41,12 +41,6 @@ export type PrintMode =
 
 export class Defs {
     /**
-     * TODO: This is a bit of a code smell. Maybe a hack for the test harness?
-     * What is exactly is it trying to do?
-     * It is set to true during the execution of the test harness, and reset after.
-     */
-    private $test_flag = false;
-    /**
      * The (default) PrintMode when using the (print ...) expression or print keyword.
      */
     private $printMode: PrintMode = PRINTMODE_INFIX;
@@ -86,13 +80,6 @@ export class Defs {
     }
     setPrintMode(printMode: PrintMode) {
         this.$printMode = printMode;
-    }
-
-    get testFlag(): boolean {
-        return this.$test_flag;
-    }
-    setTestFlag(test_flag: boolean) {
-        this.$test_flag = test_flag;
     }
 }
 

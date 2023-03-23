@@ -328,7 +328,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
     if (defs.printMode === PRINTMODE_LATEX) {
         str += print_str('}{');
     }
-    else if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
+    else if (defs.printMode === PRINTMODE_HUMAN) {
         str += print_str(' / ');
     }
     else {
@@ -397,7 +397,7 @@ export function print_additive_expr(p: U, $: ExtensionEnv): string {
         p = cdr(p);
         while (is_cons(p)) {
             if (sign_of_term(car(p)) === '+') {
-                if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
+                if (defs.printMode === PRINTMODE_HUMAN) {
                     str += print_str(' + ');
                 }
                 else {
@@ -405,7 +405,7 @@ export function print_additive_expr(p: U, $: ExtensionEnv): string {
                 }
             }
             else {
-                if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
+                if (defs.printMode === PRINTMODE_HUMAN) {
                     str += print_str(' - ');
                 }
                 else {
@@ -585,7 +585,7 @@ function print_outer_operator(): string {
         return ' \\wedge ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
+    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
         return print_str(' ^ ');
     }
     else {
@@ -653,7 +653,7 @@ function print_inner_operator(): string {
         return ' \\mid ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
+    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
         return print_str(' | ');
     }
     else {
@@ -666,7 +666,7 @@ function print_lco_operator(): string {
         return ' \\ll ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
+    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
         return print_str(' << ');
     }
     else {
@@ -679,7 +679,7 @@ function print_rco_operator(): string {
         return ' \\gg ';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
+    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
         return print_str(' >> ');
     }
     else {
@@ -1381,7 +1381,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
                 if (defs.printMode === PRINTMODE_LATEX) {
                     str += print_str('\\frac{1}{');
                 }
-                else if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
+                else if (defs.printMode === PRINTMODE_HUMAN) {
                     str += print_str('1 / ');
                 }
                 else {
@@ -1408,7 +1408,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
                 if (defs.printMode === PRINTMODE_LATEX) {
                     str += print_str('\\frac{1}{');
                 }
-                else if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
+                else if (defs.printMode === PRINTMODE_HUMAN) {
                     str += print_str('1 / ');
                 }
                 else {
@@ -1524,7 +1524,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
         }
 
         // print the power symbol
-        if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
+        if (defs.printMode === PRINTMODE_HUMAN) {
             if ($.getDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }
@@ -1735,7 +1735,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
             str += print_str(' \\rightarrow ');
         }
         else {
-            if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag) {
+            if (defs.printMode === PRINTMODE_HUMAN) {
                 str += print_str(' -> ');
             }
             else {
@@ -2142,7 +2142,7 @@ function print_multiply_sign(): string {
         return '';
     }
 
-    if (defs.printMode === PRINTMODE_HUMAN && !defs.testFlag && !defs.codeGen) {
+    if (defs.printMode === PRINTMODE_HUMAN && !defs.codeGen) {
         return print_str(' ');
     }
     else {

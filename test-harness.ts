@@ -5,7 +5,6 @@ import process from 'process';
 import { SymbolProps } from './src/env/ExtensionEnv';
 import { SyntaxKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
-import { defs } from './src/runtime/defs';
 import { create_script_context, ScriptContext, ScriptContextOptions } from './src/runtime/script_engine';
 import { U } from './src/tree/tree';
 
@@ -210,15 +209,7 @@ function setup_test(f: () => void, engine: ScriptContext, options: ScriptContext
     // Keeping it here as a note for now.
 
     // engine.executeScript('e=quote(e)');
-
-    const orig_test_flag = defs.testFlag;
-    defs.setTestFlag(true);
-    try {
-        f();
-    }
-    finally {
-        defs.setTestFlag(orig_test_flag);
-    }
+    f();
 }
 
 /**

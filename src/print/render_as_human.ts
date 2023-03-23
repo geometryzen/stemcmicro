@@ -10,10 +10,9 @@ export function render_as_human(expr: U, $: ExtensionEnv): string {
     defs.codeGen = false;
     defs.setPrintMode(PRINTMODE_HUMAN);
     try {
-        let str = render_using_non_sexpr_print_mode(expr, $);
-        // some variables might contain underscores, escape those
-        str = str.replace(/_/g, '\\_');
-        return str;
+        const str = render_using_non_sexpr_print_mode(expr, $);
+        // some variables might contain underscores, escape those. Why?
+        return str.replace(/_/g, '\\_');
     }
     finally {
         defs.codeGen = codeGen;

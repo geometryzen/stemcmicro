@@ -49,7 +49,6 @@ export function keepFlag(flags: TFLAGS): boolean {
     return (flags & TFLAG_KEEP) === TFLAG_KEEP;
 }
 
-// TODO: Need to be able to handle positive and negative cases (like Vector).
 /**
  *
  */
@@ -171,7 +170,7 @@ export interface ExprComparator {
 }
 
 /**
- * Not to be confused with the LegacyExpr.
+ * Not to be confused with the ConsExpr.
  * Here the first argument is the argument list and does not include the operator.
  */
 export type LambdaExpr = (argList: Cons, $: ExtensionEnv) => U;
@@ -184,7 +183,7 @@ export type ConsExpr = (expr: Cons, $: ExtensionEnv) => U;
 
 export type KeywordRunner = ($: ExtensionEnv) => void;
 
-export interface SymbolProps {
+export interface Predicates {
     /**
      * An algebraic number is any number that is a root of a non-zero polynomial having rational coefficients.
      * All algebraic numbers are complex.
@@ -216,11 +215,6 @@ export interface SymbolProps {
     extended_nonzero: boolean,
     extended_positive: boolean,
     /**
-     * An element of the real number line extended to include infinity.
-     * Default is true.
-     */
-    extended_real: boolean,
-    /**
      * A finite expression.
      * Any expression that is not infinite is considered finite.
      */
@@ -230,7 +224,11 @@ export interface SymbolProps {
      */
     hermitian: boolean,
     /**
-     * The extension of the real numbers to include infinitesimals.
+     * The extension of the complex numbers to include infinitesimals and infinite numbers.
+     */
+    hypercomplex: boolean;
+    /**
+     * The extension of the real numbers to include infinitesimals and infinite numbers.
      */
     hyperreal: boolean;
     imaginary: boolean,
@@ -307,7 +305,7 @@ export interface ExtensionEnv {
     float(expr: U): U;
     getCustomDirective(directive: string): boolean;
     getDirective(directive: Directive): boolean;
-    getSymbolProps(sym: Sym | string): SymbolProps;
+    getSymbolPredicates(sym: Sym | string): Predicates;
     /**
      * Used during rendering.
      */
@@ -393,7 +391,7 @@ export interface ExtensionEnv {
     pushDirective(directive: Directive, value: boolean): void;
     popDirective(): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
-    setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void;
+    setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;
     setSymbolValue(sym: Sym, value: U): void;
     simplify(expr: U): U;

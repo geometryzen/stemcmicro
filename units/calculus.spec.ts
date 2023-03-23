@@ -96,8 +96,6 @@ describe("calculus", function () {
             ];
             const context = create_script_context({
             });
-            // const $ = context.$;
-            // $.sqrt;
             const { values } = context.executeScript(lines.join('\n'));
             // This could be improved upon...
             assert.strictEqual(context.renderAsSExpr(values[0]), "(expt c 1/2)");

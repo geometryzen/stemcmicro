@@ -11,13 +11,13 @@ import { is_rat } from "../rat/is_rat";
 
 class ExpRatBuilder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
-        return new IsZeroRat($);
+        return new Op($);
     }
 }
 
 const ISZERO = native_sym(Native.iszero);
 
-class IsZeroRat extends Function1<Rat> implements Operator<U> {
+class Op extends Function1<Rat> implements Operator<U> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('iszero_rat', ISZERO, is_rat, $);

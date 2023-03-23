@@ -2,34 +2,32 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { HASH_SYM, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { create_boo } from "../../tree/boo/Boo";
+import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_sym } from "../sym/is_sym";
 
-export const IS_COMPLEX = native_sym(Native.iscomplex);
-
-class Builder implements OperatorBuilder<U> {
+class ExpRatBuilder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
         return new Op($);
     }
 }
 
-type ARG = Sym;
+const ISZERO = native_sym(Native.iszero);
 
-class Op extends Function1<ARG> {
+class Op extends Function1<Sym> implements Operator<U> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('is_complex_sym', IS_COMPLEX, is_sym, $);
+        super('iszero_sym', ISZERO, is_sym, $);
         this.hash = hash_unaop_atom(this.opr, HASH_SYM);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(arg));
         const $ = this.$;
-        const props = $.getSymbolPredicates(arg);
-        return [TFLAG_DIFF, create_boo(props.complex)];
+        const predicates = $.getSymbolPredicates(arg);
+        return [TFLAG_DIFF, predicates.zero ? booT : booF];
     }
 }
 
-export const is_complex_sym = new Builder();
+export const iszero_sym = new ExpRatBuilder();

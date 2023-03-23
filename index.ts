@@ -12,9 +12,9 @@ export {
     LambdaExpr,
     Operator,
     OperatorBuilder,
+    Predicates,
     PrintHandler,
-    Sign,
-    SymbolProps
+    Sign
 } from './src/env/ExtensionEnv';
 export { Native } from './src/native/Native';
 export { native_sym } from './src/native/native_sym';

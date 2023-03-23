@@ -24,4 +24,6 @@ https://github.com/MikeMcl/bignumber.js
 
 ## REPL
 
-Would be nice.
+npm run repl
+
+Make sure to build first.

@@ -2,7 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { hash_binop_atom_atom, HASH_RAT, HASH_SYM } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
-import { booF } from "../../tree/boo/Boo";
+import { booF, booT } from "../../tree/boo/Boo";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -30,7 +30,14 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         this.hash = hash_binop_atom_atom(testeq, HASH_SYM, HASH_RAT);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    transform2(opr: Sym, sym: LHS, rat: RHS, expr: EXPR): [TFLAGS, U] {
+        if (rat.isZero()) {
+            const $ = this.$;
+            const predicates = $.getSymbolPredicates(sym);
+            if (predicates.zero) {
+                return [TFLAG_DIFF, booT];
+            }
+        }
         return [TFLAG_DIFF, booF];
     }
 }

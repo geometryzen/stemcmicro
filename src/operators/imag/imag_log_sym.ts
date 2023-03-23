@@ -36,7 +36,7 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const x = assert_sym(innerExpr.argList.head);
-        const props = $.getSymbolProps(x);
+        const props = $.getSymbolPredicates(x);
         if (props.zero) {
             // Minus infinity in the limit but undefined at zero.
             return [TFLAG_DIFF, new Err(innerExpr)];

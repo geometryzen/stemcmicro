@@ -22,7 +22,7 @@ class PredicateSym extends Function1<Sym> {
     }
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         const $ = this.$;
-        const props = $.getSymbolProps(arg);
+        const props = $.getSymbolPredicates(arg);
         return [TFLAG_DIFF, create_boo(props.real)];
     }
 }

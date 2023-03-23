@@ -126,10 +126,10 @@ run_test([
     '-\\frac{\\sqrt{2}}{2}',
 
     'printsexpr',
-    '(multiply -1/2 (expt 2 1/2))',
+    '(* -1/2 (expt 2 1/2))',
 
     'printsexpr(a+b)\nprintsexpr(c+d)',
-    '(add a b)(add c d)',
+    '(+ a b)(+ c d)',
 
     'printascii',
     '   1   1/2\n- --- 2\n   2',

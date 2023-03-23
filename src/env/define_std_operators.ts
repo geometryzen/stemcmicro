@@ -212,6 +212,7 @@ import { is_real_sin } from '../operators/isreal/is_real_sin';
 import { make_predicate_sym_operator } from '../operators/isreal/is_real_sym';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
+import { iszero_sym } from '../operators/iszero/iszero_sym';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -831,7 +832,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(isinfinitesimal_any);
 
     $.defineOperator(isprime_varargs);
+
     $.defineOperator(iszero_rat);
+    $.defineOperator(iszero_sym);
     $.defineOperator(iszero_any);
 
     $.defineOperator(not_fn);

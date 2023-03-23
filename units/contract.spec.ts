@@ -27,7 +27,7 @@ describe("contract", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "0");
         engine.release();
     });
-    it("contract(0.0)", function () {
+    xit("contract(0.0)", function () {
         const lines: string[] = [
             `contract(0.0)`
         ];

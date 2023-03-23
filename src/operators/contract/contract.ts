@@ -1,11 +1,11 @@
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { nativeInt } from '../../nativeInt';
 import { halt } from '../../runtime/defs';
-import { cadddr, caddr, cadr, cddr } from '../../tree/helpers';
+import { cadddr, caddr, cddr } from '../../tree/helpers';
 import { one, two, zero } from '../../tree/rat/Rat';
-import { is_tensor } from '../tensor/is_tensor';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { Cons, nil, U } from '../../tree/tree';
+import { is_tensor } from '../tensor/is_tensor';
 
 /* contract =====================================================================
 
@@ -24,18 +24,18 @@ If i and j are omitted then 1 and 2 are used.
 contract(m) is equivalent to the trace of matrix m.
 
 */
-export function Eval_contract(p1: Cons, $: ExtensionEnv): U {
-    const p1_prime = $.valueOf(cadr(p1));
+export function Eval_contract(contractExpr: Cons, $: ExtensionEnv): U {
+    const a = $.valueOf(contractExpr.argList.head);
     let p2: U, p3: U;
-    if (nil.equals(cddr(p1))) {
+    if (nil.equals(cddr(contractExpr))) {
         p2 = one;
         p3 = two;
     }
     else {
-        p2 = $.valueOf(caddr(p1));
-        p3 = $.valueOf(cadddr(p1));
+        p2 = $.valueOf(caddr(contractExpr));
+        p3 = $.valueOf(cadddr(contractExpr));
     }
-    const result = contract(p1_prime, p2, p3, $);
+    const result = contract(a, p2, p3, $);
     return result;
 }
 

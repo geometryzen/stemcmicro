@@ -53,6 +53,7 @@
         "unit-not": "mocha 'units/not.spec.ts'",
         "unit-outer": "mocha 'units/outer.spec.ts'",
         "unit-polar": "mocha 'units/polar.spec.ts'",
+        "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-product": "mocha 'units/product.spec.ts'",
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",

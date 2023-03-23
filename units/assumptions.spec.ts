@@ -23,9 +23,9 @@ describe("assumptions", function () {
         assert.strictEqual(aProps.extended_nonpositive, false); // 7
         assert.strictEqual(aProps.extended_nonzero, true);      // 8
         assert.strictEqual(aProps.extended_positive, true);     // 9
-        assert.strictEqual(aProps.extended_real, true);         // 10
-        assert.strictEqual(aProps.finite, true);                // 11
-        assert.strictEqual(aProps.hermitian, true);             // 12
+        assert.strictEqual(aProps.finite, true);                // 10
+        assert.strictEqual(aProps.hermitian, true);             // 11
+        assert.strictEqual(aProps.hypercomplex, true);          // 12
         assert.strictEqual(aProps.hyperreal, true);             // 13
         assert.strictEqual(aProps.imaginary, false);            // 14
         assert.strictEqual(aProps.infinite, false);             // 15

@@ -25,7 +25,7 @@ class Op extends Function1<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         const $ = this.$;
-        const props = $.getSymbolProps(arg);
+        const props = $.getSymbolPredicates(arg);
         if (props.zero) {
             return [TFLAG_DIFF, booT];
         }

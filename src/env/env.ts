@@ -20,7 +20,7 @@ import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_function } from "../userfunc";
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, PrintHandler, Sign, SymbolProps, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
@@ -32,6 +32,7 @@ const POWER = native_sym(Native.pow);
 const ISCOMPLEX = native_sym(Native.iscomplex);
 const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
 const ISREAL = native_sym(Native.isreal);
+const ISZERO = native_sym(Native.iszero);
 
 class StableExprComparator implements ExprComparator {
     constructor(private readonly opr: Sym) {
@@ -45,7 +46,7 @@ class StableExprComparator implements ExprComparator {
 }
 
 export interface EnvOptions {
-    assumes?: { [name: string]: Partial<SymbolProps> };
+    assumes?: { [name: string]: Partial<Predicates> };
     dependencies?: FEATURE[];
     enable?: Directive[];
     disable?: Directive[];
@@ -261,7 +262,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         float(expr: U): U {
             return $.evaluate(Native.float, expr);
         },
-        getSymbolProps(sym: Sym | string): SymbolProps {
+        getSymbolPredicates(sym: Sym | string): Predicates {
             return symTab.getProps(sym);
         },
         getSymbolValue(sym: Sym | string): U {
@@ -368,12 +369,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return retval;
         },
         iszero(expr: U): boolean {
-            // TODO: This should be done using predicate functions rather than hard-coding
-            // predicates into the operators.
-            const op = $.operatorFor(expr);
-            const retval = op.isZero(expr);
-            // console.lg(`${op.name} isZero ${expr} => ${retval}`);
-            return retval;
+            return $.is(ISZERO, expr);
         },
         equals(lhs: U, rhs: U): boolean {
             return lhs.equals(rhs);
@@ -495,8 +491,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setSymbolOrder(sym: Sym, order: ExprComparator): void {
             sym_order[sym.key()] = order;
         },
-        setSymbolProps(sym: Sym, overrides: Partial<SymbolProps>): void {
-            symTab.setProps(sym, overrides);
+        setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void {
+            symTab.setProps(sym, predicates);
         },
         setSymbolPrintName(sym: Sym, printname: string): void {
             sym_key_to_printname[sym.key()] = printname;

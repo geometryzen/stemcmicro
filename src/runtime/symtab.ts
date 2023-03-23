@@ -7,34 +7,34 @@ import { is_nil, nil, U } from "../tree/tree";
  * i.e. Don't merge the two.
  */
 export interface Props extends Record<string, boolean> {
-    readonly antihermitian: boolean,
-    readonly algebraic: boolean;
-    readonly commutative: boolean,
-    readonly complex: boolean,
-    readonly extended_negative: boolean,
-    readonly extended_nonnegative: boolean,
-    readonly extended_nonpositive: boolean,
-    readonly extended_nonzero: boolean,
-    readonly extended_positive: boolean,
-    readonly extended_real: boolean,
-    readonly finite: boolean,
-    readonly hermitian: boolean,
-    readonly hyperreal: boolean,
-    readonly imaginary: boolean,
-    readonly infinite: boolean,
-    readonly infinitesimal: boolean,
-    readonly integer: boolean;
-    readonly irrational: boolean;
-    readonly negative: boolean,
-    readonly noninteger: boolean;
-    readonly nonnegative: boolean,
-    readonly nonpositive: boolean,
-    readonly nonzero: boolean,
-    readonly positive: boolean,
-    readonly rational: boolean,
-    readonly real: boolean,
-    readonly transcendental: boolean,
-    readonly zero: boolean
+    antihermitian: boolean,
+    algebraic: boolean;
+    commutative: boolean,
+    complex: boolean,
+    extended_negative: boolean,
+    extended_nonnegative: boolean,
+    extended_nonpositive: boolean,
+    extended_nonzero: boolean,
+    extended_positive: boolean,
+    finite: boolean,
+    hermitian: boolean,
+    hypercomplex: boolean,
+    hyperreal: boolean,
+    imaginary: boolean,
+    infinite: boolean,
+    infinitesimal: boolean,
+    integer: boolean;
+    irrational: boolean;
+    negative: boolean,
+    noninteger: boolean;
+    nonnegative: boolean,
+    nonpositive: boolean,
+    nonzero: boolean,
+    positive: boolean,
+    rational: boolean,
+    real: boolean,
+    transcendental: boolean,
+    zero: boolean
 }
 
 const DEFAULT_PROPS: Props = Object.freeze({
@@ -47,9 +47,9 @@ const DEFAULT_PROPS: Props = Object.freeze({
     extended_nonpositive: false,
     extended_nonzero: true,
     extended_positive: true,
-    extended_real: true,
     finite: true,
     hermitian: true,
+    hypercomplex: true,
     hyperreal: true,
     imaginary: false,
     infinite: false,
@@ -112,7 +112,7 @@ export function createSymTab(): SymTab {
         setProps(sym: Sym, overrides: Partial<Props>): void {
             const key = sym.key();
             if (overrides) {
-                const props = Object.freeze(Object.assign({ ...this.getProps(sym) }, overrides));
+                const props = Object.freeze(Object.assign({ ...this.getProps(sym) }, implications(overrides)));
                 props_from_key.set(key, props);
                 sym_from_key.set(key, sym);
             }
@@ -170,4 +170,44 @@ export function createSymTab(): SymTab {
         }
     };
     return theTab;
+}
+
+/**
+ * Returns a copy of the overrides where the implications of the overrides are made explicit.
+ * 
+ * zero => infinitesimal
+ * zero => nonzero = false
+ * 
+ * @param overrides 
+ */
+function implications(overrides: Partial<Props>): Partial<Props> {
+    const props: Partial<Props> = { ...overrides };
+    if (typeof props.infinite === 'boolean') {
+        if (props.infinite) {
+            props.finite = false;
+            props.infinitesimal = false;
+            props.integer = false;
+            props.nonzero = true;
+            props.real = false;
+            props.zero = false;
+        }
+    }
+    if (typeof props.infinitesimal === 'boolean') {
+        if (props.infinitesimal) {
+            props.finite = true;
+            props.infinite = false;
+            props.nonzero = true;
+            props.real = false;
+        }
+    }
+    if (typeof props.zero === 'boolean') {
+        if (props.zero) {
+            props.infinitesimal = true;
+            props.integer = true;
+            props.nonzero = false;
+            props.negative = false;
+            props.positive = false;
+        }
+    }
+    return props;
 }

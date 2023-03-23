@@ -1,7 +1,7 @@
-import { Directive, FEATURE, SymbolProps } from "./ExtensionEnv";
+import { Directive, FEATURE, Predicates } from "./ExtensionEnv";
 
 export interface EnvConfig {
-    assumes: { [name: string]: Partial<SymbolProps> };
+    assumes: { [name: string]: Partial<Predicates> };
     dependencies: FEATURE[];
     enable: Directive[];
     disable: Directive[];

@@ -34,7 +34,7 @@ class Op extends Function1X<Sym> implements Operator<UCons<Sym, Sym>> {
     }
     transform1(opr: Sym, x: Sym, origExpr: UCons<Sym, Sym>): [TFLAGS, U] {
         const $ = this.$;
-        const props = $.getSymbolProps(x);
+        const props = $.getSymbolPredicates(x);
         if (props.positive) {
             return [TFLAG_DIFF, x];
         }

@@ -1,6 +1,6 @@
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { Directive, ExtensionEnv, LambdaExpr, SymbolProps } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv, LambdaExpr, Predicates } from "../env/ExtensionEnv";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
@@ -42,7 +42,7 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
     /**
      * The assumptions about unbound symbols.
      */
-    assumes?: { [name: string]: Partial<SymbolProps> };
+    assumes?: { [name: string]: Partial<Predicates> };
     dependencies?: string[];
     /**
      * Determines whether the circumflex (caret) character, '^', will be used during parsing to denote exponentiation.
@@ -75,7 +75,7 @@ export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
         const names = Object.keys(options.assumes);
         for (const name of names) {
             const props = options.assumes[name];
-            $.setSymbolProps(create_sym(name), props);
+            $.setSymbolPredicates(create_sym(name), props);
         }
     }
 
@@ -99,7 +99,7 @@ export interface ScriptContext {
     readonly $: ExtensionEnv;
     clearBindings(): void;
     defineFunction(pattern: U, impl: LambdaExpr): ScriptContext;
-    getSymbolProps(sym: Sym | string): SymbolProps;
+    getSymbolProps(sym: Sym | string): Predicates;
     getSymbolValue(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
     evaluate(tree: U, options?: ExprTransformOptions): { value: U, prints: string[], errors: Error[] };
@@ -169,8 +169,8 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
             $.defineFunction(pattern, impl);
             return this;
         },
-        getSymbolProps(sym: Sym | string): SymbolProps {
-            return $.getSymbolProps(sym);
+        getSymbolProps(sym: Sym | string): Predicates {
+            return $.getSymbolPredicates(sym);
         },
         getSymbolValue(sym: Sym | string): U {
             return $.getSymbolValue(sym);

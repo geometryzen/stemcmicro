@@ -30,8 +30,14 @@ import { Cons, is_cons, nil, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 
 //-----------------------------------------------------------------------------
-export function setq_indexed(p1: Cons, $: ExtensionEnv): U {
-    const p4 = cadadr(p1);
+/**
+ * 
+ * @param assignExpr (= )
+ * @param $ 
+ * @returns 
+ */
+export function setq_indexed(assignExpr: Cons, $: ExtensionEnv): U {
+    const p4 = cadadr(assignExpr);
     // console.lg(`p4: ${toInfixString(p4)}`);
     if (!is_sym(p4)) {
         // this is likely to happen when one tries to
@@ -48,8 +54,8 @@ export function setq_indexed(p1: Cons, $: ExtensionEnv): U {
         throw new Error('indexed assignment: expected a symbol name');
     }
     const h = defs.tos;
-    stack_push($.valueOf(caddr(p1)));
-    const p2 = cdadr(p1);
+    stack_push($.valueOf(caddr(assignExpr)));
+    const p2 = cdadr(assignExpr);
     if (is_cons(p2)) {
         stack_push_items([...p2].map(function (x) {
             return $.valueOf(x);

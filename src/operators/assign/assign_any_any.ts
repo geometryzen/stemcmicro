@@ -42,20 +42,21 @@ type EXP = BCons<Sym, LHS, RHS>;
 //   g
 //   > x
 /**
- * @param expr (set! var expr)
+ * @param assignExpr (= lhs rhs)
  */
-function Eval_setq(expr: EXP, $: ExtensionEnv): U {
+function Eval_assign(assignExpr: EXP, $: ExtensionEnv): U {
     // console.lg(`Eval_setq ${expr}`);
-    const lhs = expr.lhs;
+    const lhs = assignExpr.lhs;
+    const rhs = assignExpr.rhs;
 
     // case of tensor
-    if (caadr(expr).equals(COMPONENT)) {
-        return setq_indexed(expr, $);
+    if (caadr(assignExpr).equals(COMPONENT)) {
+        return setq_indexed(assignExpr, $);
     }
 
     // case of function definition
     if (is_cons(lhs)) {
-        define_function(expr, $);
+        define_function(assignExpr, $);
         return nil;
     }
 
@@ -64,7 +65,7 @@ function Eval_setq(expr: EXP, $: ExtensionEnv): U {
     }
 
     // TODO: The evaluation of the right hand side is not really necessary.
-    const binding = $.valueOf(expr.rhs);
+    const binding = $.valueOf(rhs);
     $.setSymbolValue(lhs, binding);
 
     // An assignment returns nothing.
@@ -96,7 +97,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // Assignments return NIL to prevent them from being printed.
         // That's a bit unfortunate for chained assignments.
         // The kernel of the problem is the printing of expressions by default in the REPL.
-        return [TFLAG_DIFF, Eval_setq(expr, $)];
+        return [TFLAG_DIFF, Eval_assign(expr, $)];
     }
 }
 

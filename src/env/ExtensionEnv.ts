@@ -229,11 +229,16 @@ export interface SymbolProps {
      * An element of the field of Hermitian operators.
      */
     hermitian: boolean,
+    /**
+     * The extension of the real numbers to include infinitesimals.
+     */
+    hyperreal: boolean;
     imaginary: boolean,
     /**
      * An infinite expression.
      */
     infinite: boolean,
+    infinitesimal: boolean,
     integer: boolean;
     irrational: boolean;
     negative: boolean,

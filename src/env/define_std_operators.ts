@@ -82,6 +82,7 @@ import { clock_any } from '../operators/clock/clock_any';
 import { clock_imu } from '../operators/clock/clock_imu';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
+import { complex_2_any_any } from '../operators/complex/complex_2_any_any';
 import { condense_varargs } from '../operators/condense/condense_varargs';
 import { conj_add } from '../operators/conj/conj_add';
 import { conj_any } from '../operators/conj/conj_any';
@@ -735,6 +736,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(coeff_varargs);
     $.defineOperator(cofactor_varargs);
+    $.defineOperator(complex_2_any_any);
     $.defineOperator(condense_varargs);
     $.defineOperator(contract_varargs);
 

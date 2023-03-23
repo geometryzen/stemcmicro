@@ -112,4 +112,52 @@ describe("complex", function () {
         assert.strictEqual(engine.renderAsInfix(value), "2*a*i*j*k*x*y");
         engine.release();
     });
+    it("K", function () {
+        const lines: string[] = [
+            `y*i+x`,
+        ];
+        const engine = create_script_context({
+            useDefinitions: true
+        });
+        engine.executeScript("i=sqrt(-1)");
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
+        engine.release();
+    });
+    it("L", function () {
+        const lines: string[] = [
+            `complex(0,0)`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_script_context({
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsInfix(value), "0");
+        engine.release();
+    });
+    it("M", function () {
+        const lines: string[] = [
+            `complex(1,0)`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_script_context({
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1");
+        engine.release();
+    });
+    it("N", function () {
+        const lines: string[] = [
+            `complex(0,1)`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_script_context({
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsInfix(value), "i");
+        engine.release();
+    });
 });

@@ -36,6 +36,7 @@
         "unit-calculus": "mocha 'units/calculus.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
         "unit-clock": "mocha 'units/clock.spec.ts'",
+        "unit-complex": "mocha 'units/complex.spec.ts'",
         "unit-conj": "mocha 'units/conj.spec.ts'",
         "unit-cos": "mocha 'units/cos.spec.ts'",
         "unit-defint": "mocha 'units/defint.spec.ts'",

@@ -18,6 +18,7 @@ export enum Native {
     arctan,
     arg,
     clock,
+    complex,
     component,
     condense,
     conj,

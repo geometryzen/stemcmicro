@@ -1,15 +1,15 @@
 import { run_test } from '../test-harness';
 
 run_test([
-  'real(a+i*b)',
+  're(a+i*b)',
   'a',
 
-  'real(1+exp(i*pi/3))',
+  're(1+exp(i*pi/3))',
   '3/2',
 
-  'real(i)',
+  're(i)',
   '0',
 
-  'real((-1)^(1/3))',
+  'reS((-1)^(1/3))',
   '1/2',
 ]);

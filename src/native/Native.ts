@@ -39,7 +39,10 @@ export enum Native {
      */
     function,
     gcd,
-    imag,
+    /**
+     * im(z) returns the imaginary part of the complex number z.
+     */
+    im,
     infinitesimal,
     inner,
     integral,
@@ -63,7 +66,10 @@ export enum Native {
     pow,
     prime,
     rationalize,
-    real,
+    /**
+     * re(z) returns the real part of the complex number z.
+     */
+    re,
     rect,
     rco,
     simplify,

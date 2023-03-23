@@ -1,7 +1,7 @@
 import { run_test } from '../test-harness';
 
 run_test([
-    'real(a)',
+    're(a)',
     'a'
 ], {
     assumes: {
@@ -11,8 +11,8 @@ run_test([
 });
 
 run_test([
-    'real(a)',
-    'real(a)'
+    're(a)',
+    're(a)'
 ], {
     assumes: {
         'a': { real: false }

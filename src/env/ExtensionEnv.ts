@@ -316,7 +316,7 @@ export interface ExtensionEnv {
      * Used to make the environment ready after all operator builders have been added.
      */
     buildOperators(): void;
-    imag(expr: U): U;
+    im(expr: U): U;
     /**
      *
      */
@@ -384,7 +384,7 @@ export interface ExtensionEnv {
      *
      */
     power(base: U, expo: U): U;
-    real(expr: U): U;
+    re(expr: U): U;
     rect(expr: U): U;
     remove(varName: Sym): void;
     setCustomDirective(directive: string, value: boolean): void;

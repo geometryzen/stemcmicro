@@ -6,8 +6,8 @@ import { sort_stack } from './misc';
 import { coeff } from './operators/coeff/coeff';
 import { evaluate_as_float } from './operators/float/float';
 import { is_flt } from './operators/flt/is_flt';
-import { imag } from './operators/imag/imag';
-import { real } from './operators/real/real';
+import { im } from './operators/imag/imag';
+import { re } from './operators/real/real';
 import { defs, halt, move_top_of_stack } from './runtime/defs';
 import { stack_pop, stack_push } from './runtime/stack';
 import { create_flt } from './tree/flt/Flt';
@@ -87,8 +87,8 @@ export function Eval_nroots(expr: Cons, $: ExtensionEnv): U {
 
     // convert the coefficients to real and imaginary doubles
     for (let i = 0; i < n; i++) {
-        P = $.valueOf(evaluate_as_float(real(coefficients[i], $), $));
-        X = $.valueOf(evaluate_as_float(imag(coefficients[i], $), $));
+        P = $.valueOf(evaluate_as_float(re(coefficients[i], $), $));
+        X = $.valueOf(evaluate_as_float(im(coefficients[i], $), $));
         if (!is_flt(P) || !is_flt(X)) {
             halt('nroots: coefficients?');
         }

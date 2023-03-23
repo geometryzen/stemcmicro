@@ -7,8 +7,8 @@ import { half, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
-import { imag } from "../imag/imag";
-import { real } from "../real/real";
+import { im } from "../imag/imag";
+import { re } from "../real/real";
 import { simplify_trig } from "../simplify/simplify";
 
 const ABS = native_sym(Native.abs);
@@ -44,9 +44,9 @@ class Op extends CompositeOperator {
 
             // console.lg(`z => ${$.toInfixString(z)}`);
 
-            const x = real(z, $);
+            const x = re(z, $);
             // console.lg(`x => ${$.toInfixString(x)}`);
-            const y = imag(z, $);
+            const y = im(z, $);
             const xx = $.power(x, two);
             const yy = $.power(y, two);
             const zz = $.add(xx, yy);

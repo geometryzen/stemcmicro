@@ -8,7 +8,7 @@ import { UCons } from "../helpers/UCons";
 import { CompositeOperator } from "../CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
-const real = native_sym(Native.real);
+const real = native_sym(Native.re);
 const log = native_sym(Native.log);
 
 class Builder implements OperatorBuilder<U> {
@@ -44,7 +44,7 @@ class Op extends CompositeOperator {
                 throw new Error($.toInfixString(x));
             }
             else {
-                // We get to remove the real() wrapper.
+                // We get to remove the re() wrapper.
                 return [TFLAG_DIFF, logExpr];
             }
         }

@@ -18,17 +18,17 @@ import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { MATH_EXP } from '../exp/MATH_EXP';
 import { is_flt } from '../flt/is_flt';
 import { is_unaop } from '../helpers/is_unaop';
-import { imag } from '../imag/imag';
+import { im } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
 import { is_pi } from '../pi/is_pi';
 import { is_pow } from '../pow/is_pow';
 import { is_rat } from '../rat/is_rat';
-import { real } from '../real/real';
+import { re } from '../real/real';
 import { is_sym } from '../sym/is_sym';
 
 export const ARG = native_sym(Native.arg);
-export const IMAG = native_sym(Native.imag);
-export const REAL = native_sym(Native.real);
+export const IM = native_sym(Native.im);
+export const RE = native_sym(Native.re);
 
 /**
  * Example of inverting the registration 
@@ -51,12 +51,8 @@ function arg(z: U, $: ExtensionEnv): U {
     // If z is in the form of a (power base expo) then it can make sense to equate to a polar form
     // and solve for theta that way. The implementation of real is already using that approach.
     // console.lg(`arg`, $.toSExprString(z));
-    const y = $.imag(z);
-    // const y = imag(z, $);
-    // console.lg(`y`, $.toInfixString(y));
-    const x = $.real(z);
-    // const x = real(z, $);
-    // console.lg(`x`, $.toInfixString(x));
+    const y = $.im(z);
+    const x = $.re(z);
     // TODO: handle the undefined case when both x and y are zero.
     if ($.iszero(x)) {
         if ($.iszero(y)) {
@@ -164,18 +160,18 @@ function yyarg(expr: U, $: ExtensionEnv): U {
             return $.multiply(DynamicConstants.Pi($), expr.expo);
         }
 
-        // (expt e X) => imag(X)
+        // (expt e X) => im(X)
         if (is_base_of_natural_logarithm(base)) {
             // exponential
             // arg(a^(1/2)) is always equal to 1/2 * arg(a)
             // this can obviously be made more generic TODO
-            return imag(expr.expo, $);
+            return im(expr.expo, $);
         }
     }
 
-    // (exp X) => imag(X)
+    // (exp X) => im(X)
     if (is_cons(expr) && is_unaop(expr) && is_cons_opr_eq_sym(expr, MATH_EXP)) {
-        const arg = imag(expr.arg, $);
+        const arg = im(expr.arg, $);
         return arg;
     }
 
@@ -212,8 +208,8 @@ function arg_of_sum_old(expr: Cons, $: ExtensionEnv): U {
     // sum of terms
     const z = $.rect(expr);
     // console.lg(`z => ${z}`);
-    const x = real(z, $);
-    const y = imag(z, $);
+    const x = re(z, $);
+    const y = im(z, $);
     // console.lg(`x => ${$.toListString(x)}`);
     // console.lg(`y => ${$.toListString(y)}`);
     if ($.iszero(x)) {

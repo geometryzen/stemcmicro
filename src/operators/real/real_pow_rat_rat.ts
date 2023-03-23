@@ -10,7 +10,7 @@ import { is_rat } from "../rat/is_rat";
 
 const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -23,7 +23,7 @@ class Builder implements OperatorBuilder<U> {
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(REAL, POW, $);
+        super(RE, POW, $);
     }
     isKind(expr: U): expr is UCons<Sym, Cons> {
         if (super.isKind(expr)) {

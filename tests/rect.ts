@@ -16,7 +16,7 @@ run_test([
     'z=(a+b*i)/(c+d*i)',
     '',
 
-    'rect(z)-real(z)-i*imag(z)',
+    'rect(z)-re(z)-i*im(z)',
     '0',
 
     'z=quote(z)',

@@ -68,10 +68,10 @@ xdescribe("clock", function () {
         assert.strictEqual(engine.renderAsInfix(value), "(-1)**(1/3)");
         engine.release();
     });
-    it("clock(real(log(i)))", function () {
+    it("clock(re(log(i)))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `clock(real(log(clock(i))))`
+            `clock(re(log(clock(i))))`
         ];
         const engine = create_script_context({
             useCaretForExponentiation: true

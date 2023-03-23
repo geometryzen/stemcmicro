@@ -1,5 +1,5 @@
 import { ExtensionEnv, LambdaExpr } from '../../env/ExtensionEnv';
-import { IMAG } from '../../runtime/constants';
+import { IM } from '../../runtime/constants';
 import { Cons, items_to_cons, U } from '../../tree/tree';
 /**
  * expr = (real arg)
@@ -22,12 +22,12 @@ export function Eval_imag(expr: Cons, $: ExtensionEnv): U {
 export const imag_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv) {
     // We could/should check the numbr of arguments.
     const arg = $.valueOf(argList.car);
-    return imag(arg, $);
+    return im(arg, $);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function imag(z: U, $: ExtensionEnv): U {
-    return items_to_cons(IMAG, z);
+export function im(z: U, $: ExtensionEnv): U {
+    return items_to_cons(IM, z);
     /*
     // console.lg(`imag`, $.toInfixString(z));
     if (is_sym(z)) {
@@ -35,14 +35,14 @@ export function imag(z: U, $: ExtensionEnv): U {
             return zero;
         }
         else {
-            return items_to_cons(IMAG, z);
+            return items_to_cons(IM, z);
         }
     }
-    // The use of the real() function is elegant but it introduces the risk of infinite recursion.
+    // The use of the re() function is elegant but it introduces the risk of infinite recursion.
     const neg_imu = $.valueOf(items_to_cons(MATH_MUL, negOne, imu));
     // console.lg(`neg_imu`, $.toInfixString(neg_imu));
     const neg_imu_times_z = $.valueOf(items_to_cons(MATH_MUL, neg_imu, z));
     // console.lg(`neg_imu_times_z`, $.toInfixString(neg_imu_times_z));
-    return real(neg_imu_times_z, $);
+    return re(neg_imu_times_z, $);
     */
 }

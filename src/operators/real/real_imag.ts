@@ -5,8 +5,8 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const IMAG = native_sym(Native.imag);
-const REAL = native_sym(Native.real);
+const IM = native_sym(Native.im);
+const RE = native_sym(Native.re);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -15,11 +15,11 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * real(imag(z)) = imag(z)
+ * re(im(z)) = im(z)
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(REAL, IMAG, $);
+        super(RE, IM, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {

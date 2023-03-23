@@ -22,7 +22,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * isreal(z) <=> iszero(imag(z))
+ * isreal(z) <=> iszero(im(z))
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {

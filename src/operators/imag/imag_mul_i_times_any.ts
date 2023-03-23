@@ -9,9 +9,9 @@ import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
 import { CompositeOperator } from "../CompositeOperator";
 
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 const MUL = native_sym(Native.multiply);
-const IMAG = native_sym(Native.imag);
+const IM = native_sym(Native.im);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -20,11 +20,11 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * imag(i*z) => real(z)
+ * im(i*z) => re(z)
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IMAG, MUL, $);
+        super(IM, MUL, $);
     }
     isKind(expr: U): expr is UCons<Sym, Cons> {
         if (super.isKind(expr)) {
@@ -37,7 +37,7 @@ class Op extends CompositeOperator {
     }
     transform1(opr: Sym, innerExpr: Cons): [TFLAGS, U] {
         const z = remove_factors(innerExpr, is_imu);
-        const re_z = this.$.valueOf(items_to_cons(REAL, z));
+        const re_z = this.$.valueOf(items_to_cons(RE, z));
         return [TFLAG_DIFF, re_z];
     }
 }

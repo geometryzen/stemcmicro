@@ -46,7 +46,7 @@ export function build_sym(code: Native): Sym {
         case Native.float: return create_sym('float');
         case Native.function: return create_sym('function');
         case Native.gcd: return create_sym('gcd');
-        case Native.imag: return create_sym('imag');
+        case Native.im: return create_sym('im');
         case Native.infinitesimal: return create_sym('infinitesimal');
         case Native.inner: return create_sym('inner');
         case Native.integral: return create_sym('integral');
@@ -67,7 +67,7 @@ export function build_sym(code: Native): Sym {
         case Native.pow: return create_sym('pow');
         case Native.prime: return create_sym('prime');
         case Native.rationalize: return create_sym('rationalize');
-        case Native.real: return create_sym('real');
+        case Native.re: return create_sym('re');
         case Native.rect: return create_sym('rect');
         case Native.rco: return create_sym('>>');
         case Native.simplify: return create_sym('simplify');

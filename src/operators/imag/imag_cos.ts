@@ -7,7 +7,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const COS = native_sym(Native.cos);
-const IMAG = native_sym(Native.imag);
+const IM = native_sym(Native.im);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -16,11 +16,11 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * imag(cos(z)) = 0 when z is real
+ * im(cos(z)) = 0 when z is real
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IMAG, COS, $);
+        super(IM, COS, $);
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;

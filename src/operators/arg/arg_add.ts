@@ -19,8 +19,8 @@ class Builder implements OperatorBuilder<U> {
 }
 
 function arg_of_sum(z: Cons, $: ExtensionEnv): U {
-    const y = $.imag(z);
-    const x = $.real(z);
+    const y = $.im(z);
+    const x = $.re(z);
     if ($.iszero(x)) {
         if ($.iszero(y)) {
             // Undefined

@@ -11,7 +11,7 @@ import { CompositeOperator } from "../CompositeOperator";
 import { is_imu } from "../imu/is_imu";
 
 const EXP = native_sym(Native.exp);
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -24,7 +24,7 @@ class Builder implements OperatorBuilder<U> {
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(REAL, EXP, $);
+        super(RE, EXP, $);
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;

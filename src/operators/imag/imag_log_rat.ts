@@ -9,7 +9,7 @@ import { UCons } from "../helpers/UCons";
 import { CompositeOperator } from "../CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
-const imag = native_sym(Native.imag);
+const imag = native_sym(Native.im);
 const log = native_sym(Native.log);
 
 class Builder implements OperatorBuilder<U> {

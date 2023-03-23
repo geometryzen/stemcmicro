@@ -75,9 +75,9 @@ describe("isreal", function () {
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
     });
-    it("real(real(z))", function () {
+    it("re(re(z))", function () {
         const lines: string[] = [
-            `real(real(z))`
+            `re(re(z))`
         ];
         const engine = create_script_context({
             assumes: {
@@ -87,12 +87,12 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "real(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "re(z)");
         engine.release();
     });
-    it("imag(z)", function () {
+    it("im(z)", function () {
         const lines: string[] = [
-            `imag(z)`
+            `im(z)`
         ];
         const engine = create_script_context({
             assumes: {
@@ -102,12 +102,12 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "imag(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "im(z)");
         engine.release();
     });
-    it("real(imag(z))", function () {
+    it("re(im(z))", function () {
         const lines: string[] = [
-            `real(imag(z))`
+            `re(im(z))`
         ];
         const engine = create_script_context({
             assumes: {
@@ -117,12 +117,12 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "imag(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "im(z)");
         engine.release();
     });
-    it("real(-imag(z))", function () {
+    it("re(-im(z))", function () {
         const lines: string[] = [
-            `real(-imag(z))`
+            `re(-im(z))`
         ];
         const engine = create_script_context({
             assumes: {
@@ -132,13 +132,13 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-imag(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-im(z)");
         engine.release();
     });
-    it("real(i*z) when z is not real", function () {
+    it("re(i*z) when z is not real", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `real(i*z)`
+            `re(i*z)`
         ];
         const engine = create_script_context({
             assumes: {
@@ -148,13 +148,13 @@ describe("isreal", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-imag(z)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-im(z)");
         engine.release();
     });
-    it("imag(a+i*b)", function () {
+    it("im(a+i*b)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `imag(a+i*b)`
+            `im(a+i*b)`
         ];
         const engine = create_script_context({
             dependencies: ['Imu']
@@ -222,10 +222,10 @@ describe("isreal", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "false");
         engine.release();
     });
-    it("imag(a+i*b)", function () {
+    it("im(a+i*b)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `imag(a+i*b)`
+            `im(a+i*b)`
         ];
         const engine = create_script_context({
             assumes: {

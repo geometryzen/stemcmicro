@@ -13,12 +13,12 @@ import { caddr, cadr } from '../../tree/helpers';
 import { half, one, two } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, is_cons, items_to_cons, U } from '../../tree/tree';
-import { imag } from '../imag/imag';
+import { im } from '../imag/imag';
 import { is_imu } from '../imu/is_imu';
 import { is_num } from '../num/is_num';
 import { is_pi } from '../pi/is_pi';
 import { is_rat } from '../rat/is_rat';
-import { real } from '../real/real';
+import { re } from '../real/real';
 import { simplify, simplify_trig } from '../simplify/simplify';
 import { is_tensor } from '../tensor/is_tensor';
 
@@ -158,9 +158,9 @@ export function abs(x: U, $: ExtensionEnv): U {
 
             // console.lg(`z => ${$.toInfixString(z)}`);
 
-            const x = real(z, $);
+            const x = re(z, $);
             // console.lg(`x => ${$.toInfixString(x)}`);
-            const y = imag(z, $);
+            const y = im(z, $);
             const xx = $.power(x, two);
             const yy = $.power(y, two);
             const zz = $.add(xx, yy);
@@ -212,7 +212,7 @@ export function abs(x: U, $: ExtensionEnv): U {
     const base = cadr(expr);
     if (is_power(expr) && is_base_of_natural_logarithm(base)) {
         // exponential
-        return hook($.exp(real(caddr(expr), $)), "I");
+        return hook($.exp(re(caddr(expr), $)), "I");
     }
 
     if (is_cons(expr) && is_multiply(expr)) {

@@ -5,7 +5,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 
 class Builder implements OperatorBuilder<U> {
     constructor(readonly innerOpr: Sym) {
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
 
 class Op extends CompositeOperator {
     constructor(innerOpr: Sym, $: ExtensionEnv) {
-        super(REAL, innerOpr, $);
+        super(RE, innerOpr, $);
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
@@ -33,7 +33,7 @@ class Op extends CompositeOperator {
 }
 
 /**
- * real(f(z)) = f(z) when z is real
+ * re(f(z)) = f(z) when z is real
  */
 export function real_holomorphic(innerOpr: Sym): OperatorBuilder<U> {
     return new Builder(innerOpr);

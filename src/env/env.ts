@@ -409,8 +409,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return sym.key();
             }
         },
-        imag(expr: U): U {
-            return $.evaluate(Native.imag, expr);
+        im(expr: U): U {
+            return $.evaluate(Native.im, expr);
         },
         inner(lhs: U, rhs: U): U {
             // console.lg(`inner lhs=${print_list(lhs, $)} rhs=${print_list(rhs, $)} `);
@@ -470,8 +470,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         power(base: U, expo: U): U {
             return $.evaluate(Native.pow, base, expo);
         },
-        real(expr: U): U {
-            return $.evaluate(Native.real, expr);
+        re(expr: U): U {
+            return $.evaluate(Native.re, expr);
         },
         rect(expr: U): U {
             return $.evaluate(Native.rect, expr);

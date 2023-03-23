@@ -6,7 +6,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const IMAG = native_sym(Native.imag);
+const IM = native_sym(Native.im);
 const MUL = native_sym(Native.multiply);
 
 class Builder implements OperatorBuilder<U> {
@@ -19,12 +19,10 @@ class Builder implements OperatorBuilder<U> {
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IMAG, MUL, $);
+        super(IM, MUL, $);
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg("IMAG MUL", this.$.toInfixString(outerExpr));
-        // console.lg("Computing Re of a * expression...", $.toSExprString(expr));
         const rs: U[] = []; // the real factors.
         const cs: U[] = []; // the complex factors
         [...innerExpr.argList].forEach(function (factor) {
@@ -48,7 +46,7 @@ class Op extends CompositeOperator {
             return [TFLAG_NONE, outerExpr];
         }
         // console.lg("exp", $.toInfixString(expr));
-        const C = $.valueOf(items_to_cons(IMAG, B));
+        const C = $.valueOf(items_to_cons(IM, B));
         // console.lg("C", $.toSExprString(C));
         const D = $.valueOf(items_to_cons(MUL, A, C));
         // console.lg("D", $.toSExprString(D));

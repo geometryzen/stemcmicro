@@ -37,10 +37,10 @@ describe("JavaScript", function () {
         assert.strictEqual(context.renderAsInfix(g12), "0");
         assert.strictEqual(context.renderAsInfix(g21), "0");
         assert.strictEqual(context.renderAsInfix(g22), "1");
-        assert.strictEqual(context.renderAsInfix($.real(one)), "1");
-        assert.strictEqual(context.renderAsInfix($.imag(one)), "0");
-        assert.strictEqual(context.renderAsInfix($.real(i)), "0");
-        assert.strictEqual(context.renderAsInfix($.imag(i)), "1");
+        assert.strictEqual(context.renderAsInfix($.re(one)), "1");
+        assert.strictEqual(context.renderAsInfix($.im(one)), "0");
+        assert.strictEqual(context.renderAsInfix($.re(i)), "0");
+        assert.strictEqual(context.renderAsInfix($.im(i)), "1");
         assert.strictEqual($.isreal(one), true);
         assert.strictEqual($.isimag(one), false);
         assert.strictEqual($.isreal(i), false);

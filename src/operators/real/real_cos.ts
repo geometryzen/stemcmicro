@@ -6,7 +6,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const COS = native_sym(Native.cos);
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -15,11 +15,11 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * real(cos(z)) = cos(z) when z is real
+ * re(cos(z)) = cos(z) when z is real
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(REAL, COS, $);
+        super(RE, COS, $);
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;

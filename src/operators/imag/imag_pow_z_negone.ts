@@ -8,7 +8,7 @@ import { UCons } from "../helpers/UCons";
 import { is_rat } from "../rat/is_rat";
 
 const POW = native_sym(Native.pow);
-const IMAG = native_sym(Native.imag);
+const IM = native_sym(Native.im);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -21,7 +21,7 @@ class Builder implements OperatorBuilder<U> {
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IMAG, POW, $);
+        super(IM, POW, $);
     }
     isKind(expr: U): expr is UCons<Sym, Cons> {
         if (super.isKind(expr)) {
@@ -38,11 +38,11 @@ class Op extends CompositeOperator {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg("imag(1/z)", $.toInfixString(innerExpr));
+        // console.lg("im(1/z)", $.toInfixString(innerExpr));
         const base = innerExpr.lhs;
         const z = base;
         const z_star = $.conj(z);
-        const numer = $.imag(z_star);
+        const numer = $.im(z_star);
         const denom = $.multiply(z, z_star);
         const retval = $.divide(numer, denom);
         // console.lg("z_star", this.$.toInfixString(z_star));

@@ -21,7 +21,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * isreal(z) <=> iszero(imag(z))
+ * isreal(z) <=> iszero(im(z))
  */
 class IsRealPow extends CompositeOperator {
     constructor($: ExtensionEnv) {

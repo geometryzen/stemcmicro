@@ -17,9 +17,9 @@ import { compute_theta_from_base_and_expo } from "./compute_theta_from_base_and_
 
 const ADD = native_sym(Native.add);
 const EXP = native_sym(Native.exp);
-const IMAG = native_sym(Native.imag);
+const IM = native_sym(Native.im);
 const POW = native_sym(Native.pow);
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 const MUL = native_sym(Native.multiply);
 
 function multiply_factors(factors: U[], $: ExtensionEnv): U {
@@ -44,7 +44,7 @@ class Builder implements OperatorBuilder<U> {
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(REAL, MUL, $);
+        super(RE, MUL, $);
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
@@ -55,23 +55,22 @@ class Op extends CompositeOperator {
             switch (count_imu % 4) {
                 case 0: {
                     // This would cause an infinite loop if count_imu were 0.
-                    return [TFLAG_DIFF, $.real(z)];
+                    return [TFLAG_DIFF, $.re(z)];
                 }
                 case 1: {
-                    return [TFLAG_DIFF, $.negate($.imag(z))];
+                    return [TFLAG_DIFF, $.negate($.im(z))];
                 }
                 case 2: {
-                    return [TFLAG_DIFF, $.negate($.real(z))];
+                    return [TFLAG_DIFF, $.negate($.re(z))];
                 }
                 case 3: {
-                    return [TFLAG_DIFF, $.imag(z)];
+                    return [TFLAG_DIFF, $.im(z)];
                 }
                 default: {
                     throw new Error(`${count_imu}`);
                 }
             }
         }
-        // console.lg("REAL MUL", this.$.toInfixString(outerExpr));
         // console.lg("Computing Re of a * expression...", $.toSExprString(expr));
         const rs: U[] = []; // the real factors.
         const cs: U[] = []; // the complex factors
@@ -88,8 +87,8 @@ class Op extends CompositeOperator {
                 // How do we make progress with the factors that are complex numbers?
                 if (is_sym(factor)) {
                     // console.lg("arg is Sym and possibly complex", $.toInfixString(arg));
-                    const x = items_to_cons(REAL, factor);
-                    const y = items_to_cons(IMAG, factor);
+                    const x = items_to_cons(RE, factor);
+                    const y = items_to_cons(IM, factor);
                     const iy = items_to_cons(MUL, imu, y);
                     const z = items_to_cons(ADD, x, iy);
                     // console.lg("Z=>", $.toInfixString(z));
@@ -147,7 +146,7 @@ class Op extends CompositeOperator {
             return [TFLAG_NONE, outerExpr];
         }
         // console.lg("exp", $.toInfixString(expr));
-        const C = $.valueOf(items_to_cons(REAL, B));
+        const C = $.valueOf(items_to_cons(RE, B));
         // console.lg("C", $.toSExprString(C));
         const D = $.valueOf(items_to_cons(MUL, A, C));
         // console.lg("D", $.toSExprString(D));

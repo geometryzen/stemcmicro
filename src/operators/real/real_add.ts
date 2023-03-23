@@ -6,7 +6,7 @@ import { cons, Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const ADD = native_sym(Native.add);
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -15,18 +15,18 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * real(a + b + ...) = real(a) + real(b) + ...
+ * re(a + b + ...) = re(a) + re(b) + ...
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(REAL, ADD, $);
+        super(RE, ADD, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const argList = innerExpr.argList;
         const A = argList.map(function (arg) {
-            return $.valueOf(items_to_cons(REAL, arg));
+            return $.valueOf(items_to_cons(RE, arg));
         });
         const sum = $.valueOf(cons(ADD, A));
         return [TFLAG_NONE, sum];

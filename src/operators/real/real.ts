@@ -14,10 +14,10 @@ import { compute_theta_from_base_and_expo } from './compute_theta_from_base_and_
 
 const MATH_ADD = native_sym(Native.add);
 const EXP = native_sym(Native.exp);
-const IMAG = native_sym(Native.imag);
+const IM = native_sym(Native.im);
 const MATH_MUL = native_sym(Native.multiply);
 const MATH_POW = native_sym(Native.pow);
-const REAL = native_sym(Native.real);
+const RE = native_sym(Native.re);
 
 /**
  * expr = (real arg)
@@ -39,7 +39,7 @@ export function Eval_real(expr: Cons, $: ExtensionEnv): U {
 export const real_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv) {
     // We could/should check the numbr of arguments.
     const arg = $.valueOf(argList.car);
-    return real(arg, $);
+    return re(arg, $);
 };
 
 /**
@@ -49,7 +49,7 @@ export const real_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv)
  * @param $ 
  * @returns 
  */
-export function real(expr: U, $: ExtensionEnv): U {
+export function re(expr: U, $: ExtensionEnv): U {
     // console.lg(`real`, $.toInfixString(expr));
     // console.lg("real", $.toSExprString(expr));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -69,14 +69,14 @@ export function real(expr: U, $: ExtensionEnv): U {
             return expr;
         }
         else {
-            return items_to_cons(REAL, expr);
+            return items_to_cons(RE, expr);
         }
     }
     else if (is_add(expr)) {
         // console.lg("is_add", $.toInfixString(expr));
         const argList = expr.argList;
         const A = argList.map(function (arg) {
-            return real(arg, $);
+            return re(arg, $);
         });
         const sum = $.valueOf(cons(MATH_ADD, A));
         // console.lg("real of", $.toInfixString(expr), "is", $.toInfixString(sum));
@@ -95,7 +95,7 @@ export function real(expr: U, $: ExtensionEnv): U {
                 const numer = $.valueOf(items_to_cons(MATH_MUL, A, B));
                 const denom = $.valueOf(items_to_cons(MATH_MUL, base, conj_base));
                 const C = divide(numer, denom, $);
-                return hook($.valueOf(items_to_cons(REAL, C)), 'C');
+                return hook($.valueOf(items_to_cons(RE, C)), 'C');
             }
             else {
                 throw new Error("Power");
@@ -106,10 +106,10 @@ export function real(expr: U, $: ExtensionEnv): U {
             // It is natural to then take a log: log(z) = log(base^expo)=>expo*log(base)
             // Now let z = r * exp(i*theta). log(z) = log(r) + i * theta
             // Hence log(r) + i * theta = expo*log(base)
-            // real(z) = r * cos(theta)
-            // log(r) = real(expo*log(base))
-            // r = exp(real(expo*log(base)))
-            // theta = imag(expo*log(base)) 
+            // re(z) = r * cos(theta)
+            // log(r) = re(expo*log(base))
+            // r = exp(re(expo*log(base)))
+            // theta = im(expo*log(base)) 
             // console.lg("base", $.toInfixString(base));
             // console.lg("expo", $.toInfixString(expo));
             // console.lg("YIN");
@@ -137,8 +137,8 @@ export function real(expr: U, $: ExtensionEnv): U {
                 // How do we make progress with the factors that are complex numbers?
                 if (is_sym(factor)) {
                     // console.lg("arg is Sym and possibly complex", $.toInfixString(arg));
-                    const x = items_to_cons(REAL, factor);
-                    const y = items_to_cons(IMAG, factor);
+                    const x = items_to_cons(RE, factor);
+                    const y = items_to_cons(IM, factor);
                     const iy = items_to_cons(MATH_MUL, imu, y);
                     const z = items_to_cons(MATH_ADD, x, iy);
                     // console.lg("Z=>", $.toInfixString(z));
@@ -191,7 +191,7 @@ export function real(expr: U, $: ExtensionEnv): U {
         const B = multiply_factors(cs, $);
         // console.lg("B", $.toInfixString(B));
         // console.lg("exp", $.toInfixString(expr));
-        const C = $.valueOf(items_to_cons(REAL, B));
+        const C = $.valueOf(items_to_cons(RE, B));
         // console.lg("C", $.toSExprString(C));
         const D = $.valueOf(items_to_cons(MATH_MUL, A, C));
         // console.lg("D", $.toSExprString(D));

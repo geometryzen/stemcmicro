@@ -10,7 +10,7 @@ import { UCons } from "../helpers/UCons";
 import { assert_sym } from "../sym/assert_sym";
 import { is_sym } from "../sym/is_sym";
 
-const imag = native_sym(Native.imag);
+const imag = native_sym(Native.im);
 const log = native_sym(Native.log);
 
 class Builder implements OperatorBuilder<U> {

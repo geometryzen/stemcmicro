@@ -7,7 +7,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const SIN = native_sym(Native.sin);
-const IMAG = native_sym(Native.imag);
+const IM = native_sym(Native.im);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -16,11 +16,11 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * imag(sin(z)) = 0 when z is real
+ * im(sin(z)) = 0 when z is real
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IMAG, SIN, $);
+        super(IM, SIN, $);
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;

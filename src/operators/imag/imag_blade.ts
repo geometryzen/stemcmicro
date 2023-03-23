@@ -10,7 +10,7 @@ import { is_blade } from "../blade/is_blade";
 import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
 
-export const IMAG = native_sym(Native.imag);
+export const IM = native_sym(Native.im);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -24,7 +24,7 @@ type EXP = UCons<Sym, ARG>;
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
-        super('imag_blade', IMAG, is_blade, $);
+        super('imag_blade', IM, is_blade, $);
         this.hash = hash_unaop_atom(this.opr, HASH_BLADE);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

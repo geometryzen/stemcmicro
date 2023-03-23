@@ -369,6 +369,7 @@ import { sym_math_add } from '../operators/sym/sym_math_add';
 import { sym_math_mul } from '../operators/sym/sym_math_mul';
 import { sym_math_pi } from '../operators/sym/sym_math_pi';
 import { sym_math_pow } from '../operators/sym/sym_math_pow';
+import { symbol_varargs } from '../operators/symbol/symbol_varargs';
 import { tan_varargs } from '../operators/tan/tan_varargs';
 import { tanh_varargs } from '../operators/tanh/tanh_varargs';
 import { tau } from '../operators/tau/tau';
@@ -961,6 +962,8 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(subst_varargs);
     $.defineOperator(sum_varargs);
+
+    $.defineOperator(symbol_varargs);
 
     $.defineOperator(taylor_varargs);
 

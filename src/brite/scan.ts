@@ -12,7 +12,7 @@ import {
 } from '../runtime/constants';
 import { defs } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
-import { Boo } from '../tree/boo/Boo';
+import { create_boo } from '../tree/boo/Boo';
 import { negOne, one } from '../tree/rat/Rat';
 import { Tensor } from '../tree/tensor/Tensor';
 import { items_to_cons, nil, U } from '../tree/tree';
@@ -645,12 +645,12 @@ function scan_first_factor(state: InputState): [is_num: boolean, expr: U] {
     else if (code === T_SYM) {
         // TODO: This code should probablt be merged into scan_symbol.
         if (state.text === 'true') {
-            const value = new Boo(true, state.pos, state.end);
+            const value = create_boo(true);
             state.advance();
             return [false, value];
         }
         else if (state.text === 'false') {
-            const value = new Boo(false, state.pos, state.end);
+            const value = create_boo(false);
             state.advance();
             return [false, value];
         }

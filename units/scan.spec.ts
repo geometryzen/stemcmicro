@@ -472,8 +472,9 @@ function expect_one_tree(sourceText: string, options?: ParseOptions): U {
 function expect_boo(expr: U, value: boolean, pos: number, end: number, message?: string | undefined): Boo {
     if (is_boo(expr)) {
         assert.strictEqual(expr.isTrue(), value);
-        assert.strictEqual(expr.pos, pos);
-        assert.strictEqual(expr.end, end);
+        // The scanner no longer keeps track of the position of a Boo.
+        // assert.strictEqual(expr.pos, pos);
+        // assert.strictEqual(expr.end, end);
         return expr;
     }
     else {

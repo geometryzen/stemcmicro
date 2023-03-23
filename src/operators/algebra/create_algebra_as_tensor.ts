@@ -5,12 +5,11 @@ import { one, two, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { cons, Cons, items_to_cons, U } from '../../tree/tree';
 import { Adapter, SumTerm } from '../../tree/vec/Adapter';
-import { createAlgebra, is_blade } from '../../tree/vec/createAlgebra';
 import { Blade } from '../../tree/vec/Blade';
+import { createAlgebra, is_blade } from '../../tree/vec/createAlgebra';
 import { is_flt } from '../flt/is_flt';
 import { is_num } from '../num/is_num';
 import { is_rat } from '../rat/is_rat';
-import { is_str } from '../str/is_str';
 import { is_sym } from '../sym/is_sym';
 import { is_tensor } from '../tensor/is_tensor';
 import { extract_grade } from './extract_grade';
@@ -254,25 +253,6 @@ export function convertMetricToNative(tensor: U): U[] {
             }
             else {
                 throw new Error(`${e} must be an integer.`);
-            }
-        });
-    }
-    else {
-        throw new Error("must be a tensor.");
-    }
-}
-
-/**
- * Converts the tensor of Str values to a JavaScript native array of strings.
- */
-export function convertLabelsToNative(tensor: U): string[] {
-    if (is_tensor(tensor)) {
-        return tensor.mapElements(function (element) {
-            if (is_str(element)) {
-                return element.str;
-            }
-            else {
-                throw new Error("must be a string.");
             }
         });
     }

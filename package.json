@@ -59,6 +59,7 @@
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",
         "unit-sum": "mocha 'units/sum.spec.ts'",
+        "unit-symbol": "mocha 'units/symbol.spec.ts'",
         "unit-testle": "mocha 'units/testle.spec.ts'",
         "unit-testne": "mocha 'units/testne.spec.ts'",
         "unit-iscomplex": "mocha 'units/iscomplex.spec.ts'",

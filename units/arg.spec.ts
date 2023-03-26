@@ -290,7 +290,7 @@ describe("arg", function () {
         assert.strictEqual(engine.renderAsInfix(value), "1/5*pi");
         engine.release();
     });
-    xit("arg(abs(a)*exp(b+i*pi/5))", function () {
+    it("arg(abs(a)*exp(b+i*pi/5))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,

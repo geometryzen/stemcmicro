@@ -213,4 +213,14 @@ describe("real", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "cos(1)");
         engine.release();
     });
+    it("re((a**2)**(1/2))", function () {
+        const lines: string[] = [
+            `re((a**2)**(1/2))`
+        ];
+        const engine = create_script_context({
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "(a**2)**(1/2)");
+        engine.release();
+    });
 });

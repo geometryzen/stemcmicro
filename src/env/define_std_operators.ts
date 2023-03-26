@@ -160,6 +160,7 @@ import { imag_mul } from '../operators/imag/imag_mul';
 import { imag_mul_i_times_any } from '../operators/imag/imag_mul_i_times_any';
 import { imag_pow_e_rat } from '../operators/imag/imag_pow_e_rat';
 import { imag_pow_e_sym } from '../operators/imag/imag_pow_e_sym';
+import { imag_pow_pow_real_two_half } from '../operators/imag/imag_pow_pow_real_two_half';
 import { imag_pow_rat_rat } from '../operators/imag/imag_pow_rat_rat';
 import { imag_pow_z_negone } from '../operators/imag/imag_pow_z_negone';
 import { imag_rat } from '../operators/imag/imag_rat';
@@ -320,6 +321,7 @@ import { real_imu } from '../operators/real/real_imu';
 import { real_log_imu } from '../operators/real/real_log_imu';
 import { real_log_rat } from '../operators/real/real_log_rat';
 import { real_mul } from '../operators/real/real_mul';
+import { real_pow_pow_real_two_half } from '../operators/real/real_pow_pow_real_two_half';
 import { real_pow_rat_rat } from '../operators/real/real_pow_rat_rat';
 import { real_rat } from '../operators/real/real_rat';
 import { real_real } from '../operators/real/real_real';
@@ -818,6 +820,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(imag_pow_e_sym);
     $.defineOperator(imag_pow_rat_rat);
     $.defineOperator(imag_pow_z_negone);
+    $.defineOperator(imag_pow_pow_real_two_half);
     $.defineOperator(imag_any);
 
     $.defineOperator(index_varargs);
@@ -885,6 +888,7 @@ export function define_std_operators($: ExtensionEnv) {
     // $.defineOperator(real_mul_i_times_any);
     $.defineOperator(real_mul);
     $.defineOperator(real_pow_rat_rat);
+    $.defineOperator(real_pow_pow_real_two_half);
     $.defineOperator(real_rat);
     $.defineOperator(real_real);
     $.defineOperator(real_holomorphic(SIN));

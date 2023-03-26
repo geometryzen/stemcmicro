@@ -196,4 +196,14 @@ describe("imag", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "sin(1)");
         engine.release();
     });
+    it("im((a**2)**(1/2))", function () {
+        const lines: string[] = [
+            `im((a**2)**(1/2))`
+        ];
+        const engine = create_script_context({
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "0");
+        engine.release();
+    });
 });

@@ -1,38 +1,39 @@
 
 import { assert } from "chai";
 import { create_script_context } from "../index";
-import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sandbox", function () {
-    it("re((a**2)**(1/2))", function () {
+    it("???", function () {
         const lines: string[] = [
-            `re((a**2)**(1/2))`
+            `simplify(exp(-3/4*i*pi))`
         ];
-        const engine = create_script_context({
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "(a**2)**(1/2)");
-        engine.release();
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values, errors } = context.executeScript(sourceText, {});
+        assert.isArray(errors);
+        assert.strictEqual(errors.length, 0);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "exp(a)");
+        context.release();
     });
-    it("im((a**2)**(1/2))", function () {
-        const lines: string[] = [
-            `im((a**2)**(1/2))`
-        ];
-        const engine = create_script_context({
-        });
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "0");
-        engine.release();
-    });
-    it("arg(abs(a)*exp(b+i*pi/5))", function () {
+    it("abs(exp(a+i*b))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
-            `pi=tau(1/2)`,
-            `arg(abs(a)*exp(b+i*pi/5))`,
+            `abs(exp(a+i*b))`
         ];
-        const engine = create_script_context({});
-        const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "1/5*pi");
-        engine.release();
+        const sourceText = lines.join('\n');
+
+        const context = create_script_context({});
+
+        const { values, errors } = context.executeScript(sourceText, {});
+        assert.isArray(errors);
+        assert.strictEqual(errors.length, 0);
+        assert.isArray(values);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(context.renderAsInfix(values[0]), "exp(a)");
+        context.release();
     });
 });

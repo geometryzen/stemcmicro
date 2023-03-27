@@ -189,6 +189,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
+            // console.lg("executeScript", sourceText);
             const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> = { syntaxKind: SyntaxKind.Native };
             if (contextOptions) {
                 if (typeof contextOptions.catchExceptions === 'boolean') {

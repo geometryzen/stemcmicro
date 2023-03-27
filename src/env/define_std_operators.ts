@@ -16,6 +16,7 @@ import { abs_blade } from '../operators/abs/abs_blade';
 import { abs_exp } from '../operators/abs/abs_exp';
 import { abs_flt } from '../operators/abs/abs_flt';
 import { abs_imu } from '../operators/abs/abs_imu';
+import { abs_mul } from '../operators/abs/abs_mul';
 import { abs_pow_any_negone } from '../operators/abs/abs_pow_any_negone';
 import { abs_rat } from '../operators/abs/abs_rat';
 import { abs_sym } from '../operators/abs/abs_sym';
@@ -55,6 +56,7 @@ import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
 import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
 import { arctan_varargs } from '../operators/arctan/arctan_varargs';
 import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
+import { arg_abs } from '../operators/arg/arg_abs';
 import { arg_add } from '../operators/arg/arg_add';
 import { arg_any } from '../operators/arg/arg_any';
 import { arg_exp } from '../operators/arg/arg_exp';
@@ -326,10 +328,16 @@ import { real_pow_rat_rat } from '../operators/real/real_pow_rat_rat';
 import { real_rat } from '../operators/real/real_rat';
 import { real_real } from '../operators/real/real_real';
 import { real_sym } from '../operators/real/real_sym';
-import { Eval_rect } from '../operators/rect/rect';
+import { rect_add } from '../operators/rect/rect_add';
+import { rect_any } from '../operators/rect/rect_any';
+import { rect_cos } from '../operators/rect/rect_cos';
+import { rect_exp } from '../operators/rect/rect_exp';
+import { rect_imu } from '../operators/rect/rect_imu';
 import { rect_mul } from '../operators/rect/rect_mul';
-import { rect_mul_rat_any } from '../operators/rect/rect_mul_rat_any';
 import { rect_pow_exp_imu } from '../operators/rect/rect_pow_exp_imu';
+import { rect_pow_rat_rat } from '../operators/rect/rect_pow_rat_rat';
+import { rect_rat } from '../operators/rect/rect_rat';
+import { rect_sin } from '../operators/rect/rect_sin';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
@@ -406,7 +414,7 @@ import { zero_varargs } from '../operators/zero/zero_varargs';
 import { Eval_prime } from '../prime';
 import { get_last_print_mode_symbol, store_text_in_binding } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, RECT, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -692,6 +700,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(abs_pow_any_negone);
     $.defineOperator(abs_flt);
     $.defineOperator(abs_imu);
+    $.defineOperator(abs_mul);
     $.defineOperator(abs_rat);
     $.defineOperator(abs_tensor);
     $.defineOperator(abs_uom);
@@ -712,6 +721,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(arctanh_varargs);
 
+    $.defineOperator(arg_abs);
     $.defineOperator(arg_add);
     $.defineOperator(arg_exp);
     $.defineOperator(arg_flt);
@@ -919,10 +929,16 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(make_predicate_sym_operator(ISREAL));
     $.defineOperator(is_real_any);
 
-    $.defineOperator(rect_mul_rat_any);
+    $.defineOperator(rect_add);
+    $.defineOperator(rect_cos);
+    $.defineOperator(rect_exp);
+    $.defineOperator(rect_imu);
     $.defineOperator(rect_mul);
     $.defineOperator(rect_pow_exp_imu);
-    $.defineConsTransformer(RECT, Eval_rect);
+    $.defineOperator(rect_pow_rat_rat);
+    $.defineOperator(rect_rat);
+    $.defineOperator(rect_sin);
+    $.defineOperator(rect_any);
 
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);

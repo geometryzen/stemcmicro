@@ -62,6 +62,28 @@ function update_directives(directives: Directives, directive: Directive, value: 
             }
             break;
         }
+        case Directive.complexAsClock: {
+            if (value) {
+                update_directives(directives, Directive.complexAsPolar, false);
+                update_directives(directives, Directive.complexAsRectangular, false);
+            }
+            break;
+        }
+        case Directive.complexAsPolar: {
+            if (value) {
+                update_directives(directives, Directive.complexAsClock, false);
+                update_directives(directives, Directive.complexAsRectangular, false);
+                directives[Directive.convertExpToTrig] = false;
+            }
+            break;
+        }
+        case Directive.complexAsRectangular: {
+            if (value) {
+                update_directives(directives, Directive.complexAsClock, false);
+                update_directives(directives, Directive.complexAsPolar, false);
+            }
+            break;
+        }
         case Directive.convertCosToSin: {
             if (value) {
                 directives[Directive.convertSinToCos] = false;
@@ -77,6 +99,7 @@ function update_directives(directives: Directives, directive: Directive, value: 
         case Directive.convertExpToTrig: {
             if (value) {
                 directives[Directive.convertTrigToExp] = false;
+                directives[Directive.complexAsPolar] = false;
             }
             break;
         }
@@ -103,9 +126,10 @@ function initial_directives(): Directives {
     const directives: Directives = {};
     update_directives(directives, Directive.complexAsClock, false);
     update_directives(directives, Directive.complexAsPolar, false);
-    update_directives(directives, Directive.evaluatingAsFloat, false);
+    update_directives(directives, Directive.complexAsRectangular, false);
     update_directives(directives, Directive.convertExpToTrig, false);
     update_directives(directives, Directive.convertTrigToExp, false);
+    update_directives(directives, Directive.evaluatingAsFloat, false);
     update_directives(directives, Directive.expanding, false);
     update_directives(directives, Directive.expandAbsSum, false);
     update_directives(directives, Directive.expandCosSum, false);

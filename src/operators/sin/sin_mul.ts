@@ -1,7 +1,9 @@
-import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { imu } from "../../env/imu";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_negative } from "../../predicates/is_negative";
+import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
@@ -24,11 +26,18 @@ class Op extends CompositeOperator {
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // sine function is antisymmetric, sin(-x) = -sin(x)
-        if (is_negative(innerExpr)) {
-            return [TFLAG_DIFF, $.negate($.sin($.negate(innerExpr)))];
+        if ($.getDirective(Directive.convertTrigToExp)) {
+            const pos_ix = $.multiply(imu, innerExpr);
+            const neg_ix = $.negate(pos_ix);
+            return [TFLAG_DIFF, $.divide($.multiply(imu, $.subtract($.exp(neg_ix), $.exp(pos_ix))), two)];
         }
-        return sin_special_angles(innerExpr, outerExpr, $);
+        else {
+            // sine function is antisymmetric, sin(-x) = -sin(x)
+            if (is_negative(innerExpr)) {
+                return [TFLAG_DIFF, $.negate($.sin($.negate(innerExpr)))];
+            }
+            return sin_special_angles(innerExpr, outerExpr, $);
+        }
     }
 }
 

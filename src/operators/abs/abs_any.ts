@@ -26,6 +26,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('abs_any', ABS, is_any, $);
     }
+    /*
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {
             const arg = expr.arg;
@@ -43,6 +44,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
             return false;
         }
     }
+    */
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         // TODO: Ultimately we want this to do nothing for extensibility.
         // console.lg(this.name, this.$.toInfixString(arg));

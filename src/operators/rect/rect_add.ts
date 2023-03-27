@@ -6,8 +6,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
 const ADD = native_sym(Native.add);
-const EXP = native_sym(Native.exp);
-const MUL = native_sym(Native.multiply);
+const RECT = native_sym(Native.rect);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -16,19 +15,19 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * exp(a + b + ...) = exp(a) * exp(b) * ...
+ * rect(a + b + ...) = rect(a) + rect(b) + ...
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(EXP, ADD, $);
+        super(RECT, ADD, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, addExpr: Cons, expExpr: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(this.name, $.toInfixString(addExpr));
-        return [TFLAG_DIFF, $.multiply(...addExpr.argList.map($.exp))];
+        // console.lg(this.name, $.toInfixString(innerExpr));
+        return [TFLAG_DIFF, $.add(...innerExpr.argList.map($.rect))];
     }
 }
 
-export const exp_add = new Builder();
+export const rect_add = new Builder();
 

@@ -1,13 +1,13 @@
 
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { MATH_POW } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
 import { one, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
+import { is_rat } from "../rat/is_rat";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -21,6 +21,7 @@ class Op extends Function2<U, Rat> implements Operator<Cons> {
         super('pow_2_any_rat', MATH_POW, is_any, is_rat, $);
     }
     transform2(opr: Sym, base: U, expo: Rat, expr: BCons<Sym, U, Rat>): [TFLAGS, U] {
+        // console.lg(this.name);
         if (expo.isZero()) {
             return [TFLAG_DIFF, one];
         }

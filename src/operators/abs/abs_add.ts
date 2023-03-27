@@ -44,9 +44,10 @@ class Op extends CompositeOperator {
 
             // console.lg(`z => ${$.toInfixString(z)}`);
 
-            const x = re(z, $);
-            // console.lg(`x => ${$.toInfixString(x)}`);
-            const y = im(z, $);
+            const x = $.re(z);
+            // console.lg("x", $.toInfixString(x));
+            const y = $.im(z);
+            // console.lg("y", $.toInfixString(y));
             const xx = $.power(x, two);
             const yy = $.power(y, two);
             const zz = $.add(xx, yy);

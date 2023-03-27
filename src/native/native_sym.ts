@@ -30,6 +30,7 @@ export function build_sym(code: Native): Sym {
         case Native.arcsin: return create_sym('arcsin');
         case Native.arctan: return create_sym('arctan');
         case Native.arg: return create_sym('arg');
+        case Native.circexp: return create_sym('circexp');
         case Native.clock: return create_sym('clock');
         case Native.complex: return create_sym('complex');
         case Native.component: return create_sym('component');

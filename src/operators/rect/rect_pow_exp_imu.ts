@@ -53,6 +53,7 @@ class Op extends CompositeOperator {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
+        // console.lg(this.name);
         return [TFLAG_DIFF, expr];
     }
 }

@@ -40,8 +40,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         return this.$.iszero(b);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        const b = lhs.lhs;
-        const m = lhs.rhs;
+        // console.lg(this.name, this.$.toInfixString(lhs));
+        const b = lhs.base;
+        const m = lhs.expo;
         const n = rhs;
         if (m.isPositiveInteger() && n.isPositiveInteger()) {
             const mn = items_to_cons(MATH_MUL, m, n);
@@ -52,6 +53,9 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             return [TFLAG_DIFF, b];
         }
         if (m.isMinusOne() && n.isMinusOne()) {
+            return [TFLAG_DIFF, b];
+        }
+        if (m.isTwo() && n.isHalf()) {
             return [TFLAG_DIFF, b];
         }
         // console.lg(`${this.name} ${lhs} ${rhs}`);

@@ -16,11 +16,12 @@ import { is_sym } from '../sym/is_sym';
 
 /**
  * Convert complex z to rectanglar from.
- * @param expr (rect z)
+ * @param rectExpr (rect z)
  */
-export function Eval_rect(expr: Cons, $: ExtensionEnv): U {
-    const arg = cadnr(expr, 1);
-    $.pushDirective(Directive.convertExpToTrig, true);
+export function Eval_rect(rectExpr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_rect", $.toInfixString(rectExpr));
+    const arg = cadnr(rectExpr, 1);
+    $.pushDirective(Directive.complexAsRectangular, true);
     try {
         const valueOfArg = $.valueOf(arg);
         const result = rect(valueOfArg, $);

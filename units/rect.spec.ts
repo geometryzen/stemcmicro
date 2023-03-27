@@ -3,7 +3,7 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("rect", function () {
-    it("exp(i*pi/3)", function () {
+    it("rect(exp(i*pi/3))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `pi=tau(1/2)`,

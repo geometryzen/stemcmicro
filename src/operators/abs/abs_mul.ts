@@ -5,8 +5,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const ADD = native_sym(Native.add);
-const EXP = native_sym(Native.exp);
+const ABS = native_sym(Native.abs);
 const MUL = native_sym(Native.multiply);
 
 class Builder implements OperatorBuilder<U> {
@@ -16,19 +15,18 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * exp(a + b + ...) = exp(a) * exp(b) * ...
+ * abs(a * b 8 ...) = abs(a) * abs(b) * ...
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(EXP, ADD, $);
+        super(ABS, MUL, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, addExpr: Cons, expExpr: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, mulExpr: Cons, absExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(this.name, $.toInfixString(addExpr));
-        return [TFLAG_DIFF, $.multiply(...addExpr.argList.map($.exp))];
+        return [TFLAG_DIFF, $.multiply(...mulExpr.argList.map($.abs))];
     }
 }
 
-export const exp_add = new Builder();
+export const abs_mul = new Builder();
 

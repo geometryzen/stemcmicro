@@ -17,6 +17,7 @@ export enum Native {
     arcsin,
     arctan,
     arg,
+    circexp,
     clock,
     complex,
     component,

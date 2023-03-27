@@ -19,6 +19,7 @@ import { move_top_of_stack } from './defs';
 import { RESERVED_KEYWORD_LAST } from './ns_script';
 import { ExprTransformOptions, ScriptExecuteOptions } from "./script_engine";
 
+const CIRCEXP = native_sym(Native.circexp);
 const CLOCK = native_sym(Native.clock);
 const EXPAND = native_sym(Native.expand);
 const FACTOR = native_sym(Native.factor);
@@ -270,7 +271,10 @@ function remove_wrappers(tree: U): U {
 }
 
 function is_wrapper_opr(sym: Sym): boolean {
-    if (CLOCK.equalsSym(sym)) {
+    if (CIRCEXP.equalsSym(sym)) {
+        return true;
+    }
+    else if (CLOCK.equalsSym(sym)) {
         return true;
     }
     else if (EXPAND.equalsSym(sym)) {

@@ -1,16 +1,16 @@
 import { count_imu_factors } from "../../calculators/count_imu_factors";
 import { remove_imu_factors } from "../../calculators/remove_imu_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { imu } from "../../env/imu";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { is_multiply } from "../../runtime/helpers";
-import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const ABS = native_sym(Native.abs);
 const EXP = native_sym(Native.exp);
+const RECT = native_sym(Native.rect);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -20,26 +20,21 @@ class Builder implements OperatorBuilder<U> {
 
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(ABS, EXP, $);
+        super(RECT, EXP, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, expExpr: Cons, absExpr: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, expExpr: Cons, rectExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(this.name, this.$.toInfixString(expExpr));
-        const z = expExpr.argList.head;
-        if (is_multiply(z)) {
-            if (count_imu_factors(z) === 1) {
-                const remaining = remove_imu_factors(z);
-                if ($.isreal(remaining)) {
-                    return [TFLAG_DIFF, one];
-                }
+        const arg = expExpr.arg;
+        if (is_multiply(arg)) {
+            if (count_imu_factors(arg) === 1) {
+                const x = remove_imu_factors(arg);
+                return [TFLAG_DIFF, $.add($.cos(x), $.multiply(imu, $.sin(x)))];
             }
         }
-        if ($.isreal(z)) {
-            return [TFLAG_DIFF, expExpr];
-        }
-        return [TFLAG_NONE, absExpr];
+        return [TFLAG_NONE, rectExpr];
     }
 }
 
-export const abs_exp = new Builder();
+export const rect_exp = new Builder();
+

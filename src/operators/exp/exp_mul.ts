@@ -15,7 +15,7 @@ import { is_rat } from "../rat/is_rat";
 
 const EXP = native_sym(Native.exp);
 const MUL = native_sym(Native.multiply);
-const PI = native_sym(Native.PI);
+// const PI = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -33,10 +33,12 @@ class Op extends CompositeOperator {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(innerExpr));
+        // console.lg("converExpToTrig?", this.$.getDirective(Directive.convertExpToTrig));
+        // console.lg("converTrigToExp?", this.$.getDirective(Directive.convertTrigToExp));
         // console.lg("clock?", this.$.getDirective(Directive.complexAsClock));
         // console.lg("polar?", this.$.getDirective(Directive.complexAsPolar));
         const $ = this.$;
-        if ($.getDirective(Directive.convertExpToTrig)) {
+        if (should_convert_exp_to_trig($)) {
             if (count_imu_factors(innerExpr) === 1) {
                 const x = remove_imu_factors(innerExpr);
                 const c = $.cos(x);
@@ -55,16 +57,27 @@ class Op extends CompositeOperator {
                 }
             }
         }
-        if (!$.getDirective(Directive.complexAsPolar)) {
-            if ((count_imu_factors(innerExpr) === 1) && innerExpr.contains(PI)) {
-                const x = remove_imu_factors(innerExpr);
-                const c = $.cos(x);
-                const s = $.sin(x);
-                return [TFLAG_DIFF, $.add(c, $.multiply(imu, s))];
-            }
-        }
         return [TFLAG_NONE, outerExpr];
     }
+}
+
+function should_convert_exp_to_trig($: ExtensionEnv): boolean {
+    if ($.getDirective(Directive.convertExpToTrig)) {
+        return true;
+    }
+    if ($.getDirective(Directive.complexAsClock)) {
+        return false;
+    }
+    if ($.getDirective(Directive.complexAsPolar)) {
+        return false;
+    }
+    if ($.getDirective(Directive.convertTrigToExp)) {
+        return false;
+    }
+    if ($.getDirective(Directive.complexAsRectangular)) {
+        return true;
+    }
+    return true;
 }
 
 export const exp_mul = new Builder();

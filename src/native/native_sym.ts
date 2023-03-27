@@ -55,6 +55,7 @@ export function build_sym(code: Native): Sym {
         case Native.inverse: return create_sym('inv');
         case Native.iscomplex: return create_sym('iscomplex');
         case Native.isinfinitesimal: return create_sym('isinfinitesimal');
+        case Native.ispositive: return create_sym('ispositive');
         case Native.isreal: return create_sym('isreal');
         case Native.iszero: return create_sym('iszero');
         case Native.lco: return create_sym('<<');

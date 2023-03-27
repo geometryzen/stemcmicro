@@ -334,6 +334,7 @@ export interface ExtensionEnv {
      * @param expr 
      */
     is(predicate: Sym, expr: U): boolean;
+    iscomplex(expr: U): boolean;
     /**
      * @deprecated Use getDirective(Directive.expanding)
      */
@@ -349,13 +350,7 @@ export interface ExtensionEnv {
     isinfinitesimal(expr: U): boolean;
     isminusone(expr: U): boolean;
     isone(expr: U): boolean;
-    /**
-     * Corresponds to the 'real' property.
-     */
-    iscomplex(expr: U): boolean;
-    /**
-    * Corresponds to the 'real' property.
-    */
+    ispositive(expr: U): boolean;
     isreal(expr: U): boolean;
     /**
      * Determines whether expr is scalar-valued.

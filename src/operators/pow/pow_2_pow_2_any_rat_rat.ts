@@ -1,7 +1,6 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
-import { items_to_cons } from "../../makeList";
-import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
+import { MATH_POW } from "../../runtime/ns_math";
 import { Rat, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
@@ -27,6 +26,7 @@ const guardL = and(is_cons, is_pow_2_any_rat);
 const guardR = is_rat;
 
 /**
+ * (b**2)**(1/2) => b, for b real and positive or zero.
  * (b**m)**n => b**(m*n), for any positive integers m and n.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
@@ -35,18 +35,36 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('pow_2_pow_2_any_rat_rat', MATH_POW, guardL, guardR, $);
         this.hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
+    isKind(expr: U): expr is BCons<Sym, LHS, Rat> {
+        if (super.isKind(expr)) {
+            const m = expr.base.expo;
+            const n = expr.expo;
+            // (b**2)**(1/2)
+            if (m.isTwo() && n.isHalf()) {
+                const $ = this.$;
+                const b = expr.base.base;
+                if ($.isreal(b)) {
+                    if ($.ispositive(b) || $.iszero(b)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     isZero(expr: EXP): boolean {
         const b = expr.lhs.lhs;
         return this.$.iszero(b);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
-        // console.lg(this.name, this.$.toInfixString(lhs));
+        const $ = this.$;
+        // console.lg(this.name, this.$.toInfixString(lhs), this.$.toInfixString(rhs));
         const b = lhs.base;
         const m = lhs.expo;
         const n = rhs;
         if (m.isPositiveInteger() && n.isPositiveInteger()) {
-            const mn = items_to_cons(MATH_MUL, m, n);
-            const retval = items_to_cons(MATH_POW, b, mn);
+            const mn = $.multiply(m, n);
+            const retval = $.power(b, mn);
             return [TFLAG_DIFF, retval];
         }
         if (m.isHalf() && n.equalsRat(two)) {

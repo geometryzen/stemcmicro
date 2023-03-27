@@ -51,6 +51,7 @@ export enum Native {
     inverse,
     iscomplex,
     isinfinitesimal,
+    ispositive,
     isreal,
     iszero,
     lco,

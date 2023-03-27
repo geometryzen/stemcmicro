@@ -196,6 +196,8 @@ import { isinfinitesimal_hyp } from '../operators/isinfinitesimal/isinfinitesima
 import { isinfinitesimal_mul } from '../operators/isinfinitesimal/isinfinitesimal_mul';
 import { isinfinitesimal_rat } from '../operators/isinfinitesimal/isinfinitesimal_rat';
 import { isinfinitesimal_sym } from '../operators/isinfinitesimal/isinfinitesimal_sym';
+import { ispositive_any } from '../operators/ispositive/ispositive_any';
+import { ispositive_exp } from '../operators/ispositive/ispositive_exp';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { is_real_pow_any_negone } from '../operators/isreal/isreal_pow_any_negone';
 import { is_real_abs } from '../operators/isreal/is_real_abs';
@@ -290,6 +292,7 @@ import { outer_2_tensor_tensor } from '../operators/outer/outer_2_tensor_tensor'
 import { Eval_polar } from '../operators/polar/polar';
 import { polar_imu } from '../operators/polar/polar_imu';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
+import { pow_2_pow_2_any_rat_rat } from '../operators/pow/pow_2_pow_2_any_rat_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
 import { pow_e_any } from '../operators/pow/pow_e_any';
 import { pow_e_log } from '../operators/pow/pow_e_log';
@@ -495,7 +498,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     // TODO: See what these do.
     $.defineOperator(pow_2_pow_2_e_any_rat);
-    // $.defineOperator(pow_2_pow_2_any_rat_rat);
+    $.defineOperator(pow_2_pow_2_any_rat_rat);
     $.defineOperator(pow_e_rat);
     $.defineOperator(pow_e_log);
     $.defineOperator(pow_e_any);
@@ -841,13 +844,40 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inv_inv);
     $.defineOperator(inv_any);
 
+    $.defineOperator(is_complex_sym);
+    $.defineOperator(is_complex_any);
+
     $.defineOperator(isinfinitesimal_hyp);
     $.defineOperator(isinfinitesimal_mul);
     $.defineOperator(isinfinitesimal_rat);
     $.defineOperator(isinfinitesimal_sym);
     $.defineOperator(isinfinitesimal_any);
 
+    $.defineOperator(ispositive_exp);
+    $.defineOperator(ispositive_any);
+
     $.defineOperator(isprime_varargs);
+
+    $.defineOperator(is_real_abs);
+    $.defineOperator(is_real_add);
+    $.defineOperator(isreal_holomorphic(COS));
+    $.defineOperator(isreal_holomorphic(EXP));
+    $.defineOperator(isreal_holomorphic(FACTORIAL));
+    $.defineOperator(is_real_cos);
+    $.defineOperator(is_real_flt);
+    $.defineOperator(is_real_imag);
+    $.defineOperator(is_real_imu);
+    $.defineOperator(is_real_mul);
+    $.defineOperator(is_real_pow_e_sym);
+    $.defineOperator(is_real_pow_rat_rat);
+    $.defineOperator(is_real_pow_sym_rat);
+    $.defineOperator(is_real_pow_imu_rat);
+    $.defineOperator(is_real_pow_any_negone);
+    $.defineOperator(is_real_rat);
+    $.defineOperator(is_real_real);
+    $.defineOperator(is_real_sin);
+    $.defineOperator(make_predicate_sym_operator(ISREAL));
+    $.defineOperator(is_real_any);
 
     $.defineOperator(iszero_rat);
     $.defineOperator(iszero_sym);
@@ -904,30 +934,6 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(real_holomorphic(SIN));
     $.defineOperator(real_sym);
     $.defineOperator(real_any);
-
-    $.defineOperator(is_complex_sym);
-    $.defineOperator(is_complex_any);
-
-    $.defineOperator(is_real_abs);
-    $.defineOperator(is_real_add);
-    $.defineOperator(isreal_holomorphic(COS));
-    $.defineOperator(isreal_holomorphic(EXP));
-    $.defineOperator(isreal_holomorphic(FACTORIAL));
-    $.defineOperator(is_real_cos);
-    $.defineOperator(is_real_flt);
-    $.defineOperator(is_real_imag);
-    $.defineOperator(is_real_imu);
-    $.defineOperator(is_real_mul);
-    $.defineOperator(is_real_pow_e_sym);
-    $.defineOperator(is_real_pow_rat_rat);
-    $.defineOperator(is_real_pow_sym_rat);
-    $.defineOperator(is_real_pow_imu_rat);
-    $.defineOperator(is_real_pow_any_negone);
-    $.defineOperator(is_real_rat);
-    $.defineOperator(is_real_real);
-    $.defineOperator(is_real_sin);
-    $.defineOperator(make_predicate_sym_operator(ISREAL));
-    $.defineOperator(is_real_any);
 
     $.defineOperator(rect_add);
     $.defineOperator(rect_cos);

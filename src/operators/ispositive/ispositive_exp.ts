@@ -6,8 +6,8 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 
-const ADD = native_sym(Native.add);
-const IS_REAL = native_sym(Native.isreal);
+const EXP = native_sym(Native.exp);
+const ISPOS = native_sym(Native.ispositive);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -17,14 +17,13 @@ class Builder implements OperatorBuilder<U> {
 
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
-        super(IS_REAL, ADD, $);
+        super(ISPOS, EXP, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, add: Cons): [TFLAGS, U] {
+    transform1(opr: Sym, expExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        if ([...add.argList].every(function (arg) {
-            return $.isreal(arg);
-        })) {
+        const expArg = expExpr.arg;
+        if ($.isreal(expArg)) {
             return [TFLAG_DIFF, booT];
         }
         else {
@@ -33,4 +32,4 @@ class Op extends CompositeOperator {
     }
 }
 
-export const is_real_add = new Builder();
+export const ispositive_exp = new Builder();

@@ -32,6 +32,7 @@ const MULTIPLY = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const ISCOMPLEX = native_sym(Native.iscomplex);
 const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
+const ISPOSITIVE = native_sym(Native.ispositive);
 const ISREAL = native_sym(Native.isreal);
 const ISZERO = native_sym(Native.iszero);
 
@@ -362,6 +363,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         iscomplex(expr: U): boolean {
             return $.is(ISCOMPLEX, expr);
+        },
+        ispositive(expr: U): boolean {
+            return $.is(ISPOSITIVE, expr);
         },
         isreal(expr: U): boolean {
             return $.is(ISREAL, expr);

@@ -2,7 +2,7 @@
 import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
-import { SymbolProps } from './src/env/ExtensionEnv';
+import { Predicates } from './src/env/ExtensionEnv';
 import { SyntaxKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
 import { create_script_context, ScriptContext, ScriptContextOptions } from './src/runtime/script_engine';
@@ -238,7 +238,7 @@ export function run_shardable_test(s: string[], prefix = '') {
 type DEPENDENCY = 'Flt' | 'Imu';
 
 export interface TestOptions {
-    assumes?: { [name: string]: Partial<SymbolProps> };
+    assumes?: { [name: string]: Partial<Predicates> };
     dependencies?: DEPENDENCY[];
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
@@ -248,7 +248,7 @@ export interface TestOptions {
 }
 
 interface TestConfig {
-    assumes: { [name: string]: Partial<SymbolProps> };
+    assumes: { [name: string]: Partial<Predicates> };
     dependencies: DEPENDENCY[];
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;

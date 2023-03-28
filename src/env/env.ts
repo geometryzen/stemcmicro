@@ -22,7 +22,7 @@ import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_function } from "../userfunc";
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, LambdaExpr, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
@@ -591,9 +591,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         transform(expr: U): [TFLAGS, U] {
             // console.lg("transform", expr.toString(), "is_sym", is_sym(expr));
-            if (expr.meta === TFLAG_HALT) {
-                return [TFLAG_HALT, expr];
-            }
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
@@ -659,7 +656,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                 }
                 // Once an expression has been transformed into a stable condition, it should not be transformed until a different phase.
-                expr.meta = TFLAG_HALT;
                 return [TFLAG_NONE, expr];
             }
             else if (is_nil(expr)) {

@@ -8,7 +8,6 @@ export class Pair implements U {
 
     }
     name = "Pair";
-    meta = 0;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     contains(needle: U): boolean {
         throw new Error("Method not implemented.");
@@ -21,10 +20,6 @@ export class Pair implements U {
         throw new Error("Method not implemented.");
     }
     isNil(): boolean {
-        throw new Error("Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    reset(meta: number): void {
         throw new Error("Method not implemented.");
     }
     toString(): string {

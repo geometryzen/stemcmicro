@@ -1,4 +1,4 @@
-import { reset_meta_flag, U } from '../tree';
+import { U } from '../tree';
 import { Adapter, SumTerm } from './Adapter';
 import { Algebra, BasisBlade, MaskAndWeight, Metric } from './BasisBlade';
 import { bitCount } from './bitCount';
@@ -247,22 +247,12 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
             return field.treeZero();
         }
     };
-    let $meta = 0;
     const theBlade: BasisBlade<T, K> = {
         get bitmap(): number {
             return bitmap;
         },
-        get meta(): number {
-            return $meta;
-        },
-        set meta(meta: number) {
-            $meta = meta;
-        },
         get name(): string {
             return 'Blade';
-        },
-        reset(meta: number): void {
-            $meta = reset_meta_flag($meta, meta);
         },
         __abs__(): K {
             const lhs = field.bladeToTree(theBlade);

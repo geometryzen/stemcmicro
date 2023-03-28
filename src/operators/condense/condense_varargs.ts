@@ -1,5 +1,5 @@
 import { Eval_condense } from "../../condense";
-import { ExtensionEnv, Operator, OperatorBuilder, MODE_EXPANDING, TFLAG_DIFF, TFLAG_HALT, TFLAG_KEEP } from "../../env/ExtensionEnv";
+import { ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { CONDENSE } from "../../runtime/constants";
 import { Cons, U } from "../../tree/tree";
@@ -21,7 +21,6 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         const retval = Eval_condense(expr, $);
-        retval.meta |= TFLAG_KEEP;
         const changed = !retval.equals(expr);
         return [changed ? TFLAG_DIFF : TFLAG_HALT, retval];
     }

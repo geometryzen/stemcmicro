@@ -1,6 +1,6 @@
 import { bake } from "../bake";
 import { ScanOptions } from '../brite/scan';
-import { Directive, ExtensionEnv, TFLAG_DIFF, TFLAG_HALT } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { items_to_cons } from "../makeList";
 import { Native } from "../native/Native";
@@ -321,8 +321,6 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
  * @returns 
  */
 export function transform(expr: U, $: ExtensionEnv): U {
-    expr.reset(TFLAG_DIFF);
-    expr.reset(TFLAG_HALT);
     const [, outExpr] = $.transform(expr);
     return outExpr;
 }

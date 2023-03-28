@@ -1,5 +1,5 @@
 import { count_imu_factors } from "../../calculators/count_imu_factors";
-import { Directive, ExtensionEnv, keepFlag, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
@@ -116,16 +116,10 @@ function aggressive(expo: RHS, outerExpr: EXP, $: ExtensionEnv) {
                 // expo_lhs=X
                 // expo_rhs=i
                 if ($.isreal(expo_lhs) && is_imu(expo_rhs)) {
-                    // console.lg(`Euler 3 ${render_as_infix(expr, $)} meta=${keepFlag(expr.meta)}`);
-                    if (keepFlag(outerExpr.meta)) {
-                        return [TFLAG_NONE, outerExpr];
-                    }
-                    else {
-                        const c = $.valueOf(items_to_cons(MATH_COS, expo_lhs));
-                        const s = $.valueOf(items_to_cons(MATH_SIN, expo_lhs));
-                        const s_times_i = $.valueOf(items_to_cons(MATH_MUL, s, imu));
-                        return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_ADD, c, s_times_i))];
-                    }
+                    const c = $.valueOf(items_to_cons(MATH_COS, expo_lhs));
+                    const s = $.valueOf(items_to_cons(MATH_SIN, expo_lhs));
+                    const s_times_i = $.valueOf(items_to_cons(MATH_MUL, s, imu));
+                    return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_ADD, c, s_times_i))];
                 }
                 // Euler's formula with rational factor.
                 // exp(k*X*i) = cos(k*X) + i * sin(k*X)

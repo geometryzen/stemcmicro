@@ -2,7 +2,6 @@ import { U } from "../tree/tree";
 
 export class CommentMarker implements U {
     name = "CommentMarker";
-    meta = 0;
     contains(needle: U): boolean {
         return needle instanceof CommentMarker;
     }
@@ -14,9 +13,6 @@ export class CommentMarker implements U {
     }
     isNil(): boolean {
         return false;
-    }
-    reset(meta: number): void {
-        this.meta = meta;
     }
     pos?: number | undefined;
     end?: number | undefined;

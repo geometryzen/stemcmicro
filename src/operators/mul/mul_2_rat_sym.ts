@@ -40,12 +40,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             return false;
         }
     }
-    isImag(expr: EXP): boolean {
-        return this.$.isimag(expr.rhs);
-    }
-    isScalar(expr: EXP): boolean {
-        return this.$.isscalar(expr.rhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {
             return [TFLAG_DIFF, zero];

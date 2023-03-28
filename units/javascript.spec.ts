@@ -44,7 +44,6 @@ describe("JavaScript", function () {
         assert.strictEqual($.isreal(one), true);
         assert.strictEqual($.isimag(one), false);
         assert.strictEqual($.isreal(i), false);
-        // assert.strictEqual($.isImag(i), true);
         context.release();
     });
     it("uom", function () {

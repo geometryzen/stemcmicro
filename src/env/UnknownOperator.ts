@@ -17,20 +17,8 @@ export class UnknownOperator implements Operator<U> {
     hash?: string | undefined;
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
-    isImag(expr: U): boolean {
-        // We don't really know.
-        return false;
-        // throw new Error("UnknownOperator Method not implemented.");
-    }
     isKind(expr: U): expr is U {
         throw new Error("UnknownOperator.isKind Method not implemented.");
-    }
-    isScalar(expr: U): boolean {
-        throw new Error("UnknownOperator.isScalar Method not implemented.");
-    }
-    isZero(expr: U): boolean {
-        const repr = render_as_sexpr(expr, this.$);
-        throw new Error(`UnknownOperator.isZero ${repr} Method not implemented.`);
     }
     subst(expr: U, oldExpr: U, newExpr: U): U {
         throw new Error("UnknownOperator.subst Method not implemented.");

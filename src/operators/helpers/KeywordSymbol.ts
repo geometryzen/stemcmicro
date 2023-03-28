@@ -12,20 +12,11 @@ export abstract class KeywordOperator implements Operator<Sym> {
         // Nothing to see here.
     }
     abstract readonly name: string;
-    isImag(expr: Sym): boolean {
-        throw new Error("Keyword Symbol Method not implemented.");
-    }
     isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {
             return expr.equalsSym(this.keyword);
         }
         return false;
-    }
-    isScalar(expr: Sym): boolean {
-        throw new Error("Keyword.isScalar Symbol Method not implemented.");
-    }
-    isZero(expr: Sym): boolean {
-        throw new Error("Keyword.isZero Symbol Method not implemented.");
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         throw new Error("Keyword.subst Symbol Method not implemented.");

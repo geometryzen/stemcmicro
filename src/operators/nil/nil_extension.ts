@@ -23,24 +23,12 @@ class NilExtension implements Operator<Cons> {
         return 'NilExtension';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Cons): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(expr: U): expr is Cons {
         return nil.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNil(expr: Cons): boolean {
         throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Cons): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Cons): boolean {
-        return false;
     }
     subst(expr: Cons, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {

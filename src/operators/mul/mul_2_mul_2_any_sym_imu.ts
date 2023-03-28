@@ -30,11 +30,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_mul_2_any_sym_imu', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_imu, $);
         this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_IMU);
     }
-    isImag(expr: EXP): boolean {
-        const $ = this.$;
-        const X = expr.lhs.lhs;
-        return $.isreal(X);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
         const X = lhs.lhs;

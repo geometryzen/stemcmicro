@@ -35,20 +35,8 @@ export class BooExtension implements Extension<Boo> {
         return expr;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Boo): boolean {
-        throw new Error("Boo Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(arg: U): arg is Boo {
         return arg instanceof Boo;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(): boolean {
-        throw new Error("Boo Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(arg: Boo, $: ExtensionEnv): boolean {
-        return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subst(expr: Boo, oldExpr: U, newExpr: U, $: ExtensionEnv): U {

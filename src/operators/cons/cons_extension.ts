@@ -30,10 +30,6 @@ class ConsExtension implements Extension<Cons> {
     compareFactors(lhs: Cons, rhs: Cons, $: ExtensionEnv): Sign {
         throw new Error("Cons Method not implemented.");
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Cons, $: ExtensionEnv): boolean {
-        return false;
-    }
     isKind(expr: U): expr is Cons {
         if (is_cons(expr)) {
             return true;
@@ -41,14 +37,6 @@ class ConsExtension implements Extension<Cons> {
         else {
             return false;
         }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Cons, $: ExtensionEnv): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(arg: Cons, $: ExtensionEnv): boolean {
-        throw new Error("Cons Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subst(expr: Cons, oldExpr: U, newExpr: U, $: ExtensionEnv): U {

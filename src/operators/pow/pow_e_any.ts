@@ -61,14 +61,6 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         this.hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: EXP): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: EXP): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, base: LHS, expo: RHS, outerExpr: EXP): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(base), this.$.toInfixString(expo));
         const $ = this.$;

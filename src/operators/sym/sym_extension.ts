@@ -47,10 +47,6 @@ class SymExtension implements Extension<Sym> {
             return sym;
         }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(sym: Sym, $: ExtensionEnv): boolean {
-        return false;
-    }
     isKind(sym: U): sym is Sym {
         if (is_sym(sym)) {
             return true;
@@ -58,13 +54,6 @@ class SymExtension implements Extension<Sym> {
         else {
             return false;
         }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(sym: Sym, $: ExtensionEnv): boolean {
-        return true;
-    }
-    isZero(): boolean {
-        return false;
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (is_sym(oldExpr)) {

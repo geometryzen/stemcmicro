@@ -43,19 +43,8 @@ export class ErrExtension implements Extension<Err> {
     valueOf(expr: Err, $: ExtensionEnv): U {
         throw new Error("ErrExtension.valueOf Method not implemented.");
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Err): boolean {
-        throw new Error("ErrExtension Method not implemented.");
-    }
     isKind(arg: unknown): arg is Err {
         return arg instanceof Err;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Err): boolean {
-        return false;
-    }
-    isZero(): boolean {
-        return false;
     }
     subst(expr: Err, oldExpr: U, newExpr: U): U {
         if (this.isKind(oldExpr)) {

@@ -28,20 +28,8 @@ class HypExtension implements Extension<Hyp> {
     valueOf(hyp: Hyp, $: ExtensionEnv): U {
         throw new Error("Hyp Method not implemented.");
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(hyp: Hyp): boolean {
-        return false;
-    }
     isKind(arg: U): arg is Hyp {
         return arg instanceof Hyp;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Hyp): boolean {
-        return true;
-    }
-    isZero(): boolean {
-        // A hyperreal is non-zero and small than every real number.
-        return false;
     }
     subst(expr: Hyp, oldExpr: U, newExpr: U): U {
         if (this.isKind(oldExpr)) {

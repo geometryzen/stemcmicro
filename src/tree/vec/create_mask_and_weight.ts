@@ -64,16 +64,6 @@ export function create_mask_and_weight<T, K>(b: number, weight: T, adapter: Adap
             const sign = minusOnePow(x * (x + 1) / 2);
             return create_mask_and_weight(b, sign > 0 ? weight : adapter.neg(weight), adapter);
         },
-        isOne(): boolean {
-            // TODO: What is the more useful semantics? (With or without the isScalar)
-            return that.isScalar() && adapter.isOne(weight);
-        },
-        isScalar(): boolean {
-            return b === SCALAR_BITMAP;
-        },
-        isZero(): boolean {
-            return adapter.isZero(weight);
-        },
         zero(): MaskAndWeight<T> {
             return create_scalar_mask_and_weight(adapter.zero, adapter);
         },

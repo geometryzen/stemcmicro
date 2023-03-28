@@ -23,28 +23,4 @@ export abstract class FunctionVarArgs extends AbstractOperator {
     isKind(expr: Cons): expr is Cons {
         return expr.opr.equals(this.opr);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Cons): boolean {
-        return false;
-    }
 }

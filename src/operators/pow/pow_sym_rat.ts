@@ -25,11 +25,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         super('pow_2_sym_rat', MATH_POW, is_sym, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_SYM, HASH_RAT);
     }
-    isScalar(expr: EXPR): boolean {
-        const base = expr.lhs;
-        // TODO: If the symbol was a vector, and it was squared then it might be a scalar.
-        return this.$.isscalar(base);
-    }
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXPR): [TFLAGS, U] {
         // No change in arguments
         if (expo.isOne()) {

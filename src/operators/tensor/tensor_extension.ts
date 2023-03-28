@@ -90,20 +90,8 @@ class TensorExtension implements Extension<Tensor> {
     get name(): string {
         return 'TensorExtension';
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Tensor): boolean {
-        return false;
-    }
     isKind(arg: unknown): arg is Tensor {
         return arg instanceof Tensor;
-    }
-    isScalar(): boolean {
-        return false;
-    }
-    isZero(arg: Tensor, $: ExtensionEnv): boolean {
-        return arg.everyElement(function (element) {
-            return $.iszero(element);
-        });
     }
     subst(expr: Tensor, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
         if (is_tensor(oldExpr) && expr.equals(oldExpr)) {

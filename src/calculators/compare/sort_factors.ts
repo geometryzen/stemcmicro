@@ -14,8 +14,6 @@ export function sort_factors(factors: U[], $: ExtensionEnv): U[] {
     });
     sortable.sort(function (x, y) {
         const x_comp_y = $.compareFn(MATH_MUL)(x.value, y.value);
-        // console.lg(render_as_infix(x.value, $), "x is scalar?", $.isScalar(x.value));
-        // console.lg(render_as_infix(y.value, $), "y is scalar?", $.isScalar(y.value));
         // If either side is a scalar then we are allowed to take the canonical reordering as is.
         if ($.isscalar(x.value) || $.isscalar(y.value)) {
             return x_comp_y;

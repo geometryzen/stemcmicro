@@ -26,9 +26,6 @@ class Op extends Function2<Sym, Num> implements Operator<BCons<Sym, Sym, Num>> {
         super('mul_2_sym_num', MATH_MUL, is_sym, is_num, $);
         this.hash = `(* Sym Num)`;
     }
-    isScalar(expr: BCons<Sym, Sym, Num>): boolean {
-        return this.$.isscalar(expr.lhs);
-    }
     transform2(opr: Sym, lhs: Sym, rhs: Num): [TFLAGS, U] {
         if (rhs.isZero()) {
             return [TFLAG_DIFF, zero];

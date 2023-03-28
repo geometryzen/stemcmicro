@@ -38,19 +38,8 @@ class StrExtension implements Extension<Str> {
     valueOf(str: Str): U {
         return str;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Str): boolean {
-        return false;
-    }
     isKind(arg: unknown): arg is Str {
         return is_str(arg);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Str): boolean {
-        return true;
-    }
-    isZero(): boolean {
-        return false;
     }
     subst(expr: Str, oldExpr: U, newExpr: U): U {
         if (is_str(oldExpr)) {

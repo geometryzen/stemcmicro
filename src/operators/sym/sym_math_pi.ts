@@ -35,17 +35,8 @@ class SymMathPi implements Operator<Sym> {
     transform(expr: U): [TFLAGS, U] {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
     }
-    isImag(): boolean {
-        return false;
-    }
     isKind(expr: U): expr is Sym {
         return is_pi(expr);
-    }
-    isScalar(): boolean {
-        return true;
-    }
-    isZero(): boolean {
-        return false;
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {

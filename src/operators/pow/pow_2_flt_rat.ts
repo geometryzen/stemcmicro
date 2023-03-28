@@ -21,9 +21,6 @@ class Op extends Function2<Flt, Rat> implements Operator<Cons> {
         super('pow_2_flt_rat', MATH_POW, is_flt, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_FLT, HASH_RAT);
     }
-    isScalar(): boolean {
-        return true;
-    }
     transform2(opr: Sym, lhs: Flt, rhs: Rat): [TFLAGS, U] {
         return [TFLAG_DIFF, create_flt(Math.pow(lhs.d, rhs.toNumber()))];
     }

@@ -459,21 +459,9 @@ export interface Operator<T extends U> {
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
     /**
-     * @deprecated We don't want to have predicates hard-coded.
-     */
-    isImag(expr: T): boolean;
-    /**
      * Determines whether this operator can be used to evaluate the expression.
      */
     isKind(expr: U): expr is T;
-    /**
-     * @deprecated We don't want to have predicates hard-coded.
-     */
-    isScalar(expr: T): boolean;
-    /**
-     * @deprecated We don't want to have predicates hard-coded.
-     */
-    isZero(expr: T): boolean;
     subst(expr: T, oldExpr: U, newExpr: U): U;
     toInfixString(expr: T): string;
     toLatexString(expr: T): string;
@@ -502,10 +490,7 @@ export interface Extension<T extends U> {
     readonly hash?: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
-    isImag(expr: T, $: ExtensionEnv): boolean;
     isKind(expr: U, $: ExtensionEnv): boolean;
-    isScalar(expr: T, $: ExtensionEnv): boolean;
-    isZero(expr: T, $: ExtensionEnv): boolean;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;
     toInfixString(expr: T, $: ExtensionEnv): string;
     toLatexString(expr: T, $: ExtensionEnv): string;

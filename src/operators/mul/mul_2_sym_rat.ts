@@ -32,9 +32,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_sym_rat', MATH_MUL, is_sym, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_RAT);
     }
-    isScalar(expr: EXP): boolean {
-        return this.$.isscalar(expr.lhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         // If the base class binds the symbol to something else then none of this code below will be called.
         // Therefore, you can consider that this code only applies to unbound symbols. 

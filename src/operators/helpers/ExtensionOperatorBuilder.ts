@@ -43,17 +43,8 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     get dependencies(): FEATURE[] | undefined {
         return this.extension.dependencies;
     }
-    isImag(expr: T): boolean {
-        return this.extension.isImag(expr, this.$);
-    }
     isKind(expr: U): expr is T {
         return this.extension.isKind(expr, this.$);
-    }
-    isScalar(expr: T): boolean {
-        return this.extension.isScalar(expr, this.$);
-    }
-    isZero(expr: T): boolean {
-        return this.extension.isZero(expr, this.$);
     }
     valueOf(expr: T): U {
         return this.extension.transform(expr, this.$)[1];

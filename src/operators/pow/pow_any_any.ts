@@ -18,17 +18,11 @@ type LHS = U;
 type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
-/**
- * 
- */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_any_any', MATH_POW, is_any, is_any, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_ANY, HASH_ANY);
-    }
-    isZero(expr: EXP): boolean {
-        return this.$.iszero(expr.lhs);
     }
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

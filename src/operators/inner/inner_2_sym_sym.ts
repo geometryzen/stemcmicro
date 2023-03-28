@@ -26,14 +26,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('inner_2_sym_sym', MATH_INNER, is_sym, is_sym, $);
         this.hash = hash_binop_atom_atom(MATH_INNER, HASH_SYM, HASH_SYM);
     }
-    isScalar(): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: EXP): boolean {
-        // It actually could be zero.
-        return false;
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

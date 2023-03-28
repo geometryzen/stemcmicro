@@ -23,11 +23,6 @@ class MulOperator extends FunctionVarArgs implements Operator<Cons> {
         super('mul_varargs', MATH_MUL, $);
         this.hash = hash_nonop_cons(this.opr);
     }
-    isScalar(expr: Cons): boolean {
-        const $ = this.$;
-        const argList = expr.argList;
-        return [...argList].every((arg) => $.isscalar(arg));
-    }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         // console.lg(this.name, render_as_sexpr(expr, $));

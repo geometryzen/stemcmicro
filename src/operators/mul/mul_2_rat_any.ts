@@ -53,14 +53,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             return false;
         }
     }
-    isImag(expr: EXP): boolean {
-        const $ = this.$;
-        return $.isimag(expr.rhs);
-    }
-    isScalar(expr: EXP): boolean {
-        const $ = this.$;
-        return $.isscalar(expr.rhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         return multiply_rat_any(lhs, rhs, expr);
     }

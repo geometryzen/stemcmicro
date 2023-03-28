@@ -48,20 +48,8 @@ class BladeExtension implements Extension<Blade> {
     get dependencies(): FEATURE[] {
         return ['Blade'];
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Blade): boolean {
-        return false;
-    }
     isKind(arg: unknown): arg is Blade {
         return is_blade(arg);
-    }
-    isScalar(blade: Blade): boolean {
-        return bitCount(blade.bitmap) === 0;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Blade): boolean {
-        // Blade cannot be zero because weight is implicity one.
-        return false;
     }
     subst(expr: Blade, oldExpr: U, newExpr: U): U {
         if (is_blade(oldExpr)) {

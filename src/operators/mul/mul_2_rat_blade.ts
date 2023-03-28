@@ -33,10 +33,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_rat_blade', MATH_MUL, is_rat, is_blade, $);
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_BLADE);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: EXP): boolean {
-        return false;
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         // The following code is common
         if (lhs.isZero()) {

@@ -28,9 +28,6 @@ export interface MaskAndWeight<T> {
     cliffordConjugate(): MaskAndWeight<T>;
     grade(): number;
     gradeInversion(): MaskAndWeight<T>;
-    isOne(): boolean;
-    isScalar(): boolean;
-    isZero(): boolean;
     reverse(): MaskAndWeight<T>;
     zero(): MaskAndWeight<T>;
     asString(names?: string[]): string;
@@ -38,7 +35,7 @@ export interface MaskAndWeight<T> {
 }
 
 /**
- * TODO: Trim down this interface if methods are not used by the symbolic library.
+ *
  */
 export interface BasisBlade<T, K> extends U {
     /**

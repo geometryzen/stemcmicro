@@ -35,20 +35,8 @@ class SymMathMul implements Operator<Sym> {
     transform(expr: U): [TFLAGS, U] {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Sym): boolean {
-        throw new Error("SymMathMul Method not implemented.");
-    }
     isKind(expr: U): expr is Sym {
         return is_sym(expr) && MATH_MUL.equals(expr);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Sym): boolean {
-        throw new Error("SymMathMul Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Sym): boolean {
-        throw new Error("SymMathMul Method not implemented.");
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {

@@ -24,10 +24,6 @@ class RatExtension implements Extension<Rat> {
         return 'RatExtension';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Rat): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(arg: U, $: ExtensionEnv): arg is Rat {
         // console.lg(`RatExtension.isKind for ${arg.toString()}`);
         // We must be prepared to handle singleton lists containing a single rat.
@@ -35,13 +31,6 @@ class RatExtension implements Extension<Rat> {
             return this.isKind(arg.head, $);
         }
         return arg instanceof Rat;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Rat): boolean {
-        return true;
-    }
-    isZero(expr: Rat): boolean {
-        return expr.isZero();
     }
     subst(expr: Rat, oldExpr: U, newExpr: U): U {
         if (is_rat(oldExpr)) {

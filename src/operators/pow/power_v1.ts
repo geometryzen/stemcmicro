@@ -205,7 +205,6 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         // console.lg(`isExpanding=${$.isExpanding()}`);
         // console.lg(`base=>${render_as_infix(base, $)}`);
         // console.lg(`expo=>${render_as_infix(expo, $)}`);
-        // console.lg(`base is scalar=>${$.isScalar(base)}`);
         if (is_multiply(base)) {
             // TODO: Check that every factor commutes with every other one.
             // We do need this to ensure that tests pass.

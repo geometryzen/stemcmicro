@@ -24,7 +24,7 @@ type EXP = BCons<Sym, LHS, RHS>
 function cross($: ExtensionEnv) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return function (lhs: LHS, rhs: RHS): boolean {
-        return true;//$.isScalar(rhs);
+        return true;
     };
 }
 

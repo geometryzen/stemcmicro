@@ -52,10 +52,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         }
         return false;
     }
-    isZero(expr: EXP): boolean {
-        const b = expr.lhs.lhs;
-        return this.$.iszero(b);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         // console.lg(this.name, this.$.toInfixString(lhs), this.$.toInfixString(rhs));

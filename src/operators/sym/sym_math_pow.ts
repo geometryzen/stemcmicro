@@ -38,20 +38,8 @@ class SymMathPow implements Operator<Sym> {
     transform(expr: U): [TFLAGS, U] {
         return [this.isKind(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Sym): boolean {
-        throw new Error("SymMathPow Method not implemented.");
-    }
     isKind(expr: U): expr is Sym {
         return is_sym(expr) && MATH_POW.equals(expr);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Sym): boolean {
-        throw new Error("SymMathPow Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Sym): boolean {
-        throw new Error("SymMathPow Method not implemented.");
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {

@@ -39,10 +39,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('abs_factorize', MATH_POW, guardL, guardR, $);
         this.hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
-    isZero(expr: EXP): boolean {
-        const x = expr.lhs.lhs;
-        return this.$.iszero(x);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const x = lhs.lhs;
         const m = lhs.rhs;

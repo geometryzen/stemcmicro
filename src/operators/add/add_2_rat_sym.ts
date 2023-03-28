@@ -30,13 +30,6 @@ class Op extends Function2<Rat, Sym> implements Operator<Cons> {
         super('add_2_rat_sym', MATH_ADD, is_rat, is_sym, $);
         this.hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_SYM);
     }
-    override isScalar(expr: EXP): boolean {
-        const lhs = expr.lhs;
-        const rhs = expr.rhs;
-        // console.lg(`lhs=${lhs}`);
-        // console.lg(`rhs=${rhs}`);
-        return this.$.isscalar(lhs) && this.$.isscalar(rhs);
-    }
     override transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {
             return [TFLAG_DIFF, rhs];

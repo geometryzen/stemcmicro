@@ -28,14 +28,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('mul_2_sym_imu', MATH_MUL, is_sym, is_imu, $);
         this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_POW);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: EXP): boolean {
-        return true;
-    }
-    isScalar(expr: EXP): boolean {
-        const $ = this.$;
-        return $.isscalar(expr.lhs);
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
         switch ($.compareFn(opr)(lhs, rhs)) {

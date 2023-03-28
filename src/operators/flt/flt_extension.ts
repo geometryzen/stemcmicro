@@ -38,19 +38,8 @@ export class FltExtension implements Extension<Flt> {
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Flt ? TFLAG_HALT : TFLAG_NONE, expr];
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Flt): boolean {
-        return false;
-    }
     isKind(arg: unknown): arg is Flt {
         return is_flt(arg);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Flt): boolean {
-        return true;
-    }
-    isZero(arg: Flt): boolean {
-        return arg.isZero();
     }
     subst(expr: Flt, oldExpr: U, newExpr: U): U {
         if (is_flt(oldExpr)) {

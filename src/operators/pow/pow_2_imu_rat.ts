@@ -26,9 +26,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         super('pow_2_imu_rat', MATH_POW, is_imu, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_IMU, HASH_RAT);
     }
-    isScalar(): boolean {
-        return true;
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         // TODO: Generalize

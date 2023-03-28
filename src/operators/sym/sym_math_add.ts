@@ -28,10 +28,6 @@ class SymMathAdd implements Operator<Sym> {
     get name(): string {
         return 'SymMathAdd';
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Sym): boolean {
-        throw new Error("SymMathAdd Method not implemented.");
-    }
     isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {
             return MATH_ADD.equalsSym(expr);
@@ -39,14 +35,6 @@ class SymMathAdd implements Operator<Sym> {
         else {
             return false;
         }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Sym): boolean {
-        throw new Error("SymMathAdd Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Sym): boolean {
-        throw new Error("SymMathAdd Method not implemented.");
     }
     subst(expr: Sym, oldExpr: U, newExpr: U): U {
         if (expr.equals(oldExpr)) {

@@ -29,20 +29,8 @@ class UomExtension implements Extension<Uom> {
     valueOf(expr: Uom, $: ExtensionEnv): U {
         throw new Error('Method not implemented.');
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Uom): boolean {
-        return false;
-    }
     isKind(arg: U): arg is Uom {
         return is_uom(arg);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Uom): boolean {
-        return true;
-    }
-    isZero(): boolean {
-        // A Unit is never zero becuse it has no weighting factor.
-        return false;
     }
     subst(expr: Uom, oldExpr: U, newExpr: U): U {
         if (is_uom(oldExpr)) {

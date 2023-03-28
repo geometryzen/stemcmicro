@@ -26,23 +26,11 @@ class ImuExtension implements Operator<Imu> {
         return 'ImuExtension';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isImag(expr: Imu): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKind(expr: U): expr is Imu {
         return imu.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNil(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: Imu): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isZero(expr: Imu): boolean {
         return false;
     }
     subst(expr: Imu, oldExpr: U, newExpr: U): U {

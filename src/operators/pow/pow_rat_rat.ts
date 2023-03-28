@@ -25,15 +25,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         super('pow_rat_rat', MATH_POW, is_rat, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_RAT, HASH_RAT);
     }
-    isImag(expr: EXPR): boolean {
-        const base = expr.lhs;
-        const expo = expr.rhs;
-        return base.isMinusOne() && expo.isHalf();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isScalar(expr: EXPR): boolean {
-        return true;
-    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
         // const $ = this.$;
         // console.lg(`${this.name}  ${print_expr(expr, $)}`);

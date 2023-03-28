@@ -411,10 +411,21 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.is(ISREAL, expr);
         },
         isscalar(expr: U): boolean {
-            const op = $.operatorFor(expr);
-            const retval = op.isScalar(expr);
-            // console.lg(`${op.name} isScalar ${$.toInfixString(expr)} => ${retval}`);
-            return retval;
+            if (is_nil(expr)) {
+                return false;
+            }
+            else if (is_rat(expr)) {
+                return true;
+            }
+            else if (is_flt(expr)) {
+                return true;
+            }
+            else if (is_sym(expr)) {
+                return true;
+            }
+            else {
+                return false;
+            }
         },
         iszero(expr: U): boolean {
             return $.is(ISZERO, expr);

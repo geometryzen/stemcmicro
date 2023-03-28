@@ -21,9 +21,6 @@ class Op extends Function2<Blade, Rat> implements Operator<Cons> {
         super('pow_2_blade_rat', MATH_POW, is_blade, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_BLADE, HASH_RAT);
     }
-    isScalar(): boolean {
-        return true;
-    }
     transform2(opr: Sym, lhs: Blade, rhs: Rat): [TFLAGS, U] {
         if (rhs.isTwo()) {
             return [TFLAG_DIFF, lhs.__mul__(lhs)];

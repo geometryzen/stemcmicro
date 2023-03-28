@@ -32,6 +32,7 @@ const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const ISCOMPLEX = native_sym(Native.iscomplex);
+const ISIMAG = native_sym(Native.isimag);
 const ISINFINITE = native_sym(Native.isinfinite);
 const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
 const ISNEGATIVE = native_sym(Native.isnegative);
@@ -353,10 +354,18 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return native_directives.get(Directive.factoring);
         },
         isimag(expr: U): boolean {
-            const op = $.operatorFor(expr);
-            const retval = op.isImag(expr);
-            // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
-            return retval;
+            if (is_nil(expr)) {
+                return false;
+            }
+            else if (is_rat(expr)) {
+                return false;
+            }
+            else if (is_flt(expr)) {
+                return false;
+            }
+            else {
+                return $.is(ISIMAG, expr);
+            }
         },
         isinfinite(expr: U): boolean {
             return $.is(ISINFINITE, expr);

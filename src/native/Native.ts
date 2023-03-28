@@ -50,6 +50,7 @@ export enum Native {
     integral,
     inverse,
     iscomplex,
+    isimag,
     isinfinite,
     isinfinitesimal,
     isnegative,

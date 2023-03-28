@@ -307,7 +307,7 @@ function simplify_terms(p1: U, $: ExtensionEnv): U {
         return p1;
     }
 
-    let p2 = cdr(p1);
+    let p2: U = cdr(p1);
     if (is_cons(p2)) {
         p2 = [...p2].reduce((acc: U, p: U) =>
             simplify_rational_expressions($.add(acc, simplify(p, $)), $), zero);

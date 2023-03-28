@@ -361,7 +361,7 @@ export function car(node: U): U {
  * Returns the cdr property of the tree node if it is a Cons.
  * Otherwise, returns NIL.
  */
-export function cdr(node: U): U {
+export function cdr(node: U): Cons {
     if (is_cons(node)) {
         return node.cdr;
     }

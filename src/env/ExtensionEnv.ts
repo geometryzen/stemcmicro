@@ -347,8 +347,10 @@ export interface ExtensionEnv {
      * Meaning is imaginary valued. i.e. evaluates to i times a real number.
      */
     isimag(expr: U): boolean;
+    isinfinite(expr: U): boolean;
     isinfinitesimal(expr: U): boolean;
     isminusone(expr: U): boolean;
+    isnegative(expr: U): boolean;
     isone(expr: U): boolean;
     ispositive(expr: U): boolean;
     isreal(expr: U): boolean;

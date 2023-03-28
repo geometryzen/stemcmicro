@@ -198,6 +198,9 @@ import { isinfinitesimal_rat } from '../operators/isinfinitesimal/isinfinitesima
 import { isinfinitesimal_sym } from '../operators/isinfinitesimal/isinfinitesimal_sym';
 import { ispositive_any } from '../operators/ispositive/ispositive_any';
 import { ispositive_exp } from '../operators/ispositive/ispositive_exp';
+import { ispositive_flt } from '../operators/ispositive/ispositive_flt';
+import { ispositive_rat } from '../operators/ispositive/ispositive_rat';
+import { ispositive_sym } from '../operators/ispositive/ispositive_sym';
 import { isprime_varargs } from '../operators/isprime/isprime_varargs';
 import { is_real_pow_any_negone } from '../operators/isreal/isreal_pow_any_negone';
 import { is_real_abs } from '../operators/isreal/is_real_abs';
@@ -854,6 +857,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(isinfinitesimal_any);
 
     $.defineOperator(ispositive_exp);
+    $.defineOperator(ispositive_flt);
+    $.defineOperator(ispositive_rat);
+    $.defineOperator(ispositive_sym);
     $.defineOperator(ispositive_any);
 
     $.defineOperator(isprime_varargs);

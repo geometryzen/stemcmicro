@@ -31,7 +31,9 @@ const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POW = native_sym(Native.pow);
 const ISCOMPLEX = native_sym(Native.iscomplex);
+const ISINFINITE = native_sym(Native.isinfinite);
 const ISINFINITESIMAL = native_sym(Native.isinfinitesimal);
+const ISNEGATIVE = native_sym(Native.isnegative);
 const ISPOSITIVE = native_sym(Native.ispositive);
 const ISREAL = native_sym(Native.isreal);
 const ISZERO = native_sym(Native.iszero);
@@ -329,27 +331,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
             */
         },
-        isExpanding(): boolean {
-            return native_directives.get(Directive.expanding);
-        },
-        isFactoring(): boolean {
-            return native_directives.get(Directive.factoring);
-        },
-        isimag(expr: U): boolean {
-            const op = $.operatorFor(expr);
-            const retval = op.isImag(expr);
-            // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
-            return retval;
-        },
-        isinfinitesimal(expr: U): boolean {
-            return $.is(ISINFINITESIMAL, expr);
-        },
-        isminusone(expr: U): boolean {
-            return $.operatorFor(expr).isMinusOne(expr);
-        },
-        isone(expr: U): boolean {
-            return $.operatorFor(expr).isOne(expr);
-        },
         is(predicate: Sym, expr: U): boolean {
             // In the new way we don't require every operator to provide the answer.
             const question = items_to_cons(predicate, expr);
@@ -363,6 +344,33 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         iscomplex(expr: U): boolean {
             return $.is(ISCOMPLEX, expr);
+        },
+        isExpanding(): boolean {
+            return native_directives.get(Directive.expanding);
+        },
+        isFactoring(): boolean {
+            return native_directives.get(Directive.factoring);
+        },
+        isimag(expr: U): boolean {
+            const op = $.operatorFor(expr);
+            const retval = op.isImag(expr);
+            // console.lg(`${op.name} isImag ${render_as_infix(expr, $)} => ${retval}`);
+            return retval;
+        },
+        isinfinite(expr: U): boolean {
+            return $.is(ISINFINITE, expr);
+        },
+        isinfinitesimal(expr: U): boolean {
+            return $.is(ISINFINITESIMAL, expr);
+        },
+        isminusone(expr: U): boolean {
+            return $.operatorFor(expr).isMinusOne(expr);
+        },
+        isnegative(expr: U): boolean {
+            return $.is(ISNEGATIVE, expr);
+        },
+        isone(expr: U): boolean {
+            return $.operatorFor(expr).isOne(expr);
         },
         ispositive(expr: U): boolean {
             return $.is(ISPOSITIVE, expr);

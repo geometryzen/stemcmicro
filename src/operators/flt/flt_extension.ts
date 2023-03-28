@@ -45,12 +45,6 @@ export class FltExtension implements Extension<Flt> {
     isKind(arg: unknown): arg is Flt {
         return is_flt(arg);
     }
-    isMinusOne(arg: Flt): boolean {
-        return arg.isMinusOne();
-    }
-    isOne(arg: Flt): boolean {
-        return arg.isOne();
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Flt): boolean {
         return true;

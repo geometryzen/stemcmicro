@@ -43,15 +43,6 @@ class ConsExtension implements Extension<Cons> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(arg: Cons, $: ExtensionEnv): boolean {
-        // The answer would be false if we give up.
-        throw new Error("Cons Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(arg: Cons, $: ExtensionEnv): boolean {
-        throw new Error("Cons Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Cons, $: ExtensionEnv): boolean {
         return false;
     }

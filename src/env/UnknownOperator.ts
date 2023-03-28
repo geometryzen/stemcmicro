@@ -25,13 +25,6 @@ export class UnknownOperator implements Operator<U> {
     isKind(expr: U): expr is U {
         throw new Error("UnknownOperator.isKind Method not implemented.");
     }
-    isMinusOne(expr: U): boolean {
-        throw new Error("UnknownOperator.isMinusOne Method not implemented.");
-    }
-    isOne(expr: U): boolean {
-        return false;
-        // throw new Error("UnknownOperator.isOne Method not implemented.");
-    }
     isReal(expr: U): boolean {
         return false;
         // throw new Error("UnknownOperator.isReal Method not implemented.");

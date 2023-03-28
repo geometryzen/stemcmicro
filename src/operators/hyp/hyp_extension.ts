@@ -35,12 +35,6 @@ class HypExtension implements Extension<Hyp> {
     isKind(arg: U): arg is Hyp {
         return arg instanceof Hyp;
     }
-    isMinusOne(): boolean {
-        return false;
-    }
-    isOne(): boolean {
-        return false;
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Hyp): boolean {
         return false;

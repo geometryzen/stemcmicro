@@ -34,14 +34,6 @@ class ImuExtension implements Operator<Imu> {
         return imu.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(expr: Imu): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(expr: Imu): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNil(expr: Cons): boolean {
         return false;
     }

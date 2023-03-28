@@ -31,14 +31,6 @@ class NilExtension implements Operator<Cons> {
         return nil.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(expr: Cons): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(expr: Cons): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isNil(expr: Cons): boolean {
         throw new Error();
     }

@@ -45,12 +45,6 @@ class StrExtension implements Extension<Str> {
     isKind(arg: unknown): arg is Str {
         return is_str(arg);
     }
-    isMinusOne(): boolean {
-        return false;
-    }
-    isOne(): boolean {
-        return false;
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Str): boolean {
         return false;

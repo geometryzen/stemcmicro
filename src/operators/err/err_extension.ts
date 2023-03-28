@@ -51,13 +51,6 @@ export class ErrExtension implements Extension<Err> {
         return arg instanceof Err;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(arg: Err, $: ExtensionEnv): boolean {
-        throw new Error("ErrExtension.isMinusOne Method not implemented.");
-    }
-    isOne(): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Err): boolean {
         throw new Error("ErrExtension.isReal Method not implemented.");
     }

@@ -59,14 +59,6 @@ class SymExtension implements Extension<Sym> {
             return false;
         }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(arg: Sym, $: ExtensionEnv): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(arg: Sym, $: ExtensionEnv): boolean {
-        return false;
-    }
     isReal(sym: Sym, $: ExtensionEnv): boolean {
         return $.isreal(sym);
     }

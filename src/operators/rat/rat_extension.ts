@@ -36,12 +36,6 @@ class RatExtension implements Extension<Rat> {
         }
         return arg instanceof Rat;
     }
-    isMinusOne(arg: Rat): boolean {
-        return arg.isMinusOne();
-    }
-    isOne(arg: Rat): boolean {
-        return arg.isOne();
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Rat): boolean {
         return true;

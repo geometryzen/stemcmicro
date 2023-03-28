@@ -55,14 +55,6 @@ class BladeExtension implements Extension<Blade> {
     isKind(arg: unknown): arg is Blade {
         return is_blade(arg);
     }
-    isMinusOne(): boolean {
-        // Blade cannot be one because scalars are excluded.
-        return false;
-    }
-    isOne(): boolean {
-        // Blade cannot be one because scalars are excluded.
-        return false;
-    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Blade): boolean {
         return false;

@@ -21,12 +21,6 @@ export abstract class KeywordOperator implements Operator<Sym> {
         }
         return false;
     }
-    isMinusOne(expr: Sym): boolean {
-        throw new Error("Keyword.isMinusOne Symbol Method not implemented.");
-    }
-    isOne(expr: Sym): boolean {
-        throw new Error("Keyword.isOne Symbol Method not implemented.");
-    }
     isReal(expr: Sym): boolean {
         throw new Error("Keyword.isReal Symbol Method not implemented.");
     }

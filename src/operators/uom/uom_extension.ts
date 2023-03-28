@@ -37,15 +37,6 @@ class UomExtension implements Extension<Uom> {
         return is_uom(arg);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(arg: Uom): false {
-        return false;
-    }
-    isOne(arg: Uom): boolean {
-        // TODO: We can have a dimensionless unit, but maybe we should avoid that?
-        // It would make expression simplification easier by avoiding redundancy.
-        return arg.isOne();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Uom): boolean {
         return false;
     }

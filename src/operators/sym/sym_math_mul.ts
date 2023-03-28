@@ -43,14 +43,6 @@ class SymMathMul implements Operator<Sym> {
         return is_sym(expr) && MATH_MUL.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(expr: Sym): boolean {
-        throw new Error("SymMathMul Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(expr: Sym): boolean {
-        throw new Error("SymMathMul Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Sym): boolean {
         throw new Error("SymMathMul Method not implemented.");
     }

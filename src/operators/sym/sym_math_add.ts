@@ -41,14 +41,6 @@ class SymMathAdd implements Operator<Sym> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(expr: Sym): boolean {
-        throw new Error("SymMathAdd Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(expr: Sym): boolean {
-        throw new Error("SymMathAdd Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Sym): boolean {
         throw new Error("SymMathAdd Method not implemented.");
     }

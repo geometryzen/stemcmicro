@@ -98,16 +98,6 @@ class TensorExtension implements Extension<Tensor> {
         return arg instanceof Tensor;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isMinusOne(arg: Tensor): boolean {
-        // TODO: What about the square matrix identity element for multiplication? 
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isOne(arg: Tensor): boolean {
-        // TODO: What about the square matrix identity element for multiplication? 
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isReal(expr: Tensor): boolean {
         return false;
     }

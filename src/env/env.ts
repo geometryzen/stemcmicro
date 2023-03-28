@@ -5,6 +5,7 @@ import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { algebra } from "../operators/algebra/algebra";
 import { is_boo } from "../operators/boo/is_boo";
+import { is_flt } from "../operators/flt/is_flt";
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { is_rat } from "../operators/rat/is_rat";
 import { is_sym } from "../operators/sym/is_sym";
@@ -364,13 +365,35 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.is(ISINFINITESIMAL, expr);
         },
         isminusone(expr: U): boolean {
-            return $.operatorFor(expr).isMinusOne(expr);
+            if (is_nil(expr)) {
+                return false;
+            }
+            else if (is_rat(expr)) {
+                return expr.isMinusOne();
+            }
+            else if (is_flt(expr)) {
+                return expr.isMinusOne();
+            }
+            else {
+                return false;
+            }
         },
         isnegative(expr: U): boolean {
             return $.is(ISNEGATIVE, expr);
         },
         isone(expr: U): boolean {
-            return $.operatorFor(expr).isOne(expr);
+            if (is_nil(expr)) {
+                return false;
+            }
+            else if (is_rat(expr)) {
+                return expr.isOne();
+            }
+            else if (is_flt(expr)) {
+                return expr.isOne();
+            }
+            else {
+                return false;
+            }
         },
         ispositive(expr: U): boolean {
             return $.is(ISPOSITIVE, expr);

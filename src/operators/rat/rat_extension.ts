@@ -37,10 +37,6 @@ class RatExtension implements Extension<Rat> {
         return arg instanceof Rat;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Rat): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Rat): boolean {
         return true;
     }

@@ -65,10 +65,6 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: EXP): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: EXP): boolean {
         return true;
     }

@@ -23,10 +23,6 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         super('sinh_rat', SINH, is_rat, $);
         this.hash = hash_unaop_atom(this.opr, HASH_RAT);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(exp: EXP): boolean {
-        return true;
-    }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         if (arg.isZero()) {
             return [TFLAG_DIFF, zero];

@@ -21,9 +21,6 @@ export abstract class KeywordOperator implements Operator<Sym> {
         }
         return false;
     }
-    isReal(expr: Sym): boolean {
-        throw new Error("Keyword.isReal Symbol Method not implemented.");
-    }
     isScalar(expr: Sym): boolean {
         throw new Error("Keyword.isScalar Symbol Method not implemented.");
     }

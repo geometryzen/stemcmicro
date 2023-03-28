@@ -46,10 +46,6 @@ class StrExtension implements Extension<Str> {
         return is_str(arg);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Str): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Str): boolean {
         return true;
     }

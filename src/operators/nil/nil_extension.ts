@@ -35,10 +35,6 @@ class NilExtension implements Operator<Cons> {
         throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Cons): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Cons): boolean {
         throw new Error();
     }

@@ -40,9 +40,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
             return false;
         }
     }
-    isReal(expr: EXP): boolean {
-        return this.$.isreal(expr.rhs);
-    }
     isImag(expr: EXP): boolean {
         return this.$.isimag(expr.rhs);
     }

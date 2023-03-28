@@ -22,10 +22,6 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         super('cosh_sym', COSH, is_sym, $);
         this.hash = hash_unaop_atom(COSH, HASH_SYM);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(exp: EXP): boolean {
-        return true;
-    }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         return [TFLAG_HALT, expr];
     }

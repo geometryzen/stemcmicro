@@ -38,10 +38,6 @@ class ImuExtension implements Operator<Imu> {
         return false;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Imu): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Imu): boolean {
         return true;
     }

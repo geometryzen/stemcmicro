@@ -25,11 +25,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         super('pow_rat_rat', MATH_POW, is_rat, is_rat, $);
         this.hash = hash_binop_atom_atom(MATH_POW, HASH_RAT, HASH_RAT);
     }
-    isReal(expr: EXPR): boolean {
-        const base = expr.lhs;
-        // const expo = expr.rhs;
-        return base.isPositive();
-    }
     isImag(expr: EXPR): boolean {
         const base = expr.lhs;
         const expo = expr.rhs;

@@ -37,10 +37,6 @@ class UomExtension implements Extension<Uom> {
         return is_uom(arg);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Uom): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Uom): boolean {
         return true;
     }

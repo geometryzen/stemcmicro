@@ -46,10 +46,6 @@ export class FltExtension implements Extension<Flt> {
         return is_flt(arg);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Flt): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Flt): boolean {
         return true;
     }

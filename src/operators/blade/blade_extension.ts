@@ -55,10 +55,6 @@ class BladeExtension implements Extension<Blade> {
     isKind(arg: unknown): arg is Blade {
         return is_blade(arg);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Blade): boolean {
-        return false;
-    }
     isScalar(blade: Blade): boolean {
         return bitCount(blade.bitmap) === 0;
     }

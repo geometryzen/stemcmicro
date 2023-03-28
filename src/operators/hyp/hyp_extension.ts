@@ -36,10 +36,6 @@ class HypExtension implements Extension<Hyp> {
         return arg instanceof Hyp;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Hyp): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Hyp): boolean {
         return true;
     }

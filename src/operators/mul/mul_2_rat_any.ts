@@ -57,10 +57,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         const $ = this.$;
         return $.isimag(expr.rhs);
     }
-    isReal(expr: EXP): boolean {
-        const $ = this.$;
-        return $.isreal(expr.rhs);
-    }
     isScalar(expr: EXP): boolean {
         const $ = this.$;
         return $.isscalar(expr.rhs);

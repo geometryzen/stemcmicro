@@ -97,10 +97,6 @@ class TensorExtension implements Extension<Tensor> {
     isKind(arg: unknown): arg is Tensor {
         return arg instanceof Tensor;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Tensor): boolean {
-        return false;
-    }
     isScalar(): boolean {
         return false;
     }

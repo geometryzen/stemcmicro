@@ -46,10 +46,6 @@ class SymMathPow implements Operator<Sym> {
         return is_sym(expr) && MATH_POW.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Sym): boolean {
-        throw new Error("SymMathPow Method not implemented.");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Sym): boolean {
         throw new Error("SymMathPow Method not implemented.");
     }

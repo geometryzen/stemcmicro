@@ -43,10 +43,6 @@ class ConsExtension implements Extension<Cons> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: Cons, $: ExtensionEnv): boolean {
-        return false;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isScalar(expr: Cons, $: ExtensionEnv): boolean {
         return false;
     }

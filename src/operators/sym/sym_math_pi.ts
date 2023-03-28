@@ -41,9 +41,6 @@ class SymMathPi implements Operator<Sym> {
     isKind(expr: U): expr is Sym {
         return is_pi(expr);
     }
-    isReal(): boolean {
-        return true;
-    }
     isScalar(): boolean {
         return true;
     }

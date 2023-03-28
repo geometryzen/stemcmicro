@@ -25,10 +25,6 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         this.hash = hash_unaop_atom(this.opr, HASH_FLT);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(exp: EXP): boolean {
-        return true;
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const d = Math.sinh(arg.d);
         // TODO: There use of this magic constant should be implementation defined.

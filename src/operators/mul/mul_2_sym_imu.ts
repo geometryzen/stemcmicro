@@ -32,10 +32,6 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     isImag(expr: EXP): boolean {
         return true;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isReal(expr: EXP): boolean {
-        return false;
-    }
     isScalar(expr: EXP): boolean {
         const $ = this.$;
         return $.isscalar(expr.lhs);

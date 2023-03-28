@@ -469,10 +469,6 @@ export interface Operator<T extends U> {
     /**
      * @deprecated We don't want to have predicates hard-coded.
      */
-    isReal(expr: T): boolean;
-    /**
-     * @deprecated We don't want to have predicates hard-coded.
-     */
     isScalar(expr: T): boolean;
     /**
      * @deprecated We don't want to have predicates hard-coded.
@@ -508,7 +504,6 @@ export interface Extension<T extends U> {
     readonly dependencies?: FEATURE[];
     isImag(expr: T, $: ExtensionEnv): boolean;
     isKind(expr: U, $: ExtensionEnv): boolean;
-    isReal(expr: T, $: ExtensionEnv): boolean;
     isScalar(expr: T, $: ExtensionEnv): boolean;
     isZero(expr: T, $: ExtensionEnv): boolean;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;

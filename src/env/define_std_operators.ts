@@ -341,6 +341,7 @@ import { rect_exp } from '../operators/rect/rect_exp';
 import { rect_flt } from '../operators/rect/rect_flt';
 import { rect_imu } from '../operators/rect/rect_imu';
 import { rect_mul } from '../operators/rect/rect_mul';
+import { rect_pow_complex_negone } from '../operators/rect/rect_pow_complex_negone';
 import { rect_pow_exp_imu } from '../operators/rect/rect_pow_exp_imu';
 import { rect_pow_rat_rat } from '../operators/rect/rect_pow_rat_rat';
 import { rect_rat } from '../operators/rect/rect_rat';
@@ -951,6 +952,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(rect_mul);
     $.defineOperator(rect_pow_exp_imu);
     $.defineOperator(rect_pow_rat_rat);
+    $.defineOperator(rect_pow_complex_negone);
     $.defineOperator(rect_rat);
     $.defineOperator(rect_sin);
     $.defineOperator(rect_sym);

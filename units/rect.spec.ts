@@ -3,6 +3,50 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("rect", function () {
+    it("rect(a)", function () {
+        const lines: string[] = [
+            `rect(a)`,
+        ];
+        const engine = create_script_context({
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "a");
+        engine.release();
+    });
+    it("rect(1)", function () {
+        const lines: string[] = [
+            `rect(1)`,
+        ];
+        const engine = create_script_context({
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1");
+        engine.release();
+    });
+    it("rect(1.0)", function () {
+        const lines: string[] = [
+            `rect(1.0)`,
+        ];
+        const engine = create_script_context({
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "1.0");
+        engine.release();
+    });
+    it("rect(exp(a))", function () {
+        const lines: string[] = [
+            `rect(exp(a))`,
+        ];
+        const engine = create_script_context({
+            useDefinitions: false
+        });
+        const value = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(value), "exp(a)");
+        engine.release();
+    });
     it("rect(exp(i*pi/3))", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,

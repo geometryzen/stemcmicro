@@ -26,6 +26,9 @@ class Op extends CompositeOperator {
     transform1(opr: Sym, expExpr: Cons, rectExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
         const arg = expExpr.arg;
+        if ($.isreal(arg)) {
+            return [TFLAG_DIFF, expExpr];
+        }
         if (is_multiply(arg)) {
             if (count_imu_factors(arg) === 1) {
                 const x = remove_imu_factors(arg);

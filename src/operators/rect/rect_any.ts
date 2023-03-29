@@ -19,14 +19,15 @@ class Builder implements OperatorBuilder<U> {
 type ARG = U;
 type EXP = UCons<Sym, ARG>;
 
-class Op extends Function1<ARG> implements Operator<EXP> {
+class Op extends Function1<ARG> {
     readonly hash: string;
     constructor($: ExtensionEnv) {
         super('rect_any', RECT, is_any, $);
         this.hash = hash_unaop_atom(RECT, HASH_ANY);
     }
-    transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        return [TFLAG_NONE, expr];
+    transform1(opr: Sym, arg: ARG, rectExpr: EXP): [TFLAGS, U] {
+        // console.lg(this.name, this.$.toInfixString(rectExpr));
+        return [TFLAG_NONE, rectExpr];
     }
 }
 

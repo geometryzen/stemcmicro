@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- *
+ * rect(1/(x+i*y)) => (x-i*y)/(x**2+y**2)
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {

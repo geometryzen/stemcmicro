@@ -7,7 +7,6 @@ import { CompositeOperator } from "../CompositeOperator";
 
 const ADD = native_sym(Native.add);
 const EXP = native_sym(Native.exp);
-const MUL = native_sym(Native.multiply);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

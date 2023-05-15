@@ -2,11 +2,10 @@ import { ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS } from 
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
-import { is_atom, U } from "../../tree/tree";
+import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
-import { is_sym } from "../sym/is_sym";
 import { wrap_as_transform } from "../wrap_as_transform";
 import { abs } from "./abs";
 

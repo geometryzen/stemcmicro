@@ -7,8 +7,6 @@ import { half, two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
-import { im } from "../imag/imag";
-import { re } from "../real/real";
 import { simplify_trig } from "../simplify/simplify";
 
 const ABS = native_sym(Native.abs);

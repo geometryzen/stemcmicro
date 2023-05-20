@@ -1,37 +1,148 @@
 import bigInt from 'big-integer';
 import { assert } from "chai";
 
-class Foo {
+/**
+ * A shim for simulating features available in Jasmine needed by BigInteger specification.
+ */
+class ActualWrapper {
     negate = false;
     constructor(private actual: unknown) {
         // 
     }
     get not(): this {
+        this.negate = true;
         return this;
     }
     toBe(expected: number | string | boolean): void {
-        // assert.strictEqual(this.actual, expected);
+        if (typeof expected === 'boolean') {
+            assert.strictEqual(this.actual, expected);
+        }
+        else if (typeof expected === 'string') {
+            if (this.negate) {
+                if (typeof this.actual === 'string') {
+                    assert.isTrue(this.actual !== expected);
+                }
+                else {
+                    assert.fail(typeof this.actual);
+                }
+            }
+            else {
+                assert.strictEqual(this.actual, expected);
+            }
+        }
+        else if (typeof expected === 'number') {
+            assert.strictEqual(this.actual, expected);
+        }
+        else {
+            assert.fail(typeof expected);
+        }
     }
     toBeLessThan(value: number): void {
-        // 
+        if (typeof this.actual === 'number') {
+            assert.isTrue(this.actual < value);
+        }
+        else {
+            assert.fail(typeof this.actual);
+        }
     }
-    toEqual(expected: unknown) {
-        // assert.strictEqual(this.actual, expected);
+    toEqual(expected: unknown): void {
+        if (typeof expected === 'string') {
+            assert.strictEqual(this.actual, expected);
+        }
+        else if (typeof expected === 'object') {
+            if (Array.isArray(expected) && Array.isArray(this.actual)) {
+                assert.deepEqual(expected, this.actual);
+            }
+            else {
+                assert.deepEqual(this.actual, expected);
+            }
+        }
+        else {
+            assert.fail(typeof expected);
+        }
     }
-    toEqualBigInt(biggie: number | bigInt.BigInteger | string) {
-        return {
+    toEqualBigInt(expected: number | bigInt.BigInteger | string) {
+        if (typeof expected === 'number') {
+            if (bigInt.isInstance(this.actual)) {
+                assert.isTrue(this.actual.equals(expected));
+            }
+            else if (typeof this.actual === 'string') {
+                assert.isTrue(bigInt(this.actual).equals(expected));
+            }
+            else if (typeof this.actual === 'number') {
+                if (this.negate) {
+                    assert.isFalse(bigInt(this.actual).equals(expected));
+                }
+                else {
+                    assert.isTrue(bigInt(this.actual).equals(expected), `${this.actual}, ${expected}`);
+                }
+            }
+            else {
+                assert.fail(typeof this.actual);
+            }
+            // assert.isTrue(bigInt(this.actual).equals(expected));
+        }
+        else if (typeof expected === 'string') {
+            if (typeof this.actual === 'string') {
+                if (this.negate) {
+                    assert.isFalse(bigInt(this.actual).equals(expected));
+                }
+                else {
+                    assert.isTrue(bigInt(this.actual).equals(expected));
+                }
+            }
+            else if (typeof this.actual === 'number') {
+                assert.isTrue(bigInt(this.actual).equals(expected));
+            }
+            else if (bigInt.isInstance(this.actual)) {
+                assert.isTrue(this.actual.equals(expected));
+            }
+            else {
+                assert.fail(typeof this.actual);
+            }
+        }
+        else if (typeof expected === 'object') {
+            if (bigInt.isInstance(expected)) {
+                if (bigInt.isInstance(this.actual)) {
+                    assert.isTrue(this.actual.equals(expected));
+                }
+                else {
+                    assert.fail(typeof this.actual);
+                }
+            }
+            else {
+                assert.fail(typeof this.actual);
+            }
+            // assert.isTrue(bigInt(this.actual).equals(expected));
+        }
+        else {
+            assert.fail(typeof expected);
+        }
+        /*
             compare: function (actual, expected) {
                 return { pass: bigInt(actual).equals(expected) };
             }
         };
+        */
     }
     toThrow() {
-        //
+        if (typeof this.actual === 'function') {
+            try {
+                this.actual();
+                assert.fail();
+            }
+            catch (e) {
+                // Expected.
+            }
+        }
+        else {
+            assert.fail(typeof this.actual);
+        }
     }
 }
 
-function expect(actual: unknown): Foo {
-    return new Foo(actual);
+function expect(actual: unknown): ActualWrapper {
+    return new ActualWrapper(actual);
 }
 
 

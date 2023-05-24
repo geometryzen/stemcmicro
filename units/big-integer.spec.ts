@@ -1,4 +1,5 @@
-import bigInt from 'big-integer';
+// import bigInt from 'big-integer';
+import {bigInt} from '../src/tree/rat/big-integer';
 import { assert } from "chai";
 
 /**

@@ -1,9 +1,9 @@
 
 export const BASE = 1e7;
-const LOG_BASE = 7;
-const MAX_INT = 9007199254740992;
-const MAX_INT_ARR = smallToArray(MAX_INT);
-const DEFAULT_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
+export const LOG_BASE = 7;
+export const MAX_INT = 9007199254740992;
+export const MAX_INT_ARR = smallToArray(MAX_INT);
+export const DEFAULT_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 export function isPrecise(n: number): boolean {
     return -MAX_INT < n && n < MAX_INT;

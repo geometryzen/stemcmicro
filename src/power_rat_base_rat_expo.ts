@@ -13,7 +13,7 @@ import { nativeInt } from './nativeInt';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { quickfactor } from './quickfactor';
 import { Err } from './tree/err/Err';
-import { bigInt } from './tree/rat/big-integer';
+import { bigInt, BigInteger } from './tree/rat/big-integer';
 import { half, negOne, one, Rat, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Cons, U } from './tree/tree';

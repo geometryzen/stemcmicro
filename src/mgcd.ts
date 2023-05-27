@@ -20,5 +20,3 @@ import { BigInteger } from './tree/rat/big-integer';
 export function mgcd(u: BigInteger, v: BigInteger): BigInteger {
     return bigInt.gcd(u, v);
 }
-
-//if SELFTEST

@@ -1,8 +1,8 @@
-import bigInt from 'big-integer';
 import { mint } from './bignum';
 import { mpow } from './mpow';
 import { halt } from './runtime/defs';
 import { mcmp } from './runtime/mcmp';
+import { bigInt,BigInteger } from './tree/rat/big-integer';
 
 //-----------------------------------------------------------------------------
 //
@@ -13,7 +13,7 @@ import { mcmp } from './runtime/mcmp';
 //  The sign of the radicand is ignored.
 //
 //-----------------------------------------------------------------------------
-export function mroot(n: bigInt.BigInteger, index: number) {
+export function mroot(n: BigInteger, index: number) {
     n = n.abs();
 
     if (index === 0) {

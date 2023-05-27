@@ -1,4 +1,3 @@
-import bigInt from 'big-integer';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { items_to_cons } from './makeList';
 import { mdiv } from './mmul';
@@ -9,6 +8,7 @@ import { is_num_and_negative } from './predicates/is_negative_number';
 import { FLOOR } from './runtime/constants';
 import { create_flt } from './tree/flt/Flt';
 import { cadr } from './tree/helpers';
+import { bigInt } from './tree/rat/big-integer';
 import { negOne, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
 

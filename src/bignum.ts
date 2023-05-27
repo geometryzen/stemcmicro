@@ -1,25 +1,25 @@
-import bigInt from 'big-integer';
 import { mdiv, mmul } from './mmul';
 import { mpow } from './mpow';
 import { is_flt } from './operators/flt/is_flt';
 import { is_rat } from './operators/rat/is_rat';
 import { create_flt, Flt } from './tree/flt/Flt';
 import { Num } from './tree/num/Num';
+import { bigInt, BigInteger } from './tree/rat/big-integer';
 import { one, Rat } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
-export function mint(a: number): bigInt.BigInteger {
+export function mint(a: number): BigInteger {
     return bigInt(a);
 }
 
-export function makePositive(a: bigInt.BigInteger): bigInt.BigInteger {
+export function makePositive(a: BigInteger): BigInteger {
     if (a.isNegative()) {
         return a.multiply(bigInt(-1));
     }
     return a;
 }
 
-export function makeSignSameAs(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
+export function makeSignSameAs(a: BigInteger, b: BigInteger): BigInteger {
     if (a.isPositive()) {
         if (b.isNegative()) {
             return a.multiply(bigInt(-1));
@@ -34,7 +34,7 @@ export function makeSignSameAs(a: bigInt.BigInteger, b: bigInt.BigInteger): bigI
     return a;
 }
 
-export function setSignTo(a: bigInt.BigInteger, b: 1 | -1 | 0): bigInt.BigInteger {
+export function setSignTo(a: BigInteger, b: 1 | -1 | 0): BigInteger {
     if (a.isPositive()) {
         if (b < 0) {
             return a.multiply(bigInt(-1));
@@ -137,9 +137,9 @@ export function convert_rat_to_number(p: Rat): number {
     return result;
 }
 
-export function rational(a: number | bigInt.BigInteger, b: number | bigInt.BigInteger): Rat {
-    // `as any as number` cast added because bigInt(number) and bigInt(bigInt.BigInteger)
-    // are both accepted signatures, but bigInt(number|bigInt.BigInteger) is not
+export function rational(a: number | BigInteger, b: number | BigInteger): Rat {
+    // `as any as number` cast added because bigInt(number) and bigInt(BigInteger)
+    // are both accepted signatures, but bigInt(number|BigInteger) is not
     return new Rat(bigInt((a as unknown) as number), bigInt((b as unknown) as number));
 }
 
@@ -166,8 +166,8 @@ export function bignum_factorial(n: number): Rat {
 }
 
 // n is an int
-function __factorial(n: number): bigInt.BigInteger {
-    let a: bigInt.BigInteger;
+function __factorial(n: number): BigInteger {
+    let a: BigInteger;
 
     if (n === 0 || n === 1) {
         a = bigInt(1);

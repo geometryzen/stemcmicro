@@ -1,4 +1,3 @@
-import bigInt from 'big-integer';
 import { mint, setSignTo } from './bignum';
 import { equaln } from './is';
 import { mgcd } from './mgcd';
@@ -6,6 +5,7 @@ import { mdiv, mdivrem, mmod, mmul } from './mmul';
 import { mprime } from './operators/isprime/mprime';
 import { MULTIPLY, POWER, primetab } from './runtime/constants';
 import { mcmp } from './runtime/mcmp';
+import { bigInt, BigInteger } from './tree/rat/big-integer';
 import { negOne, Rat } from './tree/rat/Rat';
 import { cons, items_to_cons, nil, U } from './tree/tree';
 
@@ -57,7 +57,7 @@ function factor_a(): U[] {
 
 function try_kth_prime(k: number): U[] {
     const result: U[] = [];
-    let q: bigInt.BigInteger;
+    let q: BigInteger;
 
     const d = mint(primetab[k]);
 
@@ -72,7 +72,7 @@ function try_kth_prime(k: number): U[] {
             return result;
         }
 
-        let r: bigInt.BigInteger;
+        let r: BigInteger;
         [q, r] = Array.from(mdivrem(n_factor_number, d));
 
         // continue looping while remainder is zero
@@ -161,7 +161,7 @@ function factor_b(): U[] {
     }
 }
 
-function _factor(d: bigInt.BigInteger, count: number): U {
+function _factor(d: BigInteger, count: number): U {
     let factor: U = new Rat(d, bigInt.one);
     if (count > 1) {
         factor = items_to_cons(POWER, factor, new Rat(mint(count), bigInt.one));

@@ -1,4 +1,4 @@
-import { BigInteger } from 'big-integer';
+import { BigInteger } from '../tree/rat/big-integer';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { create_sym } from '../tree/sym/Sym';

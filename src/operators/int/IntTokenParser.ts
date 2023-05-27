@@ -1,4 +1,4 @@
-import bigInt from "big-integer";
+import { bigInt } from '../../tree/rat/big-integer';
 import { TokenParser } from "../../brite/ScanConfig";
 import { Rat } from "../../tree/rat/Rat";
 

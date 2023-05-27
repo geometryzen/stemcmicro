@@ -1,4 +1,3 @@
-import bigInt from 'big-integer';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_rat_and_integer } from '../../is_rat_and_integer';
 import { mmod } from '../../mmul';
@@ -7,6 +6,7 @@ import { native_sym } from '../../native/native_sym';
 import { nativeInt } from '../../nativeInt';
 import { halt } from '../../runtime/defs';
 import { caddr, cadr } from '../../tree/helpers';
+import { bigInt } from '../../tree/rat/big-integer';
 import { create_int, Rat } from '../../tree/rat/Rat';
 import { Cons, items_to_cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';

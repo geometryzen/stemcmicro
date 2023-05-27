@@ -1,4 +1,4 @@
-import { BigInteger } from 'big-integer';
+import type { BigInteger } from './tree/rat/big-integer';
 
 // Bignum power
 export function mpow(a: BigInteger, n: number | BigInteger): BigInteger {

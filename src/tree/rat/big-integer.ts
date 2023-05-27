@@ -1,7 +1,28 @@
+import { addSmall, arrayToSmall, BASE, divMod1, divMod2, isPrecise, smallToArray } from './big-helpers';
+
+export interface BigInteger {
+    abs(): BigInteger;
+    add(rhs: BigInteger): BigInteger;
+    compare(rhs: BigInteger): 1 | 0 | -1;
+    multiply(rhs: BigInteger): BigInteger;
+    divide(rhs: BigInteger): BigInteger;
+    equals(n: number): boolean;
+    isNegative(): boolean;
+    isPositive(): boolean;
+    isProbablePrime(): boolean;
+    isZero(): boolean;
+    mod(rhs: BigInteger): BigInteger;
+    pow(expo: number | BigInteger): BigInteger;
+    prev(): BigInteger;
+    divmod(rhs: BigInteger): { quotient: BigInteger, remainder: BigInteger };
+    shiftRight(n: number): BigInteger;
+    subtract(rhs: BigInteger): BigInteger;
+    toJSNumber(): number;
+}
+
 export const bigInt = (function (/*undefined*/) {
     "use strict";
 
-    const BASE = 1e7;
     const LOG_BASE = 7;
     const MAX_INT = 9007199254740992;
     const MAX_INT_ARR = smallToArray(MAX_INT);
@@ -34,34 +55,6 @@ export const bigInt = (function (/*undefined*/) {
         this.value = value;
     }
     NativeBigInt.prototype = Object.create(Integer.prototype);
-
-    function isPrecise(n: number): boolean {
-        return -MAX_INT < n && n < MAX_INT;
-    }
-
-    function smallToArray(n: number): number[] { // For performance reasons doesn't reference BASE, need to change this function if BASE changes
-        if (n < 1e7) {
-            return [n];
-        }
-        if (n < 1e14) {
-            return [n % 1e7, Math.floor(n / 1e7)];
-        }
-        return [n % 1e7, Math.floor(n / 1e7) % 1e7, Math.floor(n / 1e14)];
-    }
-
-    function arrayToSmall(arr: number[]): number | number[] { // If BASE changes this function may need to change
-        trim(arr);
-        const length = arr.length;
-        if (length < 4 && compareAbs(arr, MAX_INT_ARR) < 0) {
-            switch (length) {
-                case 0: return 0;
-                case 1: return arr[0];
-                case 2: return arr[0] + arr[1] * BASE;
-                default: return arr[0] + (arr[1] + arr[2] * BASE) * BASE;
-            }
-        }
-        return arr;
-    }
 
     function trim(v: number[]): void {
         let i = v.length;
@@ -110,25 +103,6 @@ export const bigInt = (function (/*undefined*/) {
         return add(b, a);
     }
 
-    function addSmall(a: number[], carry: number) { // assumes a is array, carry is number with 0 <= carry < MAX_INT
-        const l = a.length;
-        const r = new Array<number>(l);
-        const base = BASE;
-        let i: number;
-        let sum: number;
-        for (i = 0; i < l; i++) {
-            sum = a[i] - base + carry;
-            carry = Math.floor(sum / base);
-            r[i] = sum - carry * base;
-            carry += 1;
-        }
-        while (carry > 0) {
-            r[i++] = carry % base;
-            carry = Math.floor(carry / base);
-        }
-        return r;
-    }
-
     BigInteger.prototype.add = function (v) {
         var n = parseValue(v);
         if (this.sign !== n.sign) {
@@ -161,39 +135,6 @@ export const bigInt = (function (/*undefined*/) {
         return new NativeBigInt(this.value + parseValue(v).value);
     };
     NativeBigInt.prototype.plus = NativeBigInt.prototype.add;
-
-    function subtract(a: number[], b: number[]) { // assumes a and b are arrays with a >= b
-        const a_l = a.length;
-        const b_l = b.length;
-        const r = new Array<number>(a_l);
-        let borrow = 0;
-        const base = BASE;
-        let difference: number;
-        let i: number;
-        for (i = 0; i < b_l; i++) {
-            difference = a[i] - borrow - b[i];
-            if (difference < 0) {
-                difference += base;
-                borrow = 1;
-            }
-            else borrow = 0;
-            r[i] = difference;
-        }
-        for (i = b_l; i < a_l; i++) {
-            difference = a[i] - borrow;
-            if (difference < 0) difference += base;
-            else {
-                r[i++] = difference;
-                break;
-            }
-            r[i] = difference;
-        }
-        for (; i < a_l; i++) {
-            r[i] = a[i];
-        }
-        trim(r);
-        return r;
-    }
 
     function subtractAny(a: number[], b: number[], sign: boolean) {
         let difference: number[];
@@ -310,24 +251,6 @@ export const bigInt = (function (/*undefined*/) {
         return r;
     }
 
-    function multiplySmall(a, b) { // assumes a is array, b is number with |b| < BASE
-        var l = a.length,
-            r = new Array(l),
-            base = BASE,
-            carry = 0,
-            product, i;
-        for (i = 0; i < l; i++) {
-            product = a[i] * b + carry;
-            carry = Math.floor(product / base);
-            r[i] = product - carry * base;
-        }
-        while (carry > 0) {
-            r[i++] = carry % base;
-            carry = Math.floor(carry / base);
-        }
-        return r;
-    }
-
     function shiftLeft(x, n) {
         var r = [];
         while (n-- > 0) r.push(0);
@@ -407,7 +330,7 @@ export const bigInt = (function (/*undefined*/) {
 
     NativeBigInt.prototype.multiply = function (v) {
         return new NativeBigInt(this.value * parseValue(v).value);
-    }
+    };
     NativeBigInt.prototype.times = NativeBigInt.prototype.multiply;
 
     function square(a) {
@@ -443,113 +366,6 @@ export const bigInt = (function (/*undefined*/) {
     NativeBigInt.prototype.square = function (v) {
         return new NativeBigInt(this.value * this.value);
     };
-
-    function divMod1(a, b) { // Left over from previous version. Performs faster than divMod2 on smaller input sizes.
-        var a_l = a.length,
-            b_l = b.length,
-            base = BASE,
-            result = createArray(b.length),
-            divisorMostSignificantDigit = b[b_l - 1],
-            // normalization
-            lambda = Math.ceil(base / (2 * divisorMostSignificantDigit)),
-            remainder = multiplySmall(a, lambda),
-            divisor = multiplySmall(b, lambda),
-            quotientDigit, shift, carry, borrow, i, l, q;
-        if (remainder.length <= a_l) remainder.push(0);
-        divisor.push(0);
-        divisorMostSignificantDigit = divisor[b_l - 1];
-        for (shift = a_l - b_l; shift >= 0; shift--) {
-            quotientDigit = base - 1;
-            if (remainder[shift + b_l] !== divisorMostSignificantDigit) {
-                quotientDigit = Math.floor((remainder[shift + b_l] * base + remainder[shift + b_l - 1]) / divisorMostSignificantDigit);
-            }
-            // quotientDigit <= base - 1
-            carry = 0;
-            borrow = 0;
-            l = divisor.length;
-            for (i = 0; i < l; i++) {
-                carry += quotientDigit * divisor[i];
-                q = Math.floor(carry / base);
-                borrow += remainder[shift + i] - (carry - q * base);
-                carry = q;
-                if (borrow < 0) {
-                    remainder[shift + i] = borrow + base;
-                    borrow = -1;
-                } else {
-                    remainder[shift + i] = borrow;
-                    borrow = 0;
-                }
-            }
-            while (borrow !== 0) {
-                quotientDigit -= 1;
-                carry = 0;
-                for (i = 0; i < l; i++) {
-                    carry += remainder[shift + i] - base + divisor[i];
-                    if (carry < 0) {
-                        remainder[shift + i] = carry + base;
-                        carry = 0;
-                    } else {
-                        remainder[shift + i] = carry;
-                        carry = 1;
-                    }
-                }
-                borrow += carry;
-            }
-            result[shift] = quotientDigit;
-        }
-        // denormalization
-        remainder = divModSmall(remainder, lambda)[0];
-        return [arrayToSmall(result), arrayToSmall(remainder)];
-    }
-
-    function divMod2(a, b) { // Implementation idea shamelessly stolen from Silent Matt's library http://silentmatt.com/biginteger/
-        // Performs faster than divMod1 on larger input sizes.
-        var a_l = a.length,
-            b_l = b.length,
-            result = [],
-            part = [],
-            base = BASE,
-            guess, xlen, highx, highy, check;
-        while (a_l) {
-            part.unshift(a[--a_l]);
-            trim(part);
-            if (compareAbs(part, b) < 0) {
-                result.push(0);
-                continue;
-            }
-            xlen = part.length;
-            highx = part[xlen - 1] * base + part[xlen - 2];
-            highy = b[b_l - 1] * base + b[b_l - 2];
-            if (xlen > b_l) {
-                highx = (highx + 1) * base;
-            }
-            guess = Math.ceil(highx / highy);
-            do {
-                check = multiplySmall(b, guess);
-                if (compareAbs(check, part) <= 0) break;
-                guess--;
-            } while (guess);
-            result.push(guess);
-            part = subtract(part, check);
-        }
-        result.reverse();
-        return [arrayToSmall(result), arrayToSmall(part)];
-    }
-
-    function divModSmall(value, lambda) {
-        var length = value.length,
-            quotient = createArray(length),
-            base = BASE,
-            i, q, remainder, divisor;
-        remainder = 0;
-        for (i = length - 1; i >= 0; --i) {
-            divisor = remainder * base + value[i];
-            q = truncate(divisor / lambda);
-            remainder = divisor - q * lambda;
-            quotient[i] = q | 0;
-        }
-        return [quotient, remainder | 0];
-    }
 
     function divModAny(self, v) {
         var value, n = parseValue(v);
@@ -1371,17 +1187,17 @@ export const bigInt = (function (/*undefined*/) {
 
     function parseStringValue(v: string) {
         if (isPrecise(+v)) {
-            var x = +v;
+            const x = +v;
             if (x === truncate(x))
                 return supportsNativeBigInt ? new NativeBigInt(BigInt(x)) : new SmallInteger(x);
             throw new Error("Invalid integer: " + v);
         }
-        var sign = v[0] === "-";
+        const sign = v[0] === "-";
         if (sign) v = v.slice(1);
-        var split = v.split(/e/i);
+        const split = v.split(/e/i);
         if (split.length > 2) throw new Error("Invalid integer: " + split.join("e"));
         if (split.length === 2) {
-            var exp = split[1];
+            let exp = split[1];
             if (exp[0] === "+") exp = exp.slice(1);
             exp = +exp;
             if (exp !== truncate(exp) || !isPrecise(exp)) throw new Error("Invalid integer: " + exp + " is not a valid exponent.");

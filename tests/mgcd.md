@@ -18,7 +18,7 @@ for (let i = 1; i < 100; i++) {
 }
 
 // Euclid's algorithm
-function egcd(a: bigInt.BigInteger, b: bigInt.BigInteger) {
+function egcd(a: BigInteger, b: BigInteger) {
   let sign_: Sign = 0;
   if (MZERO(b)) {
     stop('divide by zero');

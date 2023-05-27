@@ -1,4 +1,4 @@
-import { BigInteger } from 'big-integer';
+import { BigInteger } from '../../tree/rat/big-integer';
 
 // Bignum prime test (returns 1 if prime, 0 if not)
 

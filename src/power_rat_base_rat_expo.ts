@@ -1,4 +1,3 @@
-import bigInt from 'big-integer';
 import { bignum_truncate, makePositive, makeSignSameAs } from './bignum';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
@@ -14,6 +13,7 @@ import { nativeInt } from './nativeInt';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { quickfactor } from './quickfactor';
 import { Err } from './tree/err/Err';
+import { bigInt } from './tree/rat/big-integer';
 import { half, negOne, one, Rat, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Cons, U } from './tree/tree';
@@ -68,8 +68,8 @@ export function power_rat_base_rat_expo(base: Rat, expo: Rat, $: ExtensionEnv): 
     }
 
     let expoJs = 0;
-    let x: bigInt.BigInteger | 0;
-    let y: bigInt.BigInteger;
+    let x: BigInteger | 0;
+    let y: BigInteger;
     // if exponent is integer then power
     if (is_rat_and_integer(expo)) {
         expoJs = nativeInt(expo);

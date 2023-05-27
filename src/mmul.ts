@@ -1,4 +1,4 @@
-import { BigInteger } from 'big-integer';
+import { BigInteger } from './tree/rat/big-integer';
 
 export function mmul(a: BigInteger, b: BigInteger): BigInteger {
     return a.multiply(b);

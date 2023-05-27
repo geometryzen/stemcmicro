@@ -1,6 +1,6 @@
-import bigInt from "big-integer";
 import { RBTree } from 'generic-rbtree';
 import { Atom } from "../atom/Atom";
+import { bigInt, BigInteger } from '../rat/big-integer';
 import { U } from "../tree";
 
 //
@@ -12,27 +12,27 @@ import { U } from "../tree";
 // generic-rbtree provides support for a cache of integers to take the load off the Garbage Collector.
 //
 
-function mmul(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
+function mmul(a: BigInteger, b: BigInteger): BigInteger {
     return a.multiply(b);
 }
 
-function mdiv(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
+function mdiv(a: BigInteger, b: BigInteger): BigInteger {
     return a.divide(b);
 }
 
-function mcmp(a: bigInt.BigInteger, b: bigInt.BigInteger): -1 | 0 | 1 {
+function mcmp(a: BigInteger, b: BigInteger): -1 | 0 | 1 {
     return a.compare(b) as -1 | 0 | 1;
 }
 
-function madd(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
+function madd(a: BigInteger, b: BigInteger): BigInteger {
     return a.add(b);
 }
 
-function mgcd(u: bigInt.BigNumber, v: bigInt.BigNumber): bigInt.BigInteger {
+function mgcd(u: BigInteger, v: BigInteger): BigInteger {
     return bigInt.gcd(u, v);
 }
 
-function MSIGN(biggles: bigInt.BigInteger): -1 | 0 | 1 {
+function MSIGN(biggles: BigInteger): -1 | 0 | 1 {
     if (biggles.isPositive()) {
         return +1;
     }
@@ -44,20 +44,20 @@ function MSIGN(biggles: bigInt.BigInteger): -1 | 0 | 1 {
     }
 }
 /*
-function MLENGTH(p: bigInt.BigInteger): number {
+function MLENGTH(p: BigInteger): number {
     return p.toString().length;
 }
 */
 
-function MZERO(p: bigInt.BigInteger): boolean {
+function MZERO(p: BigInteger): boolean {
     return p.isZero();
 }
 
-function MEQUAL(p: bigInt.BigInteger, n: number): boolean {
+function MEQUAL(p: BigInteger, n: number): boolean {
     return p.equals(n);
 }
 
-function makeSignSameAs(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigInteger {
+function makeSignSameAs(a: BigInteger, b: BigInteger): BigInteger {
     if (a.isPositive()) {
         if (b.isNegative()) {
             return a.multiply(bigInt(-1));
@@ -72,7 +72,7 @@ function makeSignSameAs(a: bigInt.BigInteger, b: bigInt.BigInteger): bigInt.BigI
     return a;
 }
 
-function setSignTo(a: bigInt.BigInteger, b: -1 | 0 | 1): bigInt.BigInteger {
+function setSignTo(a: BigInteger, b: -1 | 0 | 1): BigInteger {
     if (a.isPositive()) {
         if (b < 0) {
             return a.multiply(bigInt(-1));
@@ -87,7 +87,7 @@ function setSignTo(a: bigInt.BigInteger, b: -1 | 0 | 1): bigInt.BigInteger {
     return a;
 }
 
-function abs(a: bigInt.BigInteger): bigInt.BigInteger {
+function abs(a: BigInteger): BigInteger {
     if (a.isPositive()) {
         return a;
     }
@@ -104,7 +104,7 @@ export class Rat extends Atom<'Rat'> {
      * @param a The numerator.
      * @param b The denominator.
      */
-    constructor(public a: bigInt.BigInteger, public b: bigInt.BigInteger, pos?: number, end?: number) {
+    constructor(public a: BigInteger, public b: BigInteger, pos?: number, end?: number) {
         super('Rat', pos, end);
         if (b.isZero()) {
             throw new Error("denominator must not be zero");

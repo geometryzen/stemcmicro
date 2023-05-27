@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-import bigInt from 'big-integer';
 import fs from 'fs';
 import process from 'process';
 import { Predicates } from './src/env/ExtensionEnv';
@@ -71,7 +70,7 @@ class Asserts {
         console.log('Actual:   ', safeToString(actual));
         throw new Error('Failed');
     }
-    not(a: number, b: number | bigInt.BigInteger, msg?: string) {
+    not(a: number, b: number | BigInteger, msg?: string) {
         if (!Object.is(a, b)) {
             return true;
         }

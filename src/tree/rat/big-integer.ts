@@ -65,11 +65,18 @@ export const bigInt = (function (/*undefined*/) {
         return parseValue(v);
     }
 
-    class SmallInteger {
+    class BaseInteger {
+        constructor() {
+            // Nothing to see yet.
+        }
+    }
+
+    class SmallInteger extends BaseInteger {
         value: number;
         sign: boolean;
         isSmall: boolean;
         constructor(value: number) {
+            super();
             this.value = value;
             this.sign = value < 0;
             this.isSmall = true;
@@ -89,6 +96,11 @@ export const bigInt = (function (/*undefined*/) {
                 b = smallToArray(Math.abs(b));
             }
             return new LargeInteger(addSmall(b, Math.abs(a)), a < 0);
+        }
+        square() {
+            const value = this.value * this.value;
+            if (isPrecise(value)) return new SmallInteger(value);
+            return new LargeInteger(square(smallToArray(Math.abs(this.value))), false);
         }
         subtract(v: BigInteger) {
             const n = parseValue(v);
@@ -119,11 +131,12 @@ export const bigInt = (function (/*undefined*/) {
         }
     }
 
-    class LargeInteger {
+    class LargeInteger extends BaseInteger {
         value: number[];
         sign: boolean;
         isSmall: boolean;
         constructor(value: number[], sign: boolean) {
+            super();
             this.value = value;
             this.sign = sign;
             this.isSmall = false;
@@ -194,9 +207,10 @@ export const bigInt = (function (/*undefined*/) {
         }
     }
 
-    class NativeBigInt {
+    class NativeBigInt extends BaseInteger {
         value: bigint;
         constructor(value: bigint) {
+            super();
             this.value = value;
         }
         abs() {
@@ -279,14 +293,6 @@ export const bigInt = (function (/*undefined*/) {
         }
         return new LargeInteger(multiplyLong(b, smallToArray(a)), sign);
     }
-
-
-
-    SmallInteger.prototype.square = function () {
-        var value = this.value * this.value;
-        if (isPrecise(value)) return new SmallInteger(value);
-        return new LargeInteger(square(smallToArray(Math.abs(this.value))), false);
-    };
 
     NativeBigInt.prototype.square = function (v) {
         return new NativeBigInt(this.value * this.value);
@@ -856,7 +862,7 @@ export const bigInt = (function (/*undefined*/) {
         return x & -x;
     }
 
-    function integerLogarithm(value, base) {
+    function integerLogarithm(value: BigInteger, base: BigInteger): { p: BigInteger, e: number } {
         if (base.compareTo(value) <= 0) {
             var tmp = integerLogarithm(value, base.square(base));
             var p = tmp.p;
@@ -1022,7 +1028,7 @@ export const bigInt = (function (/*undefined*/) {
             };
         }
 
-        var neg = false;
+        let neg = false;
         if (n.isNegative() && base.isPositive()) {
             neg = true;
             n = n.abs();
@@ -1036,12 +1042,12 @@ export const bigInt = (function (/*undefined*/) {
                 isNegative: neg
             };
         }
-        var out = [];
-        var left = n, divmod;
+        const out = [];
+        let left = n;
         while (left.isNegative() || left.compareAbs(base) >= 0) {
-            divmod = left.divmod(base);
+            const divmod = left.divmod(base);
             left = divmod.quotient;
-            var digit = divmod.remainder;
+            let digit = divmod.remainder;
             if (digit.isNegative()) {
                 digit = base.minus(digit).abs();
                 left = left.next();
@@ -1053,7 +1059,7 @@ export const bigInt = (function (/*undefined*/) {
     }
 
     function toBaseString(n, base, alphabet) {
-        var arr = toBase(n, base);
+        const arr = toBase(n, base);
         return (arr.isNegative ? "-" : "") + arr.value.map(function (x) {
             return stringify(x, alphabet);
         }).join('');
@@ -1110,7 +1116,7 @@ export const bigInt = (function (/*undefined*/) {
         return parseInt(this.toString(), 10);
     };
 
-    function parseStringValue(v: string) {
+    function parseStringValue(v: string): SmallInteger | LargeInteger | NativeBigInt {
         if (isPrecise(+v)) {
             const x = +v;
             if (x === truncate(x))
@@ -1152,7 +1158,7 @@ export const bigInt = (function (/*undefined*/) {
         return new LargeInteger(r, sign);
     }
 
-    function parseNumberValue(v: number) {
+    function parseNumberValue(v: number): SmallInteger | LargeInteger | NativeBigInt {
         if (supportsNativeBigInt) {
             return new NativeBigInt(BigInt(v));
         }
@@ -1163,7 +1169,7 @@ export const bigInt = (function (/*undefined*/) {
         return parseStringValue(v.toString());
     }
 
-    function parseValue(v: number | string | bigint) {
+    function parseValue(v: number | string | bigint): SmallInteger | LargeInteger | NativeBigInt {
         if (typeof v === "number") {
             return parseNumberValue(v);
         }

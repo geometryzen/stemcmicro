@@ -11,12 +11,13 @@ import {
     LOG_BASE,
     MAX_INT,
     MAX_INT_ARR,
+    multiplyKaratsuba,
     multiplyLong,
-    shiftLeft,
     smallToArray,
     subtract,
     trim,
-    truncate
+    truncate,
+    useKaratsuba
 } from './big-helpers';
 
 export interface BigInteger {
@@ -197,32 +198,6 @@ export const bigInt = (function (/*undefined*/) {
     NativeBigInt.prototype.abs = function () {
         return new NativeBigInt(this.value >= 0 ? this.value : -this.value);
     };
-
-    function multiplyKaratsuba(x, y) {
-        let n = Math.max(x.length, y.length);
-
-        if (n <= 30) return multiplyLong(x, y);
-        n = Math.ceil(n / 2);
-
-        const b = x.slice(n);
-        const a = x.slice(0, n);
-        const d = y.slice(n);
-        const c = y.slice(0, n);
-
-        const ac = multiplyKaratsuba(a, c);
-        const bd = multiplyKaratsuba(b, d);
-        const abcd = multiplyKaratsuba(addAny(a, b), addAny(c, d));
-
-        const product = addAny(addAny(ac, shiftLeft(subtract(subtract(abcd, ac), bd), n)), shiftLeft(bd, 2 * n));
-        trim(product);
-        return product;
-    }
-
-    // The following function is derived from a surface fit of a graph plotting the performance difference
-    // between long multiplication and karatsuba multiplication versus the lengths of the two arrays.
-    function useKaratsuba(l1, l2) {
-        return -0.012 * l1 - 0.012 * l2 + 0.000015 * l1 * l2 > 0;
-    }
 
     LargeInteger.prototype.multiply = function (v) {
         var n = parseValue(v),

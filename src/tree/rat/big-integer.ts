@@ -3,7 +3,6 @@ import {
     addSmall,
     arrayToSmall,
     BASE,
-    createArray,
     DEFAULT_ALPHABET,
     divMod1,
     divMod2,
@@ -13,7 +12,9 @@ import {
     MAX_INT_ARR,
     multiplyKaratsuba,
     multiplyLong,
+    multiplySmall,
     smallToArray,
+    square,
     subtract,
     trim,
     truncate,
@@ -35,11 +36,13 @@ export interface BigInteger {
     isProbablePrime(): boolean;
     isZero(): boolean;
     mod(rhs: BigInteger): BigInteger;
+    negate(): BigInteger;
     pow(expo: number | BigInteger): BigInteger;
     prev(): BigInteger;
     divmod(rhs: BigInteger): { quotient: BigInteger, remainder: BigInteger };
     shiftRight(n: number): BigInteger;
     subtract(rhs: BigInteger): BigInteger;
+    times(n: BigInteger): BigInteger;
     toJSNumber(): number;
 }
 
@@ -48,63 +51,183 @@ export const bigInt = (function (/*undefined*/) {
     const supportsNativeBigInt = typeof BigInt === "function";
     // console.lg("supportsNativeBigInt", supportsNativeBigInt);
 
-    function Integer(v, radix?, alphabet?, caseSensitive?) {
+    /**
+     * This is (also) the constructor function.
+     * @param v 
+     * @param radix 
+     * @param alphabet 
+     * @param caseSensitive 
+     * @returns 
+     */
+    function Integer(v?, radix?, alphabet?, caseSensitive?) {
         if (typeof v === "undefined") return Integer[0];
         if (typeof radix !== "undefined") return +radix === 10 && !alphabet ? parseValue(v) : parseBase(v, radix, alphabet, caseSensitive);
         return parseValue(v);
     }
 
-    function LargeInteger(value, sign) {
-        this.value = value;
-        this.sign = sign;
-        this.isSmall = false;
+    class SmallInteger {
+        value: number;
+        sign: boolean;
+        isSmall: boolean;
+        constructor(value: number) {
+            this.value = value;
+            this.sign = value < 0;
+            this.isSmall = true;
+        }
+        abs() {
+            return new SmallInteger(Math.abs(this.value));
+        }
+        add(v: BigInteger) {
+            const n = parseValue(v);
+            const a = this.value;
+            if (a < 0 !== n.sign) {
+                return this.subtract(n.negate());
+            }
+            let b = n.value;
+            if (n.isSmall) {
+                if (isPrecise(a + b)) return new SmallInteger(a + b);
+                b = smallToArray(Math.abs(b));
+            }
+            return new LargeInteger(addSmall(b, Math.abs(a)), a < 0);
+        }
+        subtract(v: BigInteger) {
+            const n = parseValue(v);
+            const a = this.value;
+            if (a < 0 !== n.sign) {
+                return this.add(n.negate());
+            }
+            const b = n.value;
+            if (n.isSmall) {
+                return new SmallInteger(a - b);
+            }
+            return subtractSmall(b, Math.abs(a), a >= 0);
+        }
+        negate() {
+            const sign = this.sign;
+            const small = new SmallInteger(-this.value);
+            small.sign = !sign;
+            return small;
+        }
+        multiply(v: BigInteger) {
+            return parseValue(v)._multiplyBySmall(this);
+        }
+        _multiplyBySmall(a: SmallInteger) {
+            if (isPrecise(a.value * this.value)) {
+                return new SmallInteger(a.value * this.value);
+            }
+            return multiplySmallAndArray(Math.abs(a.value), smallToArray(Math.abs(this.value)), this.sign !== a.sign);
+        }
     }
-    LargeInteger.prototype = Object.create(Integer.prototype);
 
-    function SmallInteger(value) {
-        this.value = value;
-        this.sign = value < 0;
-        this.isSmall = true;
+    class LargeInteger {
+        value: number[];
+        sign: boolean;
+        isSmall: boolean;
+        constructor(value: number[], sign: boolean) {
+            this.value = value;
+            this.sign = sign;
+            this.isSmall = false;
+        }
+        abs() {
+            return new LargeInteger(this.value, false);
+        }
+        add(v: BigInteger) {
+            const n = parseValue(v);
+            if (this.sign !== n.sign) {
+                return this.subtract(n.negate());
+            }
+            const a = this.value;
+            const b = n.value;
+            if (n.isSmall) {
+                return new LargeInteger(addSmall(a, Math.abs(b)), this.sign);
+            }
+            return new LargeInteger(addAny(a, b), this.sign);
+        }
+        square() {
+            return new LargeInteger(square(this.value), false);
+        }
+        subtract(v: BigInteger) {
+            const n = parseValue(v);
+            if (this.sign !== n.sign) {
+                return this.add(n.negate());
+            }
+            const a = this.value, b = n.value;
+            if (n.isSmall)
+                return subtractSmall(a, Math.abs(b), this.sign);
+            return subtractAny(a, b, this.sign);
+        }
+        negate() {
+            return new LargeInteger(this.value, !this.sign);
+        }
+        multiply(v: BigInteger) {
+            const n = parseValue(v);
+            const a = this.value;
+            const sign = this.sign !== n.sign;
+            let b: number[];
+            if (n instanceof SmallInteger) {
+                const sv = n.value;
+                if (sv === 0) return Integer[0];
+                if (sv === 1) return this;
+                if (sv === -1) return this.negate();
+                const abs = Math.abs(sv);
+                if (abs < BASE) {
+                    return new LargeInteger(multiplySmall(a, abs), sign);
+                }
+                b = smallToArray(abs);
+            }
+            else if (n instanceof LargeInteger) {
+                b = n.value;
+            }
+            else {
+                throw new Error();
+            }
+            if (useKaratsuba(a.length, b.length)) {// Karatsuba is only faster for certain array sizes
+                return new LargeInteger(multiplyKaratsuba(a, b), sign);
+            }
+            return new LargeInteger(multiplyLong(a, b), sign);
+        }
+        multiplyBySmall(a: SmallInteger) {
+            if (a.value === 0) return Integer[0];
+            if (a.value === 1) return this;
+            if (a.value === -1) return this.negate();
+            return multiplySmallAndArray(Math.abs(a.value), this.value, this.sign !== a.sign);
+        }
     }
-    SmallInteger.prototype = Object.create(Integer.prototype);
 
-    function NativeBigInt(value) {
-        this.value = value;
+    class NativeBigInt {
+        value: bigint;
+        constructor(value: bigint) {
+            this.value = value;
+        }
+        abs() {
+            return new NativeBigInt(this.value >= 0 ? this.value : -this.value);
+        }
+        add(v: BigInteger) {
+            return new NativeBigInt(this.value + parseValue(v).value);
+        }
+        plus(v: BigInteger) {
+            return this.add(v);
+        }
+        subtract(v: BigInteger) {
+            return new NativeBigInt(this.value - parseValue(v).value);
+        }
+        minus(v: BigInteger) {
+            return this.subtract(v);
+        }
+        multiply(v: BigInteger) {
+            return new NativeBigInt(this.value * parseValue(v).value);
+        }
+        negate() {
+            return new NativeBigInt(-this.value);
+        }
+        times(v: BigInteger) {
+            return this.multiply(v);
+        }
     }
-    NativeBigInt.prototype = Object.create(Integer.prototype);
 
-    LargeInteger.prototype.add = function (v) {
-        var n = parseValue(v);
-        if (this.sign !== n.sign) {
-            return this.subtract(n.negate());
-        }
-        var a = this.value, b = n.value;
-        if (n.isSmall) {
-            return new LargeInteger(addSmall(a, Math.abs(b)), this.sign);
-        }
-        return new LargeInteger(addAny(a, b), this.sign);
-    };
-    LargeInteger.prototype.plus = LargeInteger.prototype.add;
-
-    SmallInteger.prototype.add = function (v) {
-        var n = parseValue(v);
-        var a = this.value;
-        if (a < 0 !== n.sign) {
-            return this.subtract(n.negate());
-        }
-        var b = n.value;
-        if (n.isSmall) {
-            if (isPrecise(a + b)) return new SmallInteger(a + b);
-            b = smallToArray(Math.abs(b));
-        }
-        return new LargeInteger(addSmall(b, Math.abs(a)), a < 0);
-    };
-    SmallInteger.prototype.plus = SmallInteger.prototype.add;
-
-    NativeBigInt.prototype.add = function (v) {
-        return new NativeBigInt(this.value + parseValue(v).value);
-    };
-    NativeBigInt.prototype.plus = NativeBigInt.prototype.add;
+    // LargeInteger.prototype.plus = LargeInteger.prototype.add;
+    // SmallInteger.prototype.plus = SmallInteger.prototype.add;
+    // NativeBigInt.prototype.plus = NativeBigInt.prototype.add;
 
     function subtractAny(a: number[], b: number[], sign: boolean) {
         let difference: number[];
@@ -142,136 +265,22 @@ export const bigInt = (function (/*undefined*/) {
         return new LargeInteger(r, sign);
     }
 
-    LargeInteger.prototype.subtract = function (v) {
-        const n = parseValue(v);
-        if (this.sign !== n.sign) {
-            return this.add(n.negate());
-        }
-        const a = this.value, b = n.value;
-        if (n.isSmall)
-            return subtractSmall(a, Math.abs(b), this.sign);
-        return subtractAny(a, b, this.sign);
-    };
-    LargeInteger.prototype.minus = LargeInteger.prototype.subtract;
+    // LargeInteger.prototype.minus = LargeInteger.prototype.subtract;
+    // SmallInteger.prototype.minus = SmallInteger.prototype.subtract;
+    // NativeBigInt.prototype.minus = NativeBigInt.prototype.subtract;
 
-    SmallInteger.prototype.subtract = function (v) {
-        const n = parseValue(v);
-        const a = this.value;
-        if (a < 0 !== n.sign) {
-            return this.add(n.negate());
-        }
-        const b = n.value;
-        if (n.isSmall) {
-            return new SmallInteger(a - b);
-        }
-        return subtractSmall(b, Math.abs(a), a >= 0);
-    };
-    SmallInteger.prototype.minus = SmallInteger.prototype.subtract;
+    // LargeInteger.prototype.times = LargeInteger.prototype.multiply;
+    // SmallInteger.prototype.times = SmallInteger.prototype.multiply;
+    // NativeBigInt.prototype.times = NativeBigInt.prototype.multiply;
 
-    NativeBigInt.prototype.subtract = function (v) {
-        return new NativeBigInt(this.value - parseValue(v).value);
-    };
-
-    NativeBigInt.prototype.minus = NativeBigInt.prototype.subtract;
-
-    LargeInteger.prototype.negate = function () {
-        return new LargeInteger(this.value, !this.sign);
-    };
-
-    SmallInteger.prototype.negate = function () {
-        const sign = this.sign;
-        const small = new SmallInteger(-this.value);
-        small.sign = !sign;
-        return small;
-    };
-
-    NativeBigInt.prototype.negate = function () {
-        return new NativeBigInt(-this.value);
-    };
-
-    LargeInteger.prototype.abs = function () {
-        return new LargeInteger(this.value, false);
-    };
-    SmallInteger.prototype.abs = function () {
-        return new SmallInteger(Math.abs(this.value));
-    };
-    NativeBigInt.prototype.abs = function () {
-        return new NativeBigInt(this.value >= 0 ? this.value : -this.value);
-    };
-
-    LargeInteger.prototype.multiply = function (v) {
-        var n = parseValue(v),
-            a = this.value, b = n.value,
-            sign = this.sign !== n.sign,
-            abs;
-        if (n.isSmall) {
-            if (b === 0) return Integer[0];
-            if (b === 1) return this;
-            if (b === -1) return this.negate();
-            abs = Math.abs(b);
-            if (abs < BASE) {
-                return new LargeInteger(multiplySmall(a, abs), sign);
-            }
-            b = smallToArray(abs);
-        }
-        if (useKaratsuba(a.length, b.length)) // Karatsuba is only faster for certain array sizes
-            return new LargeInteger(multiplyKaratsuba(a, b), sign);
-        return new LargeInteger(multiplyLong(a, b), sign);
-    };
-
-    LargeInteger.prototype.times = LargeInteger.prototype.multiply;
-
-    function multiplySmallAndArray(a, b, sign) { // a >= 0
+    function multiplySmallAndArray(a: number, b: number[], sign: boolean) { // a >= 0
         if (a < BASE) {
             return new LargeInteger(multiplySmall(b, a), sign);
         }
         return new LargeInteger(multiplyLong(b, smallToArray(a)), sign);
     }
-    SmallInteger.prototype._multiplyBySmall = function (a) {
-        if (isPrecise(a.value * this.value)) {
-            return new SmallInteger(a.value * this.value);
-        }
-        return multiplySmallAndArray(Math.abs(a.value), smallToArray(Math.abs(this.value)), this.sign !== a.sign);
-    };
-    LargeInteger.prototype._multiplyBySmall = function (a) {
-        if (a.value === 0) return Integer[0];
-        if (a.value === 1) return this;
-        if (a.value === -1) return this.negate();
-        return multiplySmallAndArray(Math.abs(a.value), this.value, this.sign !== a.sign);
-    };
-    SmallInteger.prototype.multiply = function (v) {
-        return parseValue(v)._multiplyBySmall(this);
-    };
-    SmallInteger.prototype.times = SmallInteger.prototype.multiply;
 
-    NativeBigInt.prototype.multiply = function (v) {
-        return new NativeBigInt(this.value * parseValue(v).value);
-    };
-    NativeBigInt.prototype.times = NativeBigInt.prototype.multiply;
 
-    function square(a) {
-        //console.assert(2 * BASE * BASE < MAX_INT);
-        const l = a.length;
-        const r = createArray(l + l);
-        const base = BASE;
-        for (let i = 0; i < l; i++) {
-            const a_i = a[i];
-            let carry = 0 - a_i * a_i;
-            for (let j = i; j < l; j++) {
-                const a_j = a[j];
-                const product = 2 * (a_i * a_j) + r[i + j] + carry;
-                carry = Math.floor(product / base);
-                r[i + j] = product - carry * base;
-            }
-            r[i + l] = carry;
-        }
-        trim(r);
-        return r;
-    }
-
-    LargeInteger.prototype.square = function () {
-        return new LargeInteger(square(this.value), false);
-    };
 
     SmallInteger.prototype.square = function () {
         var value = this.value * this.value;
@@ -913,7 +922,7 @@ export const bigInt = (function (/*undefined*/) {
         b = parseValue(b).abs();
         return a.divide(gcd(a, b)).multiply(b);
     }
-    function randBetween(a, b, rng) {
+    function randBetween(a: number | string, b: number | string, rng?) {
         a = parseValue(a);
         b = parseValue(b);
         var usedRNG = rng || Math.random;
@@ -1179,10 +1188,12 @@ export const bigInt = (function (/*undefined*/) {
     Integer.min = min;
     Integer.gcd = gcd;
     Integer.lcm = lcm;
-    Integer.isInstance = function (x) { return x instanceof LargeInteger || x instanceof SmallInteger || x instanceof NativeBigInt; };
+    Integer.isInstance = function (x) {
+        return x instanceof LargeInteger || x instanceof SmallInteger || x instanceof NativeBigInt;
+    };
     Integer.randBetween = randBetween;
 
-    Integer.fromArray = function (digits, base, isNegative) {
+    Integer.fromArray = function (digits: number[], base?: number, isNegative?: boolean) {
         return parseBaseFromArray(digits.map(parseValue), parseValue(base || 10), isNegative);
     };
 

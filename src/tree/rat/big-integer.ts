@@ -3,12 +3,20 @@ import {
     addSmall,
     arrayToSmall,
     BASE,
+    createArray,
+    DEFAULT_ALPHABET,
     divMod1,
     divMod2,
     isPrecise,
+    LOG_BASE,
+    MAX_INT,
+    MAX_INT_ARR,
     multiplyLong,
+    shiftLeft,
     smallToArray,
-    subtract
+    subtract,
+    trim,
+    truncate
 } from './big-helpers';
 
 export interface BigInteger {
@@ -35,12 +43,6 @@ export interface BigInteger {
 }
 
 export const bigInt = (function (/*undefined*/) {
-    "use strict";
-
-    const LOG_BASE = 7;
-    const MAX_INT = 9007199254740992;
-    const MAX_INT_ARR = smallToArray(MAX_INT);
-    const DEFAULT_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     const supportsNativeBigInt = typeof BigInt === "function";
     // console.lg("supportsNativeBigInt", supportsNativeBigInt);
@@ -69,26 +71,6 @@ export const bigInt = (function (/*undefined*/) {
         this.value = value;
     }
     NativeBigInt.prototype = Object.create(Integer.prototype);
-
-    function trim(v: number[]): void {
-        let i = v.length;
-        while (v[--i] === 0);
-        v.length = i + 1;
-    }
-
-    function createArray(length: number) { // function shamelessly stolen from Yaffle's library https://github.com/Yaffle/LargeInteger
-        const x = new Array(length);
-        let i = -1;
-        while (++i < length) {
-            x[i] = 0;
-        }
-        return x;
-    }
-
-    function truncate(n: number): number {
-        if (n > 0) return Math.floor(n);
-        return Math.ceil(n);
-    }
 
     LargeInteger.prototype.add = function (v) {
         var n = parseValue(v);
@@ -215,12 +197,6 @@ export const bigInt = (function (/*undefined*/) {
     NativeBigInt.prototype.abs = function () {
         return new NativeBigInt(this.value >= 0 ? this.value : -this.value);
     };
-
-    function shiftLeft(x, n) {
-        var r = [];
-        while (n-- > 0) r.push(0);
-        return r.concat(x);
-    }
 
     function multiplyKaratsuba(x, y) {
         let n = Math.max(x.length, y.length);

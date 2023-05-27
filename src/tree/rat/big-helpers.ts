@@ -49,7 +49,7 @@ export function trim(v: number[]): void {
     v.length = i + 1;
 }
 
-function createArray(length: number): number[] { // function shamelessly stolen from Yaffle's library https://github.com/Yaffle/BigInteger
+export function createArray(length: number): number[] { // function shamelessly stolen from Yaffle's library https://github.com/Yaffle/BigInteger
     const x = new Array<number>(length);
     let i = -1;
     while (++i < length) {
@@ -58,7 +58,7 @@ function createArray(length: number): number[] { // function shamelessly stolen 
     return x;
 }
 
-function truncate(n: number): number {
+export function truncate(n: number): number {
     if (n > 0) return Math.floor(n);
     return Math.ceil(n);
 }
@@ -184,7 +184,7 @@ export function multiplySmall(a: number[], b: number) { // assumes a is array, b
     return r;
 }
 
-function shiftLeft(x: number[], n: number): number[] {
+export function shiftLeft(x: number[], n: number): number[] {
     const r: number[] = [];
     while (n-- > 0) r.push(0);
     return r.concat(x);

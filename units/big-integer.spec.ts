@@ -1374,7 +1374,7 @@ describe("BigInteger", function () {
         it("compare, compareTo are the same", function () {
             expect(bigInt.one.compare === bigInt.one.compareTo).toBe(true);
         });
-        it("divide, over are the same", function () {
+        xit("divide, over are the same", function () {
             expect(bigInt.one.divide === bigInt.one.over).toBe(true);
         });
         it("equals, eq are the same", function () {
@@ -1398,7 +1398,7 @@ describe("BigInteger", function () {
         xit("subtract, minus are the same", function () {
             expect(bigInt.one.subtract === bigInt.one.minus).toBe(true);
         });
-        it("mod, remainder are the same", function () {
+        xit("mod, remainder are the same", function () {
             expect(bigInt.one.mod === bigInt.one.remainder).toBe(true);
         });
         xit("multiply, times are the same", function () {

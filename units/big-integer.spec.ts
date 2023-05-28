@@ -1126,10 +1126,10 @@ describe("BigInteger", function () {
 
     describe("valueOf and toJSNumber", function () {
         it("works", function () {
-            expect(bigInt(100) + bigInt(200) == 300).toBe(true);
+            expect(bigInt(100).valueOf() + bigInt(200).valueOf() == 300).toBe(true);
             expect(bigInt("100000000000300").valueOf() - bigInt("100000000000000").valueOf() == 300).toBe(true);
             expect(bigInt(100).valueOf() == 100).toBe(true);
-            expect(bigInt(43.9e30) == 43.9e30).toBe(true);
+            expect(bigInt(43.9e30).valueOf() == 43.9e30).toBe(true);
             expect(bigInt("1.11e+30").toJSNumber() == 1.11e+30).toBe(true);
             expect(bigInt(100).toJSNumber() === 100).toBe(true);
             expect(bigInt("1e30").toJSNumber() === 1e30).toBe(true);
@@ -1311,7 +1311,7 @@ describe("BigInteger", function () {
             expect(bigInt.randBetween("-9e99", "9e99").geq("-9e99")).toBe(true);
         });
         it("always returns integers", function () {
-            expect(bigInt.randBetween(0, 127) % 1).toBe(0);
+            expect(bigInt.randBetween(0, 127).valueOf() % 1).toBe(0);
 
             for (let i = 0; i < 20; i++) { // issue #60
                 expect(bigInt.randBetween(0, "11703780079612452").toString()).not.toBe("undefined");
@@ -1327,10 +1327,10 @@ describe("BigInteger", function () {
                 for (let i = 0; i < N; i++) {
                     const value = bigInt.randBetween(min, max);
                     const index = value.minus(min).times(buckets.length).over(max.minus(min).add(1));
-                    if (index >= buckets.length) {
-                        throw new RangeError(value);
+                    if (index.valueOf() >= buckets.length) {
+                        throw new RangeError(`${index}`);
                     }
-                    buckets[index]++;
+                    buckets[index.valueOf()]++;
                 }
                 // console.debug('buckets:', buckets);
                 const ideal = N / buckets.length;

@@ -25,12 +25,14 @@ import {
 export interface BigInteger {
     abs(): BigInteger;
     add(rhs: number | string | BigInteger): BigInteger;
+    and(rhs: string): BigInteger;
     bitLength(): BigInteger;
     compare(rhs: BigInteger): 1 | 0 | -1;
     compareAbs(rhs: number | string): 1 | 0 | -1;
     compareTo(rhs: BigInteger): 1 | 0 | -1;
     multiply(rhs: number | string | BigInteger): BigInteger;
     divide(rhs: number | string | BigInteger): BigInteger;
+    eq(n: number | string | BigInteger): boolean;
     equals(n: number | string | BigInteger): boolean;
     lesser(rhs: number | string | BigInteger): boolean;
     lesserOrEquals(rhs: number | string | BigInteger): boolean;
@@ -53,7 +55,9 @@ export interface BigInteger {
     modPow(x: number, y: number | string): BigInteger;
     negate(): BigInteger;
     next(): BigInteger;
+    not(): BigInteger;
     notEquals(n: number | string | BigInteger): boolean;
+    or(rhs: number | string): BigInteger;
     over(denom: number | string | BigInteger): BigInteger;
     plus(rhs: number | string | BigInteger): BigInteger;
     pow(expo: number | string | BigInteger): BigInteger;
@@ -68,6 +72,7 @@ export interface BigInteger {
     toJSNumber(): number;
     toString(radix?: number, alphabet?: string): string;
     valueOf(): number;
+    xor(rhs: number | string): BigInteger;
 }
 
 const cache: BigInteger[] = [];
@@ -1077,7 +1082,7 @@ export const bigInt = (function (/*undefined*/) {
         return a.divide(gcd(a, b)).multiply(b);
     }
 
-    function randBetween(a: number | string, b: number | string, rng?: () => number) {
+    function randBetween(a: number | string | BigInteger, b: number | string | BigInteger, rng?: () => number) {
         const iA = parseValue(a);
         const iB = parseValue(b);
         const usedRNG = rng || Math.random;

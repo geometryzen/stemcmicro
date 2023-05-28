@@ -24,154 +24,53 @@ import {
 
 export interface BigInteger {
     abs(): BigInteger;
-    add(rhs: number | BigInteger): BigInteger;
+    add(rhs: number | string | BigInteger): BigInteger;
+    bitLength(): number;
     compare(rhs: BigInteger): 1 | 0 | -1;
+    compareAbs(rhs: number | string): 1 | 0 | -1;
     compareTo(rhs: BigInteger): 1 | 0 | -1;
-    multiply(rhs: number | BigInteger): BigInteger;
-    divide(rhs: number | BigInteger): BigInteger;
-    equals(n: number | BigInteger): boolean;
-    lesser(rhs: number | BigInteger): boolean;
+    multiply(rhs: number | string | BigInteger): BigInteger;
+    divide(rhs: number | string | BigInteger): BigInteger;
+    equals(n: number | string | BigInteger): boolean;
+    lesser(rhs: number | string | BigInteger): boolean;
+    lesserOrEquals(rhs: number | string | BigInteger): boolean;
     leq(n: number | string | BigInteger): boolean;
     geq(n: number | string | BigInteger): boolean;
-    greater(rhs: number | BigInteger): boolean;
+    greater(rhs: number | string | BigInteger): boolean;
+    greaterOrEquals(rhs: number | string | BigInteger): boolean;
+    isDivisibleBy(n: number): boolean;
     isEven(): boolean;
     isNegative(): boolean;
     isOdd(): boolean;
     isPositive(): boolean;
+    isPrime(): boolean;
     isProbablePrime(): boolean;
     isUnit(): boolean;
     isZero(): boolean;
-    minus(rhs: BigInteger): BigInteger;
-    mod(rhs: BigInteger): BigInteger;
+    minus(rhs: number | string | BigInteger): BigInteger;
+    mod(rhs: number | string | BigInteger): BigInteger;
+    modInv(x: number): BigInteger;
+    modPow(x: number, y: number | string): BigInteger;
     negate(): BigInteger;
     next(): BigInteger;
-    over(denom: number | BigInteger): BigInteger;
-    pow(expo: number | BigInteger): BigInteger;
+    notEquals(n: number | string | BigInteger): boolean;
+    over(denom: number | string | BigInteger): BigInteger;
+    plus(rhs: number | string | BigInteger): BigInteger;
+    pow(expo: number | string | BigInteger): BigInteger;
     prev(): BigInteger;
     divmod(rhs: BigInteger): { quotient: BigInteger, remainder: BigInteger };
-    shiftRight(n: number): BigInteger;
-    subtract(rhs: BigInteger): BigInteger;
-    times(n: number | BigInteger): BigInteger;
+    square(): BigInteger;
+    shiftLeft(n: number | string | BigInteger): BigInteger;
+    shiftRight(n: number | string | BigInteger): BigInteger;
+    subtract(rhs: number | string | BigInteger): BigInteger;
+    times(n: number | string | BigInteger): BigInteger;
+    toArray(radix: number): { value: number[]; isNegative: boolean };
     toJSNumber(): number;
+    toString(radix?: number, alphabet?: string): string;
     valueOf(): number;
 }
 
-class BaseInteger implements BigInteger {
-    constructor() {
-        // Nothing to see yet.
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    lesser(rhs: number | BigInteger): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    greater(rhs: number | BigInteger): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    divmod(rhs: BigInteger): { quotient: BigInteger; remainder: BigInteger; } {
-        throw new Error();
-    }
-    abs(): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    add(rhs: BigInteger): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compare(rhs: number | BigInteger): 0 | 1 | -1 {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    compareTo(rhs: number | BigInteger): 0 | 1 | -1 {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    minus(rhs: BigInteger): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    multiply(rhs: BigInteger): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    divide(rhs: BigInteger): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    equals(n: number): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    leq(n: number): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    geq(n: number): boolean {
-        throw new Error();
-    }
-    isEven(): boolean {
-        throw new Error();
-    }
-    isNegative(): boolean {
-        throw new Error();
-    }
-    isOdd(): boolean {
-        throw new Error();
-    }
-    isPositive(): boolean {
-        throw new Error();
-    }
-    isProbablePrime(): boolean {
-        throw new Error();
-    }
-    isUnit(): boolean {
-        throw new Error();
-    }
-    isZero(): boolean {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mod(rhs: BigInteger): BigInteger {
-        throw new Error();
-    }
-    negate(): BigInteger {
-        throw new Error();
-    }
-    next(): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    over(denom: number | BigInteger): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    pow(expo: number | BigInteger): BigInteger {
-        throw new Error();
-    }
-    prev(): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    shiftRight(n: number): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    subtract(rhs: BigInteger): BigInteger {
-        throw new Error();
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    times(n: BigInteger): BigInteger {
-        throw new Error();
-    }
-    toJSNumber(): number {
-        throw new Error();
-    }
-    valueOf(): number {
-        throw new Error();
-    }
-}
+const cache: BigInteger[] = [];
 
 export const bigInt = (function (/*undefined*/) {
 
@@ -189,17 +88,16 @@ export const bigInt = (function (/*undefined*/) {
      * @returns 
      */
     function Integer(v?, radix?: number | string, alphabet?: string, caseSensitive?: boolean) {
-        if (typeof v === "undefined") return Integer[0];
+        if (typeof v === "undefined") return cache[0];
         if (typeof radix !== "undefined") return +radix === 10 && !alphabet ? parseValue(v) : parseBase(v, radix, alphabet, caseSensitive);
         return parseValue(v);
     }
 
-    class SmallInteger extends BaseInteger implements BigInteger {
+    class SmallInteger implements BigInteger {
         value: number;
         sign: boolean;
         isSmall: boolean;
         constructor(value: number) {
-            super();
             this.value = value;
             this.sign = value < 0;
             this.isSmall = true;
@@ -263,6 +161,9 @@ export const bigInt = (function (/*undefined*/) {
             }
             return a < 0 ? 1 : -1;
         }
+        compareTo(v: number | BigInteger): 1 | 0 | -1 {
+            return this.compare(v);
+        }
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
         }
@@ -291,7 +192,7 @@ export const bigInt = (function (/*undefined*/) {
         mod(v: BigInteger) {
             return divModAny(this, v)[1];
         }
-        next(): SmallInteger | LargeInteger {
+        next(): BigInteger {
             const value = this.value;
             if (value + 1 < MAX_INT) return new SmallInteger(value + 1);
             return new LargeInteger(MAX_INT_ARR, false);
@@ -301,6 +202,11 @@ export const bigInt = (function (/*undefined*/) {
         }
         plus(v: BigInteger) {
             return this.add(v);
+        }
+        prev(): BigInteger {
+            const value = this.value;
+            if (value - 1 > -MAX_INT) return new SmallInteger(value - 1);
+            return new LargeInteger(MAX_INT_ARR, true);
         }
         square() {
             const value = this.value * this.value;
@@ -347,7 +253,7 @@ export const bigInt = (function (/*undefined*/) {
         }
     }
 
-    class LargeInteger extends BaseInteger implements BigInteger {
+    class LargeInteger implements BigInteger {
         value: number[];
         /**
          * Indicates that the effective value should be treated as negative.
@@ -355,7 +261,6 @@ export const bigInt = (function (/*undefined*/) {
         sign: boolean;
         isSmall: boolean;
         constructor(value: number[], sign: boolean) {
-            super();
             this.value = value;
             this.sign = sign;
             this.isSmall = false;
@@ -428,6 +333,9 @@ export const bigInt = (function (/*undefined*/) {
             else {
                 throw new Error();
             }
+        }
+        compareTo(v: number | BigInteger): 1 | 0 | -1 {
+            return this.compare(v);
         }
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
@@ -502,12 +410,12 @@ export const bigInt = (function (/*undefined*/) {
             const n = parseValue(v);
             const a = this.value;
             let b = n.value;
-            if (b === 0) return Integer[1];
-            if (a === 0) return Integer[0];
-            if (a === 1) return Integer[1];
-            if (a === -1) return n.isEven() ? Integer[1] : Integer[-1];
+            if (b === 0) return cache[1];
+            if (a === 0) return cache[0];
+            if (a === 1) return cache[1];
+            if (a === -1) return n.isEven() ? cache[1] : cache[-1];
             if (n.sign) {
-                return Integer[0];
+                return cache[0];
             }
             if (!n.isSmall) throw new Error("The exponent " + n.toString() + " is too large.");
             if (this.isSmall) {
@@ -517,7 +425,7 @@ export const bigInt = (function (/*undefined*/) {
                 }
             }
             let x = this;
-            let y = Integer[1];
+            let y = cache[1];
             while (true) {
                 if (b & 1 === 1) {
                     y = y.times(x);
@@ -577,7 +485,7 @@ export const bigInt = (function (/*undefined*/) {
             let b: number[];
             if (n instanceof SmallInteger) {
                 const sv = n.value;
-                if (sv === 0) return Integer[0];
+                if (sv === 0) return cache[0];
                 if (sv === 1) return this;
                 if (sv === -1) return this.negate();
                 const abs = Math.abs(sv);
@@ -598,7 +506,7 @@ export const bigInt = (function (/*undefined*/) {
             return new LargeInteger(multiplyLong(a, b), sign);
         }
         _multiplyBySmall(a: SmallInteger) {
-            if (a.value === 0) return Integer[0];
+            if (a.value === 0) return cache[0];
             if (a.value === 1) return this;
             if (a.value === -1) return this.negate();
             return multiplySmallAndArray(Math.abs(a.value), this.value, this.sign !== a.sign);
@@ -608,10 +516,9 @@ export const bigInt = (function (/*undefined*/) {
         }
     }
 
-    class NativeBigInt extends BaseInteger implements BigInteger {
+    class NativeBigInt implements BigInteger {
         value: bigint;
         constructor(value: bigint) {
-            super();
             this.value = value;
         }
         abs() {
@@ -637,7 +544,7 @@ export const bigInt = (function (/*undefined*/) {
             b = b >= 0 ? b : -b;
             return a === b ? 0 : a > b ? 1 : -1;
         }
-        compare(v: number): 1 | 0 | -1 {
+        compare(v: number | BigInteger): 1 | 0 | -1 {
             if (v === Infinity) {
                 return -1;
             }
@@ -647,6 +554,9 @@ export const bigInt = (function (/*undefined*/) {
             const a = this.value;
             const b = parseValue(v).value;
             return a === b ? 0 : a > b ? 1 : -1;
+        }
+        compareTo(v: number | BigInteger): 1 | 0 | -1 {
+            return this.compare(v);
         }
         divide(v: BigInteger) {
             return new NativeBigInt(this.value / parseValue(v).value);
@@ -692,13 +602,13 @@ export const bigInt = (function (/*undefined*/) {
             const _0 = BigInt(0);
             const _1 = BigInt(1);
             const _2 = BigInt(2);
-            if (b === _0) return Integer[1];
-            if (a === _0) return Integer[0];
-            if (a === _1) return Integer[1];
-            if (a === BigInt(-1)) return n.isEven() ? Integer[1] : Integer[-1];
+            if (b === _0) return cache[1];
+            if (a === _0) return cache[0];
+            if (a === _1) return cache[1];
+            if (a === BigInt(-1)) return n.isEven() ? cache[1] : cache[-1];
             if (n.isNegative()) return new NativeBigInt(_0);
             let x = this;
-            let y = Integer[1];
+            let y = cache[1];
             // eslint-disable-next-line no-constant-condition
             while (true) {
                 if ((b & _1) === _1) {
@@ -806,11 +716,11 @@ export const bigInt = (function (/*undefined*/) {
             if (n.isSmall) {
                 return [new SmallInteger(truncate(a / b)), new SmallInteger(a % b)];
             }
-            return [Integer[0], self];
+            return [cache[0], self];
         }
         if (n.isSmall) {
-            if (b === 1) return [self, Integer[0]];
-            if (b == -1) return [self.negate(), Integer[0]];
+            if (b === 1) return [self, cache[0]];
+            if (b == -1) return [self.negate(), cache[0]];
             var abs = Math.abs(b);
             if (abs < BASE) {
                 value = divModSmall(a, abs);
@@ -826,8 +736,8 @@ export const bigInt = (function (/*undefined*/) {
             b = smallToArray(abs);
         }
         const comparison = compareAbs(a, b);
-        if (comparison === -1) return [Integer[0], self];
-        if (comparison === 0) return [Integer[self.sign === n.sign ? 1 : -1], Integer[0]];
+        if (comparison === -1) return [cache[0], self];
+        if (comparison === 0) return [cache[self.sign === n.sign ? 1 : -1], cache[0]];
 
         // divMod1 is faster on smaller input sizes
         if (a.length + b.length <= 200)
@@ -861,14 +771,14 @@ export const bigInt = (function (/*undefined*/) {
         exp = parseValue(exp);
         mod = parseValue(mod);
         if (mod.isZero()) throw new Error("Cannot take modPow with modulus 0");
-        var r = Integer[1],
+        var r = cache[1],
             base = this.mod(mod);
         if (exp.isNegative()) {
-            exp = exp.multiply(Integer[-1]);
+            exp = exp.multiply(cache[-1]);
             base = base.modInv(mod);
         }
         while (exp.isPositive()) {
-            if (base.isZero()) return Integer[0];
+            if (base.isZero()) return cache[0];
             if (exp.isOdd()) r = r.multiply(base).mod(mod);
             exp = exp.divide(2);
             base = base.square().mod(mod);
@@ -887,12 +797,6 @@ export const bigInt = (function (/*undefined*/) {
         return 0;
     }
 
-
-    LargeInteger.prototype.compareTo = LargeInteger.prototype.compare;
-
-    SmallInteger.prototype.compareTo = SmallInteger.prototype.compare;
-
-    NativeBigInt.prototype.compareTo = NativeBigInt.prototype.compare;
 
     LargeInteger.prototype.equals = function (v) {
         return this.compare(v) === 0;
@@ -1001,12 +905,6 @@ export const bigInt = (function (/*undefined*/) {
     };
 
     NativeBigInt.prototype.modInv = SmallInteger.prototype.modInv = LargeInteger.prototype.modInv;
-
-    SmallInteger.prototype.prev = function () {
-        const value = this.value;
-        if (value - 1 > -MAX_INT) return new SmallInteger(value - 1);
-        return new LargeInteger(MAX_INT_ARR, true);
-    };
 
     const powersOfTwo = [1];
     while (2 * powersOfTwo[powersOfTwo.length - 1] <= BASE) powersOfTwo.push(2 * powersOfTwo[powersOfTwo.length - 1]);
@@ -1144,7 +1042,7 @@ export const bigInt = (function (/*undefined*/) {
         if (a.equals(b)) return a;
         if (a.isZero()) return b;
         if (b.isZero()) return a;
-        let c = Integer[1];
+        let c = cache[1];
         let d: BigInteger;
         while (a.isEven() && b.isEven()) {
             d = min(roughLOB(a), roughLOB(b));
@@ -1219,7 +1117,7 @@ export const bigInt = (function (/*undefined*/) {
             }
         }
         const base = parseValue(radix);
-        const digits: BigInteger[] = [];
+        const digits: Bigcache[] = [];
         const isNegative = text[0] === "-";
         for (let i = isNegative ? 1 : 0; i < text.length; i++) {
             const c = text[i];
@@ -1236,9 +1134,9 @@ export const bigInt = (function (/*undefined*/) {
         return parseBaseFromArray(digits, base, isNegative);
     };
 
-    function parseBaseFromArray(digits: BigInteger[], base: BigInteger, isNegative: boolean): BigInteger {
-        let val = Integer[0] as BigInteger;
-        let pow = Integer[1] as BigInteger;
+    function parseBaseFromArray(digits: Bigcache[], base: BigInteger, isNegative: boolean): BigInteger {
+        let val = cache[0] as BigInteger;
+        let pow = cache[1] as BigInteger;
         for (let i = digits.length - 1; i >= 0; i--) {
             val = val.add(digits[i].times(pow));
             pow = pow.times(base);
@@ -1407,18 +1305,18 @@ export const bigInt = (function (/*undefined*/) {
     }
     // Pre-define numbers in range [-999,999]
     for (let i = 0; i < 1000; i++) {
-        Integer[i] = parseValue(i);
-        if (i > 0) Integer[-i] = parseValue(-i);
+        cache[i] = parseValue(i);
+        if (i > 0) cache[-i] = parseValue(-i);
     }
     // Backwards compatibility
-    Integer.one = Integer[1];
-    Integer.zero = Integer[0];
-    Integer.minusOne = Integer[-1];
+    Integer.one = cache[1];
+    Integer.zero = cache[0];
+    Integer.minusOne = cache[-1];
     Integer.max = max;
     Integer.min = min;
     Integer.gcd = gcd;
     Integer.lcm = lcm;
-    Integer.isInstance = function (x) {
+    Integer.isInstance = function (x: unknown): x is BigInteger {
         return x instanceof LargeInteger || x instanceof SmallInteger || x instanceof NativeBigInt;
     };
     Integer.randBetween = randBetween;

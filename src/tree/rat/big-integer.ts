@@ -52,7 +52,8 @@ export interface BigInteger {
 export const bigInt = (function (/*undefined*/) {
 
     // If we have native support for BigInt then SmallInteger and LargeInteger are redundant.
-    const supportsNativeBigInt = false;//typeof BigInt === "function";
+    // The unit tests should work if this variable is set to false.
+    const supportsNativeBigInt = false; // typeof BigInt === "function";
     // console.lg("supportsNativeBigInt", supportsNativeBigInt);
 
     /**
@@ -223,11 +224,17 @@ export const bigInt = (function (/*undefined*/) {
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
         }
+        isEven() {
+            return (this.value & 1) === 0;
+        }
         isNegative(): boolean {
             return this.value < 0;
         }
         isPositive(): boolean {
             return this.value > 0;
+        }
+        isUnit() {
+            return Math.abs(this.value) === 1;
         }
         minus(v: BigInteger) {
             return this.subtract(v);
@@ -290,6 +297,9 @@ export const bigInt = (function (/*undefined*/) {
 
     class LargeInteger extends BaseInteger implements BigInteger {
         value: number[];
+        /**
+         * Indicates that the effective value should be treated as negative.
+         */
         sign: boolean;
         isSmall: boolean;
         constructor(value: number[], sign: boolean) {
@@ -370,6 +380,9 @@ export const bigInt = (function (/*undefined*/) {
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
         }
+        isEven() {
+            return (this.value[0] & 1) === 0;
+        }
         isProbablePrime(iterations: number, rng) {
             const isPrime = isBasicPrime(this);
             if (isPrime !== undefined) return isPrime;
@@ -397,6 +410,15 @@ export const bigInt = (function (/*undefined*/) {
                 a.push(bigInt(i + 2));
             }
             return millerRabinTest(n, a);
+        }
+        isPositive() {
+            return !this.sign;
+        }
+        isNegative() {
+            return this.sign;
+        }
+        isUnit(): boolean {
+            return false;
         }
         minus(v: BigInteger) {
             return this.subtract(v);
@@ -447,6 +469,13 @@ export const bigInt = (function (/*undefined*/) {
                 x = x.square();
             }
             return y;
+        }
+        prev() {
+            const value = this.value;
+            if (this.sign) {
+                return new LargeInteger(addSmall(value, 1), true);
+            }
+            return subtractSmall(value, 1, this.sign);
         }
         square() {
             return new LargeInteger(square(this.value), false);
@@ -829,33 +858,11 @@ export const bigInt = (function (/*undefined*/) {
     };
     NativeBigInt.prototype.leq = NativeBigInt.prototype.lesserOrEquals = SmallInteger.prototype.leq = SmallInteger.prototype.lesserOrEquals = LargeInteger.prototype.leq = LargeInteger.prototype.lesserOrEquals;
 
-    LargeInteger.prototype.isEven = function () {
-        return (this.value[0] & 1) === 0;
-    };
-    SmallInteger.prototype.isEven = function () {
-        return (this.value & 1) === 0;
-    };
-
     LargeInteger.prototype.isOdd = function () {
         return (this.value[0] & 1) === 1;
     };
     SmallInteger.prototype.isOdd = function () {
         return (this.value & 1) === 1;
-    };
-
-    LargeInteger.prototype.isPositive = function () {
-        return !this.sign;
-    };
-
-    LargeInteger.prototype.isNegative = function () {
-        return this.sign;
-    };
-
-    LargeInteger.prototype.isUnit = function () {
-        return false;
-    };
-    SmallInteger.prototype.isUnit = function () {
-        return Math.abs(this.value) === 1;
     };
 
     LargeInteger.prototype.isZero = function () {
@@ -929,13 +936,6 @@ export const bigInt = (function (/*undefined*/) {
 
     NativeBigInt.prototype.modInv = SmallInteger.prototype.modInv = LargeInteger.prototype.modInv;
 
-    LargeInteger.prototype.prev = function () {
-        const value = this.value;
-        if (this.sign) {
-            return new LargeInteger(addSmall(value, 1), true);
-        }
-        return subtractSmall(value, 1, this.sign);
-    };
     SmallInteger.prototype.prev = function () {
         const value = this.value;
         if (value - 1 > -MAX_INT) return new SmallInteger(value - 1);
@@ -1062,7 +1062,7 @@ export const bigInt = (function (/*undefined*/) {
     }
 
 
-    function max(a, b) {
+    function max(a: BigInteger, b: BigInteger) {
         a = parseValue(a);
         b = parseValue(b);
         return a.greater(b) ? a : b;

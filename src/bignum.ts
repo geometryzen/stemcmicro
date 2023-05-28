@@ -130,10 +130,7 @@ export function bignum_power_number(base: Rat, expo: number): Rat {
 
 export function convert_rat_to_number(p: Rat): number {
     const a_div_b = p.a.divmod(p.b);
-    const result =
-        a_div_b.quotient.toJSNumber() +
-        a_div_b.remainder.toJSNumber() / p.b.toJSNumber();
-
+    const result = a_div_b.quotient.toJSNumber() + a_div_b.remainder.toJSNumber() / p.b.toJSNumber();
     return result;
 }
 

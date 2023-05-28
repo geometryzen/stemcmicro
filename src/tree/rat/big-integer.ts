@@ -40,6 +40,7 @@ export interface BigInteger {
     isZero(): boolean;
     mod(rhs: BigInteger): BigInteger;
     negate(): BigInteger;
+    next(): BigInteger;
     pow(expo: number | BigInteger): BigInteger;
     prev(): BigInteger;
     divmod(rhs: BigInteger): { quotient: BigInteger, remainder: BigInteger };
@@ -47,13 +48,111 @@ export interface BigInteger {
     subtract(rhs: BigInteger): BigInteger;
     times(n: BigInteger): BigInteger;
     toJSNumber(): number;
+    valueOf(): number;
+}
+
+class BaseInteger implements BigInteger {
+    constructor() {
+        // Nothing to see yet.
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    divmod(rhs: BigInteger): { quotient: BigInteger; remainder: BigInteger; } {
+        throw new Error('divmod not implemented.');
+    }
+    abs(): BigInteger {
+        throw new Error('abs not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    add(rhs: BigInteger): BigInteger {
+        throw new Error('add not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compare(rhs: number | BigInteger): 0 | 1 | -1 {
+        throw new Error('compare not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    multiply(rhs: BigInteger): BigInteger {
+        throw new Error('multiply not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    divide(rhs: BigInteger): BigInteger {
+        throw new Error('divide method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    equals(n: number): boolean {
+        throw new Error('equals not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    leq(n: number): boolean {
+        throw new Error('leq not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    geq(n: number): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isEven(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isNegative(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isOdd(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isPositive(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isProbablePrime(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isUnit(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isZero(): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mod(rhs: BigInteger): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    negate(): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    next(): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    pow(expo: number | BigInteger): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    prev(): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shiftRight(n: number): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    subtract(rhs: BigInteger): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    times(n: BigInteger): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    toJSNumber(): number {
+        throw new Error('Method not implemented.');
+    }
+    valueOf(): number {
+        throw new Error('Method not implemented.');
+    }
 }
 
 export const bigInt = (function (/*undefined*/) {
 
     // If we have native support for BigInt then SmallInteger and LargeInteger are redundant.
     // The unit tests should work if this variable is set to false.
-    const supportsNativeBigInt = false; // typeof BigInt === "function";
+    const supportsNativeBigInt = typeof BigInt === "function";
     // console.lg("supportsNativeBigInt", supportsNativeBigInt);
 
     /**
@@ -68,88 +167,6 @@ export const bigInt = (function (/*undefined*/) {
         if (typeof v === "undefined") return Integer[0];
         if (typeof radix !== "undefined") return +radix === 10 && !alphabet ? parseValue(v) : parseBase(v, radix, alphabet, caseSensitive);
         return parseValue(v);
-    }
-
-    class BaseInteger implements BigInteger {
-        constructor() {
-            // Nothing to see yet.
-        }
-        isEven(): boolean {
-            throw new Error('Method not implemented.');
-        }
-        isUnit(): boolean {
-            throw new Error('Method not implemented.');
-        }
-        abs(): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        add(rhs: BigInteger): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        compare(rhs: number | BigInteger): 0 | 1 | -1 {
-            throw new Error('compare not implemented.');
-        }
-        multiply(rhs: BigInteger): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        divide(rhs: BigInteger): BigInteger {
-            throw new Error('divide method not implemented.');
-        }
-        equals(n: number): boolean {
-            throw new Error('Method not implemented.');
-        }
-        leq(n: number): boolean {
-            throw new Error('Method not implemented.');
-        }
-        geq(n: number): boolean {
-            throw new Error('Method not implemented.');
-        }
-        isNegative(): boolean {
-            throw new Error('Method not implemented.');
-        }
-        isOdd(): boolean {
-            throw new Error('Method not implemented.');
-        }
-        isPositive(): boolean {
-            throw new Error('Method not implemented.');
-        }
-        isProbablePrime(): boolean {
-            throw new Error('Method not implemented.');
-        }
-        isZero(): boolean {
-            throw new Error('Method not implemented.');
-        }
-        mod(rhs: BigInteger): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        negate(): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        pow(expo: number | BigInteger): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        prev(): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        shiftRight(n: number): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        subtract(rhs: BigInteger): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        times(n: BigInteger): BigInteger {
-            throw new Error('Method not implemented.');
-        }
-        toJSNumber(): number {
-            throw new Error('Method not implemented.');
-        }
-        divmod(v: BigInteger) {
-            const result = divModAny(this, v);
-            return {
-                quotient: result[0],
-                remainder: result[1]
-            };
-        }
     }
 
     class SmallInteger extends BaseInteger implements BigInteger {
@@ -224,6 +241,13 @@ export const bigInt = (function (/*undefined*/) {
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
         }
+        divmod(v: BigInteger) {
+            const result = divModAny(this, v);
+            return {
+                quotient: result[0],
+                remainder: result[1]
+            };
+        }
         isEven() {
             return (this.value & 1) === 0;
         }
@@ -292,6 +316,9 @@ export const bigInt = (function (/*undefined*/) {
                 return new SmallInteger(a.value * this.value);
             }
             return multiplySmallAndArray(Math.abs(a.value), smallToArray(Math.abs(this.value)), this.sign !== a.sign);
+        }
+        valueOf(): number {
+            return this.value;
         }
     }
 
@@ -379,6 +406,13 @@ export const bigInt = (function (/*undefined*/) {
         }
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
+        }
+        divmod(v: BigInteger) {
+            const result = divModAny(this, v);
+            return {
+                quotient: result[0],
+                remainder: result[1]
+            };
         }
         isEven() {
             return (this.value[0] & 1) === 0;
@@ -591,6 +625,13 @@ export const bigInt = (function (/*undefined*/) {
         }
         divide(v: BigInteger) {
             return new NativeBigInt(this.value / parseValue(v).value);
+        }
+        divmod(v: BigInteger) {
+            const result = divModAny(this, v);
+            return {
+                quotient: result[0],
+                remainder: result[1]
+            };
         }
         isEven(): boolean {
             return (this.value & BigInt(1)) === BigInt(0);
@@ -1259,9 +1300,6 @@ export const bigInt = (function (/*undefined*/) {
 
     LargeInteger.prototype.toJSNumber = LargeInteger.prototype.valueOf;
 
-    SmallInteger.prototype.valueOf = function () {
-        return this.value;
-    };
     SmallInteger.prototype.toJSNumber = SmallInteger.prototype.valueOf;
     NativeBigInt.prototype.valueOf = NativeBigInt.prototype.toJSNumber = function () {
         return parseInt(this.toString(), 10);

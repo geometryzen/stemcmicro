@@ -4,7 +4,7 @@ import { bigInt, BigInteger } from '../rat/big-integer';
 import { U } from "../tree";
 
 //
-// Our goal is to try to encapsulat the bigInt dependency so that no consumers of the Rat
+// Our goal is to try to encapsulate the bigInt dependency so that no consumers of the Rat
 // are aware of this dependency. Additionally we don't want the Rat to have dependencies
 // so that it can be broken off into a standalone library.
 //

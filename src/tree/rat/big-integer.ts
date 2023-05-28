@@ -30,10 +30,12 @@ export interface BigInteger {
     equals(n: number): boolean;
     leq(n: number): boolean;
     geq(n: number): boolean;
+    isEven(): boolean;
     isNegative(): boolean;
     isOdd(): boolean;
     isPositive(): boolean;
     isProbablePrime(): boolean;
+    isUnit(): boolean;
     isZero(): boolean;
     mod(rhs: BigInteger): BigInteger;
     negate(): BigInteger;
@@ -48,6 +50,7 @@ export interface BigInteger {
 
 export const bigInt = (function (/*undefined*/) {
 
+    // If we have native support for BigInt then SmallInteger and LargeInteger are redundant.
     const supportsNativeBigInt = typeof BigInt === "function";
     // console.lg("supportsNativeBigInt", supportsNativeBigInt);
 
@@ -69,6 +72,12 @@ export const bigInt = (function (/*undefined*/) {
         constructor() {
             // Nothing to see yet.
         }
+        isEven(): boolean {
+            throw new Error('Method not implemented.');
+        }
+        isUnit(): boolean {
+            throw new Error('Method not implemented.');
+        }
         abs(): BigInteger {
             throw new Error('Method not implemented.');
         }
@@ -82,7 +91,7 @@ export const bigInt = (function (/*undefined*/) {
             throw new Error('Method not implemented.');
         }
         divide(rhs: BigInteger): BigInteger {
-            throw new Error('Method not implemented.');
+            throw new Error('divide method not implemented.');
         }
         equals(n: number): boolean {
             throw new Error('Method not implemented.');
@@ -167,6 +176,9 @@ export const bigInt = (function (/*undefined*/) {
             }
             return new LargeInteger(addSmall(b, Math.abs(a)), a < 0);
         }
+        divide(v: BigInteger) {
+            return divModAny(this, v)[0];
+        }
         square() {
             const value = this.value * this.value;
             if (isPrecise(value)) return new SmallInteger(value);
@@ -225,6 +237,20 @@ export const bigInt = (function (/*undefined*/) {
                 return new LargeInteger(addSmall(a, Math.abs(b)), this.sign);
             }
             return new LargeInteger(addAny(a, b), this.sign);
+        }
+        compareAbs(v: BigInteger) {
+            const n = parseValue(v);
+            const a = this.value;
+            if (n instanceof SmallInteger) {
+                return 1;
+            }
+            else if (n instanceof LargeInteger) {
+                const b = n.value;
+                return compareAbs(a, b);
+            }
+            else {
+                throw new Error();
+            }
         }
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
@@ -331,6 +357,9 @@ export const bigInt = (function (/*undefined*/) {
         mod(v: BigInteger) {
             return new NativeBigInt(this.value % parseValue(v).value);
         }
+        next() {
+            return new NativeBigInt(this.value + BigInt(1));
+        }
         plus(v: BigInteger) {
             return this.add(v);
         }
@@ -359,7 +388,7 @@ export const bigInt = (function (/*undefined*/) {
                 x = x.square();
             }
             return y;
-        }    
+        }
         square() {
             return new NativeBigInt(this.value * this.value);
         }
@@ -531,13 +560,6 @@ export const bigInt = (function (/*undefined*/) {
         return 0;
     }
 
-    LargeInteger.prototype.compareAbs = function (v) {
-        var n = parseValue(v),
-            a = this.value,
-            b = n.value;
-        if (n.isSmall) return 1;
-        return compareAbs(a, b);
-    };
     SmallInteger.prototype.compareAbs = function (v) {
         var n = parseValue(v),
             a = Math.abs(this.value),
@@ -708,7 +730,7 @@ export const bigInt = (function (/*undefined*/) {
     };
     NativeBigInt.prototype.isDivisibleBy = SmallInteger.prototype.isDivisibleBy = LargeInteger.prototype.isDivisibleBy;
 
-    function isBasicPrime(v) {
+    function isBasicPrime(v: BigInteger): boolean {
         const n = v.abs();
         if (n.isUnit()) return false;
         if (n.equals(2) || n.equals(3) || n.equals(5)) return true;
@@ -800,9 +822,6 @@ export const bigInt = (function (/*undefined*/) {
         const value = this.value;
         if (value + 1 < MAX_INT) return new SmallInteger(value + 1);
         return new LargeInteger(MAX_INT_ARR, false);
-    };
-    NativeBigInt.prototype.next = function () {
-        return new NativeBigInt(this.value + BigInt(1));
     };
 
     LargeInteger.prototype.prev = function () {
@@ -958,18 +977,19 @@ export const bigInt = (function (/*undefined*/) {
         b = parseValue(b);
         return a.greater(b) ? a : b;
     }
-    function min(a, b) {
+    function min(a: BigInteger, b: BigInteger) {
         a = parseValue(a);
         b = parseValue(b);
         return a.lesser(b) ? a : b;
     }
-    function gcd(a, b) {
+    function gcd(a: BigInteger, b: BigInteger): BigInteger {
         a = parseValue(a).abs();
         b = parseValue(b).abs();
         if (a.equals(b)) return a;
         if (a.isZero()) return b;
         if (b.isZero()) return a;
-        var c = Integer[1], d, t;
+        let c = Integer[1];
+        let d: BigInteger;
         while (a.isEven() && b.isEven()) {
             d = min(roughLOB(a), roughLOB(b));
             a = a.divide(d);
@@ -980,6 +1000,7 @@ export const bigInt = (function (/*undefined*/) {
             a = a.divide(roughLOB(a));
         }
         do {
+            let t: BigInteger;
             while (b.isEven()) {
                 b = b.divide(roughLOB(b));
             }
@@ -990,7 +1011,7 @@ export const bigInt = (function (/*undefined*/) {
         } while (!b.isZero());
         return c.isUnit() ? a : a.multiply(c);
     }
-    function lcm(a, b) {
+    function lcm(a: BigInteger, b: BigInteger) {
         a = parseValue(a).abs();
         b = parseValue(b).abs();
         return a.divide(gcd(a, b)).multiply(b);
@@ -1062,7 +1083,7 @@ export const bigInt = (function (/*undefined*/) {
         return isNegative ? val.negate() : val;
     }
 
-    function stringify(digit, alphabet) {
+    function stringify(digit: number, alphabet: string): string {
         alphabet = alphabet || DEFAULT_ALPHABET;
         if (digit < alphabet.length) {
             return alphabet[digit];

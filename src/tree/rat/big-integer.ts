@@ -24,13 +24,15 @@ import {
 
 export interface BigInteger {
     abs(): BigInteger;
-    add(rhs: BigInteger): BigInteger;
+    add(rhs: number | BigInteger): BigInteger;
     compare(rhs: BigInteger): 1 | 0 | -1;
-    multiply(rhs: BigInteger): BigInteger;
+    multiply(rhs: number | BigInteger): BigInteger;
     divide(rhs: number | BigInteger): BigInteger;
-    equals(n: number): boolean;
-    leq(n: number): boolean;
-    geq(n: number): boolean;
+    equals(n: number | BigInteger): boolean;
+    lesser(rhs: number | BigInteger): boolean;
+    leq(n: number | string | BigInteger): boolean;
+    geq(n: number | string | BigInteger): boolean;
+    greater(rhs: number | BigInteger): boolean;
     isEven(): boolean;
     isNegative(): boolean;
     isOdd(): boolean;
@@ -38,15 +40,17 @@ export interface BigInteger {
     isProbablePrime(): boolean;
     isUnit(): boolean;
     isZero(): boolean;
+    minus(rhs: BigInteger): BigInteger;
     mod(rhs: BigInteger): BigInteger;
     negate(): BigInteger;
     next(): BigInteger;
+    over(denom: number | BigInteger): BigInteger;
     pow(expo: number | BigInteger): BigInteger;
     prev(): BigInteger;
     divmod(rhs: BigInteger): { quotient: BigInteger, remainder: BigInteger };
     shiftRight(n: number): BigInteger;
     subtract(rhs: BigInteger): BigInteger;
-    times(n: BigInteger): BigInteger;
+    times(n: number | BigInteger): BigInteger;
     toJSNumber(): number;
     valueOf(): number;
 }
@@ -56,8 +60,16 @@ class BaseInteger implements BigInteger {
         // Nothing to see yet.
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    lesser(rhs: number | BigInteger): boolean {
+        throw new Error();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    greater(rhs: number | BigInteger): boolean {
+        throw new Error();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     divmod(rhs: BigInteger): { quotient: BigInteger; remainder: BigInteger; } {
-        throw new Error('divmod not implemented.');
+        throw new Error();
     }
     abs(): BigInteger {
         throw new Error('abs not implemented.');
@@ -163,7 +175,7 @@ export const bigInt = (function (/*undefined*/) {
      * @param caseSensitive 
      * @returns 
      */
-    function Integer(v?, radix?, alphabet?, caseSensitive?) {
+    function Integer(v?, radix?: number | string, alphabet?: string, caseSensitive?: boolean) {
         if (typeof v === "undefined") return Integer[0];
         if (typeof radix !== "undefined") return +radix === 10 && !alphabet ? parseValue(v) : parseBase(v, radix, alphabet, caseSensitive);
         return parseValue(v);
@@ -1103,17 +1115,17 @@ export const bigInt = (function (/*undefined*/) {
     }
 
 
-    function max(a: BigInteger, b: BigInteger) {
+    function max(a: number | BigInteger, b: number | BigInteger): BigInteger {
         a = parseValue(a);
         b = parseValue(b);
         return a.greater(b) ? a : b;
     }
-    function min(a: BigInteger, b: BigInteger) {
+    function min(a: number | BigInteger, b: number | BigInteger): BigInteger {
         a = parseValue(a);
         b = parseValue(b);
         return a.lesser(b) ? a : b;
     }
-    function gcd(a: BigInteger, b: BigInteger): BigInteger {
+    function gcd(a: number | BigInteger, b: number | BigInteger): BigInteger {
         a = parseValue(a).abs();
         b = parseValue(b).abs();
         if (a.equals(b)) return a;
@@ -1142,62 +1154,68 @@ export const bigInt = (function (/*undefined*/) {
         } while (!b.isZero());
         return c.isUnit() ? a : a.multiply(c);
     }
-    function lcm(a: BigInteger, b: BigInteger) {
+    function lcm(a: number | BigInteger, b: number | BigInteger): BigInteger {
         a = parseValue(a).abs();
         b = parseValue(b).abs();
         return a.divide(gcd(a, b)).multiply(b);
     }
-    function randBetween(a: number | string, b: number | string, rng?) {
-        a = parseValue(a);
-        b = parseValue(b);
-        var usedRNG = rng || Math.random;
-        var low = min(a, b), high = max(a, b);
-        var range = high.subtract(low).add(1);
-        if (range.isSmall) return low.add(Math.floor(usedRNG() * range));
-        var digits = toBase(range, BASE).value;
-        var result = [], restricted = true;
-        for (var i = 0; i < digits.length; i++) {
-            var top = restricted ? digits[i] + (i + 1 < digits.length ? digits[i + 1] / BASE : 0) : BASE;
-            var digit = truncate(usedRNG() * top);
+
+    function randBetween(a: number | string, b: number | string, rng?: () => number) {
+        const iA = parseValue(a);
+        const iB = parseValue(b);
+        const usedRNG = rng || Math.random;
+        const low = min(iA, iB);
+        const high = max(iA, iB);
+        const range = high.subtract(low).add(1);
+        if (range instanceof SmallInteger) return low.add(Math.floor(usedRNG() * range.valueOf()));
+        const digits = toBase(range, BASE).value;
+        const result: number[] = [];
+        let restricted = true;
+        for (let i = 0; i < digits.length; i++) {
+            const top = restricted ? digits[i] + (i + 1 < digits.length ? digits[i + 1] / BASE : 0) : BASE;
+            const digit = truncate(usedRNG() * top);
             result.push(digit);
-            if (digit < digits[i]) restricted = false;
+            if (digit < digits[i]) {
+                restricted = false;
+            }
         }
         return low.add(Integer.fromArray(result, BASE, false));
     }
 
-    var parseBase = function (text, base, alphabet, caseSensitive) {
+    const parseBase = function (input: unknown, radix: number, alphabet: string | undefined, caseSensitive: boolean) {
         alphabet = alphabet || DEFAULT_ALPHABET;
-        text = String(text);
+        let text = String(input);
         if (!caseSensitive) {
             text = text.toLowerCase();
             alphabet = alphabet.toLowerCase();
         }
-        var length = text.length;
-        var i;
-        var absBase = Math.abs(base);
-        var alphabetValues = {};
-        for (i = 0; i < alphabet.length; i++) {
+        const length = text.length;
+        const absBase = Math.abs(radix);
+        const alphabetValues: { [key: string]: number } = {};
+        for (let i = 0; i < alphabet.length; i++) {
             alphabetValues[alphabet[i]] = i;
         }
-        for (i = 0; i < length; i++) {
-            var c = text[i];
+        for (let i = 0; i < length; i++) {
+            const c = text[i];
             if (c === "-") continue;
             if (c in alphabetValues) {
                 if (alphabetValues[c] >= absBase) {
                     if (c === "1" && absBase === 1) continue;
-                    throw new Error(c + " is not a valid digit in base " + base + ".");
+                    throw new Error(c + " is not a valid digit in base " + radix + ".");
                 }
             }
         }
-        base = parseValue(base);
-        var digits = [];
-        var isNegative = text[0] === "-";
-        for (i = isNegative ? 1 : 0; i < text.length; i++) {
-            var c = text[i];
+        const base = parseValue(radix);
+        const digits: BigInteger[] = [];
+        const isNegative = text[0] === "-";
+        for (let i = isNegative ? 1 : 0; i < text.length; i++) {
+            const c = text[i];
             if (c in alphabetValues) digits.push(parseValue(alphabetValues[c]));
             else if (c === "<") {
-                var start = i;
-                do { i++; } while (text[i] !== ">" && i < text.length);
+                const start = i;
+                do {
+                    i++;
+                } while (text[i] !== ">" && i < text.length);
                 digits.push(parseValue(text.slice(start + 1, i)));
             }
             else throw new Error(c + " is not a valid character");
@@ -1205,9 +1223,10 @@ export const bigInt = (function (/*undefined*/) {
         return parseBaseFromArray(digits, base, isNegative);
     };
 
-    function parseBaseFromArray(digits, base, isNegative) {
-        var val = Integer[0], pow = Integer[1], i;
-        for (i = digits.length - 1; i >= 0; i--) {
+    function parseBaseFromArray(digits: BigInteger[], base: BigInteger, isNegative: boolean): BigInteger {
+        let val = Integer[0] as BigInteger;
+        let pow = Integer[1] as BigInteger;
+        for (let i = digits.length - 1; i >= 0; i--) {
             val = val.add(digits[i].times(pow));
             pow = pow.times(base);
         }
@@ -1223,7 +1242,7 @@ export const bigInt = (function (/*undefined*/) {
     }
 
     function toBase(n: BigInteger, radix: number) {
-        const base = bigInt(radix);
+        const base = bigInt(radix) as BigInteger;
         if (base.isZero()) {
             if (n.isZero()) return { value: [0], isNegative: false };
             throw new Error("Cannot convert nonzero numbers to base 0.");

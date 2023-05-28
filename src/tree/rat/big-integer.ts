@@ -237,6 +237,11 @@ export const bigInt = (function (/*undefined*/) {
             }
             return subtractSmall(b, Math.abs(a), a >= 0);
         }
+        toString(radix?: number, alphabet?: string): string {
+            if (radix === undefined) radix = 10;
+            if (radix != 10) return toBaseString(this, radix, alphabet);
+            return String(this.value);
+        }
         negate() {
             const sign = this.sign;
             const small = new SmallInteger(-this.value);
@@ -406,6 +411,21 @@ export const bigInt = (function (/*undefined*/) {
                 return subtractSmall(a, Math.abs(b), this.sign);
             return subtractAny(a, b, this.sign);
         }
+        toString(radix?: number, alphabet?: string): string {
+            if (radix === undefined) radix = 10;
+            if (radix !== 10) return toBaseString(this, radix, alphabet);
+            const v = this.value;
+            let l = v.length;
+            let str = String(v[--l]);
+            const zeros = "0000000";
+            let digit: string;
+            while (--l >= 0) {
+                digit = String(v[l]);
+                str += zeros.slice(digit.length) + digit;
+            }
+            const sign = this.sign ? "-" : "";
+            return sign + str;
+        }
         negate() {
             return new LargeInteger(this.value, !this.sign);
         }
@@ -548,6 +568,11 @@ export const bigInt = (function (/*undefined*/) {
         }
         subtract(v: BigInteger) {
             return new NativeBigInt(this.value - parseValue(v).value);
+        }
+        toString(radix?: number, alphabet?: string): string {
+            if (radix === undefined) radix = 10;
+            if (radix != 10) return toBaseString(this, radix, alphabet);
+            return String(this.value);
         }
         minus(v: BigInteger) {
             return this.subtract(v);
@@ -1103,7 +1128,7 @@ export const bigInt = (function (/*undefined*/) {
         return isNegative ? val.negate() : val;
     }
 
-    function stringify(digit: number, alphabet: string): string {
+    function stringify(digit: number, alphabet?: string): string {
         alphabet = alphabet || DEFAULT_ALPHABET;
         if (digit < alphabet.length) {
             return alphabet[digit];
@@ -1111,8 +1136,8 @@ export const bigInt = (function (/*undefined*/) {
         return "<" + digit + ">";
     }
 
-    function toBase(n, base) {
-        base = bigInt(base);
+    function toBase(n: BigInteger, radix: number) {
+        const base = bigInt(radix);
         if (base.isZero()) {
             if (n.isZero()) return { value: [0], isNegative: false };
             throw new Error("Cannot convert nonzero numbers to base 0.");
@@ -1166,7 +1191,7 @@ export const bigInt = (function (/*undefined*/) {
         return { value: out.reverse(), isNegative: neg };
     }
 
-    function toBaseString(n, base, alphabet) {
+    function toBaseString(n: BigInteger, base: number, alphabet?: string): string {
         const arr = toBase(n, base);
         return (arr.isNegative ? "-" : "") + arr.value.map(function (x) {
             return stringify(x, alphabet);
@@ -1184,30 +1209,6 @@ export const bigInt = (function (/*undefined*/) {
     NativeBigInt.prototype.toArray = function (radix) {
         return toBase(this, radix);
     };
-
-    LargeInteger.prototype.toString = function (radix, alphabet) {
-        if (radix === undefined) radix = 10;
-        if (radix !== 10) return toBaseString(this, radix, alphabet);
-        const v = this.value;
-        let l = v.length;
-        let str = String(v[--l]);
-        const zeros = "0000000";
-        let digit: string;
-        while (--l >= 0) {
-            digit = String(v[l]);
-            str += zeros.slice(digit.length) + digit;
-        }
-        const sign = this.sign ? "-" : "";
-        return sign + str;
-    };
-
-    SmallInteger.prototype.toString = function (radix, alphabet) {
-        if (radix === undefined) radix = 10;
-        if (radix != 10) return toBaseString(this, radix, alphabet);
-        return String(this.value);
-    };
-
-    NativeBigInt.prototype.toString = SmallInteger.prototype.toString;
 
     NativeBigInt.prototype.toJSON = LargeInteger.prototype.toJSON = SmallInteger.prototype.toJSON = function () { return this.toString(); }
 

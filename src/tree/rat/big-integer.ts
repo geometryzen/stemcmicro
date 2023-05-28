@@ -26,6 +26,7 @@ export interface BigInteger {
     abs(): BigInteger;
     add(rhs: number | BigInteger): BigInteger;
     compare(rhs: BigInteger): 1 | 0 | -1;
+    compareTo(rhs: BigInteger): 1 | 0 | -1;
     multiply(rhs: number | BigInteger): BigInteger;
     divide(rhs: number | BigInteger): BigInteger;
     equals(n: number | BigInteger): boolean;
@@ -72,99 +73,103 @@ class BaseInteger implements BigInteger {
         throw new Error();
     }
     abs(): BigInteger {
-        throw new Error('abs not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     add(rhs: BigInteger): BigInteger {
-        throw new Error('add not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     compare(rhs: number | BigInteger): 0 | 1 | -1 {
-        throw new Error('compare not implemented.');
+        throw new Error();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    compareTo(rhs: number | BigInteger): 0 | 1 | -1 {
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     minus(rhs: BigInteger): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     multiply(rhs: BigInteger): BigInteger {
-        throw new Error('multiply not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     divide(rhs: BigInteger): BigInteger {
-        throw new Error('divide method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     equals(n: number): boolean {
-        throw new Error('equals not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     leq(n: number): boolean {
-        throw new Error('leq not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     geq(n: number): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     isEven(): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     isNegative(): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     isOdd(): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     isPositive(): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     isProbablePrime(): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     isUnit(): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     isZero(): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     mod(rhs: BigInteger): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     negate(): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     next(): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     over(denom: number | BigInteger): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     pow(expo: number | BigInteger): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     prev(): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     shiftRight(n: number): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subtract(rhs: BigInteger): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     times(n: BigInteger): BigInteger {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     toJSNumber(): number {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
     valueOf(): number {
-        throw new Error('Method not implemented.');
+        throw new Error();
     }
 }
 
@@ -1113,10 +1118,10 @@ export const bigInt = (function (/*undefined*/) {
 
     function integerLogarithm(value: BigInteger, base: BigInteger): { p: BigInteger, e: number } {
         if (base.compareTo(value) <= 0) {
-            var tmp = integerLogarithm(value, base.square(base));
-            var p = tmp.p;
-            var e = tmp.e;
-            var t = p.multiply(base);
+            const tmp = integerLogarithm(value, base.square(base));
+            const p = tmp.p;
+            const e = tmp.e;
+            const t = p.multiply(base);
             return t.compareTo(value) <= 0 ? { p: t, e: e * 2 + 1 } : { p: p, e: e * 2 };
         }
         return { p: bigInt(1), e: 0 };
@@ -1344,12 +1349,12 @@ export const bigInt = (function (/*undefined*/) {
         const split = v.split(/e/i);
         if (split.length > 2) throw new Error("Invalid integer: " + split.join("e"));
         if (split.length === 2) {
-            let exp = split[1];
-            if (exp[0] === "+") exp = exp.slice(1);
-            exp = +exp;
+            let expo = split[1];
+            if (expo[0] === "+") expo = expo.slice(1);
+            let exp = +expo;
             if (exp !== truncate(exp) || !isPrecise(exp)) throw new Error("Invalid integer: " + exp + " is not a valid exponent.");
-            var text = split[0];
-            var decimalPlace = text.indexOf(".");
+            let text = split[0];
+            const decimalPlace = text.indexOf(".");
             if (decimalPlace >= 0) {
                 exp -= text.length - decimalPlace - 1;
                 text = text.slice(0, decimalPlace) + text.slice(decimalPlace + 1);

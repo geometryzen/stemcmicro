@@ -6,6 +6,7 @@ import {
     DEFAULT_ALPHABET,
     divMod1,
     divMod2,
+    divModSmall,
     isPrecise,
     LOG_BASE,
     MAX_INT,
@@ -51,7 +52,7 @@ export interface BigInteger {
 export const bigInt = (function (/*undefined*/) {
 
     // If we have native support for BigInt then SmallInteger and LargeInteger are redundant.
-    const supportsNativeBigInt = typeof BigInt === "function";
+    const supportsNativeBigInt = false;//typeof BigInt === "function";
     // console.lg("supportsNativeBigInt", supportsNativeBigInt);
 
     /**
@@ -176,6 +177,16 @@ export const bigInt = (function (/*undefined*/) {
             }
             return new LargeInteger(addSmall(b, Math.abs(a)), a < 0);
         }
+        bitLength() {
+            let n = this;
+            if (n.compareTo(bigInt(0)) < 0) {
+                n = n.negate().subtract(bigInt(1));
+            }
+            if (n.compareTo(bigInt(0)) === 0) {
+                return bigInt(0);
+            }
+            return bigInt(integerLogarithm(n, bigInt(2)).e).add(bigInt(1));
+        }
         compareAbs(v: BigInteger): 1 | 0 | -1 {
             const n = parseValue(v);
             const a = Math.abs(this.value);
@@ -212,13 +223,28 @@ export const bigInt = (function (/*undefined*/) {
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
         }
+        isNegative(): boolean {
+            return this.value < 0;
+        }
         isPositive(): boolean {
             return this.value > 0;
+        }
+        minus(v: BigInteger) {
+            return this.subtract(v);
+        }
+        mod(v: BigInteger) {
+            return divModAny(this, v)[1];
         }
         next(): SmallInteger | LargeInteger {
             const value = this.value;
             if (value + 1 < MAX_INT) return new SmallInteger(value + 1);
             return new LargeInteger(MAX_INT_ARR, false);
+        }
+        over(v: BigInteger) {
+            return this.divide(v);
+        }
+        plus(v: BigInteger) {
+            return this.add(v);
         }
         square() {
             const value = this.value * this.value;
@@ -236,6 +262,9 @@ export const bigInt = (function (/*undefined*/) {
                 return new SmallInteger(a - b);
             }
             return subtractSmall(b, Math.abs(a), a >= 0);
+        }
+        times(v: BigInteger) {
+            return this.multiply(v);
         }
         toString(radix?: number, alphabet?: string): string {
             if (radix === undefined) radix = 10;
@@ -341,6 +370,17 @@ export const bigInt = (function (/*undefined*/) {
         divide(v: BigInteger) {
             return divModAny(this, v)[0];
         }
+        isProbablePrime(iterations: number, rng) {
+            const isPrime = isBasicPrime(this);
+            if (isPrime !== undefined) return isPrime;
+            const n = this.abs();
+            const t = iterations === undefined ? 5 : iterations;
+            const a: number[] = [];
+            for (let i = 0; i < t; i++) {
+                a.push(bigInt.randBetween(2, n.minus(2), rng));
+            }
+            return millerRabinTest(n, a);
+        }
         isPrime(strict: boolean) {
             // Set "strict" to true to force GRH-supported lower bound of 2*log(N)^2
             const isPrime = isBasicPrime(this);
@@ -358,6 +398,9 @@ export const bigInt = (function (/*undefined*/) {
             }
             return millerRabinTest(n, a);
         }
+        minus(v: BigInteger) {
+            return this.subtract(v);
+        }
         mod(v: BigInteger) {
             return divModAny(this, v)[1];
         }
@@ -368,11 +411,16 @@ export const bigInt = (function (/*undefined*/) {
             }
             return new LargeInteger(addSmall(value, 1), this.sign);
         }
+        over(v: BigInteger) {
+            return this.divide(v);
+        }
+        plus(v: BigInteger) {
+            return this.add(v);
+        }
         pow(v: BigInteger) {
             const n = parseValue(v);
             const a = this.value;
-            const b = n.value;
-            value, x, y;
+            let b = n.value;
             if (b === 0) return Integer[1];
             if (a === 0) return Integer[0];
             if (a === 1) return Integer[1];
@@ -382,11 +430,13 @@ export const bigInt = (function (/*undefined*/) {
             }
             if (!n.isSmall) throw new Error("The exponent " + n.toString() + " is too large.");
             if (this.isSmall) {
-                if (isPrecise(value = Math.pow(a, b)))
+                const value = Math.pow(a, b);
+                if (isPrecise(value)) {
                     return new SmallInteger(truncate(value));
+                }
             }
-            x = this;
-            y = Integer[1];
+            let x = this;
+            let y = Integer[1];
             while (true) {
                 if (b & 1 === 1) {
                     y = y.times(x);
@@ -410,6 +460,9 @@ export const bigInt = (function (/*undefined*/) {
             if (n.isSmall)
                 return subtractSmall(a, Math.abs(b), this.sign);
             return subtractAny(a, b, this.sign);
+        }
+        times(v: BigInteger) {
+            return this.multiply(v);
         }
         toString(radix?: number, alphabet?: string): string {
             if (radix === undefined) radix = 10;
@@ -456,7 +509,7 @@ export const bigInt = (function (/*undefined*/) {
             }
             return new LargeInteger(multiplyLong(a, b), sign);
         }
-        multiplyBySmall(a: SmallInteger) {
+        _multiplyBySmall(a: SmallInteger) {
             if (a.value === 0) return Integer[0];
             if (a.value === 1) return this;
             if (a.value === -1) return this.negate();
@@ -851,17 +904,6 @@ export const bigInt = (function (/*undefined*/) {
 
     NativeBigInt.prototype.isPrime = SmallInteger.prototype.isPrime = LargeInteger.prototype.isPrime;
 
-    LargeInteger.prototype.isProbablePrime = function (iterations: number, rng) {
-        const isPrime = isBasicPrime(this);
-        if (isPrime !== undefined) return isPrime;
-        const n = this.abs();
-        const t = iterations === undefined ? 5 : iterations;
-        const a: number[] = [];
-        for (let i = 0; i < t; i++) {
-            a.push(bigInt.randBetween(2, n.minus(2), rng));
-        }
-        return millerRabinTest(n, a);
-    };
     NativeBigInt.prototype.isProbablePrime = SmallInteger.prototype.isProbablePrime = LargeInteger.prototype.isProbablePrime;
 
     LargeInteger.prototype.modInv = function (n) {

@@ -333,7 +333,7 @@ export function divMod2(a: number[], b: number[]) { // Implementation idea shame
     return [arrayToSmall(result), arrayToSmall(part)];
 }
 
-function divModSmall(value: number[], lambda: number): [number[], number] {
+export function divModSmall(value: number[], lambda: number): [number[], number] {
     const length = value.length;
     const quotient = createArray(length);
     const base = BASE;

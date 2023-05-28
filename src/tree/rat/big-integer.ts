@@ -83,6 +83,10 @@ class BaseInteger implements BigInteger {
         throw new Error('compare not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    minus(rhs: BigInteger): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     multiply(rhs: BigInteger): BigInteger {
         throw new Error('multiply not implemented.');
     }
@@ -131,6 +135,10 @@ class BaseInteger implements BigInteger {
         throw new Error('Method not implemented.');
     }
     next(): BigInteger {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    over(denom: number | BigInteger): BigInteger {
         throw new Error('Method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -557,7 +565,7 @@ export const bigInt = (function (/*undefined*/) {
         negate() {
             return new LargeInteger(this.value, !this.sign);
         }
-        multiply(v: BigInteger) {
+        multiply(v: number | BigInteger) {
             const n = parseValue(v);
             const a = this.value;
             const sign = this.sign !== n.sign;
@@ -1355,7 +1363,10 @@ export const bigInt = (function (/*undefined*/) {
         if (supportsNativeBigInt) {
             return new NativeBigInt(BigInt(sign ? "-" + v : v));
         }
-        var r = [], max = v.length, l = LOG_BASE, min = max - l;
+        const r: number[] = [];
+        let max = v.length;
+        const l = LOG_BASE;
+        let min = max - l;
         while (max > 0) {
             r.push(+v.slice(min, max));
             min -= l;

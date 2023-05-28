@@ -462,6 +462,9 @@ export const bigInt = (function (/*undefined*/) {
             if (a.value === -1) return this.negate();
             return multiplySmallAndArray(Math.abs(a.value), this.value, this.sign !== a.sign);
         }
+        valueOf(): number {
+            return parseInt(this.toString(), 10);
+        }
     }
 
     class NativeBigInt extends BaseInteger implements BigInteger {
@@ -1212,9 +1215,6 @@ export const bigInt = (function (/*undefined*/) {
 
     NativeBigInt.prototype.toJSON = LargeInteger.prototype.toJSON = SmallInteger.prototype.toJSON = function () { return this.toString(); }
 
-    LargeInteger.prototype.valueOf = function () {
-        return parseInt(this.toString(), 10);
-    };
     LargeInteger.prototype.toJSNumber = LargeInteger.prototype.valueOf;
 
     SmallInteger.prototype.valueOf = function () {

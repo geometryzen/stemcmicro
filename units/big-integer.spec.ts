@@ -1127,7 +1127,7 @@ describe("BigInteger", function () {
     describe("valueOf and toJSNumber", function () {
         it("works", function () {
             expect(bigInt(100) + bigInt(200) == 300).toBe(true);
-            expect(bigInt("100000000000300") - bigInt("100000000000000") == 300).toBe(true);
+            expect(bigInt("100000000000300").valueOf() - bigInt("100000000000000").valueOf() == 300).toBe(true);
             expect(bigInt(100).valueOf() == 100).toBe(true);
             expect(bigInt(43.9e30) == 43.9e30).toBe(true);
             expect(bigInt("1.11e+30").toJSNumber() == 1.11e+30).toBe(true);

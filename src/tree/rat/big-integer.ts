@@ -25,7 +25,7 @@ import {
 export interface BigInteger {
     abs(): BigInteger;
     add(rhs: number | string | BigInteger): BigInteger;
-    bitLength(): number;
+    bitLength(): BigInteger;
     compare(rhs: BigInteger): 1 | 0 | -1;
     compareAbs(rhs: number | string): 1 | 0 | -1;
     compareTo(rhs: BigInteger): 1 | 0 | -1;
@@ -44,7 +44,7 @@ export interface BigInteger {
     isOdd(): boolean;
     isPositive(): boolean;
     isPrime(): boolean;
-    isProbablePrime(): boolean;
+    isProbablePrime(iterations?: number, randomNumberGenerator?: () => number): boolean;
     isUnit(): boolean;
     isZero(): boolean;
     minus(rhs: number | string | BigInteger): BigInteger;
@@ -164,7 +164,7 @@ export const bigInt = (function (/*undefined*/) {
         compareTo(v: number | BigInteger): 1 | 0 | -1 {
             return this.compare(v);
         }
-        divide(v: BigInteger) {
+        divide(v: number | string | BigInteger) {
             return divModAny(this, v)[0];
         }
         divmod(v: BigInteger) {
@@ -197,7 +197,7 @@ export const bigInt = (function (/*undefined*/) {
             if (value + 1 < MAX_INT) return new SmallInteger(value + 1);
             return new LargeInteger(MAX_INT_ARR, false);
         }
-        over(v: BigInteger) {
+        over(v: number | string | BigInteger) {
             return this.divide(v);
         }
         plus(v: BigInteger) {
@@ -208,22 +208,28 @@ export const bigInt = (function (/*undefined*/) {
             if (value - 1 > -MAX_INT) return new SmallInteger(value - 1);
             return new LargeInteger(MAX_INT_ARR, true);
         }
-        square() {
+        square(): BigInteger {
             const value = this.value * this.value;
             if (isPrecise(value)) return new SmallInteger(value);
             return new LargeInteger(square(smallToArray(Math.abs(this.value))), false);
         }
-        subtract(v: BigInteger) {
+        subtract(v: BigInteger): BigInteger {
             const n = parseValue(v);
             const a = this.value;
             if (a < 0 !== n.sign) {
                 return this.add(n.negate());
             }
-            const b = n.value;
-            if (n.isSmall) {
+            if (n instanceof SmallInteger) {
+                const b = n.value;
                 return new SmallInteger(a - b);
             }
-            return subtractSmall(b, Math.abs(a), a >= 0);
+            else if (n instanceof LargeInteger) {
+                const b = n.value;
+                return subtractSmall(b, Math.abs(a), a >= 0);
+            }
+            else {
+                throw new Error();
+            }
         }
         times(v: BigInteger) {
             return this.multiply(v);
@@ -233,7 +239,7 @@ export const bigInt = (function (/*undefined*/) {
             if (radix != 10) return toBaseString(this, radix, alphabet);
             return String(this.value);
         }
-        negate() {
+        negate(): BigInteger {
             const sign = this.sign;
             const small = new SmallInteger(-this.value);
             small.sign = !sign;
@@ -265,10 +271,10 @@ export const bigInt = (function (/*undefined*/) {
             this.sign = sign;
             this.isSmall = false;
         }
-        abs() {
+        abs(): BigInteger {
             return new LargeInteger(this.value, false);
         }
-        add(v: BigInteger) {
+        add(v: BigInteger): BigInteger {
             const n = parseValue(v);
             if (this.sign !== n.sign) {
                 return this.subtract(n.negate());

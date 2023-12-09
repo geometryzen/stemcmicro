@@ -1,25 +1,8 @@
 import {
-    addAny,
-    addSmall,
-    arrayToSmall,
     BASE,
     DEFAULT_ALPHABET,
-    divMod1,
-    divMod2,
-    divModSmall,
     isPrecise,
-    LOG_BASE,
-    MAX_INT,
-    MAX_INT_ARR,
-    multiplyKaratsuba,
-    multiplyLong,
-    multiplySmall,
-    smallToArray,
-    square,
-    subtract,
-    trim,
-    truncate,
-    useKaratsuba
+    truncate
 } from './big-helpers';
 
 export interface BigInteger {
@@ -79,11 +62,6 @@ const cache: BigInteger[] = [];
 
 export const bigInt = (function (/*undefined*/) {
 
-    // If we have native support for BigInt then SmallInteger and LargeInteger are redundant.
-    // The unit tests should work if this variable is set to false.
-    const supportsNativeBigInt = false;//typeof BigInt === "function";
-    // console.lg("supportsNativeBigInt", supportsNativeBigInt);
-
     /**
      * This is (also) the constructor function.
      * @param v 
@@ -98,504 +76,6 @@ export const bigInt = (function (/*undefined*/) {
         return parseValue(v);
     }
 
-    class SmallInteger implements BigInteger {
-        value: number;
-        sign: boolean;
-        isSmall: boolean;
-        constructor(value: number) {
-            this.value = value;
-            this.sign = value < 0;
-            this.isSmall = true;
-        }
-        abs(): BigInteger {
-            return new SmallInteger(Math.abs(this.value));
-        }
-        add(v: BigInteger) {
-            const n = parseValue(v);
-            const a = this.value;
-            if (a < 0 !== n.sign) {
-                return this.subtract(n.negate());
-            }
-            let b = n.value;
-            if (n.isSmall) {
-                if (isPrecise(a + b)) return new SmallInteger(a + b);
-                b = smallToArray(Math.abs(b));
-            }
-            return new LargeInteger(addSmall(b, Math.abs(a)), a < 0);
-        }
-        bitLength() {
-            let n = this;
-            if (n.compareTo(bigInt(0)) < 0) {
-                n = n.negate().subtract(bigInt(1));
-            }
-            if (n.compareTo(bigInt(0)) === 0) {
-                return bigInt(0);
-            }
-            return bigInt(integerLogarithm(n, bigInt(2)).e).add(bigInt(1));
-        }
-        compareAbs(v: BigInteger): 1 | 0 | -1 {
-            const n = parseValue(v);
-            const a = Math.abs(this.value);
-            if (n instanceof SmallInteger) {
-                const b = Math.abs(n.value);
-                return a === b ? 0 : a > b ? 1 : -1;
-            }
-            else if (n instanceof LargeInteger) {
-                return -1;
-            }
-            else {
-                throw new Error();
-            }
-        }
-        compare(v: number | BigInteger) {
-            if (v === Infinity) {
-                return -1;
-            }
-            if (v === -Infinity) {
-                return 1;
-            }
-
-            const n = parseValue(v);
-            const a = this.value;
-            if (n instanceof SmallInteger) {
-                const b = n.value;
-                return a == b ? 0 : a > b ? 1 : -1;
-            }
-            if (a < 0 !== n.sign) {
-                return a < 0 ? -1 : 1;
-            }
-            return a < 0 ? 1 : -1;
-        }
-        compareTo(v: number | BigInteger): 1 | 0 | -1 {
-            return this.compare(v);
-        }
-        divide(v: number | string | BigInteger) {
-            return divModAny(this, v)[0];
-        }
-        divmod(v: BigInteger) {
-            const result = divModAny(this, v);
-            return {
-                quotient: result[0],
-                remainder: result[1]
-            };
-        }
-        isEven() {
-            return (this.value & 1) === 0;
-        }
-        isNegative(): boolean {
-            return this.value < 0;
-        }
-        isPositive(): boolean {
-            return this.value > 0;
-        }
-        isUnit() {
-            return Math.abs(this.value) === 1;
-        }
-        minus(v: BigInteger) {
-            return this.subtract(v);
-        }
-        mod(v: BigInteger) {
-            return divModAny(this, v)[1];
-        }
-        next(): BigInteger {
-            const value = this.value;
-            if (value + 1 < MAX_INT) return new SmallInteger(value + 1);
-            return new LargeInteger(MAX_INT_ARR, false);
-        }
-        over(v: number | string | BigInteger) {
-            return this.divide(v);
-        }
-        plus(v: BigInteger) {
-            return this.add(v);
-        }
-        prev(): BigInteger {
-            const value = this.value;
-            if (value - 1 > -MAX_INT) return new SmallInteger(value - 1);
-            return new LargeInteger(MAX_INT_ARR, true);
-        }
-        square(): BigInteger {
-            const value = this.value * this.value;
-            if (isPrecise(value)) return new SmallInteger(value);
-            return new LargeInteger(square(smallToArray(Math.abs(this.value))), false);
-        }
-        subtract(v: BigInteger): BigInteger {
-            const n = parseValue(v);
-            const a = this.value;
-            if (a < 0 !== n.sign) {
-                return this.add(n.negate());
-            }
-            if (n instanceof SmallInteger) {
-                const b = n.value;
-                return new SmallInteger(a - b);
-            }
-            else if (n instanceof LargeInteger) {
-                const b = n.value;
-                return subtractSmall(b, Math.abs(a), a >= 0);
-            }
-            else {
-                throw new Error();
-            }
-        }
-        times(v: BigInteger) {
-            return this.multiply(v);
-        }
-        toString(radix?: number, alphabet?: string): string {
-            if (radix === undefined) radix = 10;
-            if (radix != 10) return toBaseString(this, radix, alphabet);
-            return String(this.value);
-        }
-        negate(): BigInteger {
-            const sign = this.sign;
-            const small = new SmallInteger(-this.value);
-            small.sign = !sign;
-            return small;
-        }
-        multiply(v: BigInteger) {
-            return parseValue(v)._multiplyBySmall(this);
-        }
-        _multiplyBySmall(a: SmallInteger) {
-            if (isPrecise(a.value * this.value)) {
-                return new SmallInteger(a.value * this.value);
-            }
-            return multiplySmallAndArray(Math.abs(a.value), smallToArray(Math.abs(this.value)), this.sign !== a.sign);
-        }
-        valueOf(): number {
-            return this.value;
-        }
-    }
-
-    class LargeInteger implements BigInteger {
-        value: number[];
-        /**
-         * Indicates that the effective value should be treated as negative.
-         */
-        sign: boolean;
-        isSmall: boolean;
-        constructor(value: number[], sign: boolean) {
-            this.value = value;
-            this.sign = sign;
-            this.isSmall = false;
-        }
-        abs(): BigInteger {
-            return new LargeInteger(this.value, false);
-        }
-        add(v: BigInteger): BigInteger {
-            const n = parseValue(v);
-            if (this.sign !== n.sign) {
-                return this.subtract(n.negate());
-            }
-            const a = this.value;
-            const b = n.value;
-            if (n.isSmall) {
-                return new LargeInteger(addSmall(a, Math.abs(b)), this.sign);
-            }
-            return new LargeInteger(addAny(a, b), this.sign);
-        }
-        and(n: number | string | BigInteger): BigInteger {
-            return bitwise(this, n, function (a, b) {
-                return a & b;
-            });
-        }
-        bitLength() {
-            let n = this;
-            if (n.compareTo(bigInt(0)) < 0) {
-                n = n.negate().subtract(bigInt(1));
-            }
-            if (n.compareTo(bigInt(0)) === 0) {
-                return bigInt(0);
-            }
-            return bigInt(integerLogarithm(n, bigInt(2)).e).add(bigInt(1));
-        }
-        compare(v: number | BigInteger): 1 | 0 | -1 {
-            // See discussion about comparison with Infinity:
-            // https://github.com/peterolson/LargeInteger.js/issues/61
-            if (v === Infinity) {
-                return -1;
-            }
-            if (v === -Infinity) {
-                return 1;
-            }
-
-            const n = parseValue(v);
-            const a = this.value;
-            if (this.sign !== n.sign) {
-                return n.sign ? 1 : -1;
-            }
-            if (n instanceof SmallInteger) {
-                return this.sign ? -1 : 1;
-            }
-            if (n instanceof LargeInteger) {
-                const b = n.value;
-                switch (compareAbs(a, b)) {
-                    case 1: return this.sign ? -1 : 1;
-                    case 0: return 0;
-                    default: return this.sign ? 1 : -1;
-                }
-            }
-            else {
-                throw new Error();
-            }
-        }
-        compareAbs(v: BigInteger) {
-            const n = parseValue(v);
-            const a = this.value;
-            if (n instanceof SmallInteger) {
-                return 1;
-            }
-            else if (n instanceof LargeInteger) {
-                const b = n.value;
-                return compareAbs(a, b);
-            }
-            else {
-                throw new Error();
-            }
-        }
-        compareTo(v: number | BigInteger): 1 | 0 | -1 {
-            return this.compare(v);
-        }
-        divide(v: BigInteger) {
-            return divModAny(this, v)[0];
-        }
-        divmod(v: BigInteger) {
-            const result = divModAny(this, v);
-            return {
-                quotient: result[0],
-                remainder: result[1]
-            };
-        }
-        isDivisibleBy(v: number): boolean {
-            const n = parseValue(v);
-            if (n.isZero()) return false;
-            if (n.isUnit()) return true;
-            if (n.compareAbs(2) === 0) return this.isEven();
-            return this.mod(n).isZero();
-        }
-        isEven() {
-            return (this.value[0] & 1) === 0;
-        }
-        isProbablePrime(iterations: number, rng: () => number) {
-            const isPrime = isBasicPrime(this);
-            if (isPrime !== undefined) return isPrime;
-            const n = this.abs();
-            const t = iterations === undefined ? 5 : iterations;
-            const a: number[] = [];
-            for (let i = 0; i < t; i++) {
-                a.push(bigInt.randBetween(2, n.minus(2), rng));
-            }
-            return millerRabinTest(n, a);
-        }
-        isPrime(strict: boolean): boolean {
-            // Set "strict" to true to force GRH-supported lower bound of 2*log(N)^2
-            const isPrime = isBasicPrime(this);
-            if (isPrime !== undefined) return isPrime;
-            const n = this.abs();
-            const bits = n.bitLength();
-            if (bits <= 64) {
-                return millerRabinTest(n, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]);
-            }
-            const logN = Math.log(2) * bits.toJSNumber();
-            const t = Math.ceil((strict === true) ? (2 * Math.pow(logN, 2)) : logN);
-            const a: number[] = [];
-            for (let i = 0; i < t; i++) {
-                a.push(bigInt(i + 2));
-            }
-            return millerRabinTest(n, a);
-        }
-        isPositive(): boolean {
-            return !this.sign;
-        }
-        isNegative(): boolean {
-            return this.sign;
-        }
-        isUnit(): boolean {
-            return false;
-        }
-        isZero(): boolean {
-            return false;
-        }
-        minus(v: BigInteger) {
-            return this.subtract(v);
-        }
-        mod(v: BigInteger): BigInteger {
-            return divModAny(this, v)[1];
-        }
-        modInv(n: number): BigInteger {
-            let t = bigInt.zero, newT = bigInt.one, r = parseValue(n), newR = this.abs(), q, lastT, lastR;
-            while (!newR.isZero()) {
-                q = r.divide(newR);
-                lastT = t;
-                lastR = r;
-                t = newT;
-                r = newR;
-                newT = lastT.subtract(q.multiply(newT));
-                newR = lastR.subtract(q.multiply(newR));
-            }
-            if (!r.isUnit()) throw new Error(this.toString() + " and " + n.toString() + " are not co-prime");
-            if (t.compare(0) === -1) {
-                t = t.add(n);
-            }
-            if (this.isNegative()) {
-                return t.negate();
-            }
-            return t;
-        }
-        next() {
-            const value = this.value;
-            if (this.sign) {
-                return subtractSmall(value, 1, this.sign);
-            }
-            return new LargeInteger(addSmall(value, 1), this.sign);
-        }
-        not(): BigInteger {
-            return this.negate().prev();
-        }
-        over(v: BigInteger) {
-            return this.divide(v);
-        }
-        plus(v: BigInteger) {
-            return this.add(v);
-        }
-        pow(v: BigInteger) {
-            const n = parseValue(v);
-            const a = this.value;
-            let b = n.value;
-            if (b === 0) return cache[1];
-            if (a === 0) return cache[0];
-            if (a === 1) return cache[1];
-            if (a === -1) return n.isEven() ? cache[1] : cache[-1];
-            if (n.sign) {
-                return cache[0];
-            }
-            if (!n.isSmall) throw new Error("The exponent " + n.toString() + " is too large.");
-            if (this.isSmall) {
-                const value = Math.pow(a, b);
-                if (isPrecise(value)) {
-                    return new SmallInteger(truncate(value));
-                }
-            }
-            let x = this;
-            let y = cache[1];
-            while (true) {
-                if (b & 1 === 1) {
-                    y = y.times(x);
-                    --b;
-                }
-                if (b === 0) break;
-                b /= 2;
-                x = x.square();
-            }
-            return y;
-        }
-        prev() {
-            const value = this.value;
-            if (this.sign) {
-                return new LargeInteger(addSmall(value, 1), true);
-            }
-            return subtractSmall(value, 1, this.sign);
-        }
-        shiftLeft(v: number | string | BigInteger): BigInteger {
-            let n = parseValue(v).toJSNumber();
-            if (!shift_isSmall(n)) {
-                throw new Error(String(n) + " is too large for shifting.");
-            }
-            if (n < 0) return this.shiftRight(-n);
-            let result = this;
-            if (result.isZero()) return result;
-            while (n >= powers2Length) {
-                result = result.multiply(highestPower2);
-                n -= powers2Length - 1;
-            }
-            return result.multiply(powersOfTwo[n]);
-        }
-        shiftRight(v: number | string | BigInteger): BigInteger {
-            let remQuo;
-            let n = parseValue(v).toJSNumber();
-            if (!shift_isSmall(n)) {
-                throw new Error(String(n) + " is too large for shifting.");
-            }
-            if (n < 0) return this.shiftLeft(-n);
-            let result = this;
-            while (n >= powers2Length) {
-                if (result.isZero() || (result.isNegative() && result.isUnit())) return result;
-                remQuo = divModAny(result, highestPower2);
-                result = remQuo[1].isNegative() ? remQuo[0].prev() : remQuo[0];
-                n -= powers2Length - 1;
-            }
-            remQuo = divModAny(result, powersOfTwo[n]);
-            return remQuo[1].isNegative() ? remQuo[0].prev() : remQuo[0];
-        }
-        square() {
-            return new LargeInteger(square(this.value), false);
-        }
-        subtract(v: BigInteger) {
-            const n = parseValue(v);
-            if (this.sign !== n.sign) {
-                return this.add(n.negate());
-            }
-            const a = this.value, b = n.value;
-            if (n.isSmall)
-                return subtractSmall(a, Math.abs(b), this.sign);
-            return subtractAny(a, b, this.sign);
-        }
-        times(v: BigInteger) {
-            return this.multiply(v);
-        }
-        toString(radix?: number, alphabet?: string): string {
-            if (radix === undefined) radix = 10;
-            if (radix !== 10) return toBaseString(this, radix, alphabet);
-            const v = this.value;
-            let l = v.length;
-            let str = String(v[--l]);
-            const zeros = "0000000";
-            let digit: string;
-            while (--l >= 0) {
-                digit = String(v[l]);
-                str += zeros.slice(digit.length) + digit;
-            }
-            const sign = this.sign ? "-" : "";
-            return sign + str;
-        }
-        negate() {
-            return new LargeInteger(this.value, !this.sign);
-        }
-        multiply(v: number | BigInteger) {
-            const n = parseValue(v);
-            const a = this.value;
-            const sign = this.sign !== n.sign;
-            let b: number[];
-            if (n instanceof SmallInteger) {
-                const sv = n.value;
-                if (sv === 0) return cache[0];
-                if (sv === 1) return this;
-                if (sv === -1) return this.negate();
-                const abs = Math.abs(sv);
-                if (abs < BASE) {
-                    return new LargeInteger(multiplySmall(a, abs), sign);
-                }
-                b = smallToArray(abs);
-            }
-            else if (n instanceof LargeInteger) {
-                b = n.value;
-            }
-            else {
-                throw new Error();
-            }
-            if (useKaratsuba(a.length, b.length)) {// Karatsuba is only faster for certain array sizes
-                return new LargeInteger(multiplyKaratsuba(a, b), sign);
-            }
-            return new LargeInteger(multiplyLong(a, b), sign);
-        }
-        _multiplyBySmall(a: SmallInteger) {
-            if (a.value === 0) return cache[0];
-            if (a.value === 1) return this;
-            if (a.value === -1) return this.negate();
-            return multiplySmallAndArray(Math.abs(a.value), this.value, this.sign !== a.sign);
-        }
-        valueOf(): number {
-            return parseInt(this.toString(), 10);
-        }
-    }
-
     class NativeBigInt implements BigInteger {
         value: bigint;
         constructor(value: bigint) {
@@ -606,6 +86,11 @@ export const bigInt = (function (/*undefined*/) {
         }
         add(v: BigInteger) {
             return new NativeBigInt(this.value + parseValue(v).value);
+        }
+        and(n: number | string | BigInteger): BigInteger {
+            return bitwise(this, n, function (a, b) {
+                return a & b;
+            });
         }
         bitLength() {
             let n = this;
@@ -648,6 +133,13 @@ export const bigInt = (function (/*undefined*/) {
                 remainder: result[1]
             };
         }
+        isDivisibleBy(v: number): boolean {
+            const n = parseValue(v);
+            if (n.isZero()) return false;
+            if (n.isUnit()) return true;
+            if (n.compareAbs(2) === 0) return this.isEven();
+            return this.mod(n).isZero();
+        }
         isEven(): boolean {
             return (this.value & BigInt(1)) === BigInt(0);
         }
@@ -656,6 +148,34 @@ export const bigInt = (function (/*undefined*/) {
         }
         isPositive(): boolean {
             return this.value > 0;
+        }
+        isPrime(strict: boolean): boolean {
+            // Set "strict" to true to force GRH-supported lower bound of 2*log(N)^2
+            const isPrime = isBasicPrime(this);
+            if (isPrime !== undefined) return isPrime;
+            const n = this.abs();
+            const bits = n.bitLength();
+            if (bits <= 64) {
+                return millerRabinTest(n, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]);
+            }
+            const logN = Math.log(2) * bits.toJSNumber();
+            const t = Math.ceil((strict === true) ? (2 * Math.pow(logN, 2)) : logN);
+            const a: number[] = [];
+            for (let i = 0; i < t; i++) {
+                a.push(bigInt(i + 2));
+            }
+            return millerRabinTest(n, a);
+        }
+        isProbablePrime(iterations: number, rng: () => number) {
+            const isPrime = isBasicPrime(this);
+            if (isPrime !== undefined) return isPrime;
+            const n = this.abs();
+            const t = iterations === undefined ? 5 : iterations;
+            const a: number[] = [];
+            for (let i = 0; i < t; i++) {
+                a.push(bigInt.randBetween(2, n.minus(2), rng));
+            }
+            return millerRabinTest(n, a);
         }
         isNegative(): boolean {
             return this.value < 0;
@@ -669,8 +189,49 @@ export const bigInt = (function (/*undefined*/) {
         mod(v: BigInteger) {
             return new NativeBigInt(this.value % parseValue(v).value);
         }
+        modInv(n: number): BigInteger {
+            let t = bigInt.zero, newT = bigInt.one, r = parseValue(n), newR = this.abs(), q, lastT, lastR;
+            while (!newR.isZero()) {
+                q = r.divide(newR);
+                lastT = t;
+                lastR = r;
+                t = newT;
+                r = newR;
+                newT = lastT.subtract(q.multiply(newT));
+                newR = lastR.subtract(q.multiply(newR));
+            }
+            if (!r.isUnit()) throw new Error(this.toString() + " and " + n.toString() + " are not co-prime");
+            if (t.compare(0) === -1) {
+                t = t.add(n);
+            }
+            if (this.isNegative()) {
+                return t.negate();
+            }
+            return t;
+        }
+        modPow(exp, mod) {
+            exp = parseValue(exp);
+            mod = parseValue(mod);
+            if (mod.isZero()) throw new Error("Cannot take modPow with modulus 0");
+            var r = cache[1],
+                base = this.mod(mod);
+            if (exp.isNegative()) {
+                exp = exp.multiply(cache[-1]);
+                base = base.modInv(mod);
+            }
+            while (exp.isPositive()) {
+                if (base.isZero()) return cache[0];
+                if (exp.isOdd()) r = r.multiply(base).mod(mod);
+                exp = exp.divide(2);
+                base = base.square().mod(mod);
+            }
+            return r;
+        }
         next() {
             return new NativeBigInt(this.value + BigInt(1));
+        }
+        not(): NativeBigInt {
+            return this.negate().prev();
         }
         plus(v: BigInteger) {
             return this.add(v);
@@ -704,6 +265,37 @@ export const bigInt = (function (/*undefined*/) {
         prev() {
             return new NativeBigInt(this.value - BigInt(1));
         }
+        shiftLeft(v: number | string | BigInteger): BigInteger {
+            let n = parseValue(v).toJSNumber();
+            if (!shift_isSmall(n)) {
+                throw new Error(String(n) + " is too large for shifting.");
+            }
+            if (n < 0) return this.shiftRight(-n);
+            let result = this;
+            if (result.isZero()) return result;
+            while (n >= powers2Length) {
+                result = result.multiply(highestPower2);
+                n -= powers2Length - 1;
+            }
+            return result.multiply(powersOfTwo[n]);
+        }
+        shiftRight(v: number | string | BigInteger): BigInteger {
+            let remQuo;
+            let n = parseValue(v).toJSNumber();
+            if (!shift_isSmall(n)) {
+                throw new Error(String(n) + " is too large for shifting.");
+            }
+            if (n < 0) return this.shiftLeft(-n);
+            let result = this;
+            while (n >= powers2Length) {
+                if (result.isZero() || (result.isNegative() && result.isUnit())) return result;
+                remQuo = divModAny(result, highestPower2);
+                result = remQuo[1].isNegative() ? remQuo[0].prev() : remQuo[0];
+                n -= powers2Length - 1;
+            }
+            remQuo = divModAny(result, powersOfTwo[n]);
+            return remQuo[1].isNegative() ? remQuo[0].prev() : remQuo[0];
+        }
         square() {
             return new NativeBigInt(this.value * this.value);
         }
@@ -730,196 +322,68 @@ export const bigInt = (function (/*undefined*/) {
         times(v: BigInteger): BigInteger {
             return this.multiply(v);
         }
-    }
-
-    // LargeInteger.prototype.plus = LargeInteger.prototype.add;
-    // SmallInteger.prototype.plus = SmallInteger.prototype.add;
-
-    function subtractAny(a: number[], b: number[], sign: boolean) {
-        let difference: number[];
-        if (compareAbs(a, b) >= 0) {
-            difference = subtract(a, b);
+        equals(v) {
+            return this.compare(v) === 0;
         }
-        else {
-            difference = subtract(b, a);
-            sign = !sign;
+        eq(v) {
+            return this.equals(v);
         }
-        let value = arrayToSmall(difference);
-        if (typeof value === "number") {
-            if (sign) value = -value;
-            return new SmallInteger(value);
+        notEquals(v) {
+            return this.compare(v) !== 0;
         }
-        return new LargeInteger(value, sign);
-    }
+        neq(v) {
+            return this.notEquals(v);
+        }
+        greater(v) {
+            return this.compare(v) > 0;
+        }
+        gt(v) {
+            return this.greater(v);
+        }
+        lesser(v) {
+            return this.compare(v) < 0;
+        }
+        lt(v) {
+            return this.lesser(v);
+        }
 
-    function subtractSmall(a: number[], b: number, sign: boolean) { // assumes a is array, b is number with 0 <= b < MAX_INT
-        const l = a.length;
-        const s = new Array<number>(l);
-        let carry = -b;
-        const base = BASE;
-        for (let i = 0; i < l; i++) {
-            let difference = a[i] + carry;
-            carry = Math.floor(difference / base);
-            difference %= base;
-            s[i] = difference < 0 ? difference + base : difference;
+        greaterOrEquals(v) {
+            return this.compare(v) >= 0;
         }
-        let r = arrayToSmall(s);
-        if (typeof r === "number") {
-            if (sign) r = -r;
-            return new SmallInteger(r);
+        geq(v) {
+            return this.greaterOrEquals(v);
         }
-        return new LargeInteger(r, sign);
-    }
 
-    // LargeInteger.prototype.minus = LargeInteger.prototype.subtract;
-    // SmallInteger.prototype.minus = SmallInteger.prototype.subtract;
-
-    // LargeInteger.prototype.times = LargeInteger.prototype.multiply;
-    // SmallInteger.prototype.times = SmallInteger.prototype.multiply;
-
-    function multiplySmallAndArray(a: number, b: number[], sign: boolean) { // a >= 0
-        if (a < BASE) {
-            return new LargeInteger(multiplySmall(b, a), sign);
+        lesserOrEquals(v) {
+            return this.compare(v) <= 0;
         }
-        return new LargeInteger(multiplyLong(b, smallToArray(a)), sign);
+        leq(v) {
+            return this.lesserOrEquals(v);
+        }
+        or(n) {
+            return bitwise(this, n, function (a, b) { return a | b; });
+        }
+        xor(n) {
+            return bitwise(this, n, function (a, b) { return a ^ b; });
+        }
+        toArray(radix) {
+            return toBase(this, radix);
+        }
+        toJSON() {
+            return this.toString();
+        }
+        valueOf() {
+            return parseInt(this.toString(), 10);
+        }
+        toJSNumber() {
+            return parseInt(this.toString(), 10);
+        }
     }
 
     function divModAny(self: BigInteger, v: BigInteger) {
-        var value, n = parseValue(v);
-        if (supportsNativeBigInt) {
-            return [new NativeBigInt(self.value / n.value), new NativeBigInt(self.value % n.value)];
-        }
-        var a = self.value, b = n.value;
-        var quotient;
-        if (b === 0) throw new Error("Cannot divide by zero");
-        if (self.isSmall) {
-            if (n.isSmall) {
-                return [new SmallInteger(truncate(a / b)), new SmallInteger(a % b)];
-            }
-            return [cache[0], self];
-        }
-        if (n.isSmall) {
-            if (b === 1) return [self, cache[0]];
-            if (b == -1) return [self.negate(), cache[0]];
-            var abs = Math.abs(b);
-            if (abs < BASE) {
-                value = divModSmall(a, abs);
-                quotient = arrayToSmall(value[0]);
-                var remainder = value[1];
-                if (self.sign) remainder = -remainder;
-                if (typeof quotient === "number") {
-                    if (self.sign !== n.sign) quotient = -quotient;
-                    return [new SmallInteger(quotient), new SmallInteger(remainder)];
-                }
-                return [new LargeInteger(quotient, self.sign !== n.sign), new SmallInteger(remainder)];
-            }
-            b = smallToArray(abs);
-        }
-        const comparison = compareAbs(a, b);
-        if (comparison === -1) return [cache[0], self];
-        if (comparison === 0) return [cache[self.sign === n.sign ? 1 : -1], cache[0]];
-
-        // divMod1 is faster on smaller input sizes
-        if (a.length + b.length <= 200)
-            value = divMod1(a, b);
-        else value = divMod2(a, b);
-
-        quotient = value[0];
-        var qSign = self.sign !== n.sign,
-            mod = value[1],
-            mSign = self.sign;
-        if (typeof quotient === "number") {
-            if (qSign) quotient = -quotient;
-            quotient = new SmallInteger(quotient);
-        }
-        else quotient = new LargeInteger(quotient, qSign);
-        if (typeof mod === "number") {
-            if (mSign) mod = -mod;
-            mod = new SmallInteger(mod);
-        }
-        else mod = new LargeInteger(mod, mSign);
-        return [quotient, mod];
+        const n = parseValue(v);
+        return [new NativeBigInt(self.value / n.value), new NativeBigInt(self.value % n.value)];
     }
-
-    // SmallInteger.prototype.over = SmallInteger.prototype.divide = LargeInteger.prototype.over = LargeInteger.prototype.divide;
-
-    // SmallInteger.prototype.remainder = SmallInteger.prototype.mod = LargeInteger.prototype.remainder = LargeInteger.prototype.mod;
-
-    SmallInteger.prototype.pow = LargeInteger.prototype.pow;
-
-    LargeInteger.prototype.modPow = function (exp, mod) {
-        exp = parseValue(exp);
-        mod = parseValue(mod);
-        if (mod.isZero()) throw new Error("Cannot take modPow with modulus 0");
-        var r = cache[1],
-            base = this.mod(mod);
-        if (exp.isNegative()) {
-            exp = exp.multiply(cache[-1]);
-            base = base.modInv(mod);
-        }
-        while (exp.isPositive()) {
-            if (base.isZero()) return cache[0];
-            if (exp.isOdd()) r = r.multiply(base).mod(mod);
-            exp = exp.divide(2);
-            base = base.square().mod(mod);
-        }
-        return r;
-    };
-    NativeBigInt.prototype.modPow = SmallInteger.prototype.modPow = LargeInteger.prototype.modPow;
-
-    function compareAbs(a: number[], b: number[]): 1 | 0 | -1 {
-        if (a.length !== b.length) {
-            return a.length > b.length ? 1 : -1;
-        }
-        for (let i = a.length - 1; i >= 0; i--) {
-            if (a[i] !== b[i]) return a[i] > b[i] ? 1 : -1;
-        }
-        return 0;
-    }
-
-
-    LargeInteger.prototype.equals = function (v) {
-        return this.compare(v) === 0;
-    };
-    NativeBigInt.prototype.eq = NativeBigInt.prototype.equals = SmallInteger.prototype.eq = SmallInteger.prototype.equals = LargeInteger.prototype.eq = LargeInteger.prototype.equals;
-
-    LargeInteger.prototype.notEquals = function (v) {
-        return this.compare(v) !== 0;
-    };
-    NativeBigInt.prototype.neq = NativeBigInt.prototype.notEquals = SmallInteger.prototype.neq = SmallInteger.prototype.notEquals = LargeInteger.prototype.neq = LargeInteger.prototype.notEquals;
-
-    LargeInteger.prototype.greater = function (v) {
-        return this.compare(v) > 0;
-    };
-    NativeBigInt.prototype.gt = NativeBigInt.prototype.greater = SmallInteger.prototype.gt = SmallInteger.prototype.greater = LargeInteger.prototype.gt = LargeInteger.prototype.greater;
-
-    LargeInteger.prototype.lesser = function (v) {
-        return this.compare(v) < 0;
-    };
-    NativeBigInt.prototype.lt = NativeBigInt.prototype.lesser = SmallInteger.prototype.lt = SmallInteger.prototype.lesser = LargeInteger.prototype.lt = LargeInteger.prototype.lesser;
-
-    LargeInteger.prototype.greaterOrEquals = function (v) {
-        return this.compare(v) >= 0;
-    };
-    NativeBigInt.prototype.geq = NativeBigInt.prototype.greaterOrEquals = SmallInteger.prototype.geq = SmallInteger.prototype.greaterOrEquals = LargeInteger.prototype.geq = LargeInteger.prototype.greaterOrEquals;
-
-    LargeInteger.prototype.lesserOrEquals = function (v) {
-        return this.compare(v) <= 0;
-    };
-    NativeBigInt.prototype.leq = NativeBigInt.prototype.lesserOrEquals = SmallInteger.prototype.leq = SmallInteger.prototype.lesserOrEquals = LargeInteger.prototype.leq = LargeInteger.prototype.lesserOrEquals;
-
-    LargeInteger.prototype.isOdd = function () {
-        return (this.value[0] & 1) === 1;
-    };
-    SmallInteger.prototype.isOdd = function () {
-        return (this.value & 1) === 1;
-    };
-
-    SmallInteger.prototype.isZero = function () {
-        return this.value === 0;
-    };
-
-    NativeBigInt.prototype.isDivisibleBy = SmallInteger.prototype.isDivisibleBy = LargeInteger.prototype.isDivisibleBy;
 
     function isBasicPrime(v: BigInteger): boolean {
         const n = v.abs();
@@ -949,12 +413,6 @@ export const bigInt = (function (/*undefined*/) {
         return true;
     }
 
-    NativeBigInt.prototype.isPrime = SmallInteger.prototype.isPrime = LargeInteger.prototype.isPrime;
-
-    NativeBigInt.prototype.isProbablePrime = SmallInteger.prototype.isProbablePrime = LargeInteger.prototype.isProbablePrime;
-
-    NativeBigInt.prototype.modInv = SmallInteger.prototype.modInv = LargeInteger.prototype.modInv;
-
     const powersOfTwo = [1];
     while (2 * powersOfTwo[powersOfTwo.length - 1] <= BASE) powersOfTwo.push(2 * powersOfTwo[powersOfTwo.length - 1]);
     const powers2Length = powersOfTwo.length;
@@ -963,10 +421,6 @@ export const bigInt = (function (/*undefined*/) {
     function shift_isSmall(n: number): boolean {
         return Math.abs(n) <= BASE;
     }
-
-    NativeBigInt.prototype.shiftLeft = SmallInteger.prototype.shiftLeft = LargeInteger.prototype.shiftLeft;
-
-    NativeBigInt.prototype.shiftRight = SmallInteger.prototype.shiftRight = LargeInteger.prototype.shiftRight;
 
     function bitwise(x: BigInteger, y: BigInteger, fn: (a: number, b: number) => number): BigInteger {
         y = parseValue(y);
@@ -1002,48 +456,16 @@ export const bigInt = (function (/*undefined*/) {
         return sum;
     }
 
-    NativeBigInt.prototype.not = SmallInteger.prototype.not = LargeInteger.prototype.not;
-
-    NativeBigInt.prototype.and = SmallInteger.prototype.and = LargeInteger.prototype.and;
-
-    LargeInteger.prototype.or = function (n) {
-        return bitwise(this, n, function (a, b) { return a | b; });
-    };
-    NativeBigInt.prototype.or = SmallInteger.prototype.or = LargeInteger.prototype.or;
-
-    LargeInteger.prototype.xor = function (n) {
-        return bitwise(this, n, function (a, b) { return a ^ b; });
-    };
-    NativeBigInt.prototype.xor = SmallInteger.prototype.xor = LargeInteger.prototype.xor;
-
     const LOBMASK_I = 1 << 30;
-    const LOBMASK_BI = (BASE & -BASE) * (BASE & -BASE) | LOBMASK_I;
 
     function roughLOB(n: BigInteger) { // get lowestOneBit (rough)
-        // SmallInteger: return Min(lowestOneBit(n), 1 << 30)
-        // LargeInteger: return Min(lowestOneBit(n), 1 << 14) [BASE=1e7]
-        if (n instanceof SmallInteger) {
-            const x = n.value | LOBMASK_I;
-            return x & -x;
-        }
-        else if (n instanceof LargeInteger) {
-            const v = n.value;
-            const x = v[0] + v[1] * BASE | LOBMASK_BI;
-            return x & -x;
-        }
-        else if (n instanceof NativeBigInt) {
+        if (n instanceof NativeBigInt) {
             const x = n.value | BigInt(LOBMASK_I);
             return x & -x;
         }
         else {
             throw new Error();
         }
-        /*
-        const x = (n instanceof SmallInteger) ? n.value | LOBMASK_I :
-                (n instanceof NativeBigInt) ? n.value | BigInt(LOBMASK_I) :
-                    v[0] + v[1] * BASE | LOBMASK_BI;
-        return x & -x;
-        */
     }
 
     function integerLogarithm(value: BigInteger, base: BigInteger): { p: BigInteger, e: number } {
@@ -1110,7 +532,6 @@ export const bigInt = (function (/*undefined*/) {
         const low = min(iA, iB);
         const high = max(iA, iB);
         const range = high.subtract(low).add(1);
-        if (range instanceof SmallInteger) return low.add(Math.floor(usedRNG() * range.valueOf()));
         const digits = toBase(range, BASE).value;
         const result: number[] = [];
         let restricted = true;
@@ -1246,32 +667,12 @@ export const bigInt = (function (/*undefined*/) {
         }).join('');
     }
 
-    LargeInteger.prototype.toArray = function (radix) {
-        return toBase(this, radix);
-    };
-
-    SmallInteger.prototype.toArray = function (radix) {
-        return toBase(this, radix);
-    };
-
-    NativeBigInt.prototype.toArray = function (radix) {
-        return toBase(this, radix);
-    };
-
-    NativeBigInt.prototype.toJSON = LargeInteger.prototype.toJSON = SmallInteger.prototype.toJSON = function () { return this.toString(); }
-
-    LargeInteger.prototype.toJSNumber = LargeInteger.prototype.valueOf;
-
-    SmallInteger.prototype.toJSNumber = SmallInteger.prototype.valueOf;
-    NativeBigInt.prototype.valueOf = NativeBigInt.prototype.toJSNumber = function () {
-        return parseInt(this.toString(), 10);
-    };
-
-    function parseStringValue(v: string): SmallInteger | LargeInteger | NativeBigInt {
+    function parseStringValue(v: string): NativeBigInt {
         if (isPrecise(+v)) {
             const x = +v;
-            if (x === truncate(x))
-                return supportsNativeBigInt ? new NativeBigInt(BigInt(x)) : new SmallInteger(x);
+            if (x === truncate(x)) {
+                return new NativeBigInt(BigInt(x));
+            }
             throw new Error("Invalid integer: " + v);
         }
         const sign = v[0] === "-";
@@ -1295,35 +696,14 @@ export const bigInt = (function (/*undefined*/) {
         }
         const isValid = /^([0-9][0-9]*)$/.test(v);
         if (!isValid) throw new Error("Invalid integer: " + v);
-        if (supportsNativeBigInt) {
-            return new NativeBigInt(BigInt(sign ? "-" + v : v));
-        }
-        const r: number[] = [];
-        let max = v.length;
-        const l = LOG_BASE;
-        let min = max - l;
-        while (max > 0) {
-            r.push(+v.slice(min, max));
-            min -= l;
-            if (min < 0) min = 0;
-            max -= l;
-        }
-        trim(r);
-        return new LargeInteger(r, sign);
+        return new NativeBigInt(BigInt(sign ? "-" + v : v));
     }
 
-    function parseNumberValue(v: number): SmallInteger | LargeInteger | NativeBigInt {
-        if (supportsNativeBigInt) {
-            return new NativeBigInt(BigInt(v));
-        }
-        if (isPrecise(v)) {
-            if (v !== truncate(v)) throw new Error(v + " is not an integer.");
-            return new SmallInteger(v);
-        }
-        return parseStringValue(v.toString());
+    function parseNumberValue(v: number): NativeBigInt {
+        return new NativeBigInt(BigInt(v));
     }
 
-    function parseValue(v: number | string | bigint | BigInteger): BigInteger {
+    function parseValue(v: number | string | bigint | NativeBigInt): NativeBigInt {
         if (typeof v === "number") {
             return parseNumberValue(v);
         }
@@ -1349,7 +729,7 @@ export const bigInt = (function (/*undefined*/) {
     Integer.gcd = gcd;
     Integer.lcm = lcm;
     Integer.isInstance = function (x: unknown): x is BigInteger {
-        return x instanceof LargeInteger || x instanceof SmallInteger || x instanceof NativeBigInt;
+        return x instanceof NativeBigInt;
     };
     Integer.randBetween = randBetween;
 

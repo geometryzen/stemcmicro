@@ -4,7 +4,7 @@ import {
     isPrecise,
     truncate
 } from './big-helpers';
-
+/*
 export interface BigInteger {
     abs(): BigInteger;
     add(rhs: number | string | BigInteger): BigInteger;
@@ -57,17 +57,18 @@ export interface BigInteger {
     valueOf(): number;
     xor(rhs: number | string): BigInteger;
 }
+*/
 
-class NativeBigInt implements BigInteger {
+export class BigInteger {
     value: bigint;
     constructor(value: bigint) {
         this.value = value;
     }
     abs() {
-        return new NativeBigInt(this.value >= 0 ? this.value : -this.value);
+        return new BigInteger(this.value >= 0 ? this.value : -this.value);
     }
-    add(v: string | number | BigInteger) {
-        return new NativeBigInt(this.value + parseValue(v).value);
+    add(v: string | number | bigint | BigInteger) {
+        return new BigInteger(this.value + parseValue(v).value);
     }
     and(n: number | string | BigInteger): BigInteger {
         return bitwise(this, n, function (a, b) {
@@ -84,14 +85,14 @@ class NativeBigInt implements BigInteger {
         }
         return bigInt(integerLogarithm(n, bigInt(2)).e).add(bigInt(1));
     }
-    compareAbs(v: BigInteger) {
+    compareAbs(v: string | number | bigint | BigInteger) {
         let a = this.value;
         let b = parseValue(v).value;
         a = a >= 0 ? a : -a;
         b = b >= 0 ? b : -b;
         return a === b ? 0 : a > b ? 1 : -1;
     }
-    compare(v: number | BigInteger): 1 | 0 | -1 {
+    compare(v: string | number | bigint | BigInteger): 1 | 0 | -1 {
         if (v === Infinity) {
             return -1;
         }
@@ -105,8 +106,8 @@ class NativeBigInt implements BigInteger {
     compareTo(v: number | BigInteger): 1 | 0 | -1 {
         return this.compare(v);
     }
-    divide(v: BigInteger) {
-        return new NativeBigInt(this.value / parseValue(v).value);
+    divide(v: string | number | bigint | BigInteger) {
+        return new BigInteger(this.value / parseValue(v).value);
     }
     divmod(v: BigInteger) {
         const result = divModAny(this, v);
@@ -169,9 +170,9 @@ class NativeBigInt implements BigInteger {
         return this.value === BigInt(0);
     }
     mod(v: BigInteger) {
-        return new NativeBigInt(this.value % parseValue(v).value);
+        return new BigInteger(this.value % parseValue(v).value);
     }
-    modInv(n: number): BigInteger {
+    modInv(n: string | number | bigint | BigInteger): BigInteger {
         let t = bigInt.zero, newT = bigInt.one, r = parseValue(n), newR = this.abs(), q, lastT, lastR;
         while (!newR.isZero()) {
             q = r.divide(newR);
@@ -191,12 +192,12 @@ class NativeBigInt implements BigInteger {
         }
         return t;
     }
-    modPow(exp, mod) {
+    modPow(exp: string | number | bigint | BigInteger, mod: string | number | bigint | BigInteger) {
         exp = parseValue(exp);
         mod = parseValue(mod);
         if (mod.isZero()) throw new Error("Cannot take modPow with modulus 0");
-        var r = cache[1],
-            base = this.mod(mod);
+        let r = cache[1];
+        let base = this.mod(mod);
         if (exp.isNegative()) {
             exp = exp.multiply(cache[-1]);
             base = base.modInv(mod);
@@ -210,16 +211,16 @@ class NativeBigInt implements BigInteger {
         return r;
     }
     next() {
-        return new NativeBigInt(this.value + BigInt(1));
+        return new BigInteger(this.value + BigInt(1));
     }
-    not(): NativeBigInt {
+    not(): BigInteger {
         return this.negate().prev();
     }
     plus(v: BigInteger) {
         return this.add(v);
     }
-    pow(v: NativeBigInt) {
-        const n = parseValue(v) as NativeBigInt;
+    pow(v: BigInteger) {
+        const n = parseValue(v) as BigInteger;
         const a = this.value;
         let b = n.value;
         const _0 = BigInt(0);
@@ -229,8 +230,9 @@ class NativeBigInt implements BigInteger {
         if (a === _0) return cache[0];
         if (a === _1) return cache[1];
         if (a === BigInt(-1)) return n.isEven() ? cache[1] : cache[-1];
-        if (n.isNegative()) return new NativeBigInt(_0);
-        let x = this;
+        if (n.isNegative()) return new BigInteger(_0);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let x: BigInteger = this;
         let y = cache[1];
         // eslint-disable-next-line no-constant-condition
         while (true) {
@@ -245,7 +247,7 @@ class NativeBigInt implements BigInteger {
         return y;
     }
     prev() {
-        return new NativeBigInt(this.value - BigInt(1));
+        return new BigInteger(this.value - BigInt(1));
     }
     shiftLeft(v: number | string | BigInteger): BigInteger {
         let n = parseValue(v).toJSNumber();
@@ -253,7 +255,8 @@ class NativeBigInt implements BigInteger {
             throw new Error(String(n) + " is too large for shifting.");
         }
         if (n < 0) return this.shiftRight(-n);
-        let result = this;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let result: BigInteger = this;
         if (result.isZero()) return result;
         while (n >= powers2Length) {
             result = result.multiply(highestPower2);
@@ -268,7 +271,8 @@ class NativeBigInt implements BigInteger {
             throw new Error(String(n) + " is too large for shifting.");
         }
         if (n < 0) return this.shiftLeft(-n);
-        let result = this;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let result: BigInteger = this;
         while (n >= powers2Length) {
             if (result.isZero() || (result.isNegative() && result.isUnit())) return result;
             remQuo = divModAny(result, highestPower2);
@@ -279,10 +283,10 @@ class NativeBigInt implements BigInteger {
         return remQuo[1].isNegative() ? remQuo[0].prev() : remQuo[0];
     }
     square() {
-        return new NativeBigInt(this.value * this.value);
+        return new BigInteger(this.value * this.value);
     }
     subtract(v: BigInteger) {
-        return new NativeBigInt(this.value - parseValue(v).value);
+        return new BigInteger(this.value - parseValue(v).value);
     }
     toString(radix?: number, alphabet?: string): string {
         if (radix === undefined) radix = 10;
@@ -292,11 +296,11 @@ class NativeBigInt implements BigInteger {
     minus(v: BigInteger) {
         return this.subtract(v);
     }
-    multiply(v: BigInteger): BigInteger {
-        return new NativeBigInt(this.value * parseValue(v).value);
+    multiply(v: string | number | bigint | BigInteger): BigInteger {
+        return new BigInteger(this.value * parseValue(v).value);
     }
     negate() {
-        return new NativeBigInt(-this.value);
+        return new BigInteger(-this.value);
     }
     over(v: BigInteger) {
         return this.divide(v);
@@ -362,9 +366,9 @@ class NativeBigInt implements BigInteger {
     }
 }
 
-function divModAny(self: BigInteger, v: BigInteger) {
+function divModAny(self: BigInteger, v: string | number | bigint | BigInteger) {
     const n = parseValue(v);
-    return [new NativeBigInt(self.value / n.value), new NativeBigInt(self.value % n.value)];
+    return [new BigInteger(self.value / n.value), new BigInteger(self.value % n.value)];
 }
 
 function isBasicPrime(v: BigInteger): boolean {
@@ -404,7 +408,7 @@ function shift_isSmall(n: number): boolean {
     return Math.abs(n) <= BASE;
 }
 
-function bitwise(x: BigInteger, y: BigInteger, fn: (a: number, b: number) => number): BigInteger {
+function bitwise(x: BigInteger, y: string | number | bigint | BigInteger, fn: (a: number, b: number) => number): BigInteger {
     y = parseValue(y);
     const xSign = x.isNegative();
     const ySign = y.isNegative();
@@ -412,8 +416,9 @@ function bitwise(x: BigInteger, y: BigInteger, fn: (a: number, b: number) => num
     let yRem = ySign ? y.not() : y;
     let xDigit = 0;
     let yDigit = 0;
-    var xDivMod = null, yDivMod = null;
-    var result = [];
+    let xDivMod = null;
+    let yDivMod = null;
+    const result: number[] = [];
     while (!xRem.isZero() || !yRem.isZero()) {
         xDivMod = divModAny(xRem, highestPower2);
         xDigit = xDivMod[1].toJSNumber();
@@ -441,7 +446,7 @@ function bitwise(x: BigInteger, y: BigInteger, fn: (a: number, b: number) => num
 const LOBMASK_I = 1 << 30;
 
 function roughLOB(n: BigInteger) { // get lowestOneBit (rough)
-    if (n instanceof NativeBigInt) {
+    if (n instanceof BigInteger) {
         const x = n.value | BigInt(LOBMASK_I);
         return x & -x;
     }
@@ -528,7 +533,7 @@ function randBetween(a: number | string | BigInteger, b: number | string | BigIn
     return low.add(Integer.fromArray(result, BASE, false));
 }
 
-const parseBase = function (input: unknown, radix: number, alphabet: string | undefined, caseSensitive: boolean) {
+const parseBase = function (input: unknown, radix: number | string, alphabet: string | undefined, caseSensitive: boolean) {
     alphabet = alphabet || DEFAULT_ALPHABET;
     let text = String(input);
     if (!caseSensitive) {
@@ -649,11 +654,11 @@ function toBaseString(n: BigInteger, base: number, alphabet?: string): string {
     }).join('');
 }
 
-function parseStringValue(v: string): NativeBigInt {
+function parseStringValue(v: string): BigInteger {
     if (isPrecise(+v)) {
         const x = +v;
         if (x === truncate(x)) {
-            return new NativeBigInt(BigInt(x));
+            return new BigInteger(BigInt(x));
         }
         throw new Error("Invalid integer: " + v);
     }
@@ -678,14 +683,14 @@ function parseStringValue(v: string): NativeBigInt {
     }
     const isValid = /^([0-9][0-9]*)$/.test(v);
     if (!isValid) throw new Error("Invalid integer: " + v);
-    return new NativeBigInt(BigInt(sign ? "-" + v : v));
+    return new BigInteger(BigInt(sign ? "-" + v : v));
 }
 
-function parseNumberValue(v: number): NativeBigInt {
-    return new NativeBigInt(BigInt(v));
+function parseNumberValue(v: number): BigInteger {
+    return new BigInteger(BigInt(v));
 }
 
-function parseValue(v: number | string | bigint | NativeBigInt): NativeBigInt {
+function parseValue(v: number | string | bigint | BigInteger): BigInteger {
     if (typeof v === "number") {
         return parseNumberValue(v);
     }
@@ -693,7 +698,7 @@ function parseValue(v: number | string | bigint | NativeBigInt): NativeBigInt {
         return parseStringValue(v);
     }
     if (typeof v === "bigint") {
-        return new NativeBigInt(v);
+        return new BigInteger(v);
     }
     return v;
 }
@@ -707,7 +712,7 @@ const cache: BigInteger[] = [];
  * @param caseSensitive 
  * @returns 
  */
-function Integer(v?, radix?: number | string, alphabet?: string, caseSensitive?: boolean): NativeBigInt {
+function Integer(v?, radix?: number | string, alphabet?: string, caseSensitive?: boolean): BigInteger {
     if (typeof v === "undefined") return cache[0];
     if (typeof radix !== "undefined") return +radix === 10 && !alphabet ? parseValue(v) : parseBase(v, radix, alphabet, caseSensitive);
     return parseValue(v);
@@ -727,7 +732,7 @@ Integer.min = min;
 Integer.gcd = gcd;
 Integer.lcm = lcm;
 Integer.isInstance = function (x: unknown): x is BigInteger {
-    return x instanceof NativeBigInt;
+    return x instanceof BigInteger;
 };
 Integer.randBetween = randBetween;
 

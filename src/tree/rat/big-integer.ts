@@ -75,8 +75,9 @@ export class BigInteger {
             return a & b;
         });
     }
-    bitLength() {
-        let n = this;
+    bitLength(): BigInteger {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let n: BigInteger = this;
         if (n.compareTo(bigInt(0)) < 0) {
             n = n.negate().subtract(bigInt(1));
         }
@@ -138,23 +139,23 @@ export class BigInteger {
         if (isPrime !== undefined) return isPrime;
         const n = this.abs();
         const bits = n.bitLength();
-        if (bits <= 64) {
+        if (bits.valueOf() <= 64) {
             return millerRabinTest(n, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]);
         }
         const logN = Math.log(2) * bits.toJSNumber();
         const t = Math.ceil((strict === true) ? (2 * Math.pow(logN, 2)) : logN);
-        const a: number[] = [];
+        const a: BigInteger[] = [];
         for (let i = 0; i < t; i++) {
             a.push(bigInt(i + 2));
         }
         return millerRabinTest(n, a);
     }
-    isProbablePrime(iterations: number, rng: () => number) {
+    isProbablePrime(iterations?: number, rng?: () => number) {
         const isPrime = isBasicPrime(this);
         if (isPrime !== undefined) return isPrime;
         const n = this.abs();
         const t = iterations === undefined ? 5 : iterations;
-        const a: number[] = [];
+        const a: BigInteger[] = [];
         for (let i = 0; i < t; i++) {
             a.push(bigInt.randBetween(2, n.minus(2), rng));
         }
@@ -219,7 +220,7 @@ export class BigInteger {
     plus(v: BigInteger) {
         return this.add(v);
     }
-    pow(v: BigInteger) {
+    pow(v: string | number | bigint | BigInteger): BigInteger {
         const n = parseValue(v) as BigInteger;
         const a = this.value;
         let b = n.value;
@@ -285,7 +286,7 @@ export class BigInteger {
     square() {
         return new BigInteger(this.value * this.value);
     }
-    subtract(v: BigInteger) {
+    subtract(v: string | number | bigint | BigInteger): BigInteger {
         return new BigInteger(this.value - parseValue(v).value);
     }
     toString(radix?: number, alphabet?: string): string {
@@ -293,7 +294,7 @@ export class BigInteger {
         if (radix != 10) return toBaseString(this, radix, alphabet);
         return String(this.value);
     }
-    minus(v: BigInteger) {
+    minus(v: string | number | bigint | BigInteger): BigInteger {
         return this.subtract(v);
     }
     multiply(v: string | number | bigint | BigInteger): BigInteger {
@@ -308,57 +309,61 @@ export class BigInteger {
     times(v: BigInteger): BigInteger {
         return this.multiply(v);
     }
-    equals(v) {
+    equals(v: string | number | bigint | BigInteger) {
         return this.compare(v) === 0;
     }
-    eq(v) {
+    eq(v: string | number | bigint | BigInteger) {
         return this.equals(v);
     }
-    notEquals(v) {
+    notEquals(v: string | number | bigint | BigInteger) {
         return this.compare(v) !== 0;
     }
-    neq(v) {
+    neq(v: string | number | bigint | BigInteger) {
         return this.notEquals(v);
     }
-    greater(v) {
+    greater(v: string | number | bigint | BigInteger) {
         return this.compare(v) > 0;
     }
-    gt(v) {
+    gt(v: string | number | bigint | BigInteger) {
         return this.greater(v);
     }
-    lesser(v) {
+    lesser(v: string | number | bigint | BigInteger) {
         return this.compare(v) < 0;
     }
-    lt(v) {
+    lt(v: string | number | bigint | BigInteger) {
         return this.lesser(v);
     }
 
-    greaterOrEquals(v) {
+    greaterOrEquals(v: string | number | bigint | BigInteger) {
         return this.compare(v) >= 0;
     }
-    geq(v) {
+    geq(v: string | number | bigint | BigInteger) {
         return this.greaterOrEquals(v);
     }
 
-    lesserOrEquals(v) {
+    lesserOrEquals(v: string | number | bigint | BigInteger) {
         return this.compare(v) <= 0;
     }
-    leq(v) {
+    leq(v: string | number | bigint | BigInteger) {
         return this.lesserOrEquals(v);
     }
-    or(n) {
-        return bitwise(this, n, function (a, b) { return a | b; });
+    or(n: string | number | bigint | BigInteger) {
+        return bitwise(this, n, function (a, b) {
+            return a | b;
+        });
     }
-    xor(n) {
-        return bitwise(this, n, function (a, b) { return a ^ b; });
+    xor(n: string | number | bigint | BigInteger) {
+        return bitwise(this, n, function (a, b) {
+            return a ^ b;
+        });
     }
-    toArray(radix) {
+    toArray(radix: number) {
         return toBase(this, radix);
     }
     toJSON() {
         return this.toString();
     }
-    valueOf() {
+    valueOf(): number {
         return parseInt(this.toString(), 10);
     }
     toJSNumber() {
@@ -371,7 +376,7 @@ function divModAny(self: BigInteger, v: string | number | bigint | BigInteger) {
     return [new BigInteger(self.value / n.value), new BigInteger(self.value % n.value)];
 }
 
-function isBasicPrime(v: BigInteger): boolean {
+function isBasicPrime(v: BigInteger): boolean | undefined {
     const n = v.abs();
     if (n.isUnit()) return false;
     if (n.equals(2) || n.equals(3) || n.equals(5)) return true;
@@ -380,7 +385,7 @@ function isBasicPrime(v: BigInteger): boolean {
     // we don't know if it's prime: let the other functions figure it out
 }
 
-function millerRabinTest(n: BigInteger, a: number[]): boolean {
+function millerRabinTest(n: BigInteger, a: (number | BigInteger)[]): boolean {
     const nPrev = n.prev();
     let b = nPrev;
     let r = 0;
@@ -457,7 +462,7 @@ function roughLOB(n: BigInteger) { // get lowestOneBit (rough)
 
 function integerLogarithm(value: BigInteger, base: BigInteger): { p: BigInteger, e: number } {
     if (base.compareTo(value) <= 0) {
-        const tmp = integerLogarithm(value, base.square(base));
+        const tmp = integerLogarithm(value, base.square());
         const p = tmp.p;
         const e = tmp.e;
         const t = p.multiply(base);
@@ -477,7 +482,8 @@ function min(a: number | bigint | BigInteger, b: number | bigint | BigInteger): 
     b = parseValue(b);
     return a.lesser(b) ? a : b;
 }
-function gcd(a: number | BigInteger, b: number | BigInteger): BigInteger {
+
+export function gcd(a: number | BigInteger, b: number | BigInteger): BigInteger {
     a = parseValue(a).abs();
     b = parseValue(b).abs();
     if (a.equals(b)) return a;
@@ -533,7 +539,7 @@ function randBetween(a: number | string | BigInteger, b: number | string | BigIn
     return low.add(Integer.fromArray(result, BASE, false));
 }
 
-const parseBase = function (input: unknown, radix: number | string, alphabet: string | undefined, caseSensitive: boolean) {
+const parseBase = function (input: unknown, radix: number, alphabet: string | undefined, caseSensitive?: boolean) {
     alphabet = alphabet || DEFAULT_ALPHABET;
     let text = String(input);
     if (!caseSensitive) {
@@ -574,7 +580,7 @@ const parseBase = function (input: unknown, radix: number | string, alphabet: st
     return parseBaseFromArray(digits, base, isNegative);
 };
 
-function parseBaseFromArray(digits: BigInteger[], base: BigInteger, isNegative: boolean): BigInteger {
+function parseBaseFromArray(digits: BigInteger[], base: BigInteger, isNegative?: boolean): BigInteger {
     let val = cache[0] as BigInteger;
     let pow = cache[1] as BigInteger;
     for (let i = digits.length - 1; i >= 0; i--) {
@@ -592,7 +598,7 @@ function stringify(digit: number, alphabet?: string): string {
     return "<" + digit + ">";
 }
 
-function toBase(n: BigInteger, radix: number) {
+function toBase(n: BigInteger, radix: number): { value: number[]; isNegative: boolean } {
     const base = bigInt(radix) as BigInteger;
     if (base.isZero()) {
         if (n.isZero()) return { value: [0], isNegative: false };
@@ -602,16 +608,18 @@ function toBase(n: BigInteger, radix: number) {
         if (n.isZero()) return { value: [0], isNegative: false };
         if (n.isNegative())
             return {
-                value: [].concat.apply([], Array.apply(null, Array(-n.toJSNumber()))
-                    .map(Array.prototype.valueOf, [1, 0])
+                // eslint-disable-next-line prefer-spread
+                value: [].concat.apply([], Array.apply(null, Array(-n.toJSNumber())).map(Array.prototype.valueOf, [1, 0])
                 ),
                 isNegative: false
             };
 
+        // eslint-disable-next-line prefer-spread
         const arr = Array.apply(null, Array(n.toJSNumber() - 1))
             .map(Array.prototype.valueOf, [0, 1]);
         arr.unshift([1]);
         return {
+            // eslint-disable-next-line prefer-spread
             value: [].concat.apply([], arr),
             isNegative: false
         };
@@ -626,6 +634,7 @@ function toBase(n: BigInteger, radix: number) {
         if (n.isZero()) return { value: [0], isNegative: false };
 
         return {
+            // eslint-disable-next-line prefer-spread
             value: Array.apply(null, Array(n.toJSNumber()))
                 .map(Number.prototype.valueOf, 1),
             isNegative: neg
@@ -712,7 +721,7 @@ const cache: BigInteger[] = [];
  * @param caseSensitive 
  * @returns 
  */
-function Integer(v?, radix?: number | string, alphabet?: string, caseSensitive?: boolean): BigInteger {
+function Integer(v?: number | string | bigint | BigInteger, radix?: number, alphabet?: string, caseSensitive?: boolean): BigInteger {
     if (typeof v === "undefined") return cache[0];
     if (typeof radix !== "undefined") return +radix === 10 && !alphabet ? parseValue(v) : parseBase(v, radix, alphabet, caseSensitive);
     return parseValue(v);

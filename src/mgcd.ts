@@ -1,4 +1,4 @@
-import { BigInteger } from './tree/rat/big-integer';
+import { BigInteger, gcd } from './tree/rat/big-integer';
 
 //-----------------------------------------------------------------------------
 //
@@ -18,5 +18,5 @@ import { BigInteger } from './tree/rat/big-integer';
 //
 //-----------------------------------------------------------------------------
 export function mgcd(u: BigInteger, v: BigInteger): BigInteger {
-    return bigInt.gcd(u, v);
+    return gcd(u, v);
 }

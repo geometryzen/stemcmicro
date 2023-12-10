@@ -615,8 +615,7 @@ function toBase(n: BigInteger, radix: number): { value: number[]; isNegative: bo
             };
 
         // eslint-disable-next-line prefer-spread
-        const arr = Array.apply(null, Array(n.toJSNumber() - 1))
-            .map(Array.prototype.valueOf, [0, 1]);
+        const arr = Array.apply(null, Array(n.toJSNumber() - 1)).map(Array.prototype.valueOf, [0, 1]);
         arr.unshift([1]);
         return {
             // eslint-disable-next-line prefer-spread
@@ -632,11 +631,9 @@ function toBase(n: BigInteger, radix: number): { value: number[]; isNegative: bo
     }
     if (base.isUnit()) {
         if (n.isZero()) return { value: [0], isNegative: false };
-
         return {
             // eslint-disable-next-line prefer-spread
-            value: Array.apply(null, Array(n.toJSNumber()))
-                .map(Number.prototype.valueOf, 1),
+            value: Array.apply(null, Array(n.toJSNumber())).map(Number.prototype.valueOf, 1),
             isNegative: neg
         };
     }

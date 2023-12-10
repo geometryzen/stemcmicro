@@ -606,20 +606,23 @@ function toBase(n: BigInteger, radix: number): { value: number[]; isNegative: bo
     }
     if (base.equals(-1)) {
         if (n.isZero()) return { value: [0], isNegative: false };
-        if (n.isNegative())
+        // Creating a variable for the returned value as a means to bypass the type error...
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const values = [] as any[];
+        if (n.isNegative()) {
             return {
                 // eslint-disable-next-line prefer-spread
-                value: [].concat.apply([], Array.apply(null, Array(-n.toJSNumber())).map(Array.prototype.valueOf, [1, 0])
-                ),
+                value: values.concat.apply([], Array.apply(null, Array(-n.toJSNumber())).map(Array.prototype.valueOf, [1, 0])),
                 isNegative: false
             };
-
+        }
         // eslint-disable-next-line prefer-spread
         const arr = Array.apply(null, Array(n.toJSNumber() - 1)).map(Array.prototype.valueOf, [0, 1]);
         arr.unshift([1]);
         return {
             // eslint-disable-next-line prefer-spread
-            value: [].concat.apply([], arr),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            value: values.concat.apply([], arr),
             isNegative: false
         };
     }

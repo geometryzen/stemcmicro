@@ -30,9 +30,9 @@ describe("tensor", function () {
         // const ab = new Tensor([2], [a, b]);
         // const cd = new Tensor([2], [c, d]);
         // const ef = new Tensor([2], [e, f]);
-        const M = new Tensor([3, 2], [a, b, c, d, e, f]);
-        assert.strictEqual(M.ndim, 2);
-        assert.strictEqual(M.dim(0), 3);
+        const M = new Tensor([1, 2, 3, 4, 5, 6], [a, b, c, d, e, f]);
+        assert.strictEqual(M.ndim, 6);
+        assert.strictEqual(M.dim(0), 1);
         assert.strictEqual(M.dim(1), 2);
         // TODO: Do this some other way to avoid breaking encapsulation of ExtensionEnv.
         /*
@@ -295,6 +295,17 @@ describe("tensor", function () {
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsSExpr(values[0]), "[0,0]");
         assert.strictEqual(engine.renderAsInfix(values[0]), "[0,0]");
+        engine.release();
+    });
+    it("inv", function () {
+        const lines: string[] = [
+            `A=[[1,-0.1],[0.2,-1]]`,
+            `inv(A)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[[1.020408...,-0.102041...],[0.204082...,-1.020408...]]");
         engine.release();
     });
 });

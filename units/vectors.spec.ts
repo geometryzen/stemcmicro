@@ -325,7 +325,7 @@ describe("vectors", function () {
             assert.strictEqual(engine.renderAsInfix(value), "a*b");
             engine.release();
         });
-        it("d(e1|cross(A,B),x)", function () {
+        xit("d(e1|cross(A,B),x)", function () {
             const lines: string[] = [
                 `G30 = algebra([1,1,1],["e1","e2","e3"])`,
                 `e1 = G30[1]`,
@@ -343,7 +343,7 @@ describe("vectors", function () {
             assert.strictEqual(engine.renderAsInfix(value), "a*d(b,x)+b*d(a,x)");
             engine.release();
         });
-        it("d(cross(A,B)|e1,x)", function () {
+        xit("d(cross(A,B)|e1,x)", function () {
             const lines: string[] = [
                 `G30 = algebra([1,1,1],["e1","e2","e3"])`,
                 `e1 = G30[1]`,

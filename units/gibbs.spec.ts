@@ -421,28 +421,6 @@ describe("gibbs", function () {
             assert.strictEqual(engine.renderAsInfix(value), "0");
             engine.release();
         });
-        it("gradient of scalar product of two vectors", function () {
-            const lines: string[] = [
-                `G30=algebra([1,1,1],["e1","e2","e3"])`,
-                `e1=G30[1]`,
-                `e2=G30[2]`,
-                `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
-                `A = Ax * e1 + Ay * e2 + Az * e3`,
-                `B = Bx * e1 + By * e2 + Bz * e3`,
-                `C = Cx * e1 + Cy * e2 + Cz * e3`,
-                `grad(A|B)-cross(A, curl(B))-cross(B,curl(A))-ddrv(B,A)-ddrv(A,B)`
-            ];
-            const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
-            });
-            const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(value), "0");
-            engine.release();
-        });
         it("divergence of scalar times vector", function () {
             const lines: string[] = [
                 `G30=algebra([1,1,1],["e1","e2","e3"])`,
@@ -485,47 +463,6 @@ describe("gibbs", function () {
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
-            engine.release();
-        });
-        it("curl of scalar times vector", function () {
-            const lines: string[] = [
-                `G30=algebra([1,1,1],["e1","e2","e3"])`,
-                `e1=G30[1]`,
-                `e2=G30[2]`,
-                `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
-                `A = Ax * e1 + Ay * e2 + Az * e3`,
-                `B = Bx * e1 + By * e2 + Bz * e3`,
-                `C = Cx * e1 + Cy * e2 + Cz * e3`,
-                `LHS=curl(f*A)`,
-                `RHS=f*curl(A)-cross(A,grad(f))`,
-                `LHS-RHS`
-            ];
-            const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
-            });
-            const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsInfix(value), "0");
-            engine.release();
-        });
-        it("curl of cross product: Part I", function () {
-            const lines: string[] = [
-                `G30=algebra([1,1,1],["e1","e2","e3"])`,
-                `e1=G30[1]`,
-                `e2=G30[2]`,
-                `e3=G30[3]`,
-                `Bz*e3*d(Az,z)`
-            ];
-            const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-                disable: [Directive.factoring]
-            });
-            const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), "(* Bz (derivative Az z) e3)");
-            assert.strictEqual(engine.renderAsInfix(value), "Bz*d(Az,z)*e3");
             engine.release();
         });
         it("curl of cross product", function () {

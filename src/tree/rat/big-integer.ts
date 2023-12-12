@@ -133,7 +133,7 @@ export class BigInteger {
     isPositive(): boolean {
         return this.value > 0;
     }
-    isPrime(strict: boolean): boolean {
+    isPrime(strict?: boolean): boolean {
         // Set "strict" to true to force GRH-supported lower bound of 2*log(N)^2
         const isPrime = isBasicPrime(this);
         if (isPrime !== undefined) return isPrime;
@@ -170,7 +170,7 @@ export class BigInteger {
     isZero(): boolean {
         return this.value === BigInt(0);
     }
-    mod(v: BigInteger) {
+    mod(v: string | number | bigint | BigInteger) {
         return new BigInteger(this.value % parseValue(v).value);
     }
     modInv(n: string | number | bigint | BigInteger): BigInteger {
@@ -217,9 +217,6 @@ export class BigInteger {
     not(): BigInteger {
         return this.negate().prev();
     }
-    plus(v: BigInteger) {
-        return this.add(v);
-    }
     pow(v: string | number | bigint | BigInteger): BigInteger {
         const n = parseValue(v) as BigInteger;
         const a = this.value;
@@ -238,7 +235,7 @@ export class BigInteger {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             if ((b & _1) === _1) {
-                y = y.times(x);
+                y = y.multiply(x);
                 --b;
             }
             if (b === _0) break;
@@ -302,12 +299,6 @@ export class BigInteger {
     }
     negate() {
         return new BigInteger(-this.value);
-    }
-    over(v: BigInteger) {
-        return this.divide(v);
-    }
-    times(v: BigInteger): BigInteger {
-        return this.multiply(v);
     }
     equals(v: string | number | bigint | BigInteger) {
         return this.compare(v) === 0;
@@ -584,8 +575,8 @@ function parseBaseFromArray(digits: BigInteger[], base: BigInteger, isNegative?:
     let val = cache[0] as BigInteger;
     let pow = cache[1] as BigInteger;
     for (let i = digits.length - 1; i >= 0; i--) {
-        val = val.add(digits[i].times(pow));
-        pow = pow.times(base);
+        val = val.add(digits[i].multiply(pow));
+        pow = pow.multiply(base);
     }
     return isNegative ? val.negate() : val;
 }

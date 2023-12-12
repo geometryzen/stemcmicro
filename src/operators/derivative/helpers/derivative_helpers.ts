@@ -33,7 +33,7 @@ import {
 } from '../../../runtime/constants';
 import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
-import { MATH_ADD, MATH_E, MATH_PI } from '../../../runtime/ns_math';
+import { MATH_ADD } from '../../../runtime/ns_math';
 import { caddr, cadr } from '../../../tree/helpers';
 import { create_int, negOne, one, two, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
@@ -74,6 +74,7 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
 
     // console.lg(`f=>${render_as_infix(F, $)} is_sym(F)=>${is_sym(F)}`);
 
+    /*
     if (is_sym(F)) {
         if (F.equals(MATH_E)) {
             return zero;
@@ -84,6 +85,7 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
         // For all other symbolic constants that we don't know what they represent...
         return items_to_cons(MATH_DERIVATIVE, F, X);
     }
+    */
 
     // d(a,x)?
     if (!is_cons(F)) {

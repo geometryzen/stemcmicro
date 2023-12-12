@@ -27,13 +27,49 @@ describe("derivative-sandbox", function () {
 });
 
 describe("derivative", function () {
+    it("f(x) depends on x", function () {
+        const lines: string[] = [
+            `d(f(x),x)`
+        ];
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "d(f(x),x)");
+        engine.release();
+    });
+    it("f(x) does not depend on y", function () {
+        const lines: string[] = [
+            `d(f(x),y)`
+        ];
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
+        engine.release();
+    });
+    it("f(x,y) depends on both x and y", function () {
+        const lines: string[] = [
+            `d(f(x,y),y)`
+        ];
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "d(f(x,y),y)");
+        engine.release();
+    });
+    xit("f() is a wildcard that matches any symbol", function () {
+        const lines: string[] = [
+            `d(f(),t)`
+        ];
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        // Why are we only getting d(f,t)?
+        assert.strictEqual(engine.renderAsInfix(actual), "d(f(),t)");
+        engine.release();
+    });
     it("d(exp(x),x)", function () {
         const lines: string[] = [
             `d(exp(x),x)`
         ];
         const engine = create_script_context();
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        // assert.strictEqual(engine.renderAsInfix(actual), "e**x");
         assert.strictEqual(engine.renderAsInfix(actual), "exp(x)");
         engine.release();
     });

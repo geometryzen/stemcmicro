@@ -37,7 +37,7 @@ import { MATH_ADD } from '../../../runtime/ns_math';
 import { caddr, cadr } from '../../../tree/helpers';
 import { create_int, negOne, one, two, zero } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
-import { car, Cons, is_cons, items_to_cons, nil, U } from '../../../tree/tree';
+import { car, Cons, is_cons, items_to_cons, U } from '../../../tree/tree';
 import { besselj } from '../../besselj/besselj';
 import { bessely } from '../../bessely/bessely';
 import { ycosh } from '../../cosh/cosh';
@@ -66,7 +66,7 @@ export function d_scalar_scalar(F: U, X: U, $: ExtensionEnv): U {
 }
 
 function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
-    // console.lg(`d_scalar_scalar_1 F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
+    // console.lg(`d_scalar_scalar_1 F=>${F} X=>${X}`);
     // d(x,x)?
     if (F.equals(X)) {
         return one;
@@ -225,16 +225,18 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
 // derivative of a generic function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function dfunction(F: Cons, X: Sym, $: ExtensionEnv): U {
-    // console.lg(`dfunction F=>${render_as_infix(F, $)} X=>${render_as_infix(X, $)}`);
+    // console.lg(`dfunction F=>${F} X=>${X}`);
     const argList = F.argList;
 
-    if (nil === argList || argList.contains(X)) {
+    if (argList.contains(X)) {
+        return items_to_cons(MATH_DERIVATIVE, F, X);
+    }
+    else if (argList.isNil()) {
+        // I don't really like the empty argument list being a wildcard, but here it is...
         return items_to_cons(MATH_DERIVATIVE, F, X);
     }
     else {
-        // 
-        // return zero;
-        return items_to_cons(MATH_DERIVATIVE, F, X);
+        return zero;
     }
 }
 

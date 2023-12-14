@@ -202,4 +202,25 @@ describe("derivative", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "4*sin(x)/((5+4*cos(x))**2)");
         engine.release();
     });
+    it("gradient of f", function () {
+        const lines: string[] = [
+            `r = sqrt(x**2+y**2)`,
+            `d(r,[x,y])`
+        ];
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[x/((x**2+y**2)**(1/2)),y/((x**2+y**2)**(1/2))]");
+        engine.release();
+    });
+    it("gradient of F", function () {
+        const lines: string[] = [
+            `F = [x**2,y**2]`,
+            `X=[x,y]`,
+            `d(F,X)`
+        ];
+        const engine = create_script_context();
+        const actual = assert_one_value_execute(lines.join('\n'), engine);
+        assert.strictEqual(engine.renderAsInfix(actual), "[[2*x,0],[0,2*y]]");
+        engine.release();
+    });
 });

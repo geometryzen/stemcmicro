@@ -160,6 +160,8 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
  * This should not be needed when we can define our own transformer pipelines.
  */
 export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: ExtensionEnv,): U {
+    // console.lg("tree", $.toSExprString(tree));
+    // console.lg("tree", $.toInfixString(tree));
 
     const wrappers: Sym[] = detect_wrappers(tree);
     wrappers.reverse();

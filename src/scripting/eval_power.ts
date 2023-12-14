@@ -4,7 +4,6 @@ import { MATH_POW } from '../runtime/ns_math';
 import { Cons, items_to_cons, U } from '../tree/tree';
 
 export function Eval_power(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_power", $.toInfixString(expr));
     const argList = expr.argList;
     const baseArg = argList.car;
     const expoArg = argList.cdr.car;

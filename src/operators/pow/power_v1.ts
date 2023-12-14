@@ -34,7 +34,6 @@ import { dpow } from "./dpow";
  * @returns 
  */
 export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
-    // console.lg(`power_v1 base=${$.toInfixString(base)} expo=${$.toInfixString(expo)}`);
     if (typeof base === 'undefined') {
         throw new Error("base must be defined.");
     }
@@ -202,33 +201,30 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // TODO Do we need Directive.expandPowerProduct, like expandPowerSum?
     // N.B Eval_multiply or mul_varargs is going in the reverse direction when $.isExpanding().
     if ($.isExpanding()) {
-        // console.lg(`isExpanding=${$.isExpanding()}`);
-        // console.lg(`base=>${render_as_infix(base, $)}`);
-        // console.lg(`expo=>${render_as_infix(expo, $)}`);
         if (is_multiply(base)) {
             // TODO: Check that every factor commutes with every other one.
             // We do need this to ensure that tests pass.
             if (is_rat_and_integer(expo)) {
-                const factors = base.tail();
+                // const factors = base.tail();
                 // This is a bit too restrictive. e.g. complex numbers would work.
                 // We really do need to ask about how they commute under multiplication.
-                if (factors.every($.isreal)) {
-                    const aList = base.argList;
+                // if (factors.every($.isreal)) {
+                const aList = base.argList;
 
+                if (is_cons(aList)) {
+                    const a1 = aList.car;
+                    let result = $.power(a1, expo);
                     if (is_cons(aList)) {
-                        const a1 = aList.car;
-                        let result = $.power(a1, expo);
-                        if (is_cons(aList)) {
-                            const others = aList.tail();
-                            result = others.reduce((prev: U, curr: U) => $.multiply(prev, $.power(curr, expo)), result);
-                        }
-                        return hook(result, "P");
+                        const others = aList.tail();
+                        result = others.reduce((prev: U, curr: U) => $.multiply(prev, $.power(curr, expo)), result);
                     }
-                    if (is_nil(aList)) {
-                        // Slightly strange case of no a's means (*) => 1, and then 1 ^ m is simply 1.
-                        return hook(one, "Q");
-                    }
+                    return hook(result, "P");
                 }
+                if (is_nil(aList)) {
+                    // Slightly strange case of no a's means (*) => 1, and then 1 ^ m is simply 1.
+                    return hook(one, "Q");
+                }
+                // }
             }
         }
     }

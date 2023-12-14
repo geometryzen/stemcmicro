@@ -21,7 +21,6 @@ class Op extends Function2<U, Rat> implements Operator<Cons> {
         super('pow_2_any_rat', MATH_POW, is_any, is_rat, $);
     }
     transform2(opr: Sym, base: U, expo: Rat, expr: BCons<Sym, U, Rat>): [TFLAGS, U] {
-        // console.lg(this.name);
         if (expo.isZero()) {
             return [TFLAG_DIFF, one];
         }

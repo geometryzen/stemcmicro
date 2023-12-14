@@ -54,8 +54,8 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
-    // console.lg("lhs", $.toInfixString(lhs));
-    // console.lg("rhs", $.toInfixString(rhs));
+    // console.lg("lhs", lhs.toString());
+    // console.lg("rhs", rhs.toString());
     // TODO: Optimize handling of numbers, 0, 1.
 
     // TODO: This function should not known anything about Flt(s) and Rat(s).
@@ -118,9 +118,15 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         return $.multiply(lhs, rhs);
     }
 
+    // console.lg("lhs", lhs.toString());
+    // console.lg("rhs", rhs.toString());
+
     // adjust operands - they are both now lists.
     let p1: Cons = is_multiply(lhs) ? lhs.cdr : items_to_cons(lhs);
     let p2: Cons = is_multiply(rhs) ? rhs.cdr : items_to_cons(rhs);
+
+    // console.lg("p1", p1.toString());
+    // console.lg("p2", p2.toString());
 
     const factors: U[] = [];
 
@@ -164,10 +170,10 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         // for the next loop iteration.
         // console.lg("head1", render_as_infix(head1, $));
         // console.lg("head2", render_as_infix(head2, $));
-        // console.lg("baseL", $.toInfixString(baseL));
-        // console.lg("baseR", $.toInfixString(baseR));
-        // console.lg("expoL", $.toInfixString(expoL));
-        // console.lg("expoR", $.toInfixString(expoR));
+        // console.lg("baseL", baseL.toString());
+        // console.lg("baseR", baseR.toString());
+        // console.lg("expoL", expoL.toString());
+        // console.lg("expoR", expoR.toString());
 
         // If the head elements are the same then the bases will be the same.
         // On the other hand, the heads can be different but the bases the same.

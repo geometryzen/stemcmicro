@@ -624,7 +624,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // console.lg("keys", JSON.stringify(keys));
                 for (const key of keys) {
                     const ops = pops[key];
-                    // console.lg(`Looking for key: ${JSON.stringify(key)} curExpr: ${curExpr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                    // console.lg(`Looking for key: ${JSON.stringify(key)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                     // Determine whether there are handlers in the bucket.
                     if (Array.isArray(ops)) {
                         const op = unambiguous_operator(expr, ops, $);

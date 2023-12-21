@@ -1,5 +1,8 @@
 import { is_flt } from '../operators/flt/is_flt';
 import { is_rat } from '../operators/rat/is_rat';
+import { is_str } from '../operators/str/is_str';
+import { is_sym } from '../operators/sym/is_sym';
+import { is_tensor } from '../operators/tensor/is_tensor';
 import { Flt } from '../tree/flt/Flt';
 import { Num } from '../tree/num/Num';
 import { BigInteger } from '../tree/rat/big-integer';
@@ -12982,15 +12985,15 @@ function issquarematrix(p: Tensor): boolean {
 }
 
 function isstring(p: U): p is Str {
-    return "string" in (p as Str);
+    return is_str(p);
 }
 
 function issymbol(p: U): p is Sym {
-    return "func" in (p as Sym);
+    return is_sym(p);
 }
 
 function istensor(p: U): p is Tensor {
-    return "elem" in (p as Tensor);
+    return is_tensor(p);
 }
 
 function isusersymbol(p: Sym): boolean {
@@ -14467,10 +14470,7 @@ function printbuf(s: string, color: 1 | 2 | 3): void {
 }
 
 function printname(p: Sym) {
-    if ("printname" in p)
-        return p.printname;
-    else
-        return "?";
+    return p.printname;
 }
 
 function promote_tensor(): void {

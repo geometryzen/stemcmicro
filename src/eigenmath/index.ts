@@ -9517,15 +9517,17 @@ function eval_setq(p1: U): void {
         return;
     }
 
-    const s = cadr(p1);
-    if (!(issymbol(s) && isusersymbol(s)))
-        stopf("user symbol expected");
+    const sym = cadr(p1);
+    if (issymbol(sym) && isusersymbol(sym)) {
+        push(caddr(p1));
+        evalf();
+        const p2 = pop();
 
-    push(caddr(p1));
-    evalf();
-    const p2 = pop();
-
-    set_symbol(s, p2, nil);
+        set_symbol(sym, p2, nil);
+    }
+    else {
+        stopf(`user symbol expected sym=${sym}`);
+    }
 }
 
 // Example: a[1] = b
@@ -9544,8 +9546,9 @@ function setq_indexed(p1: U): void {
 
     const S = cadadr(p1);
 
-    if (!(issymbol(S) && isusersymbol(S)))
-        stopf("user symbol expected");
+    if (!(issymbol(S) && isusersymbol(S))) {
+        stopf(`user symbol expected S=${S}`);
+    }
 
     push(S);
     evalf();
@@ -9648,7 +9651,7 @@ function setq_usrfunc(p1: U): void {
     const B = caddr(p1); // function body
 
     if (!(issymbol(F) && isusersymbol(F)))
-        stopf("user symbol expected");
+        stopf(`user symbol expected F=${F}`);
 
     if (lengthf(A) > 9)
         stopf("more than 9 arguments");

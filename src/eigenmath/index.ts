@@ -9650,17 +9650,26 @@ function setq_usrfunc(p1: U): void {
     const A = cdadr(p1); // function args
     const B = caddr(p1); // function body
 
-    if (!(issymbol(F) && isusersymbol(F)))
-        stopf(`user symbol expected F=${F}`);
+    if (issymbol(F) && isusersymbol(F)) {
+        if (lengthf(A) > 9) {
+            stopf("more than 9 arguments");
+        }
 
-    if (lengthf(A) > 9)
-        stopf("more than 9 arguments");
+        push(B);
+        convert_body(A);
+        const C = pop();
 
-    push(B);
-    convert_body(A);
-    const C = pop();
+        set_symbol(F, B, C);
+    }
+    else {
+        if (issymbol(F)) {
+            stopf(`user symbol expected F=${F}`);
+        }
+        else {
+            stopf(`symbol expected F=${F}`);
+        }
+    }
 
-    set_symbol(F, B, C);
 }
 
 function convert_body(A: U): void {

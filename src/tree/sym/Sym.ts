@@ -37,6 +37,9 @@ export function create_sym(printname: string, pos?: number, end?: number): Sym {
 export function create_sym_legacy(printname: string, func: (expr: U) => void) {
     const cached = cache.get(printname);
     if (cached) {
+        if (cached.func !== func) {
+            throw new Error("func mismatch on Sym create.");
+        }
         return cached;
     }
     const sym = new Sym(secretToEnforceUsingCreateSym, printname, func);

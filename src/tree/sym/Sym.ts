@@ -37,8 +37,10 @@ export function create_sym(printname: string, pos?: number, end?: number): Sym {
 export function create_sym_legacy(printname: string, func: (expr: U) => void) {
     const cached = cache.get(printname);
     if (cached) {
-        if (cached.func !== func) {
-            throw new Error("func mismatch on Sym create.");
+        // We can get a race condition between the systems that do and don't store func on the Sym.
+        // Resolve the issue by fixing up the func
+        if (typeof func === 'function' && cached.func !== func) {
+            cached.func = func;
         }
         return cached;
     }
@@ -49,14 +51,14 @@ export function create_sym_legacy(printname: string, func: (expr: U) => void) {
 
 export class Sym extends Atom<'Sym'> {
     readonly #text: string;
-    readonly #func: (expr: U) => void;
+    func: (expr: U) => void;
     /**
      * Use create_sym to create a new Sym instance.
      */
     constructor(secret: number, text: string, func: (expr: U) => void, pos?: number, end?: number) {
         super('Sym', pos, end);
         this.#text = text;
-        this.#func = func;
+        this.func = func;
         if (secret !== secretToEnforceUsingCreateSym) {
             throw new Error("Sym instances must be created using the create_sym function.");
         }
@@ -99,9 +101,6 @@ export class Sym extends Atom<'Sym'> {
     }
     get printname(): string {
         return this.#text;
-    }
-    get func(): (expr: U) => void {
-        return this.#func;
     }
     get text(): string {
         return this.#text;

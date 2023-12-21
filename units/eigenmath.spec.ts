@@ -3,7 +3,7 @@ import { executeScript } from "../src/eigenmath/index";
 
 describe("eigenmath", function () {
     // "stack error" if run while running other tests?
-    xit("A", function () {
+    it("A", function () {
         const lines: string[] = [
             `trace=0`,
             `f=sin(x)/x`,

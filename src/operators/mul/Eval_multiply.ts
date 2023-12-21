@@ -23,7 +23,6 @@ import { is_uom } from "../uom/is_uom";
  */
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
-    // console.lg("Eval_multiply", $.toInfixString(expr), $.isExpanding(), $.isFactoring());
     const args = expr.argList;
     const vals = args.map($.valueOf);
     if (vals.equals(args)) {
@@ -32,6 +31,11 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
             return one;
         }
         else {
+            // const factors = [...vals];
+            // flatten factors
+            // sort
+            // perform pairwise multiplication
+            // recombine
             const retval = vals.car;
             const remaining = vals.cdr;
             if (is_cons(remaining)) {
@@ -54,8 +58,6 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
-    // console.lg("lhs", lhs.toString());
-    // console.lg("rhs", rhs.toString());
     // TODO: Optimize handling of numbers, 0, 1.
 
     // TODO: This function should not known anything about Flt(s) and Rat(s).

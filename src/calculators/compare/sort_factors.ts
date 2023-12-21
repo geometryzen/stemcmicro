@@ -27,6 +27,5 @@ export function sort_factors(factors: U[], $: ExtensionEnv): U[] {
     const sorted = sortable.map(function (elem) {
         return elem.value;
     });
-    // console.lg(`sort_factors(${items_to_infix(factors, $)}) => ${items_to_infix(sorted, $)}`);
     return sorted;
 }

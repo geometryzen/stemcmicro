@@ -1,4 +1,5 @@
 export { create_tensor } from './src/brite/create_tensor';
+export { run } from './src/eigenmath/index';
 export { EnvConfig } from './src/env/EnvConfig';
 export {
     CompareFn,

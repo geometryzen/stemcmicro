@@ -48,6 +48,12 @@ export class Tensor<T extends U = U> extends Atom<'Tensor'> {
         this.#dims = dims;
         this.#elems = elems;
     }
+    public get dims(): number[] {
+        return this.#dims;
+    }
+    public get elems(): T[] {
+        return this.#elems;
+    }
     public get rank(): number {
         for (const elem of this.#elems) {
             if (is_tensor(elem)) {

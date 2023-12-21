@@ -261,6 +261,9 @@ export class Rat extends Atom<'Rat'> {
     pred(): Rat {
         return this.sub(one);
     }
+    get sign(): 1 | -1 {
+        return this.isNegative() ? -1 : 1;
+    }
     sub(rhs: Rat): Rat {
         return this.add(rhs.neg());
     }

@@ -14,26 +14,46 @@ function strcmp(str1: string, str2: string): 0 | 1 | -1 {
 }
 
 const secretToEnforceUsingCreateSym: number = Math.random();
+/**
+ * A map of printname to symbol.
+ */
 const cache: Map<string, Sym> = new Map();
 
-export function create_sym(description: string, pos?: number, end?: number): Sym {
-    const cached = cache.get(description);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const NOOP = (expr: U) => {
+    return;
+};
+
+export function create_sym(printname: string, pos?: number, end?: number): Sym {
+    const cached = cache.get(printname);
     if (cached) {
         return cached;
     }
-    const sym = new Sym(secretToEnforceUsingCreateSym, description, pos, end);
-    cache.set(description, sym);
+    const sym = new Sym(secretToEnforceUsingCreateSym, printname, NOOP, pos, end);
+    cache.set(printname, sym);
+    return sym;
+}
+
+export function create_sym_legacy(printname: string, func: (expr: U) => void) {
+    const cached = cache.get(printname);
+    if (cached) {
+        return cached;
+    }
+    const sym = new Sym(secretToEnforceUsingCreateSym, printname, func);
+    cache.set(printname, sym);
     return sym;
 }
 
 export class Sym extends Atom<'Sym'> {
     readonly #text: string;
+    readonly #func: (expr: U) => void;
     /**
      * Use create_sym to create a new Sym instance.
      */
-    constructor(secret: number, text: string, pos?: number, end?: number) {
+    constructor(secret: number, text: string, func: (expr: U) => void, pos?: number, end?: number) {
         super('Sym', pos, end);
         this.#text = text;
+        this.#func = func;
         if (secret !== secretToEnforceUsingCreateSym) {
             throw new Error("Sym instances must be created using the create_sym function.");
         }
@@ -73,6 +93,12 @@ export class Sym extends Atom<'Sym'> {
     }
     key(): string {
         return this.#text;
+    }
+    get printname(): string {
+        return this.#text;
+    }
+    get func(): (expr: U) => void {
+        return this.#func;
     }
     get text(): string {
         return this.#text;

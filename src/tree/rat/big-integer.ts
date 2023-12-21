@@ -217,8 +217,14 @@ export class BigInteger {
     not(): BigInteger {
         return this.negate().prev();
     }
+    /**
+     * Computes this raised to the power of v.
+     * WARNING: Because the result must be a BigInteger, when v is negative the result is zero.
+     * @param v 
+     * @returns 
+     */
     pow(v: string | number | bigint | BigInteger): BigInteger {
-        const n = parseValue(v) as BigInteger;
+        const n = parseValue(v);
         const a = this.value;
         let b = n.value;
         const _0 = BigInt(0);

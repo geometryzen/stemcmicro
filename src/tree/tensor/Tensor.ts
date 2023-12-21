@@ -157,7 +157,7 @@ export class Tensor<T extends U = U> extends Atom<'Tensor'> {
         return '<tensor>';
     }
     toString(): string {
-        return `${this.name}(ndim=${this.ndim}, dim=[${this.#dims}], elems=[${this.#elems.map(function (elem) {
+        return `${this.name}(dims=[${this.#dims}], elems=[${this.#elems.map(function (elem) {
             return `${elem}`;
         }).join(',')}])`;
     }

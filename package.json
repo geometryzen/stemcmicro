@@ -44,6 +44,7 @@
         "unit-derivative": "mocha 'units/derivative.spec.ts'",
         "unit-divide": "mocha 'units/divide.spec.ts'",
         "unit-dot": "mocha 'units/dot.spec.ts'",
+        "unit-eigenmath": "mocha 'units/eigenmath.spec.ts'",
         "unit-eigenvec": "mocha 'units/eigenvec.spec.ts'",
         "unit-exp": "mocha 'units/exp.spec.ts'",
         "unit-factor": "mocha 'units/factor.spec.ts'",

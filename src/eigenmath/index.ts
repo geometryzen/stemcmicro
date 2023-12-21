@@ -1,3 +1,5 @@
+import { is_flt } from '../operators/flt/is_flt';
+import { is_rat } from '../operators/rat/is_rat';
 import { Flt } from '../tree/flt/Flt';
 import { Num } from '../tree/num/Num';
 import { BigInteger } from '../tree/rat/big-integer';
@@ -5,7 +7,7 @@ import { Rat } from '../tree/rat/Rat';
 import { Str } from '../tree/str/Str';
 import { create_sym_legacy, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, Cons, cons as create_cons, is_nil, nil, U } from '../tree/tree';
+import { car, cdr, Cons, cons as create_cons, is_cons, is_nil, nil, U } from '../tree/tree';
 
 function alloc_tensor(): Tensor {
     return new Tensor([], []);
@@ -18,7 +20,7 @@ function alloc_matrix(nrow: number, ncol: number) {
     return p;
 }
 
-function alloc_vector(n: number) {
+function alloc_vector(n: number): Tensor {
     const p = alloc_tensor();
     p.dims[0] = n;
     return p;
@@ -82,11 +84,12 @@ function push_bignum(sign: 1 | -1, a: BigInteger, b: BigInteger): void {
 
     if (bignum_iszero(a)) {
         sign = 1;
-        if (!bignum_equal(b, 1))
+        if (!bignum_equal(b, 1)) {
             b = bignum_int(1);
+        }
     }
 
-    const X: Rat = new Rat(a, b);
+    const X: Rat = sign > 0 ? new Rat(a, b) : new Rat(a.negate(), b);
 
     push(X);
 }
@@ -114,13 +117,17 @@ function bignum_mod(u: BigInteger, v: BigInteger): BigInteger {
 }
 
 function bignum_pow(u: BigInteger, v: BigInteger): BigInteger {
-    return u.pow(v);
+    if (v.isNegative()) {
+        throw new Error(`bignum_pow(u=${u}, v=${v}): v must be positive.`);
+    }
+    const result = u.pow(v);
+    return result;
 }
 
 // returns null if not perfect root, otherwise returns u^(1/v)
 
 function bignum_root(u: BigInteger, v: BigInteger): BigInteger | null {
-    return u.pow(new BigInteger(BigInt(0)).divide(v));
+    return u.pow(new BigInteger(BigInt(1)).divide(v));
 }
 
 function caaddr(p: U): U {
@@ -155,7 +162,7 @@ function cadr(p: U): U {
     return car(cdr(p));
 }
 
-function cancel_factor() {
+function cancel_factor(): void {
 
     let p2 = pop();
     const p1 = pop();
@@ -857,7 +864,6 @@ const EMIT_TABLE = 10;
 let emit_level: number;
 
 function display(): void {
-
     emit_level = 0;
 
     let p1 = pop();
@@ -1998,7 +2004,12 @@ function
 }
 
 function draw_formula(x: number, y: number, p: U): void {
-    // var char_num, d, dx, dy, font_num, h, k, w;
+    if (isNaN(x)) {
+        throw new Error("x is NaN");
+    }
+    if (isNaN(y)) {
+        throw new Error("y is NaN");
+    }
 
     const k = opcode(p);
     const h = height(p);
@@ -8660,12 +8671,12 @@ function eval_print(p1: U): void {
 }
 
 function print_result(): void {
-
     let p2 = pop(); // result
-    let p1 = pop(); // input
+    const p1 = pop(); // input
 
-    if (is_nil(p2))
+    if (is_nil(p2)) {
         return;
+    }
 
     if (annotate_result(p1, p2)) {
         push_symbol(SETQ);
@@ -8675,9 +8686,9 @@ function print_result(): void {
         p2 = pop();
     }
 
-    p1 = get_binding(symbol(TTY));
+    const tty = get_binding(symbol(TTY));
 
-    if (p1 == symbol(TTY) || iszero(p1)) {
+    if (tty == symbol(TTY) || iszero(tty)) {
         push(p2);
         display();
     }
@@ -10987,10 +10998,12 @@ function evalf(): void {
 
 function evalf_nib(): void {
 
-    if (eval_level == 200)
+    if (eval_level == 200) {
         stopf("circular definition?");
+    }
 
     const p1 = pop();
+
 
     const sym = car(p1);
     if (iscons(p1) && issymbol(sym) && iskeyword(sym)) {
@@ -12721,11 +12734,8 @@ function iscomplexnumber(p: U): boolean {
     return isimaginarynumber(p) || (lengthf(p) == 3 && car(p) == symbol(ADD) && isnum(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
-function iscons(p: U) {
-    if ("car" in (p as Cons))
-        return 1;
-    else
-        return 0;
+function iscons(p: U): 0 | 1 {
+    return is_cons(p) ? 1 : 0;
 }
 
 function isdenominator(p: U) {
@@ -12788,7 +12798,7 @@ function isdigit(s: string): boolean {
 }
 
 function isdouble(p: U): p is Flt {
-    return "d" in (p as Flt);
+    return is_flt(p);
 }
 
 function isdoublesomewhere(p: U) {
@@ -12953,7 +12963,7 @@ function isradical(p: U): boolean {
 }
 
 function isrational(p: U): p is Rat {
-    return "a" in (p as Rat);
+    return is_rat(p);
 }
 
 function issmallinteger(p: U): boolean {
@@ -14094,7 +14104,7 @@ function power_natural_number(EXPO: U): void {
 }
 // BASE and EXPO are numbers
 
-function power_numbers(BASE: Num, EXPO: Num) {
+function power_numbers(BASE: Num, EXPO: Num): void {
 
     // n^0
 
@@ -14134,18 +14144,24 @@ function power_numbers(BASE: Num, EXPO: Num) {
     // integer exponent?
 
     if (isinteger(EXPO)) {
-        const a = bignum_pow(BASE.a, EXPO.a);
-        const b = bignum_pow(BASE.b, EXPO.a);
-        if (isnegativenumber(BASE) && bignum_odd(EXPO.a))
-            if (isnegativenumber(EXPO))
-                push_bignum(-1, b, a); // reciprocate
-            else
-                push_bignum(-1, a, b);
-        else
-            if (isnegativenumber(EXPO))
-                push_bignum(1, b, a); // reciprocate
-            else
-                push_bignum(1, a, b);
+        // TODO: Move this into Rat.pow(Rat)
+        // We can forget about EXPO.b because EXPO is an integer.
+        // It's crucial that we handle negative exponents carefully.
+        if (EXPO.isNegative()) {
+            // (a/b)^(-n) = (b/a)^n = (b^n)/(a^n)
+            const n = EXPO.a.negate();
+            const a = bignum_pow(BASE.a, n);
+            const b = bignum_pow(BASE.b, n);
+            const X = new Rat(b, a);
+            push(X);
+        }
+        else {
+            const n = EXPO.a;
+            const a = bignum_pow(BASE.a, n);
+            const b = bignum_pow(BASE.b, n);
+            const X = new Rat(b, a);
+            push(X);
+        }
         return;
     }
 

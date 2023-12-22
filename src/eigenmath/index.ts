@@ -6,7 +6,7 @@ import { is_tensor } from '../operators/tensor/is_tensor';
 import { Flt } from '../tree/flt/Flt';
 import { Num } from '../tree/num/Num';
 import { BigInteger } from '../tree/rat/big-integer';
-import { Rat } from '../tree/rat/Rat';
+import { create_rat, Rat } from '../tree/rat/Rat';
 import { Str } from '../tree/str/Str';
 import { create_sym_legacy, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
@@ -111,8 +111,13 @@ function bignum_div(u: BigInteger, v: BigInteger): BigInteger {
     return u.divide(v);
 }
 
+// Previously, this probably did not have a sign
 function bignum_itoa(u: BigInteger): string {
-    return u.toString();
+    if (u.isNegative()) {
+        return u.negate().toString();
+    }
+    const str = u.toString();
+    return str;
 }
 
 function bignum_mod(u: BigInteger, v: BigInteger): BigInteger {
@@ -7931,8 +7936,9 @@ function mod_rationals(p1: Rat, p2: Rat): void {
     floorfunc();
     push(p2);
     multiply();
-    if (p1.sign == p2.sign)
+    if (p1.sign == p2.sign) {
         negate();
+    }
     add();
 }
 
@@ -8309,7 +8315,6 @@ function eval_numerator(p1: U): void {
 }
 
 function numerator(): void {
-
     let p1 = pop();
 
     if (isrational(p1)) {
@@ -12873,16 +12878,12 @@ function isequaln(p: U, n: number): boolean {
 
 function isequalq(p: U, a: number, b: number): boolean {
     if (isrational(p)) {
-        if (isnegativenumber(p) && a >= 0)
-            return false;
-        if (!isnegativenumber(p) && a < 0)
-            return false;
-        a = Math.abs(a);
-        return bignum_equal(p.a, a) && bignum_equal(p.b, b);
+        return p.equalsRat(create_rat(a, b));
     }
 
-    if (isdouble(p))
+    if (isdouble(p)) {
         return p.d == a / b;
+    }
 
     return false;
 }
@@ -12912,7 +12913,8 @@ function iskeyword(p: Sym): boolean {
 }
 
 function isminusone(p: U): boolean {
-    return isequaln(p, -1);
+    const retval = isequaln(p, -1);
+    return retval;
 }
 
 function isminusoneoversqrttwo(p: U) {
@@ -12920,7 +12922,7 @@ function isminusoneoversqrttwo(p: U) {
 }
 
 function isnegativenumber(p: Num): boolean {
-    return (isrational(p) && p.sign == -1) || (isdouble(p) && p.d < 0);
+    return p.isNegative();
 }
 
 function isnegativeterm(p: U): boolean {

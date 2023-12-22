@@ -2442,7 +2442,6 @@ function emit_graph(): void {
 }
 
 function emit_labels(): void {
-
     push_double(ymax);
     let p = pop();
     emit_level = 1; // small font
@@ -5823,11 +5822,7 @@ function floatfunc_subst(): void {
     }
 
     if (isrational(p1)) {
-        let a = bignum_float(p1.a);
-        const b = bignum_float(p1.b);
-        if (isnegativenumber(p1))
-            a = -a;
-        push_double(a / b);
+        push_double(p1.toNumber());
         return;
     }
 

@@ -14707,7 +14707,7 @@ export interface ScriptContentHandler {
 export interface ScriptErrorHandler {
     error(inbuf: string, start: number, end: number, err: unknown): void
 }
-class PrintScriptContentHandler implements ScriptContentHandler {
+export class PrintScriptContentHandler implements ScriptContentHandler {
     constructor(readonly stdout: HTMLElement) {
 
     }
@@ -14723,7 +14723,7 @@ class PrintScriptContentHandler implements ScriptContentHandler {
         print_result_and_input(value, input);
     }
 }
-class PrintScriptErrorHandler implements ScriptErrorHandler {
+export class PrintScriptErrorHandler implements ScriptErrorHandler {
     error(inbuf: string, start: number, end: number, err: unknown): void {
         printbuf(inbuf.substring(trace1, trace2) + "\nStop: " + err, RED);
     }

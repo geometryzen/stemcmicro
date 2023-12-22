@@ -14730,17 +14730,6 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
 }
 
 /**
- * Evaluates the script defined in the HTMLTextAreaElement with Id "stdin" and sends the output
- * to the HTMLElement with Id "stdout".
- */
-export function run(): void {
-    const scriptText = (document.getElementById("stdin") as HTMLTextAreaElement).value;
-    const stdout = document.getElementById("stdout") as HTMLElement;
-    const contentHandler = new PrintScriptContentHandler(stdout);
-    const errorHandler = new PrintScriptErrorHandler();
-    executeScript(scriptText, contentHandler, errorHandler);
-}
-/**
  * 
  * @param scriptText 
  * @param contentHandler 

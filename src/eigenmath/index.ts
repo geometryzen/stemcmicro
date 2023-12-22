@@ -14178,7 +14178,7 @@ function power_numbers(BASE: Num, EXPO: Num): void {
             const n = EXPO.a;
             const a = bignum_pow(BASE.a, n);
             const b = bignum_pow(BASE.b, n);
-            const X = new Rat(b, a);
+            const X = new Rat(a, b);
             push(X);
         }
         return;
@@ -14935,8 +14935,9 @@ function scan_term(): void {
 
         scan_power();
 
-        if (t == "/")
+        if (t == "/") {
             static_reciprocate();
+        }
     }
 
     if (stack.length - h > 1) {

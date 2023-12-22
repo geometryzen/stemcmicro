@@ -5329,8 +5329,6 @@ function eval_draw(p1: U): void {
 
     draw_array = [];
 
-    console.log(`draw(F=${F},X=${T})`);
-
     draw_pass1(F, T);
     draw_pass2(F, T);
 
@@ -15335,22 +15333,18 @@ function setup_final(F: U, T: Sym): void {
         tmin = xmin;
         tmax = xmax;
     }
-    console.log(`tmin=${tmin}, tmax=${tmax}`);
 }
 
 function setup_trange(): void {
 
     tmin = -Math.PI;
     tmax = Math.PI;
-    console.log(`tmin=${tmin}, tmax=${tmax}`);
 
     let p1: U = lookup("trange");
     push(p1);
     eval_nonstop();
     floatfunc();
     p1 = pop();
-
-    console.log(`setup_trange ${p1}`);
 
     if (!istensor(p1) || p1.ndim != 1 || p1.dims[0] != 2)
         return;
@@ -15367,22 +15361,18 @@ function setup_trange(): void {
 
     push(p3);
     tmax = pop_double();
-    console.log(`tmin=${tmin}, tmax=${tmax}`);
 }
 
 function setup_xrange(): void {
 
     xmin = -10;
     xmax = 10;
-    console.log(`xmin=${xmin}, xmax=${xmax}`);
 
     let p1: U = lookup("xrange");
     push(p1);
     eval_nonstop();
     floatfunc();
     p1 = pop();
-
-    console.log(`setup_xrange ${p1}`);
 
     if (!istensor(p1) || p1.ndim != 1 || p1.dims[0] != 2)
         return;
@@ -15398,7 +15388,6 @@ function setup_xrange(): void {
 
     push(p3);
     xmax = pop_double();
-    console.log(`xmin=${xmin}, xmax=${xmax}`);
 }
 
 function setup_yrange(): void {
@@ -15426,7 +15415,6 @@ function setup_yrange(): void {
 
     push(p3);
     ymax = pop_double();
-    console.log(`ymin=${ymin}, ymax=${ymax}`);
 }
 
 function sort(n: number): void {

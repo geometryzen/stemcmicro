@@ -12913,6 +12913,12 @@ function iskeyword(p: Sym): boolean {
 }
 
 function isminusone(p: U): boolean {
+    // Optimize by avoiding object creation...
+    /*
+    if (isrational(p)) {
+        return p.isMinusOne();
+    }
+    */
     const retval = isequaln(p, -1);
     return retval;
 }

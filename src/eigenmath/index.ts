@@ -52,7 +52,7 @@ function bignum_equal(u: BigInteger, n: number): boolean {
 function bignum_odd(u: BigInteger): boolean {
     return u.isOdd();
 }
-
+/*
 function bignum_float(u: BigInteger): number {
 
     const d = u.toJSNumber();
@@ -63,17 +63,19 @@ function bignum_float(u: BigInteger): number {
 
     return d;
 }
-
+*/
 // convert bignum to int32
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function bignum_smallnum(u: BigInteger): number {
-    return u.toJSNumber();
+    stopf(`bignum_smallnum`);
+    // return u.toJSNumber();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function bignum_issmallnum(u: BigInteger): boolean {
-    // TODO
-    return false;
+    stopf(`bignum_issmallnum`);
+    // return false;
 }
 
 /**
@@ -13617,22 +13619,12 @@ function pop_double(): number {
 
     const p = pop();
 
-    if (!isnum(p))
-        stopf("number expected");
-
-    let d: number;
-
-    if (isdouble(p))
-        d = p.d;
-    else {
-        const a = bignum_float(p.a);
-        const b = bignum_float(p.b);
-        d = a / b;
-        if (isnegativenumber(p))
-            d = -d;
+    if (isnum(p)) {
+        return p.toNumber();
     }
-
-    return d;
+    else {
+        stopf("number expected");
+    }
 }
 
 function pop_integer(): number {
@@ -14744,7 +14736,7 @@ export function executeScript(scriptText: string): string[] {
     inbuf = scriptText;
 
     init();
-    initscript();
+    // initscript();
 
     let k = 0;
 

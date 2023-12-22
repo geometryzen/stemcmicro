@@ -292,6 +292,9 @@ export class BigInteger {
     subtract(v: string | number | bigint | BigInteger): BigInteger {
         return new BigInteger(this.value - parseValue(v).value);
     }
+    toN(): number {
+        return Number(this.value);
+    }
     toString(radix?: number, alphabet?: string): string {
         if (radix === undefined) radix = 10;
         if (radix != 10) return toBaseString(this, radix, alphabet);

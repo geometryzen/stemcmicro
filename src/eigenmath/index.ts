@@ -2488,8 +2488,9 @@ function emit_points(): void {
         let x = draw_array[i].x;
         let y = draw_array[i].y;
 
-        if (!inrange(x, y))
+        if (!inrange(x, y)) {
             continue;
+        }
 
         x += DRAW_LEFT_PAD;
         y = DRAW_HEIGHT - y + DRAW_TOP_PAD;
@@ -5327,6 +5328,8 @@ function eval_draw(p1: U): void {
     setup_final(F, T as Sym);
 
     draw_array = [];
+
+    console.log(`draw(F=${F},X=${T})`);
 
     draw_pass1(F, T);
     draw_pass2(F, T);
@@ -14565,19 +14568,7 @@ function push_integer(n: number): void {
  * @param b 
  */
 function push_rational(a: number, b: number): void {
-    let sign: 1 | -1;
-
-    if (a < 0)
-        sign = -1;
-    else
-        sign = 1;
-
-    a = Math.abs(a);
-
-    const A = bignum_int(a);
-    const B = bignum_int(b);
-
-    push_bignum(sign, A, B);
+    push(create_rat(a, b));
 }
 
 function push_string(s: string) {
@@ -14588,8 +14579,7 @@ function push_symbol(p: string): void {
     push(symbol(p));
 }
 
-function
-    reciprocate() {
+function reciprocate(): void {
     push_integer(-1);
     power();
 }
@@ -15324,8 +15314,9 @@ function scan_inbuf(k: number): number {
 }
 
 function set_symbol(p1: Sym, p2: U, p3: U): void {
-    if (!isusersymbol(p1))
+    if (!isusersymbol(p1)) {
         stopf("symbol error");
+    }
     binding[p1.printname] = p2;
     usrfunc[p1.printname] = p3;
 }
@@ -15344,12 +15335,14 @@ function setup_final(F: U, T: Sym): void {
         tmin = xmin;
         tmax = xmax;
     }
+    console.log(`tmin=${tmin}, tmax=${tmax}`);
 }
 
 function setup_trange(): void {
 
     tmin = -Math.PI;
     tmax = Math.PI;
+    console.log(`tmin=${tmin}, tmax=${tmax}`);
 
     let p1: U = lookup("trange");
     push(p1);
@@ -15357,32 +15350,39 @@ function setup_trange(): void {
     floatfunc();
     p1 = pop();
 
+    console.log(`setup_trange ${p1}`);
+
     if (!istensor(p1) || p1.ndim != 1 || p1.dims[0] != 2)
         return;
 
     const p2 = p1.elems[0];
     const p3 = p1.elems[1];
 
-    if (!isnum(p2) || !isnum(p3))
+    if (!isnum(p2) || !isnum(p3)) {
         return;
+    }
 
     push(p2);
     tmin = pop_double();
 
     push(p3);
     tmax = pop_double();
+    console.log(`tmin=${tmin}, tmax=${tmax}`);
 }
 
 function setup_xrange(): void {
 
     xmin = -10;
     xmax = 10;
+    console.log(`xmin=${xmin}, xmax=${xmax}`);
 
     let p1: U = lookup("xrange");
     push(p1);
     eval_nonstop();
     floatfunc();
     p1 = pop();
+
+    console.log(`setup_xrange ${p1}`);
 
     if (!istensor(p1) || p1.ndim != 1 || p1.dims[0] != 2)
         return;
@@ -15398,6 +15398,7 @@ function setup_xrange(): void {
 
     push(p3);
     xmax = pop_double();
+    console.log(`xmin=${xmin}, xmax=${xmax}`);
 }
 
 function setup_yrange(): void {
@@ -15425,6 +15426,7 @@ function setup_yrange(): void {
 
     push(p3);
     ymax = pop_double();
+    console.log(`ymin=${ymin}, ymax=${ymax}`);
 }
 
 function sort(n: number): void {

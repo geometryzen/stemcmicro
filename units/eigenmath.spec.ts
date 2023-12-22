@@ -1,5 +1,27 @@
 import { assert } from "chai";
-import { executeScript } from "../src/eigenmath/index";
+import { executeScript, ScriptContentHandler, ScriptErrorHandler } from "../src/eigenmath/index";
+import { U } from "../src/tree/tree";
+
+class TestContentHandler implements ScriptContentHandler {
+    values: U[] = [];
+    inputs: U[] = [];
+    begin(): void {
+        this.values.length = 0;
+    }
+    output(value: U, input: U): void {
+        this.values.push(value);
+        this.inputs.push(input);
+    }
+    end(): void {
+    }
+}
+
+class TestErrorHandler implements ScriptErrorHandler {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    error(inbuf: string, start: number, end: number, err: unknown): void {
+
+    }
+}
 
 describe("eigenmath", function () {
     // "stack error" if run while running other tests?
@@ -12,8 +34,11 @@ describe("eigenmath", function () {
             `draw(f,x)`
         ];
         const scriptText = lines.join('\n');
-        const values = executeScript(scriptText);
-        assert.strictEqual(values.length, 2);
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 5);
         // The output currently contains svg...
         // const value = values[0];
         // assert.strictEqual(value, "?");

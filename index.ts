@@ -1,5 +1,5 @@
 export { create_tensor } from './src/brite/create_tensor';
-export { run } from './src/eigenmath/index';
+export { executeScript, run, ScriptContentHandler, ScriptErrorHandler } from './src/eigenmath/index';
 export { EnvConfig } from './src/env/EnvConfig';
 export {
     CompareFn,
@@ -40,6 +40,7 @@ export { create_flt, Flt, oneAsFlt, zeroAsFlt } from './src/tree/flt/Flt';
 export { create_hyp, delta, epsilon, Hyp } from './src/tree/hyp/Hyp';
 export { Imu, imu } from './src/tree/imu/Imu';
 export { Num } from './src/tree/num/Num';
+export { BigInteger } from './src/tree/rat/big-integer';
 export { create_int, create_rat, one, Rat, zero } from './src/tree/rat/Rat';
 export { Str } from './src/tree/str/Str';
 export { create_sym, Sym } from './src/tree/sym/Sym';

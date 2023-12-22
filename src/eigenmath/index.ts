@@ -14699,6 +14699,36 @@ function restore_symbol(): void {
     set_symbol(p1, p2, p3);
 }
 
+export interface ScriptContentHandler {
+    begin(): void;
+    output(value: U, input: U): void;
+    end(): void;
+}
+export interface ScriptErrorHandler {
+    error(inbuf: string, start: number, end: number, err: unknown): void
+}
+class PrintScriptContentHandler implements ScriptContentHandler {
+    constructor(readonly stdout: HTMLElement) {
+
+    }
+    begin(): void {
+        this.stdout.innerHTML = "";
+    }
+    end(): void {
+        for (const output of outputs) {
+            this.stdout.innerHTML += output;
+        }
+    }
+    output(value: U, input: U): void {
+        print_result_and_input(value, input);
+    }
+}
+class PrintScriptErrorHandler implements ScriptErrorHandler {
+    error(inbuf: string, start: number, end: number, err: unknown): void {
+        printbuf(inbuf.substring(trace1, trace2) + "\nStop: " + err, RED);
+    }
+}
+
 /**
  * Evaluates the script defined in the HTMLTextAreaElement with Id "stdin" and sends the output
  * to the HTMLElement with Id "stdout".
@@ -14706,58 +14736,53 @@ function restore_symbol(): void {
 export function run(): void {
     const scriptText = (document.getElementById("stdin") as HTMLTextAreaElement).value;
     const stdout = document.getElementById("stdout") as HTMLElement;
-    stdout.innerHTML = "";
+    const contentHandler = new PrintScriptContentHandler(stdout);
+    const errorHandler = new PrintScriptErrorHandler();
+    executeScript(scriptText, contentHandler, errorHandler);
+}
+/**
+ * 
+ * @param scriptText 
+ * @param contentHandler 
+ * @param errorHandler 
+ */
+export function executeScript(scriptText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler): void {
+    contentHandler.begin();
     try {
-        executeScript(scriptText);
+        inbuf = scriptText;
+
+        init();
+        initscript();
+
+        let k = 0;
+
+        for (; ;) {
+
+            k = scan_inbuf(k);
+
+            if (k == 0) {
+                break; // end of input
+            }
+
+            const input = pop();
+            const result = eval_input(input);
+            contentHandler.output(result, input);
+            if (!is_nil(result)) {
+                set_symbol(symbol(LAST), result, nil);
+            }
+        }
     }
     catch (errmsg) {
         if ((errmsg as string).length > 0) {
             if (trace1 < trace2 && inbuf[trace2 - 1] == '\n') {
                 trace2--;
             }
-            printbuf(inbuf.substring(trace1, trace2) + "\nStop: " + errmsg, RED);
+            errorHandler.error(inbuf, trace1, trace2, errmsg);
         }
     }
     finally {
-        for (const output of outputs) {
-            stdout.innerHTML += output;
-        }
+        contentHandler.end();
     }
-}
-/**
- * Work In Progress
- * @param scriptText 
- * @returns 
- */
-export function executeScript(scriptText: string): string[] {
-
-    inbuf = scriptText;
-
-    init();
-    initscript();
-
-    let k = 0;
-
-    for (; ;) {
-
-        k = scan_inbuf(k);
-
-        if (k == 0) {
-            break; // end of input
-        }
-
-        const input = pop();
-        const result = eval_input(input);
-        print_result_and_input(result, input);
-        if (!is_nil(result)) {
-            set_symbol(symbol(LAST), result, nil);
-        }
-    }
-
-    // Make a defensive copy of the output.
-    return outputs.map(function (x) {
-        return x;
-    });
 }
 
 function sample(F: U, T: U, t: number): void {
@@ -15552,7 +15577,13 @@ let eval_level: number;
 let expanding: number;
 let drawing: number;
 let nonstop: number;
+/**
+ * The start index into inbuf.
+ */
 let trace1: number;
+/**
+ * The end index into inbuf.
+ */
 let trace2: number;
 
 const symtab: { [name: string]: Sym } = {

@@ -873,10 +873,8 @@ const EMIT_TABLE = 10;
 
 let emit_level: number;
 
-function display(): void {
+function print_svg(p1: U): void {
     emit_level = 0;
-
-    let p1 = pop();
 
     emit_list(p1);
 
@@ -3056,19 +3054,10 @@ function eval_and(p1: U): void {
     push_integer(1);
 }
 
-function eval_and_print_result(): void {
-    const p1 = pop();
-    push(p1);
+function eval_input(input: U): U {
+    push(input);
     evalf();
-    const p2 = pop();
-
-    push(p1);
-    push(p2);
-    print_result();
-
-    if (!is_nil(p2)) {
-        set_symbol(symbol(LAST), p2, nil);
-    }
+    return pop();
 }
 
 function eval_arccos(p1: U) {
@@ -8670,54 +8659,58 @@ function eval_print(p1: U): void {
         push(car(p1));
         push(car(p1));
         evalf();
-        print_result();
+        const result = pop();
+        const input = pop();
+        print_result_and_input(result, input);
         p1 = cdr(p1);
     }
     push(nil);
 }
 
-function print_result(): void {
-    let p2 = pop(); // result
-    const p1 = pop(); // input
+function print_result_and_input(result: U, input: U): void {
 
-    if (is_nil(p2)) {
+    if (is_nil(result)) {
         return;
     }
 
-    if (annotate_result(p1, p2)) {
-        push_symbol(SETQ);
-        push(p1);
-        push(p2);
-        list(3);
-        p2 = pop();
+    if (should_annotate_result(input, result)) {
+        result = annotate(input, result);
     }
 
     const tty = get_binding(symbol(TTY));
 
     if (tty == symbol(TTY) || iszero(tty)) {
-        push(p2);
-        display();
+        print_svg(result);
     }
-    else
-        print_infixform(p2);
+    else {
+        print_infix(result);
+    }
 }
 
 // returns 1 if result should be annotated
 
-function annotate_result(p1: U, p2: U): 0 | 1 {
-    if (!(issymbol(p1) && isusersymbol(p1)))
+function should_annotate_result(input: U, result: U): 0 | 1 {
+    if (!(issymbol(input) && isusersymbol(input)))
         return 0;
 
-    if (p1 == p2)
+    if (input == result)
         return 0; // A = A
 
-    if (p1 == symbol(I_LOWER) && isimaginaryunit(p2))
+    if (input == symbol(I_LOWER) && isimaginaryunit(result))
         return 0;
 
-    if (p1 == symbol(J_LOWER) && isimaginaryunit(p2))
+    if (input == symbol(J_LOWER) && isimaginaryunit(result))
         return 0;
 
     return 1;
+}
+
+function annotate(input: U, result: U): U {
+    push_symbol(SETQ);
+    push(input);
+    push(result);
+    list(3);
+    return pop();
 }
 
 function eval_product(p1: U): void {
@@ -9496,7 +9489,12 @@ function eval_run(p1: U): void {
         if (k == 0)
             break; // end of input
 
-        eval_and_print_result();
+        const input = pop();
+        const result = eval_input(input);
+        print_result_and_input(result, input);
+        if (!is_nil(result)) {
+            set_symbol(symbol(LAST), result, nil);
+        }
     }
 
     inbuf = save_inbuf;
@@ -12539,7 +12537,7 @@ function infixform_arglist(p: U): void {
 // sign is not emitted
 
 function infixform_rational(p: Rat): void {
-
+    // DGH: For sign to not be emitted we should abs() here.
     const a = bignum_itoa(p.a);
     infixform_write(a);
 
@@ -14439,7 +14437,7 @@ function prefixform(p: U) {
         outbuf += " ? ";
 }
 
-function print_infixform(p: U): void {
+function print_infix(p: U): void {
     outbuf = "";
     infixform_expr(p);
     infixform_write("\n");
@@ -14736,7 +14734,7 @@ export function executeScript(scriptText: string): string[] {
     inbuf = scriptText;
 
     init();
-    // initscript();
+    initscript();
 
     let k = 0;
 
@@ -14748,7 +14746,12 @@ export function executeScript(scriptText: string): string[] {
             break; // end of input
         }
 
-        eval_and_print_result();
+        const input = pop();
+        const result = eval_input(input);
+        print_result_and_input(result, input);
+        if (!is_nil(result)) {
+            set_symbol(symbol(LAST), result, nil);
+        }
     }
 
     // Make a defensive copy of the output.

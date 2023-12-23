@@ -5,7 +5,8 @@ import { U } from "../src/tree/tree";
 class TestContentHandler implements ScriptContentHandler {
     values: U[] = [];
     inputs: U[] = [];
-    begin(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    begin($: ScriptVars): void {
         this.values.length = 0;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -13,13 +14,14 @@ class TestContentHandler implements ScriptContentHandler {
         this.values.push(value);
         this.inputs.push(input);
     }
-    end(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    end($: ScriptVars): void {
     }
 }
 
 class TestErrorHandler implements ScriptErrorHandler {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    error(inbuf: string, start: number, end: number, err: unknown): void {
+    error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
 
     }
 }

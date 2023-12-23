@@ -896,13 +896,13 @@ function print_svg(p1: U, $: ScriptVars): void {
     const heq = "height='" + h + "'";
     const weq = "width='" + w + "'";
 
-    outbuf = "<svg " + heq + weq + ">";
+    $.outbuf = "<svg " + heq + weq + ">";
 
-    draw_formula(x, y, p1);
+    draw_formula(x, y, p1, $);
 
-    outbuf += "</svg><br>";
+    $.outbuf += "</svg><br>";
 
-    outputs.push(outbuf);
+    $.outputs.push($.outbuf);
 }
 
 function emit_args(p: U, $: ScriptVars): void {
@@ -1385,11 +1385,11 @@ function emit_power(p: U, $: ScriptVars): void {
     }
 
     if (isimaginaryunit(p)) {
-        if (isimaginaryunit(get_binding(symbol(J_LOWER)))) {
+        if (isimaginaryunit(get_binding(symbol(J_LOWER), $))) {
             emit_italic_string("j", $);
             return;
         }
-        if (isimaginaryunit(get_binding(symbol(I_LOWER)))) {
+        if (isimaginaryunit(get_binding(symbol(I_LOWER), $))) {
             emit_italic_string("i", $);
             return;
         }
@@ -2010,7 +2010,7 @@ function divide($: ScriptVars): void {
     multiply($);
 }
 
-function draw_formula(x: number, y: number, p: U): void {
+function draw_formula(x: number, y: number, p: U, $: ScriptVars): void {
     if (isNaN(x)) {
         throw new Error("x is NaN");
     }
@@ -2036,13 +2036,13 @@ function draw_formula(x: number, y: number, p: U): void {
         case EMIT_CHAR:
             font_num = val1(p);
             char_num = val2(p);
-            draw_char(x, y, font_num, char_num);
+            draw_char(x, y, font_num, char_num, $);
             break;
 
         case EMIT_LIST:
             p = car(p);
             while (iscons(p)) {
-                draw_formula(x, y, car(p));
+                draw_formula(x, y, car(p), $);
                 x += width(car(p));
                 p = cdr(p);
             }
@@ -2053,33 +2053,33 @@ function draw_formula(x: number, y: number, p: U): void {
             const dx = val1(p);
             const dy = val2(p);
             p = caddr(p);
-            draw_formula(x + dx, y + dy, p);
+            draw_formula(x + dx, y + dy, p, $);
             break;
         }
         case EMIT_SUBEXPR: {
-            draw_delims(x, y, h, d, w, FONT_SIZE * DELIM_STROKE, ROMAN_FONT);
+            draw_delims(x, y, h, d, w, FONT_SIZE * DELIM_STROKE, ROMAN_FONT, $);
             const dx = get_char_width(ROMAN_FONT, LEFT_PAREN);
-            draw_formula(x + dx, y, car(p));
+            draw_formula(x + dx, y, car(p), $);
             break;
         }
         case EMIT_SMALL_SUBEXPR: {
-            draw_delims(x, y, h, d, w, SMALL_FONT_SIZE * DELIM_STROKE, SMALL_ROMAN_FONT);
+            draw_delims(x, y, h, d, w, SMALL_FONT_SIZE * DELIM_STROKE, SMALL_ROMAN_FONT, $);
             const dx = get_char_width(SMALL_ROMAN_FONT, LEFT_PAREN);
-            draw_formula(x + dx, y, car(p));
+            draw_formula(x + dx, y, car(p), $);
             break;
         }
         case EMIT_FRACTION:
-            draw_fraction(x, y, h, d, w, FONT_SIZE * FRAC_STROKE, ROMAN_FONT, p);
+            draw_fraction(x, y, h, d, w, FONT_SIZE * FRAC_STROKE, ROMAN_FONT, p, $);
             break;
 
         case EMIT_SMALL_FRACTION:
-            draw_fraction(x, y, h, d, w, SMALL_FONT_SIZE * FRAC_STROKE, SMALL_ROMAN_FONT, p);
+            draw_fraction(x, y, h, d, w, SMALL_FONT_SIZE * FRAC_STROKE, SMALL_ROMAN_FONT, p, $);
             break;
 
         case EMIT_TABLE: {
-            draw_delims(x, y, h, d, w, 1.2 * FONT_SIZE * DELIM_STROKE, ROMAN_FONT);
+            draw_delims(x, y, h, d, w, 1.2 * FONT_SIZE * DELIM_STROKE, ROMAN_FONT, $);
             const dx = get_char_width(ROMAN_FONT, LEFT_PAREN);
-            draw_table(x + dx, y - h, p);
+            draw_table(x + dx, y - h, p, $);
             break;
         }
     }
@@ -2146,7 +2146,7 @@ const html_name_tab = [
     "&le;",		// 181
 ];
 
-function draw_char(x: number, y: number, font_num: number, char_num: number): void {
+function draw_char(x: number, y: number, font_num: number, char_num: number, $: ScriptVars): void {
     let s: string;
     let t: string;
 
@@ -2187,26 +2187,26 @@ function draw_char(x: number, y: number, font_num: number, char_num: number): vo
 
     t += "'" + xeq + yeq + ">" + s + "</text>\n";
 
-    outbuf += t;
+    $.outbuf += t;
 }
 
-function draw_delims(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number): void {
+function draw_delims(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, $: ScriptVars): void {
 
     const ch = get_cap_height(font_num);
     const cd = get_char_depth(font_num, LEFT_PAREN);
     const cw = get_char_width(font_num, LEFT_PAREN);
 
     if (h > ch || d > cd) {
-        draw_left_delim(x, y, h, d, cw, stroke_width);
-        draw_right_delim(x + w - cw, y, h, d, cw, stroke_width);
+        draw_left_delim(x, y, h, d, cw, stroke_width, $);
+        draw_right_delim(x + w - cw, y, h, d, cw, stroke_width, $);
     }
     else {
-        draw_char(x, y, font_num, LEFT_PAREN);
-        draw_char(x + w - cw, y, font_num, RIGHT_PAREN);
+        draw_char(x, y, font_num, LEFT_PAREN, $);
+        draw_char(x + w - cw, y, font_num, RIGHT_PAREN, $);
     }
 }
 
-function draw_left_delim(x: number, y: number, h: number, d: number, w: number, stroke_width: number): void {
+function draw_left_delim(x: number, y: number, h: number, d: number, w: number, stroke_width: number, $: ScriptVars): void {
 
     const x1 = Math.round(x + 0.5 * w);
     const x2 = x1 + Math.round(0.5 * w);
@@ -2214,12 +2214,12 @@ function draw_left_delim(x: number, y: number, h: number, d: number, w: number, 
     const y1 = Math.round(y - h);
     const y2 = Math.round(y + d);
 
-    draw_stroke(x1, y1, x1, y2, stroke_width); // stem stroke
-    draw_stroke(x1, y1, x2, y1, stroke_width); // top stroke
-    draw_stroke(x1, y2, x2, y2, stroke_width); // bottom stroke
+    draw_stroke(x1, y1, x1, y2, stroke_width, $); // stem stroke
+    draw_stroke(x1, y1, x2, y1, stroke_width, $); // top stroke
+    draw_stroke(x1, y2, x2, y2, stroke_width, $); // bottom stroke
 }
 
-function draw_right_delim(x: number, y: number, h: number, d: number, w: number, stroke_width: number): void {
+function draw_right_delim(x: number, y: number, h: number, d: number, w: number, stroke_width: number, $: ScriptVars): void {
 
     const x1 = Math.round(x + 0.5 * w);
     const x2 = x1 - Math.round(0.5 * w);
@@ -2227,12 +2227,12 @@ function draw_right_delim(x: number, y: number, h: number, d: number, w: number,
     const y1 = Math.round(y - h);
     const y2 = Math.round(y + d);
 
-    draw_stroke(x1, y1, x1, y2, stroke_width); // stem stroke
-    draw_stroke(x1, y1, x2, y1, stroke_width); // top stroke
-    draw_stroke(x1, y2, x2, y2, stroke_width); // bottom stroke
+    draw_stroke(x1, y1, x1, y2, stroke_width, $); // stem stroke
+    draw_stroke(x1, y1, x2, y1, stroke_width, $); // top stroke
+    draw_stroke(x1, y2, x2, y2, stroke_width, $); // bottom stroke
 }
 
-function draw_stroke(x1: number, y1: number, x2: number, y2: number, stroke_width: number): void {
+function draw_stroke(x1: number, y1: number, x2: number, y2: number, stroke_width: number, $: ScriptVars): void {
 
     const x1eq = "x1='" + x1 + "'";
     const x2eq = "x2='" + x2 + "'";
@@ -2242,32 +2242,32 @@ function draw_stroke(x1: number, y1: number, x2: number, y2: number, stroke_widt
 
     const s = "<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + stroke_width + "'/>\n";
 
-    outbuf += s;
+    $.outbuf += s;
 }
 
-function draw_fraction(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, p: U): void {
+function draw_fraction(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, p: U, $: ScriptVars): void {
 
     // horizontal line
 
     let dy = get_operator_height(font_num);
 
-    draw_stroke(x, y - dy, x + w, y - dy, stroke_width);
+    draw_stroke(x, y - dy, x + w, y - dy, stroke_width, $);
 
     // numerator
 
     let dx = (w - width(car(p))) / 2;
     dy = h - height(car(p));
-    draw_formula(x + dx, y - dy, car(p));
+    draw_formula(x + dx, y - dy, car(p), $);
 
     // denominator
 
     p = cdr(p);
     dx = (w - width(car(p))) / 2;
     dy = d - depth(car(p));
-    draw_formula(x + dx, y + dy, car(p));
+    draw_formula(x + dx, y + dy, car(p), $);
 }
 
-function draw_table(x: number, y: number, p: U): void {
+function draw_table(x: number, y: number, p: U, $: ScriptVars): void {
 
     const n = val1(p);
     const m = val2(p);
@@ -2294,7 +2294,7 @@ function draw_table(x: number, y: number, p: U): void {
             const column_width = val1(w);
             const elem_width = width(car(table));
             const cx = x + dx + TABLE_HSPACE + (column_width - elem_width) / 2; // center horizontal
-            draw_formula(cx, y, car(table));
+            draw_formula(cx, y, car(table), $);
             dx += column_width + 2 * TABLE_HSPACE;
             table = cdr(table);
             w = cdr(w);
@@ -2307,7 +2307,7 @@ function draw_table(x: number, y: number, p: U): void {
     }
 }
 
-function draw_line(x1: number, y1: number, x2: number, y2: number, t: number): void {
+function draw_line(x1: number, y1: number, x2: number, y2: number, t: number, $: ScriptVars): void {
     x1 += DRAW_LEFT_PAD;
     x2 += DRAW_LEFT_PAD;
 
@@ -2320,7 +2320,7 @@ function draw_line(x1: number, y1: number, x2: number, y2: number, t: number): v
     const y1eq = "y1='" + y1 + "'";
     const y2eq = "y2='" + y2 + "'";
 
-    outbuf += "<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + t + "'/>\n";
+    $.outbuf += "<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + t + "'/>\n";
 }
 
 function draw_pass1(F: U, T: U, $: ScriptVars): void {
@@ -2391,7 +2391,7 @@ function dupl($: ScriptVars): void {
     push(p1, $);
 }
 
-function emit_axes(): void {
+function emit_axes($: ScriptVars): void {
 
     const x = 0;
     const y = 0;
@@ -2400,24 +2400,24 @@ function emit_axes(): void {
     const dy = DRAW_HEIGHT - DRAW_HEIGHT * (y - ymin) / (ymax - ymin);
 
     if (dx > 0 && dx < DRAW_WIDTH)
-        draw_line(dx, 0, dx, DRAW_HEIGHT, 0.5); // vertical axis
+        draw_line(dx, 0, dx, DRAW_HEIGHT, 0.5, $); // vertical axis
 
     if (dy > 0 && dy < DRAW_HEIGHT)
-        draw_line(0, dy, DRAW_WIDTH, dy, 0.5); // horizontal axis
+        draw_line(0, dy, DRAW_WIDTH, dy, 0.5, $); // horizontal axis
 }
 
-function emit_box(): void {
+function emit_box($: ScriptVars): void {
     const x1 = 0;
     const x2 = DRAW_WIDTH;
 
     const y1 = 0;
     const y2 = DRAW_HEIGHT;
 
-    draw_line(x1, y1, x2, y1, 0.5); // top line
-    draw_line(x1, y2, x2, y2, 0.5); // bottom line
+    draw_line(x1, y1, x2, y1, 0.5, $); // top line
+    draw_line(x1, y2, x2, y2, 0.5, $); // bottom line
 
-    draw_line(x1, y1, x1, y2, 0.5); // left line
-    draw_line(x2, y1, x2, y2, 0.5); // right line
+    draw_line(x1, y1, x1, y2, 0.5, $); // left line
+    draw_line(x2, y1, x2, y2, 0.5, $); // right line
 }
 
 function emit_graph($: ScriptVars): void {
@@ -2428,16 +2428,16 @@ function emit_graph($: ScriptVars): void {
     const heq = "height='" + h + "'";
     const weq = "width='" + w + "'";
 
-    outbuf = "<svg " + heq + weq + ">";
+    $.outbuf = "<svg " + heq + weq + ">";
 
-    emit_axes();
-    emit_box();
+    emit_axes($);
+    emit_box($);
     emit_labels($);
-    emit_points();
+    emit_points($);
 
-    outbuf += "</svg><br>";
+    $.outbuf += "</svg><br>";
 
-    outputs.push(outbuf);
+    $.outputs.push($.outbuf);
 }
 
 function emit_labels($: ScriptVars): void {
@@ -2448,7 +2448,7 @@ function emit_labels($: ScriptVars): void {
     p = pop($);
     let x = DRAW_LEFT_PAD - width(p) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(p);
-    draw_formula(x, y, p);
+    draw_formula(x, y, p, $);
 
     push_double(ymin, $);
     p = pop($);
@@ -2457,7 +2457,7 @@ function emit_labels($: ScriptVars): void {
     p = pop($);
     x = DRAW_LEFT_PAD - width(p) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
-    draw_formula(x, y, p);
+    draw_formula(x, y, p, $);
 
     push_double(xmin, $);
     p = pop($);
@@ -2466,7 +2466,7 @@ function emit_labels($: ScriptVars): void {
     p = pop($);
     x = DRAW_LEFT_PAD - width(p) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
-    draw_formula(x, y, p);
+    draw_formula(x, y, p, $);
 
     push_double(xmax, $);
     p = pop($);
@@ -2475,10 +2475,10 @@ function emit_labels($: ScriptVars): void {
     p = pop($);
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(p) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
-    draw_formula(x, y, p);
+    draw_formula(x, y, p, $);
 }
 
-function emit_points(): void {
+function emit_points($: ScriptVars): void {
 
     const n = draw_array.length;
 
@@ -2497,7 +2497,7 @@ function emit_points(): void {
         const xeq = "cx='" + x + "'";
         const yeq = "cy='" + y + "'";
 
-        outbuf += "<circle " + xeq + yeq + "r='1.5' style='stroke:black;fill:black'/>\n";
+        $.outbuf += "<circle " + xeq + yeq + "r='1.5' style='stroke:black;fill:black'/>\n";
     }
 }
 
@@ -2593,7 +2593,7 @@ function absfunc($: ScriptVars): void {
 
 function eval_add(p1: U, $: ScriptVars): void {
     const h = $.stack.length;
-    expanding--; // undo expanding++ in evalf
+    $.expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
     while (iscons(p1)) {
         push(car(p1), $);
@@ -2601,7 +2601,7 @@ function eval_add(p1: U, $: ScriptVars): void {
         p1 = cdr(p1);
     }
     add_terms($.stack.length - h, $);
-    expanding++;
+    $.expanding++;
 }
 
 function add($: ScriptVars): void {
@@ -3780,7 +3780,7 @@ function arg1($: ScriptVars): void {
 
 function eval_binding(p1: U, $: ScriptVars): void {
     const sym = cadr(p1) as Sym;
-    push(get_binding(sym), $);
+    push(get_binding(sym, $), $);
 }
 
 function eval_ceiling(p1: U, $: ScriptVars): void {
@@ -3940,16 +3940,16 @@ function circexp_subst($: ScriptVars): void {
 }
 
 function eval_clear(expr: U, $: ScriptVars) {
-    save_symbol(symbol(TRACE));
-    save_symbol(symbol(TTY));
+    save_symbol(symbol(TRACE), $);
+    save_symbol(symbol(TTY), $);
 
-    binding = {};
-    usrfunc = {};
+    $.binding = {};
+    $.usrfunc = {};
 
     initscript($);
 
-    restore_symbol();
-    restore_symbol();
+    restore_symbol($);
+    restore_symbol($);
 
     push(nil, $); // result
 }
@@ -5297,12 +5297,12 @@ function eval_dot(p1: U, $: ScriptVars): void {
 
 function eval_draw(p1: U, $: ScriptVars): void {
 
-    if (drawing) {
+    if ($.drawing) {
         push(nil, $); // return value
         return;
     }
 
-    drawing = 1;
+    $.drawing = 1;
 
     const F = cadr(p1);
     let T = caddr(p1);
@@ -5310,7 +5310,7 @@ function eval_draw(p1: U, $: ScriptVars): void {
     if (!(issymbol(T) && isusersymbol(T)))
         T = symbol(X_LOWER);
 
-    save_symbol(T as Sym);
+    save_symbol(T as Sym, $);
 
     setup_trange($);
     setup_xrange($);
@@ -5325,11 +5325,11 @@ function eval_draw(p1: U, $: ScriptVars): void {
 
     emit_graph($);
 
-    restore_symbol();
+    restore_symbol($);
 
     push(nil, $); // return value
 
-    drawing = 0;
+    $.drawing = 0;
 }
 
 function eval_eigenvec(punk: U, $: ScriptVars): void {
@@ -5928,12 +5928,12 @@ function eval_for(p1: U, $: ScriptVars): void {
 
     p1 = cddddr(p1);
 
-    save_symbol(p2);
+    save_symbol(p2, $);
 
     for (; ;) {
         push_integer(j, $);
         let p3 = pop($);
-        set_symbol(p2, p3, nil);
+        set_symbol(p2, p3, nil, $);
         p3 = p1;
         while (iscons(p3)) {
             push(car(p3), $);
@@ -5949,7 +5949,7 @@ function eval_for(p1: U, $: ScriptVars): void {
             j--;
     }
 
-    restore_symbol();
+    restore_symbol($);
 
     push(nil, $); // return value
 }
@@ -6051,7 +6051,7 @@ function eval_index(p1: U, $: ScriptVars): void {
     // try to optimize by indexing before eval
 
     if (issymbol(T) && isusersymbol(T)) {
-        p1 = get_binding(T);
+        p1 = get_binding(T, $);
         const n = $.stack.length - h;
         if (istensor(p1) && n <= p1.ndim) {
             T = p1;
@@ -6125,10 +6125,10 @@ function eval_infixform(p1: U, $: ScriptVars): void {
     evalf($);
     p1 = pop($);
 
-    outbuf = "";
-    infixform_expr(p1);
+    $.outbuf = "";
+    infixform_expr(p1, $);
 
-    push_string(outbuf, $);
+    push_string($.outbuf, $);
 }
 
 function eval_inner(p1: U, $: ScriptVars): void {
@@ -7295,11 +7295,11 @@ function integral($: ScriptVars): void {
 
 function integral_nib(F: U, X: U, $: ScriptVars): void {
 
-    save_symbol(symbol(SA));
-    save_symbol(symbol(SB));
-    save_symbol(symbol(SX));
+    save_symbol(symbol(SA), $);
+    save_symbol(symbol(SB), $);
+    save_symbol(symbol(SX), $);
 
-    set_symbol(symbol(SX), X, nil);
+    set_symbol(symbol(SX), X, nil, $);
 
     // put constants in F(X) on the stack
 
@@ -7313,9 +7313,9 @@ function integral_nib(F: U, X: U, $: ScriptVars): void {
 
     integral_lookup(h, F, $);
 
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
 }
 
 function integral_lookup(h: number, F: U, $: ScriptVars): void {
@@ -7398,11 +7398,11 @@ function integral_search_nib(h: number, F: U, I: U, C: U, $: ScriptVars): 0 | 1 
 
     for (let i = h; i < $.stack.length; i++) {
 
-        set_symbol(symbol(SA), $.stack[i], nil);
+        set_symbol(symbol(SA), $.stack[i], nil, $);
 
         for (let j = h; j < $.stack.length; j++) {
 
-            set_symbol(symbol(SB), $.stack[j], nil);
+            set_symbol(symbol(SB), $.stack[j], nil, $);
 
             push(C, $);			// condition ok?
             evalf($);
@@ -7937,7 +7937,7 @@ function mod_integers(p1: Rat, p2: Rat, $: ScriptVars): void {
 
 function eval_multiply(p1: U, $: ScriptVars): void {
     const h = $.stack.length;
-    expanding--; // undo expanding++ in evalf
+    $.expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
     while (iscons(p1)) {
         push(car(p1), $);
@@ -7945,37 +7945,37 @@ function eval_multiply(p1: U, $: ScriptVars): void {
         p1 = cdr(p1);
     }
     multiply_factors($.stack.length - h, $);
-    expanding++;
+    $.expanding++;
 }
 
 function eval_noexpand(p1: U, $: ScriptVars): void {
-    const t = expanding;
-    expanding = 0;
+    const t = $.expanding;
+    $.expanding = 0;
 
     push(cadr(p1), $);
     evalf($);
 
-    expanding = t;
+    $.expanding = t;
 }
 
 function eval_nonstop($: ScriptVars): void {
-    if (nonstop) {
+    if ($.nonstop) {
         pop($);
         push(nil, $);
         return; // not reentrant
     }
 
-    nonstop = 1;
+    $.nonstop = 1;
     eval_nonstop_nib($);
-    nonstop = 0;
+    $.nonstop = 0;
 }
 
 function eval_nonstop_nib($: ScriptVars): void {
     const save_tos = $.stack.length - 1;
-    const save_tof = frame.length;
+    const save_tof = $.frame.length;
 
-    const save_eval_level = eval_level;
-    const save_expanding = expanding;
+    const save_eval_level = $.eval_level;
+    const save_expanding = $.expanding;
 
     try {
         evalf($);
@@ -7983,10 +7983,10 @@ function eval_nonstop_nib($: ScriptVars): void {
     catch (errmsg) {
 
         $.stack.splice(save_tos);
-        frame.splice(save_tof);
+        $.frame.splice(save_tof);
 
-        eval_level = save_eval_level;
-        expanding = save_expanding;
+        $.eval_level = save_eval_level;
+        $.expanding = save_expanding;
 
         push(nil, $); // return value
     }
@@ -8425,7 +8425,7 @@ function polar($: ScriptVars): void {
 
 function eval_power(p1: U, $: ScriptVars) {
 
-    expanding--;
+    $.expanding--;
 
     // base
 
@@ -8442,10 +8442,10 @@ function eval_power(p1: U, $: ScriptVars) {
 
     swap($);
     if (isnum(p2) && isnegativenumber(p2)) {
-        const t = expanding;
-        expanding = 0;
+        const t = $.expanding;
+        $.expanding = 0;
         evalf($);
-        expanding = t;
+        $.expanding = t;
     }
     else
         evalf($);
@@ -8453,7 +8453,7 @@ function eval_power(p1: U, $: ScriptVars) {
 
     power($);
 
-    expanding++;
+    $.expanding++;
 }
 
 function power($: ScriptVars): void {
@@ -8648,9 +8648,9 @@ function eval_prefixform(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     p1 = pop($);
-    outbuf = "";
-    prefixform(p1);
-    push_string(outbuf, $);
+    $.outbuf = "";
+    prefixform(p1, $);
+    push_string($.outbuf, $);
 }
 
 function eval_print(p1: U, $: ScriptVars): void {
@@ -8677,13 +8677,13 @@ function print_result_and_input(result: U, input: U, $: ScriptVars): void {
         result = annotate(input, result, $);
     }
 
-    const tty = get_binding(symbol(TTY));
+    const tty = get_binding(symbol(TTY), $);
 
     if (tty == symbol(TTY) || iszero(tty)) {
         print_svg(result, $);
     }
     else {
-        print_infix(result);
+        print_infix(result, $);
     }
 }
 
@@ -8744,14 +8744,14 @@ function eval_product(p1: U, $: ScriptVars): void {
 
     p1 = caddddr(p1);
 
-    save_symbol(p2);
+    save_symbol(p2, $);
 
     const h = $.stack.length;
 
     for (; ;) {
         push_integer(j, $);
         const p3 = pop($);
-        set_symbol(p2, p3, nil);
+        set_symbol(p2, p3, nil, $);
         push(p1, $);
         evalf($);
         if (j == k)
@@ -8764,7 +8764,7 @@ function eval_product(p1: U, $: ScriptVars): void {
 
     multiply_factors($.stack.length - h, $);
 
-    restore_symbol();
+    restore_symbol($);
 }
 
 function eval_quote(p1: U, $: ScriptVars): void {
@@ -9475,8 +9475,8 @@ function eval_run(p1: U, $: ScriptVars): void {
         stopf("run: file not found");
 
     const save_inbuf = $.inbuf;
-    const save_trace1 = trace1;
-    const save_trace2 = trace2;
+    const save_trace1 = $.trace1;
+    const save_trace2 = $.trace2;
 
     $.inbuf = f.responseText;
 
@@ -9493,13 +9493,13 @@ function eval_run(p1: U, $: ScriptVars): void {
         const result = eval_input(input, $);
         print_result_and_input(result, input, $);
         if (!is_nil(result)) {
-            set_symbol(symbol(LAST), result, nil);
+            set_symbol(symbol(LAST), result, nil, $);
         }
     }
 
     $.inbuf = save_inbuf;
-    trace1 = save_trace1;
-    trace2 = save_trace2;
+    $.trace1 = save_trace1;
+    $.trace2 = save_trace2;
 
     push(nil, $);
 }
@@ -9524,7 +9524,7 @@ function eval_setq(p1: U, $: ScriptVars): void {
         evalf($);
         const p2 = pop($);
 
-        set_symbol(sym, p2, nil);
+        set_symbol(sym, p2, nil, $);
     }
     else {
         stopf(`user symbol expected sym=${sym}`);
@@ -9572,7 +9572,7 @@ function setq_indexed(p1: U, $: ScriptVars): void {
 
     set_component(LVAL, RVAL, h, $);
 
-    set_symbol(S, LVAL, nil);
+    set_symbol(S, LVAL, nil, $);
 }
 
 function set_component(LVAL: U, RVAL: U, h: number, $: ScriptVars): void {
@@ -9660,7 +9660,7 @@ function setq_usrfunc(p1: U, $: ScriptVars): void {
         convert_body(A, $);
         const C = pop($);
 
-        set_symbol(F, B, C);
+        set_symbol(F, B, C, $);
     }
     else {
         if (issymbol(F)) {
@@ -10364,14 +10364,14 @@ function eval_sum(p1: U, $: ScriptVars): void {
 
     p1 = caddddr(p1);
 
-    save_symbol(p2);
+    save_symbol(p2, $);
 
     const h = $.stack.length;
 
     for (; ;) {
         push_integer(j, $);
         const p3 = pop($);
-        set_symbol(p2, p3, nil);
+        set_symbol(p2, p3, nil, $);
         push(p1, $);
         evalf($);
         if (j == k)
@@ -10384,7 +10384,7 @@ function eval_sum(p1: U, $: ScriptVars): void {
 
     add_terms($.stack.length - h, $);
 
-    restore_symbol();
+    restore_symbol($);
 }
 
 function eval_tan(p1: U, $: ScriptVars): void {
@@ -10894,15 +10894,15 @@ function eval_user_function(p1: U, $: ScriptVars): void {
     const FUNC_NAME = car(p1) as Sym;
     let FUNC_ARGS = cdr(p1);
 
-    const FUNC_DEFN = get_usrfunc(FUNC_NAME);
+    const FUNC_DEFN = get_usrfunc(FUNC_NAME, $);
 
     // undefined function?
 
     if (is_nil(FUNC_DEFN)) {
         if (FUNC_NAME == symbol(D_LOWER)) {
-            expanding++;
+            $.expanding++;
             eval_derivative(p1, $);
-            expanding--;
+            $.expanding--;
             return;
         }
         const h = $.stack.length;
@@ -10926,41 +10926,41 @@ function eval_user_function(p1: U, $: ScriptVars): void {
         FUNC_ARGS = cdr(FUNC_ARGS);
     }
 
-    save_symbol(symbol(ARG1));
-    save_symbol(symbol(ARG2));
-    save_symbol(symbol(ARG3));
-    save_symbol(symbol(ARG4));
-    save_symbol(symbol(ARG5));
-    save_symbol(symbol(ARG6));
-    save_symbol(symbol(ARG7));
-    save_symbol(symbol(ARG8));
-    save_symbol(symbol(ARG9));
+    save_symbol(symbol(ARG1), $);
+    save_symbol(symbol(ARG2), $);
+    save_symbol(symbol(ARG3), $);
+    save_symbol(symbol(ARG4), $);
+    save_symbol(symbol(ARG5), $);
+    save_symbol(symbol(ARG6), $);
+    save_symbol(symbol(ARG7), $);
+    save_symbol(symbol(ARG8), $);
+    save_symbol(symbol(ARG9), $);
 
-    set_symbol(symbol(ARG9), pop($), nil);
-    set_symbol(symbol(ARG8), pop($), nil);
-    set_symbol(symbol(ARG7), pop($), nil);
-    set_symbol(symbol(ARG6), pop($), nil);
-    set_symbol(symbol(ARG5), pop($), nil);
-    set_symbol(symbol(ARG4), pop($), nil);
-    set_symbol(symbol(ARG3), pop($), nil);
-    set_symbol(symbol(ARG2), pop($), nil);
-    set_symbol(symbol(ARG1), pop($), nil);
+    set_symbol(symbol(ARG9), pop($), nil, $);
+    set_symbol(symbol(ARG8), pop($), nil, $);
+    set_symbol(symbol(ARG7), pop($), nil, $);
+    set_symbol(symbol(ARG6), pop($), nil, $);
+    set_symbol(symbol(ARG5), pop($), nil, $);
+    set_symbol(symbol(ARG4), pop($), nil, $);
+    set_symbol(symbol(ARG3), pop($), nil, $);
+    set_symbol(symbol(ARG2), pop($), nil, $);
+    set_symbol(symbol(ARG1), pop($), nil, $);
 
     evalf($);
 
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
-    restore_symbol();
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
+    restore_symbol($);
 }
 
 function eval_user_symbol(p1: U, $: ScriptVars): void {
-    const p2 = get_binding(p1 as Sym);
+    const p2 = get_binding(p1 as Sym, $);
     if (p1 == p2)
         push(p1, $); // symbol evaluates to itself
     else {
@@ -11007,14 +11007,14 @@ function eval_zero(p1: U, $: ScriptVars): void {
 }
 
 function evalf($: ScriptVars): void {
-    eval_level++;
+    $.eval_level++;
     evalf_nib($);
-    eval_level--;
+    $.eval_level--;
 }
 
 function evalf_nib($: ScriptVars): void {
 
-    if (eval_level == 200) {
+    if ($.eval_level == 200) {
         stopf("circular definition?");
     }
 
@@ -11023,9 +11023,9 @@ function evalf_nib($: ScriptVars): void {
 
     const sym = car(p1);
     if (iscons(p1) && issymbol(sym) && iskeyword(sym)) {
-        expanding++;
+        $.expanding++;
         sym.func(p1, $);
-        expanding--;
+        $.expanding--;
         return;
     }
 
@@ -12181,65 +12181,65 @@ function get_operator_height(font_num: number): number {
     return get_cap_height(font_num) / 2;
 }
 
-function get_binding(p1: Sym): U {
+function get_binding(p1: Sym, $: ScriptVars): U {
     if (!isusersymbol(p1))
         stopf("symbol error");
-    let p2 = binding[p1.printname];
+    let p2 = $.binding[p1.printname];
     if (p2 == undefined || is_nil(p2))
         p2 = p1; // symbol binds to itself
     return p2;
 }
 
-function get_usrfunc(p: Sym): U {
+function get_usrfunc(p: Sym, $: ScriptVars): U {
     if (!isusersymbol(p))
         stopf("symbol error");
-    let f = usrfunc[p.printname];
+    let f = $.usrfunc[p.printname];
     if (f == undefined) {
         f = nil;
     }
     return f;
 }
 
-function infixform_subexpr(p: U): void {
-    infixform_write("(");
-    infixform_expr(p);
-    infixform_write(")");
+function infixform_subexpr(p: U, $: ScriptVars): void {
+    infixform_write("(", $);
+    infixform_expr(p, $);
+    infixform_write(")", $);
 }
 
-function infixform_expr(p: U): void {
+function infixform_expr(p: U, $: ScriptVars): void {
     if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p))))
-        infixform_write("-");
+        infixform_write("-", $);
     if (car(p) == symbol(ADD))
-        infixform_expr_nib(p);
+        infixform_expr_nib(p, $);
     else
-        infixform_term(p);
+        infixform_term(p, $);
 }
 
-function infixform_expr_nib(p: U): void {
-    infixform_term(cadr(p));
+function infixform_expr_nib(p: U, $: ScriptVars): void {
+    infixform_term(cadr(p), $);
     p = cddr(p);
     while (iscons(p)) {
         if (isnegativeterm(car(p)))
-            infixform_write(" - ");
+            infixform_write(" - ", $);
         else
-            infixform_write(" + ");
-        infixform_term(car(p));
+            infixform_write(" + ", $);
+        infixform_term(car(p), $);
         p = cdr(p);
     }
 }
 
-function infixform_term(p: U): void {
+function infixform_term(p: U, $: ScriptVars): void {
     if (car(p) == symbol(MULTIPLY))
-        infixform_term_nib(p);
+        infixform_term_nib(p, $);
     else
-        infixform_factor(p);
+        infixform_factor(p, $);
 }
 
-function infixform_term_nib(p: U): void {
+function infixform_term_nib(p: U, $: ScriptVars): void {
     if (find_denominator(p)) {
-        infixform_numerators(p);
-        infixform_write(" / ");
-        infixform_denominators(p);
+        infixform_numerators(p, $);
+        infixform_write(" / ", $);
+        infixform_denominators(p, $);
         return;
     }
 
@@ -12250,18 +12250,18 @@ function infixform_term_nib(p: U): void {
     if (isminusone(car(p)))
         p = cdr(p); // sign already emitted
 
-    infixform_factor(car(p));
+    infixform_factor(car(p), $);
 
     p = cdr(p);
 
     while (iscons(p)) {
-        infixform_write(" "); // space in between factors
-        infixform_factor(car(p));
+        infixform_write(" ", $); // space in between factors
+        infixform_factor(car(p), $);
         p = cdr(p);
     }
 }
 
-function infixform_numerators(p: U): void {
+function infixform_numerators(p: U, $: ScriptVars): void {
 
     let k = 0;
 
@@ -12276,27 +12276,27 @@ function infixform_numerators(p: U): void {
             continue;
 
         if (++k > 1)
-            infixform_write(" "); // space in between factors
+            infixform_write(" ", $); // space in between factors
 
         if (isrational(q)) {
             const s = bignum_itoa(q.a);
-            infixform_write(s);
+            infixform_write(s, $);
             continue;
         }
 
-        infixform_factor(q);
+        infixform_factor(q, $);
     }
 
     if (k == 0)
-        infixform_write("1");
+        infixform_write("1", $);
 }
 
-function infixform_denominators(p: U): void {
+function infixform_denominators(p: U, $: ScriptVars): void {
 
     const n = count_denominators(p);
 
     if (n > 1)
-        infixform_write("(");
+        infixform_write("(", $);
 
     let k = 0;
 
@@ -12311,249 +12311,248 @@ function infixform_denominators(p: U): void {
             continue;
 
         if (++k > 1)
-            infixform_write(" "); // space in between factors
+            infixform_write(" ", $); // space in between factors
 
         if (isrational(q)) {
             const s = bignum_itoa(q.b);
-            infixform_write(s);
+            infixform_write(s, $);
             continue;
         }
 
         if (isminusone(caddr(q))) {
             q = cadr(q);
-            infixform_factor(q);
+            infixform_factor(q, $);
         }
         else {
-            infixform_base(cadr(q));
-            infixform_write("^");
-            infixform_numeric_exponent(caddr(q) as Num); // sign is not emitted
+            infixform_base(cadr(q), $);
+            infixform_write("^", $);
+            infixform_numeric_exponent(caddr(q) as Num, $); // sign is not emitted
         }
     }
 
     if (n > 1)
-        infixform_write(")");
+        infixform_write(")", $);
 }
 
-function infixform_factor(p: U): void {
+function infixform_factor(p: U, $: ScriptVars): void {
     if (isrational(p)) {
-        infixform_rational(p);
+        infixform_rational(p, $);
         return;
     }
 
     if (isdouble(p)) {
-        infixform_double(p);
+        infixform_double(p, $);
         return;
     }
 
     if (issymbol(p)) {
         if (p == symbol(EXP1))
-            infixform_write("exp(1)");
+            infixform_write("exp(1)", $);
         else
-            infixform_write(printname(p));
+            infixform_write(printname(p), $);
         return;
     }
 
     if (isstring(p)) {
-        infixform_write(p.str);
+        infixform_write(p.str, $);
         return;
     }
 
     if (istensor(p)) {
-        infixform_tensor(p);
+        infixform_tensor(p, $);
         return;
     }
 
     if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY)) {
-        infixform_subexpr(p);
+        infixform_subexpr(p, $);
         return;
     }
 
     if (car(p) == symbol(POWER)) {
-        infixform_power(p);
+        infixform_power(p, $);
         return;
     }
 
     if (car(p) == symbol(FACTORIAL)) {
-        infixform_factorial(p);
+        infixform_factorial(p, $);
         return;
     }
 
     if (car(p) == symbol(INDEX)) {
-        infixform_index(p);
+        infixform_index(p, $);
         return;
     }
 
     // use d if for derivative if d not defined
 
-    if (car(p) == symbol(DERIVATIVE) && is_nil(get_usrfunc(symbol(D_LOWER)))) {
-        infixform_write("d");
-        infixform_arglist(p);
+    if (car(p) == symbol(DERIVATIVE) && is_nil(get_usrfunc(symbol(D_LOWER), $))) {
+        infixform_write("d", $);
+        infixform_arglist(p, $);
         return;
     }
 
     if (car(p) == symbol(SETQ)) {
-        infixform_expr(cadr(p));
-        infixform_write(" = ");
-        infixform_expr(caddr(p));
+        infixform_expr(cadr(p), $);
+        infixform_write(" = ", $);
+        infixform_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTEQ)) {
-        infixform_expr(cadr(p));
-        infixform_write(" == ");
-        infixform_expr(caddr(p));
+        infixform_expr(cadr(p), $);
+        infixform_write(" == ", $);
+        infixform_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTGE)) {
-        infixform_expr(cadr(p));
-        infixform_write(" >= ");
-        infixform_expr(caddr(p));
+        infixform_expr(cadr(p), $);
+        infixform_write(" >= ", $);
+        infixform_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTGT)) {
-        infixform_expr(cadr(p));
-        infixform_write(" > ");
-        infixform_expr(caddr(p));
+        infixform_expr(cadr(p), $);
+        infixform_write(" > ", $);
+        infixform_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTLE)) {
-        infixform_expr(cadr(p));
-        infixform_write(" <= ");
-        infixform_expr(caddr(p));
+        infixform_expr(cadr(p), $);
+        infixform_write(" <= ", $);
+        infixform_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTLT)) {
-        infixform_expr(cadr(p));
-        infixform_write(" < ");
-        infixform_expr(caddr(p));
+        infixform_expr(cadr(p), $);
+        infixform_write(" < ", $);
+        infixform_expr(caddr(p), $);
         return;
     }
 
     // other function
 
     if (iscons(p)) {
-        infixform_base(car(p));
-        infixform_arglist(p);
+        infixform_base(car(p), $);
+        infixform_arglist(p, $);
         return;
     }
 
-    infixform_write(" ? ");
+    infixform_write(" ? ", $);
 }
 
-function infixform_power(p: U): void {
+function infixform_power(p: U, $: ScriptVars): void {
     if (cadr(p) == symbol(EXP1)) {
-        infixform_write("exp(");
-        infixform_expr(caddr(p));
-        infixform_write(")");
+        infixform_write("exp(", $);
+        infixform_expr(caddr(p), $);
+        infixform_write(")", $);
         return;
     }
 
     if (isimaginaryunit(p)) {
-        if (isimaginaryunit(get_binding(symbol(J_LOWER)))) {
-            infixform_write("j");
+        if (isimaginaryunit(get_binding(symbol(J_LOWER), $))) {
+            infixform_write("j", $);
             return;
         }
-        if (isimaginaryunit(get_binding(symbol(I_LOWER)))) {
-            infixform_write("i");
+        if (isimaginaryunit(get_binding(symbol(I_LOWER), $))) {
+            infixform_write("i", $);
             return;
         }
     }
 
     const expo = caddr(p);
     if (isnum(expo) && isnegativenumber(expo)) {
-        infixform_reciprocal(p);
+        infixform_reciprocal(p, $);
         return;
     }
 
-    infixform_base(cadr(p));
+    infixform_base(cadr(p), $);
 
-    infixform_write("^");
+    infixform_write("^", $);
 
     p = caddr(p); // p now points to exponent
 
     if (isnum(p))
-        infixform_numeric_exponent(p);
+        infixform_numeric_exponent(p, $);
     else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER) || car(p) == symbol(FACTORIAL))
-        infixform_subexpr(p);
+        infixform_subexpr(p, $);
     else
-        infixform_expr(p);
+        infixform_expr(p, $);
 }
 
 // p = y^x where x is a negative number
 
-function infixform_reciprocal(p: U): void {
-    infixform_write("1 / "); // numerator
+function infixform_reciprocal(p: U, $: ScriptVars): void {
+    infixform_write("1 / ", $); // numerator
     if (isminusone(caddr(p))) {
         p = cadr(p);
-        infixform_factor(p);
+        infixform_factor(p, $);
     }
     else {
-        infixform_base(cadr(p));
-        infixform_write("^");
-        infixform_numeric_exponent(caddr(p) as Num); // sign is not emitted
+        infixform_base(cadr(p), $);
+        infixform_write("^", $);
+        infixform_numeric_exponent(caddr(p) as Num, $); // sign is not emitted
     }
 }
 
-function infixform_factorial(p: U): void {
-    infixform_base(cadr(p));
-    infixform_write("!");
+function infixform_factorial(p: U, $: ScriptVars): void {
+    infixform_base(cadr(p), $);
+    infixform_write("!", $);
 }
 
-function infixform_index(p: U): void {
-    infixform_base(cadr(p));
-    infixform_write("[");
+function infixform_index(p: U, $: ScriptVars): void {
+    infixform_base(cadr(p), $);
+    infixform_write("[", $);
     p = cddr(p);
     if (iscons(p)) {
-        infixform_expr(car(p));
+        infixform_expr(car(p), $);
         p = cdr(p);
         while (iscons(p)) {
-            infixform_write(",");
-            infixform_expr(car(p));
+            infixform_write(",", $);
+            infixform_expr(car(p), $);
             p = cdr(p);
         }
     }
-    infixform_write("]");
+    infixform_write("]", $);
 }
 
-function infixform_arglist(p: U): void {
-    infixform_write("(");
+function infixform_arglist(p: U, $: ScriptVars): void {
+    infixform_write("(", $);
     p = cdr(p);
     if (iscons(p)) {
-        infixform_expr(car(p));
+        infixform_expr(car(p), $);
         p = cdr(p);
         while (iscons(p)) {
-            infixform_write(",");
-            infixform_expr(car(p));
+            infixform_write(",", $);
+            infixform_expr(car(p), $);
             p = cdr(p);
         }
     }
-    infixform_write(")");
+    infixform_write(")", $);
 }
 
 // sign is not emitted
 
-function infixform_rational(p: Rat): void {
+function infixform_rational(p: Rat, $: ScriptVars): void {
     // DGH: For sign to not be emitted we should abs() here.
     const a = bignum_itoa(p.a);
-    infixform_write(a);
+    infixform_write(a, $);
 
     if (isinteger(p))
         return;
 
-    infixform_write("/");
+    infixform_write("/", $);
 
     const b = bignum_itoa(p.b);
-    infixform_write(b);
+    infixform_write(b, $);
 }
 
 // sign is not emitted
 
-function
-    infixform_double(p: Flt): void {
+function infixform_double(p: Flt, $: ScriptVars): void {
 
     const s = fmtnum(p.d);
 
@@ -12562,7 +12561,7 @@ function
     while (k < s.length && s.charAt(k) != "." && s.charAt(k) != "E" && s.charAt(k) != "e")
         k++;
 
-    infixform_write(s.substring(0, k));
+    infixform_write(s.substring(0, k), $);
 
     // handle trailing zeroes
 
@@ -12579,7 +12578,7 @@ function
             j--;
 
         if (j - i > 1)
-            infixform_write(s.substring(i, j));
+            infixform_write(s.substring(i, j), $);
     }
 
     if (s.charAt(k) != "E" && s.charAt(k) != "e")
@@ -12587,69 +12586,69 @@ function
 
     k++;
 
-    infixform_write(" 10^");
+    infixform_write(" 10^", $);
 
     if (s.charAt(k) == "-") {
-        infixform_write("(-");
+        infixform_write("(-", $);
         k++;
         while (s.charAt(k) == "0") // skip leading zeroes
             k++;
-        infixform_write(s.substring(k));
-        infixform_write(")");
+        infixform_write(s.substring(k), $);
+        infixform_write(")", $);
     }
     else {
         if (s.charAt(k) == "+")
             k++;
         while (s.charAt(k) == "0") // skip leading zeroes
             k++;
-        infixform_write(s.substring(k));
+        infixform_write(s.substring(k), $);
     }
 }
 
-function infixform_base(p: U): void {
+function infixform_base(p: U, $: ScriptVars): void {
     if (isnum(p))
-        infixform_numeric_base(p);
+        infixform_numeric_base(p, $);
     else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER) || car(p) == symbol(FACTORIAL))
-        infixform_subexpr(p);
+        infixform_subexpr(p, $);
     else
-        infixform_expr(p);
+        infixform_expr(p, $);
 }
 
-function infixform_numeric_base(p: U): void {
+function infixform_numeric_base(p: U, $: ScriptVars): void {
     if (isrational(p) && isposint(p))
-        infixform_rational(p);
+        infixform_rational(p, $);
     else
-        infixform_subexpr(p);
+        infixform_subexpr(p, $);
 }
 
 // sign is not emitted
 
-function infixform_numeric_exponent(p: Num): void {
+function infixform_numeric_exponent(p: Num, $: ScriptVars): void {
     if (isdouble(p)) {
-        infixform_write("(");
-        infixform_double(p);
-        infixform_write(")");
+        infixform_write("(", $);
+        infixform_double(p, $);
+        infixform_write(")", $);
         return;
     }
 
     if (isrational(p) && isinteger(p)) {
-        infixform_rational(p);
+        infixform_rational(p, $);
         return;
     }
 
-    infixform_write("(");
-    infixform_rational(p);
-    infixform_write(")");
+    infixform_write("(", $);
+    infixform_rational(p, $);
+    infixform_write(")", $);
 }
 
-function infixform_tensor(p: Tensor): void {
-    infixform_tensor_nib(p, 0, 0);
+function infixform_tensor(p: Tensor, $: ScriptVars): void {
+    infixform_tensor_nib(p, 0, 0, $);
 }
 
-function infixform_tensor_nib(p: Tensor, d: number, k: number): void {
+function infixform_tensor_nib(p: Tensor, d: number, k: number, $: ScriptVars): void {
 
     if (d == p.ndim) {
-        infixform_expr(p.elems[k]);
+        infixform_expr(p.elems[k], $);
         return;
     }
 
@@ -12660,38 +12659,38 @@ function infixform_tensor_nib(p: Tensor, d: number, k: number): void {
     for (let i = d + 1; i < n; i++)
         span *= p.dims[i];
 
-    infixform_write("(");
+    infixform_write("(", $);
 
     n = p.dims[d];
 
     for (let i = 0; i < n; i++) {
 
-        infixform_tensor_nib(p, d + 1, k);
+        infixform_tensor_nib(p, d + 1, k, $);
 
         if (i < n - 1)
-            infixform_write(",");
+            infixform_write(",", $);
 
         k += span;
     }
 
-    infixform_write(")");
+    infixform_write(")", $);
 }
 
-function infixform_write(s: string): void {
-    outbuf += s;
+function infixform_write(s: string, $: ScriptVars): void {
+    $.outbuf += s;
 }
 
 function init($: ScriptVars): void {
-    eval_level = 0;
-    expanding = 1;
-    drawing = 0;
-    nonstop = 0;
+    $.eval_level = 0;
+    $.expanding = 1;
+    $.drawing = 0;
+    $.nonstop = 0;
 
     $.stack = [];
-    frame = [];
+    $.frame = [];
 
-    binding = {};
-    usrfunc = {};
+    $.binding = {};
+    $.usrfunc = {};
 
     push_integer(0, $);
     zero = pop($) as Rat;
@@ -12708,7 +12707,7 @@ function init($: ScriptVars): void {
     list(3, $);
     imaginaryunit = pop($);
 
-    outputs.length = 0;
+    $.outputs.length = 0;
 }
 const init_script = [
     "i = sqrt(-1)",
@@ -13085,10 +13084,10 @@ function multiply($: ScriptVars): void {
 }
 
 function multiply_expand($: ScriptVars): void {
-    const t = expanding;
-    expanding = 1;
+    const t = $.expanding;
+    $.expanding = 1;
     multiply($);
-    expanding = t;
+    $.expanding = t;
 }
 /**
  * 
@@ -13114,10 +13113,10 @@ function multiply_factors(n: number, $: ScriptVars): void {
 }
 
 function multiply_noexpand($: ScriptVars): void {
-    const t = expanding;
-    expanding = 0;
+    const t = $.expanding;
+    $.expanding = 0;
     multiply($);
-    expanding = t;
+    $.expanding = t;
 }
 
 function multiply_numbers(p1: U, p2: U, $: ScriptVars): void {
@@ -13172,7 +13171,7 @@ function multiply_scalar_factors(h: number, $: ScriptVars): void {
     if (!isplusone(COEFF) || isdouble(COEFF))
         push(COEFF, $);
 
-    if (expanding)
+    if ($.expanding)
         expand_sum_factors(h, $); // success leaves one expr on stack
 
     const n = $.stack.length - h;
@@ -14359,7 +14358,7 @@ function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
         return;
     }
 
-    if (expanding == 0 || !issmallinteger(EXPO) || (isnum(EXPO) && isnegativenumber(EXPO))) {
+    if ($.expanding == 0 || !issmallinteger(EXPO) || (isnum(EXPO) && isnegativenumber(EXPO))) {
         push_symbol(POWER, $);
         push(BASE, $);
         push(EXPO, $);
@@ -14397,24 +14396,24 @@ function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
     }
 }
 
-function prefixform(p: U) {
+function prefixform(p: U, $: ScriptVars) {
     if (iscons(p)) {
-        outbuf += "(";
-        prefixform(car(p));
+        $.outbuf += "(";
+        prefixform(car(p), $);
         p = cdr(p);
         while (iscons(p)) {
-            outbuf += " ";
-            prefixform(car(p));
+            $.outbuf += " ";
+            prefixform(car(p), $);
             p = cdr(p);
         }
-        outbuf += ")";
+        $.outbuf += ")";
     }
     else if (isrational(p)) {
         if (isnegativenumber(p))
-            outbuf += '-';
-        outbuf += bignum_itoa(p.a);
+            $.outbuf += '-';
+        $.outbuf += bignum_itoa(p.a);
         if (isfraction(p))
-            outbuf += "/" + bignum_itoa(p.b);
+            $.outbuf += "/" + bignum_itoa(p.b);
     }
     else if (isdouble(p)) {
         let s = p.d.toPrecision(6);
@@ -14425,29 +14424,29 @@ function prefixform(p: U) {
             if (s.charAt(s.length - 1) == '.')
                 s += "0";
         }
-        outbuf += s;
+        $.outbuf += s;
     }
     else if (issymbol(p))
-        outbuf += p.printname;
+        $.outbuf += p.printname;
     else if (isstring(p))
-        outbuf += "'" + p.str + "'";
+        $.outbuf += "'" + p.str + "'";
     else if (istensor(p))
-        outbuf += "[ ]";
+        $.outbuf += "[ ]";
     else
-        outbuf += " ? ";
+        $.outbuf += " ? ";
 }
 
-function print_infix(p: U): void {
-    outbuf = "";
-    infixform_expr(p);
-    infixform_write("\n");
-    printbuf(outbuf, BLACK);
+function print_infix(p: U, $: ScriptVars): void {
+    $.outbuf = "";
+    infixform_expr(p, $);
+    infixform_write("\n", $);
+    printbuf($.outbuf, BLACK, $);
 }
 const BLACK = 1;
 const BLUE = 2;
 const RED = 3;
 
-function printbuf(s: string, color: 1 | 2 | 3): void {
+function printbuf(s: string, color: 1 | 2 | 3, $: ScriptVars): void {
     s = s.replace(/&/g, "&amp;");
     s = s.replace(/</g, "&lt;");
     s = s.replace(/>/g, "&gt;");
@@ -14472,7 +14471,7 @@ function printbuf(s: string, color: 1 | 2 | 3): void {
             break;
     }
 
-    outputs.push(s);
+    $.outputs.push(s);
 }
 
 function printname(p: Sym) {
@@ -14692,30 +14691,31 @@ function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars) {
     return COEFF;
 }
 
-function restore_symbol(): void {
-    const p3 = frame.pop() as U;
-    const p2 = frame.pop() as U;
-    const p1 = frame.pop() as Sym;
-    set_symbol(p1, p2, p3);
+function restore_symbol($: ScriptVars): void {
+    const p3 = $.frame.pop() as U;
+    const p2 = $.frame.pop() as U;
+    const p1 = $.frame.pop() as Sym;
+    set_symbol(p1, p2, p3, $);
 }
 
 export interface ScriptContentHandler {
-    begin(): void;
+    begin($: ScriptVars): void;
     output(value: U, input: U, $: ScriptVars): void;
-    end(): void;
+    end($: ScriptVars): void;
 }
 export interface ScriptErrorHandler {
-    error(inbuf: string, start: number, end: number, err: unknown): void
+    error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void
 }
 export class PrintScriptContentHandler implements ScriptContentHandler {
     constructor(readonly stdout: HTMLElement) {
 
     }
-    begin(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    begin($: ScriptVars): void {
         this.stdout.innerHTML = "";
     }
-    end(): void {
-        for (const output of outputs) {
+    end($: ScriptVars): void {
+        for (const output of $.outputs) {
             this.stdout.innerHTML += output;
         }
     }
@@ -14724,8 +14724,8 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
     }
 }
 export class PrintScriptErrorHandler implements ScriptErrorHandler {
-    error(inbuf: string, start: number, end: number, err: unknown): void {
-        printbuf(inbuf.substring(trace1, trace2) + "\nStop: " + err, RED);
+    error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
+        printbuf(inbuf.substring(start, end) + "\nStop: " + err, RED, $);
     }
 }
 
@@ -14737,7 +14737,7 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
  */
 export function executeScript(scriptText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler): void {
     const $ = new ScriptVars();
-    contentHandler.begin();
+    contentHandler.begin($);
     try {
         $.inbuf = scriptText;
 
@@ -14758,20 +14758,20 @@ export function executeScript(scriptText: string, contentHandler: ScriptContentH
             const result = eval_input(input, $);
             contentHandler.output(result, input, $);
             if (!is_nil(result)) {
-                set_symbol(symbol(LAST), result, nil);
+                set_symbol(symbol(LAST), result, nil, $);
             }
         }
     }
     catch (errmsg) {
         if ((errmsg as string).length > 0) {
-            if (trace1 < trace2 && $.inbuf[trace2 - 1] == '\n') {
-                trace2--;
+            if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] == '\n') {
+                $.trace2--;
             }
-            errorHandler.error($.inbuf, trace1, trace2, errmsg);
+            errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
         }
     }
     finally {
-        contentHandler.end();
+        contentHandler.end($);
     }
 }
 
@@ -14781,7 +14781,7 @@ function sample(F: U, T: U, t: number, $: ScriptVars): void {
 
     push_double(t, $);
     let p1 = pop($);
-    set_symbol(T as Sym, p1, nil);
+    set_symbol(T as Sym, p1, nil, $);
 
     push(F, $);
     eval_nonstop($);
@@ -14816,10 +14816,10 @@ function sample(F: U, T: U, t: number, $: ScriptVars): void {
     draw_array.push({ t: t, x: x, y: y });
 }
 
-function save_symbol(p: Sym) {
-    frame.push(p);
-    frame.push(get_binding(p));
-    frame.push(get_usrfunc(p));
+function save_symbol(p: Sym, $: ScriptVars) {
+    $.frame.push(p);
+    $.frame.push(get_binding(p, $));
+    $.frame.push(get_usrfunc(p, $));
 }
 const T_INTEGER = 1001;
 const T_DOUBLE = 1002;
@@ -15291,7 +15291,7 @@ function update_token_buf(j: number, k: number): void {
 }
 
 function scan_error(s: string, $: ScriptVars): never {
-    let t = $.inbuf.substring(trace1, scan_index);
+    let t = $.inbuf.substring($.trace1, scan_index);
 
     t += "\nStop: Syntax error, " + s;
 
@@ -15300,7 +15300,7 @@ function scan_error(s: string, $: ScriptVars): never {
         t += instring.substring(token_index, scan_index);
     }
 
-    printbuf(t, RED);
+    printbuf(t, RED, $);
 
     stopf("");
 }
@@ -15310,28 +15310,28 @@ function inchar(): string {
 }
 
 function scan_inbuf(k: number, $: ScriptVars): number {
-    trace1 = k;
+    $.trace1 = k;
     k = scan($.inbuf, k, $);
     if (k) {
-        trace2 = k;
-        trace_input();
+        $.trace2 = k;
+        trace_input($);
     }
     return k;
 }
 
-function set_symbol(p1: Sym, p2: U, p3: U): void {
+function set_symbol(p1: Sym, p2: U, p3: U, $: ScriptVars): void {
     if (!isusersymbol(p1)) {
         stopf("symbol error");
     }
-    binding[p1.printname] = p2;
-    usrfunc[p1.printname] = p3;
+    $.binding[p1.printname] = p2;
+    $.usrfunc[p1.printname] = p3;
 }
 
 function setup_final(F: U, T: Sym, $: ScriptVars): void {
 
     push_double(tmin, $);
     let p1 = pop($);
-    set_symbol(T, p1, nil);
+    set_symbol(T, p1, nil, $);
 
     push(F, $);
     eval_nonstop($);
@@ -15545,39 +15545,39 @@ function symbol(s: string): Sym {
     return symtab[s];
 }
 
-function trace_input(): void {
-    const p1 = get_binding(symbol(TRACE));
+function trace_input($: ScriptVars): void {
+    const p1 = get_binding(symbol(TRACE), $);
     if (p1 != symbol(TRACE) && !iszero(p1)) {
-        printbuf(instring.substring(trace1, trace2), BLUE);
+        printbuf(instring.substring($.trace1, $.trace2), BLUE, $);
     }
 }
 
 export class ScriptVars {
     inbuf: string = "";
+    /**
+     * The start index into inbuf.
+     */
+    trace1: number = -1;
+    /**
+     * The end index into inbuf.
+     */
+    trace2: number = -1;
+    outbuf: string = "";
     stack: U[] = [];
+    frame: U[] = [];
+    outputs: string[] = [];
+    binding: { [printname: string]: U } = {};
+    usrfunc: { [printname: string]: U } = {};
+    eval_level: number = -1;
+    expanding: number = -1;
+    drawing: number = -1;
+    nonstop: number = -1;
 }
 
-let outbuf: string;
-const outputs: string[] = [];
-let frame: U[];
-let binding: { [printname: string]: U };
-let usrfunc: { [printname: string]: U };
 let zero: Rat;
 let one: Rat;
 let minusone: Rat;
 let imaginaryunit: U;
-let eval_level: number;
-let expanding: number;
-let drawing: number;
-let nonstop: number;
-/**
- * The start index into inbuf.
- */
-let trace1: number;
-/**
- * The end index into inbuf.
- */
-let trace2: number;
 
 const symtab: { [name: string]: Sym } = {
     "abs": create_sym_legacy(ABS, eval_abs),

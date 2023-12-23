@@ -1,5 +1,5 @@
 import { Atom } from "../atom/Atom";
-import { U } from "../tree";
+import { Cons, U } from "../tree";
 
 function strcmp(str1: string, str2: string): 0 | 1 | -1 {
     if (str1 === str2) {
@@ -35,7 +35,7 @@ export function create_sym(printname: string, pos?: number, end?: number): Sym {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function create_sym_legacy(printname: string, func: (expr: U, $: any) => void) {
+export function create_sym_legacy(printname: string, func: (expr: Cons, $: any) => void) {
     const cached = cache.get(printname);
     if (cached) {
         // We can get a race condition between the systems that do and don't store func on the Sym.
@@ -52,11 +52,11 @@ export function create_sym_legacy(printname: string, func: (expr: U, $: any) => 
 
 export class Sym extends Atom<'Sym'> {
     readonly #text: string;
-    func: (expr: U, $: unknown) => void;
+    func: (expr: Cons, $: unknown) => void;
     /**
      * Use create_sym to create a new Sym instance.
      */
-    constructor(secret: number, text: string, func: (expr: U, $: unknown) => void, pos?: number, end?: number) {
+    constructor(secret: number, text: string, func: (expr: Cons, $: unknown) => void, pos?: number, end?: number) {
         super('Sym', pos, end);
         this.#text = text;
         this.func = func;

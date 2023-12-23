@@ -2325,7 +2325,7 @@ function draw_line(x1: number, y1: number, x2: number, y2: number, t: number, $:
 
 function draw_pass1(F: U, T: U, $: ScriptVars): void {
     for (let i = 0; i <= DRAW_WIDTH; i++) {
-        const t = tmin + (tmax - tmin) * i / DRAW_WIDTH;
+        const t = $.tmin + ($.tmax - $.tmin) * i / DRAW_WIDTH;
         sample(F, T, t, $);
     }
 }
@@ -2333,18 +2333,18 @@ function draw_pass1(F: U, T: U, $: ScriptVars): void {
 function draw_pass2(F: U, T: U, $: ScriptVars): void {
     // var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
-    const n = draw_array.length - 1;
+    const n = $.draw_array.length - 1;
 
     for (let i = 0; i < n; i++) {
 
-        const t1 = draw_array[i].t;
-        const t2 = draw_array[i + 1].t;
+        const t1 = $.draw_array[i].t;
+        const t2 = $.draw_array[i + 1].t;
 
-        const x1 = draw_array[i].x;
-        const x2 = draw_array[i + 1].x;
+        const x1 = $.draw_array[i].x;
+        const x2 = $.draw_array[i + 1].x;
 
-        const y1 = draw_array[i].y;
-        const y2 = draw_array[i + 1].y;
+        const y1 = $.draw_array[i].y;
+        const y2 = $.draw_array[i + 1].y;
 
         if (!inrange(x1, y1) && !inrange(x2, y2))
             continue;
@@ -2375,16 +2375,6 @@ const DRAW_BOTTOM_PAD = 40;
 const DRAW_XLABEL_BASELINE = 30;
 const DRAW_YLABEL_MARGIN = 15;
 
-let tmin: number;
-let tmax: number;
-
-let xmin: number;
-let xmax: number;
-
-let ymin: number;
-let ymax: number;
-
-let draw_array: { t: number; x: number; y: number }[];
 function dupl($: ScriptVars): void {
     const p1 = pop($);
     push(p1, $);
@@ -2396,8 +2386,8 @@ function emit_axes($: ScriptVars): void {
     const x = 0;
     const y = 0;
 
-    const dx = DRAW_WIDTH * (x - xmin) / (xmax - xmin);
-    const dy = DRAW_HEIGHT - DRAW_HEIGHT * (y - ymin) / (ymax - ymin);
+    const dx = DRAW_WIDTH * (x - $.xmin) / ($.xmax - $.xmin);
+    const dy = DRAW_HEIGHT - DRAW_HEIGHT * (y - $.ymin) / ($.ymax - $.ymin);
 
     if (dx > 0 && dx < DRAW_WIDTH)
         draw_line(dx, 0, dx, DRAW_HEIGHT, 0.5, $); // vertical axis
@@ -2441,7 +2431,7 @@ function emit_graph($: ScriptVars): void {
 }
 
 function emit_labels($: ScriptVars): void {
-    push_double(ymax, $);
+    push_double($.ymax, $);
     let p = pop($);
     emit_level = 1; // small font
     emit_list(p, $);
@@ -2450,7 +2440,7 @@ function emit_labels($: ScriptVars): void {
     let y = DRAW_TOP_PAD + height(p);
     draw_formula(x, y, p, $);
 
-    push_double(ymin, $);
+    push_double($.ymin, $);
     p = pop($);
     emit_level = 1; // small font
     emit_list(p, $);
@@ -2459,7 +2449,7 @@ function emit_labels($: ScriptVars): void {
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
     draw_formula(x, y, p, $);
 
-    push_double(xmin, $);
+    push_double($.xmin, $);
     p = pop($);
     emit_level = 1; // small font
     emit_list(p, $);
@@ -2468,7 +2458,7 @@ function emit_labels($: ScriptVars): void {
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, p, $);
 
-    push_double(xmax, $);
+    push_double($.xmax, $);
     p = pop($);
     emit_level = 1; // small font
     emit_list(p, $);
@@ -2480,12 +2470,12 @@ function emit_labels($: ScriptVars): void {
 
 function emit_points($: ScriptVars): void {
 
-    const n = draw_array.length;
+    const n = $.draw_array.length;
 
     for (let i = 0; i < n; i++) {
 
-        let x = draw_array[i].x;
-        let y = draw_array[i].y;
+        let x = $.draw_array[i].x;
+        let y = $.draw_array[i].y;
 
         if (!inrange(x, y)) {
             continue;
@@ -5295,7 +5285,7 @@ function eval_dot(p1: U, $: ScriptVars): void {
     eval_inner(p1, $);
 }
 
-function eval_draw(p1: U, $: ScriptVars): void {
+function eval_draw(expr: Cons, $: ScriptVars): void {
 
     if ($.drawing) {
         push(nil, $); // return value
@@ -5304,8 +5294,8 @@ function eval_draw(p1: U, $: ScriptVars): void {
 
     $.drawing = 1;
 
-    const F = cadr(p1);
-    let T = caddr(p1);
+    const F = expr.item(1);
+    let T = expr.item(2);
 
     if (!(issymbol(T) && isusersymbol(T)))
         T = symbol(X_LOWER);
@@ -5318,7 +5308,8 @@ function eval_draw(p1: U, $: ScriptVars): void {
 
     setup_final(F, T as Sym, $);
 
-    draw_array = [];
+    // TODO: This could be a local variable.
+    $.draw_array = [];
 
     draw_pass1(F, T, $);
     draw_pass2(F, T, $);
@@ -12749,8 +12740,8 @@ function iscomplexnumber(p: U): boolean {
     return isimaginarynumber(p) || (lengthf(p) == 3 && car(p) == symbol(ADD) && isnum(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
-function iscons(p: U): 0 | 1 {
-    return is_cons(p) ? 1 : 0;
+function iscons(p: U): p is Cons {
+    return is_cons(p);
 }
 
 function isdenominator(p: U) {
@@ -14810,10 +14801,10 @@ function sample(F: U, T: U, t: number, $: ScriptVars): void {
     if (!isFinite(x) || !isFinite(y))
         return;
 
-    x = DRAW_WIDTH * (x - xmin) / (xmax - xmin);
-    y = DRAW_HEIGHT * (y - ymin) / (ymax - ymin);
+    x = DRAW_WIDTH * (x - $.xmin) / ($.xmax - $.xmin);
+    y = DRAW_HEIGHT * (y - $.ymin) / ($.ymax - $.ymin);
 
-    draw_array.push({ t: t, x: x, y: y });
+    $.draw_array.push({ t: t, x: x, y: y });
 }
 
 function save_symbol(p: Sym, $: ScriptVars) {
@@ -15329,7 +15320,7 @@ function set_symbol(p1: Sym, p2: U, p3: U, $: ScriptVars): void {
 
 function setup_final(F: U, T: Sym, $: ScriptVars): void {
 
-    push_double(tmin, $);
+    push_double($.tmin, $);
     let p1 = pop($);
     set_symbol(T, p1, nil, $);
 
@@ -15338,15 +15329,15 @@ function setup_final(F: U, T: Sym, $: ScriptVars): void {
     p1 = pop($);
 
     if (!istensor(p1)) {
-        tmin = xmin;
-        tmax = xmax;
+        $.tmin = $.xmin;
+        $.tmax = $.xmax;
     }
 }
 
 function setup_trange($: ScriptVars): void {
 
-    tmin = -Math.PI;
-    tmax = Math.PI;
+    $.tmin = -Math.PI;
+    $.tmax = Math.PI;
 
     let p1: U = lookup("trange");
     push(p1, $);
@@ -15365,16 +15356,16 @@ function setup_trange($: ScriptVars): void {
     }
 
     push(p2, $);
-    tmin = pop_double($);
+    $.tmin = pop_double($);
 
     push(p3, $);
-    tmax = pop_double($);
+    $.tmax = pop_double($);
 }
 
 function setup_xrange($: ScriptVars): void {
 
-    xmin = -10;
-    xmax = 10;
+    $.xmin = -10;
+    $.xmax = 10;
 
     let p1: U = lookup("xrange");
     push(p1, $);
@@ -15392,16 +15383,16 @@ function setup_xrange($: ScriptVars): void {
         return;
 
     push(p2, $);
-    xmin = pop_double($);
+    $.xmin = pop_double($);
 
     push(p3, $);
-    xmax = pop_double($);
+    $.xmax = pop_double($);
 }
 
 function setup_yrange($: ScriptVars): void {
 
-    ymin = -10;
-    ymax = 10;
+    $.ymin = -10;
+    $.ymax = 10;
 
     let p1: U = lookup("yrange");
     push(p1, $);
@@ -15419,10 +15410,10 @@ function setup_yrange($: ScriptVars): void {
         return;
 
     push(p2, $);
-    ymin = pop_double($);
+    $.ymin = pop_double($);
 
     push(p3, $);
-    ymax = pop_double($);
+    $.ymax = pop_double($);
 }
 
 function sort(n: number, $: ScriptVars): void {
@@ -15572,6 +15563,13 @@ export class ScriptVars {
     expanding: number = -1;
     drawing: number = -1;
     nonstop: number = -1;
+    tmin: number = -Math.PI;
+    tmax: number = +Math.PI;
+    xmin: number = -10;
+    xmax: number = +10;
+    ymin: number = -10;
+    ymax: number = +10;
+    draw_array: { t: number; x: number; y: number }[] = [];
 }
 
 let zero: Rat;

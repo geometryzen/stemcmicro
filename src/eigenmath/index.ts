@@ -2323,28 +2323,29 @@ function draw_line(x1: number, y1: number, x2: number, y2: number, t: number, $:
     $.outbuf += "<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + t + "'/>\n";
 }
 
-function draw_pass1(F: U, T: U, $: ScriptVars): void {
+function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
     for (let i = 0; i <= DRAW_WIDTH; i++) {
         const t = $.tmin + ($.tmax - $.tmin) * i / DRAW_WIDTH;
-        sample(F, T, t, $);
+        sample(F, T, t, draw_array, $);
     }
 }
+//    draw_array: { t: number; x: number; y: number }[] = [];
 
-function draw_pass2(F: U, T: U, $: ScriptVars): void {
+function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
     // var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
-    const n = $.draw_array.length - 1;
+    const n = draw_array.length - 1;
 
     for (let i = 0; i < n; i++) {
 
-        const t1 = $.draw_array[i].t;
-        const t2 = $.draw_array[i + 1].t;
+        const t1 = draw_array[i].t;
+        const t2 = draw_array[i + 1].t;
 
-        const x1 = $.draw_array[i].x;
-        const x2 = $.draw_array[i + 1].x;
+        const x1 = draw_array[i].x;
+        const x2 = draw_array[i + 1].x;
 
-        const y1 = $.draw_array[i].y;
-        const y2 = $.draw_array[i + 1].y;
+        const y1 = draw_array[i].y;
+        const y2 = draw_array[i + 1].y;
 
         if (!inrange(x1, y1) && !inrange(x2, y2))
             continue;
@@ -2359,7 +2360,7 @@ function draw_pass2(F: U, T: U, $: ScriptVars): void {
 
         for (let j = 1; j < m; j++) {
             const t = t1 + dt * j / m;
-            sample(F, T, t, $);
+            sample(F, T, t, draw_array, $);
         }
     }
 }
@@ -2410,7 +2411,7 @@ function emit_box($: ScriptVars): void {
     draw_line(x2, y1, x2, y2, 0.5, $); // right line
 }
 
-function emit_graph($: ScriptVars): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -2423,7 +2424,7 @@ function emit_graph($: ScriptVars): void {
     emit_axes($);
     emit_box($);
     emit_labels($);
-    emit_points($);
+    emit_points(draw_array, $);
 
     $.outbuf += "</svg><br>";
 
@@ -2468,14 +2469,14 @@ function emit_labels($: ScriptVars): void {
     draw_formula(x, y, p, $);
 }
 
-function emit_points($: ScriptVars): void {
+function emit_points(draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
 
-    const n = $.draw_array.length;
+    const n = draw_array.length;
 
     for (let i = 0; i < n; i++) {
 
-        let x = $.draw_array[i].x;
-        let y = $.draw_array[i].y;
+        let x = draw_array[i].x;
+        let y = draw_array[i].y;
 
         if (!inrange(x, y)) {
             continue;
@@ -2495,8 +2496,8 @@ function equal(p1: U, p2: U, $: ScriptVars): boolean {
     return cmp(p1, p2, $) == 0;
 }
 
-function eval_abs(p1: U, $: ScriptVars): void {
-    push(cadr(p1), $);
+function eval_abs(expr: Cons, $: ScriptVars): void {
+    push(cadr(expr), $);
     evalf($);
     absfunc($);
 }
@@ -2970,7 +2971,7 @@ function add_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
     push(sum, $);
 }
 
-function eval_adj(p1: U, $: ScriptVars): void {
+function eval_adj(p1: Cons, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     adj($);
@@ -3029,7 +3030,7 @@ function adj($: ScriptVars): void {
     push(p2, $);
 }
 
-function eval_and(p1: U, $: ScriptVars): void {
+function eval_and(p1: Cons, $: ScriptVars): void {
     p1 = cdr(p1);
     while (iscons(p1)) {
         push(car(p1), $);
@@ -3050,7 +3051,7 @@ function eval_input(input: U, $: ScriptVars): U {
     return pop($);
 }
 
-function eval_arccos(p1: U, $: ScriptVars) {
+function eval_arccos(p1: Cons, $: ScriptVars) {
     push(cadr(p1), $);
     evalf($);
     arccos($);
@@ -5297,8 +5298,9 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
     const F = expr.item(1);
     let T = expr.item(2);
 
-    if (!(issymbol(T) && isusersymbol(T)))
+    if (!(issymbol(T) && isusersymbol(T))) {
         T = symbol(X_LOWER);
+    }
 
     save_symbol(T as Sym, $);
 
@@ -5308,13 +5310,12 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
 
     setup_final(F, T as Sym, $);
 
-    // TODO: This could be a local variable.
-    $.draw_array = [];
+    const draw_array: { t: number; x: number; y: number }[] = [];
 
-    draw_pass1(F, T, $);
-    draw_pass2(F, T, $);
+    draw_pass1(F, T, draw_array, $);
+    draw_pass2(F, T, draw_array, $);
 
-    emit_graph($);
+    emit_graph(draw_array, $);
 
     restore_symbol($);
 
@@ -14766,7 +14767,7 @@ export function executeScript(scriptText: string, contentHandler: ScriptContentH
     }
 }
 
-function sample(F: U, T: U, t: number, $: ScriptVars): void {
+function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
     let X: U;
     let Y: U;
 
@@ -14804,7 +14805,7 @@ function sample(F: U, T: U, t: number, $: ScriptVars): void {
     x = DRAW_WIDTH * (x - $.xmin) / ($.xmax - $.xmin);
     y = DRAW_HEIGHT * (y - $.ymin) / ($.ymax - $.ymin);
 
-    $.draw_array.push({ t: t, x: x, y: y });
+    draw_array.push({ t: t, x: x, y: y });
 }
 
 function save_symbol(p: Sym, $: ScriptVars) {
@@ -15569,7 +15570,6 @@ export class ScriptVars {
     xmax: number = +10;
     ymin: number = -10;
     ymax: number = +10;
-    draw_array: { t: number; x: number; y: number }[] = [];
 }
 
 let zero: Rat;

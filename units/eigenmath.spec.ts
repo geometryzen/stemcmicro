@@ -1,6 +1,11 @@
 import { assert } from "chai";
 import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars } from "../src/eigenmath/index";
-import { U } from "../src/tree/tree";
+import { Cons, U } from "../src/tree/tree";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const eval_plot = function (expr: Cons, $: ScriptVars): void {
+    // console.log(`${expr}`);
+};
 
 class TestContentHandler implements ScriptContentHandler {
     values: U[] = [];
@@ -8,6 +13,8 @@ class TestContentHandler implements ScriptContentHandler {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ScriptVars): void {
         this.values.length = 0;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        $.defineFunction("plot", eval_plot);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     output(value: U, input: U, $: ScriptVars): void {
@@ -34,7 +41,8 @@ describe("eigenmath", function () {
             `f=sin(x)/x`,
             `f`,
             `yrange=(-1,1)`,
-            `draw(f,x)`
+            `draw(f,x)`,
+            `plot(f,x)`
         ];
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();

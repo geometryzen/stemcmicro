@@ -2582,7 +2582,7 @@ function absfunc($: ScriptVars): void {
     list(2, $);
 }
 
-function eval_add(p1: U, $: ScriptVars): void {
+function eval_add(p1: Cons, $: ScriptVars): void {
     const h = $.stack.length;
     $.expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
@@ -7927,7 +7927,7 @@ function mod_integers(p1: Rat, p2: Rat, $: ScriptVars): void {
     push_bignum(p1.sign, a, b, $);
 }
 
-function eval_multiply(p1: U, $: ScriptVars): void {
+function eval_multiply(p1: Cons, $: ScriptVars): void {
     const h = $.stack.length;
     $.expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
@@ -12741,8 +12741,11 @@ function iscomplexnumber(p: U): boolean {
     return isimaginarynumber(p) || (lengthf(p) == 3 && car(p) == symbol(ADD) && isnum(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
-function iscons(p: U): p is Cons {
-    return is_cons(p);
+/**
+ * Returns true if expr is a Cons and not NIL.
+ */
+function iscons(expr: U): expr is Cons {
+    return is_cons(expr);
 }
 
 function isdenominator(p: U) {
@@ -14729,11 +14732,11 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
  */
 export function executeScript(scriptText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler): void {
     const $ = new ScriptVars();
+    init($);
     contentHandler.begin($);
     try {
         $.inbuf = scriptText;
 
-        init($);
         initscript($);
 
         let k = 0;
@@ -15570,6 +15573,9 @@ export class ScriptVars {
     xmax: number = +10;
     ymin: number = -10;
     ymax: number = +10;
+    defineFunction(name: string, handler: (expr: Cons, $: ScriptVars) => void): void {
+        symtab[name] = create_sym_legacy(name, handler);
+    }
 }
 
 let zero: Rat;

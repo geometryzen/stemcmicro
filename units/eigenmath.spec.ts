@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { executeScript, ScriptContentHandler, ScriptErrorHandler } from "../src/eigenmath/index";
+import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars } from "../src/eigenmath/index";
 import { U } from "../src/tree/tree";
 
 class TestContentHandler implements ScriptContentHandler {
@@ -8,7 +8,8 @@ class TestContentHandler implements ScriptContentHandler {
     begin(): void {
         this.values.length = 0;
     }
-    output(value: U, input: U): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    output(value: U, input: U, $: ScriptVars): void {
         this.values.push(value);
         this.inputs.push(input);
     }

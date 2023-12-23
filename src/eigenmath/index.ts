@@ -29,10 +29,10 @@ function alloc_vector(n: number): Tensor {
     return p;
 }
 
-function any_radical_factors(h: number): 0 | 1 {
-    const n = stack.length;
+function any_radical_factors(h: number, $: ScriptVars): 0 | 1 {
+    const n = $.stack.length;
     for (let i = h; i < n; i++)
-        if (isradical(stack[i]))
+        if (isradical($.stack[i]))
             return 1;
     return 0;
 }
@@ -84,7 +84,7 @@ function bignum_issmallnum(u: BigInteger): boolean {
  * @param a 
  * @param b 
  */
-function push_bignum(sign: 1 | -1, a: BigInteger, b: BigInteger): void {
+function push_bignum(sign: 1 | -1, a: BigInteger, b: BigInteger, $: ScriptVars): void {
     // normalize zero
 
     if (bignum_iszero(a)) {
@@ -96,7 +96,7 @@ function push_bignum(sign: 1 | -1, a: BigInteger, b: BigInteger): void {
 
     const X: Rat = sign > 0 ? new Rat(a, b) : new Rat(a.negate(), b);
 
-    push(X);
+    push(X, $);
 }
 
 // convert string to bignum (7 decimal digits fits in 24 bits)
@@ -172,27 +172,27 @@ function cadr(p: U): U {
     return car(cdr(p));
 }
 
-function cancel_factor(): void {
+function cancel_factor($: ScriptVars): void {
 
-    let p2 = pop();
-    const p1 = pop();
+    let p2 = pop($);
+    const p1 = pop($);
 
     if (car(p2) == symbol(ADD)) {
-        const h = stack.length;
+        const h = $.stack.length;
         p2 = cdr(p2);
         while (iscons(p2)) {
-            push(p1);
-            push(car(p2));
-            multiply();
+            push(p1, $);
+            push(car(p2), $);
+            multiply($);
             p2 = cdr(p2);
         }
-        add_terms(stack.length - h);
+        add_terms($.stack.length - h, $);
         return;
     }
 
-    push(p1);
-    push(p2);
-    multiply();
+    push(p1, $);
+    push(p2, $);
+    multiply($);
 }
 
 function cdadr(p: U): Cons {
@@ -214,7 +214,7 @@ function cdddr(p: U): Cons {
 function cddr(p: U): Cons {
     return cdr(cdr(p));
 }
-function cmp(p1: U, p2: U): 1 | 0 | -1 {
+function cmp(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
 
     if (p1 == p2)
         return 0;
@@ -226,7 +226,7 @@ function cmp(p1: U, p2: U): 1 | 0 | -1 {
         return 1;
 
     if (isnum(p1) && isnum(p2))
-        return cmp_numbers(p1, p2);
+        return cmp_numbers(p1, p2, $);
 
     if (isnum(p1))
         return -1;
@@ -253,7 +253,7 @@ function cmp(p1: U, p2: U): 1 | 0 | -1 {
         return 1;
 
     if (istensor(p1) && istensor(p2))
-        return cmp_tensors(p1, p2);
+        return cmp_tensors(p1, p2, $);
 
     if (istensor(p1))
         return -1;
@@ -262,7 +262,7 @@ function cmp(p1: U, p2: U): 1 | 0 | -1 {
         return 1;
 
     while (iscons(p1) && iscons(p2)) {
-        const t = cmp(car(p1), car(p2));
+        const t = cmp(car(p1), car(p2), $);
         if (t)
             return t;
         p1 = cdr(p1);
@@ -278,7 +278,7 @@ function cmp(p1: U, p2: U): 1 | 0 | -1 {
     return 0;
 }
 
-function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
+function cmp_factors(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
 
     const a = order_factor(p1);
     const b = order_factor(p2);
@@ -312,34 +312,34 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
         expo2 = one;
     }
 
-    let c = cmp(base1, base2);
+    let c = cmp(base1, base2, $);
 
     if (c == 0)
-        c = cmp(expo2, expo1); // swapped to reverse sort order
+        c = cmp(expo2, expo1, $); // swapped to reverse sort order
 
     return c;
 }
 
-function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
+function cmp_factors_provisional(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
     if (car(p1) == symbol(POWER))
         p1 = cadr(p1); // p1 = base
 
     if (car(p2) == symbol(POWER))
         p2 = cadr(p2); // p2 = base
 
-    return cmp(p1, p2);
+    return cmp(p1, p2, $);
 }
 
-function cmp_numbers(p1: U, p2: U): 1 | 0 | -1 {
+function cmp_numbers(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
 
     if (isrational(p1) && isrational(p2))
         return p1.compare(p2);
 
-    push(p1);
-    const d1 = pop_double();
+    push(p1, $);
+    const d1 = pop_double($);
 
-    push(p2);
-    const d2 = pop_double();
+    push(p2, $);
+    const d2 = pop_double($);
 
     if (d1 < d2)
         return -1;
@@ -359,7 +359,7 @@ function cmp_strings(s1: string, s2: string): 0 | 1 | -1 {
     return 0;
 }
 
-function cmp_tensors(p1: Tensor, p2: Tensor): 1 | 0 | -1 {
+function cmp_tensors(p1: Tensor, p2: Tensor, $: ScriptVars): 1 | 0 | -1 {
     const t = p1.ndim - p2.ndim;
 
     if (t)
@@ -372,7 +372,7 @@ function cmp_tensors(p1: Tensor, p2: Tensor): 1 | 0 | -1 {
     }
 
     for (let i = 0; i < p1.nelem; i++) {
-        const t = cmp(p1.elems[i], p2.elems[i]);
+        const t = cmp(p1.elems[i], p2.elems[i], $);
         if (t)
             return t;
     }
@@ -381,54 +381,54 @@ function cmp_tensors(p1: Tensor, p2: Tensor): 1 | 0 | -1 {
 }
 // push coefficients of polynomial P(X) on stack
 
-function coeffs(P: U, X: U): void {
+function coeffs(P: U, X: U, $: ScriptVars): void {
 
     for (; ;) {
 
-        push(P);
-        push(X);
-        push_integer(0);
-        subst();
-        evalf();
-        const C = pop();
+        push(P, $);
+        push(X, $);
+        push_integer(0, $);
+        subst($);
+        evalf($);
+        const C = pop($);
 
-        push(C);
+        push(C, $);
 
-        push(P);
-        push(C);
-        subtract();
-        P = pop();
+        push(P, $);
+        push(C, $);
+        subtract($);
+        P = pop($);
 
         if (iszero(P))
             break;
 
-        push(P);
-        push(X);
-        divide();
-        P = pop();
+        push(P, $);
+        push(X, $);
+        divide($);
+        P = pop($);
     }
 }
 
-function combine_factors(h: number): void {
-    sort_factors_provisional(h);
-    let n = stack.length;
+function combine_factors(h: number, $: ScriptVars): void {
+    sort_factors_provisional(h, $);
+    let n = $.stack.length;
     for (let i = h; i < n - 1; i++) {
-        if (combine_factors_nib(i, i + 1)) {
-            stack.splice(i + 1, 1); // remove factor
+        if (combine_factors_nib(i, i + 1, $)) {
+            $.stack.splice(i + 1, 1); // remove factor
             i--; // use same index again
             n--;
         }
     }
 }
 
-function combine_factors_nib(i: number, j: number): 0 | 1 {
+function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
     let BASE1: U;
     let EXPO1: U;
     let BASE2: U;
     let EXPO2: U;
 
-    const p1 = stack[i];
-    const p2 = stack[j];
+    const p1 = $.stack[i];
+    const p2 = $.stack[j];
 
     if (car(p1) == symbol(POWER)) {
         BASE1 = cadr(p1);
@@ -448,36 +448,36 @@ function combine_factors_nib(i: number, j: number): 0 | 1 {
         EXPO2 = one;
     }
 
-    if (!equal(BASE1, BASE2))
+    if (!equal(BASE1, BASE2, $))
         return 0;
 
     if (isdouble(BASE2))
         BASE1 = BASE2; // if mixed rational and double, use double
 
-    push_symbol(POWER);
-    push(BASE1);
-    push(EXPO1);
-    push(EXPO2);
-    add();
-    list(3);
+    push_symbol(POWER, $);
+    push(BASE1, $);
+    push(EXPO1, $);
+    push(EXPO2, $);
+    add($);
+    list(3, $);
 
-    stack[i] = pop();
+    $.stack[i] = pop($);
 
     return 1;
 }
 
-function combine_numerical_factors(h: number, COEFF: U): U {
+function combine_numerical_factors(h: number, COEFF: U, $: ScriptVars): U {
 
-    let n = stack.length;
+    let n = $.stack.length;
 
     for (let i = h; i < n; i++) {
 
-        const p1 = stack[i];
+        const p1 = $.stack[i];
 
         if (isnum(p1)) {
-            multiply_numbers(COEFF, p1);
-            COEFF = pop();
-            stack.splice(i, 1); // remove factor
+            multiply_numbers(COEFF, p1, $);
+            COEFF = pop($);
+            $.stack.splice(i, 1); // remove factor
             i--;
             n--;
         }
@@ -515,10 +515,10 @@ function complexity(p: U): number {
     return n;
 }
 
-function cons(): void {
-    const p2 = pop();
-    const p1 = pop();
-    push(create_cons(p1, p2));
+function cons($: ScriptVars): void {
+    const p2 = pop($);
+    const p1 = pop($);
+    push(create_cons(p1, p2), $);
 }
 
 const ABS = "abs";
@@ -689,29 +689,29 @@ function count_numerators(p: U): number {
 }
 // push const coeffs
 
-function decomp() {
+function decomp($: ScriptVars) {
 
-    const X = pop();
-    const F = pop();
+    const X = pop($);
+    const F = pop($);
 
     // is the entire expression constant?
 
-    if (!findf(F, X)) {
-        push(F);
+    if (!findf(F, X, $)) {
+        push(F, $);
         return;
     }
 
     // sum?
 
     if (car(F) == symbol(ADD)) {
-        decomp_sum(F, X);
+        decomp_sum(F, X, $);
         return;
     }
 
     // product?
 
     if (car(F) == symbol(MULTIPLY)) {
-        decomp_product(F, X);
+        decomp_product(F, X, $);
         return;
     }
 
@@ -719,18 +719,18 @@ function decomp() {
 
     let p1 = cdr(F);
     while (iscons(p1)) {
-        push(car(p1));
-        push(X);
-        decomp();
+        push(car(p1), $);
+        push(X, $);
+        decomp($);
         p1 = cdr(p1);
     }
 }
 
-function decomp_sum(F: U, X: U): void {
+function decomp_sum(F: U, X: U, $: ScriptVars): void {
 
     let p2: U;
 
-    let h = stack.length;
+    let h = $.stack.length;
 
     // partition terms
 
@@ -738,15 +738,15 @@ function decomp_sum(F: U, X: U): void {
 
     while (iscons(p1)) {
         p2 = car(p1);
-        if (findf(p2, X)) {
+        if (findf(p2, X, $)) {
             if (car(p2) == symbol(MULTIPLY)) {
-                push(p2);
-                push(X);
-                partition_term();	// push const part then push var part
+                push(p2, $);
+                push(X, $);
+                partition_term($);	// push const part then push var part
             }
             else {
-                push_integer(1);	// const part
-                push(p2);		// var part
+                push_integer(1, $);	// const part
+                push(p2, $);		// var part
             }
         }
         p1 = cdr(p1);
@@ -754,87 +754,87 @@ function decomp_sum(F: U, X: U): void {
 
     // combine const parts of matching var parts
 
-    let n = stack.length - h;
+    let n = $.stack.length - h;
 
     for (let i = 0; i < n - 2; i += 2)
         for (let j = i + 2; j < n; j += 2) {
-            if (!equal(stack[h + i + 1], stack[h + j + 1]))
+            if (!equal($.stack[h + i + 1], $.stack[h + j + 1], $))
                 continue;
-            push(stack[h + i]); // add const parts
-            push(stack[h + j]);
-            add();
-            stack[h + i] = pop();
+            push($.stack[h + i], $); // add const parts
+            push($.stack[h + j], $);
+            add($);
+            $.stack[h + i] = pop($);
             for (let k = j; k < n - 2; k++)
-                stack[h + k] = stack[h + k + 2];
+                $.stack[h + k] = $.stack[h + k + 2];
             j -= 2; // use same j again
             n -= 2;
-            stack.splice(stack.length - 2); // pop
+            $.stack.splice($.stack.length - 2); // pop
         }
 
     // push const parts, decomp var parts
 
-    list(stack.length - h);
-    p1 = pop();
+    list($.stack.length - h, $);
+    p1 = pop($);
 
     while (iscons(p1)) {
-        push(car(p1)); // const part
-        push(cadr(p1)); // var part
-        push(X);
-        decomp();
+        push(car(p1), $); // const part
+        push(cadr(p1), $); // var part
+        push(X, $);
+        decomp($);
         p1 = cddr(p1);
     }
 
     // add together all constant terms
 
-    h = stack.length;
+    h = $.stack.length;
     p1 = cdr(F);
     while (iscons(p1)) {
-        if (!findf(car(p1), X))
-            push(car(p1));
+        if (!findf(car(p1), X, $))
+            push(car(p1), $);
         p1 = cdr(p1);
     }
 
-    n = stack.length - h;
+    n = $.stack.length - h;
 
     if (n > 1) {
-        list(n);
-        push_symbol(ADD);
-        swap();
-        cons(); // makes ADD head of list
+        list(n, $);
+        push_symbol(ADD, $);
+        swap($);
+        cons($); // makes ADD head of list
     }
 }
 
-function decomp_product(F: U, X: U): void {
+function decomp_product(F: U, X: U, $: ScriptVars): void {
 
     // decomp factors involving x
 
     let p1 = cdr(F);
     while (iscons(p1)) {
-        if (findf(car(p1), X)) {
-            push(car(p1));
-            push(X);
-            decomp();
+        if (findf(car(p1), X, $)) {
+            push(car(p1), $);
+            push(X, $);
+            decomp($);
         }
         p1 = cdr(p1);
     }
 
     // combine constant factors
 
-    const h = stack.length;
+    const h = $.stack.length;
     p1 = cdr(F);
     while (iscons(p1)) {
-        if (!findf(car(p1), X))
-            push(car(p1));
+        if (!findf(car(p1), X, $))
+            push(car(p1), $);
         p1 = cdr(p1);
     }
 
-    const n = stack.length - h;
+    const n = $.stack.length - h;
 
     if (n > 1) {
-        list(n);
-        push_symbol(MULTIPLY);
-        swap();
-        cons(); // makes MULTIPLY head of list
+        list(n, $);
+        push_symbol(MULTIPLY, $);
+        swap($);
+        cons($); // makes MULTIPLY head of list
     }
 }
 const HPAD = 10;
@@ -873,12 +873,12 @@ const EMIT_TABLE = 10;
 
 let emit_level: number;
 
-function print_svg(p1: U): void {
+function print_svg(p1: U, $: ScriptVars): void {
     emit_level = 0;
 
-    emit_list(p1);
+    emit_list(p1, $);
 
-    p1 = pop();
+    p1 = pop($);
 
     let h = height(p1);
     const d = depth(p1);
@@ -905,44 +905,44 @@ function print_svg(p1: U): void {
     outputs.push(outbuf);
 }
 
-function emit_args(p: U): void {
+function emit_args(p: U, $: ScriptVars): void {
 
     p = cdr(p);
 
     if (!iscons(p)) {
-        emit_roman_string("(");
-        emit_roman_string(")");
+        emit_roman_string("(", $);
+        emit_roman_string(")", $);
         return;
     }
 
-    const t = stack.length;
+    const t = $.stack.length;
 
-    emit_expr(car(p));
+    emit_expr(car(p), $);
 
     p = cdr(p);
 
     while (iscons(p)) {
-        emit_roman_string(",");
-        emit_thin_space();
-        emit_expr(car(p));
+        emit_roman_string(",", $);
+        emit_thin_space($);
+        emit_expr(car(p), $);
         p = cdr(p);
     }
 
-    emit_update_list(t);
+    emit_update_list(t, $);
 
-    emit_update_subexpr();
+    emit_update_subexpr($);
 }
 
-function emit_base(p: U): void {
+function emit_base(p: U, $: ScriptVars): void {
     if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER))
-        emit_subexpr(p);
+        emit_subexpr(p, $);
     else
-        emit_expr(p);
+        emit_expr(p, $);
 }
 
-function emit_denominators(p: U) {
+function emit_denominators(p: U, $: ScriptVars) {
 
-    const t = stack.length;
+    const t = $.stack.length;
     const n = count_denominators(p);
     p = cdr(p);
 
@@ -954,32 +954,32 @@ function emit_denominators(p: U) {
         if (!isdenominator(q))
             continue;
 
-        if (stack.length > t)
-            emit_medium_space();
+        if ($.stack.length > t)
+            emit_medium_space($);
 
         if (isrational(q)) {
             const s = bignum_itoa(q.b);
-            emit_roman_string(s);
+            emit_roman_string(s, $);
             continue;
         }
 
         if (isminusone(caddr(q))) {
             q = cadr(q);
             if (car(q) == symbol(ADD) && n == 1)
-                emit_expr(q); // parens not needed
+                emit_expr(q, $); // parens not needed
             else
-                emit_factor(q);
+                emit_factor(q, $);
         }
         else {
-            emit_base(cadr(q));
-            emit_numeric_exponent(caddr(q) as Num); // sign is not emitted
+            emit_base(cadr(q), $);
+            emit_numeric_exponent(caddr(q) as Num, $); // sign is not emitted
         }
     }
 
-    emit_update_list(t);
+    emit_update_list(t, $);
 }
 
-function emit_double(p: Flt): void {
+function emit_double(p: Flt, $: ScriptVars): void {
     let i: number;
     let j: number;
 
@@ -990,7 +990,7 @@ function emit_double(p: Flt): void {
     while (k < s.length && s.charAt(k) != "." && s.charAt(k) != "E" && s.charAt(k) != "e")
         k++;
 
-    emit_roman_string(s.substring(0, k));
+    emit_roman_string(s.substring(0, k), $);
 
     // handle trailing zeroes
 
@@ -1007,7 +1007,7 @@ function emit_double(p: Flt): void {
             j--;
 
         if (j - i > 1)
-            emit_roman_string(s.substring(i, j));
+            emit_roman_string(s.substring(i, j), $);
     }
 
     if (s.charAt(k) != "E" && s.charAt(k) != "e")
@@ -1015,23 +1015,23 @@ function emit_double(p: Flt): void {
 
     k++;
 
-    emit_roman_char(MULTIPLY_SIGN);
+    emit_roman_char(MULTIPLY_SIGN, $);
 
-    emit_roman_string("10");
+    emit_roman_string("10", $);
 
     // superscripted exponent
 
     emit_level++;
 
-    const t = stack.length;
+    const t = $.stack.length;
 
     // sign of exponent
 
     if (s.charAt(k) == "+")
         k++;
     else if (s.charAt(k) == "-") {
-        emit_roman_char(MINUS_SIGN);
-        emit_thin_space();
+        emit_roman_char(MINUS_SIGN, $);
+        emit_thin_space($);
         k++;
     }
 
@@ -1040,103 +1040,103 @@ function emit_double(p: Flt): void {
     while (s.charAt(k) == "0")
         k++;
 
-    emit_roman_string(s.substring(k));
+    emit_roman_string(s.substring(k), $);
 
-    emit_update_list(t);
+    emit_update_list(t, $);
 
     emit_level--;
 
-    emit_update_superscript();
+    emit_update_superscript($);
 }
 
-function emit_exponent(p: U): void {
+function emit_exponent(p: U, $: ScriptVars): void {
     if (isnum(p) && !isnegativenumber(p)) {
-        emit_numeric_exponent(p); // sign is not emitted
+        emit_numeric_exponent(p, $); // sign is not emitted
         return;
     }
 
     emit_level++;
-    emit_list(p);
+    emit_list(p, $);
     emit_level--;
 
-    emit_update_superscript();
+    emit_update_superscript($);
 }
 
-function emit_expr(p: U): void {
+function emit_expr(p: U, $: ScriptVars): void {
     if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p)))) {
-        emit_roman_char(MINUS_SIGN);
-        emit_thin_space();
+        emit_roman_char(MINUS_SIGN, $);
+        emit_thin_space($);
     }
 
     if (car(p) == symbol(ADD))
-        emit_expr_nib(p);
+        emit_expr_nib(p, $);
     else
-        emit_term(p);
+        emit_term(p, $);
 }
 
-function emit_expr_nib(p: U): void {
+function emit_expr_nib(p: U, $: ScriptVars): void {
     p = cdr(p);
-    emit_term(car(p));
+    emit_term(car(p), $);
     p = cdr(p);
     while (iscons(p)) {
         if (isnegativeterm(car(p)))
-            emit_infix_operator(MINUS_SIGN);
+            emit_infix_operator(MINUS_SIGN, $);
         else
-            emit_infix_operator(PLUS_SIGN);
-        emit_term(car(p));
+            emit_infix_operator(PLUS_SIGN, $);
+        emit_term(car(p), $);
         p = cdr(p);
     }
 }
 
-function emit_factor(p: U) {
+function emit_factor(p: U, $: ScriptVars) {
     if (isrational(p)) {
-        emit_rational(p);
+        emit_rational(p, $);
         return;
     }
 
     if (isdouble(p)) {
-        emit_double(p);
+        emit_double(p, $);
         return;
     }
 
     if (issymbol(p)) {
-        emit_symbol(p);
+        emit_symbol(p, $);
         return;
     }
 
     if (isstring(p)) {
-        emit_string(p);
+        emit_string(p, $);
         return;
     }
 
     if (istensor(p)) {
-        emit_tensor(p);
+        emit_tensor(p, $);
         return;
     }
 
     if (iscons(p)) {
         if (car(p) == symbol(POWER))
-            emit_power(p);
+            emit_power(p, $);
         else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY))
-            emit_subexpr(p);
+            emit_subexpr(p, $);
         else
-            emit_function(p);
+            emit_function(p, $);
         return;
     }
 }
 
-function emit_fraction(p: U): void {
-    emit_numerators(p);
-    emit_denominators(p);
-    emit_update_fraction();
+function emit_fraction(p: U, $: ScriptVars): void {
+    emit_numerators(p, $);
+    emit_denominators(p, $);
+    emit_update_fraction($);
 }
 
-function emit_function(p: U): void {
+function emit_function(p: U, $: ScriptVars): void {
     // d(f(x),x)
 
     if (car(p) == symbol(DERIVATIVE)) {
-        emit_roman_string("d");
-        emit_args(p);
+        emit_roman_string("d", $);
+        emit_args(p, $);
         return;
     }
 
@@ -1145,10 +1145,10 @@ function emit_function(p: U): void {
     if (car(p) == symbol(FACTORIAL)) {
         p = cadr(p);
         if (isrational(p) && isposint(p) || issymbol(p))
-            emit_expr(p);
+            emit_expr(p, $);
         else
-            emit_subexpr(p);
-        emit_roman_string("!");
+            emit_subexpr(p, $);
+        emit_roman_string("!", $);
         return;
     }
 
@@ -1158,45 +1158,45 @@ function emit_function(p: U): void {
         p = cdr(p);
         const leading = car(p);
         if (issymbol(leading))
-            emit_symbol(leading);
+            emit_symbol(leading, $);
         else
-            emit_subexpr(leading);
-        emit_indices(p);
+            emit_subexpr(leading, $);
+        emit_indices(p, $);
         return;
     }
 
     if (car(p) == symbol(SETQ) || car(p) == symbol(TESTEQ)) {
-        emit_expr(cadr(p));
-        emit_infix_operator(EQUALS_SIGN);
-        emit_expr(caddr(p));
+        emit_expr(cadr(p), $);
+        emit_infix_operator(EQUALS_SIGN, $);
+        emit_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTGE)) {
-        emit_expr(cadr(p));
-        emit_infix_operator(GREATEREQUAL);
-        emit_expr(caddr(p));
+        emit_expr(cadr(p), $);
+        emit_infix_operator(GREATEREQUAL, $);
+        emit_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTGT)) {
-        emit_expr(cadr(p));
-        emit_infix_operator(GREATER_SIGN);
-        emit_expr(caddr(p));
+        emit_expr(cadr(p), $);
+        emit_infix_operator(GREATER_SIGN, $);
+        emit_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTLE)) {
-        emit_expr(cadr(p));
-        emit_infix_operator(LESSEQUAL);
-        emit_expr(caddr(p));
+        emit_expr(cadr(p), $);
+        emit_infix_operator(LESSEQUAL, $);
+        emit_expr(caddr(p), $);
         return;
     }
 
     if (car(p) == symbol(TESTLT)) {
-        emit_expr(cadr(p));
-        emit_infix_operator(LESS_SIGN);
-        emit_expr(caddr(p));
+        emit_expr(cadr(p), $);
+        emit_infix_operator(LESS_SIGN, $);
+        emit_expr(caddr(p), $);
         return;
     }
 
@@ -1204,39 +1204,39 @@ function emit_function(p: U): void {
 
     const leading = car(p);
     if (issymbol(leading))
-        emit_symbol(leading);
+        emit_symbol(leading, $);
     else
-        emit_subexpr(leading);
+        emit_subexpr(leading, $);
 
-    emit_args(p);
+    emit_args(p, $);
 }
 
-function emit_indices(p: U): void {
-    emit_roman_string("[");
+function emit_indices(p: U, $: ScriptVars): void {
+    emit_roman_string("[", $);
 
     p = cdr(p);
 
     if (iscons(p)) {
-        emit_expr(car(p));
+        emit_expr(car(p), $);
         p = cdr(p);
         while (iscons(p)) {
-            emit_roman_string(",");
-            emit_thin_space();
-            emit_expr(car(p));
+            emit_roman_string(",", $);
+            emit_thin_space($);
+            emit_expr(car(p), $);
             p = cdr(p);
         }
     }
 
-    emit_roman_string("]");
+    emit_roman_string("]", $);
 }
 
-function emit_infix_operator(char_num: number): void {
-    emit_thick_space();
-    emit_roman_char(char_num);
-    emit_thick_space();
+function emit_infix_operator(char_num: number, $: ScriptVars): void {
+    emit_thick_space($);
+    emit_roman_char(char_num, $);
+    emit_thick_space($);
 }
 
-function emit_italic_char(char_num: number): void {
+function emit_italic_char(char_num: number, $: ScriptVars): void {
     let font_num: number;
 
     if (emit_level == 0)
@@ -1248,34 +1248,34 @@ function emit_italic_char(char_num: number): void {
     const d = get_char_depth(font_num, char_num);
     const w = get_char_width(font_num, char_num);
 
-    push_double(EMIT_CHAR);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push_double(font_num);
-    push_double(char_num);
+    push_double(EMIT_CHAR, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push_double(font_num, $);
+    push_double(char_num, $);
 
-    list(6);
+    list(6, $);
 
     if (char_num == LOWER_F)
-        emit_thin_space();
+        emit_thin_space($);
 }
 
-function emit_italic_string(s: string): void {
+function emit_italic_string(s: string, $: ScriptVars): void {
     for (let i = 0; i < s.length; i++)
-        emit_italic_char(s.charCodeAt(i));
+        emit_italic_char(s.charCodeAt(i), $);
 }
 
-function emit_list(p: U): void {
-    const t = stack.length;
-    emit_expr(p);
-    emit_update_list(t);
+function emit_list(p: U, $: ScriptVars): void {
+    const t = $.stack.length;
+    emit_expr(p, $);
+    emit_update_list(t, $);
 }
 
-function emit_matrix(p: Tensor, d: number, k: number): void {
+function emit_matrix(p: Tensor, d: number, k: number, $: ScriptVars): void {
 
     if (d == p.ndim) {
-        emit_list(p.elems[k]);
+        emit_list(p.elems[k], $);
         return;
     }
 
@@ -1293,12 +1293,12 @@ function emit_matrix(p: Tensor, d: number, k: number): void {
 
     for (let i = 0; i < n; i++)
         for (let j = 0; j < m; j++)
-            emit_matrix(p, d + 2, k + (i * m + j) * span);
+            emit_matrix(p, d + 2, k + (i * m + j) * span, $);
 
-    emit_update_table(n, m);
+    emit_update_table(n, m, $);
 }
 
-function emit_medium_space(): void {
+function emit_medium_space($: ScriptVars): void {
     let w: number;
 
     if (emit_level == 0)
@@ -1306,17 +1306,17 @@ function emit_medium_space(): void {
     else
         w = 0.5 * get_char_width(SMALL_ROMAN_FONT, LOWER_N);
 
-    push_double(EMIT_SPACE);
-    push_double(0.0);
-    push_double(0.0);
-    push_double(w);
+    push_double(EMIT_SPACE, $);
+    push_double(0.0, $);
+    push_double(0.0, $);
+    push_double(w, $);
 
-    list(4);
+    list(4, $);
 }
 
-function emit_numerators(p: U): void {
+function emit_numerators(p: U, $: ScriptVars): void {
 
-    const t = stack.length;
+    const t = $.stack.length;
     const n = count_numerators(p);
     p = cdr(p);
 
@@ -1328,129 +1328,129 @@ function emit_numerators(p: U): void {
         if (!isnumerator(q))
             continue;
 
-        if (stack.length > t)
-            emit_medium_space();
+        if ($.stack.length > t)
+            emit_medium_space($);
 
         if (isrational(q)) {
             const s = bignum_itoa(q.a);
-            emit_roman_string(s);
+            emit_roman_string(s, $);
             continue;
         }
 
         if (car(q) == symbol(ADD) && n == 1)
-            emit_expr(q); // parens not needed
+            emit_expr(q, $); // parens not needed
         else
-            emit_factor(q);
+            emit_factor(q, $);
     }
 
-    if (stack.length == t)
-        emit_roman_string("1"); // no numerators
+    if ($.stack.length == t)
+        emit_roman_string("1", $); // no numerators
 
-    emit_update_list(t);
+    emit_update_list(t, $);
 }
 
 // p is rational or double, sign is not emitted
 
-function emit_numeric_exponent(p: Num) {
+function emit_numeric_exponent(p: Num, $: ScriptVars) {
 
     emit_level++;
 
-    const t = stack.length;
+    const t = $.stack.length;
 
     if (isrational(p)) {
         let s = bignum_itoa(p.a);
-        emit_roman_string(s);
+        emit_roman_string(s, $);
         if (isfraction(p)) {
-            emit_roman_string("/");
+            emit_roman_string("/", $);
             s = bignum_itoa(p.b);
-            emit_roman_string(s);
+            emit_roman_string(s, $);
         }
     }
     else {
-        emit_double(p);
+        emit_double(p, $);
     }
 
-    emit_update_list(t);
+    emit_update_list(t, $);
 
     emit_level--;
 
-    emit_update_superscript();
+    emit_update_superscript($);
 }
 
-function emit_power(p: U): void {
+function emit_power(p: U, $: ScriptVars): void {
     if (cadr(p) == symbol(EXP1)) {
-        emit_roman_string("exp");
-        emit_args(cdr(p));
+        emit_roman_string("exp", $);
+        emit_args(cdr(p), $);
         return;
     }
 
     if (isimaginaryunit(p)) {
         if (isimaginaryunit(get_binding(symbol(J_LOWER)))) {
-            emit_italic_string("j");
+            emit_italic_string("j", $);
             return;
         }
         if (isimaginaryunit(get_binding(symbol(I_LOWER)))) {
-            emit_italic_string("i");
+            emit_italic_string("i", $);
             return;
         }
     }
 
     const X = caddr(p);
     if (isnum(X) && isnegativenumber(X)) {
-        emit_reciprocal(p);
+        emit_reciprocal(p, $);
         return;
     }
 
-    emit_base(cadr(p));
-    emit_exponent(caddr(p));
+    emit_base(cadr(p), $);
+    emit_exponent(caddr(p), $);
 }
 
-function emit_rational(p: Rat): void {
+function emit_rational(p: Rat, $: ScriptVars): void {
 
     if (isinteger(p)) {
         const s = bignum_itoa(p.a);
-        emit_roman_string(s);
+        emit_roman_string(s, $);
         return;
     }
 
     emit_level++;
 
-    let t = stack.length;
+    let t = $.stack.length;
     let s = bignum_itoa(p.a);
-    emit_roman_string(s);
-    emit_update_list(t);
+    emit_roman_string(s, $);
+    emit_update_list(t, $);
 
-    t = stack.length;
+    t = $.stack.length;
     s = bignum_itoa(p.b);
-    emit_roman_string(s);
-    emit_update_list(t);
+    emit_roman_string(s, $);
+    emit_update_list(t, $);
 
     emit_level--;
 
-    emit_update_fraction();
+    emit_update_fraction($);
 }
 
 // p = y^x where x is a negative number
 
-function emit_reciprocal(p: U): void {
+function emit_reciprocal(p: U, $: ScriptVars): void {
 
-    emit_roman_string("1"); // numerator
+    emit_roman_string("1", $); // numerator
 
-    const t = stack.length;
+    const t = $.stack.length;
 
     if (isminusone(caddr(p)))
-        emit_expr(cadr(p));
+        emit_expr(cadr(p), $);
     else {
-        emit_base(cadr(p));
-        emit_numeric_exponent(caddr(p) as Num); // sign is not emitted
+        emit_base(cadr(p), $);
+        emit_numeric_exponent(caddr(p) as Num, $); // sign is not emitted
     }
 
-    emit_update_list(t);
+    emit_update_list(t, $);
 
-    emit_update_fraction();
+    emit_update_fraction($);
 }
 
-function emit_roman_char(char_num: number): void {
+function emit_roman_char(char_num: number, $: ScriptVars): void {
     let font_num: number;
 
     if (emit_level == 0)
@@ -1462,45 +1462,45 @@ function emit_roman_char(char_num: number): void {
     const d = get_char_depth(font_num, char_num);
     const w = get_char_width(font_num, char_num);
 
-    push_double(EMIT_CHAR);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push_double(font_num);
-    push_double(char_num);
+    push_double(EMIT_CHAR, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push_double(font_num, $);
+    push_double(char_num, $);
 
-    list(6);
+    list(6, $);
 }
 
-function emit_roman_string(s: string): void {
+function emit_roman_string(s: string, $: ScriptVars): void {
     for (let i = 0; i < s.length; i++)
-        emit_roman_char(s.charCodeAt(i));
+        emit_roman_char(s.charCodeAt(i), $);
 }
 
-function emit_string(p: Str): void {
-    emit_roman_string(p.str);
+function emit_string(p: Str, $: ScriptVars): void {
+    emit_roman_string(p.str, $);
 }
 
-function emit_subexpr(p: U): void {
-    emit_list(p);
-    emit_update_subexpr();
+function emit_subexpr(p: U, $: ScriptVars): void {
+    emit_list(p, $);
+    emit_update_subexpr($);
 }
 
-function emit_symbol(p: Sym): void {
+function emit_symbol(p: Sym, $: ScriptVars): void {
 
     if (p == symbol(EXP1)) {
-        emit_roman_string("exp(1)");
+        emit_roman_string("exp(1)", $);
         return;
     }
 
     const s = printname(p);
 
     if ((issymbol(p) && iskeyword(p)) || p == symbol(LAST) || p == symbol(TRACE) || p == symbol(TTY)) {
-        emit_roman_string(s);
+        emit_roman_string(s, $);
         return;
     }
 
-    let k = emit_symbol_fragment(s, 0);
+    let k = emit_symbol_fragment(s, 0, $);
 
     if (k == s.length)
         return;
@@ -1509,16 +1509,16 @@ function emit_symbol(p: Sym): void {
 
     emit_level++;
 
-    const t = stack.length;
+    const t = $.stack.length;
 
     while (k < s.length)
-        k = emit_symbol_fragment(s, k);
+        k = emit_symbol_fragment(s, k, $);
 
-    emit_update_list(t);
+    emit_update_list(t, $);
 
     emit_level--;
 
-    emit_update_subscript();
+    emit_update_subscript($);
 }
 
 const symbol_name_tab = [
@@ -1586,7 +1586,7 @@ const symbol_italic_tab = [
     0,
 ];
 
-function emit_symbol_fragment(s: string, k: number): number {
+function emit_symbol_fragment(s: string, k: number, $: ScriptVars): number {
     let i: number;
     let t: string = "";
 
@@ -1600,39 +1600,39 @@ function emit_symbol_fragment(s: string, k: number): number {
 
     if (i == n) {
         if (isdigit(s.charAt(k)))
-            emit_roman_char(s.charCodeAt(k));
+            emit_roman_char(s.charCodeAt(k), $);
         else
-            emit_italic_char(s.charCodeAt(k));
+            emit_italic_char(s.charCodeAt(k), $);
         return k + 1;
     }
 
     const char_num = i + 128;
 
     if (symbol_italic_tab[i])
-        emit_italic_char(char_num);
+        emit_italic_char(char_num, $);
     else
-        emit_roman_char(char_num);
+        emit_roman_char(char_num, $);
 
     return k + t.length;
 }
 
-function emit_tensor(p: Tensor): void {
+function emit_tensor(p: Tensor, $: ScriptVars): void {
     if (p.ndim % 2 == 1)
-        emit_vector(p); // odd rank
+        emit_vector(p, $); // odd rank
     else
-        emit_matrix(p, 0, 0); // even rank
+        emit_matrix(p, 0, 0, $); // even rank
 }
 
-function emit_term(p: U): void {
+function emit_term(p: U, $: ScriptVars): void {
     if (car(p) == symbol(MULTIPLY))
-        emit_term_nib(p);
+        emit_term_nib(p, $);
     else
-        emit_factor(p);
+        emit_factor(p, $);
 }
 
-function emit_term_nib(p: U): void {
+function emit_term_nib(p: U, $: ScriptVars): void {
     if (find_denominator(p)) {
-        emit_fraction(p);
+        emit_fraction(p, $);
         return;
     }
 
@@ -1643,18 +1643,18 @@ function emit_term_nib(p: U): void {
     if (isminusone(car(p)) && !isdouble(car(p)))
         p = cdr(p); // sign already emitted
 
-    emit_factor(car(p));
+    emit_factor(car(p), $);
 
     p = cdr(p);
 
     while (iscons(p)) {
-        emit_medium_space();
-        emit_factor(car(p));
+        emit_medium_space($);
+        emit_factor(car(p), $);
         p = cdr(p);
     }
 }
 
-function emit_thick_space(): void {
+function emit_thick_space($: ScriptVars): void {
     let w: number;
 
     if (emit_level == 0)
@@ -1662,15 +1662,15 @@ function emit_thick_space(): void {
     else
         w = get_char_width(SMALL_ROMAN_FONT, LOWER_N);
 
-    push_double(EMIT_SPACE);
-    push_double(0.0);
-    push_double(0.0);
-    push_double(w);
+    push_double(EMIT_SPACE, $);
+    push_double(0.0, $);
+    push_double(0.0, $);
+    push_double(w, $);
 
-    list(4);
+    list(4, $);
 }
 
-function emit_thin_space(): void {
+function emit_thin_space($: ScriptVars): void {
     let w: number;
 
     if (emit_level == 0)
@@ -1678,18 +1678,18 @@ function emit_thin_space(): void {
     else
         w = 0.25 * get_char_width(SMALL_ROMAN_FONT, LOWER_N);
 
-    push_double(EMIT_SPACE);
-    push_double(0.0);
-    push_double(0.0);
-    push_double(w);
+    push_double(EMIT_SPACE, $);
+    push_double(0.0, $);
+    push_double(0.0, $);
+    push_double(w, $);
 
-    list(4);
+    list(4, $);
 }
 
-function emit_update_fraction(): void {
+function emit_update_fraction($: ScriptVars): void {
 
-    const p2 = pop(); // denominator
-    const p1 = pop(); // numerator
+    const p2 = pop($); // denominator
+    const p1 = pop($); // numerator
 
     let h = height(p1) + depth(p1);
     let d = height(p2) + depth(p2);
@@ -1716,19 +1716,19 @@ function emit_update_fraction(): void {
 
     w += get_char_width(font_num, LOWER_N) / 2; // make horizontal line a bit wider
 
-    push_double(opcode);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push(p1);
-    push(p2);
+    push_double(opcode, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push(p1, $);
+    push(p2, $);
 
-    list(6);
+    list(6, $);
 }
 
-function emit_update_list(t: number): void {
+function emit_update_list(t: number, $: ScriptVars): void {
 
-    if (stack.length - t == 1)
+    if ($.stack.length - t == 1)
         return;
 
     let h = 0;
@@ -1737,28 +1737,28 @@ function emit_update_list(t: number): void {
 
     let p1: U;
 
-    for (let i = t; i < stack.length; i++) {
-        p1 = stack[i];
+    for (let i = t; i < $.stack.length; i++) {
+        p1 = $.stack[i];
         h = Math.max(h, height(p1));
         d = Math.max(d, depth(p1));
         w += width(p1);
     }
 
-    list(stack.length - t);
-    p1 = pop();
+    list($.stack.length - t, $);
+    p1 = pop($);
 
-    push_double(EMIT_LIST);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push(p1);
+    push_double(EMIT_LIST, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push(p1, $);
 
-    list(5);
+    list(5, $);
 }
 
-function emit_update_subexpr(): void {
+function emit_update_subexpr($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     let h = height(p1);
     let d = depth(p1);
@@ -1789,18 +1789,18 @@ function emit_update_subexpr(): void {
 
     w += 2 * get_char_width(font_num, LEFT_PAREN);
 
-    push_double(opcode);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push(p1);
+    push_double(opcode, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push(p1, $);
 
-    list(5);
+    list(5, $);
 }
 
-function emit_update_subscript(): void {
+function emit_update_subscript($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     let font_num: number;
 
@@ -1820,21 +1820,21 @@ function emit_update_subscript(): void {
 
     d += dy;
 
-    push_double(EMIT_SUBSCRIPT);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push_double(dx);
-    push_double(dy);
-    push(p1);
+    push_double(EMIT_SUBSCRIPT, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push_double(dx, $);
+    push_double(dy, $);
+    push(p1, $);
 
-    list(7);
+    list(7, $);
 }
 
-function emit_update_superscript(): void {
+function emit_update_superscript($: ScriptVars): void {
 
-    const p2 = pop(); // exponent
-    const p1 = pop(); // base
+    const p2 = pop($); // exponent
+    const p1 = pop($); // base
 
     let font_num: number;
 
@@ -1870,70 +1870,70 @@ function emit_update_superscript(): void {
         w = Math.max(0, w - width(p1));
     }
 
-    push(p1); // base
+    push(p1, $); // base
 
-    push_double(EMIT_SUPERSCRIPT);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push_double(dx);
-    push_double(dy);
-    push(p2);
+    push_double(EMIT_SUPERSCRIPT, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push_double(dx, $);
+    push_double(dy, $);
+    push(p2, $);
 
-    list(7);
+    list(7, $);
 }
 
-function emit_update_table(n: number, m: number): void {
+function emit_update_table(n: number, m: number, $: ScriptVars): void {
 
     let total_height = 0;
     let total_width = 0;
 
-    const t = stack.length - n * m;
+    const t = $.stack.length - n * m;
 
     // max height for each row
 
     for (let i = 0; i < n; i++) { // for each row
         let h = 0;
         for (let j = 0; j < m; j++) { // for each column
-            const p1 = stack[t + i * m + j];
+            const p1 = $.stack[t + i * m + j];
             h = Math.max(h, height(p1));
         }
-        push_double(h);
+        push_double(h, $);
         total_height += h;
     }
 
-    list(n);
-    const p2 = pop();
+    list(n, $);
+    const p2 = pop($);
 
     // max depth for each row
 
     for (let i = 0; i < n; i++) { // for each row
         let d = 0;
         for (let j = 0; j < m; j++) { // for each column
-            const p1 = stack[t + i * m + j];
+            const p1 = $.stack[t + i * m + j];
             d = Math.max(d, depth(p1));
         }
-        push_double(d);
+        push_double(d, $);
         total_height += d;
     }
 
-    list(n);
-    const p3 = pop();
+    list(n, $);
+    const p3 = pop($);
 
     // max width for each column
 
     for (let j = 0; j < m; j++) { // for each column
         let w = 0;
         for (let i = 0; i < n; i++) { // for each row
-            const p1 = stack[t + i * m + j];
+            const p1 = $.stack[t + i * m + j];
             w = Math.max(w, width(p1));
         }
-        push_double(w);
+        push_double(w, $);
         total_width += w;
     }
 
-    list(m);
-    const p4 = pop();
+    list(m, $);
+    const p4 = pop($);
 
     // padding
 
@@ -1946,24 +1946,24 @@ function emit_update_table(n: number, m: number): void {
     const d = total_height - h;
     const w = total_width + 2 * get_char_width(ROMAN_FONT, LEFT_PAREN);
 
-    list(n * m);
-    const p1 = pop();
+    list(n * m, $);
+    const p1 = pop($);
 
-    push_double(EMIT_TABLE);
-    push_double(h);
-    push_double(d);
-    push_double(w);
-    push_double(n);
-    push_double(m);
-    push(p1);
-    push(p2);
-    push(p3);
-    push(p4);
+    push_double(EMIT_TABLE, $);
+    push_double(h, $);
+    push_double(d, $);
+    push_double(w, $);
+    push_double(n, $);
+    push_double(m, $);
+    push(p1, $);
+    push(p2, $);
+    push(p3, $);
+    push(p4, $);
 
-    list(10);
+    list(10, $);
 }
 
-function emit_vector(p: Tensor): void {
+function emit_vector(p: Tensor, $: ScriptVars): void {
     // compute element span
 
     let span = 1;
@@ -1976,9 +1976,9 @@ function emit_vector(p: Tensor): void {
     n = p.dims[0]; // number of rows
 
     for (let i = 0; i < n; i++)
-        emit_matrix(p, 1, i * span);
+        emit_matrix(p, 1, i * span, $);
 
-    emit_update_table(n, 1); // n rows, 1 column
+    emit_update_table(n, 1, $); // n rows, 1 column
 }
 
 function opcode(p: U) {
@@ -2005,10 +2005,9 @@ function val2(p: U) {
     return (cadr(p) as Flt).d;
 }
 
-function
-    divide() {
-    reciprocate();
-    multiply();
+function divide($: ScriptVars): void {
+    reciprocate($);
+    multiply($);
 }
 
 function draw_formula(x: number, y: number, p: U): void {
@@ -2324,14 +2323,14 @@ function draw_line(x1: number, y1: number, x2: number, y2: number, t: number): v
     outbuf += "<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + t + "'/>\n";
 }
 
-function draw_pass1(F: U, T: U): void {
+function draw_pass1(F: U, T: U, $: ScriptVars): void {
     for (let i = 0; i <= DRAW_WIDTH; i++) {
         const t = tmin + (tmax - tmin) * i / DRAW_WIDTH;
-        sample(F, T, t);
+        sample(F, T, t, $);
     }
 }
 
-function draw_pass2(F: U, T: U): void {
+function draw_pass2(F: U, T: U, $: ScriptVars): void {
     // var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
     const n = draw_array.length - 1;
@@ -2360,7 +2359,7 @@ function draw_pass2(F: U, T: U): void {
 
         for (let j = 1; j < m; j++) {
             const t = t1 + dt * j / m;
-            sample(F, T, t);
+            sample(F, T, t, $);
         }
     }
 }
@@ -2386,10 +2385,10 @@ let ymin: number;
 let ymax: number;
 
 let draw_array: { t: number; x: number; y: number }[];
-function dupl(): void {
-    const p1 = pop();
-    push(p1);
-    push(p1);
+function dupl($: ScriptVars): void {
+    const p1 = pop($);
+    push(p1, $);
+    push(p1, $);
 }
 
 function emit_axes(): void {
@@ -2421,7 +2420,7 @@ function emit_box(): void {
     draw_line(x2, y1, x2, y2, 0.5); // right line
 }
 
-function emit_graph(): void {
+function emit_graph($: ScriptVars): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -2433,7 +2432,7 @@ function emit_graph(): void {
 
     emit_axes();
     emit_box();
-    emit_labels();
+    emit_labels($);
     emit_points();
 
     outbuf += "</svg><br>";
@@ -2441,39 +2440,39 @@ function emit_graph(): void {
     outputs.push(outbuf);
 }
 
-function emit_labels(): void {
-    push_double(ymax);
-    let p = pop();
+function emit_labels($: ScriptVars): void {
+    push_double(ymax, $);
+    let p = pop($);
     emit_level = 1; // small font
-    emit_list(p);
-    p = pop();
+    emit_list(p, $);
+    p = pop($);
     let x = DRAW_LEFT_PAD - width(p) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(p);
     draw_formula(x, y, p);
 
-    push_double(ymin);
-    p = pop();
+    push_double(ymin, $);
+    p = pop($);
     emit_level = 1; // small font
-    emit_list(p);
-    p = pop();
+    emit_list(p, $);
+    p = pop($);
     x = DRAW_LEFT_PAD - width(p) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
     draw_formula(x, y, p);
 
-    push_double(xmin);
-    p = pop();
+    push_double(xmin, $);
+    p = pop($);
     emit_level = 1; // small font
-    emit_list(p);
-    p = pop();
+    emit_list(p, $);
+    p = pop($);
     x = DRAW_LEFT_PAD - width(p) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, p);
 
-    push_double(xmax);
-    p = pop();
+    push_double(xmax, $);
+    p = pop($);
     emit_level = 1; // small font
-    emit_list(p);
-    p = pop();
+    emit_list(p, $);
+    p = pop($);
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(p) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, p);
@@ -2502,204 +2501,204 @@ function emit_points(): void {
     }
 }
 
-function equal(p1: U, p2: U): boolean {
-    return cmp(p1, p2) == 0;
+function equal(p1: U, p2: U, $: ScriptVars): boolean {
+    return cmp(p1, p2, $) == 0;
 }
 
-function eval_abs(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    absfunc();
+function eval_abs(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    absfunc($);
 }
 
-function absfunc(): void {
+function absfunc($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (isnum(p1)) {
-        push(p1);
+        push(p1, $);
         if (isnegativenumber(p1))
-            negate();
+            negate($);
         return;
     }
 
     if (istensor(p1)) {
         if (p1.ndim > 1) {
-            push_symbol(ABS);
-            push(p1);
-            list(2);
+            push_symbol(ABS, $);
+            push(p1, $);
+            list(2, $);
             return;
         }
-        push(p1);
-        push(p1);
-        conjfunc();
-        inner();
-        push_rational(1, 2);
-        power();
+        push(p1, $);
+        push(p1, $);
+        conjfunc($);
+        inner($);
+        push_rational(1, 2, $);
+        power($);
         return;
     }
 
-    push(p1);
-    push(p1);
-    conjfunc();
-    multiply();
-    push_rational(1, 2);
-    power();
+    push(p1, $);
+    push(p1, $);
+    conjfunc($);
+    multiply($);
+    push_rational(1, 2, $);
+    power($);
 
-    const p2 = pop();
-    push(p2);
-    floatfunc();
-    const p3 = pop();
+    const p2 = pop($);
+    push(p2, $);
+    floatfunc($);
+    const p3 = pop($);
     if (isdouble(p3)) {
-        push(p2);
+        push(p2, $);
         if (isnegativenumber(p3))
-            negate();
+            negate($);
         return;
     }
 
     // abs(1/a) evaluates to 1/abs(a)
 
     if (car(p1) == symbol(POWER) && isnegativeterm(caddr(p1))) {
-        push(p1);
-        reciprocate();
-        absfunc();
-        reciprocate();
+        push(p1, $);
+        reciprocate($);
+        absfunc($);
+        reciprocate($);
         return;
     }
 
     // abs(a*b) evaluates to abs(a)*abs(b)
 
     if (car(p1) == symbol(MULTIPLY)) {
-        const h = stack.length;
+        const h = $.stack.length;
         p1 = cdr(p1);
         while (iscons(p1)) {
-            push(car(p1));
-            absfunc();
+            push(car(p1), $);
+            absfunc($);
             p1 = cdr(p1);
         }
-        multiply_factors(stack.length - h);
+        multiply_factors($.stack.length - h, $);
         return;
     }
 
     if (isnegativeterm(p1) || (car(p1) == symbol(ADD) && isnegativeterm(cadr(p1)))) {
-        push(p1);
-        negate();
-        p1 = pop();
+        push(p1, $);
+        negate($);
+        p1 = pop($);
     }
 
-    push_symbol(ABS);
-    push(p1);
-    list(2);
+    push_symbol(ABS, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_add(p1: U): void {
-    const h = stack.length;
+function eval_add(p1: U, $: ScriptVars): void {
+    const h = $.stack.length;
     expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
+        push(car(p1), $);
+        evalf($);
         p1 = cdr(p1);
     }
-    add_terms(stack.length - h);
+    add_terms($.stack.length - h, $);
     expanding++;
 }
 
-function add(): void {
-    add_terms(2);
+function add($: ScriptVars): void {
+    add_terms(2, $);
 }
 
-function add_terms(n: number): void {
+function add_terms(n: number, $: ScriptVars): void {
 
     if (n < 2)
         return;
 
-    const h = stack.length - n;
+    const h = $.stack.length - n;
 
-    flatten_terms(h);
+    flatten_terms(h, $);
 
-    let T = combine_tensors(h);
+    let T = combine_tensors(h, $);
 
-    combine_terms(h);
+    combine_terms(h, $);
 
-    if (simplify_terms(h))
-        combine_terms(h);
+    if (simplify_terms(h, $))
+        combine_terms(h, $);
 
-    n = stack.length - h;
+    n = $.stack.length - h;
 
     if (n == 0) {
         if (istensor(T))
-            push(T);
+            push(T, $);
         else
-            push_integer(0);
+            push_integer(0, $);
         return;
     }
 
     if (n > 1) {
-        list(n);
-        push_symbol(ADD);
-        swap();
-        cons(); // prepend ADD to list
+        list(n, $);
+        push_symbol(ADD, $);
+        swap($);
+        cons($); // prepend ADD to list
     }
 
     if (!istensor(T))
         return;
 
-    const p1 = pop();
+    const p1 = pop($);
 
     T = copy_tensor(T);
 
     n = T.nelem;
 
     for (let i = 0; i < n; i++) {
-        push(T.elems[i]);
-        push(p1);
-        add();
-        T.elems[i] = pop();
+        push(T.elems[i], $);
+        push(p1, $);
+        add($);
+        T.elems[i] = pop($);
     }
 
-    push(T);
+    push(T, $);
 }
 
-function flatten_terms(h: number): void {
-    const n = stack.length;
+function flatten_terms(h: number, $: ScriptVars): void {
+    const n = $.stack.length;
     for (let i = h; i < n; i++) {
-        let p1 = stack[i];
+        let p1 = $.stack[i];
         if (car(p1) == symbol(ADD)) {
-            stack[i] = cadr(p1);
+            $.stack[i] = cadr(p1);
             p1 = cddr(p1);
             while (iscons(p1)) {
-                push(car(p1));
+                push(car(p1), $);
                 p1 = cdr(p1);
             }
         }
     }
 }
 
-function combine_tensors(h: number): Tensor {
+function combine_tensors(h: number, $: ScriptVars): Tensor {
     let T: U = nil;
-    for (let i = h; i < stack.length; i++) {
-        const p1 = stack[i];
+    for (let i = h; i < $.stack.length; i++) {
+        const p1 = $.stack[i];
         if (istensor(p1)) {
             if (istensor(T)) {
-                push(T);
-                push(p1);
-                add_tensors();
-                T = pop();
+                push(T, $);
+                push(p1, $);
+                add_tensors($);
+                T = pop($);
             }
             else
                 T = p1;
-            stack.splice(i, 1);
+            $.stack.splice(i, 1);
             i--; // use same index again
         }
     }
     return T as Tensor;
 }
 
-function add_tensors(): void {
+function add_tensors($: ScriptVars): void {
 
-    const p2 = pop() as Tensor;
-    let p1 = pop() as Tensor;
+    const p2 = pop($) as Tensor;
+    let p1 = pop($) as Tensor;
 
     if (!compatible_dimensions(p1, p2))
         stopf("incompatible tensor arithmetic");
@@ -2709,46 +2708,46 @@ function add_tensors(): void {
     const n = p1.nelem;
 
     for (let i = 0; i < n; i++) {
-        push(p1.elems[i]);
-        push(p2.elems[i]);
-        add();
-        p1.elems[i] = pop();
+        push(p1.elems[i], $);
+        push(p2.elems[i], $);
+        add($);
+        p1.elems[i] = pop($);
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function combine_terms(h: number): void {
-    sort_terms(h);
-    for (let i = h; i < stack.length - 1; i++) {
-        if (combine_terms_nib(i, i + 1)) {
-            if (iszero(stack[i]))
-                stack.splice(i, 2); // remove 2 terms
+function combine_terms(h: number, $: ScriptVars): void {
+    sort_terms(h, $);
+    for (let i = h; i < $.stack.length - 1; i++) {
+        if (combine_terms_nib(i, i + 1, $)) {
+            if (iszero($.stack[i]))
+                $.stack.splice(i, 2); // remove 2 terms
             else
-                stack.splice(i + 1, 1); // remove 1 term
+                $.stack.splice(i + 1, 1); // remove 1 term
             i--; // use same index again
         }
     }
-    if (h < stack.length && iszero(stack[stack.length - 1]))
-        stack.pop();
+    if (h < $.stack.length && iszero($.stack[$.stack.length - 1]))
+        $.stack.pop();
 }
 
-function combine_terms_nib(i: number, j: number): 1 | 0 {
+function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
 
-    let p1 = stack[i];
-    let p2 = stack[j];
+    let p1 = $.stack[i];
+    let p2 = $.stack[j];
 
     if (iszero(p2))
         return 1;
 
     if (iszero(p1)) {
-        stack[i] = p2;
+        $.stack[i] = p2;
         return 1;
     }
 
     if (isnum(p1) && isnum(p2)) {
-        add_numbers(p1, p2);
-        stack[i] = pop();
+        add_numbers(p1, p2, $);
+        $.stack[i] = pop($);
         return 1;
     }
 
@@ -2783,54 +2782,55 @@ function combine_terms_nib(i: number, j: number): 1 | 0 {
         }
     }
 
-    if (!equal(p1, p2))
+    if (!equal(p1, p2, $))
         return 0;
 
-    add_numbers(coeff1, coeff2);
+    add_numbers(coeff1, coeff2, $);
 
-    coeff1 = pop();
+    coeff1 = pop($);
 
     if (iszero(coeff1)) {
-        stack[i] = coeff1;
+        $.stack[i] = coeff1;
         return 1;
     }
 
     if (isplusone(coeff1) && !isdouble(coeff1)) {
         if (denorm) {
-            push_symbol(MULTIPLY);
-            push(p1); // p1 is a list, not an atom
-            cons(); // prepend MULTIPLY
+            push_symbol(MULTIPLY, $);
+            push(p1, $); // p1 is a list, not an atom
+            cons($); // prepend MULTIPLY
         }
         else
-            push(p1);
+            push(p1, $);
     }
     else {
         if (denorm) {
-            push_symbol(MULTIPLY);
-            push(coeff1);
-            push(p1); // p1 is a list, not an atom
-            cons(); // prepend coeff1
-            cons(); // prepend MULTIPLY
+            push_symbol(MULTIPLY, $);
+            push(coeff1, $);
+            push(p1, $); // p1 is a list, not an atom
+            cons($); // prepend coeff1
+            cons($); // prepend MULTIPLY
         }
         else {
-            push_symbol(MULTIPLY);
-            push(coeff1);
-            push(p1);
-            list(3);
+            push_symbol(MULTIPLY, $);
+            push(coeff1, $);
+            push(p1, $);
+            list(3, $);
         }
     }
 
-    stack[i] = pop();
+    $.stack[i] = pop($);
 
     return 1;
 }
 
-function sort_terms(h: number): void {
-    const t = stack.splice(h).sort(cmp_terms);
-    stack = stack.concat(t);
+function sort_terms(h: number, $: ScriptVars): void {
+    const compareFn = (lhs: U, rhs: U) => cmp_terms(lhs, rhs, $);
+    const t = $.stack.splice(h).sort(compareFn);
+    $.stack = $.stack.concat(t);
 }
 
-function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
+function cmp_terms(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
 
     // 1st level: imaginary terms on the right
 
@@ -2886,24 +2886,24 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
     }
 
     if (a == 0 && b == 0)
-        return cmp_factors(p1, p2);
+        return cmp_factors(p1, p2, $);
 
     if (a == 0 && b == 1) {
-        let c = cmp_factors(p1, car(p2));
+        let c = cmp_factors(p1, car(p2), $);
         if (c == 0)
             c = -1; // lengthf(p1) < lengthf(p2)
         return c;
     }
 
     if (a == 1 && b == 0) {
-        let c = cmp_factors(car(p1), p2);
+        let c = cmp_factors(car(p1), p2, $);
         if (c == 0)
             c = 1; // lengthf(p1) > lengthf(p2)
         return c;
     }
 
     while (iscons(p1) && iscons(p2)) {
-        const c = cmp_factors(car(p1), car(p2));
+        const c = cmp_factors(car(p1), car(p2), $);
         if (c)
             return c;
         p1 = cdr(p1);
@@ -2919,16 +2919,16 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
     return 0;
 }
 
-function simplify_terms(h: number): number {
+function simplify_terms(h: number, $: ScriptVars): number {
     let n = 0;
-    for (let i = h; i < stack.length; i++) {
-        const p1 = stack[i];
+    for (let i = h; i < $.stack.length; i++) {
+        const p1 = $.stack[i];
         if (isradicalterm(p1)) {
-            push(p1);
-            evalf();
-            const p2 = pop();
-            if (!equal(p1, p2)) {
-                stack[i] = p2;
+            push(p1, $);
+            evalf($);
+            const p2 = pop($);
+            if (!equal(p1, p2, $)) {
+                $.stack[i] = p2;
                 n++;
             }
         }
@@ -2959,39 +2959,39 @@ function isimaginaryfactor(p: U): boolean | 0 {
     return car(p) == symbol(POWER) && isminusone(cadr(p));
 }
 
-function add_numbers(p1: U, p2: U): void {
+function add_numbers(p1: U, p2: U, $: ScriptVars): void {
 
     if (isrational(p1) && isrational(p2)) {
-        add_rationals(p1, p2);
+        add_rationals(p1, p2, $);
         return;
     }
 
-    push(p1);
-    const a = pop_double();
+    push(p1, $);
+    const a = pop_double($);
 
-    push(p2);
-    const b = pop_double();
+    push(p2, $);
+    const b = pop_double($);
 
-    push_double(a + b);
+    push_double(a + b, $);
 }
 
-function add_rationals(p1: Rat, p2: Rat): void {
+function add_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
     const sum = p1.add(p2);
-    push(sum);
+    push(sum, $);
 }
 
-function eval_adj(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    adj();
+function eval_adj(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    adj($);
 }
 
-function adj(): void {
+function adj($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (!istensor(p1)) {
-        push_integer(1); // adj of scalar is 1 because adj = det inv
+        push_integer(1, $); // adj of scalar is 1 because adj = det inv
         return;
     }
 
@@ -3006,14 +3006,14 @@ function adj(): void {
 
     if (n == 2) {
         p2.elems[0] = p1.elems[3];
-        push(p1.elems[1]);
-        negate();
-        p2.elems[1] = pop();
-        push(p1.elems[2]);
-        negate();
-        p2.elems[2] = pop();
+        push(p1.elems[1], $);
+        negate($);
+        p2.elems[1] = pop($);
+        push(p1.elems[2], $);
+        negate($);
+        p2.elems[2] = pop($);
         p2.elems[3] = p1.elems[0];
-        push(p2);
+        push(p2, $);
         return;
     }
 
@@ -3028,66 +3028,66 @@ function adj(): void {
                 for (let j = 0; j < n; j++)
                     if (i != row && j != col)
                         p3.elems[k++] = p1.elems[n * i + j];
-            push(p3);
-            det();
+            push(p3, $);
+            det($);
             if ((row + col) % 2)
-                negate();
-            p2.elems[n * col + row] = pop(); // transpose
+                negate($);
+            p2.elems[n * col + row] = pop($); // transpose
         }
     }
 
-    push(p2);
+    push(p2, $);
 }
 
-function eval_and(p1: U): void {
+function eval_and(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalp();
-        const p2 = pop();
+        push(car(p1), $);
+        evalp($);
+        const p2 = pop($);
         if (iszero(p2)) {
-            push_integer(0);
+            push_integer(0, $);
             return;
         }
         p1 = cdr(p1);
     }
-    push_integer(1);
+    push_integer(1, $);
 }
 
-function eval_input(input: U): U {
-    push(input);
-    evalf();
-    return pop();
+function eval_input(input: U, $: ScriptVars): U {
+    push(input, $);
+    evalf($);
+    return pop($);
 }
 
-function eval_arccos(p1: U) {
-    push(cadr(p1));
-    evalf();
-    arccos();
+function eval_arccos(p1: U, $: ScriptVars) {
+    push(cadr(p1), $);
+    evalf($);
+    arccos($);
 }
 
-function arccos(): void {
+function arccos($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            arccos();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            arccos($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         if (-1.0 <= d && d <= 1.0) {
             d = Math.acos(d);
-            push_double(d);
+            push_double(d, $);
             return;
         }
     }
@@ -3095,115 +3095,115 @@ function arccos(): void {
     // arccos(z) = -i log(z + i sqrt(1 - z^2))
 
     if (isdouble(p1) || isdoublez(p1)) {
-        push_double(1.0);
-        push(p1);
-        push(p1);
-        multiply();
-        subtract();
-        sqrtfunc();
-        push(imaginaryunit);
-        multiply();
-        push(p1);
-        add();
-        logfunc();
-        push(imaginaryunit);
-        multiply();
-        negate();
+        push_double(1.0, $);
+        push(p1, $);
+        push(p1, $);
+        multiply($);
+        subtract($);
+        sqrtfunc($);
+        push(imaginaryunit, $);
+        multiply($);
+        push(p1, $);
+        add($);
+        logfunc($);
+        push(imaginaryunit, $);
+        multiply($);
+        negate($);
         return;
     }
 
     // arccos(1 / sqrt(2)) = 1/4 pi
 
     if (isoneoversqrttwo(p1)) {
-        push_rational(1, 4);
-        push_symbol(PI);
-        multiply();
+        push_rational(1, 4, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // arccos(-1 / sqrt(2)) = 3/4 pi
 
     if (isminusoneoversqrttwo(p1)) {
-        push_rational(3, 4);
-        push_symbol(PI);
-        multiply();
+        push_rational(3, 4, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // arccos(0) = 1/2 pi
 
     if (iszero(p1)) {
-        push_rational(1, 2);
-        push_symbol(PI);
-        multiply();
+        push_rational(1, 2, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // arccos(1/2) = 1/3 pi
 
     if (isequalq(p1, 1, 2)) {
-        push_rational(1, 3);
-        push_symbol(PI);
-        multiply();
+        push_rational(1, 3, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // arccos(1) = 0
 
     if (isplusone(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     // arccos(-1/2) = 2/3 pi
 
     if (isequalq(p1, -1, 2)) {
-        push_rational(2, 3);
-        push_symbol(PI);
-        multiply();
+        push_rational(2, 3, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // arccos(-1) = pi
 
     if (isminusone(p1)) {
-        push_symbol(PI);
+        push_symbol(PI, $);
         return;
     }
 
-    push_symbol(ARCCOS);
-    push(p1);
-    list(2);
+    push_symbol(ARCCOS, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_arccosh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    arccosh();
+function eval_arccosh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    arccosh($);
 }
 
-function arccosh(): void {
+function arccosh($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            arccosh();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            arccosh($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         if (d >= 1.0) {
             d = Math.acosh(d);
-            push_double(d);
+            push_double(d, $);
             return;
         }
     }
@@ -3211,61 +3211,61 @@ function arccosh(): void {
     // arccosh(z) = log(sqrt(z^2 - 1) + z)
 
     if (isdouble(p1) || isdoublez(p1)) {
-        push(p1);
-        push(p1);
-        multiply();
-        push_double(-1.0);
-        add();
-        sqrtfunc();
-        push(p1);
-        add();
-        logfunc();
+        push(p1, $);
+        push(p1, $);
+        multiply($);
+        push_double(-1.0, $);
+        add($);
+        sqrtfunc($);
+        push(p1, $);
+        add($);
+        logfunc($);
         return;
     }
 
     if (isplusone(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     if (car(p1) == symbol(COSH)) {
-        push(cadr(p1));
+        push(cadr(p1), $);
         return;
     }
 
-    push_symbol(ARCCOSH);
-    push(p1);
-    list(2);
+    push_symbol(ARCCOSH, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_arcsin(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    arcsin();
+function eval_arcsin(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    arcsin($);
 }
 
-function arcsin(): void {
+function arcsin($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            arcsin();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            arcsin($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         if (-1.0 <= d && d <= 1.0) {
             d = Math.asin(d);
-            push_double(d);
+            push_double(d, $);
             return;
         }
     }
@@ -3273,237 +3273,237 @@ function arcsin(): void {
     // arcsin(z) = -i log(i z + sqrt(1 - z^2))
 
     if (isdouble(p1) || isdoublez(p1)) {
-        push(imaginaryunit);
-        negate();
-        push(imaginaryunit);
-        push(p1);
-        multiply();
-        push_double(1.0);
-        push(p1);
-        push(p1);
-        multiply();
-        subtract();
-        sqrtfunc();
-        add();
-        logfunc();
-        multiply();
+        push(imaginaryunit, $);
+        negate($);
+        push(imaginaryunit, $);
+        push(p1, $);
+        multiply($);
+        push_double(1.0, $);
+        push(p1, $);
+        push(p1, $);
+        multiply($);
+        subtract($);
+        sqrtfunc($);
+        add($);
+        logfunc($);
+        multiply($);
         return;
     }
 
     // arcsin(-x) = -arcsin(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        arcsin();
-        negate();
+        push(p1, $);
+        negate($);
+        arcsin($);
+        negate($);
         return;
     }
 
     // arcsin(1 / sqrt(2)) = 1/4 pi
 
     if (isoneoversqrttwo(p1)) {
-        push_rational(1, 4);
-        push_symbol(PI);
-        multiply();
+        push_rational(1, 4, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // arcsin(0) = 0
 
     if (iszero(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     // arcsin(1/2) = 1/6 pi
 
     if (isequalq(p1, 1, 2)) {
-        push_rational(1, 6);
-        push_symbol(PI);
-        multiply();
+        push_rational(1, 6, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // arcsin(1) = 1/2 pi
 
     if (isplusone(p1)) {
-        push_rational(1, 2);
-        push_symbol(PI);
-        multiply();
+        push_rational(1, 2, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
-    push_symbol(ARCSIN);
-    push(p1);
-    list(2);
+    push_symbol(ARCSIN, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_arcsinh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    arcsinh();
+function eval_arcsinh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    arcsinh($);
 }
 
-function arcsinh(): void {
+function arcsinh($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            arcsinh();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            arcsinh($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.asinh(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     // arcsinh(z) = log(sqrt(z^2 + 1) + z)
 
     if (isdoublez(p1)) {
-        push(p1);
-        push(p1);
-        multiply();
-        push_double(1.0);
-        add();
-        sqrtfunc();
-        push(p1);
-        add();
-        logfunc();
+        push(p1, $);
+        push(p1, $);
+        multiply($);
+        push_double(1.0, $);
+        add($);
+        sqrtfunc($);
+        push(p1, $);
+        add($);
+        logfunc($);
         return;
     }
 
     if (iszero(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
     // arcsinh(-x) = -arcsinh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        arcsinh();
-        negate();
+        push(p1, $);
+        negate($);
+        arcsinh($);
+        negate($);
         return;
     }
 
     if (car(p1) == symbol(SINH)) {
-        push(cadr(p1));
+        push(cadr(p1), $);
         return;
     }
 
-    push_symbol(ARCSINH);
-    push(p1);
-    list(2);
+    push_symbol(ARCSINH, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_arctan(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_arctan(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
     if (iscons(cddr(p1))) {
-        push(caddr(p1));
-        evalf();
+        push(caddr(p1), $);
+        evalf($);
     }
     else
-        push_integer(1);
-    arctan();
+        push_integer(1, $);
+    arctan($);
 }
 
-function arctan(): void {
+function arctan($: ScriptVars): void {
 
-    const X = pop();
-    const Y = pop();
+    const X = pop($);
+    const Y = pop($);
 
     if (istensor(Y)) {
         const T = copy_tensor(Y);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            push(X);
-            arctan();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            push(X, $);
+            arctan($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isnum(X) && isnum(Y)) {
-        arctan_numbers(X, Y);
+        arctan_numbers(X, Y, $);
         return;
     }
 
     // arctan(z) = -1/2 i log((i - z) / (i + z))
 
     if (!iszero(X) && (isdoublez(X) || isdoublez(Y))) {
-        push(Y);
-        push(X);
-        divide();
-        const Z = pop();
-        push_double(-0.5);
-        push(imaginaryunit);
-        multiply();
-        push(imaginaryunit);
-        push(Z);
-        subtract();
-        push(imaginaryunit);
-        push(Z);
-        add();
-        divide();
-        logfunc();
-        multiply();
+        push(Y, $);
+        push(X, $);
+        divide($);
+        const Z = pop($);
+        push_double(-0.5, $);
+        push(imaginaryunit, $);
+        multiply($);
+        push(imaginaryunit, $);
+        push(Z, $);
+        subtract($);
+        push(imaginaryunit, $);
+        push(Z, $);
+        add($);
+        divide($);
+        logfunc($);
+        multiply($);
         return;
     }
 
     // arctan(-y,x) = -arctan(y,x)
 
     if (isnegativeterm(Y)) {
-        push(Y);
-        negate();
-        push(X);
-        arctan();
-        negate();
+        push(Y, $);
+        negate($);
+        push(X, $);
+        arctan($);
+        negate($);
         return;
     }
 
     if (car(Y) == symbol(TAN) && isplusone(X)) {
-        push(cadr(Y)); // x of tan(x)
+        push(cadr(Y), $); // x of tan(x)
         return;
     }
 
-    push_symbol(ARCTAN);
-    push(Y);
-    push(X);
-    list(3);
+    push_symbol(ARCTAN, $);
+    push(Y, $);
+    push(X, $);
+    list(3, $);
 }
 
-function arctan_numbers(X: Num, Y: Num): void {
+function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
 
     if (iszero(X) && iszero(Y)) {
-        push_symbol(ARCTAN);
-        push_integer(0);
-        push_integer(0);
-        list(3);
+        push_symbol(ARCTAN, $);
+        push_integer(0, $);
+        push_integer(0, $);
+        list(3, $);
         return;
     }
 
     if (isnum(X) && isnum(Y) && (isdouble(X) || isdouble(Y))) {
-        push(X);
-        const x = pop_double();
-        push(Y);
-        const y = pop_double();
-        push_double(Math.atan2(y, x));
+        push(X, $);
+        const x = pop_double($);
+        push(Y, $);
+        const y = pop_double($);
+        push_double(Math.atan2(y, x), $);
         return;
     }
 
@@ -3511,59 +3511,59 @@ function arctan_numbers(X: Num, Y: Num): void {
 
     if (iszero(Y)) {
         if (isnegativenumber(X))
-            push_symbol(PI);
+            push_symbol(PI, $);
         else
-            push_integer(0);
+            push_integer(0, $);
         return;
     }
 
     if (iszero(X)) {
         if (isnegativenumber(Y))
-            push_rational(-1, 2);
+            push_rational(-1, 2, $);
         else
-            push_rational(1, 2);
-        push_symbol(PI);
-        multiply();
+            push_rational(1, 2, $);
+        push_symbol(PI, $);
+        multiply($);
         return;
     }
 
     // convert fractions to integers
 
-    push(Y);
-    push(X);
-    divide();
-    absfunc();
-    const T = pop();
+    push(Y, $);
+    push(X, $);
+    divide($);
+    absfunc($);
+    const T = pop($);
 
-    push(T);
-    numerator();
+    push(T, $);
+    numerator($);
     if (isnegativenumber(Y))
-        negate();
-    const Ynum = pop() as Rat;
+        negate($);
+    const Ynum = pop($) as Rat;
 
-    push(T);
-    denominator();
+    push(T, $);
+    denominator($);
     if (isnegativenumber(X))
-        negate();
-    const Xnum = pop() as Rat;
+        negate($);
+    const Xnum = pop($) as Rat;
 
     // compare numerators and denominators, ignore signs
 
     if (bignum_cmp(Xnum.a, Ynum.a) != 0 || bignum_cmp(Xnum.b, Ynum.b) != 0) {
         // not equal
         if (isnegativenumber(Ynum)) {
-            push_symbol(ARCTAN);
-            push(Ynum);
-            negate();
-            push(Xnum);
-            list(3);
-            negate();
+            push_symbol(ARCTAN, $);
+            push(Ynum, $);
+            negate($);
+            push(Xnum, $);
+            list(3, $);
+            negate($);
         }
         else {
-            push_symbol(ARCTAN);
-            push(Ynum);
-            push(Xnum);
-            list(3);
+            push_symbol(ARCTAN, $);
+            push(Ynum, $);
+            push(Xnum, $);
+            list(3, $);
         }
         return;
     }
@@ -3572,56 +3572,56 @@ function arctan_numbers(X: Num, Y: Num): void {
 
     if (isnegativenumber(Xnum)) {
         if (isnegativenumber(Ynum))
-            push_rational(-3, 4);
+            push_rational(-3, 4, $);
         else
-            push_rational(3, 4);
+            push_rational(3, 4, $);
     }
     else {
         if (isnegativenumber(Ynum))
-            push_rational(-1, 4);
+            push_rational(-1, 4, $);
         else
-            push_rational(1, 4);
+            push_rational(1, 4, $);
     }
 
-    push_symbol(PI);
-    multiply();
+    push_symbol(PI, $);
+    multiply($);
 }
 
-function eval_arctanh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    arctanh();
+function eval_arctanh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    arctanh($);
 }
 
-function arctanh(): void {
+function arctanh($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            arctanh();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            arctanh($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isplusone(p1) || isminusone(p1)) {
-        push_symbol(ARCTANH);
-        push(p1);
-        list(2);
+        push_symbol(ARCTANH, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         if (-1.0 < d && d < 1.0) {
             d = Math.atanh(d);
-            push_double(d);
+            push_double(d, $);
             return;
         }
     }
@@ -3629,184 +3629,184 @@ function arctanh(): void {
     // arctanh(z) = 1/2 log(1 + z) - 1/2 log(1 - z)
 
     if (isdouble(p1) || isdoublez(p1)) {
-        push_double(1.0);
-        push(p1);
-        add();
-        logfunc();
-        push_double(1.0);
-        push(p1);
-        subtract();
-        logfunc();
-        subtract();
-        push_double(0.5);
-        multiply();
+        push_double(1.0, $);
+        push(p1, $);
+        add($);
+        logfunc($);
+        push_double(1.0, $);
+        push(p1, $);
+        subtract($);
+        logfunc($);
+        subtract($);
+        push_double(0.5, $);
+        multiply($);
         return;
     }
 
     if (iszero(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     // arctanh(-x) = -arctanh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        arctanh();
-        negate();
+        push(p1, $);
+        negate($);
+        arctanh($);
+        negate($);
         return;
     }
 
     if (car(p1) == symbol(TANH)) {
-        push(cadr(p1));
+        push(cadr(p1), $);
         return;
     }
 
-    push_symbol(ARCTANH);
-    push(p1);
-    list(2);
+    push_symbol(ARCTANH, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_arg(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    arg();
+function eval_arg(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    arg($);
 }
 
 // use numerator and denominator to handle (a + i b) / (c + i d)
 
-function arg(): void {
+function arg($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            arg();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            arg($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     const t = isdoublesomewhere(p1);
 
-    push(p1);
-    numerator();
-    arg1();
+    push(p1, $);
+    numerator($);
+    arg1($);
 
-    push(p1);
-    denominator();
-    arg1();
+    push(p1, $);
+    denominator($);
+    arg1($);
 
-    subtract();
+    subtract($);
 
     if (t)
-        floatfunc();
+        floatfunc($);
 }
 
-function arg1(): void {
+function arg1($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (isrational(p1)) {
         if (isnegativenumber(p1)) {
-            push_symbol(PI);
-            negate();
+            push_symbol(PI, $);
+            negate($);
         }
         else
-            push_integer(0);
+            push_integer(0, $);
         return;
     }
 
     if (isdouble(p1)) {
         if (isnegativenumber(p1))
-            push_double(-Math.PI);
+            push_double(-Math.PI, $);
         else
-            push_double(0.0);
+            push_double(0.0, $);
         return;
     }
 
     // (-1) ^ expr
 
     if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
-        push_symbol(PI);
-        push(caddr(p1));
-        multiply();
+        push_symbol(PI, $);
+        push(caddr(p1), $);
+        multiply($);
         return;
     }
 
     // e ^ expr
 
     if (car(p1) == symbol(POWER) && cadr(p1) == symbol(EXP1)) {
-        push(caddr(p1));
-        imag();
+        push(caddr(p1), $);
+        imag($);
         return;
     }
 
     if (car(p1) == symbol(MULTIPLY)) {
-        const h = stack.length;
+        const h = $.stack.length;
         p1 = cdr(p1);
         while (iscons(p1)) {
-            push(car(p1));
-            arg();
+            push(car(p1), $);
+            arg($);
             p1 = cdr(p1);
         }
-        add_terms(stack.length - h);
+        add_terms($.stack.length - h, $);
         return;
     }
 
     if (car(p1) == symbol(ADD)) {
-        push(p1);
-        rect(); // convert polar and clock forms
-        p1 = pop();
-        push(p1);
-        real();
-        const RE = pop();
-        push(p1);
-        imag();
-        const IM = pop();
-        push(IM);
-        push(RE);
-        arctan();
+        push(p1, $);
+        rect($); // convert polar and clock forms
+        p1 = pop($);
+        push(p1, $);
+        real($);
+        const RE = pop($);
+        push(p1, $);
+        imag($);
+        const IM = pop($);
+        push(IM, $);
+        push(RE, $);
+        arctan($);
         return;
     }
 
-    push_integer(0); // p1 is real
+    push_integer(0, $); // p1 is real
 }
 
-function eval_binding(p1: U): void {
+function eval_binding(p1: U, $: ScriptVars): void {
     const sym = cadr(p1) as Sym;
-    push(get_binding(sym));
+    push(get_binding(sym), $);
 }
 
-function eval_ceiling(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    ceilingfunc();
+function eval_ceiling(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    ceilingfunc($);
 }
 
-function ceilingfunc(): void {
+function ceilingfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            ceilingfunc();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            ceilingfunc($);
+            T.elems[i] = pop($);
         }
-        push(p1);
+        push(p1, $);
         return;
     }
 
     if (isrational(p1) && isinteger(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
@@ -3814,195 +3814,195 @@ function ceilingfunc(): void {
         const a = bignum_div(p1.a, p1.b);
         const b = bignum_int(1);
         if (isnegativenumber(p1))
-            push_bignum(-1, a, b);
+            push_bignum(-1, a, b, $);
         else {
-            push_bignum(1, a, b);
-            push_integer(1);
-            add();
+            push_bignum(1, a, b, $);
+            push_integer(1, $);
+            add($);
         }
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.ceil(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
-    push_symbol(CEILING);
-    push(p1);
-    list(2);
+    push_symbol(CEILING, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_check(p1: U): void {
-    push(cadr(p1));
-    evalp();
-    p1 = pop();
+function eval_check(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalp($);
+    p1 = pop($);
     if (iszero(p1)) {
         stopf("check");
     }
-    push(nil); // no result is printed
+    push(nil, $); // no result is printed
 }
 
-function eval_circexp(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    circexp();
+function eval_circexp(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    circexp($);
 }
 
-function circexp(): void {
-    circexp_subst();
-    evalf();
+function circexp($: ScriptVars): void {
+    circexp_subst($);
+    evalf($);
 }
 
-function circexp_subst(): void {
+function circexp_subst($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            circexp_subst();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            circexp_subst($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (car(p1) == symbol(COS)) {
-        push_symbol(EXPCOS);
-        push(cadr(p1));
-        circexp_subst();
-        list(2);
+        push_symbol(EXPCOS, $);
+        push(cadr(p1), $);
+        circexp_subst($);
+        list(2, $);
         return;
     }
 
     if (car(p1) == symbol(SIN)) {
-        push_symbol(EXPSIN);
-        push(cadr(p1));
-        circexp_subst();
-        list(2);
+        push_symbol(EXPSIN, $);
+        push(cadr(p1), $);
+        circexp_subst($);
+        list(2, $);
         return;
     }
 
     if (car(p1) == symbol(TAN)) {
-        push_symbol(EXPTAN);
-        push(cadr(p1));
-        circexp_subst();
-        list(2);
+        push_symbol(EXPTAN, $);
+        push(cadr(p1), $);
+        circexp_subst($);
+        list(2, $);
         return;
     }
 
     if (car(p1) == symbol(COSH)) {
-        push_symbol(EXPCOSH);
-        push(cadr(p1));
-        circexp_subst();
-        list(2);
+        push_symbol(EXPCOSH, $);
+        push(cadr(p1), $);
+        circexp_subst($);
+        list(2, $);
         return;
     }
 
     if (car(p1) == symbol(SINH)) {
-        push_symbol(EXPSINH);
-        push(cadr(p1));
-        circexp_subst();
-        list(2);
+        push_symbol(EXPSINH, $);
+        push(cadr(p1), $);
+        circexp_subst($);
+        list(2, $);
         return;
     }
 
     if (car(p1) == symbol(TANH)) {
-        push_symbol(EXPTANH);
-        push(cadr(p1));
-        circexp_subst();
-        list(2);
+        push_symbol(EXPTANH, $);
+        push(cadr(p1), $);
+        circexp_subst($);
+        list(2, $);
         return;
     }
 
     // none of the above
 
     if (iscons(p1)) {
-        const h = stack.length;
-        push(car(p1));
+        const h = $.stack.length;
+        push(car(p1), $);
         p1 = cdr(p1);
         while (iscons(p1)) {
-            push(car(p1));
-            circexp_subst();
+            push(car(p1), $);
+            circexp_subst($);
             p1 = cdr(p1);
         }
-        list(stack.length - h);
+        list($.stack.length - h, $);
         return;
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_clear() {
+function eval_clear(expr: U, $: ScriptVars) {
     save_symbol(symbol(TRACE));
     save_symbol(symbol(TTY));
 
     binding = {};
     usrfunc = {};
 
-    initscript();
+    initscript($);
 
     restore_symbol();
     restore_symbol();
 
-    push(nil); // result
+    push(nil, $); // result
 }
 
-function eval_clock(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    clockfunc();
+function eval_clock(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    clockfunc($);
 }
 
-function clockfunc(): void {
-    const p1 = pop();
+function clockfunc($: ScriptVars): void {
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            clockfunc();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            clockfunc($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
-    push(p1);
-    mag();
+    push(p1, $);
+    mag($);
 
-    push_integer(-1); // base
+    push_integer(-1, $); // base
 
-    push(p1);
-    arg();
-    push_symbol(PI);
-    divide();
+    push(p1, $);
+    arg($);
+    push_symbol(PI, $);
+    divide($);
 
-    power();
+    power($);
 
-    multiply();
+    multiply($);
 }
 
-function eval_cofactor(p1: U): void {
+function eval_cofactor(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    const p2 = pop() as Tensor;
+    push(cadr(p1), $);
+    evalf($);
+    const p2 = pop($) as Tensor;
 
-    push(caddr(p1));
-    evalf();
-    const i = pop_integer();
+    push(caddr(p1), $);
+    evalf($);
+    const i = pop_integer($);
 
-    push(cadddr(p1));
-    evalf();
-    const j = pop_integer();
+    push(cadddr(p1), $);
+    evalf($);
+    const j = pop_integer($);
 
     if (!issquarematrix(p2))
         stopf("cofactor: square matrix expected");
@@ -4010,112 +4010,112 @@ function eval_cofactor(p1: U): void {
     if (i < 1 || i > p2.dims[0] || j < 0 || j > p2.dims[1])
         stopf("cofactor: index err");
 
-    push(p2);
+    push(p2, $);
 
-    minormatrix(i, j);
+    minormatrix(i, j, $);
 
-    det();
+    det($);
 
     if ((i + j) % 2)
-        negate();
+        negate($);
 }
 
-function eval_conj(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    conjfunc();
+function eval_conj(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    conjfunc($);
 }
 
-function conjfunc(): void {
-    conjfunc_subst();
-    evalf();
+function conjfunc($: ScriptVars): void {
+    conjfunc_subst($);
+    evalf($);
 }
 
-function conjfunc_subst(): void {
+function conjfunc_subst($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            conjfunc_subst();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            conjfunc_subst($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     // (-1) ^ expr
 
     if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
-        push_symbol(POWER);
-        push_integer(-1);
-        push(caddr(p1));
-        negate();
-        list(3);
+        push_symbol(POWER, $);
+        push_integer(-1, $);
+        push(caddr(p1), $);
+        negate($);
+        list(3, $);
         return;
     }
 
     if (iscons(p1)) {
-        const h = stack.length;
-        push(car(p1));
+        const h = $.stack.length;
+        push(car(p1), $);
         p1 = cdr(p1);
         while (iscons(p1)) {
-            push(car(p1));
-            conjfunc_subst();
+            push(car(p1), $);
+            conjfunc_subst($);
             p1 = cdr(p1);
         }
-        list(stack.length - h);
+        list($.stack.length - h, $);
         return;
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_contract(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_contract(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
 
     p1 = cddr(p1);
 
     if (!iscons(p1)) {
-        push_integer(1);
-        push_integer(2);
-        contract();
+        push_integer(1, $);
+        push_integer(2, $);
+        contract($);
         return;
     }
 
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
-        push(cadr(p1));
-        evalf();
-        contract();
+        push(car(p1), $);
+        evalf($);
+        push(cadr(p1), $);
+        evalf($);
+        contract($);
         p1 = cddr(p1);
     }
 }
 
-function contract(): void {
+function contract($: ScriptVars): void {
     const index: number[] = [];
 
-    const p3 = pop();
-    const p2 = pop();
-    const p1 = pop();
+    const p3 = pop($);
+    const p2 = pop($);
+    const p1 = pop($);
 
     if (!istensor(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
     const ndim = p1.ndim;
 
-    push(p2);
-    let n = pop_integer();
+    push(p2, $);
+    let n = pop_integer($);
 
-    push(p3);
-    let m = pop_integer();
+    push(p3, $);
+    let m = pop_integer($);
 
     if (n < 1 || n > ndim || m < 1 || m > ndim || n == m)
         stopf("contract: index error");
@@ -4146,12 +4146,12 @@ function contract(): void {
             let k = index[0];
             for (let h = 1; h < ndim; h++)
                 k = k * p1.dims[h] + index[h];
-            push(p1.elems[k]);
+            push(p1.elems[k], $);
         }
 
-        add_terms(ncol);
+        add_terms(ncol, $);
 
-        T.elems[i] = pop();
+        T.elems[i] = pop($);
 
         // increment index
 
@@ -4165,7 +4165,7 @@ function contract(): void {
     }
 
     if (nelem == 1) {
-        push(T.elems[0]);
+        push(T.elems[0], $);
         return;
     }
 
@@ -4177,61 +4177,61 @@ function contract(): void {
         if (i != n && i != m)
             T.dims[k++] = p1.dims[i];
 
-    push(T);
+    push(T, $);
 }
 
-function eval_cos(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    cosfunc();
+function eval_cos(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    cosfunc($);
 }
 
-function cosfunc(): void {
+function cosfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, cosfunc));
+        push(elementwise(p1, cosfunc, $), $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.cos(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     // cos(z) = 1/2 exp(i z) + 1/2 exp(-i z)
 
     if (isdoublez(p1)) {
-        push_double(0.5);
-        push(imaginaryunit);
-        push(p1);
-        multiply();
-        expfunc();
-        push(imaginaryunit);
-        negate();
-        push(p1);
-        multiply();
-        expfunc();
-        add();
-        multiply();
+        push_double(0.5, $);
+        push(imaginaryunit, $);
+        push(p1, $);
+        multiply($);
+        expfunc($);
+        push(imaginaryunit, $);
+        negate($);
+        push(p1, $);
+        multiply($);
+        expfunc($);
+        add($);
+        multiply($);
         return;
     }
 
     // cos(-x) = cos(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        cosfunc();
+        push(p1, $);
+        negate($);
+        cosfunc($);
         return;
     }
 
     if (car(p1) == symbol(ADD)) {
-        cosfunc_sum(p1);
+        cosfunc_sum(p1, $);
         return;
     }
 
@@ -4240,327 +4240,327 @@ function cosfunc(): void {
     if (car(p1) == symbol(ARCTAN)) {
         const X = caddr(p1);
         const Y = cadr(p1);
-        push(X);
-        push(X);
-        push(X);
-        multiply();
-        push(Y);
-        push(Y);
-        multiply();
-        add();
-        push_rational(-1, 2);
-        power();
-        multiply();
+        push(X, $);
+        push(X, $);
+        push(X, $);
+        multiply($);
+        push(Y, $);
+        push(Y, $);
+        multiply($);
+        add($);
+        push_rational(-1, 2, $);
+        power($);
+        multiply($);
         return;
     }
 
     // cos(arcsin(x)) = sqrt(1 - x^2)
 
     if (car(p1) == symbol(ARCSIN)) {
-        push_integer(1);
-        push(cadr(p1));
-        push_integer(2);
-        power();
-        subtract();
-        push_rational(1, 2);
-        power();
+        push_integer(1, $);
+        push(cadr(p1), $);
+        push_integer(2, $);
+        power($);
+        subtract($);
+        push_rational(1, 2, $);
+        power($);
         return;
     }
 
     // n pi ?
 
-    push(p1);
-    push_symbol(PI);
-    divide();
-    let p2 = pop();
+    push(p1, $);
+    push_symbol(PI, $);
+    divide($);
+    let p2 = pop($);
 
     if (!isnum(p2)) {
-        push_symbol(COS);
-        push(p1);
-        list(2);
+        push_symbol(COS, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
     if (isdouble(p2)) {
-        push(p2);
-        let d = pop_double();
+        push(p2, $);
+        let d = pop_double($);
         d = Math.cos(d * Math.PI);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
-    push(p2); // nonnegative by cos(-x) = cos(x) above
-    push_integer(180);
-    multiply();
-    p2 = pop();
+    push(p2, $); // nonnegative by cos(-x) = cos(x) above
+    push_integer(180, $);
+    multiply($);
+    p2 = pop($);
 
     if (!(isrational(p2) && isinteger(p2))) {
-        push_symbol(COS);
-        push(p1);
-        list(2);
+        push_symbol(COS, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
-    push(p2);
-    push_integer(360);
-    modfunc();
-    const n = pop_integer();
+    push(p2, $);
+    push_integer(360, $);
+    modfunc($);
+    const n = pop_integer($);
 
     switch (n) {
         case 90:
         case 270:
-            push_integer(0);
+            push_integer(0, $);
             break;
         case 60:
         case 300:
-            push_rational(1, 2);
+            push_rational(1, 2, $);
             break;
         case 120:
         case 240:
-            push_rational(-1, 2);
+            push_rational(-1, 2, $);
             break;
         case 45:
         case 315:
-            push_rational(1, 2);
-            push_integer(2);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(1, 2, $);
+            push_integer(2, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 135:
         case 225:
-            push_rational(-1, 2);
-            push_integer(2);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(-1, 2, $);
+            push_integer(2, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 30:
         case 330:
-            push_rational(1, 2);
-            push_integer(3);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(1, 2, $);
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 150:
         case 210:
-            push_rational(-1, 2);
-            push_integer(3);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(-1, 2, $);
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 0:
-            push_integer(1);
+            push_integer(1, $);
             break;
         case 180:
-            push_integer(-1);
+            push_integer(-1, $);
             break;
         default:
-            push_symbol(COS);
-            push(p1);
-            list(2);
+            push_symbol(COS, $);
+            push(p1, $);
+            list(2, $);
             break;
     }
 }
 
 // cos(x + n/2 pi) = cos(x) cos(n/2 pi) - sin(x) sin(n/2 pi)
 
-function cosfunc_sum(p1: U): void {
+function cosfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
     while (iscons(p2)) {
-        push_integer(2);
-        push(car(p2));
-        multiply();
-        push_symbol(PI);
-        divide();
-        let p3 = pop();
+        push_integer(2, $);
+        push(car(p2), $);
+        multiply($);
+        push_symbol(PI, $);
+        divide($);
+        let p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
-            push(p1);
-            push(car(p2));
-            subtract();
-            p3 = pop();
-            push(p3);
-            cosfunc();
-            push(car(p2));
-            cosfunc();
-            multiply();
-            push(p3);
-            sinfunc();
-            push(car(p2));
-            sinfunc();
-            multiply();
-            subtract();
+            push(p1, $);
+            push(car(p2), $);
+            subtract($);
+            p3 = pop($);
+            push(p3, $);
+            cosfunc($);
+            push(car(p2), $);
+            cosfunc($);
+            multiply($);
+            push(p3, $);
+            sinfunc($);
+            push(car(p2), $);
+            sinfunc($);
+            multiply($);
+            subtract($);
             return;
         }
         p2 = cdr(p2);
     }
-    push_symbol(COS);
-    push(p1);
-    list(2);
+    push_symbol(COS, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_cosh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    coshfunc();
+function eval_cosh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    coshfunc($);
 }
 
-function coshfunc(): void {
+function coshfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            coshfunc();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            coshfunc($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.cosh(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     // cosh(z) = 1/2 exp(z) + 1/2 exp(-z)
 
     if (isdoublez(p1)) {
-        push_rational(1, 2);
-        push(p1);
-        expfunc();
-        push(p1);
-        negate();
-        expfunc();
-        add();
-        multiply();
+        push_rational(1, 2, $);
+        push(p1, $);
+        expfunc($);
+        push(p1, $);
+        negate($);
+        expfunc($);
+        add($);
+        multiply($);
         return;
     }
 
     if (iszero(p1)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
     // cosh(-x) = cosh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        coshfunc();
+        push(p1, $);
+        negate($);
+        coshfunc($);
         return;
     }
 
     if (car(p1) == symbol(ARCCOSH)) {
-        push(cadr(p1));
+        push(cadr(p1), $);
         return;
     }
 
-    push_symbol(COSH);
-    push(p1);
-    list(2);
+    push_symbol(COSH, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_defint(p1: U): void {
+function eval_defint(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    let F = pop();
+    push(cadr(p1), $);
+    evalf($);
+    let F = pop($);
 
     p1 = cddr(p1);
 
     while (iscons(p1)) {
 
-        push(car(p1));
-        evalf();
-        const X = pop();
+        push(car(p1), $);
+        evalf($);
+        const X = pop($);
 
-        push(cadr(p1));
-        evalf();
-        const A = pop();
+        push(cadr(p1), $);
+        evalf($);
+        const A = pop($);
 
-        push(caddr(p1));
-        evalf();
-        const B = pop();
+        push(caddr(p1), $);
+        evalf($);
+        const B = pop($);
 
-        push(F);
-        push(X);
-        integral();
-        F = pop();
+        push(F, $);
+        push(X, $);
+        integral($);
+        F = pop($);
 
-        push(F);
-        push(X);
-        push(B);
-        subst();
-        evalf();
+        push(F, $);
+        push(X, $);
+        push(B, $);
+        subst($);
+        evalf($);
 
-        push(F);
-        push(X);
-        push(A);
-        subst();
-        evalf();
+        push(F, $);
+        push(X, $);
+        push(A, $);
+        subst($);
+        evalf($);
 
-        subtract();
-        F = pop();
+        subtract($);
+        F = pop($);
 
         p1 = cdddr(p1);
     }
 
-    push(F);
+    push(F, $);
 }
 
-function eval_denominator(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    denominator();
+function eval_denominator(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    denominator($);
 }
 
-function denominator(): void {
+function denominator($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (isrational(p1)) {
-        push_bignum(1, p1.b, bignum_int(1));
+        push_bignum(1, p1.b, bignum_int(1), $);
         return;
     }
 
     let p2: U = one; // denominator
 
-    while (find_divisor(p1)) {
+    while (find_divisor(p1, $)) {
 
-        const p0 = pop(); // p0 is a denominator
+        const p0 = pop($); // p0 is a denominator
 
-        push(p0); // cancel in orig expr
-        push(p1);
-        cancel_factor();
-        p1 = pop();
+        push(p0, $); // cancel in orig expr
+        push(p1, $);
+        cancel_factor($);
+        p1 = pop($);
 
-        push(p0); // update denominator
-        push(p2);
-        cancel_factor();
-        p2 = pop();
+        push(p0, $); // update denominator
+        push(p2, $);
+        cancel_factor($);
+        p2 = pop($);
     }
 
-    push(p2);
+    push(p2, $);
 }
 
-function eval_derivative(p1: U): void {
+function eval_derivative(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
+    push(cadr(p1), $);
+    evalf($);
     p1 = cddr(p1);
 
     if (!iscons(p1)) {
-        push_symbol(X_LOWER);
-        derivative();
+        push_symbol(X_LOWER, $);
+        derivative($);
         return;
     }
 
@@ -4575,37 +4575,37 @@ function eval_derivative(p1: U): void {
             flag = 0;
         }
         else {
-            push(car(p1));
-            evalf();
-            X = pop();
+            push(car(p1), $);
+            evalf($);
+            X = pop($);
             p1 = cdr(p1);
         }
 
         if (isnum(X)) {
-            push(X);
-            const n = pop_integer();
-            push_symbol(X_LOWER);
-            X = pop();
+            push(X, $);
+            const n = pop_integer($);
+            push_symbol(X_LOWER, $);
+            X = pop($);
             for (let i = 0; i < n; i++) {
-                push(X);
-                derivative();
+                push(X, $);
+                derivative($);
             }
             continue;
         }
 
         if (iscons(p1)) {
 
-            push(car(p1));
-            evalf();
-            Y = pop();
+            push(car(p1), $);
+            evalf($);
+            Y = pop($);
             p1 = cdr(p1);
 
             if (isnum(Y)) {
-                push(Y);
-                const n = pop_integer();
+                push(Y, $);
+                const n = pop_integer($);
                 for (let i = 0; i < n; i++) {
-                    push(X);
-                    derivative();
+                    push(X, $);
+                    derivative($);
                 }
                 continue;
             }
@@ -4613,178 +4613,178 @@ function eval_derivative(p1: U): void {
             flag = 1;
         }
 
-        push(X);
-        derivative();
+        push(X, $);
+        derivative($);
     }
 }
 
-function derivative(): void {
+function derivative($: ScriptVars): void {
 
-    const X = pop();
-    const F = pop();
+    const X = pop($);
+    const F = pop($);
 
     if (istensor(F)) {
         if (istensor(X))
-            d_tensor_tensor(F, X);
+            d_tensor_tensor(F, X, $);
         else
-            d_tensor_scalar(F, X);
+            d_tensor_scalar(F, X, $);
     }
     else {
         if (istensor(X))
-            d_scalar_tensor(F, X);
+            d_scalar_tensor(F, X, $);
         else
-            d_scalar_scalar(F, X);
+            d_scalar_scalar(F, X, $);
     }
 }
 
-function d_scalar_scalar(F: U, X: U): void {
+function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
     if (!(issymbol(X) && isusersymbol(X)))
         stopf("derivative: symbol expected");
 
     // d(x,x)?
 
-    if (equal(F, X)) {
-        push_integer(1);
+    if (equal(F, X, $)) {
+        push_integer(1, $);
         return;
     }
 
     // d(a,x)?
 
     if (!iscons(F)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     if (car(F) == symbol(ADD)) {
-        dsum(F, X);
+        dsum(F, X, $);
         return;
     }
 
     if (car(F) == symbol(MULTIPLY)) {
-        dproduct(F, X);
+        dproduct(F, X, $);
         return;
     }
 
     if (car(F) == symbol(POWER)) {
-        dpower(F, X);
+        dpower(F, X, $);
         return;
     }
 
     if (car(F) == symbol(DERIVATIVE)) {
-        dd(F, X);
+        dd(F, X, $);
         return;
     }
 
     if (car(F) == symbol(LOG)) {
-        dlog(F, X);
+        dlog(F, X, $);
         return;
     }
 
     if (car(F) == symbol(SIN)) {
-        dsin(F, X);
+        dsin(F, X, $);
         return;
     }
 
     if (car(F) == symbol(COS)) {
-        dcos(F, X);
+        dcos(F, X, $);
         return;
     }
 
     if (car(F) == symbol(TAN)) {
-        dtan(F, X);
+        dtan(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ARCSIN)) {
-        darcsin(F, X);
+        darcsin(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ARCCOS)) {
-        darccos(F, X);
+        darccos(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ARCTAN)) {
-        darctan(F, X);
+        darctan(F, X, $);
         return;
     }
 
     if (car(F) == symbol(SINH)) {
-        dsinh(F, X);
+        dsinh(F, X, $);
         return;
     }
 
     if (car(F) == symbol(COSH)) {
-        dcosh(F, X);
+        dcosh(F, X, $);
         return;
     }
 
     if (car(F) == symbol(TANH)) {
-        dtanh(F, X);
+        dtanh(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ARCSINH)) {
-        darcsinh(F, X);
+        darcsinh(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ARCCOSH)) {
-        darccosh(F, X);
+        darccosh(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ARCTANH)) {
-        darctanh(F, X);
+        darctanh(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ERF)) {
-        derf(F, X);
+        derf(F, X, $);
         return;
     }
 
     if (car(F) == symbol(ERFC)) {
-        derfc(F, X);
+        derfc(F, X, $);
         return;
     }
 
     if (car(F) == symbol(INTEGRAL) && caddr(F) == X) {
-        push(cadr(F));
+        push(cadr(F), $);
         return;
     }
 
-    dfunction(F, X);
+    dfunction(F, X, $);
 }
 
-function dsum(p1: U, p2: U): void {
-    const h = stack.length;
+function dsum(p1: U, p2: U, $: ScriptVars): void {
+    const h = $.stack.length;
     p1 = cdr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        push(p2);
-        derivative();
+        push(car(p1), $);
+        push(p2, $);
+        derivative($);
         p1 = cdr(p1);
     }
-    add_terms(stack.length - h);
+    add_terms($.stack.length - h, $);
 }
 
-function dproduct(p1: U, p2: U): void {
+function dproduct(p1: U, p2: U, $: ScriptVars): void {
     const n = lengthf(p1) - 1;
     for (let i = 0; i < n; i++) {
         let p3 = cdr(p1);
         for (let j = 0; j < n; j++) {
-            push(car(p3));
+            push(car(p3), $);
             if (i == j) {
-                push(p2);
-                derivative();
+                push(p2, $);
+                derivative($);
             }
             p3 = cdr(p3);
         }
-        multiply_factors(n);
+        multiply_factors(n, $);
     }
-    add_terms(n);
+    add_terms(n, $);
 }
 
 //	     v
@@ -4800,44 +4800,44 @@ function dproduct(p1: U, p2: U): void {
 //	-- = u  (- -- + (log u) --)
 //	dx       u dx           dx
 
-function dpower(F: U, X: U): void {
+function dpower(F: U, X: U, $: ScriptVars): void {
     if (isnum(cadr(F)) && isnum(caddr(F))) {
-        push_integer(0); // irr or imag
+        push_integer(0, $); // irr or imag
         return;
     }
 
-    push(caddr(F));		// v/u
-    push(cadr(F));
-    divide();
+    push(caddr(F), $);		// v/u
+    push(cadr(F), $);
+    divide($);
 
-    push(cadr(F));		// du/dx
-    push(X);
-    derivative();
+    push(cadr(F), $);		// du/dx
+    push(X, $);
+    derivative($);
 
-    multiply();
+    multiply($);
 
-    push(cadr(F));		// log u
-    logfunc();
+    push(cadr(F), $);		// log u
+    logfunc($);
 
-    push(caddr(F));		// dv/dx
-    push(X);
-    derivative();
+    push(caddr(F), $);		// dv/dx
+    push(X, $);
+    derivative($);
 
-    multiply();
+    multiply($);
 
-    add();
+    add($);
 
-    push(F);		// u^v
+    push(F, $);		// u^v
 
-    multiply();
+    multiply($);
 }
 
-function dlog(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    divide();
+function dlog(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    divide($);
 }
 
 //	derivative of derivative
@@ -4852,244 +4852,244 @@ function dlog(p1: U, p2: U): void {
 //
 //	caddr(p1) = y
 
-function dd(p1: U, p2: U): void {
+function dd(p1: U, p2: U, $: ScriptVars): void {
     // d(f(x,y),x)
 
-    push(cadr(p1));
-    push(p2);
-    derivative();
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
 
-    const p3 = pop();
+    const p3 = pop($);
 
     if (car(p3) == symbol(DERIVATIVE)) {
 
         // sort dx terms
 
-        push_symbol(DERIVATIVE);
-        push_symbol(DERIVATIVE);
-        push(cadr(p3));
+        push_symbol(DERIVATIVE, $);
+        push_symbol(DERIVATIVE, $);
+        push(cadr(p3), $);
 
-        if (lessp(caddr(p3), caddr(p1))) {
-            push(caddr(p3));
-            list(3);
-            push(caddr(p1));
+        if (lessp(caddr(p3), caddr(p1), $)) {
+            push(caddr(p3), $);
+            list(3, $);
+            push(caddr(p1), $);
         }
         else {
-            push(caddr(p1));
-            list(3);
-            push(caddr(p3));
+            push(caddr(p1), $);
+            list(3, $);
+            push(caddr(p3), $);
         }
 
-        list(3);
+        list(3, $);
 
     }
     else {
-        push(p3);
-        push(caddr(p1));
-        derivative();
+        push(p3, $);
+        push(caddr(p1), $);
+        derivative($);
     }
 }
 
 // derivative of a generic function
 
-function dfunction(p1: U, p2: U): void {
+function dfunction(p1: U, p2: U, $: ScriptVars): void {
 
     const p3 = cdr(p1); // p3 is the argument list for the function
 
-    if (is_nil(p3) || findf(p3, p2)) {
-        push_symbol(DERIVATIVE);
-        push(p1);
-        push(p2);
-        list(3);
+    if (is_nil(p3) || findf(p3, p2, $)) {
+        push_symbol(DERIVATIVE, $);
+        push(p1, $);
+        push(p2, $);
+        list(3, $);
     }
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function dsin(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    cosfunc();
-    multiply();
+function dsin(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    cosfunc($);
+    multiply($);
 }
 
-function dcos(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    sinfunc();
-    multiply();
-    negate();
+function dcos(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    sinfunc($);
+    multiply($);
+    negate($);
 }
 
-function dtan(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    cosfunc();
-    push_integer(-2);
-    power();
-    multiply();
+function dtan(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    cosfunc($);
+    push_integer(-2, $);
+    power($);
+    multiply($);
 }
 
-function darcsin(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push_integer(1);
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    subtract();
-    push_rational(-1, 2);
-    power();
-    multiply();
+function darcsin(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push_integer(1, $);
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    subtract($);
+    push_rational(-1, 2, $);
+    power($);
+    multiply($);
 }
 
-function darccos(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push_integer(1);
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    subtract();
-    push_rational(-1, 2);
-    power();
-    multiply();
-    negate();
+function darccos(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push_integer(1, $);
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    subtract($);
+    push_rational(-1, 2, $);
+    power($);
+    multiply($);
+    negate($);
 }
 
-function darctan(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push_integer(1);
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    add();
-    reciprocate();
-    multiply();
+function darctan(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push_integer(1, $);
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    add($);
+    reciprocate($);
+    multiply($);
 }
 
-function dsinh(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    coshfunc();
-    multiply();
+function dsinh(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    coshfunc($);
+    multiply($);
 }
 
-function dcosh(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    sinhfunc();
-    multiply();
+function dcosh(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    sinhfunc($);
+    multiply($);
 }
 
-function dtanh(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    coshfunc();
-    push_integer(-2);
-    power();
-    multiply();
+function dtanh(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    coshfunc($);
+    push_integer(-2, $);
+    power($);
+    multiply($);
 }
 
-function darcsinh(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    push_integer(1);
-    add();
-    push_rational(-1, 2);
-    power();
-    multiply();
+function darcsinh(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    push_integer(1, $);
+    add($);
+    push_rational(-1, 2, $);
+    power($);
+    multiply($);
 }
 
-function darccosh(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    push_integer(-1);
-    add();
-    push_rational(-1, 2);
-    power();
-    multiply();
+function darccosh(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    push_integer(-1, $);
+    add($);
+    push_rational(-1, 2, $);
+    power($);
+    multiply($);
 }
 
-function darctanh(p1: U, p2: U): void {
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    push_integer(1);
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    subtract();
-    reciprocate();
-    multiply();
+function darctanh(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    push_integer(1, $);
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    subtract($);
+    reciprocate($);
+    multiply($);
 }
 
-function derf(p1: U, p2: U): void {
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    push_integer(-1);
-    multiply();
-    expfunc();
-    push_symbol(PI);
-    push_rational(-1, 2);
-    power();
-    multiply();
-    push_integer(2);
-    multiply();
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    multiply();
+function derf(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    push_integer(-1, $);
+    multiply($);
+    expfunc($);
+    push_symbol(PI, $);
+    push_rational(-1, 2, $);
+    power($);
+    multiply($);
+    push_integer(2, $);
+    multiply($);
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    multiply($);
 }
 
 
-function derfc(p1: U, p2: U): void {
-    push(cadr(p1));
-    push_integer(2);
-    power();
-    push_integer(-1);
-    multiply();
-    expfunc();
-    push_symbol(PI);
-    push_rational(-1, 2);
-    power();
-    multiply();
-    push_integer(-2);
-    multiply();
-    push(cadr(p1));
-    push(p2);
-    derivative();
-    multiply();
+function derfc(p1: U, p2: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    push_integer(2, $);
+    power($);
+    push_integer(-1, $);
+    multiply($);
+    expfunc($);
+    push_symbol(PI, $);
+    push_rational(-1, 2, $);
+    power($);
+    multiply($);
+    push_integer(-2, $);
+    multiply($);
+    push(cadr(p1), $);
+    push(p2, $);
+    derivative($);
+    multiply($);
 }
 
 // gradient of tensor p1 wrt tensor p2
 
-function d_tensor_tensor(p1: Tensor, p2: Tensor): void {
+function d_tensor_tensor(p1: Tensor, p2: Tensor, $: ScriptVars): void {
 
     let n = p1.nelem;
     const m = p2.nelem;
@@ -5098,10 +5098,10 @@ function d_tensor_tensor(p1: Tensor, p2: Tensor): void {
 
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < m; j++) {
-            push(p1.elems[i]);
-            push(p2.elems[j]);
-            derivative();
-            p3.elems[m * i + j] = pop();
+            push(p1.elems[i], $);
+            push(p2.elems[j], $);
+            derivative($);
+            p3.elems[m * i + j] = pop($);
         }
     }
 
@@ -5119,57 +5119,57 @@ function d_tensor_tensor(p1: Tensor, p2: Tensor): void {
     for (let i = 0; i < n; i++)
         p3.dims[k++] = p2.dims[i];
 
-    push(p3);
+    push(p3, $);
 }
 
 // gradient of scalar p1 wrt tensor p2
 
-function d_scalar_tensor(p1: U, p2: Tensor): void {
+function d_scalar_tensor(p1: U, p2: Tensor, $: ScriptVars): void {
 
     const p3 = copy_tensor(p2);
 
     const n = p2.nelem;
 
     for (let i = 0; i < n; i++) {
-        push(p1);
-        push(p2.elems[i]);
-        derivative();
-        p3.elems[i] = pop();
+        push(p1, $);
+        push(p2.elems[i], $);
+        derivative($);
+        p3.elems[i] = pop($);
     }
 
-    push(p3);
+    push(p3, $);
 }
 
 // derivative of tensor p1 wrt scalar p2
 
-function d_tensor_scalar(p1: Tensor, p2: U): void {
+function d_tensor_scalar(p1: Tensor, p2: U, $: ScriptVars): void {
 
     const p3 = copy_tensor(p1);
 
     const n = p1.nelem;
 
     for (let i = 0; i < n; i++) {
-        push(p1.elems[i]);
-        push(p2);
-        derivative();
-        p3.elems[i] = pop();
+        push(p1.elems[i], $);
+        push(p2, $);
+        derivative($);
+        p3.elems[i] = pop($);
     }
 
-    push(p3);
+    push(p3, $);
 }
 
-function eval_det(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    det();
+function eval_det(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    det($);
 }
 
-function det(): void {
+function det($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (!istensor(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
@@ -5180,46 +5180,46 @@ function det(): void {
 
     switch (n) {
         case 1:
-            push(p1.elems[0]);
+            push(p1.elems[0], $);
             return;
         case 2:
-            push(p1.elems[0]);
-            push(p1.elems[3]);
-            multiply();
-            push(p1.elems[1]);
-            push(p1.elems[2]);
-            multiply();
-            subtract();
+            push(p1.elems[0], $);
+            push(p1.elems[3], $);
+            multiply($);
+            push(p1.elems[1], $);
+            push(p1.elems[2], $);
+            multiply($);
+            subtract($);
             return;
         case 3:
-            push(p1.elems[0]);
-            push(p1.elems[4]);
-            push(p1.elems[8]);
-            multiply_factors(3);
-            push(p1.elems[1]);
-            push(p1.elems[5]);
-            push(p1.elems[6]);
-            multiply_factors(3);
-            push(p1.elems[2]);
-            push(p1.elems[3]);
-            push(p1.elems[7]);
-            multiply_factors(3);
-            push_integer(-1);
-            push(p1.elems[2]);
-            push(p1.elems[4]);
-            push(p1.elems[6]);
-            multiply_factors(4);
-            push_integer(-1);
-            push(p1.elems[1]);
-            push(p1.elems[3]);
-            push(p1.elems[8]);
-            multiply_factors(4);
-            push_integer(-1);
-            push(p1.elems[0]);
-            push(p1.elems[5]);
-            push(p1.elems[7]);
-            multiply_factors(4);
-            add_terms(6);
+            push(p1.elems[0], $);
+            push(p1.elems[4], $);
+            push(p1.elems[8], $);
+            multiply_factors(3, $);
+            push(p1.elems[1], $);
+            push(p1.elems[5], $);
+            push(p1.elems[6], $);
+            multiply_factors(3, $);
+            push(p1.elems[2], $);
+            push(p1.elems[3], $);
+            push(p1.elems[7], $);
+            multiply_factors(3, $);
+            push_integer(-1, $);
+            push(p1.elems[2], $);
+            push(p1.elems[4], $);
+            push(p1.elems[6], $);
+            multiply_factors(4, $);
+            push_integer(-1, $);
+            push(p1.elems[1], $);
+            push(p1.elems[3], $);
+            push(p1.elems[8], $);
+            multiply_factors(4, $);
+            push_integer(-1, $);
+            push(p1.elems[0], $);
+            push(p1.elems[5], $);
+            push(p1.elems[7], $);
+            multiply_factors(4, $);
+            add_terms(6, $);
             return;
         default:
             break;
@@ -5227,7 +5227,7 @@ function det(): void {
 
     const p2 = alloc_matrix(n - 1, n - 1);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     for (let m = 0; m < n; m++) {
         if (iszero(p1.elems[m]))
@@ -5237,30 +5237,30 @@ function det(): void {
             for (let j = 0; j < n; j++)
                 if (j != m)
                     p2.elems[k++] = p1.elems[n * i + j];
-        push(p2);
-        det();
-        push(p1.elems[m]);
-        multiply();
+        push(p2, $);
+        det($);
+        push(p1.elems[m], $);
+        multiply($);
         if (m % 2)
-            negate();
+            negate($);
     }
 
-    const s = stack.length - h;
+    const s = $.stack.length - h;
 
     if (s == 0)
-        push_integer(0);
+        push_integer(0, $);
     else
-        add_terms(s);
+        add_terms(s, $);
 }
 
-function eval_dim(p1: U): void {
+function eval_dim(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    const p2 = pop();
+    push(cadr(p1), $);
+    evalf($);
+    const p2 = pop($);
 
     if (!istensor(p2)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
@@ -5269,36 +5269,36 @@ function eval_dim(p1: U): void {
     if (lengthf(p1) == 2)
         k = 1;
     else {
-        push(caddr(p1));
-        evalf();
-        k = pop_integer();
+        push(caddr(p1), $);
+        evalf($);
+        k = pop_integer($);
     }
 
     if (k < 1 || k > p2.ndim)
         stopf("dim 2nd arg: error");
 
-    push_integer(p2.dims[k - 1]);
+    push_integer(p2.dims[k - 1], $);
 }
 
-function eval_do(p1: U): void {
-    push(nil);
+function eval_do(p1: U, $: ScriptVars): void {
+    push(nil, $);
     p1 = cdr(p1);
     while (iscons(p1)) {
-        pop();
-        push(car(p1));
-        evalf();
+        pop($);
+        push(car(p1), $);
+        evalf($);
         p1 = cdr(p1);
     }
 }
 
-function eval_dot(p1: U): void {
-    eval_inner(p1);
+function eval_dot(p1: U, $: ScriptVars): void {
+    eval_inner(p1, $);
 }
 
-function eval_draw(p1: U): void {
+function eval_draw(p1: U, $: ScriptVars): void {
 
     if (drawing) {
-        push(nil); // return value
+        push(nil, $); // return value
         return;
     }
 
@@ -5312,34 +5312,34 @@ function eval_draw(p1: U): void {
 
     save_symbol(T as Sym);
 
-    setup_trange();
-    setup_xrange();
-    setup_yrange();
+    setup_trange($);
+    setup_xrange($);
+    setup_yrange($);
 
-    setup_final(F, T as Sym);
+    setup_final(F, T as Sym, $);
 
     draw_array = [];
 
-    draw_pass1(F, T);
-    draw_pass2(F, T);
+    draw_pass1(F, T, $);
+    draw_pass2(F, T, $);
 
-    emit_graph();
+    emit_graph($);
 
     restore_symbol();
 
-    push(nil); // return value
+    push(nil, $); // return value
 
     drawing = 0;
 }
 
-function eval_eigenvec(punk: U): void {
+function eval_eigenvec(punk: U, $: ScriptVars): void {
     const D: number[] = [];
     const Q: number[] = [];
 
-    push(cadr(punk));
-    evalf();
-    floatfunc();
-    let T = pop() as Tensor;
+    push(cadr(punk), $);
+    evalf($);
+    floatfunc($);
+    let T = pop($) as Tensor;
 
     if (!issquarematrix(T))
         stopf("eigenvec: square matrix expected");
@@ -5387,12 +5387,12 @@ function eval_eigenvec(punk: U): void {
 
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-            push_double(Q[n * j + i]); // transpose
-            T.elems[n * i + j] = pop();
+            push_double(Q[n * j + i], $); // transpose
+            T.elems[n * i + j] = pop($);
         }
     }
 
-    push(T);
+    push(T, $);
 }
 
 function eigenvec(D: number[], Q: number[], n: number): void {
@@ -5476,413 +5476,413 @@ function eigenvec_step_nib(D: number[], Q: number[], n: number, p: number, q: nu
     D[n * q + p] = 0.0;
 }
 
-function eval_erf(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    erffunc();
+function eval_erf(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    erffunc($);
 }
 
-function erffunc(): void {
+function erffunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            erffunc();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            erffunc($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = erf(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     if (iszero(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     if (isnegativeterm(p1)) {
-        push_symbol(ERF);
-        push(p1);
-        negate();
-        list(2);
-        negate();
+        push_symbol(ERF, $);
+        push(p1, $);
+        negate($);
+        list(2, $);
+        negate($);
         return;
     }
 
-    push_symbol(ERF);
-    push(p1);
-    list(2);
+    push_symbol(ERF, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_erfc(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    erfcfunc();
+function eval_erfc(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    erfcfunc($);
 }
 
-function erfcfunc(): void {
+function erfcfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            erfcfunc();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            erfcfunc($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = erfc(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     if (iszero(p1)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
-    push_symbol(ERFC);
-    push(p1);
-    list(2);
+    push_symbol(ERFC, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_eval(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_eval(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
     p1 = cddr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
-        push(cadr(p1));
-        evalf();
-        subst();
+        push(car(p1), $);
+        evalf($);
+        push(cadr(p1), $);
+        evalf($);
+        subst($);
         p1 = cddr(p1);
     }
-    evalf();
+    evalf($);
 }
 
-function eval_exit(): void {
-    push(nil);
+function eval_exit(expr: U, $: ScriptVars): void {
+    push(nil, $);
 }
 
-function eval_exp(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    expfunc();
+function eval_exp(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    expfunc($);
 }
 
-function expfunc(): void {
-    push_symbol(EXP1);
-    swap();
-    power();
+function expfunc($: ScriptVars): void {
+    push_symbol(EXP1, $);
+    swap($);
+    power($);
 }
 
-function eval_expcos(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    expcos();
+function eval_expcos(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    expcos($);
 }
 
-function expcos(): void {
-    const p1 = pop();
+function expcos($: ScriptVars): void {
+    const p1 = pop($);
 
-    push(imaginaryunit);
-    push(p1);
-    multiply();
-    expfunc();
-    push_rational(1, 2);
-    multiply();
+    push(imaginaryunit, $);
+    push(p1, $);
+    multiply($);
+    expfunc($);
+    push_rational(1, 2, $);
+    multiply($);
 
-    push(imaginaryunit);
-    negate();
-    push(p1);
-    multiply();
-    expfunc();
-    push_rational(1, 2);
-    multiply();
+    push(imaginaryunit, $);
+    negate($);
+    push(p1, $);
+    multiply($);
+    expfunc($);
+    push_rational(1, 2, $);
+    multiply($);
 
-    add();
+    add($);
 }
 
-function eval_expcosh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    expcosh();
+function eval_expcosh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    expcosh($);
 }
 
-function expcosh(): void {
-    const p1 = pop();
-    push(p1);
-    expfunc();
-    push(p1);
-    negate();
-    expfunc();
-    add();
-    push_rational(1, 2);
-    multiply();
+function expcosh($: ScriptVars): void {
+    const p1 = pop($);
+    push(p1, $);
+    expfunc($);
+    push(p1, $);
+    negate($);
+    expfunc($);
+    add($);
+    push_rational(1, 2, $);
+    multiply($);
 }
 
-function eval_expsin(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    expsin();
+function eval_expsin(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    expsin($);
 }
 
-function expsin(): void {
-    const p1 = pop();
+function expsin($: ScriptVars): void {
+    const p1 = pop($);
 
-    push(imaginaryunit);
-    push(p1);
-    multiply();
-    expfunc();
-    push(imaginaryunit);
-    divide();
-    push_rational(1, 2);
-    multiply();
+    push(imaginaryunit, $);
+    push(p1, $);
+    multiply($);
+    expfunc($);
+    push(imaginaryunit, $);
+    divide($);
+    push_rational(1, 2, $);
+    multiply($);
 
-    push(imaginaryunit);
-    negate();
-    push(p1);
-    multiply();
-    expfunc();
-    push(imaginaryunit);
-    divide();
-    push_rational(1, 2);
-    multiply();
+    push(imaginaryunit, $);
+    negate($);
+    push(p1, $);
+    multiply($);
+    expfunc($);
+    push(imaginaryunit, $);
+    divide($);
+    push_rational(1, 2, $);
+    multiply($);
 
-    subtract();
+    subtract($);
 }
 
-function eval_expsinh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    expsinh();
+function eval_expsinh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    expsinh($);
 }
 
-function expsinh(): void {
-    const p1 = pop();
-    push(p1);
-    expfunc();
-    push(p1);
-    negate();
-    expfunc();
-    subtract();
-    push_rational(1, 2);
-    multiply();
+function expsinh($: ScriptVars): void {
+    const p1 = pop($);
+    push(p1, $);
+    expfunc($);
+    push(p1, $);
+    negate($);
+    expfunc($);
+    subtract($);
+    push_rational(1, 2, $);
+    multiply($);
 }
 // tan(z) = (i - i exp(2 i z)) / (exp(2 i z) + 1)
 
-function eval_exptan(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    exptan();
+function eval_exptan(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    exptan($);
 }
 
-function exptan(): void {
+function exptan($: ScriptVars): void {
 
-    push_integer(2);
-    push(imaginaryunit);
-    multiply_factors(3);
-    expfunc();
+    push_integer(2, $);
+    push(imaginaryunit, $);
+    multiply_factors(3, $);
+    expfunc($);
 
-    const p1 = pop();
+    const p1 = pop($);
 
-    push(imaginaryunit);
-    push(imaginaryunit);
-    push(p1);
-    multiply();
-    subtract();
+    push(imaginaryunit, $);
+    push(imaginaryunit, $);
+    push(p1, $);
+    multiply($);
+    subtract($);
 
-    push(p1);
-    push_integer(1);
-    add();
+    push(p1, $);
+    push_integer(1, $);
+    add($);
 
-    divide();
+    divide($);
 }
 
-function eval_exptanh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    exptanh();
+function eval_exptanh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    exptanh($);
 }
 
-function exptanh(): void {
-    push_integer(2);
-    multiply();
-    expfunc();
-    const p1 = pop();
-    push(p1);
-    push_integer(1);
-    subtract();
-    push(p1);
-    push_integer(1);
-    add();
-    divide();
+function exptanh($: ScriptVars): void {
+    push_integer(2, $);
+    multiply($);
+    expfunc($);
+    const p1 = pop($);
+    push(p1, $);
+    push_integer(1, $);
+    subtract($);
+    push(p1, $);
+    push_integer(1, $);
+    add($);
+    divide($);
 }
 
-function eval_factorial(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    factorial();
+function eval_factorial(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    factorial($);
 }
 
-function factorial(): void {
+function factorial($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (isrational(p1) && isposint(p1)) {
-        push(p1);
-        const n = pop_integer();
-        push_integer(1);
+        push(p1, $);
+        const n = pop_integer($);
+        push_integer(1, $);
         for (let i = 2; i <= n; i++) {
-            push_integer(i);
-            multiply();
+            push_integer(i, $);
+            multiply($);
         }
         return;
     }
 
     if (isdouble(p1) && p1.d >= 0 && Math.floor(p1.d) == p1.d) {
-        push(p1);
-        const n = pop_integer();
+        push(p1, $);
+        const n = pop_integer($);
         let m = 1.0;
         for (let i = 2; i <= n; i++)
             m *= i;
-        push_double(m);
+        push_double(m, $);
         return;
     }
 
-    push_symbol(FACTORIAL);
-    push(p1);
-    list(2);
+    push_symbol(FACTORIAL, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_float(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    floatfunc();
+function eval_float(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    floatfunc($);
 }
 
-function floatfunc(): void {
-    floatfunc_subst();
-    evalf();
-    floatfunc_subst(); // in case pi popped up
-    evalf();
+function floatfunc($: ScriptVars): void {
+    floatfunc_subst($);
+    evalf($);
+    floatfunc_subst($); // in case pi popped up
+    evalf($);
 }
 
-function floatfunc_subst(): void {
-    let p1 = pop();
+function floatfunc_subst($: ScriptVars): void {
+    let p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            floatfunc_subst();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            floatfunc_subst($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (p1 == symbol(PI)) {
-        push_double(Math.PI);
+        push_double(Math.PI, $);
         return;
     }
 
     if (p1 == symbol(EXP1)) {
-        push_double(Math.E);
+        push_double(Math.E, $);
         return;
     }
 
     if (isrational(p1)) {
-        push_double(p1.toNumber());
+        push_double(p1.toNumber(), $);
         return;
     }
 
     // don't float exponential
 
     if (car(p1) == symbol(POWER) && cadr(p1) == symbol(EXP1)) {
-        push_symbol(POWER);
-        push_symbol(EXP1);
-        push(caddr(p1));
-        floatfunc_subst();
-        list(3);
+        push_symbol(POWER, $);
+        push_symbol(EXP1, $);
+        push(caddr(p1), $);
+        floatfunc_subst($);
+        list(3, $);
         return;
     }
 
     // don't float imaginary unit, but multiply it by 1.0
 
     if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
-        push_symbol(MULTIPLY);
-        push_double(1.0);
-        push_symbol(POWER);
-        push(cadr(p1));
-        push(caddr(p1));
-        floatfunc_subst();
-        list(3);
-        list(3);
+        push_symbol(MULTIPLY, $);
+        push_double(1.0, $);
+        push_symbol(POWER, $);
+        push(cadr(p1), $);
+        push(caddr(p1), $);
+        floatfunc_subst($);
+        list(3, $);
+        list(3, $);
         return;
     }
 
     if (iscons(p1)) {
-        const h = stack.length;
-        push(car(p1));
+        const h = $.stack.length;
+        push(car(p1), $);
         p1 = cdr(p1);
         while (iscons(p1)) {
-            push(car(p1));
-            floatfunc_subst();
+            push(car(p1), $);
+            floatfunc_subst($);
             p1 = cdr(p1);
         }
-        list(stack.length - h);
+        list($.stack.length - h, $);
         return;
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_floor(p1: U) {
-    push(cadr(p1));
-    evalf();
-    floorfunc();
+function eval_floor(p1: U, $: ScriptVars) {
+    push(cadr(p1), $);
+    evalf($);
+    floorfunc($);
 }
 
-function floorfunc(): void {
+function floorfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            floorfunc();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            floorfunc($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (isrational(p1) && isinteger(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
@@ -5890,55 +5890,55 @@ function floorfunc(): void {
         const a = bignum_div(p1.a, p1.b);
         const b = bignum_int(1);
         if (isnegativenumber(p1)) {
-            push_bignum(-1, a, b);
-            push_integer(-1);
-            add();
+            push_bignum(-1, a, b, $);
+            push_integer(-1, $);
+            add($);
         }
         else
-            push_bignum(1, a, b);
+            push_bignum(1, a, b, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.floor(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
-    push_symbol(FLOOR);
-    push(p1);
-    list(2);
+    push_symbol(FLOOR, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_for(p1: U): void {
+function eval_for(p1: U, $: ScriptVars): void {
 
     const p2 = cadr(p1);
     if (!(issymbol(p2) && isusersymbol(p2)))
         stopf("for: symbol error");
 
-    push(caddr(p1));
-    evalf();
-    let j = pop_integer();
+    push(caddr(p1), $);
+    evalf($);
+    let j = pop_integer($);
 
-    push(cadddr(p1));
-    evalf();
-    const k = pop_integer();
+    push(cadddr(p1), $);
+    evalf($);
+    const k = pop_integer($);
 
     p1 = cddddr(p1);
 
     save_symbol(p2);
 
     for (; ;) {
-        push_integer(j);
-        let p3 = pop();
+        push_integer(j, $);
+        let p3 = pop($);
         set_symbol(p2, p3, nil);
         p3 = p1;
         while (iscons(p3)) {
-            push(car(p3));
-            evalf();
-            pop();
+            push(car(p3), $);
+            evalf($);
+            pop($);
             p3 = cdr(p3);
         }
         if (j == k)
@@ -5951,30 +5951,30 @@ function eval_for(p1: U): void {
 
     restore_symbol();
 
-    push(nil); // return value
+    push(nil, $); // return value
 }
 
-function eval_hadamard(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_hadamard(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
     p1 = cddr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
-        hadamard();
+        push(car(p1), $);
+        evalf($);
+        hadamard($);
         p1 = cdr(p1);
     }
 }
 
-function hadamard(): void {
+function hadamard($: ScriptVars): void {
 
-    const p2 = pop();
-    const p1 = pop();
+    const p2 = pop($);
+    const p1 = pop($);
 
     if (!istensor(p1) || !istensor(p2)) {
-        push(p1);
-        push(p2);
-        multiply();
+        push(p1, $);
+        push(p2, $);
+        multiply($);
         return;
     }
 
@@ -5992,59 +5992,59 @@ function hadamard(): void {
     n = T.nelem;
 
     for (let i = 0; i < n; i++) {
-        push(p1.elems[i]);
-        push(p2.elems[i]);
-        multiply();
-        T.elems[i] = pop();
+        push(p1.elems[i], $);
+        push(p2.elems[i], $);
+        multiply($);
+        T.elems[i] = pop($);
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_imag(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    imag();
+function eval_imag(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    imag($);
 }
 
-function imag(): void {
-    let p1 = pop();
+function imag($: ScriptVars): void {
+    let p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            imag();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            imag($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
-    push(p1);
-    rect();
-    p1 = pop();
-    push_rational(-1, 2);
-    push(imaginaryunit);
-    push(p1);
-    push(p1);
-    conjfunc();
-    subtract();
-    multiply_factors(3);
+    push(p1, $);
+    rect($);
+    p1 = pop($);
+    push_rational(-1, 2, $);
+    push(imaginaryunit, $);
+    push(p1, $);
+    push(p1, $);
+    conjfunc($);
+    subtract($);
+    multiply_factors(3, $);
 }
 
-function eval_index(p1: U): void {
+function eval_index(p1: U, $: ScriptVars): void {
 
     let T = cadr(p1);
 
     p1 = cddr(p1);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
+        push(car(p1), $);
+        evalf($);
         p1 = cdr(p1);
     }
 
@@ -6052,33 +6052,33 @@ function eval_index(p1: U): void {
 
     if (issymbol(T) && isusersymbol(T)) {
         p1 = get_binding(T);
-        const n = stack.length - h;
+        const n = $.stack.length - h;
         if (istensor(p1) && n <= p1.ndim) {
             T = p1;
-            indexfunc(T as Tensor, h);
-            evalf();
+            indexfunc(T as Tensor, h, $);
+            evalf($);
             return;
         }
     }
 
-    push(T);
-    evalf();
-    T = pop();
+    push(T, $);
+    evalf($);
+    T = pop($);
 
     if (!istensor(T)) {
-        stack.splice(h); // pop all
-        push(T); // quirky, but EVA2.txt depends on it
+        $.stack.splice(h); // pop all
+        push(T, $); // quirky, but EVA2.txt depends on it
         return;
     }
 
-    indexfunc(T, h);
+    indexfunc(T, h, $);
 }
 
-function indexfunc(T: Tensor, h: number): void {
+function indexfunc(T: Tensor, h: number, $: ScriptVars): void {
 
     const m = T.ndim;
 
-    const n = stack.length - h;
+    const n = $.stack.length - h;
 
     const r = m - n; // rank of result
 
@@ -6088,17 +6088,17 @@ function indexfunc(T: Tensor, h: number): void {
     let k = 0;
 
     for (let i = 0; i < n; i++) {
-        push(stack[h + i]);
-        const t = pop_integer();
+        push($.stack[h + i], $);
+        const t = pop_integer($);
         if (t < 1 || t > T.dims[i])
             stopf("index error");
         k = k * T.dims[i] + t - 1;
     }
 
-    stack.splice(h); // pop all
+    $.stack.splice(h); // pop all
 
     if (r == 0) {
-        push(T.elems[k]); // scalar result
+        push(T.elems[k], $); // scalar result
         return;
     }
 
@@ -6117,55 +6117,55 @@ function indexfunc(T: Tensor, h: number): void {
     for (let i = 0; i < r; i++)
         p1.dims[i] = T.dims[n + i];
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_infixform(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    p1 = pop();
+function eval_infixform(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    p1 = pop($);
 
     outbuf = "";
     infixform_expr(p1);
 
-    push_string(outbuf);
+    push_string(outbuf, $);
 }
 
-function eval_inner(p1: U): void {
-    const h = stack.length;
+function eval_inner(p1: U, $: ScriptVars): void {
+    const h = $.stack.length;
 
     // evaluate from right to left
 
     p1 = cdr(p1);
 
     while (iscons(p1)) {
-        push(car(p1));
+        push(car(p1), $);
         p1 = cdr(p1);
     }
 
-    if (h == stack.length)
+    if (h == $.stack.length)
         stopf("inner: no args");
 
-    evalf();
+    evalf($);
 
-    while (stack.length - h > 1) {
-        swap();
-        evalf();
-        swap();
-        inner();
+    while ($.stack.length - h > 1) {
+        swap($);
+        evalf($);
+        swap($);
+        inner($);
     }
 }
 
-function inner(): void {
+function inner($: ScriptVars): void {
 
-    let p2 = pop();
-    let p1 = pop();
+    let p2 = pop($);
+    let p1 = pop($);
     let p3: Tensor;
 
     if (!istensor(p1) && !istensor(p2)) {
-        push(p1);
-        push(p2);
-        multiply();
+        push(p1, $);
+        push(p2, $);
+        multiply($);
         return;
     }
 
@@ -6179,12 +6179,12 @@ function inner(): void {
         const T = copy_tensor(p2);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(p1);
-            push(T.elems[i]);
-            multiply();
-            T.elems[i] = pop();
+            push(p1, $);
+            push(T.elems[i], $);
+            multiply($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
@@ -6225,17 +6225,17 @@ function inner(): void {
     for (let i = 0; i < nrow; i++) {
         for (let j = 0; j < mcol; j++) {
             for (let k = 0; k < ncol; k++) {
-                push(p1.elems[i * ncol + k]);
-                push(p2.elems[k * mcol + j]);
-                multiply();
+                push(p1.elems[i * ncol + k], $);
+                push(p2.elems[k * mcol + j], $);
+                multiply($);
             }
-            add_terms(ncol);
-            p3.elems[i * mcol + j] = pop();
+            add_terms(ncol, $);
+            p3.elems[i * mcol + j] = pop($);
         }
     }
 
     if (ndim == 0) {
-        push(p3.elems[0]); // scalar result
+        push(p3.elems[0], $); // scalar result
         return;
     }
 
@@ -6253,7 +6253,7 @@ function inner(): void {
     for (let i = 1; i < n; i++)
         p3.dims[k++] = p2.dims[i];
 
-    push(p3);
+    push(p3, $);
 }
 const integral_tab_exp: string[] = [
 
@@ -7189,16 +7189,16 @@ const integral_tab: string[] = [
     "1",
 ];
 
-function eval_integral(p1: U): void {
+function eval_integral(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
+    push(cadr(p1), $);
+    evalf($);
 
     p1 = cddr(p1);
 
     if (!iscons(p1)) {
-        push_symbol(X_LOWER);
-        integral();
+        push_symbol(X_LOWER, $);
+        integral($);
         return;
     }
 
@@ -7213,20 +7213,20 @@ function eval_integral(p1: U): void {
             flag = 0;
         }
         else {
-            push(car(p1));
-            evalf();
-            X = pop();
+            push(car(p1), $);
+            evalf($);
+            X = pop($);
             p1 = cdr(p1);
         }
 
         if (isnum(X)) {
-            push(X);
-            const n = pop_integer();
-            push_symbol(X_LOWER);
-            X = pop();
+            push(X, $);
+            const n = pop_integer($);
+            push_symbol(X_LOWER, $);
+            X = pop($);
             for (let i = 0; i < n; i++) {
-                push(X);
-                integral();
+                push(X, $);
+                integral($);
             }
             continue;
         }
@@ -7236,17 +7236,17 @@ function eval_integral(p1: U): void {
 
         if (iscons(p1)) {
 
-            push(car(p1));
-            evalf();
-            Y = pop();
+            push(car(p1), $);
+            evalf($);
+            Y = pop($);
             p1 = cdr(p1);
 
             if (isnum(Y)) {
-                push(Y);
-                const n = pop_integer();
+                push(Y, $);
+                const n = pop_integer($);
                 for (let i = 0; i < n; i++) {
-                    push(X);
-                    integral();
+                    push(X, $);
+                    integral($);
                 }
                 continue;
             }
@@ -7254,46 +7254,46 @@ function eval_integral(p1: U): void {
             flag = 1;
         }
 
-        push(X);
-        integral();
+        push(X, $);
+        integral($);
     }
 }
 
-function integral(): void {
+function integral($: ScriptVars): void {
 
-    const X = pop();
-    let F = pop();
+    const X = pop($);
+    let F = pop($);
 
     if (!(issymbol(X) && isusersymbol(X)))
         stopf("integral: symbol expected");
 
     if (car(F) == symbol(ADD)) {
-        const h = stack.length;
+        const h = $.stack.length;
         let p1 = cdr(F);
         while (iscons(p1)) {
-            push(car(p1));
-            push(X);
-            integral();
+            push(car(p1), $);
+            push(X, $);
+            integral($);
             p1 = cdr(p1);
         }
-        add_terms(stack.length - h);
+        add_terms($.stack.length - h, $);
         return;
     }
 
     if (car(F) == symbol(MULTIPLY)) {
-        push(F);
-        push(X);
-        partition_term();	// push const part then push var part
-        F = pop();		// pop var part
-        integral_nib(F, X);
-        multiply();		// multiply by const part
+        push(F, $);
+        push(X, $);
+        partition_term($);	// push const part then push var part
+        F = pop($);		// pop var part
+        integral_nib(F, X, $);
+        multiply($);		// multiply by const part
         return;
     }
 
-    integral_nib(F, X);
+    integral_nib(F, X, $);
 }
 
-function integral_nib(F: U, X: U): void {
+function integral_nib(F: U, X: U, $: ScriptVars): void {
 
     save_symbol(symbol(SA));
     save_symbol(symbol(SB));
@@ -7303,40 +7303,40 @@ function integral_nib(F: U, X: U): void {
 
     // put constants in F(X) on the stack
 
-    const h = stack.length;
+    const h = $.stack.length;
 
-    push_integer(1); // 1 is a candidate for a or b
+    push_integer(1, $); // 1 is a candidate for a or b
 
-    push(F);
-    push(X);
-    decomp(); // push const coeffs
+    push(F, $);
+    push(X, $);
+    decomp($); // push const coeffs
 
-    integral_lookup(h, F);
+    integral_lookup(h, F, $);
 
     restore_symbol();
     restore_symbol();
     restore_symbol();
 }
 
-function integral_lookup(h: number, F: U): void {
+function integral_lookup(h: number, F: U, $: ScriptVars): void {
 
     const t = integral_classify(F);
 
-    if ((t & 1) && integral_search(h, F, integral_tab_exp, integral_tab_exp.length))
+    if ((t & 1) && integral_search(h, F, integral_tab_exp, integral_tab_exp.length, $))
         return;
 
-    if ((t & 2) && integral_search(h, F, integral_tab_log, integral_tab_log.length))
+    if ((t & 2) && integral_search(h, F, integral_tab_log, integral_tab_log.length, $))
         return;
 
-    if ((t & 4) && integral_search(h, F, integral_tab_trig, integral_tab_trig.length))
+    if ((t & 4) && integral_search(h, F, integral_tab_trig, integral_tab_trig.length, $))
         return;
 
     if (car(F) == symbol(POWER)) {
-        if (integral_search(h, F, integral_tab_power, integral_tab_power.length))
+        if (integral_search(h, F, integral_tab_power, integral_tab_power.length, $))
             return;
     }
     else {
-        if (integral_search(h, F, integral_tab, integral_tab.length))
+        if (integral_search(h, F, integral_tab, integral_tab.length, $))
             return;
     }
 
@@ -7366,55 +7366,55 @@ function integral_classify(p: U): number {
     return 0;
 }
 
-function integral_search(h: number, F: U, table: string[], n: number): 0 | 1 {
+function integral_search(h: number, F: U, table: string[], n: number, $: ScriptVars): 0 | 1 {
     let i: number;
     let C: U;
     let I: U;
 
     for (i = 0; i < n; i += 3) {
 
-        scan1(table[i + 0]); // integrand
-        I = pop();
+        scan1(table[i + 0], $); // integrand
+        I = pop($);
 
-        scan1(table[i + 2]); // condition
-        C = pop();
+        scan1(table[i + 2], $); // condition
+        C = pop($);
 
-        if (integral_search_nib(h, F, I, C))
+        if (integral_search_nib(h, F, I, C, $))
             break;
     }
 
     if (i >= n)
         return 0;
 
-    stack.splice(h); // pop all
+    $.stack.splice(h); // pop all
 
-    scan1(table[i + 1]); // answer
-    evalf();
+    scan1(table[i + 1], $); // answer
+    evalf($);
 
     return 1;
 }
 
-function integral_search_nib(h: number, F: U, I: U, C: U): 0 | 1 {
+function integral_search_nib(h: number, F: U, I: U, C: U, $: ScriptVars): 0 | 1 {
 
-    for (let i = h; i < stack.length; i++) {
+    for (let i = h; i < $.stack.length; i++) {
 
-        set_symbol(symbol(SA), stack[i], nil);
+        set_symbol(symbol(SA), $.stack[i], nil);
 
-        for (let j = h; j < stack.length; j++) {
+        for (let j = h; j < $.stack.length; j++) {
 
-            set_symbol(symbol(SB), stack[j], nil);
+            set_symbol(symbol(SB), $.stack[j], nil);
 
-            push(C);			// condition ok?
-            evalf();
-            let p1 = pop();
+            push(C, $);			// condition ok?
+            evalf($);
+            let p1 = pop($);
             if (iszero(p1))
                 continue;		// no, go to next j
 
-            push(F);			// F = I?
-            push(I);
-            evalf();
-            subtract();
-            p1 = pop();
+            push(F, $);			// F = I?
+            push(I, $);
+            evalf($);
+            subtract($);
+            p1 = pop($);
             if (iszero(p1))
                 return 1;		// yes
         }
@@ -7423,55 +7423,55 @@ function integral_search_nib(h: number, F: U, I: U, C: U): 0 | 1 {
     return 0;					// no
 }
 
-function eval_inv(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    inv();
+function eval_inv(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    inv($);
 }
 
-function inv(): void {
+function inv($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (!istensor(p1)) {
-        push(p1);
-        reciprocate();
+        push(p1, $);
+        reciprocate($);
         return;
     }
 
     if (!issquarematrix(p1))
         stopf("inv: square matrix expected");
 
-    push(p1);
-    adj();
+    push(p1, $);
+    adj($);
 
-    push(p1);
-    det();
+    push(p1, $);
+    det($);
 
-    divide();
+    divide($);
 }
 
-function eval_kronecker(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_kronecker(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
     p1 = cddr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
-        kronecker();
+        push(car(p1), $);
+        evalf($);
+        kronecker($);
         p1 = cdr(p1);
     }
 }
 
-function kronecker(): void {
+function kronecker($: ScriptVars): void {
 
-    const p2 = pop();
-    const p1 = pop();
+    const p2 = pop($);
+    const p1 = pop($);
 
     if (!istensor(p1) || !istensor(p2)) {
-        push(p1);
-        push(p2);
-        multiply();
+        push(p1, $);
+        push(p2, $);
+        multiply($);
         return;
     }
 
@@ -7494,10 +7494,10 @@ function kronecker(): void {
         for (let j = 0; j < p; j++)
             for (let k = 0; k < n; k++)
                 for (let l = 0; l < q; l++) {
-                    push(p1.elems[n * i + k]);
-                    push(p2.elems[q * j + l]);
-                    multiply();
-                    p3.elems[h++] = pop();
+                    push(p1.elems[n * i + k], $);
+                    push(p2.elems[q * j + l], $);
+                    multiply($);
+                    p3.elems[h++] = pop($);
                 }
 
     // dim info
@@ -7507,38 +7507,38 @@ function kronecker(): void {
     if (n * q > 1)
         p3.dims[1] = n * q;
 
-    push(p3);
+    push(p3, $);
 }
 
-function eval_log(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    logfunc();
+function eval_log(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    logfunc($);
 }
 
-function logfunc(): void {
+function logfunc($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, logfunc));
+        push(elementwise(p1, logfunc, $), $);
         return;
     }
 
     // log of zero is not evaluated
 
     if (iszero(p1)) {
-        push_symbol(LOG);
-        push_integer(0);
-        list(2);
+        push_symbol(LOG, $);
+        push_integer(0, $);
+        list(2, $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        const d = pop_double();
+        push(p1, $);
+        const d = pop_double($);
         if (d > 0.0) {
-            push_double(Math.log(d));
+            push_double(Math.log(d), $);
             return;
         }
     }
@@ -7546,101 +7546,101 @@ function logfunc(): void {
     // log(z) -> log(mag(z)) + i arg(z)
 
     if (isdouble(p1) || isdoublez(p1)) {
-        push(p1);
-        mag();
-        logfunc();
-        push(p1);
-        arg();
-        push(imaginaryunit);
-        multiply();
-        add();
+        push(p1, $);
+        mag($);
+        logfunc($);
+        push(p1, $);
+        arg($);
+        push(imaginaryunit, $);
+        multiply($);
+        add($);
         return;
     }
 
     // log(1) -> 0
 
     if (isplusone(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     // log(e) -> 1
 
     if (p1 == symbol(EXP1)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
     if (isnum(p1) && isnegativenumber(p1)) {
-        push(p1);
-        negate();
-        logfunc();
-        push(imaginaryunit);
-        push_symbol(PI);
-        multiply();
-        add();
+        push(p1, $);
+        negate($);
+        logfunc($);
+        push(imaginaryunit, $);
+        push_symbol(PI, $);
+        multiply($);
+        add($);
         return;
     }
 
     // log(10) -> log(2) + log(5)
 
     if (isrational(p1)) {
-        const h = stack.length;
-        push(p1);
-        factor_factor();
-        for (let i = h; i < stack.length; i++) {
-            const p2 = stack[i];
+        const h = $.stack.length;
+        push(p1, $);
+        factor_factor($);
+        for (let i = h; i < $.stack.length; i++) {
+            const p2 = $.stack[i];
             if (car(p2) == symbol(POWER)) {
-                push(caddr(p2)); // exponent
-                push_symbol(LOG);
-                push(cadr(p2)); // base
-                list(2);
-                multiply();
+                push(caddr(p2), $); // exponent
+                push_symbol(LOG, $);
+                push(cadr(p2), $); // base
+                list(2, $);
+                multiply($);
             }
             else {
-                push_symbol(LOG);
-                push(p2);
-                list(2);
+                push_symbol(LOG, $);
+                push(p2, $);
+                list(2, $);
             }
-            stack[i] = pop();
+            $.stack[i] = pop($);
         }
-        add_terms(stack.length - h);
+        add_terms($.stack.length - h, $);
         return;
     }
 
     // log(a ^ b) -> b log(a)
 
     if (car(p1) == symbol(POWER)) {
-        push(caddr(p1));
-        push(cadr(p1));
-        logfunc();
-        multiply();
+        push(caddr(p1), $);
+        push(cadr(p1), $);
+        logfunc($);
+        multiply($);
         return;
     }
 
     // log(a * b) -> log(a) + log(b)
 
     if (car(p1) == symbol(MULTIPLY)) {
-        const h = stack.length;
+        const h = $.stack.length;
         p1 = cdr(p1);
         while (iscons(p1)) {
-            push(car(p1));
-            logfunc();
+            push(car(p1), $);
+            logfunc($);
             p1 = cdr(p1);
         }
-        add_terms(stack.length - h);
+        add_terms($.stack.length - h, $);
         return;
     }
 
-    push_symbol(LOG);
-    push(p1);
-    list(2);
+    push_symbol(LOG, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_mag(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    mag();
+function eval_mag(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    mag($);
 }
 
 /**
@@ -7648,62 +7648,62 @@ function eval_mag(p1: U): void {
  * @param source 
  * @param foo A function that is expected to pop a single value from the stack and push the result.
  */
-function elementwise(source: Tensor, foo: () => void): Tensor {
+function elementwise(source: Tensor, foo: ($: ScriptVars) => void, $: ScriptVars): Tensor {
     const T = copy_tensor(source);
     const n = T.nelem;
     for (let i = 0; i < n; i++) {
-        push(T.elems[i]);
-        foo();
-        T.elems[i] = pop();
+        push(T.elems[i], $);
+        foo($);
+        T.elems[i] = pop($);
     }
     return T;
 }
 
-function mag(): void {
+function mag($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, mag));
+        push(elementwise(p1, mag, $), $);
         return;
     }
 
     // use numerator and denominator to handle (a + i b) / (c + i d)
 
-    push(p1);
-    numerator();
-    mag_nib();
+    push(p1, $);
+    numerator($);
+    mag_nib($);
 
-    push(p1);
-    denominator();
-    mag_nib();
+    push(p1, $);
+    denominator($);
+    mag_nib($);
 
-    divide();
+    divide($);
 }
 
-function mag_nib(): void {
+function mag_nib($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (isnum(p1)) {
-        push(p1);
-        absfunc();
+        push(p1, $);
+        absfunc($);
         return;
     }
 
     // -1 to a power
 
     if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
     // exponential
 
     if (car(p1) == symbol(POWER) && cadr(p1) == symbol(EXP1)) {
-        push(caddr(p1));
-        real();
-        expfunc();
+        push(caddr(p1), $);
+        real($);
+        expfunc($);
         return;
     }
 
@@ -7711,58 +7711,58 @@ function mag_nib(): void {
 
     if (car(p1) == symbol(MULTIPLY)) {
         p1 = cdr(p1);
-        const h = stack.length;
+        const h = $.stack.length;
         while (iscons(p1)) {
-            push(car(p1));
-            mag();
+            push(car(p1), $);
+            mag($);
             p1 = cdr(p1);
         }
-        multiply_factors(stack.length - h);
+        multiply_factors($.stack.length - h, $);
         return;
     }
 
     // sum
 
     if (car(p1) == symbol(ADD)) {
-        push(p1);
-        rect(); // convert polar terms, if any
-        p1 = pop();
-        push(p1);
-        real();
-        const RE = pop();
-        push(p1);
-        imag();
-        const IM = pop();
-        push(RE);
-        push(RE);
-        multiply();
-        push(IM);
-        push(IM);
-        multiply();
-        add();
-        push_rational(1, 2);
-        power();
+        push(p1, $);
+        rect($); // convert polar terms, if any
+        p1 = pop($);
+        push(p1, $);
+        real($);
+        const RE = pop($);
+        push(p1, $);
+        imag($);
+        const IM = pop($);
+        push(RE, $);
+        push(RE, $);
+        multiply($);
+        push(IM, $);
+        push(IM, $);
+        multiply($);
+        add($);
+        push_rational(1, 2, $);
+        power($);
         return;
     }
 
     // real
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_minor(p1: U): void {
+function eval_minor(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    const p2 = pop();
+    push(cadr(p1), $);
+    evalf($);
+    const p2 = pop($);
 
-    push(caddr(p1));
-    evalf();
-    const i = pop_integer();
+    push(caddr(p1), $);
+    evalf($);
+    const i = pop_integer($);
 
-    push(cadddr(p1));
-    evalf();
-    const j = pop_integer();
+    push(cadddr(p1), $);
+    evalf($);
+    const j = pop_integer($);
 
     if (!istensor(p2) || p2.ndim != 2 || p2.dims[0] != p2.dims[1])
         stopf("minor");
@@ -7770,26 +7770,26 @@ function eval_minor(p1: U): void {
     if (i < 1 || i > p2.dims[0] || j < 0 || j > p2.dims[1])
         stopf("minor");
 
-    push(p2);
+    push(p2, $);
 
-    minormatrix(i, j);
+    minormatrix(i, j, $);
 
-    det();
+    det($);
 }
 
-function eval_minormatrix(p1: U): void {
+function eval_minormatrix(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    const p2 = pop();
+    push(cadr(p1), $);
+    evalf($);
+    const p2 = pop($);
 
-    push(caddr(p1));
-    evalf();
-    const i = pop_integer();
+    push(caddr(p1), $);
+    evalf($);
+    const i = pop_integer($);
 
-    push(cadddr(p1));
-    evalf();
-    const j = pop_integer();
+    push(cadddr(p1), $);
+    evalf($);
+    const j = pop_integer($);
 
     if (!istensor(p2) || p2.ndim != 2)
         stopf("minormatrix: matrix expected");
@@ -7797,14 +7797,14 @@ function eval_minormatrix(p1: U): void {
     if (i < 1 || i > p2.dims[0] || j < 0 || j > p2.dims[1])
         stopf("minormatrix: index err");
 
-    push(p2);
+    push(p2, $);
 
-    minormatrix(i, j);
+    minormatrix(i, j, $);
 }
 
-function minormatrix(row: number, col: number): void {
+function minormatrix(row: number, col: number, $: ScriptVars): void {
 
-    const p1 = pop() as Tensor;
+    const p1 = pop($) as Tensor;
 
     const n = p1.dims[0];
     const m = p1.dims[1];
@@ -7812,15 +7812,15 @@ function minormatrix(row: number, col: number): void {
     if (n == 2 && m == 2) {
         if (row == 1) {
             if (col == 1)
-                push(p1.elems[3]);
+                push(p1.elems[3], $);
             else
-                push(p1.elems[2]);
+                push(p1.elems[2], $);
         }
         else {
             if (col == 1)
-                push(p1.elems[1]);
+                push(p1.elems[1], $);
             else
-                push(p1.elems[0]);
+                push(p1.elems[0], $);
         }
         return;
     }
@@ -7859,195 +7859,195 @@ function minormatrix(row: number, col: number): void {
         }
     }
 
-    push(p2);
+    push(p2, $);
 }
 
-function eval_mod(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    push(caddr(p1));
-    evalf();
-    modfunc();
+function eval_mod(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    push(caddr(p1), $);
+    evalf($);
+    modfunc($);
 }
 
-function modfunc(): void {
+function modfunc($: ScriptVars): void {
 
-    const p2 = pop();
-    const p1 = pop();
+    const p2 = pop($);
+    const p1 = pop($);
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            push(p2);
-            modfunc();
-            p1.elems[i] = pop();
+            push(T.elems[i], $);
+            push(p2, $);
+            modfunc($);
+            p1.elems[i] = pop($);
         }
-        push(p1);
+        push(p1, $);
         return;
     }
 
     if (!isnum(p1) || !isnum(p2) || iszero(p2)) {
-        push_symbol(MOD);
-        push(p1);
-        push(p2);
-        list(3);
+        push_symbol(MOD, $);
+        push(p1, $);
+        push(p2, $);
+        list(3, $);
         return;
     }
 
     if (isrational(p1) && isrational(p2)) {
-        mod_rationals(p1, p2);
+        mod_rationals(p1, p2, $);
         return;
     }
 
-    push(p1);
-    const d1 = pop_double();
+    push(p1, $);
+    const d1 = pop_double($);
 
-    push(p2);
-    const d2 = pop_double();
+    push(p2, $);
+    const d2 = pop_double($);
 
-    push_double(d1 % d2);
+    push_double(d1 % d2, $);
 }
 
-function mod_rationals(p1: Rat, p2: Rat): void {
+function mod_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
     if (isinteger(p1) && isinteger(p2)) {
-        mod_integers(p1, p2);
+        mod_integers(p1, p2, $);
         return;
     }
-    push(p1);
-    push(p1);
-    push(p2);
-    divide();
-    absfunc();
-    floorfunc();
-    push(p2);
-    multiply();
+    push(p1, $);
+    push(p1, $);
+    push(p2, $);
+    divide($);
+    absfunc($);
+    floorfunc($);
+    push(p2, $);
+    multiply($);
     if (p1.sign == p2.sign) {
-        negate();
+        negate($);
     }
-    add();
+    add($);
 }
 
-function mod_integers(p1: Rat, p2: Rat): void {
+function mod_integers(p1: Rat, p2: Rat, $: ScriptVars): void {
     const a = bignum_mod(p1.a, p2.a);
     const b = bignum_int(1);
-    push_bignum(p1.sign, a, b);
+    push_bignum(p1.sign, a, b, $);
 }
 
-function eval_multiply(p1: U): void {
-    const h = stack.length;
+function eval_multiply(p1: U, $: ScriptVars): void {
+    const h = $.stack.length;
     expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
+        push(car(p1), $);
+        evalf($);
         p1 = cdr(p1);
     }
-    multiply_factors(stack.length - h);
+    multiply_factors($.stack.length - h, $);
     expanding++;
 }
 
-function eval_noexpand(p1: U): void {
+function eval_noexpand(p1: U, $: ScriptVars): void {
     const t = expanding;
     expanding = 0;
 
-    push(cadr(p1));
-    evalf();
+    push(cadr(p1), $);
+    evalf($);
 
     expanding = t;
 }
 
-function eval_nonstop(): void {
+function eval_nonstop($: ScriptVars): void {
     if (nonstop) {
-        pop();
-        push(nil);
+        pop($);
+        push(nil, $);
         return; // not reentrant
     }
 
     nonstop = 1;
-    eval_nonstop_nib();
+    eval_nonstop_nib($);
     nonstop = 0;
 }
 
-function eval_nonstop_nib(): void {
-    const save_tos = stack.length - 1;
+function eval_nonstop_nib($: ScriptVars): void {
+    const save_tos = $.stack.length - 1;
     const save_tof = frame.length;
 
     const save_eval_level = eval_level;
     const save_expanding = expanding;
 
     try {
-        evalf();
+        evalf($);
     }
     catch (errmsg) {
 
-        stack.splice(save_tos);
+        $.stack.splice(save_tos);
         frame.splice(save_tof);
 
         eval_level = save_eval_level;
         expanding = save_expanding;
 
-        push(nil); // return value
+        push(nil, $); // return value
     }
 }
 
-function eval_not(p1: U): void {
-    push(cadr(p1));
-    evalp();
-    p1 = pop();
+function eval_not(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalp($);
+    p1 = pop($);
     if (iszero(p1))
-        push_integer(1);
+        push_integer(1, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 const DELTA = 1e-6;
 const EPSILON = 1e-9;
 
-function eval_nroots(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_nroots(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
 
     p1 = cddr(p1);
 
     if (iscons(p1)) {
-        push(car(p1));
-        evalf();
+        push(car(p1), $);
+        evalf($);
     }
     else
-        push_symbol(X_LOWER);
+        push_symbol(X_LOWER, $);
 
-    nroots();
+    nroots($);
 }
 
-function nroots(): void {
+function nroots($: ScriptVars): void {
     const cr: number[] = [];
     const ci: number[] = [];
     const tr: number[] = [];
     const ti: number[] = [];
 
-    const X = pop();
-    const P = pop();
+    const X = pop($);
+    const P = pop($);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
-    coeffs(P, X); // put coeffs on stack
+    coeffs(P, X, $); // put coeffs on stack
 
-    let n = stack.length - h; // number of coeffs on stack
+    let n = $.stack.length - h; // number of coeffs on stack
 
     // convert coeffs to floating point
 
     for (let i = 0; i < n; i++) {
 
-        push(stack[h + i]);
-        real();
-        floatfunc();
-        const RE = pop();
+        push($.stack[h + i], $);
+        real($);
+        floatfunc($);
+        const RE = pop($);
 
-        push(stack[h + i]);
-        imag();
-        floatfunc();
-        const IM = pop();
+        push($.stack[h + i], $);
+        imag($);
+        floatfunc($);
+        const IM = pop($);
 
         if (!isdouble(RE) || !isdouble(IM))
             stopf("nroots: coeffs");
@@ -8056,7 +8056,7 @@ function nroots(): void {
         ci[i] = IM.d;
     }
 
-    stack.splice(h); // pop all
+    $.stack.splice(h); // pop all
 
     // divide p(x) by leading coeff
 
@@ -8092,11 +8092,11 @@ function nroots(): void {
 
         // push root
 
-        push_double(ar);
-        push_double(ai);
-        push(imaginaryunit);
-        multiply();
-        add();
+        push_double(ar, $);
+        push_double(ai, $);
+        push(imaginaryunit, $);
+        multiply($);
+        add($);
 
         // divide p(x) by x - a
 
@@ -8107,26 +8107,26 @@ function nroots(): void {
         n--;
     }
 
-    n = stack.length - h; // number of roots on stack
+    n = $.stack.length - h; // number of roots on stack
 
     if (n == 0) {
-        push(nil); // no roots
+        push(nil, $); // no roots
         return;
     }
 
     if (n == 1)
         return; // one root
 
-    sort(n);
+    sort(n, $);
 
     const A = alloc_vector(n);
 
     for (let i = 0; i < n; i++)
-        A.elems[i] = stack[h + i];
+        A.elems[i] = $.stack[h + i];
 
-    stack.splice(h); // pop all
+    $.stack.splice(h); // pop all
 
-    push(A);
+    push(A, $);
 }
 
 function nfindroot(cr: number[], ci: number[], n: number, par: number[], pai: number[]): void {
@@ -8284,76 +8284,76 @@ function urandom(): number {
     return 4.0 * Math.random() - 2.0;
 }
 
-function eval_number(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    p1 = pop();
+function eval_number(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    p1 = pop($);
 
     if (isnum(p1))
-        push_integer(1);
+        push_integer(1, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function eval_numerator(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    numerator();
+function eval_numerator(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    numerator($);
 }
 
-function numerator(): void {
-    let p1 = pop();
+function numerator($: ScriptVars): void {
+    let p1 = pop($);
 
     if (isrational(p1)) {
-        push_bignum(p1.sign, p1.a, bignum_int(1));
+        push_bignum(p1.sign, p1.a, bignum_int(1), $);
         return;
     }
 
-    while (find_divisor(p1)) {
-        push(p1);
-        cancel_factor();
-        p1 = pop();
+    while (find_divisor(p1, $)) {
+        push(p1, $);
+        cancel_factor($);
+        p1 = pop($);
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_or(p1: U): void {
+function eval_or(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalp();
-        const p2 = pop();
+        push(car(p1), $);
+        evalp($);
+        const p2 = pop($);
         if (!iszero(p2)) {
-            push_integer(1);
+            push_integer(1, $);
             return;
         }
         p1 = cdr(p1);
     }
-    push_integer(0);
+    push_integer(0, $);
 }
 
-function eval_outer(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_outer(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
     p1 = cddr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
-        outer();
+        push(car(p1), $);
+        evalf($);
+        outer($);
         p1 = cdr(p1);
     }
 }
 
-function outer(): void {
+function outer($: ScriptVars): void {
 
-    const p2 = pop();
-    const p1 = pop();
+    const p2 = pop($);
+    const p1 = pop($);
 
     if (!istensor(p1) || !istensor(p2)) {
-        push(p1);
-        push(p2);
-        multiply();
+        push(p1, $);
+        push(p2, $);
+        multiply($);
         return;
     }
 
@@ -8366,10 +8366,10 @@ function outer(): void {
 
     for (let i = 0; i < nrow; i++)
         for (let j = 0; j < ncol; j++) {
-            push(p1.elems[i]);
-            push(p2.elems[j]);
-            multiply();
-            p3.elems[i * ncol + j] = pop();
+            push(p1.elems[i], $);
+            push(p2.elems[j], $);
+            multiply($);
+            p3.elems[i * ncol + j] = pop($);
         }
 
     // dim info
@@ -8386,86 +8386,86 @@ function outer(): void {
     for (let i = 0; i < n; i++)
         p3.dims[k++] = p2.dims[i];
 
-    push(p3);
+    push(p3, $);
 }
 
-function eval_polar(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    polar();
+function eval_polar(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    polar($);
 }
 
-function polar(): void {
+function polar($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, polar));
+        push(elementwise(p1, polar, $), $);
         return;
     }
 
-    push(p1);
-    mag();
-    push(imaginaryunit);
-    push(p1);
-    arg();
-    const p2 = pop();
+    push(p1, $);
+    mag($);
+    push(imaginaryunit, $);
+    push(p1, $);
+    arg($);
+    const p2 = pop($);
     if (isdouble(p2)) {
-        push_double(p2.d / Math.PI);
-        push_symbol(PI);
-        multiply_factors(3);
+        push_double(p2.d / Math.PI, $);
+        push_symbol(PI, $);
+        multiply_factors(3, $);
     }
     else {
-        push(p2);
-        multiply_factors(2);
+        push(p2, $);
+        multiply_factors(2, $);
     }
-    expfunc();
-    multiply();
+    expfunc($);
+    multiply($);
 }
 
-function eval_power(p1: U) {
+function eval_power(p1: U, $: ScriptVars) {
 
     expanding--;
 
     // base
 
-    push(cadr(p1));
+    push(cadr(p1), $);
 
     // exponent
 
-    push(caddr(p1));
-    evalf();
-    dupl();
-    const p2 = pop();
+    push(caddr(p1), $);
+    evalf($);
+    dupl($);
+    const p2 = pop($);
 
     // if exponent is negative then evaluate base without expanding
 
-    swap();
+    swap($);
     if (isnum(p2) && isnegativenumber(p2)) {
         const t = expanding;
         expanding = 0;
-        evalf();
+        evalf($);
         expanding = t;
     }
     else
-        evalf();
-    swap();
+        evalf($);
+    swap($);
 
-    power();
+    power($);
 
     expanding++;
 }
 
-function power(): void {
+function power($: ScriptVars): void {
 
-    const EXPO = pop();
-    let BASE = pop();
+    const EXPO = pop($);
+    let BASE = pop($);
 
     if (istensor(BASE) && istensor(EXPO)) {
-        push_symbol(POWER);
-        push(BASE);
-        push(EXPO);
-        list(3);
+        push_symbol(POWER, $);
+        push(BASE, $);
+        push(EXPO, $);
+        list(3, $);
         return;
     }
 
@@ -8473,12 +8473,12 @@ function power(): void {
         const T = copy_tensor(EXPO);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(BASE);
-            push(T.elems[i]);
-            power();
-            T.elems[i] = pop();
+            push(BASE, $);
+            push(T.elems[i], $);
+            power($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
@@ -8486,58 +8486,58 @@ function power(): void {
         const T = copy_tensor(BASE);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            push(EXPO);
-            power();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            push(EXPO, $);
+            power($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
     if (BASE == symbol(EXP1) && isdouble(EXPO)) {
-        push_double(Math.E);
-        BASE = pop();
+        push_double(Math.E, $);
+        BASE = pop($);
     }
 
     if (BASE == symbol(PI) && isdouble(EXPO)) {
-        push_double(Math.PI);
-        BASE = pop();
+        push_double(Math.PI, $);
+        BASE = pop($);
     }
 
     if (isnum(BASE) && isnum(EXPO)) {
-        power_numbers(BASE, EXPO);
+        power_numbers(BASE, EXPO, $);
         return;
     }
 
     // expr^0
 
     if (iszero(EXPO)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
     // 0^expr
 
     if (iszero(BASE)) {
-        push_symbol(POWER);
-        push(BASE);
-        push(EXPO);
-        list(3);
+        push_symbol(POWER, $);
+        push(BASE, $);
+        push(EXPO, $);
+        list(3, $);
         return;
     }
 
     // 1^expr
 
     if (isplusone(BASE)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
     // expr^1
 
     if (isplusone(EXPO)) {
-        push(BASE);
+        push(BASE, $);
         return;
     }
 
@@ -8546,34 +8546,34 @@ function power(): void {
     if (isrational(BASE) && isinteger(BASE)) {
         // raise each factor in BASE to power EXPO
         // EXPO is not numerical, that case was handled by power_numbers() above
-        const h = stack.length;
-        push(BASE);
-        factor_factor();
-        const n = stack.length - h;
+        const h = $.stack.length;
+        push(BASE, $);
+        factor_factor($);
+        const n = $.stack.length - h;
         for (let i = 0; i < n; i++) {
-            const p1 = stack[h + i];
+            const p1 = $.stack[h + i];
             if (car(p1) == symbol(POWER)) {
-                push_symbol(POWER);
-                push(cadr(p1)); // base
-                push(caddr(p1)); // expo
-                push(EXPO);
-                multiply();
-                list(3);
+                push_symbol(POWER, $);
+                push(cadr(p1), $); // base
+                push(caddr(p1), $); // expo
+                push(EXPO, $);
+                multiply($);
+                list(3, $);
             }
             else {
-                push_symbol(POWER);
-                push(p1);
-                push(EXPO);
-                list(3);
+                push_symbol(POWER, $);
+                push(p1, $);
+                push(EXPO, $);
+                list(3, $);
             }
-            stack[h + i] = pop();
+            $.stack[h + i] = pop($);
         }
         if (n > 1) {
-            sort_factors(h);
-            list(n);
-            push_symbol(MULTIPLY);
-            swap();
-            cons(); // prepend MULTIPLY to list
+            sort_factors(h, $);
+            list(n, $);
+            push_symbol(MULTIPLY, $);
+            swap($);
+            cons($); // prepend MULTIPLY to list
         }
         return;
     }
@@ -8583,104 +8583,104 @@ function power(): void {
     if (isrational(BASE) && isfraction(BASE)) {
         // power numerator, power denominator
         // EXPO is not numerical, that case was handled by power_numbers() above
-        push(BASE);
-        numerator();
-        push(EXPO);
-        power();
-        push(BASE);
-        denominator();
-        push(EXPO);
-        negate();
-        power();
-        multiply();
+        push(BASE, $);
+        numerator($);
+        push(EXPO, $);
+        power($);
+        push(BASE, $);
+        denominator($);
+        push(EXPO, $);
+        negate($);
+        power($);
+        multiply($);
         return;
     }
 
     // BASE = e ?
 
     if (BASE == symbol(EXP1)) {
-        power_natural_number(EXPO);
+        power_natural_number(EXPO, $);
         return;
     }
 
     // (a + b) ^ c
 
     if (car(BASE) == symbol(ADD)) {
-        power_sum(BASE, EXPO);
+        power_sum(BASE, EXPO, $);
         return;
     }
 
     // (a b) ^ c  -->  (a ^ c) (b ^ c)
 
     if (car(BASE) == symbol(MULTIPLY)) {
-        const h = stack.length;
+        const h = $.stack.length;
         let p1 = cdr(BASE);
         while (iscons(p1)) {
-            push(car(p1));
-            push(EXPO);
-            power();
+            push(car(p1), $);
+            push(EXPO, $);
+            power($);
             p1 = cdr(p1);
         }
-        multiply_factors(stack.length - h);
+        multiply_factors($.stack.length - h, $);
         return;
     }
 
     // (a ^ b) ^ c  -->  a ^ (b c)
 
     if (car(BASE) == symbol(POWER)) {
-        push(cadr(BASE));
-        push(caddr(BASE));
-        push(EXPO);
-        multiply_expand(); // always expand products of exponents
-        power();
+        push(cadr(BASE), $);
+        push(caddr(BASE), $);
+        push(EXPO, $);
+        multiply_expand($); // always expand products of exponents
+        power($);
         return;
     }
 
     // none of the above
 
-    push_symbol(POWER);
-    push(BASE);
-    push(EXPO);
-    list(3);
+    push_symbol(POWER, $);
+    push(BASE, $);
+    push(EXPO, $);
+    list(3, $);
 }
 
-function eval_prefixform(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    p1 = pop();
+function eval_prefixform(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    p1 = pop($);
     outbuf = "";
     prefixform(p1);
-    push_string(outbuf);
+    push_string(outbuf, $);
 }
 
-function eval_print(p1: U): void {
+function eval_print(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
     while (iscons(p1)) {
-        push(car(p1));
-        push(car(p1));
-        evalf();
-        const result = pop();
-        const input = pop();
-        print_result_and_input(result, input);
+        push(car(p1), $);
+        push(car(p1), $);
+        evalf($);
+        const result = pop($);
+        const input = pop($);
+        print_result_and_input(result, input, $);
         p1 = cdr(p1);
     }
-    push(nil);
+    push(nil, $);
 }
 
-function print_result_and_input(result: U, input: U): void {
+function print_result_and_input(result: U, input: U, $: ScriptVars): void {
 
     if (is_nil(result)) {
         return;
     }
 
     if (should_annotate_result(input, result)) {
-        result = annotate(input, result);
+        result = annotate(input, result, $);
     }
 
     const tty = get_binding(symbol(TTY));
 
     if (tty == symbol(TTY) || iszero(tty)) {
-        print_svg(result);
+        print_svg(result, $);
     }
     else {
         print_infix(result);
@@ -8705,28 +8705,28 @@ function should_annotate_result(input: U, result: U): 0 | 1 {
     return 1;
 }
 
-function annotate(input: U, result: U): U {
-    push_symbol(SETQ);
-    push(input);
-    push(result);
-    list(3);
-    return pop();
+function annotate(input: U, result: U, $: ScriptVars): U {
+    push_symbol(SETQ, $);
+    push(input, $);
+    push(result, $);
+    list(3, $);
+    return pop($);
 }
 
-function eval_product(p1: U): void {
+function eval_product(p1: U, $: ScriptVars): void {
 
     if (lengthf(p1) == 2) {
-        push(cadr(p1));
-        evalf();
-        p1 = pop();
+        push(cadr(p1), $);
+        evalf($);
+        p1 = pop($);
         if (!istensor(p1)) {
-            push(p1);
+            push(p1, $);
             return;
         }
         const n = p1.nelem;
         for (let i = 0; i < n; i++)
-            push(p1.elems[i]);
-        multiply_factors(n);
+            push(p1.elems[i], $);
+        multiply_factors(n, $);
         return;
     }
 
@@ -8734,26 +8734,26 @@ function eval_product(p1: U): void {
     if (!(issymbol(p2) && isusersymbol(p2)))
         stopf("product: symbol error");
 
-    push(caddr(p1));
-    evalf();
-    let j = pop_integer();
+    push(caddr(p1), $);
+    evalf($);
+    let j = pop_integer($);
 
-    push(cadddr(p1));
-    evalf();
-    const k = pop_integer();
+    push(cadddr(p1), $);
+    evalf($);
+    const k = pop_integer($);
 
     p1 = caddddr(p1);
 
     save_symbol(p2);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     for (; ;) {
-        push_integer(j);
-        const p3 = pop();
+        push_integer(j, $);
+        const p3 = pop($);
         set_symbol(p2, p3, nil);
-        push(p1);
-        evalf();
+        push(p1, $);
+        evalf($);
         if (j == k)
             break;
         if (j < k)
@@ -8762,127 +8762,127 @@ function eval_product(p1: U): void {
             j--;
     }
 
-    multiply_factors(stack.length - h);
+    multiply_factors($.stack.length - h, $);
 
     restore_symbol();
 }
 
-function eval_quote(p1: U): void {
-    push(cadr(p1)); // not evaluated
+function eval_quote(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $); // not evaluated
 }
 
-function eval_rank(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    p1 = pop();
+function eval_rank(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    p1 = pop($);
     if (istensor(p1))
-        push_integer(p1.ndim);
+        push_integer(p1.ndim, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function eval_rationalize(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    rationalize();
+function eval_rationalize(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    rationalize($);
 }
 
-function rationalize(): void {
+function rationalize($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, rationalize));
+        push(elementwise(p1, rationalize, $), $);
         return;
     }
 
     let p2: U = one;
 
-    while (find_divisor(p1)) {
-        const p0 = pop();
-        push(p0);
-        push(p1);
-        cancel_factor();
-        p1 = pop();
-        push(p0);
-        push(p2);
-        multiply_noexpand();
-        p2 = pop();
+    while (find_divisor(p1, $)) {
+        const p0 = pop($);
+        push(p0, $);
+        push(p1, $);
+        cancel_factor($);
+        p1 = pop($);
+        push(p0, $);
+        push(p2, $);
+        multiply_noexpand($);
+        p2 = pop($);
     }
 
-    push(p1);
-    push(p2);
-    reciprocate();
-    multiply_noexpand();
+    push(p1, $);
+    push(p2, $);
+    reciprocate($);
+    multiply_noexpand($);
 }
 
-function eval_real(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    real();
+function eval_real(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    real($);
 }
 
-function real(): void {
+function real($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, real));
+        push(elementwise(p1, real, $), $);
         return;
     }
 
-    push(p1);
-    rect();
-    p1 = pop();
-    push(p1);
-    push(p1);
-    conjfunc();
-    add();
-    push_rational(1, 2);
-    multiply();
+    push(p1, $);
+    rect($);
+    p1 = pop($);
+    push(p1, $);
+    push(p1, $);
+    conjfunc($);
+    add($);
+    push_rational(1, 2, $);
+    multiply($);
 }
 
-function eval_rect(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    rect();
+function eval_rect(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    rect($);
 }
 
-function rect(): void {
+function rect($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, rect));
+        push(elementwise(p1, rect, $), $);
         return;
     }
 
     if (car(p1) == symbol(ADD)) {
         p1 = cdr(p1);
-        const h = stack.length;
+        const h = $.stack.length;
         while (iscons(p1)) {
-            push(car(p1));
-            rect();
+            push(car(p1), $);
+            rect($);
             p1 = cdr(p1);
         }
-        add_terms(stack.length - h);
+        add_terms($.stack.length - h, $);
         return;
     }
 
     if (car(p1) == symbol(MULTIPLY)) {
         p1 = cdr(p1);
-        const h = stack.length;
+        const h = $.stack.length;
         while (iscons(p1)) {
-            push(car(p1));
-            rect();
+            push(car(p1), $);
+            rect($);
             p1 = cdr(p1);
         }
-        multiply_factors(stack.length - h);
+        multiply_factors($.stack.length - h, $);
         return;
     }
 
     if (car(p1) != symbol(POWER)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
@@ -8893,252 +8893,252 @@ function rect(): void {
 
     if (car(EXPO) == symbol(ADD)) {
         p1 = cdr(EXPO);
-        const h = stack.length;
+        const h = $.stack.length;
         while (iscons(p1)) {
-            push_symbol(POWER);
-            push(BASE);
-            push(car(p1));
-            list(3);
-            rect();
+            push_symbol(POWER, $);
+            push(BASE, $);
+            push(car(p1), $);
+            list(3, $);
+            rect($);
             p1 = cdr(p1);
         }
-        multiply_factors(stack.length - h);
+        multiply_factors($.stack.length - h, $);
         return;
     }
 
     // return mag(p1) * cos(arg(p1)) + i sin(arg(p1)))
 
-    push(p1);
-    mag();
+    push(p1, $);
+    mag($);
 
-    push(p1);
-    arg();
-    const p2 = pop();
+    push(p1, $);
+    arg($);
+    const p2 = pop($);
 
-    push(p2);
-    cosfunc();
+    push(p2, $);
+    cosfunc($);
 
-    push(imaginaryunit);
-    push(p2);
-    sinfunc();
-    multiply();
+    push(imaginaryunit, $);
+    push(p2, $);
+    sinfunc($);
+    multiply($);
 
-    add();
+    add($);
 
-    multiply();
+    multiply($);
 }
 
-function eval_roots(p1: U): void {
-    push(cadr(p1));
-    evalf();
+function eval_roots(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
 
     p1 = cddr(p1);
 
     if (iscons(p1)) {
-        push(car(p1));
-        evalf();
+        push(car(p1), $);
+        evalf($);
     }
     else
-        push_symbol(X_LOWER);
+        push_symbol(X_LOWER, $);
 
-    roots();
+    roots($);
 }
 
-function roots(): void {
+function roots($: ScriptVars): void {
 
-    const X = pop();
-    const P = pop();
+    const X = pop($);
+    const P = pop($);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
-    coeffs(P, X); // put coeffs on stack
+    coeffs(P, X, $); // put coeffs on stack
 
-    const k = stack.length;
+    const k = $.stack.length;
 
     let n = k - h; // number of coeffs on stack
 
     // check coeffs
 
     for (let i = 0; i < n; i++)
-        if (!isrational(stack[h + i]))
+        if (!isrational($.stack[h + i]))
             stopf("roots: coeffs");
 
     // find roots
 
     while (n > 1) {
 
-        if (findroot(h, n) == 0)
+        if (findroot(h, n, $) == 0)
             break; // no root found
 
         // A is the root
 
-        const A = stack[stack.length - 1];
+        const A = $.stack[$.stack.length - 1];
 
         // divide p(x) by X - A
 
-        reduce(h, n, A);
+        reduce(h, n, A, $);
 
         n--;
     }
 
-    n = stack.length - k; // number of roots on stack
+    n = $.stack.length - k; // number of roots on stack
 
     if (n == 0) {
-        stack.length = h; // pop all
-        push(nil); // no roots
+        $.stack.length = h; // pop all
+        push(nil, $); // no roots
         return;
     }
 
-    sort(n); // sort roots
+    sort(n, $); // sort roots
 
     // eliminate repeated roots
 
     for (let i = 0; i < n - 1; i++)
-        if (equal(stack[k + i], stack[k + i + 1])) {
+        if (equal($.stack[k + i], $.stack[k + i + 1], $)) {
             for (let j = i + 1; j < n - 1; j++)
-                stack[k + j] = stack[k + j + 1];
+                $.stack[k + j] = $.stack[k + j + 1];
             i--;
             n--;
         }
 
     if (n == 1) {
-        const A = stack[k];
-        stack.length = h; // pop all
-        push(A); // one root
+        const A = $.stack[k];
+        $.stack.length = h; // pop all
+        push(A, $); // one root
         return;
     }
 
     const A = alloc_vector(n);
 
     for (let i = 0; i < n; i++)
-        A.elems[i] = stack[k + i];
+        A.elems[i] = $.stack[k + i];
 
-    stack.length = h; // pop all
+    $.stack.length = h; // pop all
 
-    push(A);
+    push(A, $);
 }
 
-function findroot(h: number, n: number): 1 | 0 {
+function findroot(h: number, n: number, $: ScriptVars): 1 | 0 {
 
     // check constant term
 
-    if (iszero(stack[h])) {
-        push_integer(0); // root is zero
+    if (iszero($.stack[h])) {
+        push_integer(0, $); // root is zero
         return 1;
     }
 
     // eliminate denominators
 
     for (let i = 0; i < n; i++) {
-        let C = stack[h + i];
+        let C = $.stack[h + i];
         if (isrational(C) && isinteger(C))
             continue;
-        push(C);
-        denominator();
-        C = pop();
+        push(C, $);
+        denominator($);
+        C = pop($);
         for (let j = 0; j < n; j++) {
-            push(stack[h + j]);
-            push(C);
-            multiply();
-            stack[h + j] = pop();
+            push($.stack[h + j], $);
+            push(C, $);
+            multiply($);
+            $.stack[h + j] = pop($);
         }
     }
 
-    const p = stack.length;
+    const p = $.stack.length;
 
-    push(stack[h]);
-    let m = pop_integer();
-    divisors(m); // divisors of constant term
+    push($.stack[h], $);
+    let m = pop_integer($);
+    divisors(m, $); // divisors of constant term
 
-    const q = stack.length;
+    const q = $.stack.length;
 
-    push(stack[h + n - 1]);
-    m = pop_integer();
-    divisors(m); // divisors of leading coeff
+    push($.stack[h + n - 1], $);
+    m = pop_integer($);
+    divisors(m, $); // divisors of leading coeff
 
-    const r = stack.length;
+    const r = $.stack.length;
 
     for (let i = p; i < q; i++) {
         for (let j = q; j < r; j++) {
 
             // try positive A
 
-            push(stack[i]);
-            push(stack[j]);
-            divide();
-            let A = pop();
+            push($.stack[i], $);
+            push($.stack[j], $);
+            divide($);
+            let A = pop($);
 
-            horner(h, n, A);
+            horner(h, n, A, $);
 
-            let PA = pop(); // polynomial evaluated at A
+            let PA = pop($); // polynomial evaluated at A
 
             if (iszero(PA)) {
-                stack.length = p; // pop all
-                push(A);
+                $.stack.length = p; // pop all
+                push(A, $);
                 return 1; // root on stack
             }
 
             // try negative A
 
-            push(A);
-            negate();
-            A = pop();
+            push(A, $);
+            negate($);
+            A = pop($);
 
-            horner(h, n, A);
+            horner(h, n, A, $);
 
-            PA = pop(); // polynomial evaluated at A
+            PA = pop($); // polynomial evaluated at A
 
             if (iszero(PA)) {
-                stack.length = p; // pop all
-                push(A);
+                $.stack.length = p; // pop all
+                push(A, $);
                 return 1; // root on stack
             }
         }
     }
 
-    stack.length = p; // pop all
+    $.stack.length = p; // pop all
 
     return 0; // no root
 }
 
 // evaluate p(x) at x = A using horner's rule
 
-function horner(h: number, n: number, A: U): void {
+function horner(h: number, n: number, A: U, $: ScriptVars): void {
 
-    push(stack[h + n - 1]);
+    push($.stack[h + n - 1], $);
 
     for (let i = n - 2; i >= 0; i--) {
-        push(A);
-        multiply();
-        push(stack[h + i]);
-        add();
+        push(A, $);
+        multiply($);
+        push($.stack[h + i], $);
+        add($);
     }
 }
 
 // push all divisors of n
 
-function divisors(n: number): void {
+function divisors(n: number, $: ScriptVars): void {
 
-    const h = stack.length;
+    const h = $.stack.length;
 
-    factor_int(n);
+    factor_int(n, $);
 
-    const k = stack.length;
+    const k = $.stack.length;
 
     // contruct divisors by recursive descent
 
-    push_integer(1);
+    push_integer(1, $);
 
-    divisors_nib(h, k);
+    divisors_nib(h, k, $);
 
     // move
 
-    n = stack.length - k;
+    n = $.stack.length - k;
 
     for (let i = 0; i < n; i++)
-        stack[h + i] = stack[k + i];
+        $.stack[h + i] = $.stack[k + i];
 
-    stack.length = h + n; // pop all
+    $.stack.length = h + n; // pop all
 }
 
 //	Generate all divisors for a factored number
@@ -9155,56 +9155,56 @@ function divisors(n: number): void {
 //
 //	1, 2, 3, 4, 6, 12
 
-function divisors_nib(h: number, k: number): void {
+function divisors_nib(h: number, k: number, $: ScriptVars): void {
 
     if (h == k)
         return;
 
-    const ACCUM = pop();
+    const ACCUM = pop($);
 
-    const BASE = stack[h + 0];
-    const EXPO = stack[h + 1];
+    const BASE = $.stack[h + 0];
+    const EXPO = $.stack[h + 1];
 
-    push(EXPO);
-    const n = pop_integer();
+    push(EXPO, $);
+    const n = pop_integer($);
 
     for (let i = 0; i <= n; i++) {
-        push(ACCUM);
-        push(BASE);
-        push_integer(i);
-        power();
-        multiply();
-        divisors_nib(h + 2, k);
+        push(ACCUM, $);
+        push(BASE, $);
+        push_integer(i, $);
+        power($);
+        multiply($);
+        divisors_nib(h + 2, k, $);
     }
 }
 
 // divide by X - A
 
-function reduce(h: number, n: number, A: U): void {
+function reduce(h: number, n: number, A: U, $: ScriptVars): void {
 
     for (let i = n - 1; i > 0; i--) {
-        push(A);
-        push(stack[h + i]);
-        multiply();
-        push(stack[h + i - 1]);
-        add();
-        stack[h + i - 1] = pop();
+        push(A, $);
+        push($.stack[h + i], $);
+        multiply($);
+        push($.stack[h + i - 1], $);
+        add($);
+        $.stack[h + i - 1] = pop($);
     }
 
-    if (!iszero(stack[h]))
+    if (!iszero($.stack[h]))
         stopf("roots: residual error"); // not a root
 
     // move
 
     for (let i = 0; i < n - 1; i++)
-        stack[h + i] = stack[h + i + 1];
+        $.stack[h + i] = $.stack[h + i + 1];
 }
 
-function eval_rotate(p1: U): void {
+function eval_rotate(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    const PSI = pop();
+    push(cadr(p1), $);
+    evalf($);
+    const PSI = pop($);
 
     if (!istensor(PSI) || PSI.ndim > 1 || PSI.nelem > 32768 || (PSI.nelem & (PSI.nelem - 1)) != 0)
         stopf("rotate error 1 first argument is not a vector or dimension error");
@@ -9219,9 +9219,9 @@ function eval_rotate(p1: U): void {
             stopf("rotate error 2 unexpected end of argument list");
 
         const OPCODE = car(p1);
-        push(cadr(p1));
-        evalf();
-        let n = pop_integer();
+        push(cadr(p1), $);
+        evalf($);
+        let n = pop_integer($);
 
         if (n > 14 || (1 << n) >= PSI.nelem)
             stopf("rotate error 3 qubit number format or range");
@@ -9234,7 +9234,7 @@ function eval_rotate(p1: U): void {
         }
 
         if (OPCODE == symbol("H")) {
-            rotate_h(PSI, c, n);
+            rotate_h(PSI, c, n, $);
             c = 0;
             continue;
         }
@@ -9242,26 +9242,26 @@ function eval_rotate(p1: U): void {
         if (OPCODE == symbol("P")) {
             if (!iscons(p1))
                 stopf("rotate error 2 unexpected end of argument list");
-            push(car(p1));
+            push(car(p1), $);
             p1 = cdr(p1);
-            evalf();
-            push(imaginaryunit);
-            multiply();
-            expfunc();
-            const PHASE = pop();
-            rotate_p(PSI, PHASE, c, n);
+            evalf($);
+            push(imaginaryunit, $);
+            multiply($);
+            expfunc($);
+            const PHASE = pop($);
+            rotate_p(PSI, PHASE, c, n, $);
             c = 0;
             continue;
         }
 
         if (OPCODE == symbol("Q")) {
-            rotate_q(PSI, n);
+            rotate_q(PSI, n, $);
             c = 0;
             continue;
         }
 
         if (OPCODE == symbol("V")) {
-            rotate_v(PSI, n);
+            rotate_v(PSI, n, $);
             c = 0;
             continue;
         }
@@ -9270,31 +9270,31 @@ function eval_rotate(p1: U): void {
             const m = n;
             if (!iscons(p1))
                 stopf("rotate error 2 unexpected end of argument list");
-            push(car(p1));
+            push(car(p1), $);
             p1 = cdr(p1);
-            evalf();
-            n = pop_integer();
+            evalf($);
+            n = pop_integer($);
             if (n > 14 || (1 << n) >= PSI.nelem)
                 stopf("rotate error 3 qubit number format or range");
-            rotate_w(PSI, c, m, n);
+            rotate_w(PSI, c, m, n, $);
             c = 0;
             continue;
         }
 
         if (OPCODE == symbol("X")) {
-            rotate_x(PSI, c, n);
+            rotate_x(PSI, c, n, $);
             c = 0;
             continue;
         }
 
         if (OPCODE == symbol("Y")) {
-            rotate_y(PSI, c, n);
+            rotate_y(PSI, c, n, $);
             c = 0;
             continue;
         }
 
         if (OPCODE == symbol("Z")) {
-            rotate_z(PSI, c, n);
+            rotate_z(PSI, c, n, $);
             c = 0;
             continue;
         }
@@ -9302,164 +9302,164 @@ function eval_rotate(p1: U): void {
         stopf("rotate error 4 unknown rotation code");
     }
 
-    push(PSI);
+    push(PSI, $);
 }
 
 // hadamard
 
-function rotate_h(PSI: Tensor, c: number, n: number): void {
+function rotate_h(PSI: Tensor, c: number, n: number, $: ScriptVars): void {
     n = 1 << n;
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) != c)
             continue;
         if (i & n) {
-            push(PSI.elems[i ^ n]);		// KET0
-            push(PSI.elems[i]);		// KET1
-            add();
-            push_rational(1, 2);
-            sqrtfunc();
-            multiply();
-            push(PSI.elems[i ^ n]);		// KET0
-            push(PSI.elems[i]);		// KET1
-            subtract();
-            push_rational(1, 2);
-            sqrtfunc();
-            multiply();
-            PSI.elems[i] = pop();		// KET1
-            PSI.elems[i ^ n] = pop();	// KET0
+            push(PSI.elems[i ^ n], $);		// KET0
+            push(PSI.elems[i], $);		// KET1
+            add($);
+            push_rational(1, 2, $);
+            sqrtfunc($);
+            multiply($);
+            push(PSI.elems[i ^ n], $);		// KET0
+            push(PSI.elems[i], $);		// KET1
+            subtract($);
+            push_rational(1, 2, $);
+            sqrtfunc($);
+            multiply($);
+            PSI.elems[i] = pop($);		// KET1
+            PSI.elems[i ^ n] = pop($);	// KET0
         }
     }
 }
 
 // phase
 
-function rotate_p(PSI: Tensor, PHASE: U, c: number, n: number): void {
+function rotate_p(PSI: Tensor, PHASE: U, c: number, n: number, $: ScriptVars): void {
     n = 1 << n;
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) != c)
             continue;
         if (i & n) {
-            push(PSI.elems[i]);		// KET1
-            push(PHASE);
-            multiply();
-            PSI.elems[i] = pop();		// KET1
+            push(PSI.elems[i], $);		// KET1
+            push(PHASE, $);
+            multiply($);
+            PSI.elems[i] = pop($);		// KET1
         }
     }
 }
 
 // swap
 
-function rotate_w(PSI: Tensor, c: number, m: number, n: number): void {
+function rotate_w(PSI: Tensor, c: number, m: number, n: number, $: ScriptVars): void {
     m = 1 << m;
     n = 1 << n;
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) != c)
             continue;
         if ((i & m) && !(i & n)) {
-            push(PSI.elems[i]);
-            push(PSI.elems[i ^ m ^ n]);
-            PSI.elems[i] = pop();
-            PSI.elems[i ^ m ^ n] = pop();
+            push(PSI.elems[i], $);
+            push(PSI.elems[i ^ m ^ n], $);
+            PSI.elems[i] = pop($);
+            PSI.elems[i ^ m ^ n] = pop($);
         }
     }
 }
 
-function rotate_x(PSI: Tensor, c: number, n: number): void {
+function rotate_x(PSI: Tensor, c: number, n: number, $: ScriptVars): void {
     n = 1 << n;
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) != c)
             continue;
         if (i & n) {
-            push(PSI.elems[i ^ n]);		// KET0
-            push(PSI.elems[i]);		// KET1
-            PSI.elems[i ^ n] = pop();	// KET0
-            PSI.elems[i] = pop();		// KET1
+            push(PSI.elems[i ^ n], $);		// KET0
+            push(PSI.elems[i], $);		// KET1
+            PSI.elems[i ^ n] = pop($);	// KET0
+            PSI.elems[i] = pop($);		// KET1
         }
     }
 }
 
-function rotate_y(PSI: Tensor, c: number, n: number): void {
+function rotate_y(PSI: Tensor, c: number, n: number, $: ScriptVars): void {
     n = 1 << n;
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) != c)
             continue;
         if (i & n) {
-            push(imaginaryunit);
-            negate();
-            push(PSI.elems[i ^ n]);		// KET0
-            multiply();
-            push(imaginaryunit);
-            push(PSI.elems[i]);		// KET1
-            multiply();
-            PSI.elems[i ^ n] = pop();	// KET0
-            PSI.elems[i] = pop();		// KET1
+            push(imaginaryunit, $);
+            negate($);
+            push(PSI.elems[i ^ n], $);		// KET0
+            multiply($);
+            push(imaginaryunit, $);
+            push(PSI.elems[i], $);		// KET1
+            multiply($);
+            PSI.elems[i ^ n] = pop($);	// KET0
+            PSI.elems[i] = pop($);		// KET1
         }
     }
 }
 
-function rotate_z(PSI: Tensor, c: number, n: number): void {
+function rotate_z(PSI: Tensor, c: number, n: number, $: ScriptVars): void {
     n = 1 << n;
     for (let i = 0; i < PSI.nelem; i++) {
         if ((i & c) != c)
             continue;
         if (i & n) {
-            push(PSI.elems[i]);		// KET1
-            negate();
-            PSI.elems[i] = pop();		// KET1
+            push(PSI.elems[i], $);		// KET1
+            negate($);
+            PSI.elems[i] = pop($);		// KET1
         }
     }
 }
 
 // quantum fourier transform
 
-function rotate_q(PSI: Tensor, n: number): void {
+function rotate_q(PSI: Tensor, n: number, $: ScriptVars): void {
     for (let i = n; i >= 0; i--) {
-        rotate_h(PSI, 0, i);
+        rotate_h(PSI, 0, i, $);
         for (let j = 0; j < i; j++) {
-            push_rational(1, 2);
-            push_integer(i - j);
-            power();
-            push(imaginaryunit);
-            push_symbol(PI);
-            evalf();
-            multiply_factors(3);
-            expfunc();
-            const PHASE = pop();
-            rotate_p(PSI, PHASE, 1 << j, i);
+            push_rational(1, 2, $);
+            push_integer(i - j, $);
+            power($);
+            push(imaginaryunit, $);
+            push_symbol(PI, $);
+            evalf($);
+            multiply_factors(3, $);
+            expfunc($);
+            const PHASE = pop($);
+            rotate_p(PSI, PHASE, 1 << j, i, $);
         }
     }
     for (let i = 0; i < (n + 1) / 2; i++)
-        rotate_w(PSI, 0, i, n - i);
+        rotate_w(PSI, 0, i, n - i, $);
 }
 
 // inverse qft
 
-function rotate_v(PSI: Tensor, n: number): void {
+function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
     for (let i = 0; i < (n + 1) / 2; i++)
-        rotate_w(PSI, 0, i, n - i);
+        rotate_w(PSI, 0, i, n - i, $);
     for (let i = 0; i <= n; i++) {
         for (let j = i - 1; j >= 0; j--) {
-            push_rational(1, 2);
-            push_integer(i - j);
-            power();
-            push(imaginaryunit);
-            push_symbol(PI);
-            evalf();
-            multiply_factors(3);
-            negate();
-            expfunc();
-            const PHASE = pop();
-            rotate_p(PSI, PHASE, 1 << j, i);
+            push_rational(1, 2, $);
+            push_integer(i - j, $);
+            power($);
+            push(imaginaryunit, $);
+            push_symbol(PI, $);
+            evalf($);
+            multiply_factors(3, $);
+            negate($);
+            expfunc($);
+            const PHASE = pop($);
+            rotate_p(PSI, PHASE, 1 << j, i, $);
         }
-        rotate_h(PSI, 0, i);
+        rotate_h(PSI, 0, i, $);
     }
 }
 
-function eval_run(p1: U): void {
+function eval_run(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    p1 = pop();
+    push(cadr(p1), $);
+    evalf($);
+    p1 = pop($);
 
     if (!isstring(p1))
         stopf("run: string expected");
@@ -9474,55 +9474,55 @@ function eval_run(p1: U): void {
     if (f.status == 404 || f.responseText.length == 0)
         stopf("run: file not found");
 
-    const save_inbuf = inbuf;
+    const save_inbuf = $.inbuf;
     const save_trace1 = trace1;
     const save_trace2 = trace2;
 
-    inbuf = f.responseText;
+    $.inbuf = f.responseText;
 
     let k = 0;
 
     for (; ;) {
 
-        k = scan_inbuf(k);
+        k = scan_inbuf(k, $);
 
         if (k == 0)
             break; // end of input
 
-        const input = pop();
-        const result = eval_input(input);
-        print_result_and_input(result, input);
+        const input = pop($);
+        const result = eval_input(input, $);
+        print_result_and_input(result, input, $);
         if (!is_nil(result)) {
             set_symbol(symbol(LAST), result, nil);
         }
     }
 
-    inbuf = save_inbuf;
+    $.inbuf = save_inbuf;
     trace1 = save_trace1;
     trace2 = save_trace2;
 
-    push(nil);
+    push(nil, $);
 }
 
-function eval_setq(p1: U): void {
+function eval_setq(p1: U, $: ScriptVars): void {
 
-    push(nil); // return value
+    push(nil, $); // return value
 
     if (caadr(p1) == symbol(INDEX)) {
-        setq_indexed(p1);
+        setq_indexed(p1, $);
         return;
     }
 
     if (iscons(cadr(p1))) {
-        setq_usrfunc(p1);
+        setq_usrfunc(p1, $);
         return;
     }
 
     const sym = cadr(p1);
     if (issymbol(sym) && isusersymbol(sym)) {
-        push(caddr(p1));
-        evalf();
-        const p2 = pop();
+        push(caddr(p1), $);
+        evalf($);
+        const p2 = pop($);
 
         set_symbol(sym, p2, nil);
     }
@@ -9543,7 +9543,7 @@ function eval_setq(p1: U): void {
 // cadadr(p1) = a
 // caddr(p1) = b
 
-function setq_indexed(p1: U): void {
+function setq_indexed(p1: U, $: ScriptVars): void {
 
     const S = cadadr(p1);
 
@@ -9551,38 +9551,38 @@ function setq_indexed(p1: U): void {
         stopf(`user symbol expected S=${S}`);
     }
 
-    push(S);
-    evalf();
+    push(S, $);
+    evalf($);
 
-    push(caddr(p1));
-    evalf();
+    push(caddr(p1), $);
+    evalf($);
 
-    const RVAL = pop();
-    const LVAL = pop();
+    const RVAL = pop($);
+    const LVAL = pop($);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     p1 = cddadr(p1);
 
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
+        push(car(p1), $);
+        evalf($);
         p1 = cdr(p1);
     }
 
-    set_component(LVAL, RVAL, h);
+    set_component(LVAL, RVAL, h, $);
 
     set_symbol(S, LVAL, nil);
 }
 
-function set_component(LVAL: U, RVAL: U, h: number): void {
+function set_component(LVAL: U, RVAL: U, h: number, $: ScriptVars): void {
 
     if (!istensor(LVAL))
         stopf("index error");
 
     // n is number of indices
 
-    const n = stack.length - h;
+    const n = $.stack.length - h;
 
     if (n < 1 || n > LVAL.ndim)
         stopf("index error");
@@ -9592,14 +9592,14 @@ function set_component(LVAL: U, RVAL: U, h: number): void {
     let k = 0;
 
     for (let i = 0; i < n; i++) {
-        push(stack[h + i]);
-        const t = pop_integer();
+        push($.stack[h + i], $);
+        const t = pop_integer($);
         if (t < 1 || t > LVAL.dims[i])
             stopf("index error");
         k = k * LVAL.dims[i] + t - 1;
     }
 
-    stack.splice(h); // pop all indices
+    $.stack.splice(h); // pop all indices
 
     if (istensor(RVAL)) {
         let m = RVAL.ndim;
@@ -9645,7 +9645,7 @@ function set_component(LVAL: U, RVAL: U, h: number): void {
 //	cdadr(p1) points to the list (x y)
 //	caddr(p1) points to (power x y)
 
-function setq_usrfunc(p1: U): void {
+function setq_usrfunc(p1: U, $: ScriptVars): void {
 
     const F = caadr(p1); // function name
     const A = cdadr(p1); // function args
@@ -9656,9 +9656,9 @@ function setq_usrfunc(p1: U): void {
             stopf("more than 9 arguments");
         }
 
-        push(B);
-        convert_body(A);
-        const C = pop();
+        push(B, $);
+        convert_body(A, $);
+        const C = pop($);
 
         set_symbol(F, B, C);
     }
@@ -9673,217 +9673,217 @@ function setq_usrfunc(p1: U): void {
 
 }
 
-function convert_body(A: U): void {
+function convert_body(A: U, $: ScriptVars): void {
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG1);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG1, $);
+    subst($);
 
     A = cdr(A);
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG2);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG2, $);
+    subst($);
 
     A = cdr(A);
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG3);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG3, $);
+    subst($);
 
     A = cdr(A);
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG4);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG4, $);
+    subst($);
 
     A = cdr(A);
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG5);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG5, $);
+    subst($);
 
     A = cdr(A);
 
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG6);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG6, $);
+    subst($);
 
     A = cdr(A);
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG7);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG7, $);
+    subst($);
 
     A = cdr(A);
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG8);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG8, $);
+    subst($);
 
     A = cdr(A);
     if (!iscons(A))
         return;
 
-    push(car(A));
-    push_symbol(ARG9);
-    subst();
+    push(car(A), $);
+    push_symbol(ARG9, $);
+    subst($);
 }
 
-function eval_sgn(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    sgn();
+function eval_sgn(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    sgn($);
 }
 
-function sgn(): void {
+function sgn($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, sgn));
+        push(elementwise(p1, sgn, $), $);
         return;
     }
 
     if (!isnum(p1)) {
-        push_symbol(SGN);
-        push(p1);
-        list(2);
+        push_symbol(SGN, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
     if (iszero(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     if (isnegativenumber(p1))
-        push_integer(-1);
+        push_integer(-1, $);
     else
-        push_integer(1);
+        push_integer(1, $);
 }
 
-function eval_simplify(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    simplify();
+function eval_simplify(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    simplify($);
 }
 
-function simplify(): void {
-    const p1 = pop();
+function simplify($: ScriptVars): void {
+    const p1 = pop($);
     if (istensor(p1))
-        simplify_tensor(p1);
+        simplify_tensor(p1, $);
     else
-        simplify_scalar(p1);
+        simplify_scalar(p1, $);
 }
 
-function simplify_tensor(p1: Tensor): void {
+function simplify_tensor(p1: Tensor, $: ScriptVars): void {
     p1 = copy_tensor(p1);
-    push(p1);
+    push(p1, $);
     const n = p1.nelem;
     for (let i = 0; i < n; i++) {
-        push(p1.elems[i]);
-        simplify();
-        p1.elems[i] = pop();
+        push(p1.elems[i], $);
+        simplify($);
+        p1.elems[i] = pop($);
     }
 }
 
-function simplify_scalar(p1: U): void {
+function simplify_scalar(p1: U, $: ScriptVars): void {
 
     // already simple?
 
     if (!iscons(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
-    const h = stack.length;
-    push(car(p1));
+    const h = $.stack.length;
+    push(car(p1), $);
     p1 = cdr(p1);
 
     while (iscons(p1)) {
-        push(car(p1));
-        simplify();
+        push(car(p1), $);
+        simplify($);
         p1 = cdr(p1);
     }
 
-    list(stack.length - h);
-    evalf();
+    list($.stack.length - h, $);
+    evalf($);
 
-    simplify_pass1();
-    simplify_pass2(); // try exponential form
-    simplify_pass3(); // try polar form
+    simplify_pass1($);
+    simplify_pass2($); // try exponential form
+    simplify_pass3($); // try polar form
 }
 
-function simplify_pass1(): void {
+function simplify_pass1($: ScriptVars): void {
 
-    let p1 = pop();
+    let p1 = pop($);
 
     // already simple?
 
     if (!iscons(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
     let T: U;
 
     if (car(p1) == symbol(ADD)) {
-        push(p1);
-        rationalize();
-        T = pop();
+        push(p1, $);
+        rationalize($);
+        T = pop($);
         if (car(T) == symbol(ADD)) {
-            push(p1); // no change
+            push(p1, $); // no change
             return;
         }
     }
     else
         T = p1;
 
-    push(T);
-    numerator();
-    let NUM = pop();
+    push(T, $);
+    numerator($);
+    let NUM = pop($);
 
-    push(T);
-    denominator();
-    evalf(); // to expand denominator
-    let DEN = pop();
+    push(T, $);
+    denominator($);
+    evalf($); // to expand denominator
+    let DEN = pop($);
 
     // if DEN is a sum then rationalize it
 
     if (car(DEN) == symbol(ADD)) {
-        push(DEN);
-        rationalize();
-        T = pop();
+        push(DEN, $);
+        rationalize($);
+        T = pop($);
         if (car(T) != symbol(ADD)) {
             // update NUM
-            push(T);
-            denominator();
-            evalf(); // to expand denominator
-            push(NUM);
-            multiply();
-            NUM = pop();
+            push(T, $);
+            denominator($);
+            evalf($); // to expand denominator
+            push(NUM, $);
+            multiply($);
+            NUM = pop($);
             // update DEN
-            push(T);
-            numerator();
-            DEN = pop();
+            push(T, $);
+            numerator($);
+            DEN = pop($);
         }
     }
 
@@ -9891,142 +9891,142 @@ function simplify_pass1(): void {
 
     if (car(NUM) != symbol(ADD) || car(DEN) != symbol(ADD) || lengthf(NUM) != lengthf(DEN)) {
         // no, but NUM over DEN might be simpler than p1
-        push(NUM);
-        push(DEN);
-        divide();
-        T = pop();
+        push(NUM, $);
+        push(DEN, $);
+        divide($);
+        T = pop($);
         if (complexity(T) < complexity(p1))
             p1 = T;
-        push(p1);
+        push(p1, $);
         return;
     }
 
-    push(cadr(NUM)); // push first term of numerator
-    push(cadr(DEN)); // push first term of denominator
-    divide();
+    push(cadr(NUM), $); // push first term of numerator
+    push(cadr(DEN), $); // push first term of denominator
+    divide($);
 
-    const R = pop(); // provisional ratio
+    const R = pop($); // provisional ratio
 
-    push(R);
-    push(DEN);
-    multiply();
+    push(R, $);
+    push(DEN, $);
+    multiply($);
 
-    push(NUM);
-    subtract();
+    push(NUM, $);
+    subtract($);
 
-    T = pop();
+    T = pop($);
 
     if (iszero(T))
         p1 = R;
 
-    push(p1);
+    push(p1, $);
 }
 
 // try exponential form
 
-function simplify_pass2(): void {
+function simplify_pass2($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     // already simple?
 
     if (!iscons(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
-    push(p1);
-    circexp();
-    rationalize();
-    evalf(); // to normalize
-    const p2 = pop();
+    push(p1, $);
+    circexp($);
+    rationalize($);
+    evalf($); // to normalize
+    const p2 = pop($);
 
     if (complexity(p2) < complexity(p1)) {
-        push(p2);
+        push(p2, $);
         return;
     }
 
-    push(p1);
+    push(p1, $);
 }
 
 // try polar form
 
-function simplify_pass3(): void {
+function simplify_pass3($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
-    if (car(p1) != symbol(ADD) || isusersymbolsomewhere(p1) || !findf(p1, imaginaryunit)) {
-        push(p1);
+    if (car(p1) != symbol(ADD) || isusersymbolsomewhere(p1) || !findf(p1, imaginaryunit, $)) {
+        push(p1, $);
         return;
     }
 
-    push(p1);
-    polar();
-    const p2 = pop();
+    push(p1, $);
+    polar($);
+    const p2 = pop($);
 
     if (!iscons(p2)) {
-        push(p2);
+        push(p2, $);
         return;
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_sin(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    sinfunc();
+function eval_sin(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    sinfunc($);
 }
 
-function sinfunc(): void {
+function sinfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, sinfunc));
+        push(elementwise(p1, sinfunc, $), $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.sin(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     // sin(z) = -i/2 exp(i z) + i/2 exp(-i z)
 
     if (isdoublez(p1)) {
-        push_double(-0.5);
-        push(imaginaryunit);
-        multiply();
-        push(imaginaryunit);
-        push(p1);
-        multiply();
-        expfunc();
-        push(imaginaryunit);
-        negate();
-        push(p1);
-        multiply();
-        expfunc();
-        subtract();
-        multiply();
+        push_double(-0.5, $);
+        push(imaginaryunit, $);
+        multiply($);
+        push(imaginaryunit, $);
+        push(p1, $);
+        multiply($);
+        expfunc($);
+        push(imaginaryunit, $);
+        negate($);
+        push(p1, $);
+        multiply($);
+        expfunc($);
+        subtract($);
+        multiply($);
         return;
     }
 
     // sin(-x) = -sin(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        sinfunc();
-        negate();
+        push(p1, $);
+        negate($);
+        sinfunc($);
+        negate($);
         return;
     }
 
     if (car(p1) == symbol(ADD)) {
-        sinfunc_sum(p1);
+        sinfunc_sum(p1, $);
         return;
     }
 
@@ -10035,318 +10035,318 @@ function sinfunc(): void {
     if (car(p1) == symbol(ARCTAN)) {
         const X = caddr(p1);
         const Y = cadr(p1);
-        push(Y);
-        push(X);
-        push(X);
-        multiply();
-        push(Y);
-        push(Y);
-        multiply();
-        add();
-        push_rational(-1, 2);
-        power();
-        multiply();
+        push(Y, $);
+        push(X, $);
+        push(X, $);
+        multiply($);
+        push(Y, $);
+        push(Y, $);
+        multiply($);
+        add($);
+        push_rational(-1, 2, $);
+        power($);
+        multiply($);
         return;
     }
 
     // sin(arccos(x)) = sqrt(1 - x^2)
 
     if (car(p1) == symbol(ARCCOS)) {
-        push_integer(1);
-        push(cadr(p1));
-        push_integer(2);
-        power();
-        subtract();
-        push_rational(1, 2);
-        power();
+        push_integer(1, $);
+        push(cadr(p1), $);
+        push_integer(2, $);
+        power($);
+        subtract($);
+        push_rational(1, 2, $);
+        power($);
         return;
     }
 
     // n pi ?
 
-    push(p1);
-    push_symbol(PI);
-    divide();
-    let p2 = pop();
+    push(p1, $);
+    push_symbol(PI, $);
+    divide($);
+    let p2 = pop($);
 
     if (!isnum(p2)) {
-        push_symbol(SIN);
-        push(p1);
-        list(2);
+        push_symbol(SIN, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
     if (isdouble(p2)) {
-        push(p2);
-        let d = pop_double();
+        push(p2, $);
+        let d = pop_double($);
         d = Math.sin(d * Math.PI);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
-    push(p2); // nonnegative by sin(-x) = -sin(x) above
-    push_integer(180);
-    multiply();
-    p2 = pop();
+    push(p2, $); // nonnegative by sin(-x) = -sin(x) above
+    push_integer(180, $);
+    multiply($);
+    p2 = pop($);
 
     if (!(isrational(p2) && isinteger(p2))) {
-        push_symbol(SIN);
-        push(p1);
-        list(2);
+        push_symbol(SIN, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
-    push(p2);
-    push_integer(360);
-    modfunc();
-    const n = pop_integer();
+    push(p2, $);
+    push_integer(360, $);
+    modfunc($);
+    const n = pop_integer($);
 
     switch (n) {
         case 0:
         case 180:
-            push_integer(0);
+            push_integer(0, $);
             break;
         case 30:
         case 150:
-            push_rational(1, 2);
+            push_rational(1, 2, $);
             break;
         case 210:
         case 330:
-            push_rational(-1, 2);
+            push_rational(-1, 2, $);
             break;
         case 45:
         case 135:
-            push_rational(1, 2);
-            push_integer(2);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(1, 2, $);
+            push_integer(2, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 225:
         case 315:
-            push_rational(-1, 2);
-            push_integer(2);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(-1, 2, $);
+            push_integer(2, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 60:
         case 120:
-            push_rational(1, 2);
-            push_integer(3);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(1, 2, $);
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 240:
         case 300:
-            push_rational(-1, 2);
-            push_integer(3);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(-1, 2, $);
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 90:
-            push_integer(1);
+            push_integer(1, $);
             break;
         case 270:
-            push_integer(-1);
+            push_integer(-1, $);
             break;
         default:
-            push_symbol(SIN);
-            push(p1);
-            list(2);
+            push_symbol(SIN, $);
+            push(p1, $);
+            list(2, $);
             break;
     }
 }
 
 // sin(x + n/2 pi) = sin(x) cos(n/2 pi) + cos(x) sin(n/2 pi)
 
-function sinfunc_sum(p1: U): void {
+function sinfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
     while (iscons(p2)) {
-        push_integer(2);
-        push(car(p2));
-        multiply();
-        push_symbol(PI);
-        divide();
-        let p3 = pop();
+        push_integer(2, $);
+        push(car(p2), $);
+        multiply($);
+        push_symbol(PI, $);
+        divide($);
+        let p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
-            push(p1);
-            push(car(p2));
-            subtract();
-            p3 = pop();
-            push(p3);
-            sinfunc();
-            push(car(p2));
-            cosfunc();
-            multiply();
-            push(p3);
-            cosfunc();
-            push(car(p2));
-            sinfunc();
-            multiply();
-            add();
+            push(p1, $);
+            push(car(p2), $);
+            subtract($);
+            p3 = pop($);
+            push(p3, $);
+            sinfunc($);
+            push(car(p2), $);
+            cosfunc($);
+            multiply($);
+            push(p3, $);
+            cosfunc($);
+            push(car(p2), $);
+            sinfunc($);
+            multiply($);
+            add($);
             return;
         }
         p2 = cdr(p2);
     }
-    push_symbol(SIN);
-    push(p1);
-    list(2);
+    push_symbol(SIN, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_sinh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    sinhfunc();
+function eval_sinh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    sinhfunc($);
 }
 
-function sinhfunc(): void {
+function sinhfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, sinhfunc));
+        push(elementwise(p1, sinhfunc, $), $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.sinh(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     // sinh(z) = 1/2 exp(z) - 1/2 exp(-z)
 
     if (isdoublez(p1)) {
-        push_rational(1, 2);
-        push(p1);
-        expfunc();
-        push(p1);
-        negate();
-        expfunc();
-        subtract();
-        multiply();
+        push_rational(1, 2, $);
+        push(p1, $);
+        expfunc($);
+        push(p1, $);
+        negate($);
+        expfunc($);
+        subtract($);
+        multiply($);
         return;
     }
 
     if (iszero(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     // sinh(-x) -> -sinh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        sinhfunc();
-        negate();
+        push(p1, $);
+        negate($);
+        sinhfunc($);
+        negate($);
         return;
     }
 
     if (car(p1) == symbol(ARCSINH)) {
-        push(cadr(p1));
+        push(cadr(p1), $);
         return;
     }
 
-    push_symbol(SINH);
-    push(p1);
-    list(2);
+    push_symbol(SINH, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_sqrt(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    sqrtfunc();
+function eval_sqrt(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    sqrtfunc($);
 }
 
-function sqrtfunc(): void {
-    push_rational(1, 2);
-    power();
+function sqrtfunc($: ScriptVars): void {
+    push_rational(1, 2, $);
+    power($);
 }
 
-function eval_status(): void {
-    push(nil);
+function eval_status(expr: U, $: ScriptVars): void {
+    push(nil, $);
 }
 
 function eval_stop(): never {
     stopf("stop");
 }
 
-function eval_subst(p1: U): void {
-    push(cadddr(p1));
-    evalf();
-    push(caddr(p1));
-    evalf();
-    push(cadr(p1));
-    evalf();
-    subst();
-    evalf(); // normalize
+function eval_subst(p1: U, $: ScriptVars): void {
+    push(cadddr(p1), $);
+    evalf($);
+    push(caddr(p1), $);
+    evalf($);
+    push(cadr(p1), $);
+    evalf($);
+    subst($);
+    evalf($); // normalize
 }
 
-function subst(): void {
+function subst($: ScriptVars): void {
 
-    const p3 = pop(); // new expr
-    const p2 = pop(); // old expr
+    const p3 = pop($); // new expr
+    const p2 = pop($); // old expr
 
     if (is_nil(p2) || is_nil(p3))
         return;
 
-    let p1 = pop(); // expr
+    let p1 = pop($); // expr
 
     if (istensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(T.elems[i]);
-            push(p2);
-            push(p3);
-            subst();
-            T.elems[i] = pop();
+            push(T.elems[i], $);
+            push(p2, $);
+            push(p3, $);
+            subst($);
+            T.elems[i] = pop($);
         }
-        push(T);
+        push(T, $);
         return;
     }
 
-    if (equal(p1, p2)) {
-        push(p3);
+    if (equal(p1, p2, $)) {
+        push(p3, $);
         return;
     }
 
     if (iscons(p1)) {
-        const h = stack.length;
+        const h = $.stack.length;
         while (iscons(p1)) {
-            push(car(p1));
-            push(p2);
-            push(p3);
-            subst();
+            push(car(p1), $);
+            push(p2, $);
+            push(p3, $);
+            subst($);
             p1 = cdr(p1);
         }
-        list(stack.length - h);
+        list($.stack.length - h, $);
         return;
     }
 
-    push(p1);
+    push(p1, $);
 }
 
-function eval_sum(p1: U): void {
+function eval_sum(p1: U, $: ScriptVars): void {
 
     if (lengthf(p1) == 2) {
-        push(cadr(p1));
-        evalf();
-        p1 = pop();
+        push(cadr(p1), $);
+        evalf($);
+        p1 = pop($);
         if (!istensor(p1)) {
-            push(p1);
+            push(p1, $);
             return;
         }
         const n = p1.nelem;
         for (let i = 0; i < n; i++)
-            push(p1.elems[i]);
-        add_terms(n);
+            push(p1.elems[i], $);
+        add_terms(n, $);
         return;
     }
 
@@ -10354,26 +10354,26 @@ function eval_sum(p1: U): void {
     if (!(issymbol(p2) && isusersymbol(p2)))
         stopf("sum: symbol error");
 
-    push(caddr(p1));
-    evalf();
-    let j = pop_integer();
+    push(caddr(p1), $);
+    evalf($);
+    let j = pop_integer($);
 
-    push(cadddr(p1));
-    evalf();
-    const k = pop_integer();
+    push(cadddr(p1), $);
+    evalf($);
+    const k = pop_integer($);
 
     p1 = caddddr(p1);
 
     save_symbol(p2);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     for (; ;) {
-        push_integer(j);
-        const p3 = pop();
+        push_integer(j, $);
+        const p3 = pop($);
         set_symbol(p2, p3, nil);
-        push(p1);
-        evalf();
+        push(p1, $);
+        evalf($);
         if (j == k)
             break;
         if (j < k)
@@ -10382,392 +10382,392 @@ function eval_sum(p1: U): void {
             j--;
     }
 
-    add_terms(stack.length - h);
+    add_terms($.stack.length - h, $);
 
     restore_symbol();
 }
 
-function eval_tan(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    tanfunc();
+function eval_tan(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    tanfunc($);
 }
 
-function tanfunc(): void {
+function tanfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, tanfunc));
+        push(elementwise(p1, tanfunc, $), $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.tan(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     if (isdoublez(p1)) {
-        push(p1);
-        sinfunc();
-        push(p1);
-        cosfunc();
-        divide();
+        push(p1, $);
+        sinfunc($);
+        push(p1, $);
+        cosfunc($);
+        divide($);
         return;
     }
 
     // tan(-x) = -tan(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        tanfunc();
-        negate();
+        push(p1, $);
+        negate($);
+        tanfunc($);
+        negate($);
         return;
     }
 
     if (car(p1) == symbol(ADD)) {
-        tanfunc_sum(p1);
+        tanfunc_sum(p1, $);
         return;
     }
 
     if (car(p1) == symbol(ARCTAN)) {
-        push(cadr(p1));
-        push(caddr(p1));
-        divide();
+        push(cadr(p1), $);
+        push(caddr(p1), $);
+        divide($);
         return;
     }
 
     // n pi ?
 
-    push(p1);
-    push_symbol(PI);
-    divide();
-    let p2 = pop();
+    push(p1, $);
+    push_symbol(PI, $);
+    divide($);
+    let p2 = pop($);
 
     if (!isnum(p2)) {
-        push_symbol(TAN);
-        push(p1);
-        list(2);
+        push_symbol(TAN, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
     if (isdouble(p2)) {
-        push(p2);
-        let d = pop_double();
+        push(p2, $);
+        let d = pop_double($);
         d = Math.tan(d * Math.PI);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
-    push(p2); // nonnegative by tan(-x) = -tan(x) above
-    push_integer(180);
-    multiply();
-    p2 = pop();
+    push(p2, $); // nonnegative by tan(-x) = -tan(x) above
+    push_integer(180, $);
+    multiply($);
+    p2 = pop($);
 
     if (!(isrational(p2) && isinteger(p2))) {
-        push_symbol(TAN);
-        push(p1);
-        list(2);
+        push_symbol(TAN, $);
+        push(p1, $);
+        list(2, $);
         return;
     }
 
-    push(p2);
-    push_integer(360);
-    modfunc();
-    const n = pop_integer();
+    push(p2, $);
+    push_integer(360, $);
+    modfunc($);
+    const n = pop_integer($);
 
     switch (n) {
         case 0:
         case 180:
-            push_integer(0);
+            push_integer(0, $);
             break;
         case 30:
         case 210:
-            push_rational(1, 3);
-            push_integer(3);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(1, 3, $);
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 150:
         case 330:
-            push_rational(-1, 3);
-            push_integer(3);
-            push_rational(1, 2);
-            power();
-            multiply();
+            push_rational(-1, 3, $);
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
+            multiply($);
             break;
         case 45:
         case 225:
-            push_integer(1);
+            push_integer(1, $);
             break;
         case 135:
         case 315:
-            push_integer(-1);
+            push_integer(-1, $);
             break;
         case 60:
         case 240:
-            push_integer(3);
-            push_rational(1, 2);
-            power();
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
             break;
         case 120:
         case 300:
-            push_integer(3);
-            push_rational(1, 2);
-            power();
-            negate();
+            push_integer(3, $);
+            push_rational(1, 2, $);
+            power($);
+            negate($);
             break;
         default:
-            push_symbol(TAN);
-            push(p1);
-            list(2);
+            push_symbol(TAN, $);
+            push(p1, $);
+            list(2, $);
             break;
     }
 }
 
 // tan(x + n pi) = tan(x)
 
-function tanfunc_sum(p1: U): void {
+function tanfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
     while (iscons(p2)) {
-        push(car(p2));
-        push_symbol(PI);
-        divide();
-        const p3 = pop();
+        push(car(p2), $);
+        push_symbol(PI, $);
+        divide($);
+        const p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
-            push(p1);
-            push(car(p2));
-            subtract();
-            tanfunc();
+            push(p1, $);
+            push(car(p2), $);
+            subtract($);
+            tanfunc($);
             return;
         }
         p2 = cdr(p2);
     }
-    push_symbol(TAN);
-    push(p1);
-    list(2);
+    push_symbol(TAN, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_tanh(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    tanhfunc();
+function eval_tanh(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    tanhfunc($);
 }
 
-function tanhfunc(): void {
+function tanhfunc($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (istensor(p1)) {
-        push(elementwise(p1, tanhfunc));
+        push(elementwise(p1, tanhfunc, $), $);
         return;
     }
 
     if (isdouble(p1)) {
-        push(p1);
-        let d = pop_double();
+        push(p1, $);
+        let d = pop_double($);
         d = Math.tanh(d);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     if (isdoublez(p1)) {
-        push(p1);
-        sinhfunc();
-        push(p1);
-        coshfunc();
-        divide();
+        push(p1, $);
+        sinhfunc($);
+        push(p1, $);
+        coshfunc($);
+        divide($);
         return;
     }
 
     if (iszero(p1)) {
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     // tanh(-x) = -tanh(x)
 
     if (isnegativeterm(p1)) {
-        push(p1);
-        negate();
-        tanhfunc();
-        negate();
+        push(p1, $);
+        negate($);
+        tanhfunc($);
+        negate($);
         return;
     }
 
     if (car(p1) == symbol(ARCTANH)) {
-        push(cadr(p1));
+        push(cadr(p1), $);
         return;
     }
 
-    push_symbol(TANH);
-    push(p1);
-    list(2);
+    push_symbol(TANH, $);
+    push(p1, $);
+    list(2, $);
 }
 
-function eval_taylor(p1: U): void {
+function eval_taylor(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    let F = pop();
+    push(cadr(p1), $);
+    evalf($);
+    let F = pop($);
 
-    push(caddr(p1));
-    evalf();
-    const X = pop();
+    push(caddr(p1), $);
+    evalf($);
+    const X = pop($);
 
-    push(cadddr(p1));
-    evalf();
-    const n = pop_integer();
+    push(cadddr(p1), $);
+    evalf($);
+    const n = pop_integer($);
 
     p1 = cddddr(p1);
 
     if (iscons(p1)) {
-        push(car(p1));
-        evalf();
+        push(car(p1), $);
+        evalf($);
     }
     else
-        push_integer(0); // default expansion point
+        push_integer(0, $); // default expansion point
 
-    const A = pop();
+    const A = pop($);
 
-    const h = stack.length;
+    const h = $.stack.length;
 
-    push(F);	// f(a)
-    push(X);
-    push(A);
-    subst();
-    evalf();
+    push(F, $);	// f(a)
+    push(X, $);
+    push(A, $);
+    subst($);
+    evalf($);
 
-    push_integer(1);
-    let C = pop();
+    push_integer(1, $);
+    let C = pop($);
 
     for (let i = 1; i <= n; i++) {
 
-        push(F);	// f = f'
-        push(X);
-        derivative();
-        F = pop();
+        push(F, $);	// f = f'
+        push(X, $);
+        derivative($);
+        F = pop($);
 
         if (iszero(F))
             break;
 
-        push(C);	// c = c * (x - a)
-        push(X);
-        push(A);
-        subtract();
-        multiply();
-        C = pop();
+        push(C, $);	// c = c * (x - a)
+        push(X, $);
+        push(A, $);
+        subtract($);
+        multiply($);
+        C = pop($);
 
-        push(F);	// f(a)
-        push(X);
-        push(A);
-        subst();
-        evalf();
+        push(F, $);	// f(a)
+        push(X, $);
+        push(A, $);
+        subst($);
+        evalf($);
 
-        push(C);
-        multiply();
-        push_integer(i);
-        factorial();
-        divide();
+        push(C, $);
+        multiply($);
+        push_integer(i, $);
+        factorial($);
+        divide($);
     }
 
-    add_terms(stack.length - h);
+    add_terms($.stack.length - h, $);
 }
 
-function eval_tensor(p1: Tensor): void {
+function eval_tensor(p1: Tensor, $: ScriptVars): void {
 
     p1 = copy_tensor(p1);
 
     const n = p1.nelem;
 
     for (let i = 0; i < n; i++) {
-        push(p1.elems[i]);
-        evalf();
-        p1.elems[i] = pop();
+        push(p1.elems[i], $);
+        evalf($);
+        p1.elems[i] = pop($);
     }
 
-    push(p1);
+    push(p1, $);
 
-    promote_tensor();
+    promote_tensor($);
 }
 
-function eval_test(p1: U): void {
+function eval_test(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
     while (iscons(p1)) {
         if (!iscons(cdr(p1))) {
-            push(car(p1)); // default case
-            evalf();
+            push(car(p1), $); // default case
+            evalf($);
             return;
         }
-        push(car(p1));
-        evalp();
-        const p2 = pop();
+        push(car(p1), $);
+        evalp($);
+        const p2 = pop($);
         if (!iszero(p2)) {
-            push(cadr(p1));
-            evalf();
+            push(cadr(p1), $);
+            evalf($);
             return;
         }
         p1 = cddr(p1);
     }
-    push(nil);
+    push(nil, $);
 }
 
-function eval_testeq(p1: U): void {
-    push(cadr(p1));
-    evalf();
-    push(caddr(p1));
-    evalf();
-    subtract();
-    simplify();
-    p1 = pop();
+function eval_testeq(p1: U, $: ScriptVars): void {
+    push(cadr(p1), $);
+    evalf($);
+    push(caddr(p1), $);
+    evalf($);
+    subtract($);
+    simplify($);
+    p1 = pop($);
     if (iszero(p1))
-        push_integer(1);
+        push_integer(1, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function eval_testge(p1: U): void {
-    if (cmp_args(p1) >= 0)
-        push_integer(1);
+function eval_testge(p1: U, $: ScriptVars): void {
+    if (cmp_args(p1, $) >= 0)
+        push_integer(1, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function eval_testgt(p1: U): void {
-    if (cmp_args(p1) > 0)
-        push_integer(1);
+function eval_testgt(p1: U, $: ScriptVars): void {
+    if (cmp_args(p1, $) > 0)
+        push_integer(1, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function eval_testle(p1: U): void {
-    if (cmp_args(p1) <= 0)
-        push_integer(1);
+function eval_testle(p1: U, $: ScriptVars): void {
+    if (cmp_args(p1, $) <= 0)
+        push_integer(1, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function eval_testlt(p1: U): void {
-    if (cmp_args(p1) < 0)
-        push_integer(1);
+function eval_testlt(p1: U, $: ScriptVars): void {
+    if (cmp_args(p1, $) < 0)
+        push_integer(1, $);
     else
-        push_integer(0);
+        push_integer(0, $);
 }
 
-function cmp_args(p1: U): 0 | 1 | -1 {
-    push(cadr(p1));
-    evalf();
-    push(caddr(p1));
-    evalf();
-    subtract();
-    simplify();
-    floatfunc();
-    p1 = pop();
+function cmp_args(p1: U, $: ScriptVars): 0 | 1 | -1 {
+    push(cadr(p1), $);
+    evalf($);
+    push(caddr(p1), $);
+    evalf($);
+    subtract($);
+    simplify($);
+    floatfunc($);
+    p1 = pop($);
     if (iszero(p1))
         return 0;
     if (!isnum(p1))
@@ -10778,12 +10778,12 @@ function cmp_args(p1: U): 0 | 1 | -1 {
         return 1;
 }
 
-function eval_transpose(p1: U): void {
+function eval_transpose(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
-    const p2 = pop();
-    push(p2);
+    push(cadr(p1), $);
+    evalf($);
+    const p2 = pop($);
+    push(p2, $);
 
     if (!istensor(p2) || p2.ndim < 2)
         return;
@@ -10791,30 +10791,30 @@ function eval_transpose(p1: U): void {
     p1 = cddr(p1);
 
     if (!iscons(p1)) {
-        transpose(1, 2);
+        transpose(1, 2, $);
         return;
     }
 
     while (iscons(p1)) {
 
-        push(car(p1));
-        evalf();
-        const n = pop_integer();
+        push(car(p1), $);
+        evalf($);
+        const n = pop_integer($);
 
-        push(cadr(p1));
-        evalf();
-        const m = pop_integer();
+        push(cadr(p1), $);
+        evalf($);
+        const m = pop_integer($);
 
-        transpose(n, m);
+        transpose(n, m, $);
 
         p1 = cddr(p1);
     }
 }
 
-function transpose(n: number, m: number): void {
+function transpose(n: number, m: number, $: ScriptVars): void {
     const index: number[] = [];
 
-    const p1 = pop() as Tensor;
+    const p1 = pop($) as Tensor;
 
     const ndim = p1.ndim;
     const nelem = p1.nelem;
@@ -10859,21 +10859,21 @@ function transpose(n: number, m: number): void {
         }
     }
 
-    push(p2);
+    push(p2, $);
 }
 
-function eval_unit(p1: U): void {
+function eval_unit(p1: U, $: ScriptVars): void {
 
-    push(cadr(p1));
-    evalf();
+    push(cadr(p1), $);
+    evalf($);
 
-    const n = pop_integer();
+    const n = pop_integer($);
 
     if (n < 1)
         stopf("unit: index err");
 
     if (n == 1) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
@@ -10886,10 +10886,10 @@ function eval_unit(p1: U): void {
             else
                 M.elems[n * i + j] = zero;
 
-    push(M);
+    push(M, $);
 }
 
-function eval_user_function(p1: U): void {
+function eval_user_function(p1: U, $: ScriptVars): void {
 
     const FUNC_NAME = car(p1) as Sym;
     let FUNC_ARGS = cdr(p1);
@@ -10901,28 +10901,28 @@ function eval_user_function(p1: U): void {
     if (is_nil(FUNC_DEFN)) {
         if (FUNC_NAME == symbol(D_LOWER)) {
             expanding++;
-            eval_derivative(p1);
+            eval_derivative(p1, $);
             expanding--;
             return;
         }
-        const h = stack.length;
-        push(FUNC_NAME);
+        const h = $.stack.length;
+        push(FUNC_NAME, $);
         while (iscons(FUNC_ARGS)) {
-            push(car(FUNC_ARGS));
-            evalf();
+            push(car(FUNC_ARGS), $);
+            evalf($);
             FUNC_ARGS = cdr(FUNC_ARGS);
         }
-        list(stack.length - h);
+        list($.stack.length - h, $);
         return;
     }
 
-    push(FUNC_DEFN);
+    push(FUNC_DEFN, $);
 
     // eval all args before changing bindings
 
     for (let i = 0; i < 9; i++) {
-        push(car(FUNC_ARGS));
-        evalf();
+        push(car(FUNC_ARGS), $);
+        evalf($);
         FUNC_ARGS = cdr(FUNC_ARGS);
     }
 
@@ -10936,17 +10936,17 @@ function eval_user_function(p1: U): void {
     save_symbol(symbol(ARG8));
     save_symbol(symbol(ARG9));
 
-    set_symbol(symbol(ARG9), pop(), nil);
-    set_symbol(symbol(ARG8), pop(), nil);
-    set_symbol(symbol(ARG7), pop(), nil);
-    set_symbol(symbol(ARG6), pop(), nil);
-    set_symbol(symbol(ARG5), pop(), nil);
-    set_symbol(symbol(ARG4), pop(), nil);
-    set_symbol(symbol(ARG3), pop(), nil);
-    set_symbol(symbol(ARG2), pop(), nil);
-    set_symbol(symbol(ARG1), pop(), nil);
+    set_symbol(symbol(ARG9), pop($), nil);
+    set_symbol(symbol(ARG8), pop($), nil);
+    set_symbol(symbol(ARG7), pop($), nil);
+    set_symbol(symbol(ARG6), pop($), nil);
+    set_symbol(symbol(ARG5), pop($), nil);
+    set_symbol(symbol(ARG4), pop($), nil);
+    set_symbol(symbol(ARG3), pop($), nil);
+    set_symbol(symbol(ARG2), pop($), nil);
+    set_symbol(symbol(ARG1), pop($), nil);
 
-    evalf();
+    evalf($);
 
     restore_symbol();
     restore_symbol();
@@ -10959,37 +10959,37 @@ function eval_user_function(p1: U): void {
     restore_symbol();
 }
 
-function eval_user_symbol(p1: U): void {
+function eval_user_symbol(p1: U, $: ScriptVars): void {
     const p2 = get_binding(p1 as Sym);
     if (p1 == p2)
-        push(p1); // symbol evaluates to itself
+        push(p1, $); // symbol evaluates to itself
     else {
-        push(p2); // evaluate symbol binding
-        evalf();
+        push(p2, $); // evaluate symbol binding
+        evalf($);
     }
 }
 
-function eval_zero(p1: U): void {
+function eval_zero(p1: U, $: ScriptVars): void {
 
     p1 = cdr(p1);
-    const h = stack.length;
+    const h = $.stack.length;
     let m = 1;
 
     while (iscons(p1)) {
-        push(car(p1));
-        evalf();
-        dupl();
-        const n = pop_integer();
+        push(car(p1), $);
+        evalf($);
+        dupl($);
+        const n = pop_integer($);
         if (n < 2)
             stopf("zero: dim err");
         m *= n;
         p1 = cdr(p1);
     }
 
-    const n = stack.length - h;
+    const n = $.stack.length - h;
 
     if (n == 0) {
-        push_integer(0); // scalar zero
+        push_integer(0, $); // scalar zero
         return;
     }
 
@@ -11001,73 +11001,73 @@ function eval_zero(p1: U): void {
     // dim info
 
     for (let i = 0; i < n; i++)
-        T.dims[n - i - 1] = pop_integer();
+        T.dims[n - i - 1] = pop_integer($);
 
-    push(T);
+    push(T, $);
 }
 
-function evalf(): void {
+function evalf($: ScriptVars): void {
     eval_level++;
-    evalf_nib();
+    evalf_nib($);
     eval_level--;
 }
 
-function evalf_nib(): void {
+function evalf_nib($: ScriptVars): void {
 
     if (eval_level == 200) {
         stopf("circular definition?");
     }
 
-    const p1 = pop();
+    const p1 = pop($);
 
 
     const sym = car(p1);
     if (iscons(p1) && issymbol(sym) && iskeyword(sym)) {
         expanding++;
-        sym.func(p1);
+        sym.func(p1, $);
         expanding--;
         return;
     }
 
     if (iscons(p1) && issymbol(sym) && isusersymbol(sym)) {
-        eval_user_function(p1);
+        eval_user_function(p1, $);
         return;
     }
 
     if (issymbol(p1) && iskeyword(p1)) { // bare keyword
-        push(p1);
-        push_symbol(LAST); // default arg
-        list(2);
-        evalf();
+        push(p1, $);
+        push_symbol(LAST, $); // default arg
+        list(2, $);
+        evalf($);
         return;
     }
 
     if (issymbol(p1) && isusersymbol(p1)) {
-        eval_user_symbol(p1);
+        eval_user_symbol(p1, $);
         return;
     }
 
     if (istensor(p1)) {
-        eval_tensor(p1);
+        eval_tensor(p1, $);
         return;
     }
 
-    push(p1); // rational, double, or string
+    push(p1, $); // rational, double, or string
 }
 
-function evalp(): void {
-    const p1 = pop();
+function evalp($: ScriptVars): void {
+    const p1 = pop($);
     if (car(p1) == symbol(SETQ))
-        eval_testeq(p1);
+        eval_testeq(p1, $);
     else {
-        push(p1);
-        evalf();
+        push(p1, $);
+        evalf($);
     }
 }
 
-function expand_sum_factors(h: number): void {
+function expand_sum_factors(h: number, $: ScriptVars): void {
 
-    let n = stack.length;
+    let n = $.stack.length;
 
     if (n - h < 2)
         return;
@@ -11077,7 +11077,7 @@ function expand_sum_factors(h: number): void {
     let p2: U = nil;
 
     for (i = h; i < n; i++) {
-        p2 = stack[i];
+        p2 = $.stack[i];
         if (car(p2) == symbol(ADD))
             break;
     }
@@ -11087,85 +11087,85 @@ function expand_sum_factors(h: number): void {
 
     // remove the sum factor
 
-    stack.splice(i, 1);
+    $.stack.splice(i, 1);
 
-    n = stack.length - h;
+    n = $.stack.length - h;
 
     if (n > 1) {
-        sort_factors(h);
-        list(n);
-        push_symbol(MULTIPLY);
-        swap();
-        cons();
+        sort_factors(h, $);
+        list(n, $);
+        push_symbol(MULTIPLY, $);
+        swap($);
+        cons($);
     }
 
-    const p1 = pop(); // p1 is the multiplier
+    const p1 = pop($); // p1 is the multiplier
 
     p2 = cdr(p2); // p2 is the sum
 
     while (iscons(p2)) {
-        push(p1);
-        push(car(p2));
-        multiply();
+        push(p1, $);
+        push(car(p2), $);
+        multiply($);
         p2 = cdr(p2);
     }
 
-    add_terms(stack.length - h);
+    add_terms($.stack.length - h, $);
 }
 // N is bignum, M is rational
 
-function factor_bignum(N: BigInteger, M: U): void {
+function factor_bignum(N: BigInteger, M: U, $: ScriptVars): void {
 
     // greater than 31 bits?
 
     if (!bignum_issmallnum(N)) {
-        push_bignum(1, N, bignum_int(1));
+        push_bignum(1, N, bignum_int(1), $);
         if (isplusone(M))
             return;
-        push_symbol(POWER);
-        swap();
-        push(M);
-        list(3);
+        push_symbol(POWER, $);
+        swap($);
+        push(M, $);
+        list(3, $);
         return;
     }
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     let n = bignum_smallnum(N);
 
-    factor_int(n);
+    factor_int(n, $);
 
-    n = (stack.length - h) / 2; // number of factors on stack
+    n = ($.stack.length - h) / 2; // number of factors on stack
 
     for (let i = 0; i < n; i++) {
 
-        const BASE = stack[h + 2 * i + 0];
-        let EXPO = stack[h + 2 * i + 1];
+        const BASE = $.stack[h + 2 * i + 0];
+        let EXPO = $.stack[h + 2 * i + 1];
 
-        push(EXPO);
-        push(M);
-        multiply();
-        EXPO = pop();
+        push(EXPO, $);
+        push(M, $);
+        multiply($);
+        EXPO = pop($);
 
         if (isplusone(EXPO)) {
-            stack[h + i] = BASE;
+            $.stack[h + i] = BASE;
             continue;
         }
 
-        push_symbol(POWER);
-        push(BASE);
-        push(EXPO);
-        list(3);
-        stack[h + i] = pop();
+        push_symbol(POWER, $);
+        push(BASE, $);
+        push(EXPO, $);
+        list(3, $);
+        $.stack[h + i] = pop($);
     }
 
-    stack.splice(h + n); // pop all
+    $.stack.splice(h + n); // pop all
 }
 // factors N or N^M where N and M are rational numbers, returns factors on stack
 
-function factor_factor(): void {
+function factor_factor($: ScriptVars): void {
 
-    const INPUT = pop();
+    const INPUT = pop($);
 
     if (car(INPUT) == symbol(POWER)) {
 
@@ -11173,55 +11173,55 @@ function factor_factor(): void {
         const EXPO = caddr(INPUT);
 
         if (!isrational(BASE) || !isrational(EXPO)) {
-            push(INPUT); // cannot factor
+            push(INPUT, $); // cannot factor
             return;
         }
 
         if (isminusone(BASE)) {
-            push(INPUT); // -1 to the M
+            push(INPUT, $); // -1 to the M
             return;
         }
 
         if (isnegativenumber(BASE)) {
-            push_symbol(POWER);
-            push_integer(-1);
-            push(EXPO);
-            list(3); // leave on stack
+            push_symbol(POWER, $);
+            push_integer(-1, $);
+            push(EXPO, $);
+            list(3, $); // leave on stack
         }
 
         const numer = BASE.a;
         const denom = BASE.b;
 
         if (!bignum_equal(numer, 1))
-            factor_bignum(numer, EXPO);
+            factor_bignum(numer, EXPO, $);
 
         if (!bignum_equal(denom, 1)) {
             // flip sign of exponent
-            push(EXPO);
-            negate();
-            const expo = pop();
-            factor_bignum(denom, expo);
+            push(EXPO, $);
+            negate($);
+            const expo = pop($);
+            factor_bignum(denom, expo, $);
         }
 
         return;
     }
 
     if (!isrational(INPUT) || iszero(INPUT) || isplusone(INPUT) || isminusone(INPUT)) {
-        push(INPUT);
+        push(INPUT, $);
         return;
     }
 
     if (isnegativenumber(INPUT))
-        push_integer(-1);
+        push_integer(-1, $);
 
     const numer = INPUT.a;
     const denom = INPUT.b;
 
     if (!bignum_equal(numer, 1))
-        factor_bignum(numer, one);
+        factor_bignum(numer, one, $);
 
     if (!bignum_equal(denom, 1))
-        factor_bignum(denom, minusone);
+        factor_bignum(denom, minusone, $);
 }
 const primetab = [
     2, 3, 5, 7, 11, 13, 17, 19,
@@ -11825,7 +11825,7 @@ const primetab = [
     46271, 46273, 46279, 46301, 46307, 46309, 46327, 46337,
 ];
 
-function factor_int(n: number): void {
+function factor_int(n: number, $: ScriptVars): void {
 
     n = Math.abs(n);
 
@@ -11846,15 +11846,15 @@ function factor_int(n: number): void {
         if (m == 0)
             continue;
 
-        push_integer(d);
-        push_integer(m);
+        push_integer(d, $);
+        push_integer(m, $);
 
         if (n == 1)
             return;
     }
 
-    push_integer(n);
-    push_integer(1);
+    push_integer(n, $);
+    push_integer(1, $);
 }
 
 function find_denominator(p: U): 0 | 1 {
@@ -11873,53 +11873,53 @@ function find_denominator(p: U): 0 | 1 {
 }
 // returns 1 with divisor on stack, otherwise returns 0
 
-function find_divisor(p: U): 0 | 1 {
+function find_divisor(p: U, $: ScriptVars): 0 | 1 {
     if (car(p) == symbol(ADD)) {
         p = cdr(p);
         while (iscons(p)) {
-            if (find_divisor_term(car(p)))
+            if (find_divisor_term(car(p), $))
                 return 1;
             p = cdr(p);
         }
         return 0;
     }
 
-    return find_divisor_term(p);
+    return find_divisor_term(p, $);
 }
 
-function find_divisor_term(p: U): 0 | 1 {
+function find_divisor_term(p: U, $: ScriptVars): 0 | 1 {
     if (car(p) == symbol(MULTIPLY)) {
         p = cdr(p);
         while (iscons(p)) {
-            if (find_divisor_factor(car(p)))
+            if (find_divisor_factor(car(p), $))
                 return 1;
             p = cdr(p);
         }
         return 0;
     }
 
-    return find_divisor_factor(p);
+    return find_divisor_factor(p, $);
 }
 
-function find_divisor_factor(p: U): 0 | 1 {
+function find_divisor_factor(p: U, $: ScriptVars): 0 | 1 {
     if (isrational(p) && isinteger(p))
         return 0;
 
     if (isrational(p)) {
-        push(p);
-        denominator();
+        push(p, $);
+        denominator($);
         return 1;
     }
 
     if (car(p) == symbol(POWER) && !isminusone(cadr(p)) && isnegativeterm(caddr(p))) {
         if (isminusone(caddr(p)))
-            push(cadr(p));
+            push(cadr(p), $);
         else {
-            push_symbol(POWER);
-            push(cadr(p));
-            push(caddr(p));
-            negate();
-            list(3);
+            push_symbol(POWER, $);
+            push(cadr(p), $);
+            push(caddr(p), $);
+            negate($);
+            list(3, $);
         }
         return 1;
     }
@@ -11932,22 +11932,22 @@ function find_divisor_factor(p: U): 0 | 1 {
  * @param q 
  * @returns 
  */
-function findf(p: U, q: U): 0 | 1 {
+function findf(p: U, q: U, $: ScriptVars): 0 | 1 {
 
-    if (equal(p, q))
+    if (equal(p, q, $))
         return 1;
 
     if (istensor(p)) {
         const n = p.nelem;
         for (let i = 0; i < n; i++) {
-            if (findf(p.elems[i], q))
+            if (findf(p.elems[i], q, $))
                 return 1;
         }
         return 0;
     }
 
     while (iscons(p)) {
-        if (findf(car(p), q))
+        if (findf(car(p), q, $))
             return 1;
         p = cdr(p);
     }
@@ -11955,16 +11955,16 @@ function findf(p: U, q: U): 0 | 1 {
     return 0;
 }
 
-function flatten_factors(h: number): void {
-    const n = stack.length;
+function flatten_factors(h: number, $: ScriptVars): void {
+    const n = $.stack.length;
     for (let i = h; i < n; i++) {
-        let p1 = stack[i];
+        let p1 = $.stack[i];
         if (car(p1) == symbol(MULTIPLY)) {
             p1 = cdr(p1);
-            stack[i] = car(p1);
+            $.stack[i] = car(p1);
             p1 = cdr(p1);
             while (iscons(p1)) {
-                push(car(p1));
+                push(car(p1), $);
                 p1 = cdr(p1);
             }
         }
@@ -12681,32 +12681,32 @@ function infixform_write(s: string): void {
     outbuf += s;
 }
 
-function init(): void {
+function init($: ScriptVars): void {
     eval_level = 0;
     expanding = 1;
     drawing = 0;
     nonstop = 0;
 
-    stack = [];
+    $.stack = [];
     frame = [];
 
     binding = {};
     usrfunc = {};
 
-    push_integer(0);
-    zero = pop() as Rat;
+    push_integer(0, $);
+    zero = pop($) as Rat;
 
-    push_integer(1);
-    one = pop() as Rat;
+    push_integer(1, $);
+    one = pop($) as Rat;
 
-    push_integer(-1);
-    minusone = pop() as Rat;
+    push_integer(-1, $);
+    minusone = pop($) as Rat;
 
-    push_symbol(POWER);
-    push_integer(-1);
-    push_rational(1, 2);
-    list(3);
-    imaginaryunit = pop();
+    push_symbol(POWER, $);
+    push_integer(-1, $);
+    push_rational(1, 2, $);
+    list(3, $);
+    imaginaryunit = pop($);
 
     outputs.length = 0;
 }
@@ -12723,13 +12723,13 @@ const init_script = [
     "choose(n,k) = n! / k! / (n - k)!",
 ];
 
-function initscript(): void {
+function initscript($: ScriptVars): void {
     const n = init_script.length;
 
     for (let i = 0; i < n; i++) {
-        scan(init_script[i], 0);
-        evalf();
-        pop();
+        scan(init_script[i], 0, $);
+        evalf($);
+        pop($);
     }
 }
 
@@ -12768,21 +12768,21 @@ function isdenominator(p: U) {
     return 0;
 }
 
-function isdenormalpolar(p: U) {
+function isdenormalpolar(p: U, $: ScriptVars) {
     if (car(p) == symbol(ADD)) {
         p = cdr(p);
         while (iscons(p)) {
-            if (isdenormalpolarterm(car(p)))
+            if (isdenormalpolarterm(car(p), $))
                 return 1;
             p = cdr(p);
         }
         return 0;
     }
 
-    return isdenormalpolarterm(p);
+    return isdenormalpolarterm(p, $);
 }
 
-function isdenormalpolarterm(p: U) {
+function isdenormalpolarterm(p: U, $: ScriptVars) {
     if (car(p) != symbol(MULTIPLY))
         return 0;
 
@@ -12797,10 +12797,10 @@ function isdenormalpolarterm(p: U) {
     if (isnum(p) && isnegativenumber(p))
         return 1; // p < 0
 
-    push(p);
-    push_rational(-1, 2);
-    add();
-    p = pop();
+    push(p, $);
+    push_rational(-1, 2, $);
+    add($);
+    p = pop($);
 
     if (!(isnum(p) && isnegativenumber(p)))
         return 1; // p >= 1/2
@@ -13061,314 +13061,314 @@ function lengthf(p: U): number {
     return n;
 }
 
-function lessp(p1: U, p2: U): boolean {
-    return cmp(p1, p2) < 0;
+function lessp(p1: U, p2: U, $: ScriptVars): boolean {
+    return cmp(p1, p2, $) < 0;
 }
 
-function list(n: number): void {
-    push(nil);
+function list(n: number, $: ScriptVars): void {
+    push(nil, $);
     for (let i = 0; i < n; i++)
-        cons();
+        cons($);
 }
 
 function lookup(s: string): Sym {
     let p = symtab[s];
     if (p == undefined) {
-        p = create_sym_legacy(s, eval_user_symbol);
+        p = create_sym_legacy(s, eval_user_symbol as unknown as (expr: U, $: unknown) => void);
         symtab[s] = p;
     }
     return p;
 }
 
-function multiply(): void {
-    multiply_factors(2);
+function multiply($: ScriptVars): void {
+    multiply_factors(2, $);
 }
 
-function multiply_expand(): void {
+function multiply_expand($: ScriptVars): void {
     const t = expanding;
     expanding = 1;
-    multiply();
+    multiply($);
     expanding = t;
 }
 /**
  * 
  * @param n number of factors on stack
  */
-function multiply_factors(n: number): void {
+function multiply_factors(n: number, $: ScriptVars): void {
 
     if (n < 2)
         return;
 
-    const h = stack.length - n;
+    const h = $.stack.length - n;
 
-    flatten_factors(h);
+    flatten_factors(h, $);
 
-    const T = multiply_tensor_factors(h);
+    const T = multiply_tensor_factors(h, $);
 
-    multiply_scalar_factors(h);
+    multiply_scalar_factors(h, $);
 
     if (istensor(T)) {
-        push(T);
-        inner();
+        push(T, $);
+        inner($);
     }
 }
 
-function multiply_noexpand(): void {
+function multiply_noexpand($: ScriptVars): void {
     const t = expanding;
     expanding = 0;
-    multiply();
+    multiply($);
     expanding = t;
 }
 
-function multiply_numbers(p1: U, p2: U): void {
+function multiply_numbers(p1: U, p2: U, $: ScriptVars): void {
 
     if (isrational(p1) && isrational(p2)) {
-        multiply_rationals(p1, p2);
+        multiply_rationals(p1, p2, $);
         return;
     }
 
-    push(p1);
-    const a = pop_double();
+    push(p1, $);
+    const a = pop_double($);
 
-    push(p2);
-    const b = pop_double();
+    push(p2, $);
+    const b = pop_double($);
 
-    push_double(a * b);
+    push_double(a * b, $);
 }
 
-function multiply_rationals(p1: Rat, p2: Rat): void {
+function multiply_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
     const product = p1.mul(p2);
-    push(product);
+    push(product, $);
 }
 
-function multiply_scalar_factors(h: number): void {
+function multiply_scalar_factors(h: number, $: ScriptVars): void {
 
-    let COEFF = combine_numerical_factors(h, one);
+    let COEFF = combine_numerical_factors(h, one, $);
 
-    if (iszero(COEFF) || h == stack.length) {
-        stack.splice(h); // pop all
-        push(COEFF);
+    if (iszero(COEFF) || h == $.stack.length) {
+        $.stack.splice(h); // pop all
+        push(COEFF, $);
         return;
     }
 
-    combine_factors(h);
-    normalize_power_factors(h);
+    combine_factors(h, $);
+    normalize_power_factors(h, $);
 
     // do again in case exp(1/2 i pi) changed to i
 
-    combine_factors(h);
-    normalize_power_factors(h);
+    combine_factors(h, $);
+    normalize_power_factors(h, $);
 
-    COEFF = combine_numerical_factors(h, COEFF);
+    COEFF = combine_numerical_factors(h, COEFF, $);
 
-    if (iszero(COEFF) || h == stack.length) {
-        stack.splice(h); // pop all
-        push(COEFF);
+    if (iszero(COEFF) || h == $.stack.length) {
+        $.stack.splice(h); // pop all
+        push(COEFF, $);
         return;
     }
 
-    COEFF = reduce_radical_factors(h, COEFF);
+    COEFF = reduce_radical_factors(h, COEFF, $);
 
     if (!isplusone(COEFF) || isdouble(COEFF))
-        push(COEFF);
+        push(COEFF, $);
 
     if (expanding)
-        expand_sum_factors(h); // success leaves one expr on stack
+        expand_sum_factors(h, $); // success leaves one expr on stack
 
-    const n = stack.length - h;
+    const n = $.stack.length - h;
 
     switch (n) {
         case 0:
-            push_integer(1);
+            push_integer(1, $);
             break;
         case 1:
             break;
         default:
-            sort_factors(h); // previously sorted provisionally
-            list(n);
-            push_symbol(MULTIPLY);
-            swap();
-            cons();
+            sort_factors(h, $); // previously sorted provisionally
+            list(n, $);
+            push_symbol(MULTIPLY, $);
+            swap($);
+            cons($);
             break;
     }
 }
 
-function multiply_tensor_factors(h: number) {
+function multiply_tensor_factors(h: number, $: ScriptVars) {
     let T: U = nil;
-    let n = stack.length;
+    let n = $.stack.length;
     for (let i = h; i < n; i++) {
-        const p1 = stack[i];
+        const p1 = $.stack[i];
         if (!istensor(p1))
             continue;
         if (istensor(T)) {
-            push(T);
-            push(p1);
-            hadamard();
-            T = pop();
+            push(T, $);
+            push(p1, $);
+            hadamard($);
+            T = pop($);
         }
         else
             T = p1;
-        stack.splice(i, 1); // remove factor
+        $.stack.splice(i, 1); // remove factor
         i--; // use same index again
         n--;
     }
     return T;
 }
 
-function negate(): void {
-    push_integer(-1);
-    multiply();
+function negate($: ScriptVars): void {
+    push_integer(-1, $);
+    multiply($);
 }
 
-function normalize_polar(EXPO: U): void {
+function normalize_polar(EXPO: U, $: ScriptVars): void {
     if (car(EXPO) == symbol(ADD)) {
-        const h = stack.length;
+        const h = $.stack.length;
         let p1 = cdr(EXPO);
         while (iscons(p1)) {
             EXPO = car(p1);
-            if (isdenormalpolarterm(EXPO))
-                normalize_polar_term(EXPO);
+            if (isdenormalpolarterm(EXPO, $))
+                normalize_polar_term(EXPO, $);
             else {
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push(EXPO);
-                list(3);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push(EXPO, $);
+                list(3, $);
             }
             p1 = cdr(p1);
         }
-        multiply_factors(stack.length - h);
+        multiply_factors($.stack.length - h, $);
     }
     else
-        normalize_polar_term(EXPO);
+        normalize_polar_term(EXPO, $);
 }
 
-function normalize_polar_term(EXPO: U): void {
+function normalize_polar_term(EXPO: U, $: ScriptVars): void {
 
     // exp(i pi) = -1
 
     if (lengthf(EXPO) == 3) {
-        push_integer(-1);
+        push_integer(-1, $);
         return;
     }
 
     const R = cadr(EXPO); // R = coeff of term
 
     if (isrational(R))
-        normalize_polar_term_rational(R);
+        normalize_polar_term_rational(R, $);
     else
-        normalize_polar_term_double(R as Flt);
+        normalize_polar_term_double(R as Flt, $);
 }
 
-function normalize_polar_term_rational(R: U): void {
+function normalize_polar_term_rational(R: U, $: ScriptVars): void {
 
     // R = R mod 2
 
-    push(R);
-    push_integer(2);
-    modfunc();
-    R = pop();
+    push(R, $);
+    push_integer(2, $);
+    modfunc($);
+    R = pop($);
 
     // convert negative rotation to positive
 
     if (isnum(R) && isnegativenumber(R)) {
-        push(R);
-        push_integer(2);
-        add();
-        R = pop();
+        push(R, $);
+        push_integer(2, $);
+        add($);
+        R = pop($);
     }
 
-    push(R);
-    push_integer(2);
-    multiply();
-    floorfunc();
-    const n = pop_integer(); // number of 90 degree turns
+    push(R, $);
+    push_integer(2, $);
+    multiply($);
+    floorfunc($);
+    const n = pop_integer($); // number of 90 degree turns
 
-    push(R);
-    push_integer(n);
-    push_rational(-1, 2);
-    multiply();
-    add();
-    R = pop(); // remainder
+    push(R, $);
+    push_integer(n, $);
+    push_rational(-1, 2, $);
+    multiply($);
+    add($);
+    R = pop($); // remainder
 
     switch (n) {
 
         case 0:
             if (iszero(R))
-                push_integer(1);
+                push_integer(1, $);
             else {
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push(R);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push(R, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
             }
             break;
 
         case 1:
             if (iszero(R))
-                push(imaginaryunit);
+                push(imaginaryunit, $);
             else {
-                push_symbol(MULTIPLY);
-                push(imaginaryunit);
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push(R);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push(imaginaryunit, $);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push(R, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 2:
             if (iszero(R))
-                push_integer(-1);
+                push_integer(-1, $);
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push(R);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push(R, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 3:
             if (iszero(R)) {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push(imaginaryunit);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push(imaginaryunit, $);
+                list(3, $);
             }
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push(imaginaryunit);
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push(R);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
-                list(4);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push(imaginaryunit, $);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push(R, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
+                list(4, $);
             }
             break;
     }
 }
 
-function normalize_polar_term_double(R: Flt): void {
+function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
 
     let coeff = R.d;
 
@@ -13389,100 +13389,100 @@ function normalize_polar_term_double(R: Flt): void {
 
         case 0:
             if (r == 0)
-                push_integer(1);
+                push_integer(1, $);
             else {
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push_double(r);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push_double(r, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
             }
             break;
 
         case 1:
             if (r == 0)
-                push(imaginaryunit);
+                push(imaginaryunit, $);
             else {
-                push_symbol(MULTIPLY);
-                push(imaginaryunit);
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push_double(r);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push(imaginaryunit, $);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push_double(r, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 2:
             if (r == 0)
-                push_integer(-1);
+                push_integer(-1, $);
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push_double(r);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push_double(r, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 3:
             if (r == 0) {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push(imaginaryunit);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push(imaginaryunit, $);
+                list(3, $);
             }
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push(imaginaryunit);
-                push_symbol(POWER);
-                push_symbol(EXP1);
-                push_symbol(MULTIPLY);
-                push_double(r);
-                push(imaginaryunit);
-                push_symbol(PI);
-                list(4);
-                list(3);
-                list(4);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push(imaginaryunit, $);
+                push_symbol(POWER, $);
+                push_symbol(EXP1, $);
+                push_symbol(MULTIPLY, $);
+                push_double(r, $);
+                push(imaginaryunit, $);
+                push_symbol(PI, $);
+                list(4, $);
+                list(3, $);
+                list(4, $);
             }
             break;
     }
 }
 
-function normalize_power_factors(h: number): void {
-    const k = stack.length;
+function normalize_power_factors(h: number, $: ScriptVars): void {
+    const k = $.stack.length;
     for (let i = h; i < k; i++) {
-        let p1 = stack[i];
+        let p1 = $.stack[i];
         if (car(p1) == symbol(POWER)) {
-            push(cadr(p1));
-            push(caddr(p1));
-            power();
-            p1 = pop();
+            push(cadr(p1), $);
+            push(caddr(p1), $);
+            power($);
+            p1 = pop($);
             if (car(p1) == symbol(MULTIPLY)) {
                 p1 = cdr(p1);
-                stack[i] = car(p1);
+                $.stack[i] = car(p1);
                 p1 = cdr(p1);
                 while (iscons(p1)) {
-                    push(car(p1));
+                    push(car(p1), $);
                     p1 = cdr(p1);
                 }
             }
             else
-                stack[i] = p1;
+                $.stack[i] = p1;
         }
     }
 }
@@ -13528,51 +13528,51 @@ function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
     return 4;
 }
 
-function partition_term(): void {
+function partition_term($: ScriptVars): void {
 
-    const X = pop();
-    const F = pop();
+    const X = pop($);
+    const F = pop($);
 
     // push const factors
 
-    let h = stack.length;
+    let h = $.stack.length;
     let p1 = cdr(F);
     while (iscons(p1)) {
-        if (!findf(car(p1), X))
-            push(car(p1));
+        if (!findf(car(p1), X, $))
+            push(car(p1), $);
         p1 = cdr(p1);
     }
 
-    let n = stack.length - h;
+    let n = $.stack.length - h;
 
     if (n == 0)
-        push_integer(1);
+        push_integer(1, $);
     else if (n > 1) {
-        list(n);
-        push_symbol(MULTIPLY);
-        swap();
-        cons(); // makes MULTIPLY head of list
+        list(n, $);
+        push_symbol(MULTIPLY, $);
+        swap($);
+        cons($); // makes MULTIPLY head of list
     }
 
     // push var factors
 
-    h = stack.length;
+    h = $.stack.length;
     p1 = cdr(F);
     while (iscons(p1)) {
-        if (findf(car(p1), X))
-            push(car(p1));
+        if (findf(car(p1), X, $))
+            push(car(p1), $);
         p1 = cdr(p1);
     }
 
-    n = stack.length - h;
+    n = $.stack.length - h;
 
     if (n == 0)
-        push_integer(1);
+        push_integer(1, $);
     else if (n > 1) {
-        list(n);
-        push_symbol(MULTIPLY);
-        swap();
-        cons(); // makes MULTIPLY head of list
+        list(n, $);
+        push_symbol(MULTIPLY, $);
+        swap($);
+        cons($); // makes MULTIPLY head of list
     }
 }
 // https://github.com/ghewgill/picomath
@@ -13606,16 +13606,16 @@ function erfc(x: number): number {
     return 1.0 - erf(x);
 }
 
-function pop(): U {
-    if (stack.length == 0) {
+function pop($: ScriptVars): U {
+    if ($.stack.length == 0) {
         stopf("stack error");
     }
-    return stack.pop() as U;
+    return $.stack.pop() as U;
 }
 
-function pop_double(): number {
+function pop_double($: ScriptVars): number {
 
-    const p = pop();
+    const p = pop($);
 
     if (isnum(p)) {
         return p.toNumber();
@@ -13625,9 +13625,9 @@ function pop_double(): number {
     }
 }
 
-function pop_integer(): number {
+function pop_integer($: ScriptVars): number {
 
-    const p = pop();
+    const p = pop($);
 
     if (!issmallinteger(p))
         stopf("small integer expected");
@@ -13650,16 +13650,16 @@ function pop_integer(): number {
     return n;
 }
 
-function power_complex_double(_BASE: U, EXPO: U, X: U, Y: U): void {
+function power_complex_double(_BASE: U, EXPO: U, X: U, Y: U, $: ScriptVars): void {
 
-    push(X);
-    let x = pop_double();
+    push(X, $);
+    let x = pop_double($);
 
-    push(Y);
-    let y = pop_double();
+    push(Y, $);
+    let y = pop_double($);
 
-    push(EXPO);
-    const expo = pop_double();
+    push(EXPO, $);
+    const expo = pop_double($);
 
     let r = Math.sqrt(x * x + y * y);
     let theta = Math.atan2(y, x);
@@ -13670,76 +13670,76 @@ function power_complex_double(_BASE: U, EXPO: U, X: U, Y: U): void {
     x = r * Math.cos(theta);
     y = r * Math.sin(theta);
 
-    push_double(x);
-    push_double(y);
-    push(imaginaryunit);
-    multiply();
-    add();
+    push_double(x, $);
+    push_double(y, $);
+    push(imaginaryunit, $);
+    multiply($);
+    add($);
 }
 
-function power_complex_minus(X: U, Y: U, n: number): void {
+function power_complex_minus(X: U, Y: U, n: number, $: ScriptVars): void {
 
     // R = X^2 + Y^2
 
-    push(X);
-    push(X);
-    multiply();
-    push(Y);
-    push(Y);
-    multiply();
-    add();
-    const R = pop();
+    push(X, $);
+    push(X, $);
+    multiply($);
+    push(Y, $);
+    push(Y, $);
+    multiply($);
+    add($);
+    const R = pop($);
 
     // X = X / R
 
-    push(X);
-    push(R);
-    divide();
-    X = pop();
+    push(X, $);
+    push(R, $);
+    divide($);
+    X = pop($);
 
     // Y = -Y / R
 
-    push(Y);
-    negate();
-    push(R);
-    divide();
-    Y = pop();
+    push(Y, $);
+    negate($);
+    push(R, $);
+    divide($);
+    Y = pop($);
 
     let PX = X;
     let PY = Y;
 
     for (let i = 1; i < n; i++) {
 
-        push(PX);
-        push(X);
-        multiply();
-        push(PY);
-        push(Y);
-        multiply();
-        subtract();
+        push(PX, $);
+        push(X, $);
+        multiply($);
+        push(PY, $);
+        push(Y, $);
+        multiply($);
+        subtract($);
 
-        push(PX);
-        push(Y);
-        multiply();
-        push(PY);
-        push(X);
-        multiply();
-        add();
+        push(PX, $);
+        push(Y, $);
+        multiply($);
+        push(PY, $);
+        push(X, $);
+        multiply($);
+        add($);
 
-        PY = pop();
-        PX = pop();
+        PY = pop($);
+        PX = pop($);
     }
 
     // X + i*Y
 
-    push(PX);
-    push(imaginaryunit);
-    push(PY);
-    multiply();
-    add();
+    push(PX, $);
+    push(imaginaryunit, $);
+    push(PY, $);
+    multiply($);
+    add($);
 }
 
-function power_complex_number(BASE: U, EXPO: U): void {
+function power_complex_number(BASE: U, EXPO: U, $: ScriptVars): void {
     let X: U;
     let Y: U;
 
@@ -13768,107 +13768,107 @@ function power_complex_number(BASE: U, EXPO: U): void {
     }
 
     if (isdouble(X) || isdouble(Y) || isdouble(EXPO)) {
-        power_complex_double(BASE, EXPO, X, Y);
+        power_complex_double(BASE, EXPO, X, Y, $);
         return;
     }
 
     if (!(isrational(EXPO) && isinteger(EXPO))) {
-        power_complex_rational(BASE, EXPO, X, Y);
+        power_complex_rational(BASE, EXPO, X, Y, $);
         return;
     }
 
     if (!issmallinteger(EXPO)) {
-        push_symbol(POWER);
-        push(BASE);
-        push(EXPO);
-        list(3);
+        push_symbol(POWER, $);
+        push(BASE, $);
+        push(EXPO, $);
+        list(3, $);
         return;
     }
 
-    push(EXPO);
-    const n = pop_integer();
+    push(EXPO, $);
+    const n = pop_integer($);
 
     if (n > 0)
-        power_complex_plus(X, Y, n);
+        power_complex_plus(X, Y, n, $);
     else if (n < 0)
-        power_complex_minus(X, Y, -n);
+        power_complex_minus(X, Y, -n, $);
     else
-        push_integer(1);
+        push_integer(1, $);
 }
 
-function power_complex_plus(X: U, Y: U, n: number): void {
+function power_complex_plus(X: U, Y: U, n: number, $: ScriptVars): void {
 
     let PX = X;
     let PY = Y;
 
     for (let i = 1; i < n; i++) {
 
-        push(PX);
-        push(X);
-        multiply();
-        push(PY);
-        push(Y);
-        multiply();
-        subtract();
+        push(PX, $);
+        push(X, $);
+        multiply($);
+        push(PY, $);
+        push(Y, $);
+        multiply($);
+        subtract($);
 
-        push(PX);
-        push(Y);
-        multiply();
-        push(PY);
-        push(X);
-        multiply();
-        add();
+        push(PX, $);
+        push(Y, $);
+        multiply($);
+        push(PY, $);
+        push(X, $);
+        multiply($);
+        add($);
 
-        PY = pop();
-        PX = pop();
+        PY = pop($);
+        PX = pop($);
     }
 
     // X + i Y
 
-    push(PX);
-    push(imaginaryunit);
-    push(PY);
-    multiply();
-    add();
+    push(PX, $);
+    push(imaginaryunit, $);
+    push(PY, $);
+    multiply($);
+    add($);
 }
 
-function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U): void {
+function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U, $: ScriptVars): void {
     // calculate sqrt(X^2 + Y^2) ^ (1/2 * EXPO)
 
-    push(X);
-    push(X);
-    multiply();
-    push(Y);
-    push(Y);
-    multiply();
-    add();
-    push_rational(1, 2);
-    push(EXPO);
-    multiply();
-    power();
+    push(X, $);
+    push(X, $);
+    multiply($);
+    push(Y, $);
+    push(Y, $);
+    multiply($);
+    add($);
+    push_rational(1, 2, $);
+    push(EXPO, $);
+    multiply($);
+    power($);
 
     // calculate (-1) ^ (EXPO * arctan(Y, X) / pi)
 
-    push(Y);
-    push(X);
-    arctan();
-    push_symbol(PI);
-    divide();
-    push(EXPO);
-    multiply();
-    EXPO = pop();
-    power_minusone(EXPO);
+    push(Y, $);
+    push(X, $);
+    arctan($);
+    push_symbol(PI, $);
+    divide($);
+    push(EXPO, $);
+    multiply($);
+    EXPO = pop($);
+    power_minusone(EXPO, $);
 
     // result = sqrt(X^2 + Y^2) ^ (1/2 * EXPO) * (-1) ^ (EXPO * arctan(Y, X) / pi)
 
-    multiply();
+    multiply($);
 }
 
-function power_minusone(EXPO: U): void {
+function power_minusone(EXPO: U, $: ScriptVars): void {
     // optimization for i
 
     if (isequalq(EXPO, 1, 2)) {
-        push(imaginaryunit);
+        push(imaginaryunit, $);
         return;
     }
 
@@ -13876,123 +13876,123 @@ function power_minusone(EXPO: U): void {
 
     if (isrational(EXPO) && bignum_odd(EXPO.b)) {
         if (bignum_odd(EXPO.a))
-            push_integer(-1);
+            push_integer(-1, $);
         else
-            push_integer(1);
+            push_integer(1, $);
         return;
     }
 
     if (isrational(EXPO)) {
-        normalize_clock_rational(EXPO);
+        normalize_clock_rational(EXPO, $);
         return;
     }
 
     if (isdouble(EXPO)) {
-        normalize_clock_double(EXPO);
-        rect();
+        normalize_clock_double(EXPO, $);
+        rect($);
         return;
     }
 
-    push_symbol(POWER);
-    push_integer(-1);
-    push(EXPO);
-    list(3);
+    push_symbol(POWER, $);
+    push_integer(-1, $);
+    push(EXPO, $);
+    list(3, $);
 }
 
-function normalize_clock_rational(EXPO: U): void {
+function normalize_clock_rational(EXPO: U, $: ScriptVars): void {
 
     // R = EXPO mod 2
 
-    push(EXPO);
-    push_integer(2);
-    modfunc();
-    let R = pop();
+    push(EXPO, $);
+    push_integer(2, $);
+    modfunc($);
+    let R = pop($);
 
     // convert negative rotation to positive
 
     if (isnum(R) && isnegativenumber(R)) {
-        push(R);
-        push_integer(2);
-        add();
-        R = pop();
+        push(R, $);
+        push_integer(2, $);
+        add($);
+        R = pop($);
     }
 
-    push(R);
-    push_integer(2);
-    multiply();
-    floorfunc();
-    const n = pop_integer(); // number of 90 degree turns
+    push(R, $);
+    push_integer(2, $);
+    multiply($);
+    floorfunc($);
+    const n = pop_integer($); // number of 90 degree turns
 
-    push(R);
-    push_integer(n);
-    push_rational(-1, 2);
-    multiply();
-    add();
-    R = pop(); // remainder
+    push(R, $);
+    push_integer(n, $);
+    push_rational(-1, 2, $);
+    multiply($);
+    add($);
+    R = pop($); // remainder
 
     switch (n) {
 
         case 0:
             if (iszero(R))
-                push_integer(1);
+                push_integer(1, $);
             else {
-                push_symbol(POWER);
-                push_integer(-1);
-                push(R);
-                list(3);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push(R, $);
+                list(3, $);
             }
             break;
 
         case 1:
             if (iszero(R))
-                push(imaginaryunit);
+                push(imaginaryunit, $);
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push_symbol(POWER);
-                push_integer(-1);
-                push(R);
-                push_rational(-1, 2);
-                add();
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push(R, $);
+                push_rational(-1, 2, $);
+                add($);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 2:
             if (iszero(R))
-                push_integer(-1);
+                push_integer(-1, $);
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push_symbol(POWER);
-                push_integer(-1);
-                push(R);
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push(R, $);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 3:
             if (iszero(R)) {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push(imaginaryunit);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push(imaginaryunit, $);
+                list(3, $);
             }
             else {
-                push_symbol(POWER);
-                push_integer(-1);
-                push(R);
-                push_rational(-1, 2);
-                add();
-                list(3);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push(R, $);
+                push_rational(-1, 2, $);
+                add($);
+                list(3, $);
             }
             break;
     }
 }
 
-function normalize_clock_double(EXPO: Flt): void {
+function normalize_clock_double(EXPO: Flt, $: ScriptVars): void {
 
     let expo = EXPO.d;
 
@@ -14013,61 +14013,61 @@ function normalize_clock_double(EXPO: Flt): void {
 
         case 0:
             if (r == 0)
-                push_integer(1);
+                push_integer(1, $);
             else {
-                push_symbol(POWER);
-                push_integer(-1);
-                push_double(r);
-                list(3);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push_double(r, $);
+                list(3, $);
             }
             break;
 
         case 1:
             if (r == 0)
-                push(imaginaryunit);
+                push(imaginaryunit, $);
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push_symbol(POWER);
-                push_integer(-1);
-                push_double(r - 0.5);
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push_double(r - 0.5, $);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 2:
             if (r == 0)
-                push_integer(-1);
+                push_integer(-1, $);
             else {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push_symbol(POWER);
-                push_integer(-1);
-                push_double(r);
-                list(3);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push_double(r, $);
+                list(3, $);
+                list(3, $);
             }
             break;
 
         case 3:
             if (r == 0) {
-                push_symbol(MULTIPLY);
-                push_integer(-1);
-                push(imaginaryunit);
-                list(3);
+                push_symbol(MULTIPLY, $);
+                push_integer(-1, $);
+                push(imaginaryunit, $);
+                list(3, $);
             }
             else {
-                push_symbol(POWER);
-                push_integer(-1);
-                push_double(r - 0.5);
-                list(3);
+                push_symbol(POWER, $);
+                push_integer(-1, $);
+                push_double(r - 0.5, $);
+                list(3, $);
             }
             break;
     }
 }
 
-function power_natural_number(EXPO: U): void {
+function power_natural_number(EXPO: U, $: ScriptVars): void {
 
     // exp(x + i y) = exp(x) (cos(y) + i sin(y))
     let x: number;
@@ -14082,43 +14082,43 @@ function power_natural_number(EXPO: U): void {
             x = 0.0;
             y = (cadr(EXPO) as Flt).d;
         }
-        push_double(Math.exp(x));
-        push_double(y);
-        cosfunc();
-        push(imaginaryunit);
-        push_double(y);
-        sinfunc();
-        multiply();
-        add();
-        multiply();
+        push_double(Math.exp(x), $);
+        push_double(y, $);
+        cosfunc($);
+        push(imaginaryunit, $);
+        push_double(y, $);
+        sinfunc($);
+        multiply($);
+        add($);
+        multiply($);
         return;
     }
 
     // e^log(expr) = expr
 
     if (car(EXPO) == symbol(LOG)) {
-        push(cadr(EXPO));
+        push(cadr(EXPO), $);
         return;
     }
 
-    if (isdenormalpolar(EXPO)) {
-        normalize_polar(EXPO);
+    if (isdenormalpolar(EXPO, $)) {
+        normalize_polar(EXPO, $);
         return;
     }
 
-    push_symbol(POWER);
-    push_symbol(EXP1);
-    push(EXPO);
-    list(3);
+    push_symbol(POWER, $);
+    push_symbol(EXP1, $);
+    push(EXPO, $);
+    list(3, $);
 }
 // BASE and EXPO are numbers
 
-function power_numbers(BASE: Num, EXPO: Num): void {
+function power_numbers(BASE: Num, EXPO: Num, $: ScriptVars): void {
 
     // n^0
 
     if (iszero(EXPO)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
@@ -14127,26 +14127,26 @@ function power_numbers(BASE: Num, EXPO: Num): void {
     if (iszero(BASE)) {
         if (isnegativenumber(EXPO))
             stopf("divide by zero");
-        push_integer(0);
+        push_integer(0, $);
         return;
     }
 
     // 1^n
 
     if (isplusone(BASE)) {
-        push_integer(1);
+        push_integer(1, $);
         return;
     }
 
     // n^1
 
     if (isplusone(EXPO)) {
-        push(BASE);
+        push(BASE, $);
         return;
     }
 
     if (isdouble(BASE) || isdouble(EXPO)) {
-        power_double(BASE, EXPO);
+        power_double(BASE, EXPO, $);
         return;
     }
 
@@ -14162,42 +14162,42 @@ function power_numbers(BASE: Num, EXPO: Num): void {
             const a = bignum_pow(BASE.a, n);
             const b = bignum_pow(BASE.b, n);
             const X = new Rat(b, a);
-            push(X);
+            push(X, $);
         }
         else {
             const n = EXPO.a;
             const a = bignum_pow(BASE.a, n);
             const b = bignum_pow(BASE.b, n);
             const X = new Rat(a, b);
-            push(X);
+            push(X, $);
         }
         return;
     }
 
     // exponent is a root
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     // put factors on stack
 
-    push_symbol(POWER);
-    push(BASE);
-    push(EXPO);
-    list(3);
+    push_symbol(POWER, $);
+    push(BASE, $);
+    push(EXPO, $);
+    list(3, $);
 
-    factor_factor();
+    factor_factor($);
 
     // normalize factors
 
-    let n = stack.length - h; // fix n now, stack can grow
+    let n = $.stack.length - h; // fix n now, stack can grow
 
     for (let i = 0; i < n; i++) {
-        const p1 = stack[h + i];
+        const p1 = $.stack[h + i];
         if (car(p1) == symbol(POWER)) {
             BASE = cadr(p1) as Num;
             EXPO = caddr(p1) as Num;
-            power_numbers_factor(BASE as Rat, EXPO as Rat);
-            stack[h + i] = pop(); // fill hole
+            power_numbers_factor(BASE as Rat, EXPO as Rat, $);
+            $.stack[h + i] = pop($); // fill hole
         }
     }
 
@@ -14205,53 +14205,53 @@ function power_numbers(BASE: Num, EXPO: Num): void {
 
     let p1: U = one;
 
-    for (let i = h; i < stack.length; i++) {
-        const p2 = stack[i];
+    for (let i = h; i < $.stack.length; i++) {
+        const p2 = $.stack[i];
         if (isnum(p2)) {
-            push(p1);
-            push(p2);
-            multiply();
-            p1 = pop();
-            stack.splice(i, 1);
+            push(p1, $);
+            push(p2, $);
+            multiply($);
+            p1 = pop($);
+            $.stack.splice(i, 1);
             i--;
         }
     }
 
     // finalize
 
-    n = stack.length - h;
+    n = $.stack.length - h;
 
     if (n == 0 || !isplusone(p1)) {
-        push(p1);
+        push(p1, $);
         n++;
     }
 
     if (n == 1)
         return;
 
-    sort_factors(h);
-    list(n);
-    push_symbol(MULTIPLY);
-    swap();
-    cons();
+    sort_factors(h, $);
+    list(n, $);
+    push_symbol(MULTIPLY, $);
+    swap($);
+    cons($);
 }
 
 // BASE is an integer
 
-function power_numbers_factor(BASE: Rat, EXPO: Rat): void {
+function power_numbers_factor(BASE: Rat, EXPO: Rat, $: ScriptVars): void {
 
     if (isminusone(BASE)) {
-        power_minusone(EXPO);
-        let p0 = pop();
+        power_minusone(EXPO, $);
+        let p0 = pop($);
         if (car(p0) == symbol(MULTIPLY)) {
             p0 = cdr(p0);
             while (iscons(p0)) {
-                push(car(p0));
+                push(car(p0), $);
                 p0 = cdr(p0);
             }
         }
         else
-            push(p0);
+            push(p0, $);
         return;
     }
 
@@ -14261,9 +14261,9 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat): void {
         const b = bignum_int(1);
 
         if (isnegativenumber(EXPO))
-            push_bignum(1, b, a); // reciprocate
+            push_bignum(1, b, a, $); // reciprocate
         else
-            push_bignum(1, a, b);
+            push_bignum(1, a, b, $);
 
         return;
     }
@@ -14283,9 +14283,9 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat): void {
         const b = bignum_int(1);
 
         if (isnegativenumber(EXPO))
-            push_bignum(1, b, a); // reciprocate
+            push_bignum(1, b, a, $); // reciprocate
         else
-            push_bignum(1, a, b);
+            push_bignum(1, a, b, $);
     }
 
     // process r
@@ -14294,10 +14294,10 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat): void {
 
     if (n0 != null) {
         // BASE is 32 bits or less, hence BASE is a prime number, no root
-        push_symbol(POWER);
-        push(BASE);
-        push_bignum(EXPO.sign, r, EXPO.b);
-        list(3);
+        push_symbol(POWER, $);
+        push(BASE, $);
+        push_bignum(EXPO.sign, r, EXPO.b, $);
+        list(3, $);
         return;
     }
 
@@ -14307,10 +14307,10 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat): void {
 
     if (n1 == null) {
         // no root
-        push_symbol(POWER);
-        push(BASE);
-        push_bignum(EXPO.sign, r, EXPO.b);
-        list(3);
+        push_symbol(POWER, $);
+        push(BASE, $);
+        push_bignum(EXPO.sign, r, EXPO.b, $);
+        list(3, $);
         return;
     }
 
@@ -14319,81 +14319,81 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat): void {
     const n = bignum_pow(n1, r);
 
     if (isnegativenumber(EXPO))
-        push_bignum(1, bignum_int(1), n); // reciprocate
+        push_bignum(1, bignum_int(1), n, $); // reciprocate
     else
-        push_bignum(1, n, bignum_int(1));
+        push_bignum(1, n, bignum_int(1), $);
 }
 
-function power_double(BASE: U, EXPO: U) {
+function power_double(BASE: U, EXPO: U, $: ScriptVars) {
 
-    push(BASE);
-    const base = pop_double();
+    push(BASE, $);
+    const base = pop_double($);
 
-    push(EXPO);
-    const expo = pop_double();
+    push(EXPO, $);
+    const expo = pop_double($);
 
     if (base > 0 || expo == Math.floor(expo)) {
         const d = Math.pow(base, expo);
-        push_double(d);
+        push_double(d, $);
         return;
     }
 
     // BASE is negative and EXPO is fractional
 
-    power_minusone(EXPO);
+    power_minusone(EXPO, $);
 
     if (base == -1)
         return;
 
     const d = Math.pow(-base, expo);
-    push_double(d);
+    push_double(d, $);
 
-    multiply();
+    multiply($);
 }
 // BASE is a sum of terms
 
-function power_sum(BASE: U, EXPO: U): void {
+function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
 
     if (iscomplexnumber(BASE) && isnum(EXPO)) {
-        power_complex_number(BASE, EXPO);
+        power_complex_number(BASE, EXPO, $);
         return;
     }
 
     if (expanding == 0 || !issmallinteger(EXPO) || (isnum(EXPO) && isnegativenumber(EXPO))) {
-        push_symbol(POWER);
-        push(BASE);
-        push(EXPO);
-        list(3);
+        push_symbol(POWER, $);
+        push(BASE, $);
+        push(EXPO, $);
+        list(3, $);
         return;
     }
 
-    push(EXPO);
-    const n = pop_integer();
+    push(EXPO, $);
+    const n = pop_integer($);
 
     // square the sum first (prevents infinite loop through multiply)
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     let p1 = cdr(BASE);
 
     while (iscons(p1)) {
         let p2 = cdr(BASE);
         while (iscons(p2)) {
-            push(car(p1));
-            push(car(p2));
-            multiply();
+            push(car(p1), $);
+            push(car(p2), $);
+            multiply($);
             p2 = cdr(p2);
         }
         p1 = cdr(p1);
     }
 
-    add_terms(stack.length - h);
+    add_terms($.stack.length - h, $);
 
     // continue up to power n
 
     for (let i = 2; i < n; i++) {
-        push(BASE);
-        multiply();
+        push(BASE, $);
+        multiply($);
     }
 }
 
@@ -14479,12 +14479,12 @@ function printname(p: Sym) {
     return p.printname;
 }
 
-function promote_tensor(): void {
+function promote_tensor($: ScriptVars): void {
 
-    const p1 = pop();
+    const p1 = pop($);
 
     if (!istensor(p1)) {
-        push(p1);
+        push(p1, $);
         return;
     }
 
@@ -14502,7 +14502,7 @@ function promote_tensor(): void {
     }
 
     if (!istensor(p2)) {
-        push(p1);
+        push(p1, $);
         return; // all elements are scalars
     }
 
@@ -14533,160 +14533,160 @@ function promote_tensor(): void {
             p3.elems[k++] = (p2 as Tensor).elems[j];
     }
 
-    push(p3);
+    push(p3, $);
 }
 
-function push(a: U): void {
-    stack.push(a);
+function push(a: U, $: ScriptVars): void {
+    $.stack.push(a);
 }
 
-function push_double(d: number): void {
-    push(new Flt(d));
+function push_double(d: number, $: ScriptVars): void {
+    push(new Flt(d), $);
 }
 /**
  * Pushes a Rat onto the stack.
  * @param n 
  */
-function push_integer(n: number): void {
-    push_rational(n, 1);
+function push_integer(n: number, $: ScriptVars): void {
+    push_rational(n, 1, $);
 }
 /**
  * Pushes a Rat onto the stack.
  * @param a 
  * @param b 
  */
-function push_rational(a: number, b: number): void {
-    push(create_rat(a, b));
+function push_rational(a: number, b: number, $: ScriptVars): void {
+    push(create_rat(a, b), $);
 }
 
-function push_string(s: string) {
-    push(new Str(s));
+function push_string(s: string, $: ScriptVars) {
+    push(new Str(s), $);
 }
 
-function push_symbol(p: string): void {
-    push(symbol(p));
+function push_symbol(p: string, $: ScriptVars): void {
+    push(symbol(p), $);
 }
 
-function reciprocate(): void {
-    push_integer(-1);
-    power();
+function reciprocate($: ScriptVars): void {
+    push_integer(-1, $);
+    power($);
 }
 
-function reduce_radical_double(h: number, COEFF: Flt) {
+function reduce_radical_double(h: number, COEFF: Flt, $: ScriptVars) {
 
     let c = COEFF.d;
 
-    let n = stack.length;
+    let n = $.stack.length;
 
     for (let i = h; i < n; i++) {
 
-        const p1 = stack[i];
+        const p1 = $.stack[i];
 
         if (isradical(p1)) {
 
-            push(cadr(p1)); // base
-            const a = pop_double();
+            push(cadr(p1), $); // base
+            const a = pop_double($);
 
-            push(caddr(p1)); // exponent
-            const b = pop_double();
+            push(caddr(p1), $); // exponent
+            const b = pop_double($);
 
             c = c * Math.pow(a, b); // a > 0 by isradical above
 
-            stack.splice(i, 1); // remove factor
+            $.stack.splice(i, 1); // remove factor
 
             i--; // use same index again
             n--;
         }
     }
 
-    push_double(c);
-    const C = pop();
+    push_double(c, $);
+    const C = pop($);
 
     return C;
 }
 
-function reduce_radical_factors(h: number, COEFF: U): U {
-    if (!any_radical_factors(h))
+function reduce_radical_factors(h: number, COEFF: U, $: ScriptVars): U {
+    if (!any_radical_factors(h, $))
         return COEFF;
 
     if (isrational(COEFF))
-        return reduce_radical_rational(h, COEFF);
+        return reduce_radical_rational(h, COEFF, $);
     else
-        return reduce_radical_double(h, COEFF as Flt);
+        return reduce_radical_double(h, COEFF as Flt, $);
 }
 
-function reduce_radical_rational(h: number, COEFF: Rat) {
+function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars) {
 
     if (isplusone(COEFF) || isminusone(COEFF))
         return COEFF; // COEFF has no factors, no cancellation is possible
 
-    push(COEFF);
-    absfunc();
-    let p1 = pop();
+    push(COEFF, $);
+    absfunc($);
+    let p1 = pop($);
 
-    push(p1);
-    numerator();
-    let NUMER = pop();
+    push(p1, $);
+    numerator($);
+    let NUMER = pop($);
 
-    push(p1);
-    denominator();
-    let DENOM = pop();
+    push(p1, $);
+    denominator($);
+    let DENOM = pop($);
 
     let k = 0;
 
-    const n = stack.length;
+    const n = $.stack.length;
 
     for (let i = h; i < n; i++) {
-        p1 = stack[i];
+        p1 = $.stack[i];
         if (!isradical(p1))
             continue;
         const BASE = cadr(p1);
         const EXPO = caddr(p1);
         if (isnum(EXPO) && isnegativenumber(EXPO)) {
-            mod_integers(NUMER as Rat, BASE as Rat);
-            const p2 = pop();
+            mod_integers(NUMER as Rat, BASE as Rat, $);
+            const p2 = pop($);
             if (iszero(p2)) {
-                push(NUMER);
-                push(BASE);
-                divide();
-                NUMER = pop();
-                push_symbol(POWER);
-                push(BASE);
-                push_integer(1);
-                push(EXPO);
-                add();
-                list(3);
-                stack[i] = pop();
+                push(NUMER, $);
+                push(BASE, $);
+                divide($);
+                NUMER = pop($);
+                push_symbol(POWER, $);
+                push(BASE, $);
+                push_integer(1, $);
+                push(EXPO, $);
+                add($);
+                list(3, $);
+                $.stack[i] = pop($);
                 k++;
             }
         }
         else {
-            mod_integers(DENOM as Rat, BASE as Rat);
-            const p2 = pop();
+            mod_integers(DENOM as Rat, BASE as Rat, $);
+            const p2 = pop($);
             if (iszero(p2)) {
-                push(DENOM);
-                push(BASE);
-                divide();
-                DENOM = pop();
-                push_symbol(POWER);
-                push(BASE);
-                push_integer(-1);
-                push(EXPO);
-                add();
-                list(3);
-                stack[i] = pop();
+                push(DENOM, $);
+                push(BASE, $);
+                divide($);
+                DENOM = pop($);
+                push_symbol(POWER, $);
+                push(BASE, $);
+                push_integer(-1, $);
+                push(EXPO, $);
+                add($);
+                list(3, $);
+                $.stack[i] = pop($);
                 k++;
             }
         }
     }
 
     if (k) {
-        push(NUMER);
-        push(DENOM);
-        divide();
+        push(NUMER, $);
+        push(DENOM, $);
+        divide($);
         if (isnegativenumber(COEFF))
-            negate();
-        COEFF = pop() as Rat;
+            negate($);
+        COEFF = pop($) as Rat;
     }
 
     return COEFF;
@@ -14701,7 +14701,7 @@ function restore_symbol(): void {
 
 export interface ScriptContentHandler {
     begin(): void;
-    output(value: U, input: U): void;
+    output(value: U, input: U, $: ScriptVars): void;
     end(): void;
 }
 export interface ScriptErrorHandler {
@@ -14719,8 +14719,8 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
             this.stdout.innerHTML += output;
         }
     }
-    output(value: U, input: U): void {
-        print_result_and_input(value, input);
+    output(value: U, input: U, $: ScriptVars): void {
+        print_result_and_input(value, input, $);
     }
 }
 export class PrintScriptErrorHandler implements ScriptErrorHandler {
@@ -14736,26 +14736,27 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
  * @param errorHandler 
  */
 export function executeScript(scriptText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler): void {
+    const $ = new ScriptVars();
     contentHandler.begin();
     try {
-        inbuf = scriptText;
+        $.inbuf = scriptText;
 
-        init();
-        initscript();
+        init($);
+        initscript($);
 
         let k = 0;
 
         for (; ;) {
 
-            k = scan_inbuf(k);
+            k = scan_inbuf(k, $);
 
             if (k == 0) {
                 break; // end of input
             }
 
-            const input = pop();
-            const result = eval_input(input);
-            contentHandler.output(result, input);
+            const input = pop($);
+            const result = eval_input(input, $);
+            contentHandler.output(result, input, $);
             if (!is_nil(result)) {
                 set_symbol(symbol(LAST), result, nil);
             }
@@ -14763,10 +14764,10 @@ export function executeScript(scriptText: string, contentHandler: ScriptContentH
     }
     catch (errmsg) {
         if ((errmsg as string).length > 0) {
-            if (trace1 < trace2 && inbuf[trace2 - 1] == '\n') {
+            if (trace1 < trace2 && $.inbuf[trace2 - 1] == '\n') {
                 trace2--;
             }
-            errorHandler.error(inbuf, trace1, trace2, errmsg);
+            errorHandler.error($.inbuf, trace1, trace2, errmsg);
         }
     }
     finally {
@@ -14774,37 +14775,37 @@ export function executeScript(scriptText: string, contentHandler: ScriptContentH
     }
 }
 
-function sample(F: U, T: U, t: number): void {
+function sample(F: U, T: U, t: number, $: ScriptVars): void {
     let X: U;
     let Y: U;
 
-    push_double(t);
-    let p1 = pop();
+    push_double(t, $);
+    let p1 = pop($);
     set_symbol(T as Sym, p1, nil);
 
-    push(F);
-    eval_nonstop();
-    floatfunc();
-    p1 = pop();
+    push(F, $);
+    eval_nonstop($);
+    floatfunc($);
+    p1 = pop($);
 
     if (istensor(p1)) {
         X = p1.elems[0];
         Y = p1.elems[1];
     }
     else {
-        push_double(t);
-        X = pop();
+        push_double(t, $);
+        X = pop($);
         Y = p1;
     }
 
     if (!isnum(X) || !isnum(Y))
         return;
 
-    push(X);
-    let x = pop_double();
+    push(X, $);
+    let x = pop_double($);
 
-    push(Y);
-    let y = pop_double();
+    push(Y, $);
+    let y = pop_double($);
 
     if (!isFinite(x) || !isFinite(y))
         return;
@@ -14839,121 +14840,119 @@ let token: number | string;
 let token_index: number;
 let token_buf: string;
 
-function scan(s: string, k: number) {
+function scan(s: string, k: number, $: ScriptVars) {
     scan_mode = 0;
-    return scan_nib(s, k);
+    return scan_nib(s, k, $);
 }
 
-function scan1(s: string): number {
+function scan1(s: string, $: ScriptVars): number {
     scan_mode = 1; // mode for table of integrals
-    return scan_nib(s, 0);
+    return scan_nib(s, 0, $);
 }
 
-function scan_nib(s: string, k: number): number {
+function scan_nib(s: string, k: number, $: ScriptVars): number {
     instring = s;
     scan_index = k;
     scan_level = 0;
 
-    get_token_skip_newlines();
+    get_token_skip_newlines($);
 
     if (token == T_END)
         return 0;
 
-    scan_stmt();
+    scan_stmt($);
 
     if (token != T_NEWLINE && token != T_END)
-        scan_error("expected newline");
+        scan_error("expected newline", $);
 
     return scan_index;
 }
 
-function
-    scan_stmt() {
-    scan_comparison();
+function scan_stmt($: ScriptVars) {
+    scan_comparison($);
     if (token == "=") {
-        get_token_skip_newlines(); // get token after =
-        push_symbol(SETQ);
-        swap();
-        scan_comparison();
-        list(3);
+        get_token_skip_newlines($); // get token after =
+        push_symbol(SETQ, $);
+        swap($);
+        scan_comparison($);
+        list(3, $);
     }
 }
 
-function
-    scan_comparison() {
-    scan_expression();
+function scan_comparison($: ScriptVars) {
+    scan_expression($);
     switch (token) {
         case T_EQ:
-            push_symbol(TESTEQ); // ==
+            push_symbol(TESTEQ, $); // ==
             break;
         case T_LTEQ:
-            push_symbol(TESTLE);
+            push_symbol(TESTLE, $);
             break;
         case T_GTEQ:
-            push_symbol(TESTGE);
+            push_symbol(TESTGE, $);
             break;
         case "<":
-            push_symbol(TESTLT);
+            push_symbol(TESTLT, $);
             break;
         case ">":
-            push_symbol(TESTGT);
+            push_symbol(TESTGT, $);
             break;
         default:
             return;
     }
-    swap();
-    get_token_skip_newlines(); // get token after rel op
-    scan_expression();
-    list(3);
+    swap($);
+    get_token_skip_newlines($); // get token after rel op
+    scan_expression($);
+    list(3, $);
 }
 
-function scan_expression(): void {
-    const h = stack.length;
+function scan_expression($: ScriptVars): void {
+    const h = $.stack.length;
     let t = token;
     if (token == "+" || token == "-")
-        get_token_skip_newlines();
-    scan_term();
+        get_token_skip_newlines($);
+    scan_term($);
     if (t == "-")
-        static_negate();
+        static_negate($);
     while (token == "+" || token == "-") {
         t = token;
-        get_token_skip_newlines(); // get token after + or -
-        scan_term();
+        get_token_skip_newlines($); // get token after + or -
+        scan_term($);
         if (t == "-")
-            static_negate();
+            static_negate($);
     }
-    if (stack.length - h > 1) {
-        list(stack.length - h);
-        push_symbol(ADD);
-        swap();
-        cons();
+    if ($.stack.length - h > 1) {
+        list($.stack.length - h, $);
+        push_symbol(ADD, $);
+        swap($);
+        cons($);
     }
 }
 
-function scan_term(): void {
-    const h = stack.length;
+function scan_term($: ScriptVars): void {
+    const h = $.stack.length;
 
-    scan_power();
+    scan_power($);
 
     while (scan_factor_pending()) {
 
         const t = token;
 
         if (token == "*" || token == "/")
-            get_token_skip_newlines();
+            get_token_skip_newlines($);
 
-        scan_power();
+        scan_power($);
 
         if (t == "/") {
-            static_reciprocate();
+            static_reciprocate($);
         }
     }
 
-    if (stack.length - h > 1) {
-        list(stack.length - h);
-        push_symbol(MULTIPLY);
-        swap();
-        cons();
+    if ($.stack.length - h > 1) {
+        list($.stack.length - h, $);
+        push_symbol(MULTIPLY, $);
+        swap($);
+        cons($);
     }
 }
 
@@ -14974,58 +14973,57 @@ function scan_factor_pending(): 0 | 1 {
     return 0;
 }
 
-function
-    scan_power() {
-    scan_factor();
+function scan_power($: ScriptVars) {
+    scan_factor($);
 
     if (token == "^") {
 
-        get_token_skip_newlines();
+        get_token_skip_newlines($);
 
-        push_symbol(POWER);
-        swap();
-        scan_power();
-        list(3);
+        push_symbol(POWER, $);
+        swap($);
+        scan_power($);
+        list(3, $);
     }
 }
 
-function scan_factor(): void {
+function scan_factor($: ScriptVars): void {
 
-    const h = stack.length;
+    const h = $.stack.length;
 
     switch (token) {
 
         case "(":
-            scan_subexpr();
+            scan_subexpr($);
             break;
 
         case T_SYMBOL:
-            scan_symbol();
+            scan_symbol($);
             break;
 
         case T_FUNCTION:
-            scan_function_call();
+            scan_function_call($);
             break;
 
         case T_INTEGER: {
             const a = bignum_atoi(token_buf);
             const b = bignum_int(1);
-            push_bignum(1, a, b);
-            get_token();
+            push_bignum(1, a, b, $);
+            get_token($);
             break;
         }
         case T_DOUBLE: {
             const d = parseFloat(token_buf);
-            push_double(d);
-            get_token();
+            push_double(d, $);
+            get_token($);
             break;
         }
         case T_STRING:
-            scan_string();
+            scan_string($);
             break;
 
         default:
-            scan_error("expected operand");
+            scan_error("expected operand", $);
             break;
     }
 
@@ -15035,127 +15033,127 @@ function scan_factor(): void {
 
         scan_level++;
 
-        get_token(); // get token after [
-        push_symbol(INDEX);
-        swap();
+        get_token($); // get token after [
+        push_symbol(INDEX, $);
+        swap($);
 
-        scan_expression();
+        scan_expression($);
 
         while (token as string == ",") {
-            get_token(); // get token after ,
-            scan_expression();
+            get_token($); // get token after ,
+            scan_expression($);
         }
 
         if (token as string != "]")
-            scan_error("expected ]");
+            scan_error("expected ]", $);
 
         scan_level--;
 
-        get_token(); // get token after ]
+        get_token($); // get token after ]
 
-        list(stack.length - h);
+        list($.stack.length - h, $);
     }
 
     while ((token as string) == "!") {
-        get_token(); // get token after !
-        push_symbol(FACTORIAL);
-        swap();
-        list(2);
+        get_token($); // get token after !
+        push_symbol(FACTORIAL, $);
+        swap($);
+        list(2, $);
     }
 }
 
-function scan_symbol(): void {
+function scan_symbol($: ScriptVars): void {
     if (scan_mode == 1 && token_buf.length == 1) {
         switch (token_buf[0]) {
             case "a":
-                push_symbol(SA);
+                push_symbol(SA, $);
                 break;
             case "b":
-                push_symbol(SB);
+                push_symbol(SB, $);
                 break;
             case "x":
-                push_symbol(SX);
+                push_symbol(SX, $);
                 break;
             default:
-                push(lookup(token_buf));
+                push(lookup(token_buf), $);
                 break;
         }
     }
     else {
-        push(lookup(token_buf));
+        push(lookup(token_buf), $);
     }
-    get_token();
+    get_token($);
 }
 
-function scan_string(): void {
-    push_string(token_buf);
-    get_token();
+function scan_string($: ScriptVars): void {
+    push_string(token_buf, $);
+    get_token($);
 }
 
-function scan_function_call(): void {
-    const h = stack.length;
+function scan_function_call($: ScriptVars): void {
+    const h = $.stack.length;
     scan_level++;
-    push(lookup(token_buf)); // push function name
-    get_token(); // get token after function name
-    get_token(); // get token after (
+    push(lookup(token_buf), $); // push function name
+    get_token($); // get token after function name
+    get_token($); // get token after (
     if (token == ")") {
         scan_level--;
-        get_token(); // get token after )
-        list(1); // function call with no args
+        get_token($); // get token after )
+        list(1, $); // function call with no args
         return;
     }
-    scan_stmt();
+    scan_stmt($);
     while (token == ",") {
-        get_token(); // get token after ,
-        scan_stmt();
+        get_token($); // get token after ,
+        scan_stmt($);
     }
     if (token != ")")
-        scan_error("expected )");
+        scan_error("expected )", $);
     scan_level--;
-    get_token(); // get token after )
-    list(stack.length - h);
+    get_token($); // get token after )
+    list($.stack.length - h, $);
 }
 
-function scan_subexpr(): void {
-    const h = stack.length;
+function scan_subexpr($: ScriptVars): void {
+    const h = $.stack.length;
 
     scan_level++;
 
-    get_token(); // get token after (
+    get_token($); // get token after (
 
-    scan_stmt();
+    scan_stmt($);
 
     while (token == ",") {
-        get_token(); // get token after ,
-        scan_stmt();
+        get_token($); // get token after ,
+        scan_stmt($);
     }
 
     if (token != ")")
-        scan_error("expected )");
+        scan_error("expected )", $);
 
     scan_level--;
 
-    get_token(); // get token after )
+    get_token($); // get token after )
 
-    if (stack.length - h > 1)
-        vector(h);
+    if ($.stack.length - h > 1)
+        vector(h, $);
 }
 
-function get_token_skip_newlines(): void {
+function get_token_skip_newlines($: ScriptVars): void {
     scan_level++;
-    get_token();
+    get_token($);
     scan_level--;
 }
 
-function get_token(): void {
-    get_token_nib();
+function get_token($: ScriptVars): void {
+    get_token_nib($);
 
     if (scan_level)
         while (token == T_NEWLINE)
-            get_token_nib(); // skip over newlines
+            get_token_nib($); // skip over newlines
 }
 
-function get_token_nib(): void {
+function get_token_nib($: ScriptVars): void {
     let c: string;
 
     // skip spaces
@@ -15218,7 +15216,7 @@ function get_token_nib(): void {
                 scan_index++;
 
             if (scan_index - token_index == 1)
-                scan_error("expected decimal digit"); // only a decimal point
+                scan_error("expected decimal digit", $); // only a decimal point
 
             token = T_DOUBLE;
         }
@@ -15255,7 +15253,7 @@ function get_token_nib(): void {
             scan_index++;
         if (inchar() != "\"") {
             token_index = scan_index; // no token
-            scan_error("runaway string");
+            scan_error("runaway string", $);
         }
         scan_index++;
         token = T_STRING;
@@ -15292,8 +15290,8 @@ function update_token_buf(j: number, k: number): void {
     token_buf = instring.substring(j, k);
 }
 
-function scan_error(s: string): never {
-    let t = inbuf.substring(trace1, scan_index);
+function scan_error(s: string, $: ScriptVars): never {
+    let t = $.inbuf.substring(trace1, scan_index);
 
     t += "\nStop: Syntax error, " + s;
 
@@ -15311,9 +15309,9 @@ function inchar(): string {
     return instring.charAt(scan_index); // returns empty string if index out of range
 }
 
-function scan_inbuf(k: number): number {
+function scan_inbuf(k: number, $: ScriptVars): number {
     trace1 = k;
-    k = scan(inbuf, k);
+    k = scan($.inbuf, k, $);
     if (k) {
         trace2 = k;
         trace_input();
@@ -15329,15 +15327,15 @@ function set_symbol(p1: Sym, p2: U, p3: U): void {
     usrfunc[p1.printname] = p3;
 }
 
-function setup_final(F: U, T: Sym): void {
+function setup_final(F: U, T: Sym, $: ScriptVars): void {
 
-    push_double(tmin);
-    let p1 = pop();
+    push_double(tmin, $);
+    let p1 = pop($);
     set_symbol(T, p1, nil);
 
-    push(F);
-    eval_nonstop();
-    p1 = pop();
+    push(F, $);
+    eval_nonstop($);
+    p1 = pop($);
 
     if (!istensor(p1)) {
         tmin = xmin;
@@ -15345,16 +15343,16 @@ function setup_final(F: U, T: Sym): void {
     }
 }
 
-function setup_trange(): void {
+function setup_trange($: ScriptVars): void {
 
     tmin = -Math.PI;
     tmax = Math.PI;
 
     let p1: U = lookup("trange");
-    push(p1);
-    eval_nonstop();
-    floatfunc();
-    p1 = pop();
+    push(p1, $);
+    eval_nonstop($);
+    floatfunc($);
+    p1 = pop($);
 
     if (!istensor(p1) || p1.ndim != 1 || p1.dims[0] != 2)
         return;
@@ -15366,23 +15364,23 @@ function setup_trange(): void {
         return;
     }
 
-    push(p2);
-    tmin = pop_double();
+    push(p2, $);
+    tmin = pop_double($);
 
-    push(p3);
-    tmax = pop_double();
+    push(p3, $);
+    tmax = pop_double($);
 }
 
-function setup_xrange(): void {
+function setup_xrange($: ScriptVars): void {
 
     xmin = -10;
     xmax = 10;
 
     let p1: U = lookup("xrange");
-    push(p1);
-    eval_nonstop();
-    floatfunc();
-    p1 = pop();
+    push(p1, $);
+    eval_nonstop($);
+    floatfunc($);
+    p1 = pop($);
 
     if (!istensor(p1) || p1.ndim != 1 || p1.dims[0] != 2)
         return;
@@ -15393,23 +15391,23 @@ function setup_xrange(): void {
     if (!isnum(p2) || !isnum(p3))
         return;
 
-    push(p2);
-    xmin = pop_double();
+    push(p2, $);
+    xmin = pop_double($);
 
-    push(p3);
-    xmax = pop_double();
+    push(p3, $);
+    xmax = pop_double($);
 }
 
-function setup_yrange(): void {
+function setup_yrange($: ScriptVars): void {
 
     ymin = -10;
     ymax = 10;
 
     let p1: U = lookup("yrange");
-    push(p1);
-    eval_nonstop();
-    floatfunc();
-    p1 = pop();
+    push(p1, $);
+    eval_nonstop($);
+    floatfunc($);
+    p1 = pop($);
 
     if (!istensor(p1) || p1.ndim != 1 || p1.dims[0] != 2)
         return;
@@ -15420,124 +15418,127 @@ function setup_yrange(): void {
     if (!isnum(p2) || !isnum(p3))
         return;
 
-    push(p2);
-    ymin = pop_double();
+    push(p2, $);
+    ymin = pop_double($);
 
-    push(p3);
-    ymax = pop_double();
+    push(p3, $);
+    ymax = pop_double($);
 }
 
-function sort(n: number): void {
-    const t = stack.splice(stack.length - n).sort(cmp);
-    stack = stack.concat(t);
+function sort(n: number, $: ScriptVars): void {
+    const compareFn = (lhs: U, rhs: U) => cmp(lhs, rhs, $);
+    const t = $.stack.splice($.stack.length - n).sort(compareFn);
+    $.stack = $.stack.concat(t);
 }
 
-function sort_factors(h: number): void {
-    const t = stack.splice(h).sort(cmp_factors);
-    stack = stack.concat(t);
+function sort_factors(h: number, $: ScriptVars): void {
+    const compareFn = (lhs: U, rhs: U) => cmp_factors(lhs, rhs, $);
+    const t = $.stack.splice(h).sort(compareFn);
+    $.stack = $.stack.concat(t);
 }
 
-function sort_factors_provisional(h: number): void {
-    const t = stack.splice(h).sort(cmp_factors_provisional);
-    stack = stack.concat(t);
+function sort_factors_provisional(h: number, $: ScriptVars): void {
+    const compareFn = (lhs: U, rhs: U) => cmp_factors_provisional(lhs, rhs, $);
+    const t = $.stack.splice(h).sort(compareFn);
+    $.stack = $.stack.concat(t);
 }
 
-function static_negate(): void {
-    const p1 = pop();
+function static_negate($: ScriptVars): void {
+    const p1 = pop($);
 
     if (isnum(p1)) {
-        push(p1);
-        negate();
+        push(p1, $);
+        negate($);
         return;
     }
 
     if (car(p1) == symbol(MULTIPLY)) {
-        push_symbol(MULTIPLY);
+        push_symbol(MULTIPLY, $);
         if (isnum(cadr(p1))) {
-            push(cadr(p1));
-            negate();
-            push(cddr(p1));
+            push(cadr(p1), $);
+            negate($);
+            push(cddr(p1), $);
         }
         else {
-            push_integer(-1);
-            push(cdr(p1));
+            push_integer(-1, $);
+            push(cdr(p1), $);
         }
-        cons();
-        cons();
+        cons($);
+        cons($);
         return;
     }
 
-    push_symbol(MULTIPLY);
-    push_integer(-1);
-    push(p1);
-    list(3);
+    push_symbol(MULTIPLY, $);
+    push_integer(-1, $);
+    push(p1, $);
+    list(3, $);
 }
 
-function static_reciprocate(): void {
-    const p2 = pop();
-    const p1 = pop();
+function static_reciprocate($: ScriptVars): void {
+    const p2 = pop($);
+    const p1 = pop($);
 
     // save divide by zero error for runtime
 
     if (iszero(p2)) {
         if (!(isrational(p1) && isinteger1(p1)))
-            push(p1);
-        push_symbol(POWER);
-        push(p2);
-        push_integer(-1);
-        list(3);
+            push(p1, $);
+        push_symbol(POWER, $);
+        push(p2, $);
+        push_integer(-1, $);
+        list(3, $);
         return;
     }
 
     if (isnum(p1) && isnum(p2)) {
-        push(p1);
-        push(p2);
-        divide();
+        push(p1, $);
+        push(p2, $);
+        divide($);
         return;
     }
 
     if (isnum(p2)) {
         if (!(isrational(p1) && isinteger1(p1)))
-            push(p1);
-        push(p2);
-        reciprocate();
+            push(p1, $);
+        push(p2, $);
+        reciprocate($);
         return;
     }
 
     if (car(p2) == symbol(POWER) && isnum(caddr(p2))) {
         if (!(isrational(p1) && isinteger1(p1)))
-            push(p1);
-        push_symbol(POWER);
-        push(cadr(p2));
-        push(caddr(p2));
-        negate();
-        list(3);
+            push(p1, $);
+        push_symbol(POWER, $);
+        push(cadr(p2), $);
+        push(caddr(p2), $);
+        negate($);
+        list(3, $);
         return;
     }
 
     if (!(isrational(p1) && isinteger1(p1)))
-        push(p1);
+        push(p1, $);
 
-    push_symbol(POWER);
-    push(p2);
-    push_integer(-1);
-    list(3);
+    push_symbol(POWER, $);
+    push(p2, $);
+    push_integer(-1, $);
+    list(3, $);
 }
 
 function stopf(errmsg: string): never {
     throw errmsg;
 }
 
-function subtract(): void {
-    negate();
-    add();
+function subtract($: ScriptVars): void {
+    negate($);
+    add($);
 }
 
-function swap(): void {
-    const p2 = pop();
-    const p1 = pop();
-    push(p2);
-    push(p1);
+function swap($: ScriptVars): void {
+    const p2 = pop($);
+    const p1 = pop($);
+    push(p2, $);
+    push(p1, $);
 }
 
 function symbol(s: string): Sym {
@@ -15551,10 +15552,13 @@ function trace_input(): void {
     }
 }
 
-let inbuf: string;
+export class ScriptVars {
+    inbuf: string = "";
+    stack: U[] = [];
+}
+
 let outbuf: string;
 const outputs: string[] = [];
-let stack: U[];
 let frame: U[];
 let binding: { [printname: string]: U };
 let usrfunc: { [printname: string]: U };
@@ -15706,8 +15710,8 @@ const symtab: { [name: string]: Sym } = {
     "$9": create_sym_legacy(ARG9, eval_user_symbol)
 };
 
-function vector(h: number): void {
-    const n = stack.length - h;
-    const v = new Tensor([n], stack.splice(h, n));
-    push(v);
+function vector(h: number, $: ScriptVars): void {
+    const n = $.stack.length - h;
+    const v = new Tensor([n], $.stack.splice(h, n));
+    push(v, $);
 }

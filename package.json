@@ -137,6 +137,7 @@
         "typescript": "^5.3.3"
     },
     "peerDependencies": {
-        "math-expression-tree": "^0.9.11"
+        "math-expression-tree": "^0.9.11",
+        "math-expression-atoms": "^0.9.7"
     }
 }

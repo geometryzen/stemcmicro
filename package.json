@@ -125,7 +125,7 @@
         "@typescript-eslint/parser": "^6.15.0",
         "chai": "^4.3.10",
         "eslint": "^8.56.0",
-        "gh-pages": "^6.1.0",
+        "gh-pages": "^6.1.1",
         "mocha": "^10.2.0",
         "nyc": "^15.1.0",
         "release-it": "^17.0.1",
@@ -135,5 +135,8 @@
         "ts-node": "^10.9.2",
         "typedoc": "^0.25.4",
         "typescript": "^5.3.3"
+    },
+    "peerDependencies": {
+        "math-expression-tree": "^0.9.11"
     }
 }

@@ -1,3 +1,4 @@
+import { car, cdr, Cons, cons as create_cons, is_cons, is_nil, nil, U } from 'math-expression-tree';
 import { is_flt } from '../operators/flt/is_flt';
 import { is_rat } from '../operators/rat/is_rat';
 import { is_str } from '../operators/str/is_str';
@@ -10,7 +11,6 @@ import { create_rat, Rat } from '../tree/rat/Rat';
 import { Str } from '../tree/str/Str';
 import { create_sym_legacy, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, Cons, cons as create_cons, is_cons, is_nil, nil, U } from '../tree/tree';
 
 function alloc_tensor(): Tensor {
     return new Tensor([], []);

@@ -4,6 +4,7 @@ import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import { RollupOptions } from 'rollup';
 import { dts } from 'rollup-plugin-dts';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import pkg from './package.json' assert { type: 'json' };
 
 /**
@@ -51,6 +52,7 @@ const options: RollupOptions[] = [
             },
         ],
         plugins: [
+            peerDepsExternal(),
             // Allows us to consume the 'big-integer' library, which is CommonJS :(
             commonjs(),
             resolve(),

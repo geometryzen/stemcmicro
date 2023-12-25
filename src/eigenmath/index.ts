@@ -1,16 +1,5 @@
+import { BigInteger, create_rat, create_sym_legacy, Flt, is_flt, is_rat, is_str, is_sym, is_tensor, Num, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
 import { car, cdr, Cons, cons as create_cons, is_cons, is_nil, nil, U } from 'math-expression-tree';
-import { is_flt } from '../operators/flt/is_flt';
-import { is_rat } from '../operators/rat/is_rat';
-import { is_str } from '../operators/str/is_str';
-import { is_sym } from '../operators/sym/is_sym';
-import { is_tensor } from '../operators/tensor/is_tensor';
-import { Flt } from '../tree/flt/Flt';
-import { Num } from '../tree/num/Num';
-import { BigInteger } from '../tree/rat/big-integer';
-import { create_rat, Rat } from '../tree/rat/Rat';
-import { Str } from '../tree/str/Str';
-import { create_sym_legacy, Sym } from '../tree/sym/Sym';
-import { Tensor } from '../tree/tensor/Tensor';
 
 function alloc_tensor(): Tensor {
     return new Tensor([], []);
@@ -214,6 +203,7 @@ function cdddr(p: U): Cons {
 function cddr(p: U): Cons {
     return cdr(cdr(p));
 }
+
 function cmp(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
 
     if (p1 == p2)

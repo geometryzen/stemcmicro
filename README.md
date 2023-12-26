@@ -141,7 +141,6 @@ describe("versin", function () {
 * booleans
 * integrals
 * multi-integrals
-* Native, Python, and Scheme syntax
 * open for extension
 
 ## Getting Started

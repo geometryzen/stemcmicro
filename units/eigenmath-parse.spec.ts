@@ -2,7 +2,6 @@
 import { assert } from "chai";
 import { eigenmath_parse } from "../src/brite/eigenmath_parse";
 import { create_script_context } from "../src/runtime/script_engine";
-import { scheme_parse } from "../src/scheme/scheme_parse";
 import { python_parse } from "../src/typhon/python_parse";
 
 describe("eigenmath-parse", function () {
@@ -30,21 +29,6 @@ describe("eigenmath-parse", function () {
         const engine = create_script_context({});
 
         const { trees } = python_parse('foo.ts', lines.join('\n'));
-        assert.isArray(trees);
-        assert.strictEqual(trees.length, 1);
-        const tree = trees[0];
-        assert.isDefined(tree);
-        assert.strictEqual(engine.renderAsSExpr(tree), "(define f (lambda (x) x))");
-        engine.release();
-    });
-    it("(lambda (x) x)", function () {
-        const lines: string[] = [
-            `(define f (lambda (x) x))`
-        ];
-
-        const engine = create_script_context({});
-
-        const { trees } = scheme_parse('foo.ts', lines.join('\n'));
         assert.isArray(trees);
         assert.strictEqual(trees.length, 1);
         const tree = trees[0];

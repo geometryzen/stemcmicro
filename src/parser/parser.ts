@@ -1,9 +1,4 @@
 import { EigenmathParseOptions, eigenmath_parse } from "../brite/eigenmath_parse";
-import { MATH_EXP } from "../operators/exp/MATH_EXP";
-import { ISREAL, QUOTE } from "../runtime/constants";
-import { MATH_ADD, MATH_MUL, MATH_POW } from "../runtime/ns_math";
-import { SchemeParseOptions } from "../scheme/SchemeParseOptions";
-import { scheme_parse } from "../scheme/scheme_parse";
 import { U } from "../tree/tree";
 import { TsParseOptions } from "../typescript/ts_parse";
 import { PythonParseOptions } from "../typhon/PythonParseOptions";
@@ -18,21 +13,16 @@ export enum SyntaxKind {
      * Python Programming Language.
      */
     Python = 2,
-    /**
-     * Scheme Programming Language, a dialect of Lisp.
-     */
-    Scheme = 3,
 }
 
 export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
     switch (syntaxKind) {
         case SyntaxKind.Native: return "Native";
         case SyntaxKind.Python: return "Python";
-        case SyntaxKind.Scheme: return "Scheme";
     }
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Native, SyntaxKind.Python, SyntaxKind.Scheme];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Native, SyntaxKind.Python];
 
 export interface ParseOptions {
     catchExceptions?: boolean,
@@ -73,9 +63,6 @@ export function parse_script(fileName: string, sourceText: string, options?: Par
         case SyntaxKind.Native: {
             return eigenmath_parse(fileName, sourceText, eigenmath_parse_options(options));
         }
-        case SyntaxKind.Scheme: {
-            return scheme_parse(fileName, sourceText, scheme_parse_options(options));
-        }
         case SyntaxKind.Python: {
             return python_parse(fileName, sourceText, typhon_parse_options(options));
         }
@@ -102,29 +89,6 @@ function eigenmath_parse_options(options?: ParseOptions): EigenmathParseOptions 
     }
     else {
         return {};
-    }
-}
-
-function scheme_parse_options(options?: ParseOptions): SchemeParseOptions {
-    if (options) {
-        if (options.useCaretForExponentiation) {
-            throw new Error("useCaretForExponentiation is not supported by the Scheme parser");
-        }
-        return {
-            lexicon: {
-                '+': MATH_ADD,
-                '*': MATH_MUL,
-                'exp': MATH_EXP,
-                'pow': MATH_POW,
-                'quote': QUOTE,
-                'real?': ISREAL
-            },
-            explicitAssocAdd: options.explicitAssocAdd,
-            explicitAssocMul: options.explicitAssocMul,
-        };
-    }
-    else {
-        return scheme_parse_options({});
     }
 }
 

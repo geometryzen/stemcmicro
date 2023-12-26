@@ -46,9 +46,6 @@ function run(cmd, unusedContext, filename, callback) {
     }
     for (const value of values) {
         switch (executeOptions.syntaxKind) {
-            case SyntaxKind.Scheme: {
-                return ctxt.renderAsSExpr(value);
-            }
             default: {
                 return ctxt.renderAsInfix(value);
             }

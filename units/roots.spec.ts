@@ -108,7 +108,7 @@ describe("roots", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(-4*c/a+b^2/(a^2))^(1/2),-b/(2*a)+1/2*(-4*c/a+b^2/(a^2))^(1/2)]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(b^2/(a^2)-4*c/a)^(1/2),-b/(2*a)+1/2*(b^2/(a^2)-4*c/a)^(1/2)]");
         engine.release();
     });
     it("roots(a*x**2+b*x+c)", function () {
@@ -117,7 +117,7 @@ describe("roots", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: false });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(-4*c/a+b**2/(a**2))**(1/2),-b/(2*a)+1/2*(-4*c/a+b**2/(a**2))**(1/2)]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[-b/(2*a)-1/2*(b**2/(a**2)-4*c/a)**(1/2),-b/(2*a)+1/2*(b**2/(a**2)-4*c/a)**(1/2)]");
         engine.release();
     });
     it("roots(3+7*x+5*x^2+x^3)", function () {

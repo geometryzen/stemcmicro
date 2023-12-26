@@ -11,7 +11,7 @@ describe("divide", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "1/b");
         engine.release();
     });
-    xit("b/(a*b)", function () {
+    it("b/(a*b)", function () {
         const lines: string[] = [
             `b/(a*b)`
         ];

@@ -11,7 +11,7 @@ describe("simplify", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "-1/2*(1+i)*2^(1/2)");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2^(1/2)*(1+i)");
 
         engine.release();
     });

@@ -11,7 +11,7 @@ describe("subst", function () {
             useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "-3+10/9*i*3^(1/2)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "-3+10/9*3^(1/2)*i");
         engine.release();
     });
 });

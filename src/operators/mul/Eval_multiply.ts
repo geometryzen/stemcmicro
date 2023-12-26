@@ -23,6 +23,7 @@ import { is_uom } from "../uom/is_uom";
  */
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
+    // console.log($.toSExprString(expr));
     const args = expr.argList;
     const vals = args.map($.valueOf);
     if (vals.equals(args)) {

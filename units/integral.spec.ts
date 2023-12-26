@@ -49,7 +49,7 @@ describe("integral", function () {
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "-1/(a*b+x*b^2)");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1/(a*b+b^2*x)");
         engine.release();
     });
     it("1/b*1/(a+b*x)", function () {
@@ -82,7 +82,7 @@ describe("integral", function () {
             useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "-1/(a*b+x*b^2)");
+        assert.strictEqual(engine.renderAsInfix(actual), "-1/(a*b+b^2*x)");
         engine.release();
     });
 });

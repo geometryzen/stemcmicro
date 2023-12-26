@@ -7,6 +7,7 @@ import { strcmp } from "../../operators/str/str_extension";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_uom } from "../../operators/uom/is_uom";
+import { is_power } from "../../runtime/helpers";
 import { car, cdr, is_cons, is_nil, U } from "../../tree/tree";
 import { cmp_expr } from "./cmp_expr";
 import { compare_num_num } from "./compare_num_num";
@@ -15,7 +16,18 @@ import { compare_tensors } from "./compare_tensors";
 
 export class MulComparator implements ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-        // console.lg("ENTERING :", "compare *", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
+        // console.log("compare *", "lhs", $.toSExprString(lhs), "rhs", $.toSExprString(rhs));
+        // We have to treat (pow base expo) as a special case because of the ambiguity in representing a symbol.
+        // i.e. sym is the same as (pow sym expo).
+        // So we have to order power expressions according to the base.
+        if (is_power(lhs)) {
+            const base = lhs.base;
+            return this.compare(base, rhs, $);
+        }
+        if (is_power(rhs)) {
+            const base = rhs.base;
+            return this.compare(lhs, base, $);
+        }
 
         if (lhs === rhs || lhs.equals(rhs)) {
             return SIGN_EQ;

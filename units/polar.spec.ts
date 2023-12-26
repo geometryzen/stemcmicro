@@ -30,7 +30,7 @@ describe("polar", function () {
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsInfix(value), "2**(1/2)*e**(1/4*i*pi)");
-        assert.strictEqual(engine.renderAsInfix(value), "exp(1/4*i*pi)*2**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "2**(1/2)*exp(1/4*i*pi)");
         engine.release();
     });
     it("polar(3+4*i)", function () {
@@ -63,7 +63,7 @@ describe("polar", function () {
         ];
         const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "exp(i*arctan(y/x))*(x^2+y^2)^(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(x^2+y^2)^(1/2)*exp(i*arctan(y/x))");
         engine.release();
     });
     it("polar(x-i*y)", function () {
@@ -72,7 +72,7 @@ describe("polar", function () {
         ];
         const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "exp(-i*arctan(y/x))*(x^2+y^2)^(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "(x^2+y^2)^(1/2)*exp(-i*arctan(y/x))");
         engine.release();
     });
 });

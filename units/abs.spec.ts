@@ -135,7 +135,7 @@ describe("abs", function () {
             useDefinitions: true
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(value), "1/2+1/2*i*3**(1/2)");
+        assert.strictEqual(engine.renderAsInfix(value), "1/2+1/2*3**(1/2)*i");
         engine.release();
     });
     it("abs(x*y)", function () {

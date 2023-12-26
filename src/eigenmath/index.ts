@@ -5,7 +5,7 @@ function alloc_tensor(): Tensor {
     return new Tensor([], []);
 }
 
-function alloc_matrix(nrow: number, ncol: number) {
+function alloc_matrix(nrow: number, ncol: number): Tensor {
     const p = alloc_tensor();
     p.dims[0] = nrow;
     p.dims[1] = ncol;
@@ -204,7 +204,7 @@ function cddr(p: U): Cons {
     return cdr(cdr(p));
 }
 
-function cmp(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
+function cmp(p1: U, p2: U): 1 | 0 | -1 {
 
     if (p1 == p2)
         return 0;
@@ -216,7 +216,7 @@ function cmp(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
         return 1;
 
     if (isnum(p1) && isnum(p2))
-        return cmp_numbers(p1, p2, $);
+        return cmp_numbers(p1, p2);
 
     if (isnum(p1))
         return -1;
@@ -243,7 +243,7 @@ function cmp(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
         return 1;
 
     if (istensor(p1) && istensor(p2))
-        return cmp_tensors(p1, p2, $);
+        return cmp_tensors(p1, p2);
 
     if (istensor(p1))
         return -1;
@@ -252,7 +252,7 @@ function cmp(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
         return 1;
 
     while (iscons(p1) && iscons(p2)) {
-        const t = cmp(car(p1), car(p2), $);
+        const t = cmp(car(p1), car(p2));
         if (t)
             return t;
         p1 = cdr(p1);
@@ -268,7 +268,7 @@ function cmp(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
     return 0;
 }
 
-function cmp_factors(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
+function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
 
     const a = order_factor(p1);
     const b = order_factor(p2);
@@ -302,34 +302,33 @@ function cmp_factors(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
         expo2 = one;
     }
 
-    let c = cmp(base1, base2, $);
+    let c = cmp(base1, base2);
 
     if (c == 0)
-        c = cmp(expo2, expo1, $); // swapped to reverse sort order
+        c = cmp(expo2, expo1); // swapped to reverse sort order
 
     return c;
 }
 
-function cmp_factors_provisional(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
+function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
     if (car(p1) == symbol(POWER))
         p1 = cadr(p1); // p1 = base
 
     if (car(p2) == symbol(POWER))
         p2 = cadr(p2); // p2 = base
 
-    return cmp(p1, p2, $);
+    return cmp(p1, p2);
 }
 
-function cmp_numbers(p1: U, p2: U, $: ScriptVars): 1 | 0 | -1 {
+function cmp_numbers(p1: Num, p2: Num): 1 | 0 | -1 {
 
-    if (isrational(p1) && isrational(p2))
+    if (isrational(p1) && isrational(p2)) {
         return p1.compare(p2);
+    }
 
-    push(p1, $);
-    const d1 = pop_double($);
+    const d1 = assert_num_to_number(p1);
 
-    push(p2, $);
-    const d2 = pop_double($);
+    const d2 = assert_num_to_number(p2);
 
     if (d1 < d2)
         return -1;
@@ -349,7 +348,7 @@ function cmp_strings(s1: string, s2: string): 0 | 1 | -1 {
     return 0;
 }
 
-function cmp_tensors(p1: Tensor, p2: Tensor, $: ScriptVars): 1 | 0 | -1 {
+function cmp_tensors(p1: Tensor, p2: Tensor): 1 | 0 | -1 {
     const t = p1.ndim - p2.ndim;
 
     if (t)
@@ -362,7 +361,7 @@ function cmp_tensors(p1: Tensor, p2: Tensor, $: ScriptVars): 1 | 0 | -1 {
     }
 
     for (let i = 0; i < p1.nelem; i++) {
-        const t = cmp(p1.elems[i], p2.elems[i], $);
+        const t = cmp(p1.elems[i], p2.elems[i]);
         if (t)
             return t;
     }
@@ -438,7 +437,7 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
         EXPO2 = one;
     }
 
-    if (!equal(BASE1, BASE2, $))
+    if (!equal(BASE1, BASE2))
         return 0;
 
     if (isdouble(BASE2))
@@ -456,7 +455,7 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
     return 1;
 }
 
-function combine_numerical_factors(h: number, COEFF: U, $: ScriptVars): U {
+function combine_numerical_factors(h: number, COEFF: Num, $: ScriptVars): Num {
 
     let n = $.stack.length;
 
@@ -466,7 +465,7 @@ function combine_numerical_factors(h: number, COEFF: U, $: ScriptVars): U {
 
         if (isnum(p1)) {
             multiply_numbers(COEFF, p1, $);
-            COEFF = pop($);
+            COEFF = pop($) as Num;
             $.stack.splice(i, 1); // remove factor
             i--;
             n--;
@@ -748,7 +747,7 @@ function decomp_sum(F: U, X: U, $: ScriptVars): void {
 
     for (let i = 0; i < n - 2; i += 2)
         for (let j = i + 2; j < n; j += 2) {
-            if (!equal($.stack[h + i + 1], $.stack[h + j + 1], $))
+            if (!equal($.stack[h + i + 1], $.stack[h + j + 1]))
                 continue;
             push($.stack[h + i], $); // add const parts
             push($.stack[h + j], $);
@@ -2482,8 +2481,8 @@ function emit_points(draw_array: { t: number; x: number; y: number }[], $: Scrip
     }
 }
 
-function equal(p1: U, p2: U, $: ScriptVars): boolean {
-    return cmp(p1, p2, $) == 0;
+function equal(p1: U, p2: U): boolean {
+    return cmp(p1, p2) == 0;
 }
 
 function eval_abs(expr: Cons, $: ScriptVars): void {
@@ -2763,7 +2762,7 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
         }
     }
 
-    if (!equal(p1, p2, $))
+    if (!equal(p1, p2))
         return 0;
 
     add_numbers(coeff1, coeff2, $);
@@ -2806,12 +2805,12 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
 }
 
 function sort_terms(h: number, $: ScriptVars): void {
-    const compareFn = (lhs: U, rhs: U) => cmp_terms(lhs, rhs, $);
+    const compareFn = (lhs: U, rhs: U) => cmp_terms(lhs, rhs);
     const t = $.stack.splice(h).sort(compareFn);
     $.stack = $.stack.concat(t);
 }
 
-function cmp_terms(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
+function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
 
     // 1st level: imaginary terms on the right
 
@@ -2867,24 +2866,24 @@ function cmp_terms(p1: U, p2: U, $: ScriptVars): 0 | 1 | -1 {
     }
 
     if (a == 0 && b == 0)
-        return cmp_factors(p1, p2, $);
+        return cmp_factors(p1, p2);
 
     if (a == 0 && b == 1) {
-        let c = cmp_factors(p1, car(p2), $);
+        let c = cmp_factors(p1, car(p2));
         if (c == 0)
             c = -1; // lengthf(p1) < lengthf(p2)
         return c;
     }
 
     if (a == 1 && b == 0) {
-        let c = cmp_factors(car(p1), p2, $);
+        let c = cmp_factors(car(p1), p2);
         if (c == 0)
             c = 1; // lengthf(p1) > lengthf(p2)
         return c;
     }
 
     while (iscons(p1) && iscons(p2)) {
-        const c = cmp_factors(car(p1), car(p2), $);
+        const c = cmp_factors(car(p1), car(p2));
         if (c)
             return c;
         p1 = cdr(p1);
@@ -2908,7 +2907,7 @@ function simplify_terms(h: number, $: ScriptVars): number {
             push(p1, $);
             evalf($);
             const p2 = pop($);
-            if (!equal(p1, p2, $)) {
+            if (!equal(p1, p2)) {
                 $.stack[i] = p2;
                 n++;
             }
@@ -2947,11 +2946,9 @@ function add_numbers(p1: U, p2: U, $: ScriptVars): void {
         return;
     }
 
-    push(p1, $);
-    const a = pop_double($);
+    const a = assert_num_to_number(p1);
 
-    push(p2, $);
-    const b = pop_double($);
+    const b = assert_num_to_number(p2);
 
     push_double(a + b, $);
 }
@@ -3064,8 +3061,7 @@ function arccos($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         if (-1.0 <= d && d <= 1.0) {
             d = Math.acos(d);
             push_double(d, $);
@@ -3180,8 +3176,7 @@ function arccosh($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         if (d >= 1.0) {
             d = Math.acosh(d);
             push_double(d, $);
@@ -3242,8 +3237,7 @@ function arcsin($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         if (-1.0 <= d && d <= 1.0) {
             d = Math.asin(d);
             push_double(d, $);
@@ -3343,8 +3337,7 @@ function arcsinh($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.asinh(d);
         push_double(d, $);
         return;
@@ -3480,10 +3473,8 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
     }
 
     if (isnum(X) && isnum(Y) && (isdouble(X) || isdouble(Y))) {
-        push(X, $);
-        const x = pop_double($);
-        push(Y, $);
-        const y = pop_double($);
+        const x = X.toNumber();
+        const y = Y.toNumber();
         push_double(Math.atan2(y, x), $);
         return;
     }
@@ -3598,8 +3589,7 @@ function arctanh($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         if (-1.0 < d && d < 1.0) {
             d = Math.atanh(d);
             push_double(d, $);
@@ -3805,8 +3795,7 @@ function ceilingfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.ceil(d);
         push_double(d, $);
         return;
@@ -4177,8 +4166,7 @@ function cosfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.cos(d);
         push_double(d, $);
         return;
@@ -4263,8 +4251,7 @@ function cosfunc($: ScriptVars): void {
     }
 
     if (isdouble(p2)) {
-        push(p2, $);
-        let d = pop_double($);
+        let d = p2.toNumber();
         d = Math.cos(d * Math.PI);
         push_double(d, $);
         return;
@@ -4405,8 +4392,7 @@ function coshfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.cosh(d);
         push_double(d, $);
         return;
@@ -4624,7 +4610,7 @@ function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
 
     // d(x,x)?
 
-    if (equal(F, X, $)) {
+    if (equal(F, X)) {
         push_integer(1, $);
         return;
     }
@@ -4850,7 +4836,7 @@ function dd(p1: U, p2: U, $: ScriptVars): void {
         push_symbol(DERIVATIVE, $);
         push(cadr(p3), $);
 
-        if (lessp(caddr(p3), caddr(p1), $)) {
+        if (lessp(caddr(p3), caddr(p1))) {
             push(caddr(p3), $);
             list(3, $);
             push(caddr(p1), $);
@@ -5481,8 +5467,7 @@ function erffunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = erf(d);
         push_double(d, $);
         return;
@@ -5530,8 +5515,7 @@ function erfcfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = erfc(d);
         push_double(d, $);
         return;
@@ -5882,8 +5866,7 @@ function floorfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.floor(d);
         push_double(d, $);
         return;
@@ -7517,8 +7500,7 @@ function logfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        const d = pop_double($);
+        const d = p1.toNumber();
         if (d > 0.0) {
             push_double(Math.log(d), $);
             return;
@@ -7883,11 +7865,8 @@ function modfunc($: ScriptVars): void {
         return;
     }
 
-    push(p1, $);
-    const d1 = pop_double($);
-
-    push(p2, $);
-    const d2 = pop_double($);
+    const d1 = p1.toNumber();
+    const d2 = p2.toNumber();
 
     push_double(d1 % d2, $);
 }
@@ -8976,7 +8955,7 @@ function roots($: ScriptVars): void {
     // eliminate repeated roots
 
     for (let i = 0; i < n - 1; i++)
-        if (equal($.stack[k + i], $.stack[k + i + 1], $)) {
+        if (equal($.stack[k + i], $.stack[k + i + 1])) {
             for (let j = i + 1; j < n - 1; j++)
                 $.stack[k + j] = $.stack[k + j + 1];
             i--;
@@ -9970,8 +9949,7 @@ function sinfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.sin(d);
         push_double(d, $);
         return;
@@ -10059,8 +10037,7 @@ function sinfunc($: ScriptVars): void {
     }
 
     if (isdouble(p2)) {
-        push(p2, $);
-        let d = pop_double($);
+        let d = p2.toNumber();
         d = Math.sin(d * Math.PI);
         push_double(d, $);
         return;
@@ -10194,8 +10171,7 @@ function sinhfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.sinh(d);
         push_double(d, $);
         return;
@@ -10294,7 +10270,7 @@ function subst($: ScriptVars): void {
         return;
     }
 
-    if (equal(p1, p2, $)) {
+    if (equal(p1, p2)) {
         push(p3, $);
         return;
     }
@@ -10385,8 +10361,7 @@ function tanfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.tan(d);
         push_double(d, $);
         return;
@@ -10438,8 +10413,7 @@ function tanfunc($: ScriptVars): void {
     }
 
     if (isdouble(p2)) {
-        push(p2, $);
-        let d = pop_double($);
+        let d = p2.toNumber();
         d = Math.tan(d * Math.PI);
         push_double(d, $);
         return;
@@ -10551,8 +10525,7 @@ function tanhfunc($: ScriptVars): void {
     }
 
     if (isdouble(p1)) {
-        push(p1, $);
-        let d = pop_double($);
+        let d = p1.toNumber();
         d = Math.tanh(d);
         push_double(d, $);
         return;
@@ -11916,7 +11889,7 @@ function find_divisor_factor(p: U, $: ScriptVars): 0 | 1 {
  */
 function findf(p: U, q: U, $: ScriptVars): 0 | 1 {
 
-    if (equal(p, q, $))
+    if (equal(p, q))
         return 1;
 
     if (istensor(p)) {
@@ -13045,8 +13018,8 @@ function lengthf(p: U): number {
     return n;
 }
 
-function lessp(p1: U, p2: U, $: ScriptVars): boolean {
-    return cmp(p1, p2, $) < 0;
+function lessp(p1: U, p2: U): boolean {
+    return cmp(p1, p2) < 0;
 }
 
 function list(n: number, $: ScriptVars): void {
@@ -13104,22 +13077,32 @@ function multiply_noexpand($: ScriptVars): void {
     $.expanding = t;
 }
 
-function multiply_numbers(p1: U, p2: U, $: ScriptVars): void {
+/**
+ * ( -- Num)
+ * @param p1 
+ * @param p2 
+ * @param $ 
+ * @returns 
+ */
+function multiply_numbers(p1: Num, p2: Num, $: ScriptVars): void {
 
     if (isrational(p1) && isrational(p2)) {
         multiply_rationals(p1, p2, $);
         return;
     }
 
-    push(p1, $);
-    const a = pop_double($);
-
-    push(p2, $);
-    const b = pop_double($);
+    const a = p1.toNumber();
+    const b = p2.toNumber();
 
     push_double(a * b, $);
 }
 
+/**
+ * ( -- Rat)
+ * @param p1 
+ * @param p2 
+ * @param $ 
+ */
 function multiply_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
     const product = p1.mul(p2);
     push(product, $);
@@ -13595,6 +13578,15 @@ function pop($: ScriptVars): U {
         stopf("stack error");
     }
     return $.stack.pop() as U;
+}
+
+function assert_num_to_number(p: U): number | never {
+    if (isnum(p)) {
+        return p.toNumber();
+    }
+    else {
+        stopf("number expected");
+    }
 }
 
 function pop_double($: ScriptVars): number {
@@ -14308,13 +14300,10 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat, $: ScriptVars): void {
         push_bignum(1, n, bignum_int(1), $);
 }
 
-function power_double(BASE: U, EXPO: U, $: ScriptVars) {
+function power_double(BASE: Num, EXPO: Num, $: ScriptVars) {
 
-    push(BASE, $);
-    const base = pop_double($);
-
-    push(EXPO, $);
-    const expo = pop_double($);
+    const base = BASE.toNumber();
+    const expo = EXPO.toNumber();
 
     if (base > 0 || expo == Math.floor(expo)) {
         const d = Math.pow(base, expo);
@@ -14556,7 +14545,7 @@ function reciprocate($: ScriptVars): void {
     power($);
 }
 
-function reduce_radical_double(h: number, COEFF: Flt, $: ScriptVars) {
+function reduce_radical_double(h: number, COEFF: Flt, $: ScriptVars): Flt {
 
     let c = COEFF.d;
 
@@ -14584,22 +14573,22 @@ function reduce_radical_double(h: number, COEFF: Flt, $: ScriptVars) {
     }
 
     push_double(c, $);
-    const C = pop($);
+    const C = pop($) as Flt;
 
     return C;
 }
 
-function reduce_radical_factors(h: number, COEFF: U, $: ScriptVars): U {
+function reduce_radical_factors(h: number, COEFF: Num, $: ScriptVars): Num {
     if (!any_radical_factors(h, $))
         return COEFF;
 
     if (isrational(COEFF))
         return reduce_radical_rational(h, COEFF, $);
     else
-        return reduce_radical_double(h, COEFF as Flt, $);
+        return reduce_radical_double(h, COEFF, $);
 }
 
-function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars) {
+function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars): Rat {
 
     if (isplusone(COEFF) || isminusone(COEFF))
         return COEFF; // COEFF has no factors, no cancellation is possible
@@ -14786,11 +14775,8 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     if (!isnum(X) || !isnum(Y))
         return;
 
-    push(X, $);
-    let x = pop_double($);
-
-    push(Y, $);
-    let y = pop_double($);
+    let x = X.toNumber();
+    let y = Y.toNumber();
 
     if (!isFinite(x) || !isFinite(y))
         return;
@@ -15349,11 +15335,8 @@ function setup_trange($: ScriptVars): void {
         return;
     }
 
-    push(p2, $);
-    $.tmin = pop_double($);
-
-    push(p3, $);
-    $.tmax = pop_double($);
+    $.tmin = p2.toNumber();
+    $.tmax = p3.toNumber();
 }
 
 function setup_xrange($: ScriptVars): void {
@@ -15376,11 +15359,8 @@ function setup_xrange($: ScriptVars): void {
     if (!isnum(p2) || !isnum(p3))
         return;
 
-    push(p2, $);
-    $.xmin = pop_double($);
-
-    push(p3, $);
-    $.xmax = pop_double($);
+    $.xmin = p2.toNumber();
+    $.xmax = p3.toNumber();
 }
 
 function setup_yrange($: ScriptVars): void {
@@ -15403,27 +15383,24 @@ function setup_yrange($: ScriptVars): void {
     if (!isnum(p2) || !isnum(p3))
         return;
 
-    push(p2, $);
-    $.ymin = pop_double($);
-
-    push(p3, $);
-    $.ymax = pop_double($);
+    $.ymin = p2.toNumber();
+    $.ymax = p3.toNumber();
 }
 
 function sort(n: number, $: ScriptVars): void {
-    const compareFn = (lhs: U, rhs: U) => cmp(lhs, rhs, $);
+    const compareFn = (lhs: U, rhs: U) => cmp(lhs, rhs);
     const t = $.stack.splice($.stack.length - n).sort(compareFn);
     $.stack = $.stack.concat(t);
 }
 
 function sort_factors(h: number, $: ScriptVars): void {
-    const compareFn = (lhs: U, rhs: U) => cmp_factors(lhs, rhs, $);
+    const compareFn = (lhs: U, rhs: U) => cmp_factors(lhs, rhs);
     const t = $.stack.splice(h).sort(compareFn);
     $.stack = $.stack.concat(t);
 }
 
 function sort_factors_provisional(h: number, $: ScriptVars): void {
-    const compareFn = (lhs: U, rhs: U) => cmp_factors_provisional(lhs, rhs, $);
+    const compareFn = (lhs: U, rhs: U) => cmp_factors_provisional(lhs, rhs);
     const t = $.stack.splice(h).sort(compareFn);
     $.stack = $.stack.concat(t);
 }

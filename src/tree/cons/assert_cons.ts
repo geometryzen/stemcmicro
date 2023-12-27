@@ -1,5 +1,5 @@
+import { Cons, is_cons, U } from "math-expression-tree";
 import { SystemError } from "../../runtime/SystemError";
-import { Cons, is_cons, U } from "../tree";
 
 export function assert_cons(expr: U): Cons {
     if (is_cons(expr)) {

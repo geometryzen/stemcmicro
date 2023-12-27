@@ -1,5 +1,5 @@
-import { Atom } from "../atom/Atom";
-import { U } from "../tree";
+import { Atom } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 
 export class Hyp extends Atom<'Hyp'> {
     constructor(public readonly printname: string, pos?: number, end?: number) {

@@ -1,5 +1,4 @@
-import { Flt } from "../flt/Flt";
-import { Rat } from "../rat/Rat";
+import { Flt, Rat } from "math-expression-atoms";
 
 /**
  * The Num type is the union of Flt and Rat (and maybe Int in future).

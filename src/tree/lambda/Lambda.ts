@@ -1,6 +1,6 @@
+import { Atom } from "math-expression-atoms";
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, LambdaExpr } from "../../env/ExtensionEnv";
-import { Atom } from "../atom/Atom";
-import { Cons, U } from "../tree";
 
 export class Lambda extends Atom<'Lambda'> {
     readonly #hash: string;

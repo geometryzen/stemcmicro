@@ -1,5 +1,4 @@
-import { Atom } from "../atom/Atom";
-import { U } from "../tree";
+import { Flt } from 'math-expression-atoms';
 
 // TODO: Use the cache to intern common Flt values.
 const cache: Flt[] = [];
@@ -30,88 +29,7 @@ export function create_flt(value: number, pos?: number, end?: number): Flt {
     return new Flt(value, pos, end);
 }
 
-export class Flt extends Atom<'Flt'> {
-    /**
-     * Use the factory method instead. This may not exist in future.
-     */
-    constructor(public readonly d: number, pos?: number, end?: number) {
-        super('Flt', pos, end);
-    }
-    abs(): Flt {
-        return this.d >= 0 ? this : this.neg();
-    }
-    add(rhs: Flt): Flt {
-        return create_flt(this.d + rhs.d);
-    }
-    compare(other: Flt): 1 | -1 | 0 {
-        if (this.d > other.d) {
-            return 1;
-        }
-        if (this.d < other.d) {
-            return -1;
-        }
-        return 0;
-    }
-    equals(other: U): boolean {
-        if (this === other) {
-            return true;
-        }
-        if (other instanceof Flt) {
-            return this.equalsFlt(other);
-        }
-        else {
-            return false;
-        }
-    }
-    equalsFlt(other: Flt): boolean {
-        return this.d === other.d;
-    }
-    inv(): Flt {
-        return new Flt(1 / this.d, this.pos, this.end);
-    }
-    isInteger(): boolean {
-        return this.d === Math.round(this.d);
-    }
-    /**
-     * Returns true if this number is less than zero.
-     */
-    isNegative(): boolean {
-        return this.d < 0;
-    }
-    isMinusOne(): boolean {
-        return this.d === -1;
-    }
-    isOne(): boolean {
-        return this.d === 1;
-    }
-    isPositive(): boolean {
-        return this.d > 0;
-    }
-    isZero(): boolean {
-        return this.d === 0;
-    }
-    mul(rhs: Flt): Flt {
-        return create_flt(this.d * rhs.d);
-    }
-    neg(): Flt {
-        return create_flt(-this.d);
-    }
-    sub(rhs: Flt): Flt {
-        return create_flt(this.d - rhs.d);
-    }
-    toInfixString(): string {
-        return `${this.d}`;
-    }
-    toListString(): string {
-        return `${this.d}`;
-    }
-    toNumber(): number {
-        return this.d;
-    }
-    toString(): string {
-        return `${this.name}(${this.d})`;
-    }
-}
+export { Flt };
 
 export const zeroAsFlt = new Flt(0.0);
 export const oneAsFlt = new Flt(1.0);

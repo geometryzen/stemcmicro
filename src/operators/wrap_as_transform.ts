@@ -1,5 +1,5 @@
+import { U } from "math-expression-tree";
 import { TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../env/ExtensionEnv";
-import { U } from "../tree/tree";
 
 /**
  * A convenience function.

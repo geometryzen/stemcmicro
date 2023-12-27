@@ -1,11 +1,10 @@
 
+import { is_sym, Sym } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { is_num } from "../operators/num/is_num";
-import { is_sym } from "../operators/sym/is_sym";
 import { is_power } from "../runtime/helpers";
-import { Sym } from "../tree/sym/Sym";
-import { U } from "../tree/tree";
 
 const E = native_sym(Native.E);
 

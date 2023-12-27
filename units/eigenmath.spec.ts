@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars } from "../src/eigenmath/index";
+import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from "../src/eigenmath/index";
 import { Cons, U } from "../src/tree/tree";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,8 +34,59 @@ class TestErrorHandler implements ScriptErrorHandler {
 }
 
 describe("eigenmath", function () {
-    // "stack error" if run while running other tests?
     it("A", function () {
+        const lines: string[] = [
+            `x`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value), "x");
+    });
+    it("B", function () {
+        const lines: string[] = [
+            `x^y`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value, { useCaretForExponentiation: true }), "x^y");
+    });
+    it("C", function () {
+        const lines: string[] = [
+            `x^y`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value, { useCaretForExponentiation: false }), "x**y");
+    });
+    it("D", function () {
+        const lines: string[] = [
+            `x^y`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_sexpr(value), "(^ x y)");
+    });
+    it("E", function () {
         const lines: string[] = [
             `trace=0`,
             `f=sin(x)/x`,
@@ -50,8 +101,10 @@ describe("eigenmath", function () {
         executeScript(scriptText, contentHandler, errorHandler);
         const values = contentHandler.values;
         assert.strictEqual(values.length, 5);
-        // The output currently contains svg...
-        // const value = values[0];
-        // assert.strictEqual(value, "?");
+        assert.strictEqual(to_infix(values[0]), " ? ");
+        assert.strictEqual(to_infix(values[1]), " ? ");
+        assert.strictEqual(to_infix(values[2]), "sin(x) / x");
+        assert.strictEqual(to_infix(values[3]), " ? ");
+        assert.strictEqual(to_infix(values[4]), " ? ");
     });
 });

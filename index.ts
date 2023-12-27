@@ -1,5 +1,5 @@
 export { create_tensor } from './src/brite/create_tensor';
-export { executeScript, PrintScriptContentHandler, PrintScriptErrorHandler, ScriptContentHandler, ScriptErrorHandler, ScriptVars } from './src/eigenmath/index';
+export { executeScript, InfixOptions, PrintScriptContentHandler, PrintScriptErrorHandler, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from './src/eigenmath/index';
 export { EnvConfig } from './src/env/EnvConfig';
 export {
     CompareFn,

@@ -1,5 +1,5 @@
-import { Sym } from "../../tree/sym/Sym";
-import { items_to_cons, U } from "../../tree/tree";
+import { Sym } from "math-expression-atoms";
+import { items_to_cons, U } from "math-expression-tree";
 import { BCons } from "./BCons";
 
 /**

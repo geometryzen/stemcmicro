@@ -1,4 +1,4 @@
-import { create_sym, Sym } from "../tree/sym/Sym";
+import { create_sym, Sym } from "math-expression-atoms";
 import { Native } from "./Native";
 
 const cache: Map<Native, Sym> = new Map();

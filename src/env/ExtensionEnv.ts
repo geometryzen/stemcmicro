@@ -1,8 +1,6 @@
+import { Rat, Sym, Tensor } from "math-expression-atoms";
+import { Cons, U } from "math-expression-tree";
 import { Native } from "../native/Native";
-import { Rat } from "../tree/rat/Rat";
-import { Sym } from "../tree/sym/Sym";
-import { Tensor } from "../tree/tensor/Tensor";
-import { Cons, U } from "../tree/tree";
 import { EnvConfig } from "./EnvConfig";
 
 export type Sign = -1 | 0 | 1;

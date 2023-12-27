@@ -1,6 +1,5 @@
-import { is_sym } from "../operators/sym/is_sym";
-import { Sym } from "../tree/sym/Sym";
-import { Cons } from "../tree/tree";
+import { is_sym, Sym } from "math-expression-atoms";
+import { Cons } from "math-expression-tree";
 
 export function is_cons_opr_eq_sym(expr: Cons, name: Sym): boolean {
     const opr = expr.car;

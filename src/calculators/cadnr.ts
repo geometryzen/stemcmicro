@@ -1,4 +1,4 @@
-import { Cons, is_cons, U } from "../tree/tree";
+import { Cons, is_cons, U } from "math-expression-tree";
 
 /**
  * Extracts the operand at the specified zero-based position, where expr = (op0 op1 op2 ...).

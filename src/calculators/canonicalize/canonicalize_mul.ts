@@ -1,6 +1,6 @@
+import { one } from "math-expression-atoms";
+import { Cons, is_nil, U } from "math-expression-tree";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
-import { one } from "../../tree/rat/Rat";
-import { Cons, is_nil, U } from "../../tree/tree";
 
 /**
  * Converts 0-ary and 1-ary multiplicative expressions to canonical form.

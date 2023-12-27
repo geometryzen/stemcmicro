@@ -1,4 +1,4 @@
-import { cons, nil, U } from "../tree/tree";
+import { cons, nil, U } from "math-expression-tree";
 import { Stack } from "./Stack";
 
 /**

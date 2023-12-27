@@ -1,12 +1,12 @@
+import { is_sym } from "math-expression-atoms";
+import { is_cons, items_to_cons, U } from "math-expression-tree";
 import { cadnr } from "../../calculators/cadnr";
 import { ExtensionEnv, Sign } from "../../env/ExtensionEnv";
 import { render_as_infix } from "../../print/render_as_infix";
 import { render_as_latex } from "../../print/render_as_latex";
 import { render_as_sexpr } from "../../print/render_as_sexpr";
 import { SystemError } from "../../runtime/SystemError";
-import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { subst } from "../subst/subst";
-import { is_sym } from "../sym/is_sym";
 
 /**
  * Provides a base implementation of an operator.

@@ -1,7 +1,6 @@
+import { is_sym, Sym } from "math-expression-atoms";
+import { Cons, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
-import { is_sym } from "../sym/is_sym";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 
 export abstract class Function0 extends FunctionVarArgs {

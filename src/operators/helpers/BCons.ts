@@ -1,4 +1,4 @@
-import { Cons, U } from "../../tree/tree";
+import { Cons, U } from "math-expression-tree";
 import { UCons } from "./UCons";
 
 export interface BCons<O extends U, L extends U, R extends U> extends Cons {

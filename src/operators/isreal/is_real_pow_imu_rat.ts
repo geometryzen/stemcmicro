@@ -1,15 +1,14 @@
+import { assert_rat, is_rat } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { booF, booT } from "../../tree/boo/Boo";
-import { assert_rat } from "../../tree/rat/assert_rat";
 import { four } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
+import { CompositeOperator } from "../CompositeOperator";
 import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
-import { is_rat } from "../rat/is_rat";
-import { CompositeOperator } from "../CompositeOperator";
 
 const POW = native_sym(Native.pow);
 const IS_REAL = native_sym(Native.isreal);

@@ -107,4 +107,30 @@ describe("eigenmath", function () {
         assert.strictEqual(to_infix(values[3]), " ? ");
         assert.strictEqual(to_infix(values[4]), " ? ");
     });
+    it("F", function () {
+        const lines: string[] = [
+            `(-1,1)`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value), "[-1,1]");
+    });
+    it("G", function () {
+        const lines: string[] = [
+            `(-1,1)`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value, { useParenForTensors: true }), "(-1,1)");
+    });
 });

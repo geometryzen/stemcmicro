@@ -3031,8 +3031,13 @@ function eval_and(p1: Cons, $: ScriptVars): void {
     push_integer(1, $);
 }
 
-function eval_input(input: U, $: ScriptVars): U {
-    push(input, $);
+/**
+ * Evaluates the given exprression in the specified context and returns the result.
+ * @param expression The expression to be evaluated.
+ * @param $ The expression context.
+ */
+function evaluate_expression(expression: U, $: ScriptVars): U {
+    push(expression, $);
     evalf($);
     return pop($);
 }
@@ -9422,17 +9427,22 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
     }
 }
 
-function eval_run(p1: U, $: ScriptVars): void {
+/**
+ * run("https://...")
+ * @param expr 
+ * @param $ 
+ */
+function eval_run(expr: Cons, $: ScriptVars): void {
 
-    push(cadr(p1), $);
+    push(cadr(expr), $);
     evalf($);
-    p1 = pop($);
+    const url = pop($);
 
-    if (!isstring(p1))
+    if (!isstring(url))
         stopf("run: string expected");
 
     const f = new XMLHttpRequest();
-    f.open("GET", p1.str, false);
+    f.open("GET", url.str, false);
     f.onerror = function () {
         stopf("run: network error");
     };
@@ -9457,7 +9467,7 @@ function eval_run(p1: U, $: ScriptVars): void {
             break; // end of input
 
         const input = pop($);
-        const result = eval_input(input, $);
+        const result = evaluate_expression(input, $);
         print_result_and_input(result, input, $);
         if (!is_nil(result)) {
             set_symbol(symbol(LAST), result, nil, $);
@@ -12169,15 +12179,18 @@ function infixform_subexpr(p: U, config: InfixConfig, outbuf: string[]): void {
 
 export interface InfixOptions {
     useCaretForExponentiation?: boolean,
+    useParenForTensors?: boolean;
 }
 
 interface InfixConfig {
     useCaretForExponentiation: boolean,
+    useParenForTensors: boolean;
 }
 
 function infix_config_from_options(options: InfixOptions): InfixConfig {
     const config: InfixConfig = {
-        useCaretForExponentiation: options.useCaretForExponentiation ? true : false
+        useCaretForExponentiation: options.useCaretForExponentiation ? true : false,
+        useParenForTensors: options.useParenForTensors ? true : false
     };
     return config;
 }
@@ -12308,7 +12321,12 @@ function infixform_denominators(p: U, config: InfixConfig, outbuf: string[]): vo
         }
         else {
             infixform_base(cadr(q), config, outbuf);
-            infixform_write("^", config, outbuf);
+            if (config.useCaretForExponentiation) {
+                infixform_write("^", config, outbuf);
+            }
+            else {
+                infixform_write("**", config, outbuf);
+            }
             infixform_numeric_exponent(caddr(q) as Num, config, outbuf); // sign is not emitted
         }
     }
@@ -12485,7 +12503,12 @@ function infixform_reciprocal(p: U, config: InfixConfig, outbuf: string[]): void
     }
     else {
         infixform_base(cadr(p), config, outbuf);
-        infixform_write("^", config, outbuf);
+        if (config.useCaretForExponentiation) {
+            infixform_write("^", config, outbuf);
+        }
+        else {
+            infixform_write("**", config, outbuf);
+        }
         infixform_numeric_exponent(caddr(p) as Num, config, outbuf); // sign is not emitted
     }
 }
@@ -12648,10 +12671,16 @@ function infixform_tensor_nib(p: Tensor, d: number, k: number, config: InfixConf
 
     let n = p.ndim;
 
-    for (let i = d + 1; i < n; i++)
+    for (let i = d + 1; i < n; i++) {
         span *= p.dims[i];
+    }
 
-    infixform_write("(", config, outbuf);
+    if (config.useParenForTensors) {
+        infixform_write("(", config, outbuf);
+    }
+    else {
+        infixform_write("[", config, outbuf);
+    }
 
     n = p.dims[d];
 
@@ -12665,7 +12694,12 @@ function infixform_tensor_nib(p: Tensor, d: number, k: number, config: InfixConf
         k += span;
     }
 
-    infixform_write(")", config, outbuf);
+    if (config.useParenForTensors) {
+        infixform_write(")", config, outbuf);
+    }
+    else {
+        infixform_write("]", config, outbuf);
+    }
 }
 
 function infixform_write(s: string, config: InfixConfig, outbuf: string[]): void {
@@ -14747,6 +14781,40 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
     }
 }
 
+export function parseScript(scriptText: string, errorHandler: ScriptErrorHandler): U[] {
+    const exprs: U[] = [];
+    const $ = new ScriptVars();
+    init($);
+    try {
+        $.inbuf = scriptText;
+
+        initscript($);
+
+        let k = 0;
+
+        for (; ;) {
+
+            k = scan_inbuf(k, $);
+
+            if (k == 0) {
+                break; // end of input
+            }
+
+            const input = pop($);
+            exprs.push(input);
+        }
+    }
+    catch (errmsg) {
+        if ((errmsg as string).length > 0) {
+            if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] == '\n') {
+                $.trace2--;
+            }
+            errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
+        }
+    }
+    return exprs;
+}
+
 /**
  * 
  * @param scriptText 
@@ -14773,7 +14841,7 @@ export function executeScript(scriptText: string, contentHandler: ScriptContentH
             }
 
             const input = pop($);
-            const result = eval_input(input, $);
+            const result = evaluate_expression(input, $);
             contentHandler.output(result, input, $);
             if (!is_nil(result)) {
                 set_symbol(symbol(LAST), result, nil, $);

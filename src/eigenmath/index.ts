@@ -7501,22 +7501,23 @@ function integral_lookup(h: number, F: U, $: ScriptVars): void {
 
     const t = integral_classify(F);
 
-    if ((t & 1) && integral_search(h, F, integral_tab_exp, integral_tab_exp.length, $))
+    if ((t & 1) && integral_search(h, F, integral_tab_exp, integral_tab_exp.length, $, { useCaretForExponentiation: true, useParenForTensors: true }))
         return;
 
-    if ((t & 2) && integral_search(h, F, integral_tab_log, integral_tab_log.length, $))
+    if ((t & 2) && integral_search(h, F, integral_tab_log, integral_tab_log.length, $, { useCaretForExponentiation: true, useParenForTensors: true }))
         return;
 
-    if ((t & 4) && integral_search(h, F, integral_tab_trig, integral_tab_trig.length, $))
+    if ((t & 4) && integral_search(h, F, integral_tab_trig, integral_tab_trig.length, $, { useCaretForExponentiation: true, useParenForTensors: true }))
         return;
 
     if (car(F) == symbol(POWER)) {
-        if (integral_search(h, F, integral_tab_power, integral_tab_power.length, $))
+        if (integral_search(h, F, integral_tab_power, integral_tab_power.length, $, { useCaretForExponentiation: true, useParenForTensors: true }))
             return;
     }
     else {
-        if (integral_search(h, F, integral_tab, integral_tab.length, $))
+        if (integral_search(h, F, integral_tab, integral_tab.length, $, { useCaretForExponentiation: true, useParenForTensors: true })) {
             return;
+        }
     }
 
     stopf("integral: no solution found");
@@ -7545,17 +7546,27 @@ function integral_classify(p: U): number {
     return 0;
 }
 
-function integral_search(h: number, F: U, table: string[], n: number, $: ScriptVars): 0 | 1 {
+/**
+ * 
+ * @param h 
+ * @param F 
+ * @param table 
+ * @param n 
+ * @param $ 
+ * @param config A configuration which is appropriate for the table
+ * @returns 
+ */
+function integral_search(h: number, F: U, table: string[], n: number, $: ScriptVars, config: ParseConfig): 0 | 1 {
     let i: number;
     let C: U;
     let I: U;
 
     for (i = 0; i < n; i += 3) {
 
-        scan1(table[i + 0], $); // integrand
+        scan1(table[i + 0], $, config); // integrand
         I = pop($);
 
-        scan1(table[i + 2], $); // condition
+        scan1(table[i + 2], $, config); // condition
         C = pop($);
 
         if (integral_search_nib(h, F, I, C, $))
@@ -7567,7 +7578,7 @@ function integral_search(h: number, F: U, table: string[], n: number, $: ScriptV
 
     $.stack.splice(h); // pop all
 
-    scan1(table[i + 1], $); // answer
+    scan1(table[i + 1], $, config); // answer
     evalf($);
 
     return 1;
@@ -9666,7 +9677,10 @@ function eval_run(expr: Cons, $: ScriptVars): void {
 
     for (; ;) {
 
-        k = scan_inbuf(k, $);
+        // This would have to come from an argument to run...
+        const config: ParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
+
+        k = scan_inbuf(k, $, config);
 
         if (k == 0)
             break; // end of input
@@ -12152,9 +12166,9 @@ function findf(p: U, q: U, $: ScriptVars): 0 | 1 {
     return 0;
 }
 
-function flatten_factors(h: number, $: ScriptVars): void {
-    const n = $.stack.length;
-    for (let i = h; i < n; i++) {
+function flatten_factors(start: number, $: ScriptVars): void {
+    const end = $.stack.length;
+    for (let i = start; i < end; i++) {
         let p1 = $.stack[i];
         if (car(p1) == symbol(MULTIPLY)) {
             p1 = cdr(p1);
@@ -12993,10 +13007,12 @@ const init_script = [
 ];
 
 function initscript($: ScriptVars): void {
+    // The configuration should match the syntax in the initialization script.
+    const config: ParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
     const n = init_script.length;
 
     for (let i = 0; i < n; i++) {
-        scan(init_script[i], 0, $);
+        scan(init_script[i], 0, $, config);
         evalf($);
         pop($);
     }
@@ -13415,13 +13431,13 @@ function multiply_numbers(p1: Num, p2: Num, $: ScriptVars): void {
 
 /**
  * ( -- Rat)
- * @param p1 
- * @param p2 
+ * @param lhs 
+ * @param rhs 
  * @param $ 
  */
-function multiply_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
-    const product = p1.mul(p2);
-    push(product, $);
+function multiply_rationals(lhs: Rat, rhs: Rat, $: ScriptVars): void {
+    const x: Rat = lhs.mul(rhs);
+    push(x, $);
 }
 
 function multiply_scalar_factors(h: number, $: ScriptVars): void {
@@ -15034,7 +15050,7 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
     }
 }
 
-export function parseScript(scriptText: string, errorHandler: ScriptErrorHandler): U[] {
+export function parseScript(scriptText: string, config: ParseConfig, errorHandler: ScriptErrorHandler): U[] {
     const exprs: U[] = [];
     const $ = new ScriptVars();
     init($);
@@ -15047,7 +15063,7 @@ export function parseScript(scriptText: string, errorHandler: ScriptErrorHandler
 
         for (; ;) {
 
-            k = scan_inbuf(k, $);
+            k = scan_inbuf(k, $, config);
 
             if (k == 0) {
                 break; // end of input
@@ -15068,13 +15084,22 @@ export function parseScript(scriptText: string, errorHandler: ScriptErrorHandler
     return exprs;
 }
 
+function parse_config_from_options(options: Partial<ParseConfig>): ParseConfig {
+    const config: ParseConfig = {
+        useCaretForExponentiation: options.useCaretForExponentiation ? true : false,
+        useParenForTensors: options.useParenForTensors ? true : false
+    };
+    return config;
+}
+
 /**
  * 
  * @param scriptText 
  * @param contentHandler 
  * @param errorHandler 
  */
-export function executeScript(scriptText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler): void {
+export function executeScript(scriptText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<ParseConfig> = {}): void {
+    const config = parse_config_from_options(options);
     const $ = new ScriptVars();
     init($);
     contentHandler.begin($);
@@ -15087,7 +15112,7 @@ export function executeScript(scriptText: string, contentHandler: ScriptContentH
 
         for (; ;) {
 
-            k = scan_inbuf(k, $);
+            k = scan_inbuf(k, $, config);
 
             if (k == 0) {
                 break; // end of input
@@ -15166,7 +15191,8 @@ const T_STRING = 1006;
 const T_GTEQ = 1007;
 const T_LTEQ = 1008;
 const T_EQ = 1009;
-const T_END = 1010;
+const T_EXPONENTIATION = 1010;
+const T_END = 1011;
 
 let scan_mode: 0 | 1;
 let instring: string;
@@ -15176,27 +15202,27 @@ let token: number | string;
 let token_index: number;
 let token_buf: string;
 
-function scan(s: string, k: number, $: ScriptVars) {
+function scan(s: string, k: number, $: ScriptVars, config: ParseConfig) {
     scan_mode = 0;
-    return scan_nib(s, k, $);
+    return scan_nib(s, k, $, config);
 }
 
-function scan1(s: string, $: ScriptVars): number {
+function scan1(s: string, $: ScriptVars, config: ParseConfig): number {
     scan_mode = 1; // mode for table of integrals
-    return scan_nib(s, 0, $);
+    return scan_nib(s, 0, $, config);
 }
 
-function scan_nib(s: string, k: number, $: ScriptVars): number {
+function scan_nib(s: string, k: number, $: ScriptVars, config: ParseConfig): number {
     instring = s;
     scan_index = k;
     scan_level = 0;
 
-    get_token_skip_newlines($);
+    get_token_skip_newlines($, config);
 
     if (token == T_END)
         return 0;
 
-    scan_stmt($);
+    scan_stmt($, config);
 
     if (token != T_NEWLINE && token != T_END)
         scan_error("expected newline", $);
@@ -15204,19 +15230,19 @@ function scan_nib(s: string, k: number, $: ScriptVars): number {
     return scan_index;
 }
 
-function scan_stmt($: ScriptVars) {
-    scan_comparison($);
+function scan_stmt($: ScriptVars, config: ParseConfig) {
+    scan_comparison($, config);
     if (token == "=") {
-        get_token_skip_newlines($); // get token after =
+        get_token_skip_newlines($, config); // get token after =
         push_symbol(SETQ, $);
         swap($);
-        scan_comparison($);
+        scan_comparison($, config);
         list(3, $);
     }
 }
 
-function scan_comparison($: ScriptVars) {
-    scan_expression($);
+function scan_comparison($: ScriptVars, config: ParseConfig) {
+    scan_expression($, config);
     switch (token) {
         case T_EQ:
             push_symbol(TESTEQ, $); // ==
@@ -15237,23 +15263,23 @@ function scan_comparison($: ScriptVars) {
             return;
     }
     swap($);
-    get_token_skip_newlines($); // get token after rel op
-    scan_expression($);
+    get_token_skip_newlines($, config); // get token after rel op
+    scan_expression($, config);
     list(3, $);
 }
 
-function scan_expression($: ScriptVars): void {
+function scan_expression($: ScriptVars, config: ParseConfig): void {
     const h = $.stack.length;
     let t = token;
     if (token == "+" || token == "-")
-        get_token_skip_newlines($);
-    scan_term($);
+        get_token_skip_newlines($, config);
+    scan_term($, config);
     if (t == "-")
         static_negate($);
     while (token == "+" || token == "-") {
         t = token;
-        get_token_skip_newlines($); // get token after + or -
-        scan_term($);
+        get_token_skip_newlines($, config); // get token after + or -
+        scan_term($, config);
         if (t == "-")
             static_negate($);
     }
@@ -15265,19 +15291,20 @@ function scan_expression($: ScriptVars): void {
     }
 }
 
-function scan_term($: ScriptVars): void {
+function scan_term($: ScriptVars, config: ParseConfig): void {
     const h = $.stack.length;
 
-    scan_power($);
+    scan_power($, config);
 
-    while (scan_factor_pending()) {
+    while (scan_factor_pending(config)) {
 
         const t = token;
 
-        if (token == "*" || token == "/")
-            get_token_skip_newlines($);
+        if (token == "*" || token == "/") {
+            get_token_skip_newlines($, config);
+        }
 
-        scan_power($);
+        scan_power($, config);
 
         if (t == "/") {
             static_reciprocate($);
@@ -15292,7 +15319,17 @@ function scan_term($: ScriptVars): void {
     }
 }
 
-function scan_factor_pending(): 0 | 1 {
+function scan_factor_pending(config: ParseConfig): boolean {
+    if (config.useParenForTensors) {
+        if (token == "(") {
+            return true;
+        }
+    }
+    else {
+        if (token == "[") {
+            return true;
+        }
+    }
     switch (token) {
         case "*":
         case "/":
@@ -15302,65 +15339,74 @@ function scan_factor_pending(): 0 | 1 {
         case T_INTEGER:
         case T_DOUBLE:
         case T_STRING:
-            return 1;
+            return true;
         default:
             break;
     }
-    return 0;
+    return false;
 }
 
-function scan_power($: ScriptVars) {
-    scan_factor($);
+function scan_power($: ScriptVars, config: ParseConfig) {
+    scan_factor($, config);
 
-    if (token == "^") {
-
-        get_token_skip_newlines($);
-
-        push_symbol(POWER, $);
-        swap($);
-        scan_power($);
-        list(3, $);
+    if (config.useCaretForExponentiation) {
+        if (token == "^") {
+            get_token_skip_newlines($, config);
+            push_symbol(POWER, $);
+            swap($);
+            scan_power($, config);
+            list(3, $);
+        }
+    }
+    else {
+        if (token == T_EXPONENTIATION) {
+            get_token_skip_newlines($, config);
+            push_symbol(POWER, $);
+            swap($);
+            scan_power($, config);
+            list(3, $);
+        }
     }
 }
 
-function scan_factor($: ScriptVars): void {
+function scan_factor($: ScriptVars, config: ParseConfig): void {
 
     const h = $.stack.length;
 
     switch (token) {
-
+        // We should really be checking config.useParenForTensors here
         case "(":
-            scan_subexpr($);
+        case "[":
+            scan_subexpr($, config);
             break;
 
         case T_SYMBOL:
-            scan_symbol($);
+            scan_symbol($, config);
             break;
 
         case T_FUNCTION:
-            scan_function_call($);
+            scan_function_call($, config);
             break;
 
         case T_INTEGER: {
             const a = bignum_atoi(token_buf);
             const b = bignum_int(1);
             push_bignum(1, a, b, $);
-            get_token($);
+            get_token($, config);
             break;
         }
         case T_DOUBLE: {
             const d = parseFloat(token_buf);
             push_double(d, $);
-            get_token($);
+            get_token($, config);
             break;
         }
         case T_STRING:
-            scan_string($);
+            scan_string($, config);
             break;
 
         default:
             scan_error("expected operand", $);
-            break;
     }
 
     // index
@@ -15369,15 +15415,15 @@ function scan_factor($: ScriptVars): void {
 
         scan_level++;
 
-        get_token($); // get token after [
+        get_token($, config); // get token after [
         push_symbol(INDEX, $);
         swap($);
 
-        scan_expression($);
+        scan_expression($, config);
 
         while (token as string == ",") {
-            get_token($); // get token after ,
-            scan_expression($);
+            get_token($, config); // get token after ,
+            scan_expression($, config);
         }
 
         if (token as string != "]")
@@ -15385,20 +15431,20 @@ function scan_factor($: ScriptVars): void {
 
         scan_level--;
 
-        get_token($); // get token after ]
+        get_token($, config); // get token after ]
 
         list($.stack.length - h, $);
     }
 
     while ((token as string) == "!") {
-        get_token($); // get token after !
+        get_token($, config); // get token after !
         push_symbol(FACTORIAL, $);
         swap($);
         list(2, $);
     }
 }
 
-function scan_symbol($: ScriptVars): void {
+function scan_symbol($: ScriptVars, config: ParseConfig): void {
     if (scan_mode == 1 && token_buf.length == 1) {
         switch (token_buf[0]) {
             case "a":
@@ -15418,78 +15464,91 @@ function scan_symbol($: ScriptVars): void {
     else {
         push(lookup(token_buf), $);
     }
-    get_token($);
+    get_token($, config);
 }
 
-function scan_string($: ScriptVars): void {
+function scan_string($: ScriptVars, config: ParseConfig): void {
     push_string(token_buf, $);
-    get_token($);
+    get_token($, config);
 }
 
-function scan_function_call($: ScriptVars): void {
+function scan_function_call($: ScriptVars, config: ParseConfig): void {
     const h = $.stack.length;
     scan_level++;
     push(lookup(token_buf), $); // push function name
-    get_token($); // get token after function name
-    get_token($); // get token after (
+    get_token($, config); // get token after function name
+    get_token($, config); // get token after (
     if (token == ")") {
         scan_level--;
-        get_token($); // get token after )
+        get_token($, config); // get token after )
         list(1, $); // function call with no args
         return;
     }
-    scan_stmt($);
+    scan_stmt($, config);
     while (token == ",") {
-        get_token($); // get token after ,
-        scan_stmt($);
+        get_token($, config); // get token after ,
+        scan_stmt($, config);
     }
     if (token != ")")
         scan_error("expected )", $);
     scan_level--;
-    get_token($); // get token after )
+    get_token($, config); // get token after )
     list($.stack.length - h, $);
 }
 
-function scan_subexpr($: ScriptVars): void {
+function scan_subexpr($: ScriptVars, config: ParseConfig): void {
     const h = $.stack.length;
 
     scan_level++;
 
-    get_token($); // get token after (
+    get_token($, config); // get token after "(" or "["
 
-    scan_stmt($);
+    scan_stmt($, config);
 
     while (token == ",") {
-        get_token($); // get token after ,
-        scan_stmt($);
+        get_token($, config); // get token after ,
+        scan_stmt($, config);
     }
 
-    if (token != ")")
-        scan_error("expected )", $);
+    if (config.useParenForTensors) {
+        if (token != ")") {
+            scan_error("expected )", $);
+        }
+    }
+    else {
+        if (token != "]") {
+            scan_error("expected ]", $);
+        }
+    }
 
     scan_level--;
 
-    get_token($); // get token after )
+    get_token($, config); // get token after ")" or "]""
 
     if ($.stack.length - h > 1)
         vector(h, $);
 }
 
-function get_token_skip_newlines($: ScriptVars): void {
+function get_token_skip_newlines($: ScriptVars, config: ParseConfig): void {
     scan_level++;
-    get_token($);
+    get_token($, config);
     scan_level--;
 }
 
-function get_token($: ScriptVars): void {
-    get_token_nib($);
+function get_token($: ScriptVars, config: ParseConfig): void {
+    get_token_nib($, config);
 
     if (scan_level)
         while (token == T_NEWLINE)
-            get_token_nib($); // skip over newlines
+            get_token_nib($, config); // skip over newlines
 }
 
-function get_token_nib($: ScriptVars): void {
+interface ParseConfig {
+    useCaretForExponentiation: boolean;
+    useParenForTensors: boolean;
+}
+
+function get_token_nib($: ScriptVars, config: ParseConfig): void {
     let c: string;
 
     // skip spaces
@@ -15617,6 +15676,19 @@ function get_token_nib($: ScriptVars): void {
         return;
     }
 
+    // exponentiation
+    if (config.useCaretForExponentiation) {
+        // Do nothing
+    }
+    else {
+        // We're using the ** exponentiation operator syntax.
+        if (c == "*" && inchar() == "*") {
+            scan_index++;
+            token = T_EXPONENTIATION;
+            return;
+        }
+    }
+
     // single char token
 
     token = c;
@@ -15647,9 +15719,9 @@ function inchar(): string {
     return instring.charAt(scan_index); // returns empty string if index out of range
 }
 
-function scan_inbuf(k: number, $: ScriptVars): number {
+function scan_inbuf(k: number, $: ScriptVars, config: ParseConfig): number {
     $.trace1 = k;
-    k = scan($.inbuf, k, $);
+    k = scan($.inbuf, k, $, config);
     if (k) {
         $.trace2 = k;
         trace_input($);

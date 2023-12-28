@@ -186,4 +186,38 @@ describe("eigenmath", function () {
         const value = values[0];
         assert.strictEqual(to_infix(value), "[e1,e2,e3]");
     });
+    it("L", function () {
+        const lines: string[] = [
+            `G = algebra((1,1,1),("e1","e2","e3"))`,
+            `i = G[1]`,
+            `j = G[2]`,
+            `k = G[3]`,
+            `i`
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 5);
+        const value = values[4];
+        assert.strictEqual(to_infix(value), "e1");
+    });
+    xit("M", function () {
+        const lines: string[] = [
+            `G = algebra((1,1,1),("e1","e2","e3"))`,
+            `i = G[1]`,
+            `j = G[2]`,
+            `k = G[3]`,
+            `i * j`
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 5);
+        const value = values[4];
+        assert.strictEqual(to_infix(value), "e1");
+    });
 });

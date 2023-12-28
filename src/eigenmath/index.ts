@@ -67,16 +67,20 @@ function bignum_float(u: BigInteger): number {
 */
 // convert bignum to int32
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function bignum_smallnum(u: BigInteger): number {
-    stopf(`bignum_smallnum`);
-    // return u.toJSNumber();
+    return u.toJSNumber();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const MAX_SMALL_INTEGER = new BigInteger(BigInt(Number.MAX_SAFE_INTEGER));
+const MIN_SMALL_INTEGER = new BigInteger(BigInt(Number.MIN_SAFE_INTEGER));
+
 function bignum_issmallnum(u: BigInteger): boolean {
-    stopf(`bignum_issmallnum`);
-    // return false;
+    if (u.geq(MIN_SMALL_INTEGER) && u.leq(MAX_SMALL_INTEGER)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 /**

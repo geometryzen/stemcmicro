@@ -13368,8 +13368,9 @@ function multiply_expand($: ScriptVars): void {
  */
 function multiply_factors(n: number, $: ScriptVars): void {
 
-    if (n < 2)
+    if (n < 2) {
         return;
+    }
 
     const h = $.stack.length - n;
 

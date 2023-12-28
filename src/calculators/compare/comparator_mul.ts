@@ -16,7 +16,7 @@ import { compare_tensors } from "./compare_tensors";
 
 export class MulComparator implements ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-        // console.log("compare *", "lhs", $.toSExprString(lhs), "rhs", $.toSExprString(rhs));
+        // console.lg("compare *", "lhs", $.toSExprString(lhs), "rhs", $.toSExprString(rhs));
         // We have to treat (pow base expo) as a special case because of the ambiguity in representing a symbol.
         // i.e. sym is the same as (pow sym expo).
         // So we have to order power expressions according to the base.

@@ -220,67 +220,81 @@ function cddr(p: U): Cons {
     return cdr(cdr(p));
 }
 
-function cmp(p1: U, p2: U): 1 | 0 | -1 {
+function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
 
-    if (p1 == p2)
+    if (lhs == rhs)
         return 0;
 
-    if (is_nil(p1))
+    if (is_nil(lhs))
         return -1;
 
-    if (is_nil(p2))
+    if (is_nil(rhs))
         return 1;
 
-    if (isnum(p1) && isnum(p2))
-        return cmp_numbers(p1, p2);
+    if (isnum(lhs) && isnum(rhs))
+        return cmp_numbers(lhs, rhs);
 
-    if (isnum(p1))
+    if (isnum(lhs))
         return -1;
 
-    if (isnum(p2))
+    if (isnum(rhs))
         return 1;
 
-    if (isstring(p1) && isstring(p2))
-        return cmp_strings(p1.str, p2.str);
+    if (isstring(lhs) && isstring(rhs))
+        return cmp_strings(lhs.str, rhs.str);
 
-    if (isstring(p1))
+    if (isstring(lhs))
         return -1;
 
-    if (isstring(p2))
+    if (isstring(rhs))
         return 1;
 
-    if (issymbol(p1) && issymbol(p2))
-        return cmp_strings(printname(p1), printname(p2));
+    if (issymbol(lhs) && issymbol(rhs))
+        return cmp_strings(printname(lhs), printname(rhs));
 
-    if (issymbol(p1))
+    if (issymbol(lhs))
         return -1;
 
-    if (issymbol(p2))
+    if (issymbol(rhs))
         return 1;
 
-    if (istensor(p1) && istensor(p2))
-        return cmp_tensors(p1, p2);
+    if (istensor(lhs) && istensor(rhs))
+        return cmp_tensors(lhs, rhs);
 
-    if (istensor(p1))
+    if (istensor(lhs))
         return -1;
 
-    if (istensor(p2))
+    if (istensor(rhs))
         return 1;
 
-    while (iscons(p1) && iscons(p2)) {
-        const t = cmp(car(p1), car(p2));
+    while (iscons(lhs) && iscons(rhs)) {
+        const t = cmp(car(lhs), car(rhs));
         if (t)
             return t;
-        p1 = cdr(p1);
-        p2 = cdr(p2);
+        lhs = cdr(lhs);
+        rhs = cdr(rhs);
     }
 
-    if (iscons(p2))
+    if (iscons(rhs))
         return -1; // lengthf(p1) < lengthf(p2)
 
-    if (iscons(p1))
+    if (iscons(lhs))
         return 1; // lengthf(p1) > lengthf(p2)
 
+    if (is_uom(lhs) && is_uom(rhs)) {
+        // TODO: Perhaps there is a better way to compare?
+        return cmp_strings(lhs.toString(), rhs.toString());
+    }
+
+    if (is_uom(lhs)) {
+        return -1;
+    }
+
+    if (is_uom(rhs)) {
+        return 1;
+    }
+
+    // console.lg(`cmp(lhs=${lhs}, rhs=${rhs})=>0`);
     return 0;
 }
 
@@ -415,7 +429,9 @@ function coeffs(P: U, X: U, $: ScriptVars): void {
 }
 
 function combine_factors(h: number, $: ScriptVars): void {
+    // console.lg(`before sort factors provisional: ${$.stack}`);
     sort_factors_provisional(h, $);
+    // console.lg(`after sort factors provisional: ${$.stack}`);
     let n = $.stack.length;
     for (let i = h; i < n - 1; i++) {
         if (combine_factors_nib(i, i + 1, $)) {
@@ -453,8 +469,12 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
         EXPO2 = one;
     }
 
-    if (!equal(BASE1, BASE2))
+    // console.lg(`BASE1=${BASE1}, BASE2=${BASE2}`);
+    if (!equal(BASE1, BASE2)) {
         return 0;
+    }
+
+    // console.lg(`BASE1=${BASE1}, BASE2=${BASE2} are considered EQUAL`);
 
     if (isdouble(BASE2))
         BASE1 = BASE2; // if mixed rational and double, use double
@@ -8122,6 +8142,7 @@ function mod_integers(p1: Rat, p2: Rat, $: ScriptVars): void {
 }
 
 function eval_multiply(p1: Cons, $: ScriptVars): void {
+    // console.lg(`eval_multiply(${p1})`);
     const h = $.stack.length;
     $.expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
@@ -8130,7 +8151,9 @@ function eval_multiply(p1: Cons, $: ScriptVars): void {
         evalf($);
         p1 = cdr(p1);
     }
+    // console.lg(`stack: ${$.stack}`);
     multiply_factors($.stack.length - h, $);
+    // console.lg(`stack: ${$.stack}`);
     $.expanding++;
 }
 
@@ -13392,9 +13415,15 @@ function multiply_factors(n: number, $: ScriptVars): void {
 
     flatten_factors(h, $);
 
+    // console.lg(`after flatten factors: ${$.stack}`);
+
     const T = multiply_tensor_factors(h, $);
 
+    // console.lg(`after multiply tensor factors: ${$.stack}`);
+
     multiply_scalar_factors(h, $);
+
+    // console.lg(`after multiply scalar factors: ${$.stack}`);
 
     if (istensor(T)) {
         push(T, $);
@@ -13444,6 +13473,8 @@ function multiply_scalar_factors(h: number, $: ScriptVars): void {
 
     let COEFF = combine_numerical_factors(h, one, $);
 
+    // console.lg(`after combine numerical factors: ${$.stack}`);
+
     if (iszero(COEFF) || h == $.stack.length) {
         $.stack.splice(h); // pop all
         push(COEFF, $);
@@ -13456,6 +13487,7 @@ function multiply_scalar_factors(h: number, $: ScriptVars): void {
     // do again in case exp(1/2 i pi) changed to i
 
     combine_factors(h, $);
+    // console.lg(`after combine factors: ${$.stack}`);
     normalize_power_factors(h, $);
 
     COEFF = combine_numerical_factors(h, COEFF, $);
@@ -15525,8 +15557,9 @@ function scan_subexpr($: ScriptVars, config: ParseConfig): void {
 
     get_token($, config); // get token after ")" or "]""
 
-    if ($.stack.length - h > 1)
+    if ($.stack.length - h > 1) {
         vector(h, $);
+    }
 }
 
 function get_token_skip_newlines($: ScriptVars, config: ParseConfig): void {

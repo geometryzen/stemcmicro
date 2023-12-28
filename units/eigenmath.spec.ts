@@ -5,7 +5,7 @@ import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const eval_plot = function (expr: Cons, $: ScriptVars): void {
     $.push(nil);
-    // console.log(`${expr}`);
+    // console.lg(`${expr}`);
 };
 
 class TestContentHandler implements ScriptContentHandler {

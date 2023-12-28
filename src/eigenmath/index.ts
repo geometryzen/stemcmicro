@@ -15543,7 +15543,7 @@ function get_token($: ScriptVars, config: ParseConfig): void {
             get_token_nib($, config); // skip over newlines
 }
 
-interface ParseConfig {
+export interface ParseConfig {
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
 }

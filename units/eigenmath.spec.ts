@@ -1,9 +1,10 @@
 import { assert } from "chai";
+import { Cons, nil, U } from "math-expression-tree";
 import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from "../src/eigenmath/index";
-import { Cons, U } from "../src/tree/tree";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const eval_plot = function (expr: Cons, $: ScriptVars): void {
+    $.push(nil);
     // console.log(`${expr}`);
 };
 
@@ -29,7 +30,7 @@ class TestContentHandler implements ScriptContentHandler {
 class TestErrorHandler implements ScriptErrorHandler {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
-
+        throw new Error(`${inbuf} ${start} ${end} ${err}`);
     }
 }
 
@@ -100,7 +101,7 @@ describe("eigenmath", function () {
         const errorHandler = new TestErrorHandler();
         executeScript(scriptText, contentHandler, errorHandler);
         const values = contentHandler.values;
-        assert.strictEqual(values.length, 5);
+        assert.strictEqual(values.length, 6);
         assert.strictEqual(to_infix(values[0]), " ? ");
         assert.strictEqual(to_infix(values[1]), " ? ");
         assert.strictEqual(to_infix(values[2]), "sin(x) / x");
@@ -132,5 +133,57 @@ describe("eigenmath", function () {
         assert.strictEqual(values.length, 1);
         const value = values[0];
         assert.strictEqual(to_infix(value, { useParenForTensors: true }), "(-1,1)");
+    });
+    it("H", function () {
+        const lines: string[] = [
+            `uom("kilogram")`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value), "kg");
+    });
+    it("I", function () {
+        const lines: string[] = [
+            `uom("meter")`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_sexpr(value), "m");
+    });
+    xit("J", function () {
+        const lines: string[] = [
+            `uom("kilogram") * uom("meter")`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value), "kg m");
+    });
+    it("K", function () {
+        const lines: string[] = [
+            `algebra((1,1,1),("e1","e2","e3"))`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        executeScript(scriptText, contentHandler, errorHandler);
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value), "[e1,e2,e3]");
     });
 });

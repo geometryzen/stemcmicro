@@ -1,5 +1,13 @@
-import { BigInteger, create_rat, Flt, is_flt, is_rat, is_str, is_sym, is_tensor, Num, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
-import { car, cdr, Cons, cons as create_cons, is_cons, is_nil, nil, U } from 'math-expression-tree';
+import { BigInteger, create_flt, create_rat, Flt, is_flt, is_rat, is_str, is_sym, is_tensor, Num, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
+import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from 'math-expression-tree';
+import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
+import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { is_uom } from '../operators/uom/is_uom';
+import { create_uom, is_uom_name } from '../operators/uom/uom';
+import { Adapter, SumTerm } from '../tree/vec/Adapter';
+import { BasisBlade } from '../tree/vec/BasisBlade';
+import { Blade } from '../tree/vec/Blade';
+import { createAlgebra } from '../tree/vec/createAlgebra';
 
 function create_sym_with_handler_func(printname: string, func: (expr: Cons, $: ScriptVars) => void): Sym {
     return new Sym(printname, func as unknown as (expr: Cons, $: unknown) => void);
@@ -519,6 +527,7 @@ function cons($: ScriptVars): void {
 
 const ABS = "abs";
 const ADJ = "adj";
+const ALGEBRA = "algebra";
 const AND = "and";
 const ARCCOS = "arccos";
 const ARCCOSH = "arccosh";
@@ -614,6 +623,7 @@ const TESTLT = "testlt";
 const TRANSPOSE = "transpose";
 const TTY = "tty";
 const UNIT = "unit";
+const UOM = "uom";
 const ZERO = "zero";
 
 const ADD = "+";
@@ -3018,6 +3028,193 @@ function adj($: ScriptVars): void {
     }
 
     push(p2, $);
+}
+
+function eval_algebra(expr: Cons, $: ScriptVars): void {
+    push(expr.item(1), $);
+    evalf($);
+    const metric = pop($);
+    if (!is_tensor(metric)) {
+        stopf('');
+    }
+    push(expr.item(2), $);
+    evalf($);
+    const labels = pop($);
+    if (!is_tensor(labels)) {
+        stopf('');
+    }
+    push_algebra_tensor(metric, labels, $);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function push_algebra_tensor(metric: Tensor<U>, labels: Tensor<U>, $: ScriptVars): void {
+    const metricNative: U[] = convertMetricToNative(metric);
+    const labelsNative: string[] = convert_tensor_to_strings(labels);
+    const T: Tensor<U> = create_algebra_as_tensor(metricNative, labelsNative, $);
+    push(T, $);
+}
+
+class AlgebraFieldAdapter implements Adapter<U, U> {
+    constructor(private readonly dimensions: number, private readonly $: ScriptVars) {
+    }
+    get ε(): U {
+        return create_flt(1e-6);
+    }
+    get one(): U {
+        return one;
+    }
+    get zero(): U {
+        return zero;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    abs(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    add(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sub(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    eq(lhs: U, rhs: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ne(lhs: U, rhs: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    le(lhs: U, rhs: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    lt(lhs: U, rhs: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ge(lhs: U, rhs: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    gt(lhs: U, rhs: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    max(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    min(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mul(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    div(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    neg(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    asString(arg: U): string {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cos(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    isField(arg: U | BasisBlade<U, U>): arg is U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isOne(arg: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isZero(arg: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sin(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sqrt(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isDimension(arg: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    dim(arg: U): number {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sum(terms: SumTerm<U, U>[]): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    extractGrade(arg: U, grade: number): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    treeAdd(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    treeLco(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    treeMul(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    treeScp(lhs: U, rhs: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    treeSqrt(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    treeZero(): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    weightToTree(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    scalarCoordinate(arg: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    bladeToTree(blade: BasisBlade<U, U>): U {
+        throw new Error('Method not implemented.');
+    }
+}
+
+export function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ScriptVars): Tensor<U> {
+    const uFieldAdaptor = new AlgebraFieldAdapter(metric.length, $);
+    const GA = createAlgebra(metric, uFieldAdaptor, labels);
+    /**
+     * Number of basis vectors in algebra is dimensionality.
+     */
+    const dimensions = metric.length;
+    const dims = [metric.length];
+    const elems = new Array<Blade>(dimensions);
+    for (let index = 0; index < dimensions; index++) {
+        elems[index] = GA.unit(index);
+    }
+    return new Tensor(dims, elems);
 }
 
 function eval_and(p1: Cons, $: ScriptVars): void {
@@ -10837,7 +11034,7 @@ function transpose(n: number, m: number, $: ScriptVars): void {
     push(p2, $);
 }
 
-function eval_unit(p1: U, $: ScriptVars): void {
+function eval_unit(p1: Cons, $: ScriptVars): void {
 
     push(cadr(p1), $);
     evalf($);
@@ -10862,6 +11059,27 @@ function eval_unit(p1: U, $: ScriptVars): void {
                 M.elems[n * i + j] = zero;
 
     push(M, $);
+}
+
+function eval_uom(p1: Cons, $: ScriptVars): void {
+
+    push(cadr(p1), $);
+    evalf($);
+
+    const strname = pop($);
+    if (is_str(strname)) {
+        const name = strname.str;
+        if (is_uom_name(name)) {
+            const uom = create_uom(name);
+            push(uom, $);
+        }
+        else {
+            stopf(``);
+        }
+    }
+    else {
+        stopf(``);
+    }
 }
 
 function eval_user_function(p1: U, $: ScriptVars): void {
@@ -12340,16 +12558,19 @@ function infixform_denominators(p: U, config: InfixConfig, outbuf: string[]): vo
 }
 
 function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
+    // Rat
     if (isrational(p)) {
         infixform_rational(p, config, outbuf);
         return;
     }
 
+    // Flt
     if (isdouble(p)) {
         infixform_double(p, config, outbuf);
         return;
     }
 
+    // Sym
     if (issymbol(p)) {
         if (p == symbol(EXP1))
             infixform_write("exp(1)", config, outbuf);
@@ -12358,13 +12579,20 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
         return;
     }
 
+    // Str
     if (isstring(p)) {
         infixform_write(p.str, config, outbuf);
         return;
     }
 
+    // Tensor
     if (istensor(p)) {
         infixform_tensor(p, config, outbuf);
+        return;
+    }
+
+    if (is_atom(p)) {
+        infixform_atom(p, config, outbuf);
         return;
     }
 
@@ -12703,6 +12931,14 @@ function infixform_tensor_nib(p: Tensor, d: number, k: number, config: InfixConf
     }
     else {
         infixform_write("]", config, outbuf);
+    }
+}
+function infixform_atom(p: U, config: InfixConfig, outbuf: string[]): void {
+    if (is_uom(p)) {
+        infixform_write(`${p.toInfixString()}`, config, outbuf);
+    }
+    else {
+        infixform_write(`${p}`, config, outbuf);
     }
 }
 
@@ -14485,10 +14721,18 @@ function prefixform(p: U, outbuf: string[]) {
         outbuf.push(p.printname);
     else if (isstring(p))
         outbuf.push("'" + p.str + "'");
-    else if (istensor(p))
+    else if (istensor(p)) {
         outbuf.push("[ ]");
-    else
+    }
+    else if (is_uom(p)) {
+        outbuf.push(`${p.toListString()}`);
+    }
+    else if (is_atom(p)) {
+        outbuf.push(`${p}`);
+    }
+    else {
         outbuf.push(" ? ");
+    }
 }
 
 function render_as_html_infix(p: U, config: InfixConfig): string {
@@ -14590,8 +14834,8 @@ function promote_tensor($: ScriptVars): void {
     push(p3, $);
 }
 
-function push(a: U, $: ScriptVars): void {
-    $.stack.push(a);
+function push(expr: U, $: ScriptVars): void {
+    $.stack.push(expr);
 }
 
 function push_double(d: number, $: ScriptVars): void {
@@ -15674,6 +15918,9 @@ export class ScriptVars {
     defineFunction(name: string, handler: (expr: Cons, $: ScriptVars) => void): void {
         symtab[name] = create_sym_with_handler_func(name, handler);
     }
+    push(expr: U): void {
+        push(expr, this);
+    }
 }
 
 let zero: Rat;
@@ -15684,6 +15931,7 @@ let imaginaryunit: U;
 const symtab: { [name: string]: Sym } = {
     "abs": create_sym_with_handler_func(ABS, eval_abs),
     "adj": create_sym_with_handler_func(ADJ, eval_adj),
+    "algebra": create_sym_with_handler_func(ALGEBRA, eval_algebra),
     "and": create_sym_with_handler_func(AND, eval_and),
     "arccos": create_sym_with_handler_func(ARCCOS, eval_arccos),
     "arccosh": create_sym_with_handler_func(ARCCOSH, eval_arccosh),
@@ -15778,6 +16026,7 @@ const symtab: { [name: string]: Sym } = {
     "testlt": create_sym_with_handler_func(TESTLT, eval_testlt),
     "transpose": create_sym_with_handler_func(TRANSPOSE, eval_transpose),
     "unit": create_sym_with_handler_func(UNIT, eval_unit),
+    "uom": create_sym_with_handler_func(UOM, eval_uom),
     "zero": create_sym_with_handler_func(ZERO, eval_zero),
 
     "+": create_sym_with_handler_func(ADD, eval_add),

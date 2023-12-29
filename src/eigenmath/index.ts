@@ -2,6 +2,7 @@ import { BigInteger, create_flt, create_rat, Flt, is_flt, is_rat, is_str, is_sym
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { is_blade } from '../operators/blade/is_blade';
 import { is_uom } from '../operators/uom/is_uom';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { Adapter, SumTerm } from '../tree/vec/Adapter';
@@ -491,11 +492,11 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
     return 1;
 }
 
-function combine_numerical_factors(h: number, COEFF: Num, $: ScriptVars): Num {
+function combine_numerical_factors(start: number, COEFF: Num, $: ScriptVars): Num {
 
-    let n = $.stack.length;
+    let end = $.stack.length;
 
-    for (let i = h; i < n; i++) {
+    for (let i = start; i < end; i++) {
 
         const p1 = $.stack[i];
 
@@ -504,7 +505,7 @@ function combine_numerical_factors(h: number, COEFF: Num, $: ScriptVars): Num {
             COEFF = pop($) as Num;
             $.stack.splice(i, 1); // remove factor
             i--;
-            n--;
+            end--;
         }
     }
 
@@ -6164,6 +6165,11 @@ function eval_hadamard(p1: U, $: ScriptVars): void {
     }
 }
 
+/**
+ * 
+ * @param $ 
+ * @returns 
+ */
 function hadamard($: ScriptVars): void {
 
     const p2 = pop($);
@@ -13411,17 +13417,27 @@ function multiply_factors(n: number, $: ScriptVars): void {
         return;
     }
 
-    const h = $.stack.length - n;
+    const start = $.stack.length - n;
 
-    flatten_factors(h, $);
+    flatten_factors(start, $);
 
     // console.lg(`after flatten factors: ${$.stack}`);
+    const uom = multiply_uom_factors(start, $);
+    if (is_uom(uom)) {
+        push(uom, $);
+    }
 
-    const T = multiply_tensor_factors(h, $);
+    const B = multiply_blade_factors(start, $);
+    if (is_blade(B)) {
+        push(B, $);
+    }
+
+    const T = multiply_tensor_factors(start, $);
+
 
     // console.lg(`after multiply tensor factors: ${$.stack}`);
 
-    multiply_scalar_factors(h, $);
+    multiply_scalar_factors(start, $);
 
     // console.lg(`after multiply scalar factors: ${$.stack}`);
 
@@ -13469,44 +13485,44 @@ function multiply_rationals(lhs: Rat, rhs: Rat, $: ScriptVars): void {
     push(x, $);
 }
 
-function multiply_scalar_factors(h: number, $: ScriptVars): void {
+function multiply_scalar_factors(start: number, $: ScriptVars): void {
 
-    let COEFF = combine_numerical_factors(h, one, $);
+    let COEFF = combine_numerical_factors(start, one, $);
 
     // console.lg(`after combine numerical factors: ${$.stack}`);
 
-    if (iszero(COEFF) || h == $.stack.length) {
-        $.stack.splice(h); // pop all
+    if (iszero(COEFF) || start == $.stack.length) {
+        $.stack.splice(start); // pop all
         push(COEFF, $);
         return;
     }
 
-    combine_factors(h, $);
-    normalize_power_factors(h, $);
+    combine_factors(start, $);
+    normalize_power_factors(start, $);
 
     // do again in case exp(1/2 i pi) changed to i
 
-    combine_factors(h, $);
+    combine_factors(start, $);
     // console.lg(`after combine factors: ${$.stack}`);
-    normalize_power_factors(h, $);
+    normalize_power_factors(start, $);
 
-    COEFF = combine_numerical_factors(h, COEFF, $);
+    COEFF = combine_numerical_factors(start, COEFF, $);
 
-    if (iszero(COEFF) || h == $.stack.length) {
-        $.stack.splice(h); // pop all
+    if (iszero(COEFF) || start == $.stack.length) {
+        $.stack.splice(start); // pop all
         push(COEFF, $);
         return;
     }
 
-    COEFF = reduce_radical_factors(h, COEFF, $);
+    COEFF = reduce_radical_factors(start, COEFF, $);
 
     if (!isplusone(COEFF) || isdouble(COEFF))
         push(COEFF, $);
 
     if ($.expanding)
-        expand_sum_factors(h, $); // success leaves one expr on stack
+        expand_sum_factors(start, $); // success leaves one expr on stack
 
-    const n = $.stack.length - h;
+    const n = $.stack.length - start;
 
     switch (n) {
         case 0:
@@ -13515,7 +13531,7 @@ function multiply_scalar_factors(h: number, $: ScriptVars): void {
         case 1:
             break;
         default:
-            sort_factors(h, $); // previously sorted provisionally
+            sort_factors(start, $); // previously sorted provisionally
             list(n, $);
             push_symbol(MULTIPLY, $);
             swap($);
@@ -13524,26 +13540,77 @@ function multiply_scalar_factors(h: number, $: ScriptVars): void {
     }
 }
 
-function multiply_tensor_factors(h: number, $: ScriptVars) {
+/**
+ * The return value is either nil (because there are no tensors) or is a tensor.
+ * @param start The start index on the stack.
+ */
+function multiply_tensor_factors(start: number, $: ScriptVars): U {
     let T: U = nil;
-    let n = $.stack.length;
-    for (let i = h; i < n; i++) {
+    let end = $.stack.length;
+    for (let i = start; i < end; i++) {
         const p1 = $.stack[i];
-        if (!istensor(p1))
+        if (!istensor(p1)) {
             continue;
+        }
         if (istensor(T)) {
             push(T, $);
             push(p1, $);
             hadamard($);
             T = pop($);
         }
-        else
+        else {
+            // The first time through, T is nil.
             T = p1;
+        }
         $.stack.splice(i, 1); // remove factor
         i--; // use same index again
-        n--;
+        end--;
     }
     return T;
+}
+
+function multiply_blade_factors(start: number, $: ScriptVars): U {
+    let B: U = nil;
+    let end = $.stack.length;
+    for (let i = start; i < end; i++) {
+        const p1 = $.stack[i];
+        if (!is_blade(p1)) {
+            continue;
+        }
+        if (is_blade(B)) {
+            B = B.mul(p1);
+        }
+        else {
+            // The first time through, T is nil.
+            B = p1;
+        }
+        $.stack.splice(i, 1); // remove factor
+        i--; // use same index again
+        end--;
+    }
+    return B;
+}
+
+function multiply_uom_factors(start: number, $: ScriptVars): U {
+    let product: U = nil;
+    let end = $.stack.length;
+    for (let i = start; i < end; i++) {
+        const p1 = $.stack[i];
+        if (!is_uom(p1)) {
+            continue;
+        }
+        if (is_uom(product)) {
+            product = product.mul(p1);
+        }
+        else {
+            // The first time through, T is nil.
+            product = p1;
+        }
+        $.stack.splice(i, 1); // remove factor
+        i--; // use same index again
+        end--;
+    }
+    return product;
 }
 
 function negate($: ScriptVars): void {

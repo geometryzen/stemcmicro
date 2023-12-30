@@ -60,6 +60,7 @@ export interface EnvOptions {
     useCaretForExponentiation?: boolean;
     useDefinitions?: boolean;
     useIntegersForPredicates?: boolean;
+    useParenForTensors?: boolean;
     syntaxKind?: SyntaxKind;
 }
 
@@ -74,6 +75,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
+            useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false,
             syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Native,
         };
         return config;
@@ -88,6 +90,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useCaretForExponentiation: false,
             useDefinitions: false,
             useIntegersForPredicates: false,
+            useParenForTensors: false,
             syntaxKind: SyntaxKind.Native
         };
         return config;
@@ -694,6 +697,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     }
     if ($.getDirective(Directive.useIntegersForPredicates) !== config.useIntegersForPredicates) {
         $.pushDirective(Directive.useIntegersForPredicates, config.useIntegersForPredicates);
+    }
+    if ($.getDirective(Directive.useParenForTensors) !== config.useParenForTensors) {
+        $.pushDirective(Directive.useParenForTensors, config.useParenForTensors);
     }
     for (const directive of config.enable) {
         if ($.getDirective(directive) !== true) {

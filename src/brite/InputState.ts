@@ -99,6 +99,10 @@ export class InputState {
      */
     useCaretForExponentiation = false;
     /**
+     * Use "(" and ")" otherwise "[" and "]".
+     */
+    useParenForTensors = false;
+    /**
      * 
      */
     explicitAssocAdd = false;

@@ -60,6 +60,10 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
      * The default is false.
      */
     useIntegersForPredicates?: boolean;
+    /**
+     * Determines whether parentheses, "(" and ")", or square brackets, "[" and "]", will be used to delimit tensors.
+     */
+    useParenForTensors?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -130,6 +134,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             useCaretForExponentiation: options.useCaretForExponentiation,
             useDefinitions: options.useDefinitions,
             useIntegersForPredicates: options.useIntegersForPredicates,
+            useParenForTensors: options.useParenForTensors,
             syntaxKind: options.syntaxKind
         };
         return hook(config, "A");
@@ -144,6 +149,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             useCaretForExponentiation: false,
             useDefinitions: false,
             useIntegersForPredicates: false,
+            useParenForTensors: false,
             syntaxKind: SyntaxKind.Native
         };
         return hook(config, "B");
@@ -280,6 +286,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
             catchExceptions: options.catchExceptions,
             syntaxKind: options.syntaxKind,
             useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
+            useParenForTensors: $.getDirective(Directive.useParenForTensors),
             explicitAssocAdd: false,
             explicitAssocMul: false,
         };
@@ -289,6 +296,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
             catchExceptions: false,
             syntaxKind: SyntaxKind.Native,
             useCaretForExponentiation: false,
+            useParenForTensors: false,
             explicitAssocAdd: false,
             explicitAssocMul: false
         };

@@ -10,5 +10,6 @@ export interface EnvConfig {
     useCaretForExponentiation: boolean;
     useDefinitions: boolean;
     useIntegersForPredicates: boolean;
+    useParenForTensors: boolean;
     syntaxKind: SyntaxKind;
 }

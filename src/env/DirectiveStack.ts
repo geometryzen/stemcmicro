@@ -140,5 +140,6 @@ function initial_directives(): Directives {
     // TODO: These two don't seem like Directive(s).
     update_directives(directives, Directive.renderFloatAsEcmaScript, false);
     update_directives(directives, Directive.useCaretForExponentiation, false);
+    update_directives(directives, Directive.useParenForTensors, false);
     return Object.freeze(directives);
 }

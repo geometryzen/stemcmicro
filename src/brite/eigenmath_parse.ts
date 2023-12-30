@@ -11,6 +11,10 @@ export interface EigenmathParseOptions {
      */
     useCaretForExponentiation?: boolean;
     /**
+     * Determines whether to use parentheses or square brackets to delimit tensors.
+     */
+    useParenForTensors?: boolean;
+    /**
      * Determines whether the parser makes associativity explicit or implicit in additive expressions.
      */
     explicitAssocAdd?: boolean;
@@ -22,6 +26,7 @@ export interface EigenmathParseOptions {
 
 interface ScanConfig {
     useCaretForExponentiation: boolean;
+    useParenForTensors: boolean;
     explicitAssocAdd: boolean;
     explicitAssocMul: boolean;
 }
@@ -30,6 +35,7 @@ function config_from_options(options: EigenmathParseOptions | undefined): ScanCo
     if (options) {
         return {
             useCaretForExponentiation: !!options.useCaretForExponentiation,
+            useParenForTensors: !!options.useParenForTensors,
             explicitAssocAdd: !!options.explicitAssocAdd,
             explicitAssocMul: !!options.explicitAssocMul
         };
@@ -37,6 +43,7 @@ function config_from_options(options: EigenmathParseOptions | undefined): ScanCo
     else {
         return {
             useCaretForExponentiation: false,
+            useParenForTensors: false,
             explicitAssocAdd: false,
             explicitAssocMul: false
         };
@@ -109,6 +116,7 @@ export function eigenmath_parse(fileName: string, sourceText: string, options?: 
 function scan_substring(sourceText: string, start: number, config: ScanConfig): [scanned: number, tree: U] {
     return scan(sourceText.substring(start), {
         useCaretForExponentiation: config.useCaretForExponentiation,
+        useParenForTensors: config.useParenForTensors,
         explicitAssocAdd: config.explicitAssocAdd,
         explicitAssocMul: config.explicitAssocMul
     });

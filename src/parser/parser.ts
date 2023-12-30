@@ -24,6 +24,7 @@ export interface ParseOptions {
      * The alternative is to use '**', which frees the caret symbol to denote the outer product.
      */
     useCaretForExponentiation?: boolean;
+    useParenForTensors?: boolean;
     /**
      * Determines whether the parser makes associativity explicit or implicit in additive expressions.
      */
@@ -66,7 +67,8 @@ function eigenmath_parse_options(options?: ParseOptions): EigenmathParseOptions 
         return {
             explicitAssocAdd: options.explicitAssocAdd,
             explicitAssocMul: options.explicitAssocMul,
-            useCaretForExponentiation: options.useCaretForExponentiation
+            useCaretForExponentiation: options.useCaretForExponentiation,
+            useParenForTensors: options.useParenForTensors
         };
     }
     else {

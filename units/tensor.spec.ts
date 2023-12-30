@@ -54,6 +54,22 @@ describe("tensor", function () {
         assert.isTrue(get_component(M, items_to_cons(wrap_as_int(3), wrap_as_int(2)), env).equals(f));
         */
     });
+    it("parsing", function () {
+        const lines: string[] = [
+            `A=((a,b),(c,d))`,
+            `A`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_script_context({ useParenForTensors: true });
+        const actual = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsAscii(actual), "a   b\n\nc   d");
+        assert.strictEqual(engine.renderAsHuman(actual), "((a,b),(c,d))");
+        assert.strictEqual(engine.renderAsLaTeX(actual), "\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}");
+        assert.strictEqual(engine.renderAsSExpr(actual), "((a,b),(c,d))");
+        assert.strictEqual(engine.renderAsSExpr(actual), "((a,b),(c,d))");
+
+        engine.release();
+    });
     it("printing", function () {
         const lines: string[] = [
             `A=[[a,b],[c,d]]`,
@@ -62,8 +78,11 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
+        assert.strictEqual(engine.renderAsAscii(actual), "a   b\n\nc   d");
+        assert.strictEqual(engine.renderAsHuman(actual), "[[a,b],[c,d]]");
+        assert.strictEqual(engine.renderAsLaTeX(actual), "\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}");
         assert.strictEqual(engine.renderAsInfix(actual), "[[a,b],[c,d]]");
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
 
         engine.release();
     });

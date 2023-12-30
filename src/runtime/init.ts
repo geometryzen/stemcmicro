@@ -65,6 +65,7 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
     try {
         const [scanned, tree] = scan(sourceText, {
             useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
+            useParenForTensors: $.getDirective(Directive.useParenForTensors),
             explicitAssocAdd: false,
             explicitAssocMul: false
         });

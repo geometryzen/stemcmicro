@@ -161,7 +161,8 @@ export enum Directive {
      * 
      * The default value is false.
      */
-    useIntegersForPredicates
+    useIntegersForPredicates,
+    useParenForTensors
 }
 
 export interface PrintHandler {

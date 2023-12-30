@@ -29,6 +29,7 @@ export const COMPONENT = native_sym(Native.component);
 
 export interface ScanOptions {
     useCaretForExponentiation: boolean;
+    useParenForTensors: boolean;
     explicitAssocAdd: boolean;
     explicitAssocMul: boolean;
 }
@@ -52,6 +53,7 @@ export function scan(sourceText: string, options: ScanOptions): [scanned: number
     state.functionInvokationsScanningStack = [''];
     state.assignmentFound = false;
     state.useCaretForExponentiation = options.useCaretForExponentiation;
+    state.useParenForTensors = options.useParenForTensors;
     state.explicitAssocAdd = options.explicitAssocAdd;
     state.explicitAssocMul = options.explicitAssocMul;
 
@@ -626,7 +628,12 @@ function scan_unary_expr(state: InputState): U {
 function scan_grouping_expr(state: InputState): U {
     const code = state.code;
     if (code === T_LPAR) {
-        return scan_grouping(state);
+        if (state.useParenForTensors) {
+            return scan_tensor(state);
+        }
+        else {
+            return scan_grouping(state);
+        }
     }
     else {
         return scan_factor(state);
@@ -640,10 +647,15 @@ function scan_first_factor(state: InputState): [is_num: boolean, expr: U] {
     const code = state.code;
     // TODO: Convert this to a switch.
     if (code === T_LPAR) {
-        return [false, scan_grouping(state)];
+        if (state.useParenForTensors) {
+            return [false, scan_tensor(state)];
+        }
+        else {
+            return [false, scan_grouping(state)];
+        }
     }
     else if (code === T_SYM) {
-        // TODO: This code should probablt be merged into scan_symbol.
+        // TODO: This code should probably be merged into scan_symbol.
         if (state.text === 'true') {
             const value = create_boo(true);
             state.advance();
@@ -661,7 +673,7 @@ function scan_first_factor(state: InputState): [is_num: boolean, expr: U] {
     else if (code === T_FUNCTION) {
         return [false, scan_function_call_with_function_name(state)];
     }
-    else if (code === T_LSQB) {
+    else if (code === T_LSQB && !state.useParenForTensors) {
         return [false, scan_tensor(state)];
     }
     else if (code === T_INT) {
@@ -1052,7 +1064,12 @@ function scan_grouping(state: InputState): U {
 
 function scan_tensor(state: InputState): Tensor {
 
-    state.expect(T_LSQB);
+    if (state.useParenForTensors) {
+        state.expect(T_LPAR);
+    }
+    else {
+        state.expect(T_LSQB);
+    }
     state.advance();
 
     const element = scan_stmt(state);
@@ -1066,7 +1083,12 @@ function scan_tensor(state: InputState): Tensor {
 
     const M = create_tensor(elements);
 
-    state.expect(T_RSQB);
+    if (state.useParenForTensors) {
+        state.expect(T_RPAR);
+    }
+    else {
+        state.expect(T_RSQB);
+    }
     state.advance();
 
     return M;

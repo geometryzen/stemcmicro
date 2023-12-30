@@ -159,6 +159,7 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     // TOOD: Need a better routing to initialize the ScanOptions.
     const [scanned, tree] = scan(sourceText, {
         useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
+        useParenForTensors: $.getDirective(Directive.useParenForTensors),
         explicitAssocAdd: false,
         explicitAssocMul: false
     });
@@ -913,7 +914,14 @@ function print_tensor(p: Tensor<U>, $: ExtensionEnv): string {
 function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv): [number, string] {
     let accumulator = '';
 
-    accumulator += print_str('[');
+    const useParenForTensors = $.getDirective(Directive.useParenForTensors);
+
+    if (useParenForTensors) {
+        accumulator += print_str('(');
+    }
+    else {
+        accumulator += print_str('[');
+    }
 
     // only the last dimension prints the actual elements
     // e.g. in a matrix, the first dimension contains
@@ -951,7 +959,12 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
         }
     }
 
-    accumulator += print_str(']');
+    if (useParenForTensors) {
+        accumulator += print_str(')');
+    }
+    else {
+        accumulator += print_str(']');
+    }
     return [k, accumulator];
 }
 

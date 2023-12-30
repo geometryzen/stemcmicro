@@ -30,6 +30,7 @@ const RECT = native_sym(Native.rect);
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
         useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
+        useParenForTensors: $.getDirective(Directive.useParenForTensors),
         explicitAssocAdd: false,
         explicitAssocMul: false,
     };

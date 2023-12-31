@@ -237,7 +237,7 @@ function scan_relational_expr(state: InputState): U {
 /**
  * !newLine && ('+' || '-')
  */
-function is_additive(code: TokenCode, newLine: boolean): boolean {
+function is_additive_operator(code: TokenCode, newLine: boolean): boolean {
     // console.lg(`is_additive_expression(state = ${JSON.stringify(micro(state))})`);
     if (!newLine) {
         switch (code) {
@@ -318,7 +318,7 @@ function scan_additive_expr_explicit(state: InputState): U {
 
     let result = scan_multiplicative_expr(state);
 
-    while (is_additive(state.code, state.newLine)) {
+    while (is_additive_operator(state.code, state.newLine)) {
         switch (state.code) {
             case T_PLUS: {
                 const opr = clone_symbol_using_info(native_sym(Native.add), state.tokenToSym());
@@ -344,7 +344,8 @@ function scan_additive_expr_explicit(state: InputState): U {
  * '*' | '/' | '(' | 'Sym' | 'Function' | 'Int' | 'Flt' | 'Str'
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
+function is_multiplicative_operator_or_factor_pending(code: TokenCode, newLine: boolean): boolean {
+    // console.lg(`code.text="${code.text}", code.code=${code.code}`);
     switch (code) {
         case T_ASTRX:
         case T_FWDSLASH: {
@@ -353,7 +354,9 @@ function is_multiplicative(code: TokenCode, newLine: boolean): boolean {
         // TOOD: Not sure if this belongs here anymore.
         // Probably used for juxtaposition as multiplication (implicit multiplication).
         // case T_LPAR:
-        // case T_SYM:
+        // case T_SYM: {
+        //    return true;
+        //}
         // case T_FUNCTION:
         // case T_INT:
         // case T_FLT:
@@ -394,7 +397,7 @@ export function scan_multiplicative_expr_implicit(state: InputState): U {
     }
     */
 
-    while (is_multiplicative(state.code, state.newLine)) {
+    while (is_multiplicative_operator_or_factor_pending(state.code, state.newLine)) {
         if (state.code === T_ASTRX) {
             state.advance();
             results.push(scan_outer_expr(state));
@@ -416,7 +419,12 @@ export function scan_multiplicative_expr_implicit(state: InputState): U {
             results.push(items_to_cons(symbol(INNER), results.pop(), scan_factor()));
         }
         */
+        else if (state.code === T_SYM) {
+            results.push(scan_symbol(state));
+        }
         else {
+            // This will be dead code unless perhaps if we allow juxtaposition.
+            console.log(`state.code.code=${state.code.code}, state.code.text=${state.code.text}`);
             results.push(scan_outer_expr(state));
         }
         /*
@@ -458,7 +466,7 @@ export function scan_multiplicative_expr_explicit(state: InputState): U {
 
     let result = scan_outer_expr(state);
 
-    while (is_multiplicative(state.code, state.newLine)) {
+    while (is_multiplicative_operator_or_factor_pending(state.code, state.newLine)) {
         switch (state.code) {
             case T_ASTRX: {
                 const opr = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
@@ -569,6 +577,13 @@ function scan_inner_expr(state: InputState): U {
     return hook(result, "A");
 }
 
+/**
+ * '^' | '**'
+ * @param code 
+ * @param newLine 
+ * @param useCaretForExponentiation 
+ * @returns 
+ */
 function is_power(code: TokenCode, newLine: boolean, useCaretForExponentiation: boolean): boolean {
     // console.lg(`is_power ${JSON.stringify(code)} useCaret: ${useCaretForExponentiation}`);
     if (newLine) {
@@ -643,7 +658,7 @@ function scan_grouping_expr(state: InputState): U {
 /**
  *
  */
-function scan_first_factor(state: InputState): [is_num: boolean, expr: U] {
+function scan_atom(state: InputState): [is_num: boolean, expr: U] {
     const code = state.code;
     // TODO: Convert this to a switch.
     if (code === T_LPAR) {
@@ -711,7 +726,7 @@ function scan_string(state: InputState): U {
 }
 
 function scan_factor(state: InputState): U {
-    const ff = scan_first_factor(state);
+    const ff = scan_atom(state);
     const ff_is_num = ff[0];
     let result = ff[1];
 

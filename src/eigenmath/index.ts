@@ -15330,18 +15330,21 @@ function scan_nib(s: string, k: number, $: ScriptVars, config: ParseConfig): num
 }
 
 function scan_stmt($: ScriptVars, config: ParseConfig) {
-    scan_comparison($, config);
+    scan_relational_expr($, config);
     if (token == "=") {
         get_token_skip_newlines($, config); // get token after =
         push_symbol(SETQ, $);
         swap($);
-        scan_comparison($, config);
+        scan_relational_expr($, config);
         list(3, $);
     }
 }
 
-function scan_comparison($: ScriptVars, config: ParseConfig) {
-    scan_expression($, config);
+/**
+ * 
+ */
+function scan_relational_expr($: ScriptVars, config: ParseConfig) {
+    scan_additive_expr($, config);
     switch (token) {
         case T_EQ:
             push_symbol(TESTEQ, $); // ==
@@ -15363,22 +15366,22 @@ function scan_comparison($: ScriptVars, config: ParseConfig) {
     }
     swap($);
     get_token_skip_newlines($, config); // get token after rel op
-    scan_expression($, config);
+    scan_additive_expr($, config);
     list(3, $);
 }
 
-function scan_expression($: ScriptVars, config: ParseConfig): void {
+function scan_additive_expr($: ScriptVars, config: ParseConfig): void {
     const h = $.stack.length;
     let t = token;
     if (token == "+" || token == "-")
         get_token_skip_newlines($, config);
-    scan_term($, config);
+    scan_multiplicative_expr($, config);
     if (t == "-")
         static_negate($);
     while (token == "+" || token == "-") {
         t = token;
         get_token_skip_newlines($, config); // get token after + or -
-        scan_term($, config);
+        scan_multiplicative_expr($, config);
         if (t == "-")
             static_negate($);
     }
@@ -15390,12 +15393,12 @@ function scan_expression($: ScriptVars, config: ParseConfig): void {
     }
 }
 
-function scan_term($: ScriptVars, config: ParseConfig): void {
+function scan_multiplicative_expr($: ScriptVars, config: ParseConfig): void {
     const h = $.stack.length;
 
     scan_power($, config);
 
-    while (scan_factor_pending(config)) {
+    while (is_multiplicative_operator_or_factor_pending(config)) {
 
         const t = token;
 
@@ -15418,7 +15421,10 @@ function scan_term($: ScriptVars, config: ParseConfig): void {
     }
 }
 
-function scan_factor_pending(config: ParseConfig): boolean {
+/**
+ * '*' | '/' | Sym | Function | Integer | Double | String | '[' | '('
+ */
+function is_multiplicative_operator_or_factor_pending(config: ParseConfig): boolean {
     if (config.useParenForTensors) {
         if (token == "(") {
             return true;
@@ -15432,7 +15438,6 @@ function scan_factor_pending(config: ParseConfig): boolean {
     switch (token) {
         case "*":
         case "/":
-        case "(":
         case T_SYMBOL:
         case T_FUNCTION:
         case T_INTEGER:
@@ -15518,11 +15523,11 @@ function scan_factor($: ScriptVars, config: ParseConfig): void {
         push_symbol(INDEX, $);
         swap($);
 
-        scan_expression($, config);
+        scan_additive_expr($, config);
 
         while (token as string == ",") {
             get_token($, config); // get token after ,
-            scan_expression($, config);
+            scan_additive_expr($, config);
         }
 
         if (token as string != "]")

@@ -55,6 +55,7 @@
         "unit-inv": "mocha 'units/inv.spec.ts'",
         "unit-ispositive": "mocha 'units/ispositive.spec.ts'",
         "unit-javascript": "mocha 'units/javascript.spec.ts'",
+        "unit-juxtaposition": "mocha 'units/juxtaposition.spec.ts'",
         "unit-log": "mocha 'units/log.spec.ts'",
         "unit-not": "mocha 'units/not.spec.ts'",
         "unit-outer": "mocha 'units/outer.spec.ts'",

@@ -178,7 +178,7 @@ export class InputState {
         return this.sourceText[this.#token.end + 1];
     }
     advance(): void {
-        // console.lg(`ScanState.advance(from = ${JSON.stringify(this.token)})`);
+        // console.lg(`InputState.advance(from = ${JSON.stringify(this.#token)})`);
 
         this.newLine = false;
         // eslint-disable-next-line no-constant-condition

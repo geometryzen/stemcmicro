@@ -24,8 +24,8 @@ export const T_GT = next_code('>');
 export const T_ASTRX = next_code('*');
 export const T_FWDSLASH = next_code('/');
 export const T_LPAR = next_code('(');
-export const T_RPAR = next_code(')');
-export const T_MIDDLE_DOT = next_code('·');
+export const T_RPAR = next_code(')');               // 1018
+export const T_MIDDLE_DOT = next_code('·');         // 1019
 export const T_EQ_EQ = next_code('==');             // 1020
 export const T_NTEQ = next_code('!=');              // 1021
 export const T_COLON = next_code(':');              // 1022

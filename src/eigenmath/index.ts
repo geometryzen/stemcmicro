@@ -15343,11 +15343,11 @@ function scan_stmt($: ScriptVars, config: ParseConfig) {
 /**
  * 
  */
-function scan_relational_expr($: ScriptVars, config: ParseConfig) {
+function scan_relational_expr($: ScriptVars, config: ParseConfig): void {
     scan_additive_expr($, config);
     switch (token) {
         case T_EQ:
-            push_symbol(TESTEQ, $); // ==
+            push_symbol(TESTEQ, $);
             break;
         case T_LTEQ:
             push_symbol(TESTLE, $);

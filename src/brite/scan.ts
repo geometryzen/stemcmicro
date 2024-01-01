@@ -345,7 +345,7 @@ function scan_additive_expr_explicit(state: InputState): U {
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function is_multiplicative_operator_or_factor_pending(code: TokenCode, newLine: boolean): boolean {
-    // console.lg(`code.text="${code.text}", code.code=${code.code}`);
+    // console.lg(`is_multiplicative_operator code.text="${code.text}", code.code=${code.code}`);
     switch (code) {
         case T_ASTRX:
         case T_FWDSLASH: {
@@ -356,7 +356,7 @@ function is_multiplicative_operator_or_factor_pending(code: TokenCode, newLine: 
         // case T_LPAR:
         // case T_SYM: {
         //    return true;
-        //}
+        // }
         // case T_FUNCTION:
         // case T_INT:
         // case T_FLT:
@@ -419,12 +419,9 @@ export function scan_multiplicative_expr_implicit(state: InputState): U {
             results.push(items_to_cons(symbol(INNER), results.pop(), scan_factor()));
         }
         */
-        else if (state.code === T_SYM) {
-            results.push(scan_symbol(state));
-        }
         else {
             // This will be dead code unless perhaps if we allow juxtaposition.
-            console.log(`state.code.code=${state.code.code}, state.code.text=${state.code.text}`);
+            // console.lg(`state.code.code=${state.code.code}, state.code.text=${state.code.text}`);
             results.push(scan_outer_expr(state));
         }
         /*

@@ -53,7 +53,6 @@ export class Defs {
     public symbolsDependencies: { [key: string]: string[] } = {};
 
     public symbolsHavingReassignments: string[] = [];
-    public symbolsInExpressionsWithoutAssignments: string[] = [];
 
     /**
      * top of stack

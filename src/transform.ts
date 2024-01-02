@@ -151,7 +151,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
                     // console.lg("sourceText:", JSON.stringify(sourceText));
                     // Note that expr is (f A B C1 C2 C3 ...),
                     // where A is the expression to be integrated, B is the integral solution, Cn are optional conditions.
-                    const expr = assert_cons(scan_meta(sourceText));
+                    const expr = assert_cons(scan_meta(sourceText, { useCaretForExponentiation: false, useParenForTensors: false, explicitAssocAdd: false, explicitAssocMul: false }));
                     const argList = expr.argList;
                     const A = argList.head;
                     // console.lg("A:", $.toInfixString(A));

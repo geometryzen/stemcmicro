@@ -734,7 +734,7 @@ function hash_power(base: U, expo: U, x: U, $: ExtensionEnv): number {
 export function make_hashed_itab($: ExtensionEnv): { [index: string]: string[] } {
     const tab: { [key: string]: string[] } = {};
     for (const s of Array.from(itab)) {
-        const f = scan_meta(s);
+        const f = scan_meta(s, { useCaretForExponentiation: false, useParenForTensors: false, explicitAssocAdd: false, explicitAssocMul: false });
         const u = cadr(f);
         const h = italu_hashcode(u, METAX, $);
         const key = h.toFixed(6);

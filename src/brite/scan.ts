@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { is_num } from '../operators/num/is_num';
@@ -5,12 +6,11 @@ import { is_rat } from '../operators/rat/rat_extension';
 import { assert_sym } from '../operators/sym/assert_sym';
 import {
     ASSIGN,
-    FACTORIAL, predefinedSymbolsInGlobalScope_doNotTrackInDependencies,
+    FACTORIAL,
     QUOTE,
     TRANSPOSE,
     TRANSPOSE_CHAR_CODE
 } from '../runtime/constants';
-import { defs } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
 import { create_boo } from '../tree/boo/Boo';
 import { negOne, one } from '../tree/rat/Rat';
@@ -28,7 +28,13 @@ import { TokenCode } from './Token';
 export const COMPONENT = native_sym(Native.component);
 
 export interface ScanOptions {
+    /**
+     * Use '^' or '**' for exponentiation.
+     */
     useCaretForExponentiation: boolean;
+    /**
+     * Use "(" and ")" otherwise "[" and "]".
+     */
     useParenForTensors: boolean;
     explicitAssocAdd: boolean;
     explicitAssocMul: boolean;
@@ -45,37 +51,25 @@ export function scan(sourceText: string, options: ScanOptions): [scanned: number
 
     const state = new InputState(sourceText);
 
-    state.lastFoundSymbol = null;
-    state.symbolsRightOfAssignment = [];
-    state.symbolsLeftOfAssignment = [];
-    state.isSymbolLeftOfAssignment = true;
-    state.scanningParameters = [];
-    state.functionInvokationsScanningStack = [''];
-    state.assignmentFound = false;
-    state.useCaretForExponentiation = options.useCaretForExponentiation;
-    state.useParenForTensors = options.useParenForTensors;
-    state.explicitAssocAdd = options.explicitAssocAdd;
-    state.explicitAssocMul = options.explicitAssocMul;
+    state.get_token_skip_newlines();
 
-    state.advance();
     if (state.code === T_END) {
         return [0, nil];
     }
-    const expr = scan_stmt(state);
-    if (!state.assignmentFound) {
-        defs.symbolsInExpressionsWithoutAssignments = defs.symbolsInExpressionsWithoutAssignments.concat(state.symbolsLeftOfAssignment);
-    }
+
+    const expr = scan_assignment_stmt(state, options);
+
     return [state.scanned, expr];
 }
 
-export function scan_meta(sourceText: string): U {
+export function scan_meta(sourceText: string, options: ScanOptions): U {
     const state = new InputState(sourceText);
     state.meta_mode = true;
-    state.advance();
+    state.get_token();
     if (state.code === T_END) {
         return nil;
     }
-    return scan_stmt(state);
+    return scan_assignment_stmt(state, options);
 }
 
 /**
@@ -109,33 +103,30 @@ function is_assign(code: TokenCode): boolean {
 /**
  * ':=' | '='
  */
-function is_stmt(code: TokenCode): boolean {
+function is_assignment_operator(code: TokenCode): boolean {
     // console.lg("is_stmt", code);
     return is_quote_assign(code) || is_assign(code);
 }
 
-function scan_stmt(state: InputState): U {
+function scan_assignment_stmt(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_assignment_stmt(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_stmt => ${retval} @ ${description}`);
         return retval;
     };
 
-    let result = scan_relational_expr(state);
+    let result = scan_relational_expr(state, options);
 
-    if (is_stmt(state.code)) {
-        const symbolLeft = state.lastFoundSymbol;
-
-        state.assignmentFound = true;
-        state.isSymbolLeftOfAssignment = false;
+    if (is_assignment_operator(state.code)) {
 
         // Keep the scanning information for the operator so that we can add it to the tree.
         const { pos, end } = state.tokenToSym();
         const was_quote_assign = is_quote_assign(state.code);
 
-        state.advance();
+        state.get_token_skip_newlines();
 
-        let rhs = scan_relational_expr(state);
+        let rhs = scan_relational_expr(state, options);
 
         // if it's a := then add a quote
         if (was_quote_assign) {
@@ -143,51 +134,6 @@ function scan_stmt(state: InputState): U {
         }
 
         result = items_to_cons(ASSIGN.clone(pos, end), result, rhs);
-
-        state.isSymbolLeftOfAssignment = true;
-
-        if (defs.codeGen) {
-            // in case of re-assignment, the symbol on the
-            // left will also be in the set of the symbols
-            // on the right. In that case just remove it from
-            // the symbols on the right.
-            if (symbolLeft) {
-                const i = state.symbolsRightOfAssignment.indexOf(symbolLeft);
-                if (i !== -1) {
-                    state.symbolsRightOfAssignment.splice(i, 1);
-                    defs.symbolsHavingReassignments.push(symbolLeft);
-                }
-            }
-
-            // print out the immediate dependencies
-            // eslint-disable-next-line no-console
-            // console.lg(`locally, ${symbolLeftOfAssignment} depends on: `);
-            // for (const i of Array.from(symbolsRightOfAssignment)) {
-            // eslint-disable-next-line no-console
-            // console.lg(`  ${i}`);
-            // }
-
-            // ok add the local dependencies to the existing
-            // dependencies of this left-value symbol
-
-            // create the exiting dependencies list if it doesn't exist
-            if (symbolLeft) {
-                if (defs.symbolsDependencies[symbolLeft] == null) {
-                    defs.symbolsDependencies[symbolLeft] = [];
-                }
-                const existingDependencies = defs.symbolsDependencies[symbolLeft];
-
-                // copy over the new dependencies to the existing
-                // dependencies avoiding repetitions
-                for (const i of Array.from(state.symbolsRightOfAssignment)) {
-                    if (existingDependencies.indexOf(i) === -1) {
-                        existingDependencies.push(i);
-                    }
-                }
-            }
-
-            state.symbolsRightOfAssignment = [];
-        }
     }
 
     return hook(result, "A");
@@ -215,19 +161,20 @@ function is_relational(code: TokenCode): boolean {
 /**
  * relational ::= add [REL add]?
  */
-function scan_relational_expr(state: InputState): U {
+function scan_relational_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_relational_expr(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_relational => ${retval} @ ${description}`);
         return retval;
     };
 
-    const result = scan_additive_expr(state);
+    const result = scan_additive_expr(state, options);
 
     if (is_relational(state.code)) {
         const opr = state.tokenToSym();
-        state.advance();
-        const rhs = scan_additive_expr(state);
+        state.get_token_skip_newlines();
+        const rhs = scan_additive_expr(state, options);
         return hook(items_to_cons(opr, result, rhs), "A");
     }
 
@@ -235,62 +182,58 @@ function scan_relational_expr(state: InputState): U {
 }
 
 /**
- * !newLine && ('+' || '-')
+ * '+' || '-'
  */
-function is_additive_operator(code: TokenCode, newLine: boolean): boolean {
-    // console.lg(`is_additive_expression(state = ${JSON.stringify(micro(state))})`);
-    if (!newLine) {
-        switch (code) {
-            case T_PLUS:
-            case T_MINUS: {
-                return true;
-            }
-            default: {
-                return false;
-            }
+function is_additive_operator(code: TokenCode): boolean {
+    switch (code) {
+        case T_PLUS:
+        case T_MINUS: {
+            return true;
+        }
+        default: {
+            return false;
         }
     }
-    else {
-        return false;
-    }
 }
-function scan_additive_expr(state: InputState): U {
-    if (state.explicitAssocAdd) {
-        return scan_additive_expr_explicit(state);
+function scan_additive_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_additive_expr(state.code.text=${state.code.text})`);
+    if (options.explicitAssocAdd) {
+        return scan_additive_expr_explicit(state, options);
     }
     else {
-        return scan_additive_expr_implicit(state);
+        return scan_additive_expr_implicit(state, options);
     }
 }
 
 /**
  * 
  */
-function scan_additive_expr_implicit(state: InputState): U {
+function scan_additive_expr_implicit(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_additive_expr_imp(state.code.text=${state.code.text})`);
     // TODO: We could cache the symbol.
     const terms: U[] = [native_sym(Native.add)];
 
     switch (state.code) {
         case T_PLUS:
-            state.advance();
-            terms.push(scan_multiplicative_expr(state));
+            state.get_token_skip_newlines();
+            terms.push(scan_multiplicative_expr(state, options));
             break;
         case T_MINUS:
-            state.advance();
-            terms.push(negate(scan_multiplicative_expr(state)));
+            state.get_token_skip_newlines();
+            terms.push(negate(scan_multiplicative_expr(state, options)));
             break;
         default:
-            terms.push(scan_multiplicative_expr(state));
+            terms.push(scan_multiplicative_expr(state, options));
     }
 
-    while (state.newLine === false && (state.code === T_PLUS || state.code === T_MINUS)) {
+    while (state.code === T_PLUS || state.code === T_MINUS) {
         if (state.code === T_PLUS) {
-            state.advance();
-            terms.push(scan_multiplicative_expr(state));
+            state.get_token_skip_newlines();
+            terms.push(scan_multiplicative_expr(state, options));
         }
         else {
-            state.advance();
-            terms.push(negate(scan_multiplicative_expr(state)));
+            state.get_token_skip_newlines();
+            terms.push(negate(scan_multiplicative_expr(state, options)));
         }
     }
 
@@ -309,21 +252,22 @@ function negate(expr: U): U {
     }
 }
 
-function scan_additive_expr_explicit(state: InputState): U {
+function scan_additive_expr_explicit(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_additive_expr_exp(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_additive => ${retval} @ ${description}`);
         return retval;
     };
 
-    let result = scan_multiplicative_expr(state);
+    let result = scan_multiplicative_expr(state, options);
 
-    while (is_additive_operator(state.code, state.newLine)) {
+    while (is_additive_operator(state.code)) {
         switch (state.code) {
             case T_PLUS: {
                 const opr = clone_symbol_using_info(native_sym(Native.add), state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, scan_multiplicative_expr(state));
+                state.get_token();
+                result = items_to_cons(opr, result, scan_multiplicative_expr(state, options));
                 break;
             }
             default: {
@@ -331,8 +275,8 @@ function scan_additive_expr_explicit(state: InputState): U {
                 // Make sure to also add test for a-b-c = (a-b)-c
                 assert_token_code(state.code, T_MINUS);
                 const opr = clone_symbol_using_info(native_sym(Native.add), state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, scanner_negate(scan_multiplicative_expr(state)));
+                state.get_token();
+                result = items_to_cons(opr, result, scanner_negate(scan_multiplicative_expr(state, options)));
                 break;
             }
         }
@@ -344,7 +288,7 @@ function scan_additive_expr_explicit(state: InputState): U {
  * '*' | '/' | '(' | 'Sym' | 'Function' | 'Int' | 'Flt' | 'Str'
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function is_multiplicative_operator_or_factor_pending(code: TokenCode, newLine: boolean): boolean {
+function is_multiplicative_operator_or_factor_pending(code: TokenCode): boolean {
     // console.lg(`is_multiplicative_operator code.text="${code.text}", code.code=${code.code}`);
     switch (code) {
         case T_ASTRX:
@@ -362,45 +306,42 @@ function is_multiplicative_operator_or_factor_pending(code: TokenCode, newLine: 
         // case T_FLT:
         /*
         case T_STR: {
-            if (newLine) {
                 return false;
                 // implicit multiplication can't cross line
                 // throw new Error("end <<<< pos");
                 // state.end = state.pos; // better error display
                 // return false;
-            }
-            else {
-                return true;
-            }
         }
         */
     }
     return false;
 }
-export function scan_multiplicative_expr(state: InputState): U {
-    if (state.explicitAssocMul) {
-        return scan_multiplicative_expr_explicit(state);
+export function scan_multiplicative_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_multiplicative_expr(state.code.text=${state.code.text})`);
+    if (options.explicitAssocMul) {
+        return scan_multiplicative_expr_explicit(state, options);
     }
     else {
-        return scan_multiplicative_expr_implicit(state);
+        return scan_multiplicative_expr_implicit(state, options);
     }
 }
 
 /**
  * 
  */
-export function scan_multiplicative_expr_implicit(state: InputState): U {
-    const results = [scan_outer_expr(state)];
+export function scan_multiplicative_expr_implicit(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_multiplicative_expr_imp(state.code.text=${state.code.text})`);
+    const results = [scan_outer_expr(state, options)];
     /*
     if (parse_time_simplifications) {
         simplify_1_in_products(results);
     }
     */
 
-    while (is_multiplicative_operator_or_factor_pending(state.code, state.newLine)) {
+    while (is_multiplicative_operator_or_factor_pending(state.code)) {
         if (state.code === T_ASTRX) {
-            state.advance();
-            results.push(scan_outer_expr(state));
+            state.get_token_skip_newlines();
+            results.push(scan_outer_expr(state, options));
         }
         else if (state.code === T_FWDSLASH) {
             // in case of 1/... then
@@ -410,8 +351,8 @@ export function scan_multiplicative_expr_implicit(state: InputState): U {
             // things like
             // 1/(2*a) become 1*(1/(2*a))
             simplify_1_in_products(results);
-            state.advance();
-            results.push(one_divided_by(scan_outer_expr(state)));
+            state.get_token_skip_newlines();
+            results.push(one_divided_by(scan_outer_expr(state, options)));
         }
         /*
         else if (tokenCharCode() === dotprod_unicode) {
@@ -422,7 +363,7 @@ export function scan_multiplicative_expr_implicit(state: InputState): U {
         else {
             // This will be dead code unless perhaps if we allow juxtaposition.
             // console.lg(`state.code.code=${state.code.code}, state.code.text=${state.code.text}`);
-            results.push(scan_outer_expr(state));
+            results.push(scan_outer_expr(state, options));
         }
         /*
         if (parse_time_simplifications) {
@@ -454,21 +395,21 @@ function simplify_1_in_products(factors: U[]): void {
 /**
  * Corresponds to scan_term
  */
-export function scan_multiplicative_expr_explicit(state: InputState): U {
+export function scan_multiplicative_expr_explicit(state: InputState, options: ScanOptions): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_multiplicative => ${retval} @ ${description}`);
         return retval;
     };
 
-    let result = scan_outer_expr(state);
+    let result = scan_outer_expr(state, options);
 
-    while (is_multiplicative_operator_or_factor_pending(state.code, state.newLine)) {
+    while (is_multiplicative_operator_or_factor_pending(state.code)) {
         switch (state.code) {
             case T_ASTRX: {
                 const opr = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, scan_outer_expr(state));
+                state.get_token();
+                result = items_to_cons(opr, result, scan_outer_expr(state, options));
                 break;
             }
             case T_FWDSLASH: {
@@ -476,13 +417,13 @@ export function scan_multiplicative_expr_explicit(state: InputState): U {
                 // But I think it belongs in the transformations.
                 // console.lg("result", JSON.stringify(result));
                 if (is_rat(result) && result.isOne()) {
-                    state.advance();
-                    result = one_divided_by(scan_outer_expr(state));
+                    state.get_token();
+                    result = one_divided_by(scan_outer_expr(state, options));
                 }
                 else {
                     const mulOp = clone_symbol_using_info(MATH_MUL, state.tokenToSym());
-                    state.advance();
-                    result = items_to_cons(mulOp, result, one_divided_by(scan_outer_expr(state)));
+                    state.get_token();
+                    result = items_to_cons(mulOp, result, one_divided_by(scan_outer_expr(state, options)));
                 }
                 break;
             }
@@ -499,28 +440,27 @@ export function scan_multiplicative_expr_explicit(state: InputState): U {
 /**
  * ! newline && '^'
  */
-function is_outer(code: TokenCode, newline_flag: boolean, useCaretForExponentiation: boolean): boolean {
-    if (!newline_flag) {
-        if (code === T_CARET) {
-            if (useCaretForExponentiation) {
-                return false;
-            }
-            else {
-                return true;
-            }
+function is_outer(code: TokenCode, useCaretForExponentiation: boolean): boolean {
+    if (code === T_CARET) {
+        if (useCaretForExponentiation) {
+            return false;
+        }
+        else {
+            return true;
         }
     }
     return false;
 }
 
-function scan_outer_expr(state: InputState): U {
+function scan_outer_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_outer_expr(state.code.text=${state.code.text})`);
 
-    let result = scan_inner_expr(state);
+    let result = scan_inner_expr(state, options);
 
-    while (is_outer(state.code, state.newLine, state.useCaretForExponentiation)) {
+    while (is_outer(state.code, options.useCaretForExponentiation)) {
         const opr = clone_symbol_using_info(MATH_OUTER, state.tokenToSym());
-        state.advance();
-        result = items_to_cons(opr, result, scan_inner_expr(state));
+        state.get_token();
+        result = items_to_cons(opr, result, scan_inner_expr(state, options));
     }
 
     return result;
@@ -529,44 +469,45 @@ function scan_outer_expr(state: InputState): U {
 /**
  * ! newline && ('<<' || '>>' || Vbar || 'middle-dot')
  */
-function is_inner_or_contraction(code: TokenCode, newline_flag: boolean): boolean {
-    return !newline_flag && (code === T_LTLT || code === T_GTGT || code === T_VBAR || code === T_MIDDLE_DOT);
+function is_inner_or_contraction(code: TokenCode): boolean {
+    return code === T_LTLT || code === T_GTGT || code === T_VBAR || code === T_MIDDLE_DOT;
 }
 
-function scan_inner_expr(state: InputState): U {
+function scan_inner_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_inner_expr(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`results (INNER) => ${retval} @ ${description}`);
         return retval;
     };
 
-    let result = scan_power_expr(state);
+    let result = scan_power_expr(state, options);
 
-    while (is_inner_or_contraction(state.code, state.newLine)) {
+    while (is_inner_or_contraction(state.code)) {
         switch (state.code) {
             case T_LTLT: {
                 const opr = clone_symbol_using_info(MATH_LCO, state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, scan_power_expr(state));
+                state.get_token();
+                result = items_to_cons(opr, result, scan_power_expr(state, options));
                 break;
             }
             case T_GTGT: {
                 const opr = clone_symbol_using_info(MATH_RCO, state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, scan_power_expr(state));
+                state.get_token();
+                result = items_to_cons(opr, result, scan_power_expr(state, options));
                 break;
             }
             case T_VBAR: {
                 const opr = clone_symbol_using_info(MATH_INNER, state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, scan_power_expr(state));
+                state.get_token();
+                result = items_to_cons(opr, result, scan_power_expr(state, options));
                 break;
             }
             default: {
                 state.expect(T_MIDDLE_DOT);
                 const opr = clone_symbol_using_info(MATH_INNER, state.tokenToSym());
-                state.advance();
-                result = items_to_cons(opr, result, scan_power_expr(state));
+                state.get_token();
+                result = items_to_cons(opr, result, scan_power_expr(state, options));
                 break;
             }
         }
@@ -576,16 +517,11 @@ function scan_inner_expr(state: InputState): U {
 
 /**
  * '^' | '**'
- * @param code 
- * @param newLine 
+ * @param code
  * @param useCaretForExponentiation 
  * @returns 
  */
-function is_power(code: TokenCode, newLine: boolean, useCaretForExponentiation: boolean): boolean {
-    // console.lg(`is_power ${JSON.stringify(code)} useCaret: ${useCaretForExponentiation}`);
-    if (newLine) {
-        return false;
-    }
+function is_power(code: TokenCode, useCaretForExponentiation: boolean): boolean {
     if (useCaretForExponentiation) {
         return code === T_CARET;
     }
@@ -594,16 +530,17 @@ function is_power(code: TokenCode, newLine: boolean, useCaretForExponentiation: 
     }
 }
 
-function scan_power_expr(state: InputState): U {
+function scan_power_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_power_expr(state.code.text=${state.code.text})`);
     // Using a stack because exponentiation is right-associative.
     // We'll push the operands as well in order to retain scanning location information.
     const stack: U[] = [];
-    stack.push(scan_unary_expr(state));
+    stack.push(scan_unary_expr(state, options));
 
-    while (is_power(state.code, state.newLine, state.useCaretForExponentiation)) {
+    while (is_power(state.code, options.useCaretForExponentiation)) {
         stack.push(state.tokenToSym());
-        state.advance();
-        stack.push(scan_unary_expr(state));
+        state.get_token();
+        stack.push(scan_unary_expr(state, options));
     }
 
     while (stack.length > 0) {
@@ -620,62 +557,65 @@ function scan_power_expr(state: InputState): U {
     throw new Error();
 }
 
-function scan_unary_expr(state: InputState): U {
+function scan_unary_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_unary_expr(state.code.text=${state.code.text})`);
     const code = state.code;
     switch (code) {
         case T_PLUS: {
-            state.advance();
-            return scan_unary_expr(state);
+            state.get_token();
+            return scan_unary_expr(state, options);
         }
         case T_MINUS: {
-            state.advance();
-            return scanner_negate(scan_unary_expr(state));
+            state.get_token();
+            return scanner_negate(scan_unary_expr(state, options));
         }
         default: {
-            return scan_grouping_expr(state);
+            return scan_grouping_expr(state, options);
         }
     }
 }
 
-function scan_grouping_expr(state: InputState): U {
+function scan_grouping_expr(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_grouping_expr(state.code.text=${state.code.text})`);
     const code = state.code;
     if (code === T_LPAR) {
-        if (state.useParenForTensors) {
-            return scan_tensor(state);
+        if (options.useParenForTensors) {
+            return scan_tensor(state, options);
         }
         else {
-            return scan_grouping(state);
+            return scan_grouping(state, options);
         }
     }
     else {
-        return scan_factor(state);
+        return scan_factor(state, options);
     }
 }
 
 /**
  *
  */
-function scan_atom(state: InputState): [is_num: boolean, expr: U] {
+function scan_atom(state: InputState, options: ScanOptions): [is_num: boolean, expr: U] {
+    // console.lg(`scan_atom(state.code.text=${state.code.text})`);
     const code = state.code;
     // TODO: Convert this to a switch.
     if (code === T_LPAR) {
-        if (state.useParenForTensors) {
-            return [false, scan_tensor(state)];
+        if (options.useParenForTensors) {
+            return [false, scan_tensor(state, options)];
         }
         else {
-            return [false, scan_grouping(state)];
+            return [false, scan_grouping(state, options)];
         }
     }
     else if (code === T_SYM) {
         // TODO: This code should probably be merged into scan_symbol.
         if (state.text === 'true') {
             const value = create_boo(true);
-            state.advance();
+            state.get_token();
             return [false, value];
         }
         else if (state.text === 'false') {
             const value = create_boo(false);
-            state.advance();
+            state.get_token();
             return [false, value];
         }
         else {
@@ -683,10 +623,10 @@ function scan_atom(state: InputState): [is_num: boolean, expr: U] {
         }
     }
     else if (code === T_FUNCTION) {
-        return [false, scan_function_call_with_function_name(state)];
+        return [false, scan_function_call(state, options)];
     }
-    else if (code === T_LSQB && !state.useParenForTensors) {
-        return [false, scan_tensor(state)];
+    else if (code === T_LSQB && !options.useParenForTensors) {
+        return [false, scan_tensor(state, options)];
     }
     else if (code === T_INT) {
         return [true, scan_int(state)];
@@ -706,24 +646,25 @@ function scan_atom(state: InputState): [is_num: boolean, expr: U] {
 
 function scan_flt(state: InputState): U {
     const flt = state.tokenToFlt();
-    state.advance();
+    state.get_token();
     return flt;
 }
 
 function scan_int(state: InputState): U {
     const int = state.tokenToInt();
-    state.advance();
+    state.get_token();
     return int;
 }
 
 function scan_string(state: InputState): U {
     const str = state.tokenToStr();
-    state.advance();
+    state.get_token();
     return str;
 }
 
-function scan_factor(state: InputState): U {
-    const ff = scan_atom(state);
+function scan_factor(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_factor(state.code.text=${state.code.text} ${state.code.code})`);
+    const ff = scan_atom(state, options);
     const ff_is_num = ff[0];
     let result = ff[1];
 
@@ -737,18 +678,18 @@ function scan_factor(state: InputState): U {
     //    (instead of subexpressions or parameters of function
     //    definitions or function calls with an explicit function
     //    name), respectively
-    while (state.code === T_LSQB || (state.code === T_LPAR && !state.newLine && !ff_is_num)) {
+    while (state.code === T_LSQB || (state.code === T_LPAR && !ff_is_num)) {
         if (state.code === T_LSQB) {
-            result = scan_index(result, state);
+            result = scan_index(result, state, options);
         }
         else if (state.code === T_LPAR) {
             // console.lg "( as function call without function name "
-            result = scan_function_call_without_function_name(result, state);
+            result = scan_function_call_without_function_name(result, state, options);
         }
     }
 
     while (state.code === T_BANG) {
-        state.advance();
+        state.get_token();
         result = items_to_cons(FACTORIAL, result);
     }
 
@@ -758,282 +699,82 @@ function scan_factor(state: InputState): U {
     // multiple places where that happens, and
     // the parser is not the place.
     while (state.tokenCharCode() === TRANSPOSE_CHAR_CODE) {
-        state.advance();
+        state.get_token();
         result = items_to_cons(TRANSPOSE, result);
     }
 
     return result;
 }
 
-function scan_index(indexable: U, state: InputState): U {
+function scan_index(indexable: U, state: InputState, options: ScanOptions): U {
     state.expect(T_LSQB);
-    state.advance();
+    state.get_token();
     const items: U[] = [COMPONENT, indexable];
     if (state.code !== T_RSQB) {
-        items.push(scan_additive_expr(state));
+        items.push(scan_additive_expr(state, options));
         while (state.code === T_COMMA) {
-            state.advance();
-            items.push(scan_additive_expr(state));
+            state.get_token();
+            items.push(scan_additive_expr(state, options));
         }
     }
     state.expect(T_RSQB);
-    state.advance();
+    state.get_token();
 
     return items_to_cons(...items);
 }
 
-function addSymbolRightOfAssignment(state: InputState, theSymbol: string): void {
-    if (
-        predefinedSymbolsInGlobalScope_doNotTrackInDependencies.indexOf(theSymbol) === -1 &&
-        state.symbolsRightOfAssignment.indexOf(theSymbol) === -1 &&
-        state.symbolsRightOfAssignment.indexOf("'" + theSymbol) === -1 &&
-        !state.skipRootVariableToBeSolved
-    ) {
-        // console.lg(`... adding symbol: ${theSymbol} to the set of the symbols right of assignment`);
-        let prefixVar = '';
-        for (let i = 1; i < state.functionInvokationsScanningStack.length; i++) {
-            if (state.functionInvokationsScanningStack[i] !== '') {
-                prefixVar += state.functionInvokationsScanningStack[i] + '_' + i + '_';
-            }
-        }
-
-        theSymbol = prefixVar + theSymbol;
-        state.symbolsRightOfAssignment.push(theSymbol);
-    }
-}
-
-function addSymbolLeftOfAssignment(state: InputState, theSymbol: string): void {
-    if (
-        predefinedSymbolsInGlobalScope_doNotTrackInDependencies.indexOf(theSymbol) === -1 &&
-        state.symbolsLeftOfAssignment.indexOf(theSymbol) === -1 &&
-        state.symbolsLeftOfAssignment.indexOf("'" + theSymbol) === -1 &&
-        !state.skipRootVariableToBeSolved
-    ) {
-        // console.lg(`... adding symbol: ${theSymbol} to the set of the symbols left of assignment`);
-        let prefixVar = '';
-        for (let i = 1; i < state.functionInvokationsScanningStack.length; i++) {
-            if (state.functionInvokationsScanningStack[i] !== '') {
-                prefixVar += state.functionInvokationsScanningStack[i] + '_' + i + '_';
-            }
-        }
-
-        theSymbol = prefixVar + theSymbol;
-        state.symbolsLeftOfAssignment.push(theSymbol);
-    }
-}
 function scan_symbol(state: InputState): U {
-    // console.lg("scan_symbol()");
+    // console.lg(`scan_symbol(state.code.text=${state.code.text})`);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const hook = function (retval: U, description: string): U {
+        // console.lg(`scan_symbol => ${retval} @ ${description}`);
+        return retval;
+    };
     state.expect(T_SYM);
     const sym = state.tokenToSym();
-    // The text should be the same as  
-    // const text = sym.text;
-    if (state.scanningParameters.length === 0) {
-        // TODO: Why don't we just store the actual symbol here?
-        state.lastFoundSymbol = state.text;
-        if (state.isSymbolLeftOfAssignment) {
-            addSymbolLeftOfAssignment(state, state.text);
-        }
-    }
-    else {
-        if (state.isSymbolLeftOfAssignment) {
-            addSymbolRightOfAssignment(state, "'" + state.text);
-        }
-    }
 
     // if we were looking at the right part of an assignment while we
     // found the symbol, then add it to the "symbolsRightOfAssignment"
     // set (we check for duplications)
-    if (!state.isSymbolLeftOfAssignment) {
-        addSymbolRightOfAssignment(state, state.text);
-    }
-    state.advance();
-    return sym;
+    state.get_token();
+    return hook(sym, "A");
 }
 
-function is_special_function(name: string): boolean {
-    switch (name) {
-        case 'defint':
-        case 'for':
-        case 'product':
-        case 'roots':
-        case 'sum': {
-            return true;
-        }
-        default: {
-            return false;
-        }
-    }
-}
-
-function scan_function_call_with_function_name(state: InputState): U {
+function scan_function_call(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_function_call(pos=${state.pos}, end=${state.end})`);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const hook = function (retval: U, description: string): U {
+        // console.lg(`scan_function_call => ${retval} @ ${description}`);
+        return retval;
+    };
     state.expect(T_FUNCTION);
-    let n = 1; // the parameter number as we scan parameters
 
-    const p = state.tokenToSym();
-    const fcall: U[] = [p];
-    const functionName = state.text;
-    if (is_special_function(functionName)) {
-        state.functionInvokationsScanningStack.push(state.text);
-    }
-    state.lastFoundSymbol = state.text;
-    if (!state.isSymbolLeftOfAssignment) {
-        addSymbolRightOfAssignment(state, state.text);
-    }
+    const name = state.tokenToSym();
+    const fcall: U[] = [name];
 
-    state.advance(); // open parens
-    state.advance(); // 1st parameter
-    state.scanningParameters.push(true);
-    try {
-        if (state.code !== T_RPAR) {
-            fcall.push(scan_stmt(state));
-            n++;
-            while (state.code === T_COMMA) {
-                state.advance();
-                // roots' disappearing variable, if there, is the second one
-                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('roots') !== -1) {
-                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                        (x) =>
-                            !new RegExp(
-                                'roots_' +
-                                (state.functionInvokationsScanningStack.length - 1) +
-                                '_' +
-                                state.text
-                            ).test(x)
-                    );
-                    state.skipRootVariableToBeSolved = true;
-                }
-                // sums' disappearing variable, is alsways the second one
-                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('sum') !== -1) {
-                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                        (x) =>
-                            !new RegExp(
-                                'sum_' +
-                                (state.functionInvokationsScanningStack.length - 1) +
-                                '_' +
-                                state.text
-                            ).test(x)
-                    );
-                    state.skipRootVariableToBeSolved = true;
-                }
-                // product's disappearing variable, is alsways the second one
-                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('product') !== -1) {
-                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                        (x) =>
-                            !new RegExp(
-                                'product_' +
-                                (state.functionInvokationsScanningStack.length - 1) +
-                                '_' +
-                                state.text
-                            ).test(x)
-                    );
-                    state.skipRootVariableToBeSolved = true;
-                }
-                // for's disappearing variable, is alsways the second one
-                if (n === 2 && state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('for') !== -1) {
-                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                        (x) =>
-                            !new RegExp(
-                                'for_' +
-                                (state.functionInvokationsScanningStack.length - 1) +
-                                '_' +
-                                state.text
-                            ).test(x)
-                    );
-                    state.skipRootVariableToBeSolved = true;
-                }
-                // defint's disappearing variables can be in positions 2,5,8...
-                if (state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('defint') !== -1 && (n === 2 || (n > 2 && (n - 2) % 3 === 0))) {
-                    state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                        (x) =>
-                            !new RegExp(
-                                'defint_' +
-                                (state.functionInvokationsScanningStack.length - 1) +
-                                '_' +
-                                state.text
-                            ).test(x)
-                    );
-                    state.skipRootVariableToBeSolved = true;
-                }
+    state.get_token(); // open parens
+    // console.lg(`LPAR is at (pos=${state.pos}, end=${state.end})`);
+    state.expect(T_LPAR);
+    state.get_token(); // 1st parameter or closing paren.
+    if (state.code !== T_RPAR) {
+        fcall.push(scan_assignment_stmt(state, options));
+        while (state.code === T_COMMA) {
+            state.get_token();
 
-                fcall.push(scan_stmt(state));
-                state.skipRootVariableToBeSolved = false;
-                n++;
-            }
-
-            // todo refactor this, there are two copies
-            // this catches the case where the "roots" variable is not specified
-            if (n === 2 &&
-                state.functionInvokationsScanningStack[state.functionInvokationsScanningStack.length - 1].indexOf('roots') !== -1) {
-                state.symbolsRightOfAssignment = state.symbolsRightOfAssignment.filter(
-                    (x) =>
-                        !new RegExp(
-                            'roots_' + (state.functionInvokationsScanningStack.length - 1) + '_' + 'x'
-                        ).test(x)
-                );
-            }
-        }
-    }
-    finally {
-        state.scanningParameters.pop();
-    }
-
-    for (let i = 0; i <= state.symbolsRightOfAssignment.length; i++) {
-        if (state.symbolsRightOfAssignment[i] != null) {
-            if (functionName === 'roots') {
-                state.symbolsRightOfAssignment[i] = state.symbolsRightOfAssignment[i].replace(
-                    new RegExp(
-                        'roots_' + (state.functionInvokationsScanningStack.length - 1) + '_'
-                    ),
-                    ''
-                );
-            }
-            if (functionName === 'defint') {
-                state.symbolsRightOfAssignment[i] = state.symbolsRightOfAssignment[i].replace(
-                    new RegExp(
-                        'defint_' + (state.functionInvokationsScanningStack.length - 1) + '_'
-                    ),
-                    ''
-                );
-            }
-            if (functionName === 'sum') {
-                state.symbolsRightOfAssignment[i] = state.symbolsRightOfAssignment[i].replace(
-                    new RegExp(
-                        'sum_' + (state.functionInvokationsScanningStack.length - 1) + '_'
-                    ),
-                    ''
-                );
-            }
-            if (functionName === 'product') {
-                state.symbolsRightOfAssignment[i] = state.symbolsRightOfAssignment[i].replace(
-                    new RegExp(
-                        'product_' + (state.functionInvokationsScanningStack.length - 1) + '_'
-                    ),
-                    ''
-                );
-            }
-            if (functionName === 'for') {
-                state.symbolsRightOfAssignment[i] = state.symbolsRightOfAssignment[i].replace(
-                    new RegExp(
-                        'for_' + (state.functionInvokationsScanningStack.length - 1) + '_'
-                    ),
-                    ''
-                );
-            }
+            fcall.push(scan_assignment_stmt(state, options));
         }
     }
 
     state.expect(T_RPAR);
-    state.advance();
-
-    if (is_special_function(functionName)) {
-        state.functionInvokationsScanningStack.pop();
-    }
+    // console.lg(`RPAR is at (pos=${state.pos}, end=${state.end})`);
+    state.get_token();
+    // console.lg(`Next is at (pos=${state.pos}, end=${state.end})`);
 
     // console.lg('-- scan_function_call_with_function_name end');
-    return items_to_cons(...fcall);
+    return hook(items_to_cons(...fcall), "A");
 }
 
-function scan_function_call_without_function_name(lhs: U, state: InputState): U {
+function scan_function_call_without_function_name(lhs: U, state: InputState, options: ScanOptions): U {
     state.expect(T_LPAR);
 
     // const func = makeList(EVAL, lhs); // original code added an EVAL. Don't know why.
@@ -1041,23 +782,17 @@ function scan_function_call_without_function_name(lhs: U, state: InputState): U 
 
     const fcall: U[] = [func];
     assert_token_code(state.code, T_LPAR);
-    state.advance(); // left paren
-    state.scanningParameters.push(true);
-    try {
-        if (state.code !== T_RPAR) {
-            fcall.push(scan_stmt(state));
-            while (state.code === T_COMMA) {
-                state.advance();
-                fcall.push(scan_stmt(state));
-            }
+    state.get_token(); // left paren
+    if (state.code !== T_RPAR) {
+        fcall.push(scan_assignment_stmt(state, options));
+        while (state.code === T_COMMA) {
+            state.get_token();
+            fcall.push(scan_assignment_stmt(state, options));
         }
-    }
-    finally {
-        state.scanningParameters.pop();
     }
 
     state.expect(T_RPAR);
-    state.advance();
+    state.get_token();
 
     return items_to_cons(...fcall);
 }
@@ -1065,43 +800,45 @@ function scan_function_call_without_function_name(lhs: U, state: InputState): U 
 /**
  * An expression that is enclosed in parentheses.
  */
-function scan_grouping(state: InputState): U {
+function scan_grouping(state: InputState, options: ScanOptions): U {
+    // console.lg(`scan_grouping(state.code.text=${state.code.text})`);
     state.expect(T_LPAR);
-    state.advance();
-    const result = scan_stmt(state);
+    state.get_token();
+    const result = scan_assignment_stmt(state, options);
     state.expect(T_RPAR);
-    state.advance();
+    state.get_token();
     return result;
 }
 
-function scan_tensor(state: InputState): Tensor {
+function scan_tensor(state: InputState, options: ScanOptions): Tensor {
+    // console.lg(`scan_tensor(state.code.text=${state.code.text})`);
 
-    if (state.useParenForTensors) {
+    if (options.useParenForTensors) {
         state.expect(T_LPAR);
     }
     else {
         state.expect(T_LSQB);
     }
-    state.advance();
+    state.get_token();
 
-    const element = scan_stmt(state);
+    const element = scan_assignment_stmt(state, options);
 
     const elements: U[] = [element];
 
     while (state.code === T_COMMA) {
-        state.advance();
-        elements.push(scan_stmt(state));
+        state.get_token();
+        elements.push(scan_assignment_stmt(state, options));
     }
 
     const M = create_tensor(elements);
 
-    if (state.useParenForTensors) {
+    if (options.useParenForTensors) {
         state.expect(T_RPAR);
     }
     else {
         state.expect(T_RSQB);
     }
-    state.advance();
+    state.get_token();
 
     return M;
 }

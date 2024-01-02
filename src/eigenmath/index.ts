@@ -15729,7 +15729,7 @@ function get_token_nib($: ScriptVars, config: ParseConfig): void {
         return;
     }
 
-    // symbol?
+    // symbol or function call?
 
     if (isalpha(c)) {
 

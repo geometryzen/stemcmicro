@@ -1,5 +1,7 @@
 
-// s is a string here anyways
+/**
+ * Determines whether s is a whitespace character.
+ */
 export function is_space(s: string): boolean {
     if (s == null) {
         return false;

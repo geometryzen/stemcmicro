@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
@@ -8,7 +9,7 @@ import { ASSIGN, METAA, METAB, METAX } from "../runtime/constants";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
 import { consume_num } from "./consume_num";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
@@ -68,8 +69,8 @@ export class InputState {
      * Tokens or Operators with multiple characters are combined into a number captured in a T_* constant. e.g. T_
      */
     #token: Token;
-    newLine: boolean;
     meta_mode = false;
+    scan_level: number;
 
     /**
      * Initialized to zero in the constructor.
@@ -79,55 +80,13 @@ export class InputState {
     private input_str: number;
 
     /**
-     * WARNING: The reason why this isn't type as Sym is because there is some array lookup code
-     * that only works for string primitives.
-     * TODO: Create an abstraction for storing symbols that works if Sym is a value type (i.e. not interred or primitive).
-     */
-    lastFoundSymbol: string | null;
-    symbolsRightOfAssignment: string[];
-    symbolsLeftOfAssignment: string[];
-    isSymbolLeftOfAssignment: boolean | null;
-    /**
-     * A stack that indicates when we are scanning parameters to a function.
-     */
-    scanningParameters: boolean[];
-    functionInvokationsScanningStack: string[];
-    skipRootVariableToBeSolved: boolean;
-    assignmentFound: boolean | null;
-    /**
-     * Use '^' or '**' for exponentiation.
-     */
-    useCaretForExponentiation = false;
-    /**
-     * Use "(" and ")" otherwise "[" and "]".
-     */
-    useParenForTensors = false;
-    /**
-     * 
-     */
-    explicitAssocAdd = false;
-    /**
-     * 
-     */
-    explicitAssocMul = false;
-    /**
      * @param sourceText The text that will be used for the scan.
-     * @param end The zero-based starting position in the text. 
+     * @param start The zero-based starting position in the text. 
      */
-    constructor(private readonly sourceText: string, end = 0) {
-        this.#token = { txt: '', pos: 0, end: end };
-        this.newLine = false;
-
+    constructor(private readonly sourceText: string, start = 0) {
+        this.#token = { txt: '', pos: 0, end: start };
+        this.scan_level = 0;
         this.input_str = 0;
-
-        this.lastFoundSymbol = null;
-        this.symbolsRightOfAssignment = [];
-        this.symbolsLeftOfAssignment = [];
-        this.isSymbolLeftOfAssignment = null;
-        this.scanningParameters = [];
-        this.functionInvokationsScanningStack = [];
-        this.skipRootVariableToBeSolved = false;
-        this.assignmentFound = null;
     }
     get code(): TokenCode {
         const code = this.#token.code;
@@ -160,16 +119,13 @@ export class InputState {
         return this.#token.end;
     }
     get scanned(): number {
-        // console.lg(`pos: ${this.token.pos}`);
-        // console.lg(`end: ${this.token.end}`);
-        // console.lg(`inp: ${this.input_str}`);
         return this.#token.pos - this.input_str;
     }
     /**
      * The character at token.end
      */
     get curr(): string {
-        return this.sourceText[this.#token.end];
+        return this.sourceText.charAt(this.#token.end);
     }
     /**
      * The character at token.end + 1
@@ -177,21 +133,22 @@ export class InputState {
     get next(): string {
         return this.sourceText[this.#token.end + 1];
     }
-    advance(): void {
-        // console.lg(`InputState.advance(from = ${JSON.stringify(this.#token)})`);
-
-        this.newLine = false;
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
+    get_token_skip_newlines(): void {
+        this.scan_level++;
+        try {
             this.get_token();
-            if (this.#token.code === T_NEWLINE) {
-                this.newLine = true;
-            }
-            else {
-                break;
+        }
+        finally {
+            this.scan_level--;
+        }
+    }
+    get_token(): void {
+        this.get_token_nib();
+        if (this.scan_level > 0) {
+            while (this.#token.code === T_NEWLINE) {
+                this.get_token_nib();
             }
         }
-        // console.lg(`InputState.advance(token = ${JSON.stringify(this.#token)})`);
     }
     consumeChars(n: number): void {
         this.#token.end += n;
@@ -248,7 +205,7 @@ export class InputState {
      * '>=' T_GTEQ
      * '**' or "**" T_STAR_STAR
      */
-    private get_token(): void {
+    private get_token_nib(): void {
         // eslint-disable-next-line no-console
         // console.lg(`get_token(start = ${JSON.stringify(this.#token)})`);
 
@@ -256,6 +213,7 @@ export class InputState {
         while (is_space(this.curr)) {
             if (this.curr === '\n' || this.curr === '\r') {
                 this.#token.code = T_NEWLINE;
+                this.#token.pos = this.#token.end;
                 this.#token.end++;
                 return;
             }
@@ -309,13 +267,20 @@ export class InputState {
         }
         */
 
-        // symbol?
+        // symbol or function call?
         if (is_alphabetic(this.curr)) {
             this.#token.code = T_SYM;
             this.#token.end++;
             while (is_alphanumeric_or_underscore(this.curr)) {
                 this.#token.code = T_SYM;
                 this.#token.end++;
+            }
+            // TODO: T_FUNCTION or T_SYM
+            if (this.curr === '(') {
+                this.#token.code = T_FUNCTION;
+            }
+            else {
+                this.#token.code = T_SYM;
             }
             this.update_token_text(this.#token.pos, this.#token.end);
             return;

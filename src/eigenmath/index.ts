@@ -544,7 +544,7 @@ function complexity(p: U): number {
 /**
  * ( pop1 pop2 == Cons(pop2, pop1) )
  */
-function cons($: ScriptVars): void {
+function cons($: StackContext): void {
     const pop1 = pop($);
     const pop2 = pop($);
     push(create_cons(pop2, pop1), $);
@@ -904,12 +904,24 @@ const EMIT_TABLE = 10;
 
 let emit_level: number;
 
-function render_svg(p1: U, $: ScriptVars): string {
+interface StackContext {
+    stack: U[];
+}
+
+interface EmitContext {
+    useImaginaryI: boolean;
+    useImaginaryJ: boolean;
+}
+
+function render_svg(expr: U, dc: DrawContext, ec: EmitContext): string {
+    // TODO: We only really need the stack here...
+    const $ = new ScriptVars();
+
     emit_level = 0;
 
-    emit_list(p1, $);
+    emit_list(expr, $, ec);
 
-    p1 = pop($);
+    const p1 = pop($);
 
     let h = height(p1);
     const d = depth(p1);
@@ -931,13 +943,13 @@ function render_svg(p1: U, $: ScriptVars): string {
 
     outbuf.push("<svg " + heq + weq + ">");
 
-    draw_formula(x, y, p1, $, outbuf);
+    draw_formula(x, y, p1, dc, outbuf);
 
     outbuf.push("</svg><br>");
     return outbuf.join('');
 }
 
-function emit_args(p: U, $: ScriptVars): void {
+function emit_args(p: U, $: StackContext, ec: EmitContext): void {
 
     p = cdr(p);
 
@@ -949,14 +961,14 @@ function emit_args(p: U, $: ScriptVars): void {
 
     const t = $.stack.length;
 
-    emit_expr(car(p), $);
+    emit_expr(car(p), $, ec);
 
     p = cdr(p);
 
     while (iscons(p)) {
         emit_roman_string(",", $);
         emit_thin_space($);
-        emit_expr(car(p), $);
+        emit_expr(car(p), $, ec);
         p = cdr(p);
     }
 
@@ -965,14 +977,14 @@ function emit_args(p: U, $: ScriptVars): void {
     emit_update_subexpr($);
 }
 
-function emit_base(p: U, $: ScriptVars): void {
+function emit_base(p: U, $: StackContext, ec: EmitContext): void {
     if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER))
-        emit_subexpr(p, $);
+        emit_subexpr(p, $, ec);
     else
-        emit_expr(p, $);
+        emit_expr(p, $, ec);
 }
 
-function emit_denominators(p: U, $: ScriptVars) {
+function emit_denominators(p: U, $: StackContext, ec: EmitContext) {
 
     const t = $.stack.length;
     const n = count_denominators(p);
@@ -998,12 +1010,12 @@ function emit_denominators(p: U, $: ScriptVars) {
         if (isminusone(caddr(q))) {
             q = cadr(q);
             if (car(q) == symbol(ADD) && n == 1)
-                emit_expr(q, $); // parens not needed
+                emit_expr(q, $, ec); // parens not needed
             else
-                emit_factor(q, $);
+                emit_factor(q, $, ec);
         }
         else {
-            emit_base(cadr(q), $);
+            emit_base(cadr(q), $, ec);
             emit_numeric_exponent(caddr(q) as Num, $); // sign is not emitted
         }
     }
@@ -1011,7 +1023,7 @@ function emit_denominators(p: U, $: ScriptVars) {
     emit_update_list(t, $);
 }
 
-function emit_double(p: Flt, $: ScriptVars): void {
+function emit_double(p: Flt, $: StackContext): void {
     let i: number;
     let j: number;
 
@@ -1081,46 +1093,46 @@ function emit_double(p: Flt, $: ScriptVars): void {
     emit_update_superscript($);
 }
 
-function emit_exponent(p: U, $: ScriptVars): void {
+function emit_exponent(p: U, $: StackContext, ec: EmitContext): void {
     if (isnum(p) && !isnegativenumber(p)) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
     }
 
     emit_level++;
-    emit_list(p, $);
+    emit_list(p, $, ec);
     emit_level--;
 
     emit_update_superscript($);
 }
 
-function emit_expr(p: U, $: ScriptVars): void {
+function emit_expr(p: U, $: StackContext, ec: EmitContext): void {
     if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p)))) {
         emit_roman_char(MINUS_SIGN, $);
         emit_thin_space($);
     }
 
     if (car(p) == symbol(ADD))
-        emit_expr_nib(p, $);
+        emit_expr_nib(p, $, ec);
     else
-        emit_term(p, $);
+        emit_term(p, $, ec);
 }
 
-function emit_expr_nib(p: U, $: ScriptVars): void {
+function emit_expr_nib(p: U, $: StackContext, ec: EmitContext): void {
     p = cdr(p);
-    emit_term(car(p), $);
+    emit_term(car(p), $, ec);
     p = cdr(p);
     while (iscons(p)) {
         if (isnegativeterm(car(p)))
             emit_infix_operator(MINUS_SIGN, $);
         else
             emit_infix_operator(PLUS_SIGN, $);
-        emit_term(car(p), $);
+        emit_term(car(p), $, ec);
         p = cdr(p);
     }
 }
 
-function emit_factor(p: U, $: ScriptVars) {
+function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     if (isrational(p)) {
         emit_rational(p, $);
         return;
@@ -1142,33 +1154,33 @@ function emit_factor(p: U, $: ScriptVars) {
     }
 
     if (istensor(p)) {
-        emit_tensor(p, $);
+        emit_tensor(p, $, ec);
         return;
     }
 
     if (iscons(p)) {
         if (car(p) == symbol(POWER))
-            emit_power(p, $);
+            emit_power(p, $, ec);
         else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY))
-            emit_subexpr(p, $);
+            emit_subexpr(p, $, ec);
         else
-            emit_function(p, $);
+            emit_function(p, $, ec);
         return;
     }
 }
 
-function emit_fraction(p: U, $: ScriptVars): void {
-    emit_numerators(p, $);
-    emit_denominators(p, $);
+function emit_fraction(p: U, $: StackContext, ec: EmitContext): void {
+    emit_numerators(p, $, ec);
+    emit_denominators(p, $, ec);
     emit_update_fraction($);
 }
 
-function emit_function(p: U, $: ScriptVars): void {
+function emit_function(p: U, $: StackContext, ec: EmitContext): void {
     // d(f(x),x)
 
     if (car(p) == symbol(DERIVATIVE)) {
         emit_roman_string("d", $);
-        emit_args(p, $);
+        emit_args(p, $, ec);
         return;
     }
 
@@ -1177,9 +1189,9 @@ function emit_function(p: U, $: ScriptVars): void {
     if (car(p) == symbol(FACTORIAL)) {
         p = cadr(p);
         if (isrational(p) && isposint(p) || issymbol(p))
-            emit_expr(p, $);
+            emit_expr(p, $, ec);
         else
-            emit_subexpr(p, $);
+            emit_subexpr(p, $, ec);
         emit_roman_string("!", $);
         return;
     }
@@ -1192,43 +1204,43 @@ function emit_function(p: U, $: ScriptVars): void {
         if (issymbol(leading))
             emit_symbol(leading, $);
         else
-            emit_subexpr(leading, $);
-        emit_indices(p, $);
+            emit_subexpr(leading, $, ec);
+        emit_indices(p, $, ec);
         return;
     }
 
     if (car(p) == symbol(SETQ) || car(p) == symbol(TESTEQ)) {
-        emit_expr(cadr(p), $);
+        emit_expr(cadr(p), $, ec);
         emit_infix_operator(EQUALS_SIGN, $);
-        emit_expr(caddr(p), $);
+        emit_expr(caddr(p), $, ec);
         return;
     }
 
     if (car(p) == symbol(TESTGE)) {
-        emit_expr(cadr(p), $);
+        emit_expr(cadr(p), $, ec);
         emit_infix_operator(GREATEREQUAL, $);
-        emit_expr(caddr(p), $);
+        emit_expr(caddr(p), $, ec);
         return;
     }
 
     if (car(p) == symbol(TESTGT)) {
-        emit_expr(cadr(p), $);
+        emit_expr(cadr(p), $, ec);
         emit_infix_operator(GREATER_SIGN, $);
-        emit_expr(caddr(p), $);
+        emit_expr(caddr(p), $, ec);
         return;
     }
 
     if (car(p) == symbol(TESTLE)) {
-        emit_expr(cadr(p), $);
+        emit_expr(cadr(p), $, ec);
         emit_infix_operator(LESSEQUAL, $);
-        emit_expr(caddr(p), $);
+        emit_expr(caddr(p), $, ec);
         return;
     }
 
     if (car(p) == symbol(TESTLT)) {
-        emit_expr(cadr(p), $);
+        emit_expr(cadr(p), $, ec);
         emit_infix_operator(LESS_SIGN, $);
-        emit_expr(caddr(p), $);
+        emit_expr(caddr(p), $, ec);
         return;
     }
 
@@ -1238,23 +1250,23 @@ function emit_function(p: U, $: ScriptVars): void {
     if (issymbol(leading))
         emit_symbol(leading, $);
     else
-        emit_subexpr(leading, $);
+        emit_subexpr(leading, $, ec);
 
-    emit_args(p, $);
+    emit_args(p, $, ec);
 }
 
-function emit_indices(p: U, $: ScriptVars): void {
+function emit_indices(p: U, $: StackContext, ec: EmitContext): void {
     emit_roman_string("[", $);
 
     p = cdr(p);
 
     if (iscons(p)) {
-        emit_expr(car(p), $);
+        emit_expr(car(p), $, ec);
         p = cdr(p);
         while (iscons(p)) {
             emit_roman_string(",", $);
             emit_thin_space($);
-            emit_expr(car(p), $);
+            emit_expr(car(p), $, ec);
             p = cdr(p);
         }
     }
@@ -1262,13 +1274,13 @@ function emit_indices(p: U, $: ScriptVars): void {
     emit_roman_string("]", $);
 }
 
-function emit_infix_operator(char_num: number, $: ScriptVars): void {
+function emit_infix_operator(char_num: number, $: StackContext): void {
     emit_thick_space($);
     emit_roman_char(char_num, $);
     emit_thick_space($);
 }
 
-function emit_italic_char(char_num: number, $: ScriptVars): void {
+function emit_italic_char(char_num: number, $: StackContext): void {
     let font_num: number;
 
     if (emit_level == 0)
@@ -1293,21 +1305,21 @@ function emit_italic_char(char_num: number, $: ScriptVars): void {
         emit_thin_space($);
 }
 
-function emit_italic_string(s: string, $: ScriptVars): void {
+function emit_italic_string(s: string, $: StackContext): void {
     for (let i = 0; i < s.length; i++)
         emit_italic_char(s.charCodeAt(i), $);
 }
 
-function emit_list(p: U, $: ScriptVars): void {
+function emit_list(p: U, $: StackContext, ec: EmitContext): void {
     const t = $.stack.length;
-    emit_expr(p, $);
+    emit_expr(p, $, ec);
     emit_update_list(t, $);
 }
 
-function emit_matrix(p: Tensor, d: number, k: number, $: ScriptVars): void {
+function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: EmitContext): void {
 
     if (d == p.ndim) {
-        emit_list(p.elems[k], $);
+        emit_list(p.elems[k], $, ec);
         return;
     }
 
@@ -1325,12 +1337,12 @@ function emit_matrix(p: Tensor, d: number, k: number, $: ScriptVars): void {
 
     for (let i = 0; i < n; i++)
         for (let j = 0; j < m; j++)
-            emit_matrix(p, d + 2, k + (i * m + j) * span, $);
+            emit_matrix(p, d + 2, k + (i * m + j) * span, $, ec);
 
     emit_update_table(n, m, $);
 }
 
-function emit_medium_space($: ScriptVars): void {
+function emit_medium_space($: StackContext): void {
     let w: number;
 
     if (emit_level == 0)
@@ -1346,7 +1358,7 @@ function emit_medium_space($: ScriptVars): void {
     list(4, $);
 }
 
-function emit_numerators(p: U, $: ScriptVars): void {
+function emit_numerators(p: U, $: StackContext, ec: EmitContext): void {
 
     const t = $.stack.length;
     const n = count_numerators(p);
@@ -1370,9 +1382,9 @@ function emit_numerators(p: U, $: ScriptVars): void {
         }
 
         if (car(q) == symbol(ADD) && n == 1)
-            emit_expr(q, $); // parens not needed
+            emit_expr(q, $, ec); // parens not needed
         else
-            emit_factor(q, $);
+            emit_factor(q, $, ec);
     }
 
     if ($.stack.length == t)
@@ -1383,7 +1395,7 @@ function emit_numerators(p: U, $: ScriptVars): void {
 
 // p is rational or double, sign is not emitted
 
-function emit_numeric_exponent(p: Num, $: ScriptVars) {
+function emit_numeric_exponent(p: Num, $: StackContext) {
 
     emit_level++;
 
@@ -1409,19 +1421,19 @@ function emit_numeric_exponent(p: Num, $: ScriptVars) {
     emit_update_superscript($);
 }
 
-function emit_power(p: U, $: ScriptVars): void {
+function emit_power(p: U, $: StackContext, ec: EmitContext): void {
     if (cadr(p) == symbol(EXP1)) {
         emit_roman_string("exp", $);
-        emit_args(cdr(p), $);
+        emit_args(cdr(p), $, ec);
         return;
     }
 
     if (isimaginaryunit(p)) {
-        if (isimaginaryunit(get_binding(symbol(J_LOWER), $))) {
+        if (ec.useImaginaryJ) {
             emit_italic_string("j", $);
             return;
         }
-        if (isimaginaryunit(get_binding(symbol(I_LOWER), $))) {
+        if (ec.useImaginaryI) {
             emit_italic_string("i", $);
             return;
         }
@@ -1429,15 +1441,15 @@ function emit_power(p: U, $: ScriptVars): void {
 
     const X = caddr(p);
     if (isnum(X) && isnegativenumber(X)) {
-        emit_reciprocal(p, $);
+        emit_reciprocal(p, $, ec);
         return;
     }
 
-    emit_base(cadr(p), $);
-    emit_exponent(caddr(p), $);
+    emit_base(cadr(p), $, ec);
+    emit_exponent(caddr(p), $, ec);
 }
 
-function emit_rational(p: Rat, $: ScriptVars): void {
+function emit_rational(p: Rat, $: StackContext): void {
 
     if (isinteger(p)) {
         const s = bignum_itoa(p.a);
@@ -1464,16 +1476,16 @@ function emit_rational(p: Rat, $: ScriptVars): void {
 
 // p = y^x where x is a negative number
 
-function emit_reciprocal(p: U, $: ScriptVars): void {
+function emit_reciprocal(p: U, $: StackContext, ec: EmitContext): void {
 
     emit_roman_string("1", $); // numerator
 
     const t = $.stack.length;
 
     if (isminusone(caddr(p)))
-        emit_expr(cadr(p), $);
+        emit_expr(cadr(p), $, ec);
     else {
-        emit_base(cadr(p), $);
+        emit_base(cadr(p), $, ec);
         emit_numeric_exponent(caddr(p) as Num, $); // sign is not emitted
     }
 
@@ -1482,7 +1494,7 @@ function emit_reciprocal(p: U, $: ScriptVars): void {
     emit_update_fraction($);
 }
 
-function emit_roman_char(char_num: number, $: ScriptVars): void {
+function emit_roman_char(char_num: number, $: StackContext): void {
     let font_num: number;
 
     if (emit_level == 0)
@@ -1504,21 +1516,21 @@ function emit_roman_char(char_num: number, $: ScriptVars): void {
     list(6, $);
 }
 
-function emit_roman_string(s: string, $: ScriptVars): void {
+function emit_roman_string(s: string, $: StackContext): void {
     for (let i = 0; i < s.length; i++)
         emit_roman_char(s.charCodeAt(i), $);
 }
 
-function emit_string(p: Str, $: ScriptVars): void {
+function emit_string(p: Str, $: StackContext): void {
     emit_roman_string(p.str, $);
 }
 
-function emit_subexpr(p: U, $: ScriptVars): void {
-    emit_list(p, $);
+function emit_subexpr(p: U, $: StackContext, ec: EmitContext): void {
+    emit_list(p, $, ec);
     emit_update_subexpr($);
 }
 
-function emit_symbol(p: Sym, $: ScriptVars): void {
+function emit_symbol(p: Sym, $: StackContext): void {
 
     if (p == symbol(EXP1)) {
         emit_roman_string("exp(1)", $);
@@ -1618,7 +1630,7 @@ const symbol_italic_tab = [
     0,
 ];
 
-function emit_symbol_fragment(s: string, k: number, $: ScriptVars): number {
+function emit_symbol_fragment(s: string, k: number, $: StackContext): number {
     let i: number;
     let t: string = "";
 
@@ -1648,23 +1660,23 @@ function emit_symbol_fragment(s: string, k: number, $: ScriptVars): number {
     return k + t.length;
 }
 
-function emit_tensor(p: Tensor, $: ScriptVars): void {
+function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext): void {
     if (p.ndim % 2 == 1)
-        emit_vector(p, $); // odd rank
+        emit_vector(p, $, ec); // odd rank
     else
-        emit_matrix(p, 0, 0, $); // even rank
+        emit_matrix(p, 0, 0, $, ec); // even rank
 }
 
-function emit_term(p: U, $: ScriptVars): void {
+function emit_term(p: U, $: StackContext, ec: EmitContext): void {
     if (car(p) == symbol(MULTIPLY))
-        emit_term_nib(p, $);
+        emit_term_nib(p, $, ec);
     else
-        emit_factor(p, $);
+        emit_factor(p, $, ec);
 }
 
-function emit_term_nib(p: U, $: ScriptVars): void {
+function emit_term_nib(p: U, $: StackContext, ec: EmitContext): void {
     if (find_denominator(p)) {
-        emit_fraction(p, $);
+        emit_fraction(p, $, ec);
         return;
     }
 
@@ -1675,18 +1687,18 @@ function emit_term_nib(p: U, $: ScriptVars): void {
     if (isminusone(car(p)) && !isdouble(car(p)))
         p = cdr(p); // sign already emitted
 
-    emit_factor(car(p), $);
+    emit_factor(car(p), $, ec);
 
     p = cdr(p);
 
     while (iscons(p)) {
         emit_medium_space($);
-        emit_factor(car(p), $);
+        emit_factor(car(p), $, ec);
         p = cdr(p);
     }
 }
 
-function emit_thick_space($: ScriptVars): void {
+function emit_thick_space($: StackContext): void {
     let w: number;
 
     if (emit_level == 0)
@@ -1702,7 +1714,7 @@ function emit_thick_space($: ScriptVars): void {
     list(4, $);
 }
 
-function emit_thin_space($: ScriptVars): void {
+function emit_thin_space($: StackContext): void {
     let w: number;
 
     if (emit_level == 0)
@@ -1718,7 +1730,7 @@ function emit_thin_space($: ScriptVars): void {
     list(4, $);
 }
 
-function emit_update_fraction($: ScriptVars): void {
+function emit_update_fraction($: StackContext): void {
 
     const p2 = pop($); // denominator
     const p1 = pop($); // numerator
@@ -1758,10 +1770,11 @@ function emit_update_fraction($: ScriptVars): void {
     list(6, $);
 }
 
-function emit_update_list(t: number, $: ScriptVars): void {
+function emit_update_list(t: number, $: StackContext): void {
 
-    if ($.stack.length - t == 1)
+    if ($.stack.length - t == 1) {
         return;
+    }
 
     let h = 0;
     let d = 0;
@@ -1788,7 +1801,7 @@ function emit_update_list(t: number, $: ScriptVars): void {
     list(5, $);
 }
 
-function emit_update_subexpr($: ScriptVars): void {
+function emit_update_subexpr($: StackContext): void {
 
     const p1 = pop($);
 
@@ -1830,7 +1843,7 @@ function emit_update_subexpr($: ScriptVars): void {
     list(5, $);
 }
 
-function emit_update_subscript($: ScriptVars): void {
+function emit_update_subscript($: StackContext): void {
 
     const p1 = pop($);
 
@@ -1863,7 +1876,7 @@ function emit_update_subscript($: ScriptVars): void {
     list(7, $);
 }
 
-function emit_update_superscript($: ScriptVars): void {
+function emit_update_superscript($: StackContext): void {
 
     const p2 = pop($); // exponent
     const p1 = pop($); // base
@@ -1915,7 +1928,7 @@ function emit_update_superscript($: ScriptVars): void {
     list(7, $);
 }
 
-function emit_update_table(n: number, m: number, $: ScriptVars): void {
+function emit_update_table(n: number, m: number, $: StackContext): void {
 
     let total_height = 0;
     let total_width = 0;
@@ -1995,7 +2008,7 @@ function emit_update_table(n: number, m: number, $: ScriptVars): void {
     list(10, $);
 }
 
-function emit_vector(p: Tensor, $: ScriptVars): void {
+function emit_vector(p: Tensor, $: StackContext, ec: EmitContext): void {
     // compute element span
 
     let span = 1;
@@ -2008,7 +2021,7 @@ function emit_vector(p: Tensor, $: ScriptVars): void {
     n = p.dims[0]; // number of rows
 
     for (let i = 0; i < n; i++)
-        emit_matrix(p, 1, i * span, $);
+        emit_matrix(p, 1, i * span, $, ec);
 
     emit_update_table(n, 1, $); // n rows, 1 column
 }
@@ -2447,7 +2460,7 @@ function emit_box(dc: DrawContext, outbuf: string[]): void {
     draw_line(x2, y1, x2, y2, 0.5, outbuf); // right line
 }
 
-function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, outbuf: string[]): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -2459,37 +2472,37 @@ function emit_graph(draw_array: { t: number; x: number; y: number }[], $: Script
 
     emit_axes(dc, outbuf);
     emit_box(dc, outbuf);
-    emit_labels($, dc, outbuf);
+    emit_labels($, dc, ec, outbuf);
     emit_points(draw_array, dc, outbuf);
 
     outbuf.push("</svg><br>");
 }
 
-function emit_labels($: ScriptVars, dc: DrawContext, outbuf: string[]): void {
+function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
     // TODO; Why do we need ScriptVars here?
     emit_level = 1; // small font
-    emit_list(new Flt(dc.ymax), $);
+    emit_list(new Flt(dc.ymax), $, ec);
     const YMAX = pop($);
     let x = DRAW_LEFT_PAD - width(YMAX) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(YMAX);
     draw_formula(x, y, YMAX, $, outbuf);
 
     emit_level = 1; // small font
-    emit_list(new Flt(dc.ymin), $);
+    emit_list(new Flt(dc.ymin), $, ec);
     const YMIN = pop($);
     x = DRAW_LEFT_PAD - width(YMIN) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
     draw_formula(x, y, YMIN, $, outbuf);
 
     emit_level = 1; // small font
-    emit_list(new Flt(dc.xmin), $);
+    emit_list(new Flt(dc.xmin), $, ec);
     const XMIN = pop($);
     x = DRAW_LEFT_PAD - width(XMIN) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, XMIN, $, outbuf);
 
     emit_level = 1; // small font
-    emit_list(new Flt(dc.xmax), $);
+    emit_list(new Flt(dc.xmax), $, ec);
     const XMAX = pop($);
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(XMAX) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
@@ -5523,7 +5536,12 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
 
     const outbuf: string[] = [];
 
-    emit_graph(draw_array, $, $, outbuf);
+    const dc: DrawContext = $;
+    const ec: EmitContext = {
+        useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+        useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
+    };
+    emit_graph(draw_array, $, dc, ec, outbuf);
 
     $.outputs.push(outbuf.join(''));
 
@@ -8896,7 +8914,12 @@ function print_result_and_input(result: U, input: U, $: ScriptVars): void {
     const tty = get_binding(symbol(TTY), $);
 
     if (tty == symbol(TTY) || iszero(tty)) {
-        $.outputs.push(render_svg(result, $));
+        const dc: DrawContext = $;
+        const ec: EmitContext = {
+            useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+            useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
+        };
+        $.outputs.push(render_svg(result, dc, ec));
     }
     else {
         const config = infix_config_from_options({});
@@ -13382,7 +13405,7 @@ function lessp(p1: U, p2: U): boolean {
     return cmp(p1, p2) < 0;
 }
 
-function list(n: number, $: ScriptVars): void {
+function list(n: number, $: StackContext): void {
     push(nil, $);
     for (let i = 0; i < n; i++)
         cons($);
@@ -14004,7 +14027,7 @@ function erfc(x: number): number {
     return 1.0 - erf(x);
 }
 
-function pop($: ScriptVars): U {
+function pop($: StackContext): U {
     if ($.stack.length == 0) {
         stopf("stack error");
     }
@@ -14954,11 +14977,11 @@ function promote_tensor($: ScriptVars): void {
     push(p3, $);
 }
 
-function push(expr: U, $: ScriptVars): void {
+function push(expr: U, $: StackContext): void {
     $.stack.push(expr);
 }
 
-function push_double(d: number, $: ScriptVars): void {
+function push_double(d: number, $: StackContext): void {
     push(new Flt(d), $);
 }
 /**

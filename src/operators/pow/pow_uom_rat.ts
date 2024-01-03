@@ -1,13 +1,12 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { QQ, Uom } from "math-expression-atoms";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_RAT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { QQ } from "../../tree/uom/QQ";
-import { Uom } from "../../tree/uom/Uom";
 import { Function2 } from "../helpers/Function2";
+import { is_rat } from "../rat/is_rat";
 import { is_uom } from "../uom/uom_extension";
 
 class Builder implements OperatorBuilder<Cons> {

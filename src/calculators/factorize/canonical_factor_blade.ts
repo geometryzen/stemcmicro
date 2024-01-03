@@ -1,8 +1,7 @@
-import { is_blade } from "../../operators/blade/is_blade";
+import { Blade, is_blade } from "math-expression-atoms";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { one, Rat } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
 import { canonicalize_mul } from "../canonicalize/canonicalize_mul";
 /*
 export function canonical_factor_blade_lhs(expr: U): U {

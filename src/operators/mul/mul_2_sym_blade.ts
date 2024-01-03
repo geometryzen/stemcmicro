@@ -1,11 +1,10 @@
 
+import { Blade, is_blade } from "math-expression-atoms";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 import { is_sym } from "../sym/is_sym";

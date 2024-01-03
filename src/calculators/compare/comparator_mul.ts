@@ -1,5 +1,5 @@
+import { is_blade } from "math-expression-atoms";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { is_blade } from "../../operators/blade/is_blade";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_num } from "../../operators/num/is_num";
 import { is_str } from "../../operators/str/is_str";

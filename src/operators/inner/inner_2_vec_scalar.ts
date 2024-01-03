@@ -1,11 +1,10 @@
 
+import { Blade, is_blade } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { MATH_INNER } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_scalar } from "../helpers/is_scalar";

@@ -1,3 +1,4 @@
+import { QQ } from "math-expression-atoms";
 import { nativeDouble, rational } from "../../bignum";
 import { gt_num_num } from "../../calculators/compare/gt_num_num";
 import { complex_conjugate } from "../../complex_conjugate";
@@ -18,7 +19,6 @@ import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
 import { caddr, cadr } from "../../tree/helpers";
 import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
 import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
-import { QQ } from "../../tree/uom/QQ";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";

@@ -1,7 +1,6 @@
-import { is_blade } from "../../operators/blade/is_blade";
+import { Blade, is_blade } from "math-expression-atoms";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
 import { count_factors } from "../count_factors";
 import { remove_factors } from "../remove_factors";
 import { not_is_blade } from "./not_is_blade";

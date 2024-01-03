@@ -7,7 +7,7 @@ import { is_multiply } from "../../runtime/helpers";
 import { MATH_LCO, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { is_blade } from "../blade/is_blade";
+import { is_blade } from "math-expression-atoms";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";

@@ -1,7 +1,7 @@
+import { is_blade } from "math-expression-atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { zero } from "../../tree/rat/Rat";
 import { is_cons, U } from "../../tree/tree";
-import { is_blade } from "../blade/is_blade";
 import { is_flt } from "../flt/is_flt";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 import { is_rat } from "../rat/rat_extension";

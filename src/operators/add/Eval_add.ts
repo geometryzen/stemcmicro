@@ -1,3 +1,4 @@
+import { is_blade } from "math-expression-atoms";
 import { add_num_num } from "../../calculators/add/add_num_num";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
@@ -12,7 +13,6 @@ import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { compare_blade_blade } from "../blade/blade_extension";
-import { is_blade } from "../blade/is_blade";
 import { evaluate_as_float } from "../float/float";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";

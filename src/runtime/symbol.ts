@@ -1,9 +1,6 @@
+import { is_sym, is_tensor, Sym, Uom } from 'math-expression-atoms';
+import { car, cdr, is_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../env/ExtensionEnv';
-import { is_sym } from '../operators/sym/is_sym';
-import { is_tensor } from '../operators/tensor/is_tensor';
-import { Sym } from '../tree/sym/Sym';
-import { car, cdr, is_cons, U } from '../tree/tree';
-import { Uom } from '../tree/uom/Uom';
 
 /**
  * TODO: Move this abstraction of Uom to where Uom is defined.

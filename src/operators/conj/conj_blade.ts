@@ -1,8 +1,7 @@
+import { Blade, is_blade } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/is_blade";
 import { Function1 } from "../helpers/Function1";
 import { MATH_CONJ } from "./MATH_CONJ";
 

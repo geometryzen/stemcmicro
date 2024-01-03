@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { QQ } from '../src/tree/uom/QQ';
+import { QQ } from 'math-expression-atoms';
 
 describe("QQ", function () {
     describe("constructor", function () {

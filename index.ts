@@ -1,3 +1,4 @@
+export { BasisBlade, Blade, Dimensions, is_blade, QQ, Uom } from 'math-expression-atoms';
 export { create_tensor } from './src/brite/create_tensor';
 export { DrawContext, EmitContext, executeScript, InfixOptions, ParseConfig, parseScript, PrintScriptContentHandler, PrintScriptErrorHandler, render_svg, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from './src/eigenmath/index';
 export { EnvConfig } from './src/env/EnvConfig';
@@ -19,7 +20,6 @@ export {
 } from './src/env/ExtensionEnv';
 export { Native } from './src/native/Native';
 export { native_sym } from './src/native/native_sym';
-export { is_blade } from './src/operators/blade/is_blade';
 export { is_boo } from './src/operators/boo/is_boo';
 export { is_flt } from './src/operators/flt/is_flt';
 export { is_hyp } from './src/operators/hyp/is_hyp';
@@ -46,9 +46,4 @@ export { Str } from './src/tree/str/Str';
 export { create_sym, Sym } from './src/tree/sym/Sym';
 export { Tensor } from './src/tree/tensor/Tensor';
 export { car, cdr, Cons, cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from './src/tree/tree';
-export { Dimensions } from './src/tree/uom/Dimensions';
-export { QQ } from './src/tree/uom/QQ';
-export { Uom } from './src/tree/uom/Uom';
-export { BasisBlade } from './src/tree/vec/BasisBlade';
-export { Blade } from './src/tree/vec/Blade';
 

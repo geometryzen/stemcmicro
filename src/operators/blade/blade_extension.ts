@@ -1,9 +1,8 @@
+import { Blade, is_blade } from "math-expression-atoms";
 import { Extension, ExtensionEnv, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
 import { cons, Cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
-import { is_blade } from "./is_blade";
 
 /**
  * Compares blades according to the canonical representation.

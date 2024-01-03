@@ -1,3 +1,4 @@
+import { Blade, is_blade } from "math-expression-atoms";
 import { cmp_terms } from "../../calculators/compare/comparator_add";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, Operator, OperatorBuilder, Sign, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
@@ -6,9 +7,7 @@ import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
 import { compare_blade_blade } from "../blade/blade_extension";
-import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
 

@@ -1,3 +1,4 @@
+import { is_blade } from 'math-expression-atoms';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
@@ -67,7 +68,6 @@ import { assert_str } from '../tree/str/assert_str';
 import { create_sym, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, is_nil, nil, U } from '../tree/tree';
-import { is_blade } from '../tree/vec/createAlgebra';
 import { print_number } from './print_number';
 import { render_as_ascii } from './render_as_ascii';
 import { render_as_sexpr } from './render_as_sexpr';

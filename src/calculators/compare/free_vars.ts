@@ -1,6 +1,6 @@
+import { is_blade } from "math-expression-atoms";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_add_2_any_any } from "../../operators/add/is_add_2_any_any";
-import { is_blade } from "../../operators/blade/is_blade";
 import { is_flt } from "../../operators/flt/is_flt";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";

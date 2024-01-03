@@ -1,4 +1,4 @@
-import { Uom } from "../../tree/uom/Uom";
+import { Uom } from "math-expression-atoms";
 
 export type TYPE_UOM_NAME = 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelvin' | 'mole' | 'candela';
 

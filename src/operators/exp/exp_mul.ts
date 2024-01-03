@@ -1,3 +1,4 @@
+import { is_blade } from "math-expression-atoms";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { count_imu_factors } from "../../calculators/count_imu_factors";
@@ -9,7 +10,6 @@ import { native_sym } from "../../native/native_sym";
 import { imu } from "../../tree/imu/Imu";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { is_blade } from "../blade/is_blade";
 import { CompositeOperator } from "../CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 

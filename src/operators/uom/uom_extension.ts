@@ -1,7 +1,7 @@
+import { Uom } from "math-expression-atoms";
+import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
-import { cons, Cons, U } from "../../tree/tree";
-import { Uom } from "../../tree/uom/Uom";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 export function is_uom(p: U): p is Uom {

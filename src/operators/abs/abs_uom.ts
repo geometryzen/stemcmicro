@@ -1,10 +1,10 @@
+import { Uom } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_unaop_atom, HASH_UOM } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Uom } from "../../tree/uom/Uom";
 import { Function1 } from "../helpers/Function1";
 import { GUARD } from "../helpers/GUARD";
 import { UCons } from "../helpers/UCons";

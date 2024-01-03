@@ -1,7 +1,5 @@
 import { assert } from 'chai';
-import { Dimensions } from '../src/tree/uom/Dimensions';
-import { QQ } from '../src/tree/uom/QQ';
-import { Uom } from '../src/tree/uom/Uom';
+import { Dimensions, QQ, Uom } from 'math-expression-atoms';
 
 const Rat0 = QQ.valueOf(0, 1);
 const Rat1 = QQ.valueOf(1, 1);

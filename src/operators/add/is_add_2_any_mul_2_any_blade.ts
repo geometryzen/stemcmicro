@@ -1,6 +1,6 @@
+import { Blade } from "math-expression-atoms";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
 import { BCons } from "../helpers/BCons";
 import { is_any } from "../helpers/is_any";
 import { is_mul_2_any_blade } from "../mul/is_mul_2_any_blade";

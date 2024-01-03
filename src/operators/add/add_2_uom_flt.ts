@@ -1,10 +1,10 @@
+import { Uom } from "math-expression-atoms";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { Uom } from "../../tree/uom/Uom";
 import { is_flt } from "../flt/is_flt";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";

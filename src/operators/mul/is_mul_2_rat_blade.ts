@@ -1,10 +1,9 @@
-import { is_rat } from "../rat/is_rat";
+import { Blade, is_blade } from "math-expression-atoms";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/is_blade";
 import { BCons } from "../helpers/BCons";
+import { is_rat } from "../rat/is_rat";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 
 export function is_mul_2_rat_blade(expr: Cons): expr is BCons<Sym, Rat, Blade> {

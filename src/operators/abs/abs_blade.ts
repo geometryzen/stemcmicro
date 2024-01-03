@@ -1,11 +1,10 @@
+import { Blade, is_blade } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_BLADE, hash_unaop_atom } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { items_to_cons, U } from "../../tree/tree";
-import { Blade } from "../../tree/vec/Blade";
-import { is_blade } from "../blade/is_blade";
 import { Function1 } from "../helpers/Function1";
 import { GUARD } from "../helpers/GUARD";
 import { UCons } from "../helpers/UCons";

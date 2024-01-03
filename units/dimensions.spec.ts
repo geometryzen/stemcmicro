@@ -1,6 +1,5 @@
 import { assert } from 'chai';
-import { Dimensions } from '../src/tree/uom/Dimensions';
-import { QQ } from '../src/tree/uom/QQ';
+import { Dimensions, QQ } from 'math-expression-atoms';
 
 const R0 = QQ.valueOf(0, 1);
 const R1 = QQ.valueOf(1, 1);

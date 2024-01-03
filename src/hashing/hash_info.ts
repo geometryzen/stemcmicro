@@ -1,14 +1,7 @@
-import { is_blade } from "../operators/blade/is_blade";
-import { is_boo } from "../operators/boo/is_boo";
+import { is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
 import { is_err } from "../operators/err/is_err";
-import { is_flt } from "../operators/flt/is_flt";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
-import { is_rat } from "../operators/rat/is_rat";
-import { is_str } from "../operators/str/is_str";
-import { is_sym } from "../operators/sym/is_sym";
-import { is_tensor } from "../operators/tensor/is_tensor";
-import { is_uom } from "../operators/uom/is_uom";
 import { TYPEOF_ERR } from "../tree/err/TYPEOF_ERR";
 import { Sym } from "../tree/sym/Sym";
 import { is_cons, is_nil, U } from "../tree/tree";

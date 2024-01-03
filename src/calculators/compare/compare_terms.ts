@@ -1,7 +1,7 @@
+import { is_blade } from "math-expression-atoms";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
-import { is_blade } from "../../operators/blade/is_blade";
 import { MATH_DERIVATIVE } from "../../operators/derivative/MATH_DERIVATIVE";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";

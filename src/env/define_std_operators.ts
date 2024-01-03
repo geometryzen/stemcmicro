@@ -1,3 +1,4 @@
+import { is_blade } from 'math-expression-atoms';
 import { Eval_approxratio } from '../approxratio';
 import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
@@ -72,7 +73,6 @@ import { besselj_varargs } from '../operators/besselj/besselj_varargs';
 import { bessely_varargs } from '../operators/bessely/bessely_varargs';
 import { binomial_varargs } from '../operators/binomial/binomial_varargs';
 import { blade_extension } from '../operators/blade/blade_extension';
-import { is_blade } from '../operators/blade/is_blade';
 import { boo_extension } from '../operators/boo/boo_extension';
 import { ceiling_cons } from '../operators/ceiling/ceiling_cons';
 import { ceiling_flt } from '../operators/ceiling/ceiling_flt';

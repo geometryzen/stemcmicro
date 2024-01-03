@@ -1,3 +1,4 @@
+import { is_blade } from "math-expression-atoms";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
@@ -11,7 +12,6 @@ import { cddr } from "../../tree/helpers";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
 import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
-import { is_blade } from "../blade/is_blade";
 import { is_num } from "../num/is_num";
 import { is_rat } from "../rat/is_rat";
 import { is_tensor } from "../tensor/is_tensor";

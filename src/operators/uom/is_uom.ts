@@ -1,6 +1,2 @@
-import { U } from "../../tree/tree";
-import { Uom } from "../../tree/uom/Uom";
+export { is_uom } from 'math-expression-atoms';
 
-export function is_uom(expr: U): expr is Uom {
-    return expr instanceof Uom;
-}

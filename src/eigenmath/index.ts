@@ -1,14 +1,10 @@
-import { BigInteger, create_flt, create_rat, Flt, is_flt, is_rat, is_str, is_sym, is_tensor, Num, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, Flt, is_flt, is_rat, is_str, is_sym, is_tensor, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_blade } from '../operators/blade/is_blade';
 import { is_uom } from '../operators/uom/is_uom';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
-import { Adapter, SumTerm } from '../tree/vec/Adapter';
-import { BasisBlade } from '../tree/vec/BasisBlade';
-import { Blade } from '../tree/vec/Blade';
-import { create_algebra } from '../tree/vec/createAlgebra';
 
 function create_sym_with_handler_func(printname: string, func: (expr: Cons, $: ScriptVars) => void): Sym {
     return new Sym(printname, func as unknown as (expr: Cons, $: unknown) => void);

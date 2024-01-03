@@ -1,3 +1,4 @@
+import { is_blade, is_tensor } from 'math-expression-atoms';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inv } from '../../inv';
 import { items_to_cons } from '../../makeList';
@@ -8,9 +9,7 @@ import { MATH_INNER } from '../../runtime/ns_math';
 import { other_x_tensor, tensor_x_other } from '../../tensor';
 import { zero } from '../../tree/rat/Rat';
 import { car, cdr, U } from '../../tree/tree';
-import { is_blade } from '../../tree/vec/createAlgebra';
 import { is_num } from '../num/is_num';
-import { is_tensor } from '../tensor/is_tensor';
 import { inner_tensor_tensor } from './inner_tensor_tensor';
 
 /**

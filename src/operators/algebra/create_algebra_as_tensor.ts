@@ -1,3 +1,4 @@
+import { create_algebra, is_blade } from 'math-expression-atoms';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { MATH_ADD, MATH_MUL } from '../../runtime/ns_math';
 import { create_flt } from '../../tree/flt/Flt';
@@ -6,7 +7,6 @@ import { Tensor } from '../../tree/tensor/Tensor';
 import { cons, Cons, items_to_cons, U } from '../../tree/tree';
 import { Adapter, SumTerm } from '../../tree/vec/Adapter';
 import { Blade } from '../../tree/vec/Blade';
-import { create_algebra, is_blade } from '../../tree/vec/createAlgebra';
 import { is_flt } from '../flt/is_flt';
 import { is_num } from '../num/is_num';
 import { is_rat } from '../rat/is_rat';

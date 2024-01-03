@@ -1,5 +1,5 @@
-import { U } from "./tree/tree";
-import { is_blade } from "./tree/vec/createAlgebra";
+import { is_blade } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 
 /**
  * Left Contraction (<<)

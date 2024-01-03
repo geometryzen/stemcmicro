@@ -39,7 +39,7 @@ class Op extends FunctionBlade {
     }
     transform1(opr: Sym, arg: Blade, expr: UCons<Sym, Blade>): [TFLAGS, U] {
         const $ = this.$;
-        const innerProduct = arg.__vbar__(arg);
+        const innerProduct = arg.scp(arg);
         const retval = $.valueOf(items_to_cons(MATH_SQRT, $.valueOf(innerProduct)));
         return wrap_as_transform(retval, expr);
     }

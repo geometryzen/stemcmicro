@@ -25,7 +25,7 @@ class OuterBladeBlade extends Function2<Blade, Blade> implements Operator<Cons> 
         this.hash = hash_binop_atom_atom(MATH_OUTER, HASH_BLADE, HASH_BLADE);
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
-        return [TFLAG_DIFF, lhs.__wedge__(rhs)];
+        return [TFLAG_DIFF, lhs.wedge(rhs)];
     }
 }
 

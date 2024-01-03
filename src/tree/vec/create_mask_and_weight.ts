@@ -31,10 +31,10 @@ export function create_mask_and_weight<T, K>(b: number, weight: T, adapter: Adap
         get weight(): T {
             return weight;
         },
-        __neg__(): MaskAndWeight<T> {
+        neg(): MaskAndWeight<T> {
             return create_mask_and_weight(b, adapter.neg(weight), adapter);
         },
-        __wedge__(rhs: MaskAndWeight<T>): MaskAndWeight<T> {
+        wedge(rhs: MaskAndWeight<T>): MaskAndWeight<T> {
             // If there are any vectors in common then the result is zero.
             if (b & rhs.bitmap) {
                 return create_scalar_mask_and_weight(adapter.zero, adapter);
@@ -53,19 +53,6 @@ export function create_mask_and_weight<T, K>(b: number, weight: T, adapter: Adap
             const x = that.grade();
             const sign = minusOnePow(x * (x - 1) / 2);
             return create_mask_and_weight(b, sign > 0 ? weight : adapter.neg(weight), adapter);
-        },
-        gradeInversion(): MaskAndWeight<T> {
-            const x = that.grade();
-            const sign = minusOnePow(x);
-            return create_mask_and_weight(b, sign > 0 ? weight : adapter.neg(weight), adapter);
-        },
-        cliffordConjugate(): MaskAndWeight<T> {
-            const x = that.grade();
-            const sign = minusOnePow(x * (x + 1) / 2);
-            return create_mask_and_weight(b, sign > 0 ? weight : adapter.neg(weight), adapter);
-        },
-        zero(): MaskAndWeight<T> {
-            return create_scalar_mask_and_weight(adapter.zero, adapter);
         },
         asString(names?: string[]): string {
             let bladePart = "";

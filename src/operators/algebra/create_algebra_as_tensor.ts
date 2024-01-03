@@ -186,7 +186,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     treeLco(lhs: U, rhs: U): U {
         if (is_blade(lhs) && is_blade(rhs)) {
-            return lhs.__lshift__(rhs);
+            return lhs.lshift(rhs);
         }
         throw new Error(`treeLco(lhs=${lhs}, rhs=${rhs}) Method not implemented.`);
     }

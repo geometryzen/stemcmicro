@@ -36,7 +36,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const wedge = $.valueOf(lhs.__wedge__(rhs));
+        const wedge = $.valueOf(lhs.wedge(rhs));
         if (is_blade(wedge)) {
             return [TFLAG_DIFF, $.valueOf(items_to_cons(MATH_MUL, negOne, wedge.dual()))];
         }

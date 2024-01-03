@@ -3,11 +3,6 @@ import { Adapter, SumTerm } from './Adapter';
 import { Algebra, BasisBlade, MaskAndWeight, Metric } from './BasisBlade';
 import { bitCount } from './bitCount';
 import { Blade } from './Blade';
-import { bladeEQ } from './bladeEQ';
-import { bladeGE } from './bladeGE';
-import { bladeGT } from './bladeGT';
-import { bladeLE } from './bladeLE';
-import { bladeLT } from './bladeLT';
 import { mustBeDefined } from './checks/mustBeDefined';
 import { mustBeInteger } from './checks/mustBeInteger';
 import { combine_mask_and_weights } from './combine_mask_and_weights';
@@ -144,7 +139,7 @@ function sub<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | Basis
     if (field.isField(lhs) && is_blade(rhs)) {
         const rez: MaskAndWeight<T>[] = [];
         rez.push(create_scalar_mask_and_weight(lhs, field));
-        rez.push(create_vector_mask_and_weight(rhs.bitmap, field).__neg__());
+        rez.push(create_vector_mask_and_weight(rhs.bitmap, field).neg());
         return promote_blades_to_tree(combine_mask_and_weights(rez, field), algebra, metric, labels);
     }
     else if (is_blade(lhs) && field.isField(rhs)) {
@@ -157,7 +152,7 @@ function sub<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | Basis
         if (is_blade(lhs) && is_blade(rhs)) {
             const rez: MaskAndWeight<T>[] = [];
             rez.push(create_vector_mask_and_weight(lhs.bitmap, field));
-            rez.push(create_vector_mask_and_weight(rhs.bitmap, field).__neg__());
+            rez.push(create_vector_mask_and_weight(rhs.bitmap, field).neg());
             return promote_blades_to_tree(combine_mask_and_weights(rez, field), algebra, metric, labels);
         }
         else {
@@ -254,62 +249,11 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
         get name(): string {
             return 'Blade';
         },
-        __abs__(): K {
-            const lhs = field.bladeToTree(theBlade);
-            const rhs = theBlade.rev();
-            const scp = field.treeScp(lhs, rhs);
-            return field.treeSqrt(scp);
-        },
         add(rhs: BasisBlade<T, K>): K {
             return add(theBlade, rhs, algebra, metric, labels) as K;
         },
-        __add__(rhs: BasisBlade<T, K>): K {
-            return add(theBlade, rhs, algebra, metric, labels) as K;
-        },
-        __radd__(lhs: BasisBlade<T, K>): K {
-            return add(lhs, theBlade, algebra, metric, labels) as K;
-        },
         sub(rhs: BasisBlade<T, K>): K {
             return sub(theBlade, rhs, algebra, metric, labels) as K;
-        },
-        __sub__(rhs: BasisBlade<T, K>): K {
-            return sub(theBlade, rhs, algebra, metric, labels) as K;
-        },
-        __rsub__(lhs: BasisBlade<T, K>): K {
-            return sub(lhs, theBlade, algebra, metric, labels) as K;
-        },
-        __eq__(rhs: BasisBlade<T, K>): boolean {
-            return bladeEQ(theBlade, rhs, field);
-        },
-        __ge__(rhs: BasisBlade<T, K>): boolean {
-            return bladeGE(theBlade, rhs, field);
-        },
-        __gt__(rhs: BasisBlade<T, K>): boolean {
-            return bladeGT(theBlade, rhs, field);
-        },
-        __le__(rhs: BasisBlade<T, K>): boolean {
-            return bladeLE(theBlade, rhs, field);
-        },
-        __lt__(rhs: BasisBlade<T, K>): boolean {
-            return bladeLT(theBlade, rhs, field);
-        },
-        __ne__(rhs: BasisBlade<T, K>): boolean {
-            return !bladeEQ(theBlade, rhs, field);
-        },
-        inv(): K {
-            throw new Error("Multivector.inv method not implemented.");
-            /*
-            // We'll start by trying the versor inverse before doing the general inverse.
-            const reversed = that.rev();
-            const denom = that.mul(reversed);
-            // If we have a scalar, then we can compute the versor inverse
-            if (denom.blades.length === 1 && denom.blades[0].bitmap === 0) {
-                return reversed.divByScalar(denom.scalarCoordinate());
-            }
-            else {
-                throw new Error(`non-invertible multivector (versor inverse) ${that}`);
-            }
-            */
         },
         isCons(): boolean {
             return false;
@@ -317,28 +261,10 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
         isNil(): boolean {
             return false;
         },
-        map(f: (weight: T) => T): K {
-            const weight = f(field.one);
-            if (!field.isZero(weight)) {
-                return promote_mask_and_weight_to_tree(create_mask_and_weight(bitmap, weight, field), algebra, metric, labels);
-            }
-            else {
-                return field.treeZero();
-            }
-        },
         mul(rhs: BasisBlade<T, K>): K {
             return mul(theBlade, rhs, algebra, metric, labels) as K;
         },
-        __mul__(rhs: T | BasisBlade<T, K>): K {
-            return mul(theBlade, rhs, algebra, metric, labels) as K;
-        },
-        __rmul__(lhs: T | BasisBlade<T, K>): K {
-            return mul(lhs, theBlade, algebra, metric, labels) as K;
-        },
-        __div__(rhs: T | BasisBlade<T, K>): K {
-            return div(theBlade, rhs, algebra) as K;
-        },
-        __lshift__(rhs: BasisBlade<T, K>): K {
+        lshift(rhs: BasisBlade<T, K>): K {
             const B1 = create_mask_and_weight(bitmap, field.one, field);
             const B2 = create_mask_and_weight(rhs.bitmap, field.one, field);
             if (Array.isArray(metric)) {
@@ -358,7 +284,7 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
                 return promote_mask_and_weight_to_tree(B, algebra, metric, labels);
             }
         },
-        __rshift__(rhs: BasisBlade<T, K>): K {
+        rshift(rhs: BasisBlade<T, K>): K {
             const B1 = create_mask_and_weight(bitmap, field.one, field);
             const B2 = create_mask_and_weight(rhs.bitmap, field.one, field);
             if (Array.isArray(metric)) {
@@ -378,58 +304,27 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
                 return promote_mask_and_weight_to_tree(B, algebra, metric, labels);
             }
         },
-        __vbar__(rhs: BasisBlade<T, K>): K {
+        scp(rhs: BasisBlade<T, K>): K {
             // console.lg(`BasisBlade.__vbar__(lhs=>${theBlade}, rhs=>${rhs})`);
             // Use the definition of the scalar product in terms of the geometric product.
             const adapter = algebra.field;
-            const gp = theBlade.__mul__(rhs);
+            const gp = theBlade.mul(rhs);
             // console.lg(`BasisBlade.__vbar__(lhs=>${that}, rhs=>${rhs}) => ${gp}`);
             // TODO: Why do we need the adapter? We know that we have a BasisBlade.
             // This changed because we don't have weights.
             return adapter.extractGrade(gp, 0);
         },
-        __wedge__(rhs: BasisBlade<T, K>): K {
+        wedge(rhs: BasisBlade<T, K>): K {
             const rez: MaskAndWeight<T>[] = [];
             const B1 = create_vector_mask_and_weight(bitmap, field);
             const B2 = create_vector_mask_and_weight(rhs.bitmap, field);
-            const B = B1.__wedge__(B2);
+            const B = B1.wedge(B2);
             rez.push(B);
             // It seems that promotion is not required in this case.
             return promote_blades_to_tree(combine_mask_and_weights(rez, field), algebra, metric, labels);
         },
-        __bang__(): K {
-            return theBlade.inv();
-        },
-        __pos__(): K {
-            return field.bladeToTree(theBlade);
-        },
-        neg(): K {
-            return promote_mask_and_weight_to_tree(create_vector_mask_and_weight(bitmap, field).__neg__(), algebra, metric, labels);
-        },
-        __neg__(): K {
-            return promote_mask_and_weight_to_tree(create_vector_mask_and_weight(bitmap, field).__neg__(), algebra, metric, labels);
-        },
-        __tilde__(): K {
-            return theBlade.rev();
-        },
-        cliffordConjugate(): K {
-            return promote_mask_and_weight_to_tree(create_vector_mask_and_weight(bitmap, field).cliffordConjugate(), algebra, metric, labels);
-        },
         contains(needle: U): boolean {
             return theBlade.equals(needle);
-        },
-        direction(): K {
-            const me = field.bladeToTree(theBlade);
-            const rev = theBlade.rev();
-            const scp = field.treeScp(me, rev);
-            const squaredNorm = field.scalarCoordinate(scp);
-            const norm = field.sqrt(squaredNorm);
-            if (!field.isZero(norm)) {
-                return theBlade.divByScalar(norm);
-            }
-            else {
-                return me;
-            }
         },
         equals(other: U): boolean {
             if (theBlade === other) {
@@ -444,45 +339,11 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
                 }
             }
         },
-        exp(): K {
-            // TODO: Optimize and Generalize.
-            throw new Error(`BasisBlade.exp`);
-            /*
-            const B = extractGrade(2);
-            const Brev = B.rev();
-            const θ = field.scalarCoordinate(field.treeSqrt(B.__vbar__(Brev)));
-            const i = B.divByScalar(θ);
-            const cosθ = promote_mask_and_weight_to_tree(create_scalar_repr(field.cos(θ), field), algebra, metric, labels);
-            const sinθ = promote_mask_and_weight_to_tree(create_scalar_repr(field.sin(θ), field), algebra, metric, labels);
-            return field.treeAdd(cosθ, field.treeMul(i, sinθ));
-            */
-        },
         extractGrade,
-        div(rhs: BasisBlade<T, K>): K {
-            return field.treeMul(field.bladeToTree(theBlade), rhs.inv());
-        },
-        divByScalar(alpha: T): K {
-            const scale = field.div(field.one, alpha);
-            if (!field.isZero(scale)) {
-                return promote_mask_and_weight_to_tree(create_mask_and_weight(bitmap, scale, field), algebra, metric, labels);
-            }
-            else {
-                return field.treeZero();
-            }
-        },
         dual(): K {
             const n = dim(metric, algebra.field);
             const I = promote_mask_and_weight_to_tree(create_mask_and_weight((1 << n) - 1, field.one, field), algebra, metric, labels);
             return field.treeLco(field.bladeToTree(theBlade), I);
-        },
-        gradeInversion(): K {
-            return promote_mask_and_weight_to_tree(create_vector_mask_and_weight(bitmap, field).gradeInversion(), algebra, metric, labels);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isCompatible(rhs: BasisBlade<T, K>): boolean {
-            // TODO: If we had a leaky abstraction we might check the algebra for equality!
-            // Maybe we can compare the metric?
-            return true;
         },
         rev(): K {
             return promote_mask_and_weight_to_tree(create_vector_mask_and_weight(bitmap, field).reverse(), algebra, metric, labels);
@@ -492,18 +353,6 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
                 return field.one;
             }
             return field.zero;
-        },
-        scp(rhs: BasisBlade<T, K>): K {
-            // console.lg(`BasisBlade.scp(lhs=>${that}, rhs=>${rhs})`);
-            return theBlade.__vbar__(rhs);
-        },
-        sqrt(): K {
-            if (bitmap === 0) {
-                return promote_mask_and_weight_to_tree(create_mask_and_weight(bitmap, field.one, field).reverse(), algebra, metric, labels);
-            }
-            else {
-                throw new Error(`sqrt on arbitrary multivectors is not yet supported.`);
-            }
         },
         asString(n: number, names: string[], wedge: string): string {
             if (names.length === n) {

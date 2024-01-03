@@ -23,7 +23,7 @@ class Op extends Function2<Blade, Blade> implements Operator<Cons> {
         this.hash = hash_binop_atom_atom(this.opr, HASH_BLADE, HASH_BLADE);
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
-        return [TFLAG_DIFF, this.$.valueOf(lhs.__lshift__(rhs))];
+        return [TFLAG_DIFF, this.$.valueOf(lhs.lshift(rhs))];
     }
 }
 

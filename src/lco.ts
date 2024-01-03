@@ -11,7 +11,7 @@ import { is_blade } from "./tree/vec/createAlgebra";
 export function lco(lhs: U, rhs: U): U {
     if (is_blade(lhs)) {
         if (is_blade(rhs)) {
-            return lhs.__lshift__(rhs);
+            return lhs.lshift(rhs);
         }
         else {
             throw new Error(`${lhs},${rhs}`);

@@ -23,7 +23,7 @@ class Op extends Function2<Blade, Rat> implements Operator<Cons> {
     }
     transform2(opr: Sym, lhs: Blade, rhs: Rat): [TFLAGS, U] {
         if (rhs.isTwo()) {
-            return [TFLAG_DIFF, lhs.__mul__(lhs)];
+            return [TFLAG_DIFF, lhs.mul(lhs)];
         }
         else {
             return [TFLAG_NONE, items_to_cons(opr, lhs, rhs)];

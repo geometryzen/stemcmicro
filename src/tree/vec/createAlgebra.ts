@@ -3,8 +3,6 @@ import { Adapter, SumTerm } from './Adapter';
 import { Algebra, BasisBlade, MaskAndWeight, Metric } from './BasisBlade';
 import { bitCount } from './bitCount';
 import { Blade } from './Blade';
-import { mustBeDefined } from './checks/mustBeDefined';
-import { mustBeInteger } from './checks/mustBeInteger';
 import { combine_mask_and_weights } from './combine_mask_and_weights';
 import { create_mask_and_weight, create_scalar_mask_and_weight, create_vector_mask_and_weight } from './create_mask_and_weight';
 import { gpE } from './gpE';
@@ -16,6 +14,7 @@ import { lcoL } from './lcoL';
 import { rcoE } from './rcoE';
 import { rcoG } from './rcoG';
 import { rcoL } from './rcoL';
+export { create_algebra } from 'math-expression-atoms';
 
 type METRIC<T> = T | T[] | Metric<T>;
 
@@ -198,21 +197,6 @@ function mul<T extends U, K extends U>(lhs: T | BasisBlade<T, K>, rhs: T | Basis
             return void 0;
         }
     }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function div<T, K>(lhs: T | BasisBlade<T, K>, rhs: T | BasisBlade<T, K>, algebra: Algebra<T, K>): K | undefined {
-    throw new Error(`Multivector division is not yet supported. ${lhs} / ${rhs}`);
-}
-
-/**
- * Returns the basis vector with index in the integer range [0 ... dim).
- * The bitmap is simply 1 shifted to the left by the index.
- */
-function getBasisVector<T extends U, K extends U>(index: number, algebra: Algebra<T, K>, metric: METRIC<T>, labels: string[]): BasisBlade<T, K> {
-    mustBeInteger('index', index);
-    mustBeDefined('algebra', algebra);
-    return create_blade(1 << index, algebra, metric, labels);
 }
 
 /**
@@ -407,76 +391,3 @@ export function create_blade<T extends U, K extends U>(bitmap: number, algebra: 
     };
     return theBlade;
 }
-
-/**
- * Verify that the basis vector labels are strings and that there are the correct number.
- */
-function check_algebra_labels(name: string, labels: string[], n: number): void {
-    // console.lg("check_algebra_labels", "name", JSON.stringify(name), "labels", JSON.stringify(labels), "n", n);
-    if (labels) {
-        if (Array.isArray(labels)) {
-            for (let i = 0; i < labels.length; i++) {
-                const label = labels[i];
-                if (typeof label !== 'string') {
-                    throw new Error(`${name}[${i}] must be a string.`);
-                }
-            }
-            check_labels_length(labels, n);
-        }
-        else {
-            throw new Error(`${name} must be a string[]`);
-        }
-    }
-}
-
-function check_labels_length(labels: string[], n: number): void | never {
-    if (labels.length === n) {
-        // The labels are describing only the basis vectors of the algebra.
-    }
-    else if (labels.length === Math.pow(2, n)) {
-        // The labels are describing all the elements of the algebra.
-    }
-    else {
-        throw new Error(`labels length must be compatible with the dimensionality of the vector space.`);
-    }
-}
-
-export function createAlgebra<T extends U, K extends U>(metric: T | T[] | Metric<T>, field: Adapter<T, K>, labels: string[]): Algebra<T, K> {
-
-    mustBeDefined('metric', metric);
-
-    const n = dim(metric, field);
-
-    mustBeDefined('field', field);
-
-    check_algebra_labels('labels', labels, n);
-
-    /**
-     * A cache of the basis vectors.
-     */
-    const basisVectors: BasisBlade<T, K>[] = [];
-
-    const that: Algebra<T, K> = {
-        get field() {
-            return field;
-        },
-        unit(index: number) {
-            mustBeInteger('index', index);
-            if (index >= 0 && index < n) {
-                return basisVectors[index];
-            }
-            else {
-                throw new Error(`index must be in range [0 ... ${n - 1})`);
-            }
-        },
-        get units(): BasisBlade<T, K>[] {
-            // For safety, return a copy of the cached array of basis vectors.
-            return basisVectors.map(x => x);
-        }
-    };
-    for (let i = 0; i < n; i++) {
-        basisVectors[i] = getBasisVector(i, that, metric, labels);
-    }
-    return that;
-}
-

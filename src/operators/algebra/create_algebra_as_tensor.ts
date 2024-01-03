@@ -6,7 +6,7 @@ import { Tensor } from '../../tree/tensor/Tensor';
 import { cons, Cons, items_to_cons, U } from '../../tree/tree';
 import { Adapter, SumTerm } from '../../tree/vec/Adapter';
 import { Blade } from '../../tree/vec/Blade';
-import { createAlgebra, is_blade } from '../../tree/vec/createAlgebra';
+import { create_algebra, is_blade } from '../../tree/vec/createAlgebra';
 import { is_flt } from '../flt/is_flt';
 import { is_num } from '../num/is_num';
 import { is_rat } from '../rat/is_rat';
@@ -226,7 +226,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
  */
 export function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ExtensionEnv): Tensor<U> {
     const uFieldAdaptor = new AlgebraFieldAdapter(metric.length, $);
-    const GA = createAlgebra(metric, uFieldAdaptor, labels);
+    const GA = create_algebra(metric, uFieldAdaptor, labels);
     /**
      * Number of basis vectors in algebra is dimensionality.
      */

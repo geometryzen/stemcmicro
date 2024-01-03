@@ -8,7 +8,7 @@ import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { Adapter, SumTerm } from '../tree/vec/Adapter';
 import { BasisBlade } from '../tree/vec/BasisBlade';
 import { Blade } from '../tree/vec/Blade';
-import { createAlgebra } from '../tree/vec/createAlgebra';
+import { create_algebra } from '../tree/vec/createAlgebra';
 
 function create_sym_with_handler_func(printname: string, func: (expr: Cons, $: ScriptVars) => void): Sym {
     return new Sym(printname, func as unknown as (expr: Cons, $: unknown) => void);
@@ -3242,7 +3242,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
 
 function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ScriptVars): Tensor<U> {
     const uFieldAdaptor = new AlgebraFieldAdapter(metric.length, $);
-    const GA = createAlgebra(metric, uFieldAdaptor, labels);
+    const GA = create_algebra(metric, uFieldAdaptor, labels);
     /**
      * Number of basis vectors in algebra is dimensionality.
      */

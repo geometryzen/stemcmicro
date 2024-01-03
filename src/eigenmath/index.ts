@@ -2368,15 +2368,15 @@ function draw_line(x1: number, y1: number, x2: number, y2: number, t: number, ou
     outbuf.push("<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + t + "'/>\n");
 }
 
-function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, range: { min: number; max: number }): void {
+function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext): void {
     for (let i = 0; i <= DRAW_WIDTH; i++) {
-        const t = range.min + (range.max - range.min) * i / DRAW_WIDTH;
-        sample(F, T, t, draw_array, $);
+        const t = dc.tmin + (dc.tmax - dc.tmin) * i / DRAW_WIDTH;
+        sample(F, T, t, draw_array, $, dc);
     }
 }
 //    draw_array: { t: number; x: number; y: number }[] = [];
 
-function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
+function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext): void {
     // var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
     const n = draw_array.length - 1;
@@ -2405,7 +2405,7 @@ function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[
 
         for (let j = 1; j < m; j++) {
             const t = t1 + dt * j / m;
-            sample(F, T, t, draw_array, $);
+            sample(F, T, t, draw_array, $, dc);
         }
     }
 }
@@ -5540,8 +5540,8 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
     const draw_array: { t: number; x: number; y: number }[] = [];
 
     // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
-    draw_pass1(F, T, draw_array, $, { max: dc.tmax, min: dc.tmin });
-    draw_pass2(F, T, draw_array, $);
+    draw_pass1(F, T, draw_array, $, dc);
+    draw_pass2(F, T, draw_array, $, dc);
 
     const outbuf: string[] = [];
 
@@ -15279,7 +15279,7 @@ export function executeScript(scriptText: string, contentHandler: ScriptContentH
     }
 }
 
-function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
+function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext): void {
     let X: U;
     let Y: U;
 
@@ -15311,8 +15311,8 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     if (!isFinite(x) || !isFinite(y))
         return;
 
-    x = DRAW_WIDTH * (x - $.xmin) / ($.xmax - $.xmin);
-    y = DRAW_HEIGHT * (y - $.ymin) / ($.ymax - $.ymin);
+    x = DRAW_WIDTH * (x - dc.xmin) / (dc.xmax - dc.xmin);
+    y = DRAW_HEIGHT * (y - dc.ymin) / (dc.ymax - dc.ymin);
 
     draw_array.push({ t: t, x: x, y: y });
 }
@@ -16150,11 +16150,6 @@ export class ScriptVars {
     expanding: number = -1;
     drawing: number = -1;
     nonstop: number = -1;
-    tmax: number = +Math.PI;
-    xmin: number = -10;
-    xmax: number = +10;
-    ymin: number = -10;
-    ymax: number = +10;
     defineFunction(name: string, handler: (expr: Cons, $: ScriptVars) => void): void {
         symtab[name] = create_sym_with_handler_func(name, handler);
     }

@@ -908,12 +908,12 @@ interface StackContext {
     stack: U[];
 }
 
-interface EmitContext {
+export interface EmitContext {
     useImaginaryI: boolean;
     useImaginaryJ: boolean;
 }
 
-function render_svg(expr: U, dc: DrawContext, ec: EmitContext): string {
+export function render_svg(expr: U, dc: DrawContext, ec: EmitContext): string {
     // TODO: We only really need the stack here...
     const $ = new ScriptVars();
 
@@ -2368,9 +2368,9 @@ function draw_line(x1: number, y1: number, x2: number, y2: number, t: number, ou
     outbuf.push("<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + t + "'/>\n");
 }
 
-function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars): void {
+function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, range: { min: number; max: number }): void {
     for (let i = 0; i <= DRAW_WIDTH; i++) {
-        const t = $.tmin + ($.tmax - $.tmin) * i / DRAW_WIDTH;
+        const t = range.min + (range.max - range.min) * i / DRAW_WIDTH;
         sample(F, T, t, draw_array, $);
     }
 }
@@ -2485,28 +2485,28 @@ function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: st
     const YMAX = pop($);
     let x = DRAW_LEFT_PAD - width(YMAX) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(YMAX);
-    draw_formula(x, y, YMAX, $, outbuf);
+    draw_formula(x, y, YMAX, dc, outbuf);
 
     emit_level = 1; // small font
     emit_list(new Flt(dc.ymin), $, ec);
     const YMIN = pop($);
     x = DRAW_LEFT_PAD - width(YMIN) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
-    draw_formula(x, y, YMIN, $, outbuf);
+    draw_formula(x, y, YMIN, dc, outbuf);
 
     emit_level = 1; // small font
     emit_list(new Flt(dc.xmin), $, ec);
     const XMIN = pop($);
     x = DRAW_LEFT_PAD - width(XMIN) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
-    draw_formula(x, y, XMIN, $, outbuf);
+    draw_formula(x, y, XMIN, dc, outbuf);
 
     emit_level = 1; // small font
     emit_list(new Flt(dc.xmax), $, ec);
     const XMAX = pop($);
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(XMAX) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
-    draw_formula(x, y, XMAX, $, outbuf);
+    draw_formula(x, y, XMAX, dc, outbuf);
 }
 
 function emit_points(draw_array: { t: number; x: number; y: number }[], $: DrawContext, outbuf: string[]): void {
@@ -3240,7 +3240,7 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
     }
 }
 
-export function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ScriptVars): Tensor<U> {
+function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ScriptVars): Tensor<U> {
     const uFieldAdaptor = new AlgebraFieldAdapter(metric.length, $);
     const GA = createAlgebra(metric, uFieldAdaptor, labels);
     /**
@@ -5523,27 +5523,37 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
 
     save_symbol(T as Sym, $);
 
-    setup_trange($);
-    setup_xrange($);
-    setup_yrange($);
+    const dc: DrawContext = {
+        tmax: +Math.PI,
+        tmin: -Math.PI,
+        xmax: +10,
+        xmin: -10,
+        ymax: +10,
+        ymin: -10
+    };
+    setup_trange($, dc);
+    setup_xrange($, dc);
+    setup_yrange($, dc);
 
-    setup_final(F, T as Sym, $);
+    setup_final(F, T as Sym, $, dc);
 
     const draw_array: { t: number; x: number; y: number }[] = [];
 
-    draw_pass1(F, T, draw_array, $);
+    // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
+    draw_pass1(F, T, draw_array, $, { max: dc.tmax, min: dc.tmin });
     draw_pass2(F, T, draw_array, $);
 
     const outbuf: string[] = [];
 
-    const dc: DrawContext = $;
     const ec: EmitContext = {
         useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
         useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
     };
     emit_graph(draw_array, $, dc, ec, outbuf);
 
-    $.outputs.push(outbuf.join(''));
+    const output = outbuf.join('');
+
+    $.outputs.push(output);
 
     restore_symbol($);
 
@@ -8914,7 +8924,15 @@ function print_result_and_input(result: U, input: U, $: ScriptVars): void {
     const tty = get_binding(symbol(TTY), $);
 
     if (tty == symbol(TTY) || iszero(tty)) {
-        const dc: DrawContext = $;
+        // TODO: Why is this needed fro rendering SVG?
+        const dc: DrawContext = {
+            tmax: +Math.PI,
+            tmin: -Math.PI,
+            xmax: +10,
+            xmin: -10,
+            ymax: +10,
+            ymin: -10
+        };
         const ec: EmitContext = {
             useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
@@ -15857,17 +15875,17 @@ function scan_inbuf(k: number, $: ScriptVars, config: ParseConfig): number {
     return k;
 }
 
-function set_symbol(p1: Sym, p2: U, p3: U, $: ScriptVars): void {
-    if (!isusersymbol(p1)) {
+function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): void {
+    if (!isusersymbol(sym)) {
         stopf("symbol error");
     }
-    $.binding[p1.printname] = p2;
-    $.usrfunc[p1.printname] = p3;
+    $.binding[sym.printname] = binding;
+    $.usrfunc[sym.printname] = usrfunc;
 }
 
-function setup_final(F: U, T: Sym, $: ScriptVars): void {
+function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
 
-    push_double($.tmin, $);
+    push_double(dc.tmin, $);
     let p1 = pop($);
     set_symbol(T, p1, nil, $);
 
@@ -15876,15 +15894,15 @@ function setup_final(F: U, T: Sym, $: ScriptVars): void {
     p1 = pop($);
 
     if (!istensor(p1)) {
-        $.tmin = $.xmin;
-        $.tmax = $.xmax;
+        dc.tmin = dc.xmin;
+        dc.tmax = dc.xmax;
     }
 }
 
-function setup_trange($: ScriptVars): void {
+function setup_trange($: ScriptVars, dc: DrawContext): void {
 
-    $.tmin = -Math.PI;
-    $.tmax = Math.PI;
+    dc.tmin = -Math.PI;
+    dc.tmax = Math.PI;
 
     let p1: U = lookup("trange");
     push(p1, $);
@@ -15902,14 +15920,14 @@ function setup_trange($: ScriptVars): void {
         return;
     }
 
-    $.tmin = p2.toNumber();
-    $.tmax = p3.toNumber();
+    dc.tmin = p2.toNumber();
+    dc.tmax = p3.toNumber();
 }
 
-function setup_xrange($: ScriptVars): void {
+function setup_xrange($: ScriptVars, dc: DrawContext): void {
 
-    $.xmin = -10;
-    $.xmax = 10;
+    dc.xmin = -10;
+    dc.xmax = 10;
 
     let p1: U = lookup("xrange");
     push(p1, $);
@@ -15926,14 +15944,14 @@ function setup_xrange($: ScriptVars): void {
     if (!isnum(p2) || !isnum(p3))
         return;
 
-    $.xmin = p2.toNumber();
-    $.xmax = p3.toNumber();
+    dc.xmin = p2.toNumber();
+    dc.xmax = p3.toNumber();
 }
 
-function setup_yrange($: ScriptVars): void {
+function setup_yrange($: ScriptVars, dc: DrawContext): void {
 
-    $.ymin = -10;
-    $.ymax = 10;
+    dc.ymin = -10;
+    dc.ymax = 10;
 
     let p1: U = lookup("yrange");
     push(p1, $);
@@ -15950,8 +15968,8 @@ function setup_yrange($: ScriptVars): void {
     if (!isnum(p2) || !isnum(p3))
         return;
 
-    $.ymin = p2.toNumber();
-    $.ymax = p3.toNumber();
+    dc.ymin = p2.toNumber();
+    dc.ymax = p3.toNumber();
 }
 
 function sort(n: number, $: ScriptVars): void {
@@ -16087,11 +16105,29 @@ function trace_input($: ScriptVars): void {
 }
 
 export interface DrawContext {
+    /**
+     * -Math.PI
+     */
     tmin: number;
+    /**
+     * +Math.PI
+     */
     tmax: number;
+    /**
+     * -10
+     */
     xmin: number;
+    /**
+     * +10
+     */
     xmax: number;
+    /**
+     * -10
+     */
     ymin: number;
+    /**
+     * +10
+     */
     ymax: number;
 }
 
@@ -16114,7 +16150,6 @@ export class ScriptVars {
     expanding: number = -1;
     drawing: number = -1;
     nonstop: number = -1;
-    tmin: number = -Math.PI;
     tmax: number = +Math.PI;
     xmin: number = -10;
     xmax: number = +10;

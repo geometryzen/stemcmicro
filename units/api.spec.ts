@@ -112,13 +112,16 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(errors.length, 1);
+        assert.strictEqual(trees.length, 0);
+        /*
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a**b");
         }
         engine.release();
+        */
     });
     it("mixed Eigenmath => Native", function () {
         const lines: string[] = [

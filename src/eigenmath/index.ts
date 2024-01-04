@@ -13045,7 +13045,7 @@ function infixform_write(s: string, config: InfixConfig, outbuf: string[]): void
     outbuf.push(s);
 }
 
-function init($: ScriptVars): void {
+export function init($: ScriptVars): void {
     $.eval_level = 0;
     $.expanding = 1;
     $.drawing = 0;
@@ -15216,7 +15216,13 @@ export function parseScript(sourceText: string, config: EigenmathParseConfig, er
         }
     }
     catch (errmsg) {
-        if ((errmsg as string).length > 0) {
+        if (errmsg instanceof Error) {
+            if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] == '\n') {
+                $.trace2--;
+            }
+            errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
+        }
+        else if ((errmsg as string).length > 0) {
             if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] == '\n') {
                 $.trace2--;
             }
@@ -16134,6 +16140,9 @@ export interface DrawContext {
 }
 
 export class ScriptVars implements ExprContext {
+    constructor() {
+        // Do nothing yet.
+    }
     getBinding(printname: string): U {
         return this.binding[printname];
     }

@@ -1,6 +1,6 @@
 import { Sym } from 'math-expression-atoms';
 import { is_nil, nil, U } from 'math-expression-tree';
-import { EigenmathParseConfig, evaluate_expression, InfixOptions, LAST, parseScript, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix } from '../eigenmath';
+import { EigenmathParseConfig, evaluate_expression, InfixOptions, init, LAST, parseScript, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_script } from '../parser/parser';
@@ -154,7 +154,7 @@ function eigenmath_infix_config(config: InfixConfig): InfixOptions {
 class EigenmathExprEngine implements ExprEngine {
     $: ScriptVars = new ScriptVars();
     constructor() {
-
+        init(this.$);
     }
     evaluate(expr: U): U {
         return evaluate_expression(expr, this.$);

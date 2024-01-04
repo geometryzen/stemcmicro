@@ -1,4 +1,5 @@
 export { BasisBlade, Blade, Dimensions, is_blade, QQ, Uom } from 'math-expression-atoms';
+export { ExprContext } from 'math-expression-context';
 export { create_tensor } from './src/brite/create_tensor';
 export { DrawContext, EmitContext, executeScript, InfixOptions, ParseConfig, parseScript, PrintScriptContentHandler, PrintScriptErrorHandler, render_svg, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from './src/eigenmath/index';
 export { EnvConfig } from './src/env/EnvConfig';

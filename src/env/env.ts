@@ -167,6 +167,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
+        getBinding(printname: string): U {
+            return $.getSymbolValue(printname);
+        },
+        setBinding(printname: string, binding: U): void {
+            return $.setSymbolValue(printname, binding);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        getUsrFunc(printname: string): U {
+            throw new Error();
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        setUsrFunc(printname: string, binding: U): void {
+            throw new Error();
+        },
         getPrintHandler(): PrintHandler {
             return printHandler;
         },

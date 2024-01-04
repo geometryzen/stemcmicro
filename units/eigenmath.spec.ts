@@ -1,11 +1,12 @@
 import { assert } from "chai";
+import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
 import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from "../src/eigenmath/index";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const eval_plot = function (expr: Cons, $: ScriptVars): void {
-    $.push(nil);
-    // console.lg(`${expr}`);
+const plotLambda = function (argList: Cons, $: ExprContext): U {
+    // console.lg(`argList.length=${argList.length}`);
+    return nil;
 };
 
 class TestContentHandler implements ScriptContentHandler {
@@ -15,7 +16,7 @@ class TestContentHandler implements ScriptContentHandler {
     begin($: ScriptVars): void {
         this.values.length = 0;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        $.defineFunction("plot", eval_plot);
+        $.defineFunction("plot", plotLambda);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     output(value: U, input: U, $: ScriptVars): void {

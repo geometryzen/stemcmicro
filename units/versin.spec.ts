@@ -20,10 +20,10 @@ const negOne = one.neg();
 /**
  * Registers an implementation of the versin function with the environment.
  */
-export function define_versin($: ScriptContext): ScriptContext {
+export function define_versin($: ScriptContext): void {
     // If we also want to control the name as it appears in the script
     const match: U = items_to_cons(VERSIN);   // TODO 
-    return $.defineFunction(match, versin_lambda);
+    $.defineFunction(match, versin_lambda);
 }
 
 const versin_lambda: LambdaExpr = (argList: Cons, $: ExtensionEnv) => {
@@ -47,9 +47,9 @@ describe("versin", function () {
         const lines: string[] = [
             `versin(x)`
         ];
-        const rootContext = create_script_context({
+        const context = create_script_context({
         });
-        const context = define_versin(rootContext);
+        define_versin(context);
         const value = assert_one_value_execute(lines.join('\n'), context);
         assert.strictEqual(context.renderAsInfix(value), "1-cos(x)");
         context.release();
@@ -59,9 +59,9 @@ describe("versin", function () {
             `pi=tau(1)/2`,
             `versin(pi)`
         ];
-        const rootContext = create_script_context({
+        const context = create_script_context({
         });
-        const context = define_versin(rootContext);
+        define_versin(context);
         const value = assert_one_value_execute(lines.join('\n'), context);
         assert.strictEqual(context.renderAsInfix(value), "2");
         context.release();
@@ -71,9 +71,9 @@ describe("versin", function () {
             `pi=tau(1)/2`,
             `versin(2*pi)`
         ];
-        const rootContext = create_script_context({
+        const context = create_script_context({
         });
-        const context = define_versin(rootContext);
+        define_versin(context);
         const value = assert_one_value_execute(lines.join('\n'), context);
         assert.strictEqual(context.renderAsInfix(value), "0");
         context.release();

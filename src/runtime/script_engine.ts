@@ -102,7 +102,7 @@ export function env_term($: ExtensionEnv) {
 export interface ScriptContext {
     readonly $: ExtensionEnv;
     clearBindings(): void;
-    defineFunction(pattern: U, impl: LambdaExpr): ScriptContext;
+    defineFunction(pattern: U, impl: LambdaExpr): void;
     getSymbolProps(sym: Sym | string): Predicates;
     getSymbolValue(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
@@ -173,9 +173,8 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         clearBindings(): void {
             $.clearBindings();
         },
-        defineFunction(pattern: U, impl: LambdaExpr): ScriptContext {
+        defineFunction(pattern: U, impl: LambdaExpr): void {
             $.defineFunction(pattern, impl);
-            return this;
         },
         getSymbolProps(sym: Sym | string): Predicates {
             return $.getSymbolPredicates(sym);

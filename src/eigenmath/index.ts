@@ -1,4 +1,5 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { ExprContext } from 'math-expression-context';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
@@ -5503,58 +5504,63 @@ function eval_dot(p1: U, $: ScriptVars): void {
 function eval_draw(expr: Cons, $: ScriptVars): void {
 
     if ($.drawing) {
-        push(nil, $); // return value
-        return;
+        // Do nothing
     }
+    else {
+        $.drawing = 1;
+        try {
 
-    $.drawing = 1;
+            const F = expr.item(1);
+            let T = expr.item(2);
 
-    const F = expr.item(1);
-    let T = expr.item(2);
+            if (!(issymbol(T) && isusersymbol(T))) {
+                T = symbol(X_LOWER);
+            }
 
-    if (!(issymbol(T) && isusersymbol(T))) {
-        T = symbol(X_LOWER);
+            save_symbol(T as Sym, $);
+            try {
+                const dc: DrawContext = {
+                    tmax: +Math.PI,
+                    tmin: -Math.PI,
+                    xmax: +10,
+                    xmin: -10,
+                    ymax: +10,
+                    ymin: -10
+                };
+                setup_trange($, dc);
+                setup_xrange($, dc);
+                setup_yrange($, dc);
+
+                setup_final(F, T as Sym, $, dc);
+
+                const draw_array: { t: number; x: number; y: number }[] = [];
+
+                // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
+                draw_pass1(F, T, draw_array, $, dc);
+                draw_pass2(F, T, draw_array, $, dc);
+
+                const outbuf: string[] = [];
+
+                const ec: EmitContext = {
+                    useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+                    useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
+                };
+                emit_graph(draw_array, $, dc, ec, outbuf);
+
+                const output = outbuf.join('');
+
+                $.outputs.push(output);
+            }
+            finally {
+                restore_symbol($);
+            }
+        }
+        finally {
+            $.drawing = 0;
+        }
     }
-
-    save_symbol(T as Sym, $);
-
-    const dc: DrawContext = {
-        tmax: +Math.PI,
-        tmin: -Math.PI,
-        xmax: +10,
-        xmin: -10,
-        ymax: +10,
-        ymin: -10
-    };
-    setup_trange($, dc);
-    setup_xrange($, dc);
-    setup_yrange($, dc);
-
-    setup_final(F, T as Sym, $, dc);
-
-    const draw_array: { t: number; x: number; y: number }[] = [];
-
-    // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
-    draw_pass1(F, T, draw_array, $, dc);
-    draw_pass2(F, T, draw_array, $, dc);
-
-    const outbuf: string[] = [];
-
-    const ec: EmitContext = {
-        useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
-        useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
-    };
-    emit_graph(draw_array, $, dc, ec, outbuf);
-
-    const output = outbuf.join('');
-
-    $.outputs.push(output);
-
-    restore_symbol($);
 
     push(nil, $); // return value
-
-    $.drawing = 0;
 }
 
 function eval_eigenvec(punk: U, $: ScriptVars): void {
@@ -12458,18 +12464,20 @@ function get_operator_height(font_num: number): number {
 }
 
 function get_binding(p1: Sym, $: ScriptVars): U {
-    if (!isusersymbol(p1))
+    if (!isusersymbol(p1)) {
         stopf("symbol error");
-    let p2 = $.binding[p1.printname];
-    if (p2 == undefined || is_nil(p2))
+    }
+    let p2 = $.getBinding(p1.printname);
+    if (p2 == undefined || is_nil(p2)) {
         p2 = p1; // symbol binds to itself
+    }
     return p2;
 }
 
 function get_usrfunc(p: Sym, $: ScriptVars): U {
     if (!isusersymbol(p))
         stopf("symbol error");
-    let f = $.usrfunc[p.printname];
+    let f = $.getUsrFunc(p.printname);
     if (f == undefined) {
         f = nil;
     }
@@ -15312,7 +15320,7 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     draw_array.push({ t: t, x: x, y: y });
 }
 
-function save_symbol(p: Sym, $: ScriptVars) {
+function save_symbol(p: Sym, $: ScriptVars): void {
     $.frame.push(p);
     $.frame.push(get_binding(p, $));
     $.frame.push(get_usrfunc(p, $));
@@ -15874,8 +15882,8 @@ function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): void {
     if (!isusersymbol(sym)) {
         stopf("symbol error");
     }
-    $.binding[sym.printname] = binding;
-    $.usrfunc[sym.printname] = usrfunc;
+    $.setBinding(sym.printname, binding);
+    $.setUsrFunc(sym.printname, usrfunc);
 }
 
 function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
@@ -16126,7 +16134,19 @@ export interface DrawContext {
     ymax: number;
 }
 
-export class ScriptVars {
+export class ScriptVars implements ExprContext {
+    getBinding(printname: string): U {
+        return this.binding[printname];
+    }
+    setBinding(printname: string, binding: U): void {
+        this.binding[printname] = binding;
+    }
+    getUsrFunc(printname: string): U {
+        return this.usrfunc[printname];
+    }
+    setUsrFunc(printname: string, usrfunc: U): void {
+        this.usrfunc[printname] = usrfunc;
+    }
     inbuf: string = "";
     /**
      * The start index into inbuf.
@@ -16145,13 +16165,36 @@ export class ScriptVars {
     expanding: number = -1;
     drawing: number = -1;
     nonstop: number = -1;
-    defineFunction(name: string, handler: (expr: Cons, $: ScriptVars) => void): void {
+    defineFunction(name: string, lambda: (argList: Cons, $: ExprContext) => U): void {
+        const handler = (expr: Cons, $: ScriptVars) => {
+            const retval = lambda(expr.argList, $);
+            $.push(retval);
+        };
         symtab[name] = create_sym_with_handler_func(name, handler);
     }
     push(expr: U): void {
         push(expr, this);
     }
 }
+/*
+class ExprContextOnScriptVars implements ExprContext {
+    constructor(private readonly $: ScriptVars) {
+
+    }
+    getBinding(printname: string): U {
+        return this.$.binding[printname];
+    }
+    setBinding(printname: string, binding: U): void {
+        this.$.binding[printname] = binding;
+    }
+    getUsrFunc(printname: string): U {
+        return this.$.usrfunc[printname];
+    }
+    setUsrFunc(printname: string, usrfunc: U): void {
+        this.$.usrfunc[printname] = usrfunc;
+    }
+}
+*/
 
 let zero: Rat;
 let one: Rat;

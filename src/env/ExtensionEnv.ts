@@ -1,4 +1,5 @@
 import { Rat, Sym, Tensor } from "math-expression-atoms";
+import { ExprContext } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { Native } from "../native/Native";
 import { EnvConfig } from "./EnvConfig";
@@ -267,8 +268,7 @@ export interface Predicates {
     zero: boolean
 }
 
-
-export interface ExtensionEnv {
+export interface ExtensionEnv extends ExprContext {
     getPrintHandler(): PrintHandler;
     setPrintHandler(handler: PrintHandler): void;
     abs(expr: U): U;
@@ -396,7 +396,7 @@ export interface ExtensionEnv {
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;
-    setSymbolValue(sym: Sym, value: U): void;
+    setSymbolValue(sym: Sym | string, value: U): void;
     simplify(expr: U): U;
     sin(expr: U): U;
     sqrt(expr: U): U;

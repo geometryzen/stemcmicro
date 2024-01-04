@@ -1,5 +1,6 @@
+import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { complex_conjugate } from '../../complex_conjugate';
-import { ExtensionEnv, LambdaExpr } from '../../env/ExtensionEnv';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
 import { divide } from '../../helpers/divide';
 import { Native } from '../../native/Native';
@@ -36,10 +37,11 @@ export function Eval_real(expr: Cons, $: ExtensionEnv): U {
  * @param $ 
  * @returns 
  */
-export const real_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv) {
+export const real_lambda: LambdaExpr = function (argList: Cons, $: ExprContext): U {
+    const env: ExtensionEnv = $ as unknown as ExtensionEnv;
     // We could/should check the numbr of arguments.
-    const arg = $.valueOf(argList.car);
-    return re(arg, $);
+    const arg = env.valueOf(argList.car);
+    return re(arg, env);
 };
 
 /**

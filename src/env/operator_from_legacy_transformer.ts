@@ -1,9 +1,9 @@
+import { is_sym, Sym } from "math-expression-atoms";
+import { LambdaExpr } from "math-expression-context";
+import { Cons, is_cons, U } from "math-expression-tree";
 import { hash_nonop_cons } from "../hashing/hash_info";
 import { FunctionVarArgs } from "../operators/helpers/FunctionVarArgs";
-import { is_sym } from "../operators/sym/is_sym";
-import { Sym } from "../tree/sym/Sym";
-import { Cons, is_cons, U } from "../tree/tree";
-import { ExtensionEnv, LambdaExpr, ConsExpr, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { ConsExpr, ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 
 class PluggableBuilder implements OperatorBuilder<U> {
     constructor(private readonly opr: Sym, private readonly hash: string, private readonly evaluator: ConsExpr) {

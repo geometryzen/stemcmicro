@@ -1,6 +1,7 @@
+import { LambdaExpr } from "math-expression-context";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { Directive, ExtensionEnv, LambdaExpr, Predicates } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";

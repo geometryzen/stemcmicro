@@ -1,6 +1,7 @@
-import { ExtensionEnv, LambdaExpr } from '../../env/ExtensionEnv';
+import { ExprContext, LambdaExpr } from 'math-expression-context';
+import { Cons, items_to_cons, U } from 'math-expression-tree';
+import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { IM } from '../../runtime/constants';
-import { Cons, items_to_cons, U } from '../../tree/tree';
 /**
  * expr = (real arg)
  * @param expr 
@@ -19,10 +20,11 @@ export function Eval_imag(expr: Cons, $: ExtensionEnv): U {
  * @param $ 
  * @returns 
  */
-export const imag_lambda: LambdaExpr = function (argList: Cons, $: ExtensionEnv) {
+export const imag_lambda: LambdaExpr = function (argList: Cons, $: ExprContext): U {
+    const env: ExtensionEnv = $ as unknown as ExtensionEnv;
     // We could/should check the numbr of arguments.
-    const arg = $.valueOf(argList.car);
-    return im(arg, $);
+    const arg = env.valueOf(argList.car);
+    return im(arg, env);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

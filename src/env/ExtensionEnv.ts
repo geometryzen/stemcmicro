@@ -1,5 +1,5 @@
 import { Rat, Sym, Tensor } from "math-expression-atoms";
-import { ExprContext } from "math-expression-context";
+import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { Native } from "../native/Native";
 import { EnvConfig } from "./EnvConfig";
@@ -175,12 +175,6 @@ export type CompareFn = (lhs: U, rhs: U) => Sign;
 export interface ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign;
 }
-
-/**
- * Not to be confused with the ConsExpr.
- * Here the first argument is the argument list and does not include the operator.
- */
-export type LambdaExpr = (argList: Cons, $: ExtensionEnv) => U;
 
 /**
  * Not to be confused with a LambdaExpr.

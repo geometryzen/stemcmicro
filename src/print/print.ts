@@ -582,6 +582,7 @@ export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: 
 }
 
 function print_outer_operator(): string {
+    // console.lg(`print_outer_operator`);
     if (defs.printMode === PRINTMODE_LATEX) {
         return ' \\wedge ';
     }

@@ -3270,7 +3270,7 @@ function eval_and(p1: Cons, $: ScriptVars): void {
  * @param expression The expression to be evaluated.
  * @param $ The expression context.
  */
-function evaluate_expression(expression: U, $: ScriptVars): U {
+export function evaluate_expression(expression: U, $: ScriptVars): U {
     push(expression, $);
     evalf($);
     return pop($);
@@ -15192,12 +15192,12 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
     }
 }
 
-export function parseScript(scriptText: string, config: ParseConfig, errorHandler: ScriptErrorHandler): U[] {
+export function parseScript(sourceText: string, config: ParseConfig, errorHandler: ScriptErrorHandler): U[] {
     const exprs: U[] = [];
     const $ = new ScriptVars();
     init($);
     try {
-        $.inbuf = scriptText;
+        $.inbuf = sourceText;
 
         initscript($);
 
@@ -15236,17 +15236,17 @@ function parse_config_from_options(options: Partial<ParseConfig>): ParseConfig {
 
 /**
  * 
- * @param scriptText 
+ * @param sourceText 
  * @param contentHandler 
  * @param errorHandler 
  */
-export function executeScript(scriptText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<ParseConfig> = {}): void {
+export function executeScript(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<ParseConfig> = {}): void {
     const config = parse_config_from_options(options);
     const $ = new ScriptVars();
     init($);
     contentHandler.begin($);
     try {
-        $.inbuf = scriptText;
+        $.inbuf = sourceText;
 
         initscript($);
 
@@ -16164,36 +16164,17 @@ export class ScriptVars implements ExprContext {
     expanding: number = -1;
     drawing: number = -1;
     nonstop: number = -1;
+    /**
+     * 
+     */
     defineFunction(name: string, lambda: LambdaExpr): void {
         const handler = (expr: Cons, $: ScriptVars) => {
             const retval = lambda(expr.argList, $);
-            $.push(retval);
+            push(retval, $);
         };
         symtab[name] = create_sym_with_handler_func(name, handler);
     }
-    push(expr: U): void {
-        push(expr, this);
-    }
 }
-/*
-class ExprContextOnScriptVars implements ExprContext {
-    constructor(private readonly $: ScriptVars) {
-
-    }
-    getBinding(printname: string): U {
-        return this.$.binding[printname];
-    }
-    setBinding(printname: string, binding: U): void {
-        this.$.binding[printname] = binding;
-    }
-    getUsrFunc(printname: string): U {
-        return this.$.usrfunc[printname];
-    }
-    setUsrFunc(printname: string, usrfunc: U): void {
-        this.$.usrfunc[printname] = usrfunc;
-    }
-}
-*/
 
 let zero: Rat;
 let one: Rat;

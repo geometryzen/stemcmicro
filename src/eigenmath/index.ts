@@ -13057,15 +13057,6 @@ function init($: ScriptVars): void {
     $.binding = {};
     $.usrfunc = {};
 
-    push_integer(0, $);
-    zero = pop($) as Rat;
-
-    push_integer(1, $);
-    one = pop($) as Rat;
-
-    push_integer(-1, $);
-    minusone = pop($) as Rat;
-
     push_symbol(POWER, $);
     push_integer(-1, $);
     push_rational(1, 2, $);
@@ -14068,7 +14059,7 @@ function assert_num_to_number(p: U): number | never {
         return p.toNumber();
     }
     else {
-        stopf("number expected");
+        stopf(`assert_num_to_number() number expected ${p}`);
     }
 }
 
@@ -14080,7 +14071,7 @@ function pop_double($: ScriptVars): number {
         return p.toNumber();
     }
     else {
-        stopf("number expected");
+        stopf("pop_double() number expected");
     }
 }
 
@@ -16084,7 +16075,7 @@ function static_reciprocate($: ScriptVars): void {
 }
 
 function stopf(errmsg: string): never {
-    throw errmsg;
+    throw new Error(errmsg);
 }
 
 function subtract($: ScriptVars): void {
@@ -16185,9 +16176,9 @@ export class ScriptVars implements ExprContext {
     }
 }
 
-let zero: Rat;
-let one: Rat;
-let minusone: Rat;
+const zero: Rat = create_rat(0, 1);
+const one: Rat = create_rat(1, 1);
+const minusone: Rat = create_rat(-1, 1);
 let imaginaryunit: U;
 
 const symtab: { [name: string]: Sym } = {

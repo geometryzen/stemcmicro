@@ -652,7 +652,7 @@ const POWER = "^";
 const INDEX = "[";
 const SETQ = "=";
 
-const LAST = "last";
+export const LAST = "last";
 const PI = "pi";
 const TRACE = "trace";
 
@@ -15877,7 +15877,7 @@ function scan_inbuf(k: number, $: ScriptVars, config: ParseConfig): number {
     return k;
 }
 
-function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): void {
+export function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): void {
     if (!isusersymbol(sym)) {
         stopf("symbol error");
     }
@@ -16094,7 +16094,7 @@ function swap($: ScriptVars): void {
     push(p1, $);
 }
 
-function symbol(s: string): Sym {
+export function symbol(s: string): Sym {
     return symtab[s];
 }
 

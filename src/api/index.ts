@@ -1,5 +1,6 @@
-import { U } from 'math-expression-tree';
-import { evaluate_expression, InfixOptions, ParseConfig as EigenmathParseConfig, parseScript, ScriptErrorHandler, ScriptVars, to_infix } from '../eigenmath';
+import { Sym } from 'math-expression-atoms';
+import { is_nil, nil, U } from 'math-expression-tree';
+import { evaluate_expression, InfixOptions, LAST, ParseConfig as EigenmathParseConfig, parseScript, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_script } from '../parser/parser';
@@ -7,17 +8,9 @@ import { render_as_infix } from '../print/render_as_infix';
 import { transform_tree } from '../runtime/execute';
 import { env_term, init_env } from '../runtime/script_engine';
 
-export enum SyntaxKind {
-    /**
-     * Based on Algebrite, which was derived from Eigenmath.
-     */
-    Native = 1,
-    Eigenmath = 2
-}
-
 export interface ParseConfig {
-    syntaxKind: SyntaxKind,
     useCaretForExponentiation: boolean;
+    useGeometricAlgebra: boolean;
     useParenForTensors: boolean;
 }
 
@@ -44,12 +37,13 @@ class EigenmathErrorHandler implements ScriptErrorHandler {
 }
 
 export function parse(sourceText: string, options: ParseConfig): { trees: U[], errors: Error[] } {
-    switch (options.syntaxKind) {
-        case SyntaxKind.Native: {
+    const engineKind = engine_kind_from_parse_config(options);
+    switch (engineKind) {
+        case EngineKind.Native: {
             const { trees, errors } = parse_script("", sourceText, native_parse_config(options));
             return { trees, errors };
         }
-        case SyntaxKind.Eigenmath: {
+        case EngineKind.Eigenmath: {
             const errorHandler = new EigenmathErrorHandler();
             const trees: U[] = parseScript(sourceText, eigenmath_parse_config(options), errorHandler);
             return { trees, errors: errorHandler.errors };
@@ -65,13 +59,22 @@ export interface InfixConfig {
     useParenForTensors: boolean;
 }
 
+export enum Concept {
+    Last = 1
+}
+
 export interface ExprEngine {
     evaluate(expr: U): U;
     renderAsInfix(expr: U, config: InfixConfig): string;
     release(): void;
+    setSymbol(sym: Sym, binding: U, usrfunc: U): void;
+    symbol(concept: Concept): Sym;
 }
 
-export enum EngineKind {
+/**
+ * This is an implementation detail. 
+ */
+enum EngineKind {
     /**
      * Based on Algebrite, which was derived from Eigenmath.
      */
@@ -79,8 +82,26 @@ export enum EngineKind {
     Eigenmath = 2
 }
 
+function engine_kind_from_parse_config(config: ParseConfig): EngineKind {
+    if (config.useGeometricAlgebra) {
+        return EngineKind.Native;
+    }
+    else {
+        return EngineKind.Eigenmath;
+    }
+}
+
 export interface EvalConfig {
-    engineKind: EngineKind;
+    useGeometricAlgebra: boolean;
+}
+
+function engine_kind_from_eval_config(config: EvalConfig): EngineKind {
+    if (config.useGeometricAlgebra) {
+        return EngineKind.Native;
+    }
+    else {
+        return EngineKind.Eigenmath;
+    }
 }
 
 class NativeExprEngine implements ExprEngine {
@@ -108,6 +129,18 @@ class NativeExprEngine implements ExprEngine {
     release(): void {
         env_term(this.$);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setSymbol(sym: Sym, binding: U, usrfunc: U): void {
+        throw new Error('Method not implemented.');
+    }
+    symbol(concept: Concept): Sym {
+        switch (concept) {
+            case Concept.Last: {
+                break;
+            }
+        }
+        throw new Error('Method not implemented.');
+    }
 }
 
 function eigenmath_infix_config(config: InfixConfig): InfixOptions {
@@ -129,10 +162,24 @@ class EigenmathExprEngine implements ExprEngine {
     release(): void {
         // Do nothing (yet).
     }
+    setSymbol(sym: Sym, binding: U, usrfunc: U): void {
+        set_symbol(sym, binding, usrfunc, this.$);
+    }
+    symbol(concept: Concept): Sym {
+        switch (concept) {
+            case Concept.Last: {
+                return symbol(LAST);
+            }
+            default: {
+                throw new Error('Method not implemented.');
+            }
+        }
+    }
 }
 
 export function create_engine(config: EvalConfig): ExprEngine {
-    switch (config.engineKind) {
+    const engineKind = engine_kind_from_eval_config(config);
+    switch (engineKind) {
         case EngineKind.Native: {
             return new NativeExprEngine();
         }
@@ -142,5 +189,33 @@ export function create_engine(config: EvalConfig): ExprEngine {
         default: {
             throw new Error(`Unexpected options.syntaxKind`);
         }
+    }
+}
+
+export interface ScriptContentHandler {
+    begin($: ExprEngine): void;
+    output(value: U, input: U, $: ExprEngine): void;
+    end($: ExprEngine): void;
+}
+
+export function run_script(inputs: U[], config: EvalConfig, handler: ScriptContentHandler): void {
+    const engine: ExprEngine = create_engine(config);
+    try {
+        handler.begin(engine);
+        try {
+            for (const input of inputs) {
+                const result = engine.evaluate(input);
+                handler.output(result, input, engine);
+                if (!is_nil(result)) {
+                    engine.setSymbol(engine.symbol(Concept.Last), result, nil);
+                }
+            }
+        }
+        finally {
+            handler.end(engine);
+        }
+    }
+    finally {
+        engine.release();
     }
 }

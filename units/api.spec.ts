@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { create_engine, EngineKind, ExprEngine, parse, SyntaxKind } from "../src/api/index";
+import { create_engine, ExprEngine, parse } from "../src/api/index";
 
 describe("api", function () {
     it("native A", function () {
@@ -9,8 +9,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Native, useCaretForExponentiation: false, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Native });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "x^(1/2)");
@@ -23,8 +23,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Native, useCaretForExponentiation: false, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Native });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: false, useParenForTensors: true }), "x**(1/2)");
@@ -37,8 +37,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Native, useCaretForExponentiation: false, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Native });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a^b");
@@ -52,8 +52,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Native, useCaretForExponentiation: true, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Native });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a^b");
@@ -66,8 +66,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Eigenmath, useCaretForExponentiation: false, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Eigenmath });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "x^(1/2)");
@@ -80,8 +80,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Eigenmath, useCaretForExponentiation: false, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Eigenmath });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: false, useParenForTensors: true }), "x**(1/2)");
@@ -94,8 +94,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Eigenmath, useCaretForExponentiation: false, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Eigenmath });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: false, useParenForTensors: true }), "a**b");
@@ -109,8 +109,8 @@ describe("api", function () {
         ];
         const sourceText = lines.join('\n');
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { syntaxKind: SyntaxKind.Eigenmath, useCaretForExponentiation: true, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ engineKind: EngineKind.Eigenmath });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a**b");

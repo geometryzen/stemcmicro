@@ -69,6 +69,7 @@
         "unit-schwarzchild": "mocha 'units/schwarzchild.spec.ts'",
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",
+        "unit-svg": "mocha 'units/svg.spec.ts'",
         "unit-sum": "mocha 'units/sum.spec.ts'",
         "unit-symbol": "mocha 'units/symbol.spec.ts'",
         "unit-tensor": "mocha 'units/tensor.spec.ts'",

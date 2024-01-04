@@ -1,12 +1,16 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
 
 function create_sym_with_handler_func(printname: string, func: (expr: Cons, $: ScriptVars) => void): Sym {
-    return new Sym(printname, func as unknown as (expr: Cons, $: unknown) => void);
+    // By using the global cache of symbols, we are able to evaluate expressions parsed by other engines.
+    const sym = create_sym(printname);
+    sym.func = func as unknown as (expr: Cons, $: unknown) => void;
+    return sym;
 }
 
 function alloc_tensor(): Tensor {
@@ -3988,7 +3992,7 @@ function arg1($: ScriptVars): void {
 }
 
 function eval_binding(p1: U, $: ScriptVars): void {
-    const sym = cadr(p1) as Sym;
+    const sym = assert_sym(cadr(p1));
     push(get_binding(sym, $), $);
 }
 
@@ -5516,7 +5520,7 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
                 T = symbol(X_LOWER);
             }
 
-            save_symbol(T as Sym, $);
+            save_symbol(assert_sym(T), $);
             try {
                 const dc: DrawContext = {
                     tmax: +Math.PI,
@@ -5530,7 +5534,7 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
                 setup_xrange($, dc);
                 setup_yrange($, dc);
 
-                setup_final(F, T as Sym, $, dc);
+                setup_final(F, assert_sym(T), $, dc);
 
                 const draw_array: { t: number; x: number; y: number }[] = [];
 
@@ -11171,8 +11175,9 @@ function eval_uom(p1: Cons, $: ScriptVars): void {
 }
 
 function eval_user_function(p1: U, $: ScriptVars): void {
+    // console.lg(`eval_user_function(${p1})`);
 
-    const FUNC_NAME = car(p1) as Sym;
+    const FUNC_NAME = assert_sym(car(p1));
     let FUNC_ARGS = cdr(p1);
 
     const FUNC_DEFN = get_usrfunc(FUNC_NAME, $);
@@ -11241,9 +11246,10 @@ function eval_user_function(p1: U, $: ScriptVars): void {
 }
 
 function eval_user_symbol(p1: U, $: ScriptVars): void {
-    const p2 = get_binding(p1 as Sym, $);
-    if (p1 == p2)
+    const p2 = get_binding(assert_sym(p1), $);
+    if (p1 == p2) {
         push(p1, $); // symbol evaluates to itself
+    }
     else {
         push(p2, $); // evaluate symbol binding
         evalf($);
@@ -11301,10 +11307,10 @@ function evalf_nib($: ScriptVars): void {
 
     const p1 = pop($);
 
-
     const sym = car(p1);
     if (iscons(p1) && issymbol(sym) && iskeyword(sym)) {
         $.expanding++;
+        // TODO: We want to be more careful here using func which will become 'custom: unknown'
         sym.func(p1, $);
         $.expanding--;
         return;
@@ -12463,8 +12469,11 @@ function get_operator_height(font_num: number): number {
 }
 
 function get_binding(p1: Sym, $: ScriptVars): U {
+    if (!is_sym(p1)) {
+        stopf(`get_binding(${p1}) argument must be a Sym.`);
+    }
     if (!isusersymbol(p1)) {
-        stopf("symbol error");
+        stopf(`get_binding(${p1}) symbol error`);
     }
     let p2 = $.getBinding(p1.printname);
     if (p2 == undefined || is_nil(p2)) {
@@ -15156,7 +15165,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars): Rat {
 function restore_symbol($: ScriptVars): void {
     const p3 = $.frame.pop() as U;
     const p2 = $.frame.pop() as U;
-    const p1 = $.frame.pop() as Sym;
+    const p1 = assert_sym($.frame.pop() as U);
     set_symbol(p1, p2, p3, $);
 }
 
@@ -15287,7 +15296,7 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
 
     push_double(t, $);
     let p1 = pop($);
-    set_symbol(T as Sym, p1, nil, $);
+    set_symbol(assert_sym(T), p1, nil, $);
 
     push(F, $);
     eval_nonstop($);

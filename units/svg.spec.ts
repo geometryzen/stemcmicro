@@ -24,8 +24,9 @@ describe("svg", function () {
             useImaginaryI: true,
             useImaginaryJ: false
         };
-        const svg = render_svg(value, dc, ec);
-        assert.strictEqual(svg, `<svg height='36'width='32'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>x</text>\n</svg><br>`);
+        const actual = render_svg(value, dc, ec);
+        const expect = `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>x</text>\n</svg><br>`;
+        assert.strictEqual(actual, expect);
         engine.release();
     });
 });

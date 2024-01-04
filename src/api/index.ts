@@ -153,6 +153,9 @@ function eigenmath_infix_config(config: InfixConfig): InfixOptions {
 
 class EigenmathExprEngine implements ExprEngine {
     $: ScriptVars = new ScriptVars();
+    constructor() {
+
+    }
     evaluate(expr: U): U {
         return evaluate_expression(expr, this.$);
     }

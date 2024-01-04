@@ -13078,7 +13078,7 @@ const init_script = [
     "choose(n,k) = n! / k! / (n - k)!",
 ];
 
-function initscript($: ScriptVars): void {
+export function initscript($: ScriptVars): void {
     // The configuration should match the syntax in the initialization script.
     const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
     const n = init_script.length;

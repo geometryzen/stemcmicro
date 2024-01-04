@@ -1,7 +1,7 @@
-export { Atom, BasisBlade, BigInteger, Blade, Boo, booF, booT, create_boo, create_flt, create_int, create_rat, Dimensions, Flt, is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, one, QQ, Rat, Str, Tensor, Uom, zero } from 'math-expression-atoms';
+export { Atom, BasisBlade, BigInteger, Blade, Boo, booF, booT, create_boo, create_flt, create_int, create_rat, create_sym, Dimensions, Flt, is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, one, QQ, Rat, Str, Sym, Tensor, Uom, zero } from 'math-expression-atoms';
 export { ExprContext, LambdaExpr } from 'math-expression-context';
 export { car, cdr, Cons, cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
-export { create_engine, EvalConfig, ExprEngine, parse, ParseConfig } from "./src/api/index";
+export { Concept, create_engine, EvalConfig, ExprEngine, InfixConfig, parse, ParseConfig, ScriptHandler } from "./src/api/index";
 export { create_tensor } from './src/brite/create_tensor';
 export { DrawContext, EigenmathParseConfig, EmitContext, executeScript, InfixOptions, parseScript, PrintScriptContentHandler, PrintScriptErrorHandler, render_svg, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from './src/eigenmath/index';
 export { EnvConfig } from './src/env/EnvConfig';
@@ -32,6 +32,5 @@ export { create_script_context, ExprTransformOptions, ScriptContext, ScriptConte
 export { oneAsFlt, zeroAsFlt } from './src/tree/flt/Flt';
 export { create_hyp, delta, epsilon, Hyp } from './src/tree/hyp/Hyp';
 export { Imu, imu } from './src/tree/imu/Imu';
-export { create_sym, Sym } from './src/tree/sym/Sym';
 
 

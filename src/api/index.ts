@@ -192,13 +192,13 @@ export function create_engine(config: EvalConfig): ExprEngine {
     }
 }
 
-export interface ScriptContentHandler {
+export interface ScriptHandler {
     begin($: ExprEngine): void;
     output(value: U, input: U, $: ExprEngine): void;
     end($: ExprEngine): void;
 }
 
-export function run_script(inputs: U[], config: EvalConfig, handler: ScriptContentHandler): void {
+export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandler): void {
     const engine: ExprEngine = create_engine(config);
     try {
         handler.begin(engine);

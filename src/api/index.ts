@@ -1,6 +1,6 @@
 import { Sym } from 'math-expression-atoms';
 import { is_nil, nil, U } from 'math-expression-tree';
-import { evaluate_expression, InfixOptions, LAST, ParseConfig as EigenmathParseConfig, parseScript, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix } from '../eigenmath';
+import { EigenmathParseConfig, evaluate_expression, InfixOptions, LAST, parseScript, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_script } from '../parser/parser';

@@ -7610,7 +7610,7 @@ function integral_classify(p: U): number {
  * @param config A configuration which is appropriate for the table
  * @returns 
  */
-function integral_search(h: number, F: U, table: string[], n: number, $: ScriptVars, config: ParseConfig): 0 | 1 {
+function integral_search(h: number, F: U, table: string[], n: number, $: ScriptVars, config: EigenmathParseConfig): 0 | 1 {
     let i: number;
     let C: U;
     let I: U;
@@ -9748,7 +9748,7 @@ function eval_run(expr: Cons, $: ScriptVars): void {
     for (; ;) {
 
         // This would have to come from an argument to run...
-        const config: ParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
+        const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
 
         k = scan_inbuf(k, $, config);
 
@@ -13080,7 +13080,7 @@ const init_script = [
 
 function initscript($: ScriptVars): void {
     // The configuration should match the syntax in the initialization script.
-    const config: ParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
+    const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
     const n = init_script.length;
 
     for (let i = 0; i < n; i++) {
@@ -15192,7 +15192,7 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
     }
 }
 
-export function parseScript(sourceText: string, config: ParseConfig, errorHandler: ScriptErrorHandler): U[] {
+export function parseScript(sourceText: string, config: EigenmathParseConfig, errorHandler: ScriptErrorHandler): U[] {
     const exprs: U[] = [];
     const $ = new ScriptVars();
     init($);
@@ -15226,8 +15226,8 @@ export function parseScript(sourceText: string, config: ParseConfig, errorHandle
     return exprs;
 }
 
-function parse_config_from_options(options: Partial<ParseConfig>): ParseConfig {
-    const config: ParseConfig = {
+function parse_config_from_options(options: Partial<EigenmathParseConfig>): EigenmathParseConfig {
+    const config: EigenmathParseConfig = {
         useCaretForExponentiation: options.useCaretForExponentiation ? true : false,
         useParenForTensors: options.useParenForTensors ? true : false
     };
@@ -15240,7 +15240,7 @@ function parse_config_from_options(options: Partial<ParseConfig>): ParseConfig {
  * @param contentHandler 
  * @param errorHandler 
  */
-export function executeScript(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<ParseConfig> = {}): void {
+export function executeScript(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<EigenmathParseConfig> = {}): void {
     const config = parse_config_from_options(options);
     const $ = new ScriptVars();
     init($);
@@ -15344,17 +15344,17 @@ let token: number | string;
 let token_index: number;
 let token_buf: string;
 
-function scan(s: string, k: number, $: ScriptVars, config: ParseConfig) {
+function scan(s: string, k: number, $: ScriptVars, config: EigenmathParseConfig) {
     scan_mode = 0;
     return scan_nib(s, k, $, config);
 }
 
-function scan1(s: string, $: ScriptVars, config: ParseConfig): number {
+function scan1(s: string, $: ScriptVars, config: EigenmathParseConfig): number {
     scan_mode = 1; // mode for table of integrals
     return scan_nib(s, 0, $, config);
 }
 
-function scan_nib(s: string, k: number, $: ScriptVars, config: ParseConfig): number {
+function scan_nib(s: string, k: number, $: ScriptVars, config: EigenmathParseConfig): number {
     instring = s;
     scan_index = k;
     scan_level = 0;
@@ -15372,7 +15372,7 @@ function scan_nib(s: string, k: number, $: ScriptVars, config: ParseConfig): num
     return scan_index;
 }
 
-function scan_stmt($: ScriptVars, config: ParseConfig) {
+function scan_stmt($: ScriptVars, config: EigenmathParseConfig) {
     scan_relational_expr($, config);
     if (token == "=") {
         get_token_skip_newlines($, config); // get token after =
@@ -15386,7 +15386,7 @@ function scan_stmt($: ScriptVars, config: ParseConfig) {
 /**
  * 
  */
-function scan_relational_expr($: ScriptVars, config: ParseConfig): void {
+function scan_relational_expr($: ScriptVars, config: EigenmathParseConfig): void {
     scan_additive_expr($, config);
     switch (token) {
         case T_EQ:
@@ -15413,7 +15413,7 @@ function scan_relational_expr($: ScriptVars, config: ParseConfig): void {
     list(3, $);
 }
 
-function scan_additive_expr($: ScriptVars, config: ParseConfig): void {
+function scan_additive_expr($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     let t = token;
     if (token == "+" || token == "-")
@@ -15436,7 +15436,7 @@ function scan_additive_expr($: ScriptVars, config: ParseConfig): void {
     }
 }
 
-function scan_multiplicative_expr($: ScriptVars, config: ParseConfig): void {
+function scan_multiplicative_expr($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
 
     scan_power($, config);
@@ -15467,7 +15467,7 @@ function scan_multiplicative_expr($: ScriptVars, config: ParseConfig): void {
 /**
  * '*' | '/' | Sym | Function | Integer | Double | String | '[' | '('
  */
-function is_multiplicative_operator_or_factor_pending(config: ParseConfig): boolean {
+function is_multiplicative_operator_or_factor_pending(config: EigenmathParseConfig): boolean {
     if (config.useParenForTensors) {
         if (token == "(") {
             return true;
@@ -15493,7 +15493,7 @@ function is_multiplicative_operator_or_factor_pending(config: ParseConfig): bool
     return false;
 }
 
-function scan_power($: ScriptVars, config: ParseConfig) {
+function scan_power($: ScriptVars, config: EigenmathParseConfig) {
     scan_factor($, config);
 
     if (config.useCaretForExponentiation) {
@@ -15516,7 +15516,7 @@ function scan_power($: ScriptVars, config: ParseConfig) {
     }
 }
 
-function scan_factor($: ScriptVars, config: ParseConfig): void {
+function scan_factor($: ScriptVars, config: EigenmathParseConfig): void {
 
     const h = $.stack.length;
 
@@ -15591,7 +15591,7 @@ function scan_factor($: ScriptVars, config: ParseConfig): void {
     }
 }
 
-function scan_symbol($: ScriptVars, config: ParseConfig): void {
+function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
     if (scan_mode == 1 && token_buf.length == 1) {
         switch (token_buf[0]) {
             case "a":
@@ -15614,12 +15614,12 @@ function scan_symbol($: ScriptVars, config: ParseConfig): void {
     get_token($, config);
 }
 
-function scan_string($: ScriptVars, config: ParseConfig): void {
+function scan_string($: ScriptVars, config: EigenmathParseConfig): void {
     push_string(token_buf, $);
     get_token($, config);
 }
 
-function scan_function_call($: ScriptVars, config: ParseConfig): void {
+function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     scan_level++;
     push(lookup(token_buf), $); // push function name
@@ -15643,7 +15643,7 @@ function scan_function_call($: ScriptVars, config: ParseConfig): void {
     list($.stack.length - h, $);
 }
 
-function scan_subexpr($: ScriptVars, config: ParseConfig): void {
+function scan_subexpr($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
 
     scan_level++;
@@ -15677,13 +15677,13 @@ function scan_subexpr($: ScriptVars, config: ParseConfig): void {
     }
 }
 
-function get_token_skip_newlines($: ScriptVars, config: ParseConfig): void {
+function get_token_skip_newlines($: ScriptVars, config: EigenmathParseConfig): void {
     scan_level++;
     get_token($, config);
     scan_level--;
 }
 
-function get_token($: ScriptVars, config: ParseConfig): void {
+function get_token($: ScriptVars, config: EigenmathParseConfig): void {
     get_token_nib($, config);
 
     if (scan_level)
@@ -15691,12 +15691,12 @@ function get_token($: ScriptVars, config: ParseConfig): void {
             get_token_nib($, config); // skip over newlines
 }
 
-export interface ParseConfig {
+export interface EigenmathParseConfig {
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
 }
 
-function get_token_nib($: ScriptVars, config: ParseConfig): void {
+function get_token_nib($: ScriptVars, config: EigenmathParseConfig): void {
     let c: string;
 
     // skip spaces
@@ -15867,7 +15867,7 @@ function inchar(): string {
     return instring.charAt(scan_index); // returns empty string if index out of range
 }
 
-function scan_inbuf(k: number, $: ScriptVars, config: ParseConfig): number {
+function scan_inbuf(k: number, $: ScriptVars, config: EigenmathParseConfig): number {
     $.trace1 = k;
     k = scan($.inbuf, k, $, config);
     if (k) {

@@ -1,6 +1,5 @@
-import { is_tensor } from "../operators/tensor/is_tensor";
-import { Tensor } from "../tree/tensor/Tensor";
-import { U } from "../tree/tree";
+import { is_tensor, Tensor } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 
 /**
  * Creates a Tensor from an array of elements. If the elements themselves are tensors,

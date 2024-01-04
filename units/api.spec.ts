@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { create_engine, ExprEngine, parse } from "../src/api/index";
+import { create_engine, EvalConfig, ExprEngine, parse, ParseConfig } from "../src/api/index";
 
 describe("api", function () {
     it("native A", function () {
@@ -8,9 +8,11 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const configParse: ParseConfig = { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false };
+        const { trees, errors } = parse(sourceText, configParse);
+        assert.strictEqual(errors.length, 0);
+        const configEval: EvalConfig = { useGeometricAlgebra: true };
+        const engine: ExprEngine = create_engine(configEval);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "x^(1/2)");

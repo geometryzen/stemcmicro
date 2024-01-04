@@ -1,6 +1,6 @@
 import { Sym } from 'math-expression-atoms';
 import { is_nil, nil, U } from 'math-expression-tree';
-import { EigenmathParseConfig, evaluate_expression, InfixOptions, init, initscript, LAST, parseScript, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parseScript, print_result_and_input, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_script } from '../parser/parser';
@@ -60,11 +60,13 @@ export interface RenderConfig {
 }
 
 export enum Concept {
-    Last = 1
+    Last = 1,
+    TTY = 2
 }
 
 export interface ExprEngine {
     evaluate(expr: U): U;
+    getBinding(sym: Sym): U;
     renderAsString(expr: U, config: RenderConfig): string;
     release(): void;
     setSymbol(sym: Sym, binding: U, usrfunc: U): void;
@@ -109,6 +111,9 @@ class NativeExprEngine implements ExprEngine {
     constructor() {
         this.$ = create_env();
         init_env(this.$, {});
+    }
+    getBinding(sym: Sym): U {
+        return this.$.getBinding(sym.printname);
     }
     evaluate(expr: U): U {
         const { value } = transform_tree(expr, {}, this.$);
@@ -157,6 +162,10 @@ class EigenmathExprEngine implements ExprEngine {
         init(this.$);
         initscript(this.$);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getBinding(sym: Sym): U {
+        return get_binding(sym, this.$);
+    }
     evaluate(expr: U): U {
         return evaluate_expression(expr, this.$);
     }
@@ -173,6 +182,9 @@ class EigenmathExprEngine implements ExprEngine {
         switch (concept) {
             case Concept.Last: {
                 return symbol(LAST);
+            }
+            case Concept.TTY: {
+                return symbol(TTY);
             }
             default: {
                 throw new Error('Method not implemented.');
@@ -221,5 +233,39 @@ export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandl
     }
     finally {
         engine.release();
+    }
+}
+
+export class PrintScriptHandler implements ScriptHandler {
+    outputs: string[] = [];
+    constructor(readonly stdout: HTMLElement) {
+
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    begin($: ExprEngine): void {
+        this.stdout.innerHTML = "";
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    end($: ExprEngine): void {
+        for (const output of this.outputs) {
+            this.stdout.innerHTML += output;
+        }
+    }
+    output(value: U, input: U, $: ExprEngine): void {
+        const ec: EmitContext = {
+            useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+            useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
+        };
+        print_result_and_input(value, input, should_render_svg($), ec, this.outputs);
+    }
+}
+function should_render_svg($: ExprEngine): boolean {
+    const sym = $.symbol(Concept.TTY);
+    const tty = $.getBinding(sym);
+    if (tty.equals(sym) || iszero(tty)) {
+        return true;
+    }
+    else {
+        return false;
     }
 }

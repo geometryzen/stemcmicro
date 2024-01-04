@@ -1,6 +1,6 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
-import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from 'math-expression-tree';
+import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { assert_sym } from '../operators/sym/assert_sym';
@@ -645,7 +645,7 @@ const TESTGT = "testgt";
 const TESTLE = "testle";
 const TESTLT = "testlt";
 const TRANSPOSE = "transpose";
-const TTY = "tty";
+export const TTY = "tty";
 const UNIT = "unit";
 const UOM = "uom";
 const ZERO = "zero";
@@ -8909,26 +8909,38 @@ function eval_print(p1: U, $: ScriptVars): void {
         evalf($);
         const result = pop($);
         const input = pop($);
-        print_result_and_input(result, input, $);
+        const ec: EmitContext = {
+            useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+            useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
+        };
+        print_result_and_input(result, input, should_render_svg($), ec, $.outputs);
         p1 = cdr(p1);
     }
     push(nil, $);
 }
 
-function print_result_and_input(result: U, input: U, $: ScriptVars): void {
+function should_render_svg($: ScriptVars): boolean {
+    const tty = get_binding(symbol(TTY), $);
+    if (tty == symbol(TTY) || iszero(tty)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+export function print_result_and_input(result: U, input: U, svg: boolean, ec: EmitContext, outputs: string[]): void {
 
     if (is_nil(result)) {
         return;
     }
 
     if (should_annotate_result(input, result)) {
-        result = annotate(input, result, $);
+        result = annotate(input, result);
     }
 
-    const tty = get_binding(symbol(TTY), $);
-
-    if (tty == symbol(TTY) || iszero(tty)) {
-        // TODO: Why is this needed fro rendering SVG?
+    if (svg) {
+        // TODO: Why is this needed for rendering SVG?
         const dc: DrawContext = {
             tmax: +Math.PI,
             tmin: -Math.PI,
@@ -8937,15 +8949,11 @@ function print_result_and_input(result: U, input: U, $: ScriptVars): void {
             ymax: +10,
             ymin: -10
         };
-        const ec: EmitContext = {
-            useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
-            useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
-        };
-        $.outputs.push(render_svg(result, dc, ec));
+        outputs.push(render_svg(result, dc, ec));
     }
     else {
         const config = infix_config_from_options({});
-        $.outputs.push(render_as_html_infix(result, config));
+        outputs.push(render_as_html_infix(result, config));
     }
 }
 
@@ -8967,12 +8975,16 @@ function should_annotate_result(input: U, result: U): 0 | 1 {
     return 1;
 }
 
-function annotate(input: U, result: U, $: ScriptVars): U {
+function annotate(input: U, result: U): U {
+    // console.lg(`annotate(${input}, ${result})`);
+    return items_to_cons(symbol(SETQ), input, result);
+    /*
     push_symbol(SETQ, $);
     push(input, $);
     push(result, $);
     list(3, $);
     return pop($);
+    */
 }
 
 function eval_product(p1: U, $: ScriptVars): void {
@@ -9761,7 +9773,11 @@ function eval_run(expr: Cons, $: ScriptVars): void {
 
         const input = pop($);
         const result = evaluate_expression(input, $);
-        print_result_and_input(result, input, $);
+        const ec: EmitContext = {
+            useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+            useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
+        };
+        print_result_and_input(result, input, should_render_svg($), ec, $.outputs);
         if (!is_nil(result)) {
             set_symbol(symbol(LAST), result, nil, $);
         }
@@ -12468,7 +12484,7 @@ function get_operator_height(font_num: number): number {
     return get_cap_height(font_num) / 2;
 }
 
-function get_binding(p1: Sym, $: ScriptVars): U {
+export function get_binding(p1: Sym, $: ScriptVars): U {
     if (!is_sym(p1)) {
         stopf(`get_binding(${p1}) argument must be a Sym.`);
     }
@@ -13392,7 +13408,7 @@ function isusersymbolsomewhere(p: U): 0 | 1 {
     return 0;
 }
 
-function iszero(p: U): boolean {
+export function iszero(p: U): boolean {
 
     if (isrational(p))
         return bignum_iszero(p.a);
@@ -15182,7 +15198,11 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
         }
     }
     output(value: U, input: U, $: ScriptVars): void {
-        print_result_and_input(value, input, $);
+        const ec: EmitContext = {
+            useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+            useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
+        };
+        print_result_and_input(value, input, should_render_svg($), ec, $.outputs);
     }
 }
 export class PrintScriptErrorHandler implements ScriptErrorHandler {

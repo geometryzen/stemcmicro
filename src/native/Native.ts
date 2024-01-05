@@ -79,6 +79,7 @@ export enum Native {
     re,
     rect,
     rco,
+    setq,
     simplify,
     sin,
     spread,

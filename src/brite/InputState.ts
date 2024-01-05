@@ -5,7 +5,7 @@ import { FltTokenParser } from "../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { StrTokenParser } from "../operators/str/StrTokenParser";
 import { SymTokenParser } from "../operators/sym/SymTokenParser";
-import { ASSIGN, METAA, METAB, METAX } from "../runtime/constants";
+import { METAA, METAB, METAX } from "../runtime/constants";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
@@ -46,7 +46,7 @@ const scanConfig: ScanConfig = {
         '!=': native_sym(Native.testne),
         '==': native_sym(Native.testeq),
         ':=': LANG_COLON_EQ,
-        '=': ASSIGN,
+        '=': native_sym(Native.setq),
         'abs': native_sym(Native.abs),
         'cos': native_sym(Native.cos),
         'exp': native_sym(Native.exp),

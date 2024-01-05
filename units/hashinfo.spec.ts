@@ -20,10 +20,10 @@ describe("hash_info", function () {
         const hashes = hash_info(expr);
         assert.strictEqual(hashes.length, 5);
         // The idea here is that the lexical representation of symbols is the key() property of the symbol.
-        assert.strictEqual(hashes[0], `(add (${MATH_INNER.key()}) (*))`);
-        assert.strictEqual(hashes[1], `(add (${MATH_INNER.key()}) U)`);
-        assert.strictEqual(hashes[2], '(add U (*))');
-        assert.strictEqual(hashes[3], '(add U U)');
-        assert.strictEqual(hashes[4], '(add)');
+        assert.strictEqual(hashes[0], `(+ (${MATH_INNER.key()}) (*))`);
+        assert.strictEqual(hashes[1], `(+ (${MATH_INNER.key()}) U)`);
+        assert.strictEqual(hashes[2], '(+ U (*))');
+        assert.strictEqual(hashes[3], '(+ U U)');
+        assert.strictEqual(hashes[4], '(+)');
     });
 });

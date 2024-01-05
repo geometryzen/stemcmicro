@@ -15190,12 +15190,13 @@ export interface ScriptErrorHandler {
 }
 
 class PrintScriptOutputListener implements ScriptOutputListener {
+    // TODO: only stdout needed here.
+    // TOOD: May be the proper place for escaping.
     constructor(private readonly outer: PrintScriptContentHandler) {
-
+        this.outer.stdout.innerHTML = "";
     }
     output(output: string): void {
         this.outer.stdout.innerHTML += output;
-        throw new Error('Method not implemented.');
     }
 
 }
@@ -15205,9 +15206,7 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
     constructor(readonly stdout: HTMLElement) {
         this.listener = new PrintScriptOutputListener(this);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ScriptVars): void {
-        this.stdout.innerHTML = "";
         $.addOutputListener(this.listener);
     }
     end($: ScriptVars): void {

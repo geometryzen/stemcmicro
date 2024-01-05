@@ -270,31 +270,28 @@ export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandl
 }
 
 class PrintScriptListener implements ExprEngineListener {
+    // TODO: This class only really needs stdout.
+    // TODO: This class could be the correct location for HTML escaping.
     constructor(private readonly outer: PrintScriptHandler) {
-
+        this.outer.stdout.innerHTML = "";
     }
     output(output: string): void {
-        this.outer.outputs.push(output);
+        this.outer.stdout.innerHTML += output;
     }
 }
 
 export class PrintScriptHandler implements ScriptHandler {
-    outputs: string[] = [];
     listener: PrintScriptListener;
     constructor(readonly stdout: HTMLElement) {
         this.listener = new PrintScriptListener(this);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ExprEngine): void {
-        this.stdout.innerHTML = "";
         $.addListener(this.listener);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     end($: ExprEngine): void {
         $.removeListener(this.listener);
-        for (const output of this.outputs) {
-            this.stdout.innerHTML += output;
-        }
     }
     output(value: U, input: U, $: ExprEngine): void {
         const ec: EmitContext = {

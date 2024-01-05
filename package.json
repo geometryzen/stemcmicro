@@ -1,6 +1,6 @@
 {
     "name": "jsxmath",
-    "version": "0.0.59",
+    "version": "0.0.60",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
         ".": {

@@ -33,18 +33,18 @@ export function Eval_product(expr: U, $: ExtensionEnv): U {
 
     // remember contents of the index
     // variable so we can put it back after the loop
-    const oldIndexVariableValue = $.getSymbolValue(indexVariable);
+    const oldIndexVariableValue = $.getSymbolBinding(indexVariable);
 
     let temp: U = one;
 
     for (let i = j; i <= k; i++) {
-        $.setSymbolValue(indexVariable, create_int(i));
+        $.setSymbolBinding(indexVariable, create_int(i));
         const arg2 = $.valueOf(body);
         temp = $.multiply(temp, arg2);
     }
 
     // put back the index variable to original content
-    $.setSymbolValue(indexVariable, oldIndexVariableValue);
+    $.setSymbolBinding(indexVariable, oldIndexVariableValue);
 
     return temp;
 }

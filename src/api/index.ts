@@ -1,11 +1,12 @@
 import { Sym } from 'math-expression-atoms';
 import { is_nil, nil, U } from 'math-expression-tree';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parseScript, print_result_and_input, ScriptErrorHandler, ScriptVars, set_symbol, symbol, to_infix, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parseScript, print_result_and_input, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_script } from '../parser/parser';
 import { render_as_infix } from '../print/render_as_infix';
 import { transform_tree } from '../runtime/execute';
+import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
 
 export interface ParseConfig {
@@ -64,13 +65,19 @@ export enum Concept {
     TTY = 2
 }
 
+export interface ExprEngineListener {
+    output(output: string): void;
+}
+
 export interface ExprEngine {
     evaluate(expr: U): U;
     getBinding(sym: Sym): U;
-    renderAsString(expr: U, config: RenderConfig): string;
     release(): void;
+    renderAsString(expr: U, config: RenderConfig): string;
     setSymbol(sym: Sym, binding: U, usrfunc: U): void;
     symbol(concept: Concept): Sym;
+    addListener(listener: ExprEngineListener): void;
+    removeListener(listener: ExprEngineListener): void;
 }
 
 /**
@@ -136,15 +143,24 @@ class NativeExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        throw new Error('Method not implemented.');
+        this.$.setBinding(sym.printname, binding);
+        this.$.setUsrFunc(sym.printname, usrfunc);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
             case Concept.Last: {
-                break;
+                return RESERVED_KEYWORD_LAST;
             }
         }
-        throw new Error('Method not implemented.');
+        throw new Error(`symbol(${concept}) Method not implemented.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addListener(listener: ExprEngineListener): void {
+        // throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeListener(listener: ExprEngineListener): void {
+        // throw new Error('Method not implemented.');
     }
 }
 
@@ -156,8 +172,17 @@ function eigenmath_infix_config(config: RenderConfig): InfixOptions {
     return options;
 }
 
+class EigenmathOutputListener implements ScriptOutputListener {
+    constructor(public readonly inner: ExprEngineListener) {
+
+    }
+    output(output: string): void {
+        this.inner.output(output);
+    }
+}
+
 class EigenmathExprEngine implements ExprEngine {
-    $: ScriptVars = new ScriptVars();
+    private readonly $: ScriptVars = new ScriptVars();
     constructor() {
         init(this.$);
         initscript(this.$);
@@ -190,6 +215,14 @@ class EigenmathExprEngine implements ExprEngine {
                 throw new Error('Method not implemented.');
             }
         }
+    }
+    addListener(listener: ExprEngineListener): void {
+        this.$.addOutputListener(new EigenmathOutputListener(listener));
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeListener(listener: ExprEngineListener): void {
+        // This doesn't work because we've lost the identity of the adapter.
+        this.$.removeOutputListener(new EigenmathOutputListener(listener));
     }
 }
 
@@ -236,17 +269,29 @@ export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandl
     }
 }
 
+class PrintScriptListener implements ExprEngineListener {
+    constructor(private readonly outer: PrintScriptHandler) {
+
+    }
+    output(output: string): void {
+        this.outer.outputs.push(output);
+    }
+}
+
 export class PrintScriptHandler implements ScriptHandler {
     outputs: string[] = [];
+    listener: PrintScriptListener;
     constructor(readonly stdout: HTMLElement) {
-
+        this.listener = new PrintScriptListener(this);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ExprEngine): void {
         this.stdout.innerHTML = "";
+        $.addListener(this.listener);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     end($: ExprEngine): void {
+        $.removeListener(this.listener);
         for (const output of this.outputs) {
             this.stdout.innerHTML += output;
         }
@@ -259,6 +304,7 @@ export class PrintScriptHandler implements ScriptHandler {
         print_result_and_input(value, input, should_render_svg($), ec, this.outputs);
     }
 }
+
 function should_render_svg($: ExprEngine): boolean {
     const sym = $.symbol(Concept.TTY);
     const tty = $.getBinding(sym);

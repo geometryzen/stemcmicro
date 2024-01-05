@@ -5553,6 +5553,9 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
                 const output = outbuf.join('');
 
                 $.outputs.push(output);
+                for (const listener of $.listeners) {
+                    listener.output(output);
+                }
             }
             finally {
                 restore_symbol($);
@@ -16159,6 +16162,10 @@ export interface DrawContext {
     ymax: number;
 }
 
+export interface ScriptOutputListener {
+    output(output: string): void;
+}
+
 export class ScriptVars implements ExprContext {
     constructor() {
         // Do nothing yet.
@@ -16193,6 +16200,7 @@ export class ScriptVars implements ExprContext {
     expanding: number = -1;
     drawing: number = -1;
     nonstop: number = -1;
+    listeners: ScriptOutputListener[] = [];
     /**
      * 
      */
@@ -16202,6 +16210,14 @@ export class ScriptVars implements ExprContext {
             push(retval, $);
         };
         symtab[name] = create_sym_with_handler_func(name, handler);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addOutputListener(listener: ScriptOutputListener): void {
+        this.listeners.push(listener);
+    }
+    removeOutputListener(listener: ScriptOutputListener): void {
+        const index = this.listeners.findIndex((value) => value === listener);
+        this.listeners.splice(index, 1);
     }
 }
 

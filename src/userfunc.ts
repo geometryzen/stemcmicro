@@ -47,7 +47,7 @@ export function Eval_function(functionCallExpr: Cons, $: ExtensionEnv): U {
 
     // Use "derivative" instead of "d" if there is no user function "d"
     // TODO: This needs to be checked because of the way getSymbolValue behaves.
-    if (car(functionCallExpr).equals(SYMBOL_D) && $.getSymbolValue(SYMBOL_D).equals(SYMBOL_D)) {
+    if (car(functionCallExpr).equals(SYMBOL_D) && $.getSymbolBinding(SYMBOL_D).equals(SYMBOL_D)) {
         const retval = Eval_derivative(functionCallExpr, $);
         return retval;
     }
@@ -225,7 +225,7 @@ function rewrite_args(stack: StackU, $: ExtensionEnv) {
 
     // Get the symbol's content, if _that_
     // matches then do the substitution
-    p3 = $.getSymbolValue(p1);
+    p3 = $.getSymbolBinding(p1);
     stack.push(p3);
     if (p1 !== p3) {
         stack.push(p2); // subst. list

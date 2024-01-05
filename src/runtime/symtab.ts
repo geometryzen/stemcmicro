@@ -1,3 +1,4 @@
+import { assert_sym } from "../operators/sym/assert_sym";
 import { Sym } from "../tree/sym/Sym";
 import { is_nil, nil, U } from "../tree/tree";
 
@@ -78,21 +79,25 @@ export interface SymTab {
     /**
      * Returns NIL if the symbol is not bound to anything.
      */
-    getValue(sym: Sym | string): U;
-    setValue(sym: Sym, value: U): void;
+    getBinding(sym: Sym | string): U;
+    setBinding(sym: Sym, value: U): void;
+    getUsrFunc(sym: Sym | string): U;
+    setUsrFunc(sym: Sym, value: U): void;
     entries(): { sym: Sym, value: U }[];
     delete(sym: Sym): void;
 }
 
 export function createSymTab(): SymTab {
     const props_from_key: Map<string, Props> = new Map();
-    const value_from_key: Map<string, U> = new Map();
+    const binding_from_key: Map<string, U> = new Map();
+    const usrfunc_from_key: Map<string, U> = new Map();
     const sym_from_key: Map<string, Sym> = new Map();
 
     const theTab: SymTab = {
         clear(): void {
             props_from_key.clear();
-            value_from_key.clear();
+            binding_from_key.clear();
+            usrfunc_from_key.clear();
             sym_from_key.clear();
         },
         getProps(sym: Sym | string): Props {
@@ -120,9 +125,9 @@ export function createSymTab(): SymTab {
                 props_from_key.delete(key);
             }
         },
-        getValue(sym: Sym | string): U {
+        getBinding(sym: Sym | string): U {
             if (typeof sym === 'string') {
-                const value = value_from_key.get(sym);
+                const value = binding_from_key.get(sym);
                 if (value) {
                     return value;
                 }
@@ -131,22 +136,48 @@ export function createSymTab(): SymTab {
                 }
             }
             else {
-                return this.getValue(sym.key());
+                return this.getBinding(sym.key());
             }
         },
-        setValue(sym: Sym, value: U): void {
+        setBinding(sym: Sym, value: U): void {
+            assert_sym(sym);
             const key = sym.key();
             if (is_nil(value)) {
-                value_from_key.delete(key);
+                binding_from_key.delete(key);
             }
             else {
-                value_from_key.set(key, value);
+                binding_from_key.set(key, value);
+                sym_from_key.set(key, sym);
+            }
+        },
+        getUsrFunc(sym: Sym | string): U {
+            if (typeof sym === 'string') {
+                const value = usrfunc_from_key.get(sym);
+                if (value) {
+                    return value;
+                }
+                else {
+                    return nil;
+                }
+            }
+            else {
+                return this.getUsrFunc(sym.key());
+            }
+        },
+        setUsrFunc(sym: Sym, value: U): void {
+            assert_sym(sym);
+            const key = sym.key();
+            if (is_nil(value)) {
+                usrfunc_from_key.delete(key);
+            }
+            else {
+                usrfunc_from_key.set(key, value);
                 sym_from_key.set(key, sym);
             }
         },
         entries(): { sym: Sym, value: U }[] {
             const bs: { sym: Sym, value: U }[] = [];
-            value_from_key.forEach(function (value: U, key: string) {
+            binding_from_key.forEach(function (value: U, key: string) {
                 const sym = sym_from_key.get(key);
                 if (sym) {
                     if (is_nil(value)) {
@@ -165,7 +196,7 @@ export function createSymTab(): SymTab {
         delete(sym: Sym): void {
             const key = sym.key();
             props_from_key.delete(key);
-            value_from_key.delete(key);
+            binding_from_key.delete(key);
             sym_from_key.delete(key);
         }
     };

@@ -310,7 +310,8 @@ export interface ExtensionEnv extends ExprContext {
      * Used during rendering.
      */
     getSymbolPrintName(sym: Sym): string;
-    getSymbolValue(sym: Sym | string): U;
+    getSymbolBinding(sym: Sym | string): U;
+    getSymbolUsrFunc(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[];
     /**
      * Used to make the environment ready after all operator builders have been added.
@@ -390,7 +391,8 @@ export interface ExtensionEnv extends ExprContext {
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;
-    setSymbolValue(sym: Sym | string, value: U): void;
+    setSymbolBinding(sym: Sym | string, binding: U): void;
+    setSymbolUsrFunc(sym: Sym | string, usrfunc: U): void;
     simplify(expr: U): U;
     sin(expr: U): U;
     sqrt(expr: U): U;

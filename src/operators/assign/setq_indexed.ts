@@ -63,6 +63,6 @@ export function setq_indexed(assignExpr: Cons, $: ExtensionEnv): U {
     }
     set_component(defs.tos - h);
     const p3 = stack_pop();
-    $.setSymbolValue(p4, p3);
+    $.setSymbolBinding(p4, p3);
     return nil;
 }

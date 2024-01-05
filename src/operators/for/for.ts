@@ -46,16 +46,16 @@ export function Eval_for(p1: Cons, $: ExtensionEnv): U {
 
     // remember contents of the index
     // variable so we can put it back after the loop
-    const p4: U = $.getSymbolValue(loopingVariable);
+    const p4: U = $.getSymbolBinding(loopingVariable);
     try {
         for (let i = j; i <= k; i++) {
-            $.setSymbolValue(loopingVariable, create_int(i));
+            $.setSymbolBinding(loopingVariable, create_int(i));
             $.valueOf(cadr(p1));
         }
     }
     finally {
         // put back the index variable to original content
-        $.setSymbolValue(loopingVariable, p4);
+        $.setSymbolBinding(loopingVariable, p4);
     }
 
     // return value

@@ -55,7 +55,7 @@ export function transform(F: U, X: U, s: string[] | U, generalTransform: boolean
     const state = saveMetaBindings($);
     try {
 
-        $.setSymbolValue(METAX, X);
+        $.setSymbolBinding(METAX, X);
 
         const arg = polyform(F, X, $); // collect coefficients of x, x^2, etc.
         // console.lg("arg:", $.toInfixString(arg));
@@ -207,16 +207,16 @@ interface TransformState {
  */
 function saveMetaBindings($: ExtensionEnv): TransformState {
     return {
-        METAA: $.getSymbolValue(METAA),
-        METAB: $.getSymbolValue(METAB),
-        METAX: $.getSymbolValue(METAX),
+        METAA: $.getSymbolBinding(METAA),
+        METAB: $.getSymbolBinding(METAB),
+        METAX: $.getSymbolBinding(METAX),
     };
 }
 
 function restoreMetaBindings(state: TransformState, $: ExtensionEnv) {
-    $.setSymbolValue(METAX, state.METAX);
-    $.setSymbolValue(METAB, state.METAB);
-    $.setSymbolValue(METAA, state.METAA);
+    $.setSymbolBinding(METAX, state.METAX);
+    $.setSymbolBinding(METAB, state.METAB);
+    $.setSymbolBinding(METAA, state.METAA);
 }
 
 // search for a METAA and METAB such that F = A
@@ -233,9 +233,9 @@ function restoreMetaBindings(state: TransformState, $: ExtensionEnv) {
 function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: ExtensionEnv): boolean {
     // console.lg("f_equals_a", $.toInfixString(F), $.toInfixString(A), "generalTransform", JSON.stringify(generalTransform));
     for (const fea_i of stack) {
-        $.setSymbolValue(METAA, fea_i);
+        $.setSymbolBinding(METAA, fea_i);
         for (const fea_j of stack) {
-            $.setSymbolValue(METAB, fea_j);
+            $.setSymbolBinding(METAB, fea_j);
 
             // now test all the conditions (it's an and between them)
             let cList = C;

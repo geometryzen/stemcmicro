@@ -89,7 +89,7 @@ export function define_function(assignExpr: BCons<Sym, U, U>, $: ExtensionEnv): 
     // somehow
     const functionExpr = items_to_cons(FUNCTION, body, paramList);
 
-    $.setSymbolValue(F, functionExpr);
+    $.setSymbolBinding(F, functionExpr);
 
     return nil;
 }

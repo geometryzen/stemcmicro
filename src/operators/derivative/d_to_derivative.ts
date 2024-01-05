@@ -34,7 +34,7 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     transform(expr: U): [TFLAGS, U] {
         if (is_cons(expr) && is_opr(this.opr, expr)) {
             const $ = this.$;
-            if (is_nil($.getSymbolValue(this.opr))) {
+            if (is_nil($.getSymbolBinding(this.opr))) {
                 const retval = items_to_cons(this.oprNew, ...expr.tail());
                 return [TFLAG_DIFF, $.valueOf(retval)];
             }

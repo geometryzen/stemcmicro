@@ -29,7 +29,7 @@ class ScriptLast extends KeywordOperator {
     }
     transform(expr: U): [TFLAGS, U] {
         if (this.isKind(expr)) {
-            return [TFLAG_DIFF, this.$.getSymbolValue(RESERVED_KEYWORD_LAST)];
+            return [TFLAG_DIFF, this.$.getSymbolBinding(RESERVED_KEYWORD_LAST)];
         }
         return [TFLAG_NONE, expr];
     }

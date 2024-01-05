@@ -17,7 +17,7 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { Lambda } from "../tree/lambda/Lambda";
 import { negOne, Rat } from "../tree/rat/Rat";
-import { Sym } from "../tree/sym/Sym";
+import { create_sym, Sym } from "../tree/sym/Sym";
 import { Tensor } from "../tree/tensor/Tensor";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { Eval_function } from "../userfunc";
@@ -169,18 +169,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      */
     const $: ExtensionEnv = {
         getBinding(printname: string): U {
-            return $.getSymbolValue(printname);
+            return $.getSymbolBinding(printname);
         },
         setBinding(printname: string, binding: U): void {
-            return $.setSymbolValue(printname, binding);
+            return $.setSymbolBinding(printname, binding);
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         getUsrFunc(printname: string): U {
-            throw new Error();
+            return $.getSymbolUsrFunc(printname);
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        setUsrFunc(printname: string, binding: U): void {
-            throw new Error();
+        setUsrFunc(printname: string, usrfunc: U): void {
+            return $.setSymbolUsrFunc(printname, usrfunc);
         },
         getPrintHandler(): PrintHandler {
             return printHandler;
@@ -231,7 +229,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // $.defineOperator(operator_from_modern_transformer(match, impl));
             const opr = opr_from_match(match);
             const hash = hash_from_match(match);
-            $.setSymbolValue(opr, new Lambda(impl, hash));
+            $.setSymbolBinding(opr, new Lambda(impl, hash));
         },
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
             $.defineOperator(operator_from_keyword_runner(sym, runner));
@@ -292,8 +290,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getSymbolPredicates(sym: Sym | string): Predicates {
             return symTab.getProps(sym);
         },
-        getSymbolValue(sym: Sym | string): U {
-            return symTab.getValue(sym);
+        getSymbolBinding(sym: Sym | string): U {
+            return symTab.getBinding(sym);
+        },
+        getSymbolUsrFunc(sym: Sym | string): U {
+            return symTab.getUsrFunc(sym);
         },
         getSymbolsInfo() {
             return symTab.entries();
@@ -574,8 +575,21 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setSymbolPrintName(sym: Sym, printname: string): void {
             sym_key_to_printname[sym.key()] = printname;
         },
-        setSymbolValue(sym: Sym, value: U): void {
-            symTab.setValue(sym, value);
+        setSymbolBinding(sym: string | Sym, binding: U): void {
+            if (typeof sym === 'string') {
+                symTab.setBinding(create_sym(sym), binding);
+            }
+            else {
+                symTab.setBinding(sym, binding);
+            }
+        },
+        setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
+            if (typeof sym === 'string') {
+                symTab.setUsrFunc(create_sym(sym), usrfunc);
+            }
+            else {
+                symTab.setUsrFunc(sym, usrfunc);
+            }
         },
         simplify(expr: U): U {
             return $.evaluate(Native.simplify, expr);
@@ -616,7 +630,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const head = expr.head;
                 if (is_sym(head)) {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
-                    const value = $.getSymbolValue(head);
+                    const value = $.getSymbolBinding(head);
                     if (is_lambda(value)) {
                         return wrap_as_transform(value.evaluate(expr.argList, $), expr);
                     }
@@ -658,7 +672,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (is_cons(expr)) {
                             const opr = expr.opr;
                             if (is_sym(opr)) {
-                                const binding = $.getSymbolValue(opr);
+                                const binding = $.getSymbolBinding(opr);
                                 if (!is_nil(binding)) {
                                     if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
                                         const newExpr = Eval_function(expr, $);

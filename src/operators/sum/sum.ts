@@ -35,16 +35,16 @@ function sum(body: U, index: U, lower: U, upper: U, expr: Cons, $: ExtensionEnv)
 
     // remember contents of the index
     // variable so we can restore it back after the loop
-    const original = $.getSymbolValue(index);
+    const original = $.getSymbolBinding(index);
     try {
         let temp: U = zero;
         for (let i = lowerBound; i <= upperBound; i++) {
-            $.setSymbolValue(index, create_int(i));
+            $.setSymbolBinding(index, create_int(i));
             temp = $.add(temp, $.valueOf(body));
         }
         return temp;
     }
     finally {
-        $.setSymbolValue(index, original);
+        $.setSymbolBinding(index, original);
     }
 }

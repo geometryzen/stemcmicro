@@ -10,7 +10,7 @@ import { is_nil, U } from "../../tree/tree";
  * @param sym The symbol for which the binding is required.
  */
 export function get_binding(sym: Sym, $: ExtensionEnv): [changed: TFLAGS, retval: U] {
-    const binding = $.getSymbolValue(sym);
+    const binding = $.getSymbolBinding(sym);
     // console.lg("get_binding", render_as_infix(sym, $), "is", render_as_infix(binding, $));
 
     if (is_nil(binding)) {

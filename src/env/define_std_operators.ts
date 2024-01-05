@@ -613,9 +613,9 @@ export function define_std_operators($: ExtensionEnv) {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     $.defineKeyword(FACTOR, function ($: ExtensionEnv) {
-        const last = $.getSymbolValue(RESERVED_KEYWORD_LAST);
+        const last = $.getSymbolBinding(RESERVED_KEYWORD_LAST);
         const factored = $.factor(last);
-        $.setSymbolValue(RESERVED_KEYWORD_LAST, factored);
+        $.setSymbolBinding(RESERVED_KEYWORD_LAST, factored);
 
         const str = render_using_print_mode(factored, defs.printMode, $);
         const printHandler = $.getPrintHandler();

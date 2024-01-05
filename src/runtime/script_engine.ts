@@ -181,7 +181,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
             return $.getSymbolPredicates(sym);
         },
         getSymbolValue(sym: Sym | string): U {
-            return $.getSymbolValue(sym);
+            return $.getSymbolBinding(sym);
         },
         getSymbolsInfo(): { sym: Sym, value: U }[] {
             return $.getSymbolsInfo();

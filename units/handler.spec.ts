@@ -31,6 +31,10 @@ class TestScriptHandler implements ScriptHandler {
         // console.log(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    text(text: string): void {
+        // throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     end($: ExprEngine): void {
         // console.log(`end`);
         $.removeListener(this.listener);

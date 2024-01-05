@@ -156,11 +156,12 @@ class NativeExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {
-        // throw new Error('Method not implemented.');
+        // The native engine currently does not support listeners.
+        // throw new Error('addListener() Method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
-        // throw new Error('Method not implemented.');
+        // throw new Error('removeListener() Method not implemented.');
     }
 }
 
@@ -173,7 +174,7 @@ function eigenmath_infix_config(config: RenderConfig): InfixOptions {
 }
 
 class EigenmathOutputListener implements ScriptOutputListener {
-    constructor(public readonly inner: ExprEngineListener) {
+    constructor(private readonly inner: ExprEngineListener) {
 
     }
     output(output: string): void {
@@ -244,12 +245,24 @@ export function create_engine(config: EvalConfig): ExprEngine {
 export interface ScriptHandler {
     begin($: ExprEngine): void;
     output(value: U, input: U, $: ExprEngine): void;
+    text(text: string): void;
     end($: ExprEngine): void;
+}
+
+class MyExprEngineListener implements ExprEngineListener {
+    constructor(private readonly handler: ScriptHandler) {
+
+    }
+    output(output: string): void {
+        this.handler.text(output);
+    }
 }
 
 export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandler): void {
     const engine: ExprEngine = create_engine(config);
+    const listen = new MyExprEngineListener(handler);
     try {
+        engine.addListener(listen);
         handler.begin(engine);
         try {
             for (const input of inputs) {
@@ -262,6 +275,7 @@ export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandl
         }
         finally {
             handler.end(engine);
+            engine.removeListener(listen);
         }
     }
     finally {
@@ -299,6 +313,9 @@ export class PrintScriptHandler implements ScriptHandler {
             useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
         print_result_and_input(value, input, should_render_svg($), ec, [this.listener]);
+    }
+    text(text: string): void {
+        this.stdout.innerHTML += text;
     }
 }
 

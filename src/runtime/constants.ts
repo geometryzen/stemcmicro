@@ -1,10 +1,8 @@
-import { BigInteger } from '../tree/rat/big-integer';
+import { BigInteger, create_sym } from 'math-expression-atoms';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
-import { create_sym } from '../tree/sym/Sym';
 import { MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
 
-export const dontCreateNewRadicalsInDenominatorWhenEvalingMultiplication = true;
 export const do_simplify_nested_radicals = true;
 export const avoidCalculatingPowersIntoArctans = true;
 

@@ -29,7 +29,7 @@ class TestScriptHandler implements ScriptHandler {
     output(value: U, input: U, $: ExprEngine): void {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
-        // console.lg(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
+        // console.log(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {

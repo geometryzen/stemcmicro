@@ -86,7 +86,7 @@ describe("eigenmath", function () {
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
-        assert.strictEqual(to_sexpr(value), "(^ x y)");
+        assert.strictEqual(to_sexpr(value), "(pow x y)");
     });
     it("E", function () {
         const lines: string[] = [

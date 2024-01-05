@@ -2,6 +2,8 @@ import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, cre
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
+import { Native } from '../native/Native';
+import { native_sym } from '../native/native_sym';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
@@ -314,7 +316,7 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
     let expo1: U;
     let expo2: U;
 
-    if (car(p1) == symbol(POWER)) {
+    if (car(p1) == POWER) {
         base1 = cadr(p1);
         expo1 = caddr(p1);
     }
@@ -323,7 +325,7 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
         expo1 = one;
     }
 
-    if (car(p2) == symbol(POWER)) {
+    if (car(p2) == POWER) {
         base2 = cadr(p2);
         expo2 = caddr(p2);
     }
@@ -341,10 +343,10 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
 }
 
 function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
-    if (car(p1) == symbol(POWER))
+    if (car(p1) == POWER)
         p1 = cadr(p1); // p1 = base
 
-    if (car(p2) == symbol(POWER))
+    if (car(p2) == POWER)
         p2 = cadr(p2); // p2 = base
 
     return cmp(p1, p2);
@@ -451,7 +453,7 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
     const p1 = $.stack[i];
     const p2 = $.stack[j];
 
-    if (car(p1) == symbol(POWER)) {
+    if (car(p1) == POWER) {
         BASE1 = cadr(p1);
         EXPO1 = caddr(p1);
     }
@@ -460,7 +462,7 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
         EXPO1 = one;
     }
 
-    if (car(p2) == symbol(POWER)) {
+    if (car(p2) == POWER) {
         BASE2 = cadr(p2);
         EXPO2 = caddr(p2);
     }
@@ -479,7 +481,7 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
     if (isdouble(BASE2))
         BASE1 = BASE2; // if mixed rational and double, use double
 
-    push_symbol(POWER, $);
+    push(POWER, $);
     push(BASE1, $);
     push(EXPO1, $);
     push(EXPO2, $);
@@ -652,7 +654,7 @@ const ZERO = "zero";
 
 const ADD = "+";
 const MULTIPLY = "*";
-const POWER = "^";
+const POWER = native_sym(Native.pow);
 const INDEX = "[";
 const SETQ = "=";
 
@@ -977,7 +979,7 @@ function emit_args(p: U, $: StackContext, ec: EmitContext): void {
 }
 
 function emit_base(p: U, $: StackContext, ec: EmitContext): void {
-    if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER))
+    if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == POWER)
         emit_subexpr(p, $, ec);
     else
         emit_expr(p, $, ec);
@@ -1158,7 +1160,7 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     }
 
     if (iscons(p)) {
-        if (car(p) == symbol(POWER))
+        if (car(p) == POWER)
             emit_power(p, $, ec);
         else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY))
             emit_subexpr(p, $, ec);
@@ -2588,7 +2590,7 @@ function absfunc($: ScriptVars): void {
 
     // abs(1/a) evaluates to 1/abs(a)
 
-    if (car(p1) == symbol(POWER) && isnegativeterm(caddr(p1))) {
+    if (car(p1) == POWER && isnegativeterm(caddr(p1))) {
         push(p1, $);
         reciprocate($);
         absfunc($);
@@ -2986,7 +2988,7 @@ function isimaginaryterm(p: U): 0 | 1 {
 
 // DGH
 function isimaginaryfactor(p: U): boolean | 0 {
-    return car(p) == symbol(POWER) && isminusone(cadr(p));
+    return car(p) == POWER && isminusone(cadr(p));
 }
 
 function add_numbers(p1: U, p2: U, $: ScriptVars): void {
@@ -3945,7 +3947,7 @@ function arg1($: ScriptVars): void {
 
     // (-1) ^ expr
 
-    if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
+    if (car(p1) == POWER && isminusone(cadr(p1))) {
         push_symbol(PI, $);
         push(caddr(p1), $);
         multiply($);
@@ -3954,7 +3956,7 @@ function arg1($: ScriptVars): void {
 
     // e ^ expr
 
-    if (car(p1) == symbol(POWER) && cadr(p1) == symbol(EXP1)) {
+    if (car(p1) == POWER && cadr(p1) == symbol(EXP1)) {
         push(caddr(p1), $);
         imag($);
         return;
@@ -4261,8 +4263,8 @@ function conjfunc_subst($: ScriptVars): void {
 
     // (-1) ^ expr
 
-    if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
-        push_symbol(POWER, $);
+    if (car(p1) == POWER && isminusone(cadr(p1))) {
+        push(POWER, $);
         push_integer(-1, $);
         push(caddr(p1), $);
         negate($);
@@ -4874,7 +4876,7 @@ function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
         return;
     }
 
-    if (car(F) == symbol(POWER)) {
+    if (car(F) == POWER) {
         dpower(F, X, $);
         return;
     }
@@ -6052,8 +6054,8 @@ function floatfunc_subst($: ScriptVars): void {
 
     // don't float exponential
 
-    if (car(p1) == symbol(POWER) && cadr(p1) == symbol(EXP1)) {
-        push_symbol(POWER, $);
+    if (car(p1) == POWER && cadr(p1) == symbol(EXP1)) {
+        push(POWER, $);
         push_symbol(EXP1, $);
         push(caddr(p1), $);
         floatfunc_subst($);
@@ -6063,10 +6065,10 @@ function floatfunc_subst($: ScriptVars): void {
 
     // don't float imaginary unit, but multiply it by 1.0
 
-    if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
+    if (car(p1) == POWER && isminusone(cadr(p1))) {
         push_symbol(MULTIPLY, $);
         push_double(1.0, $);
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(cadr(p1), $);
         push(caddr(p1), $);
         floatfunc_subst($);
@@ -7568,7 +7570,7 @@ function integral_lookup(h: number, F: U, $: ScriptVars): void {
     if ((t & 4) && integral_search(h, F, integral_tab_trig, integral_tab_trig.length, $, { useCaretForExponentiation: true, useParenForTensors: true }))
         return;
 
-    if (car(F) == symbol(POWER)) {
+    if (car(F) == POWER) {
         if (integral_search(h, F, integral_tab_power, integral_tab_power.length, $, { useCaretForExponentiation: true, useParenForTensors: true }))
             return;
     }
@@ -7837,7 +7839,7 @@ function logfunc($: ScriptVars): void {
         factor_factor($);
         for (let i = h; i < $.stack.length; i++) {
             const p2 = $.stack[i];
-            if (car(p2) == symbol(POWER)) {
+            if (car(p2) == POWER) {
                 push(caddr(p2), $); // exponent
                 push_symbol(LOG, $);
                 push(cadr(p2), $); // base
@@ -7857,7 +7859,7 @@ function logfunc($: ScriptVars): void {
 
     // log(a ^ b) -> b log(a)
 
-    if (car(p1) == symbol(POWER)) {
+    if (car(p1) == POWER) {
         push(caddr(p1), $);
         push(cadr(p1), $);
         logfunc($);
@@ -7940,14 +7942,14 @@ function mag_nib($: ScriptVars): void {
 
     // -1 to a power
 
-    if (car(p1) == symbol(POWER) && isminusone(cadr(p1))) {
+    if (car(p1) == POWER && isminusone(cadr(p1))) {
         push_integer(1, $);
         return;
     }
 
     // exponential
 
-    if (car(p1) == symbol(POWER) && cadr(p1) == symbol(EXP1)) {
+    if (car(p1) == POWER && cadr(p1) == symbol(EXP1)) {
         push(caddr(p1), $);
         real($);
         expfunc($);
@@ -8709,7 +8711,7 @@ function power($: ScriptVars): void {
     let BASE = pop($);
 
     if (istensor(BASE) && istensor(EXPO)) {
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(BASE, $);
         push(EXPO, $);
         list(3, $);
@@ -8767,7 +8769,7 @@ function power($: ScriptVars): void {
     // 0^expr
 
     if (iszero(BASE)) {
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(BASE, $);
         push(EXPO, $);
         list(3, $);
@@ -8799,8 +8801,8 @@ function power($: ScriptVars): void {
         const n = $.stack.length - h;
         for (let i = 0; i < n; i++) {
             const p1 = $.stack[h + i];
-            if (car(p1) == symbol(POWER)) {
-                push_symbol(POWER, $);
+            if (car(p1) == POWER) {
+                push(POWER, $);
                 push(cadr(p1), $); // base
                 push(caddr(p1), $); // expo
                 push(EXPO, $);
@@ -8808,7 +8810,7 @@ function power($: ScriptVars): void {
                 list(3, $);
             }
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push(p1, $);
                 push(EXPO, $);
                 list(3, $);
@@ -8874,7 +8876,7 @@ function power($: ScriptVars): void {
 
     // (a ^ b) ^ c  -->  a ^ (b c)
 
-    if (car(BASE) == symbol(POWER)) {
+    if (car(BASE) == POWER) {
         push(cadr(BASE), $);
         push(caddr(BASE), $);
         push(EXPO, $);
@@ -8885,7 +8887,7 @@ function power($: ScriptVars): void {
 
     // none of the above
 
-    push_symbol(POWER, $);
+    push(POWER, $);
     push(BASE, $);
     push(EXPO, $);
     list(3, $);
@@ -9159,7 +9161,7 @@ function rect($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) != symbol(POWER)) {
+    if (car(p1) != POWER) {
         push(p1, $);
         return;
     }
@@ -9173,7 +9175,7 @@ function rect($: ScriptVars): void {
         p1 = cdr(EXPO);
         const h = $.stack.length;
         while (iscons(p1)) {
-            push_symbol(POWER, $);
+            push(POWER, $);
             push(BASE, $);
             push(car(p1), $);
             list(3, $);
@@ -11429,7 +11431,7 @@ function factor_bignum(N: BigInteger, M: U, $: ScriptVars): void {
         push_bignum(1, N, bignum_int(1), $);
         if (isplusone(M))
             return;
-        push_symbol(POWER, $);
+        push(POWER, $);
         swap($);
         push(M, $);
         list(3, $);
@@ -11459,7 +11461,7 @@ function factor_bignum(N: BigInteger, M: U, $: ScriptVars): void {
             continue;
         }
 
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(BASE, $);
         push(EXPO, $);
         list(3, $);
@@ -11474,7 +11476,7 @@ function factor_factor($: ScriptVars): void {
 
     const INPUT = pop($);
 
-    if (car(INPUT) == symbol(POWER)) {
+    if (car(INPUT) == POWER) {
 
         const BASE = cadr(INPUT);
         const EXPO = caddr(INPUT);
@@ -11490,7 +11492,7 @@ function factor_factor($: ScriptVars): void {
         }
 
         if (isnegativenumber(BASE)) {
-            push_symbol(POWER, $);
+            push(POWER, $);
             push_integer(-1, $);
             push(EXPO, $);
             list(3, $); // leave on stack
@@ -12168,7 +12170,7 @@ function find_denominator(p: U): 0 | 1 {
     p = cdr(p);
     while (iscons(p)) {
         const q = car(p);
-        if (car(q) == symbol(POWER)) {
+        if (car(q) == POWER) {
             const expo = caddr(q);
             if (isrational(expo) && isnegativenumber(expo)) {
                 return 1;
@@ -12218,11 +12220,11 @@ function find_divisor_factor(p: U, $: ScriptVars): 0 | 1 {
         return 1;
     }
 
-    if (car(p) == symbol(POWER) && !isminusone(cadr(p)) && isnegativeterm(caddr(p))) {
+    if (car(p) == POWER && !isminusone(cadr(p)) && isnegativeterm(caddr(p))) {
         if (isminusone(caddr(p)))
             push(cadr(p), $);
         else {
-            push_symbol(POWER, $);
+            push(POWER, $);
             push(cadr(p), $);
             push(caddr(p), $);
             negate($);
@@ -12720,7 +12722,7 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
         return;
     }
 
-    if (car(p) == symbol(POWER)) {
+    if (car(p) == POWER) {
         infixform_power(p, config, outbuf);
         return;
     }
@@ -12838,7 +12840,7 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
 
     if (isnum(p))
         infixform_numeric_exponent(p, config, outbuf);
-    else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER) || car(p) == symbol(FACTORIAL))
+    else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == POWER || car(p) == symbol(FACTORIAL))
         infixform_subexpr(p, config, outbuf);
     else
         infixform_expr(p, config, outbuf);
@@ -12974,7 +12976,7 @@ function infixform_double(p: Flt, config: InfixConfig, outbuf: string[]): void {
 function infixform_base(p: U, config: InfixConfig, outbuf: string[]): void {
     if (isnum(p))
         infixform_numeric_base(p, config, outbuf);
-    else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == symbol(POWER) || car(p) == symbol(FACTORIAL))
+    else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == POWER || car(p) == symbol(FACTORIAL))
         infixform_subexpr(p, config, outbuf);
     else
         infixform_expr(p, config, outbuf);
@@ -13077,7 +13079,7 @@ export function init($: ScriptVars): void {
     $.binding = {};
     $.usrfunc = {};
 
-    push_symbol(POWER, $);
+    push(POWER, $);
     push_integer(-1, $);
     push_rational(1, 2, $);
     list(3, $);
@@ -13133,7 +13135,7 @@ function iscons(expr: U): expr is Cons {
 }
 
 function isdenominator(p: U) {
-    if (car(p) == symbol(POWER)) {
+    if (car(p) == POWER) {
         const expo = caddr(p);
         if (isnum(expo) && isnegativenumber(expo)) {
             return 1;
@@ -13234,7 +13236,7 @@ function isdoublez(p: U): 0 | 1 {
 
     p = caddr(p);
 
-    if (car(p) != symbol(POWER))
+    if (car(p) != POWER)
         return 0;
 
     if (!isminusone(cadr(p)))
@@ -13271,7 +13273,7 @@ function isimaginarynumber(p: U): boolean {
 }
 
 function isimaginaryunit(p: U): boolean {
-    return car(p) == symbol(POWER) && isminusone(cadr(p)) && isequalq(caddr(p), 1, 2);
+    return car(p) == POWER && isminusone(cadr(p)) && isequalq(caddr(p), 1, 2);
 }
 
 function isinteger(p: Rat): boolean {
@@ -13323,7 +13325,7 @@ function isnum(p: U): p is Num {
 }
 
 function isnumerator(p: U) {
-    if (car(p) == symbol(POWER)) {
+    if (car(p) == POWER) {
         const expo = caddr(p);
         if (isnum(expo) && isnegativenumber(expo)) {
             return 0;
@@ -13337,7 +13339,7 @@ function isnumerator(p: U) {
 }
 
 function isoneoversqrttwo(p: U): boolean {
-    return car(p) == symbol(POWER) && isequaln(cadr(p), 2) && isequalq(caddr(p), -1, 2);
+    return car(p) == POWER && isequaln(cadr(p), 2) && isequalq(caddr(p), -1, 2);
 }
 
 function isplusone(p: U): boolean {
@@ -13349,7 +13351,7 @@ function isposint(p: Rat): boolean {
 }
 
 function isradical(p: U): boolean {
-    if (car(p) == symbol(POWER)) {
+    if (car(p) == POWER) {
         const base = cadr(p);
         const expo = caddr(p);
         return isrational(base) && isposint(base) && isrational(expo) && isfraction(expo);
@@ -13449,13 +13451,16 @@ function list(n: number, $: StackContext): void {
         cons($);
 }
 
-function lookup(s: string): Sym {
-    let p = symtab[s];
-    if (p == undefined) {
-        p = create_sym_with_handler_func(s, eval_user_symbol as unknown as (expr: U, $: unknown) => void);
-        symtab[s] = p;
+function ensure_cached_symbol(s: string): Sym {
+    const candidate = symtab[s];
+    if (candidate === void 0) {
+        const sym = create_sym_with_handler_func(s, eval_user_symbol as unknown as (expr: U, $: unknown) => void);
+        symtab[s] = sym;
+        return sym;
     }
-    return p;
+    else {
+        return candidate;
+    }
 }
 
 function multiply($: ScriptVars): void {
@@ -13688,7 +13693,7 @@ function normalize_polar(EXPO: U, $: ScriptVars): void {
             if (isdenormalpolarterm(EXPO, $))
                 normalize_polar_term(EXPO, $);
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push(EXPO, $);
                 list(3, $);
@@ -13755,7 +13760,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
             if (iszero(R))
                 push_integer(1, $);
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push(R, $);
@@ -13772,7 +13777,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push(imaginaryunit, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push(R, $);
@@ -13790,7 +13795,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push(R, $);
@@ -13813,7 +13818,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
                 push(imaginaryunit, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push(R, $);
@@ -13850,7 +13855,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
             if (r == 0)
                 push_integer(1, $);
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push_double(r, $);
@@ -13867,7 +13872,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push(imaginaryunit, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push_double(r, $);
@@ -13885,7 +13890,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push_double(r, $);
@@ -13908,7 +13913,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
                 push(imaginaryunit, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_symbol(EXP1, $);
                 push_symbol(MULTIPLY, $);
                 push_double(r, $);
@@ -13926,7 +13931,7 @@ function normalize_power_factors(h: number, $: ScriptVars): void {
     const k = $.stack.length;
     for (let i = h; i < k; i++) {
         let p1 = $.stack[i];
-        if (car(p1) == symbol(POWER)) {
+        if (car(p1) == POWER) {
             push(cadr(p1), $);
             push(caddr(p1), $);
             power($);
@@ -13967,7 +13972,7 @@ function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
     if (car(p) == symbol(DERIVATIVE) || car(p) == symbol(D_LOWER))
         return 6;
 
-    if (car(p) == symbol(POWER)) {
+    if (car(p) == POWER) {
 
         p = cadr(p); // p = base
 
@@ -14246,7 +14251,7 @@ function power_complex_number(BASE: U, EXPO: U, $: ScriptVars): void {
     }
 
     if (!issmallinteger(EXPO)) {
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(BASE, $);
         push(EXPO, $);
         list(3, $);
@@ -14361,7 +14366,7 @@ function power_minusone(EXPO: U, $: ScriptVars): void {
         return;
     }
 
-    push_symbol(POWER, $);
+    push(POWER, $);
     push_integer(-1, $);
     push(EXPO, $);
     list(3, $);
@@ -14404,7 +14409,7 @@ function normalize_clock_rational(EXPO: U, $: ScriptVars): void {
             if (iszero(R))
                 push_integer(1, $);
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push(R, $);
                 list(3, $);
@@ -14417,7 +14422,7 @@ function normalize_clock_rational(EXPO: U, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push(R, $);
                 push_rational(-1, 2, $);
@@ -14433,7 +14438,7 @@ function normalize_clock_rational(EXPO: U, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push(R, $);
                 list(3, $);
@@ -14449,7 +14454,7 @@ function normalize_clock_rational(EXPO: U, $: ScriptVars): void {
                 list(3, $);
             }
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push(R, $);
                 push_rational(-1, 2, $);
@@ -14483,7 +14488,7 @@ function normalize_clock_double(EXPO: Flt, $: ScriptVars): void {
             if (r == 0)
                 push_integer(1, $);
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push_double(r, $);
                 list(3, $);
@@ -14496,7 +14501,7 @@ function normalize_clock_double(EXPO: Flt, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push_double(r - 0.5, $);
                 list(3, $);
@@ -14510,7 +14515,7 @@ function normalize_clock_double(EXPO: Flt, $: ScriptVars): void {
             else {
                 push_symbol(MULTIPLY, $);
                 push_integer(-1, $);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push_double(r, $);
                 list(3, $);
@@ -14526,7 +14531,7 @@ function normalize_clock_double(EXPO: Flt, $: ScriptVars): void {
                 list(3, $);
             }
             else {
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push_integer(-1, $);
                 push_double(r - 0.5, $);
                 list(3, $);
@@ -14574,7 +14579,7 @@ function power_natural_number(EXPO: U, $: ScriptVars): void {
         return;
     }
 
-    push_symbol(POWER, $);
+    push(POWER, $);
     push_symbol(EXP1, $);
     push(EXPO, $);
     list(3, $);
@@ -14648,7 +14653,7 @@ function power_numbers(BASE: Num, EXPO: Num, $: ScriptVars): void {
 
     // put factors on stack
 
-    push_symbol(POWER, $);
+    push(POWER, $);
     push(BASE, $);
     push(EXPO, $);
     list(3, $);
@@ -14661,7 +14666,7 @@ function power_numbers(BASE: Num, EXPO: Num, $: ScriptVars): void {
 
     for (let i = 0; i < n; i++) {
         const p1 = $.stack[h + i];
-        if (car(p1) == symbol(POWER)) {
+        if (car(p1) == POWER) {
             BASE = cadr(p1) as Num;
             EXPO = caddr(p1) as Num;
             power_numbers_factor(BASE as Rat, EXPO as Rat, $);
@@ -14762,7 +14767,7 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat, $: ScriptVars): void {
 
     if (n0 != null) {
         // BASE is 32 bits or less, hence BASE is a prime number, no root
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(BASE, $);
         push_bignum(EXPO.sign, r, EXPO.b, $);
         list(3, $);
@@ -14775,7 +14780,7 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat, $: ScriptVars): void {
 
     if (n1 == null) {
         // no root
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(BASE, $);
         push_bignum(EXPO.sign, r, EXPO.b, $);
         list(3, $);
@@ -14825,7 +14830,7 @@ function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
     }
 
     if ($.expanding == 0 || !issmallinteger(EXPO) || (isnum(EXPO) && isnegativenumber(EXPO))) {
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(BASE, $);
         push(EXPO, $);
         list(3, $);
@@ -15129,7 +15134,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars): Rat {
                 push(BASE, $);
                 divide($);
                 NUMER = pop($);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push(BASE, $);
                 push_integer(1, $);
                 push(EXPO, $);
@@ -15147,7 +15152,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars): Rat {
                 push(BASE, $);
                 divide($);
                 DENOM = pop($);
-                push_symbol(POWER, $);
+                push(POWER, $);
                 push(BASE, $);
                 push_integer(-1, $);
                 push(EXPO, $);
@@ -15542,7 +15547,7 @@ function scan_power($: ScriptVars, config: EigenmathParseConfig) {
     if (config.useCaretForExponentiation) {
         if (token == "^") {
             get_token_skip_newlines($, config);
-            push_symbol(POWER, $);
+            push(POWER, $);
             swap($);
             scan_power($, config);
             list(3, $);
@@ -15551,7 +15556,7 @@ function scan_power($: ScriptVars, config: EigenmathParseConfig) {
     else {
         if (token == T_EXPONENTIATION) {
             get_token_skip_newlines($, config);
-            push_symbol(POWER, $);
+            push(POWER, $);
             swap($);
             scan_power($, config);
             list(3, $);
@@ -15647,12 +15652,12 @@ function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
                 push_symbol(SX, $);
                 break;
             default:
-                push(lookup(token_buf), $);
+                push(ensure_cached_symbol(token_buf), $);
                 break;
         }
     }
     else {
-        push(lookup(token_buf), $);
+        push(ensure_cached_symbol(token_buf), $);
     }
     get_token($, config);
 }
@@ -15665,7 +15670,7 @@ function scan_string($: ScriptVars, config: EigenmathParseConfig): void {
 function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     scan_level++;
-    push(lookup(token_buf), $); // push function name
+    push(ensure_cached_symbol(token_buf), $); // push function name
     get_token($, config); // get token after function name
     get_token($, config); // get token after (
     if (token == ")") {
@@ -15949,7 +15954,7 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmin = -Math.PI;
     dc.tmax = Math.PI;
 
-    let p1: U = lookup("trange");
+    let p1: U = ensure_cached_symbol("trange");
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -15974,7 +15979,7 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmin = -10;
     dc.xmax = 10;
 
-    let p1: U = lookup("xrange");
+    let p1: U = ensure_cached_symbol("xrange");
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -15998,7 +16003,7 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymin = -10;
     dc.ymax = 10;
 
-    let p1: U = lookup("yrange");
+    let p1: U = ensure_cached_symbol("yrange");
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16075,7 +16080,7 @@ function static_reciprocate($: ScriptVars): void {
     if (iszero(p2)) {
         if (!(isrational(p1) && isinteger1(p1)))
             push(p1, $);
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(p2, $);
         push_integer(-1, $);
         list(3, $);
@@ -16097,10 +16102,10 @@ function static_reciprocate($: ScriptVars): void {
         return;
     }
 
-    if (car(p2) == symbol(POWER) && isnum(caddr(p2))) {
+    if (car(p2) == POWER && isnum(caddr(p2))) {
         if (!(isrational(p1) && isinteger1(p1)))
             push(p1, $);
-        push_symbol(POWER, $);
+        push(POWER, $);
         push(cadr(p2), $);
         push(caddr(p2), $);
         negate($);
@@ -16111,7 +16116,7 @@ function static_reciprocate($: ScriptVars): void {
     if (!(isrational(p1) && isinteger1(p1)))
         push(p1, $);
 
-    push_symbol(POWER, $);
+    push(POWER, $);
     push(p2, $);
     push_integer(-1, $);
     list(3, $);
@@ -16137,6 +16142,9 @@ function swap($: ScriptVars): void {
     push(p1, $);
 }
 
+/**
+ * Preforms a lookup in the symtab.
+ */
 export function symbol(s: string): Sym {
     return symtab[s];
 }
@@ -16348,7 +16356,6 @@ const symtab: { [name: string]: Sym } = {
 
     "+": create_sym_with_handler_func(ADD, eval_add),
     "*": create_sym_with_handler_func(MULTIPLY, eval_multiply),
-    "^": create_sym_with_handler_func(POWER, eval_power),
     "[": create_sym_with_handler_func(INDEX, eval_index),
     "=": create_sym_with_handler_func(SETQ, eval_setq),
 
@@ -16377,6 +16384,8 @@ const symtab: { [name: string]: Sym } = {
     "$8": create_sym_with_handler_func(ARG8, eval_user_symbol),
     "$9": create_sym_with_handler_func(ARG9, eval_user_symbol)
 };
+
+symtab[POWER.printname] = create_sym_with_handler_func(POWER.printname, eval_power);
 
 function vector(h: number, $: ScriptVars): void {
     const n = $.stack.length - h;

@@ -136,7 +136,7 @@
         "mocha": "^10.2.0",
         "nyc": "^15.1.0",
         "release-it": "^17.0.1",
-        "rollup": "^4.9.2",
+        "rollup": "^4.9.3",
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "ts-node": "^10.9.2",

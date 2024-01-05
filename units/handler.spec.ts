@@ -2,6 +2,7 @@
 import { assert } from "chai";
 import { U } from "math-expression-tree";
 import { create_engine, ExprEngine, ExprEngineListener, RenderConfig, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
+import { EmitContext, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
 
 class TestScriptListener implements ExprEngineListener {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,6 +12,13 @@ class TestScriptListener implements ExprEngineListener {
     output(output: string): void {
         // console.log(`${output}`);
         this.outer.outputs.push(output);
+    }
+}
+
+class TestScriptOutputListener implements ScriptOutputListener {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    output(output: string): void {
+        // console.log(`${output}`);
     }
 }
 
@@ -30,6 +38,13 @@ class TestScriptHandler implements ScriptHandler {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
         // console.log(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
+        const listener = new TestScriptOutputListener();
+        const ec: EmitContext = {
+            useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
+            useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
+        };
+        print_result_and_input(value, input, should_render_svg($), ec, [listener]);
+
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {

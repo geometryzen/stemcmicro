@@ -3,7 +3,7 @@ import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { Native } from '../native/Native';
-import { native_sym } from '../native/native_sym';
+import { is_native_sym, native_sym } from '../native/native_sym';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
@@ -8966,31 +8966,36 @@ export function print_result_and_input(result: U, input: U, svg: boolean, ec: Em
 // returns 1 if result should be annotated
 
 function should_annotate_result(input: U, result: U): 0 | 1 {
-    if (!(issymbol(input) && isusersymbol(input)))
+    if (issymbol(input)) {
+        if (isusersymbol(input)) {
+            // Eigenmath
+            if (input == result)
+                return 0; // A = A
+
+            if (input == symbol(I_LOWER) && isimaginaryunit(result))
+                return 0;
+
+            if (input == symbol(J_LOWER) && isimaginaryunit(result))
+                return 0;
+
+            return 1;
+        }
+        else {
+            if (is_native_sym(input)) {
+                return 0;
+            }
+            else {
+                return 1;
+            }
+        }
+    }
+    else {
         return 0;
-
-    if (input == result)
-        return 0; // A = A
-
-    if (input == symbol(I_LOWER) && isimaginaryunit(result))
-        return 0;
-
-    if (input == symbol(J_LOWER) && isimaginaryunit(result))
-        return 0;
-
-    return 1;
+    }
 }
 
 function annotate(input: U, result: U): U {
-    // console.lg(`annotate(${input}, ${result})`);
     return items_to_cons(SETQ, input, result);
-    /*
-    push_symbol(SETQ, $);
-    push(input, $);
-    push(result, $);
-    list(3, $);
-    return pop($);
-    */
 }
 
 function eval_product(p1: U, $: ScriptVars): void {
@@ -11267,6 +11272,7 @@ function eval_user_function(p1: U, $: ScriptVars): void {
     restore_symbol($);
 }
 
+// TODO: It should be possible to type p1: Sym (changes to math-expression-atoms needed)
 function eval_user_symbol(p1: U, $: ScriptVars): void {
     const p2 = get_binding(assert_sym(p1), $);
     if (p1 == p2) {
@@ -13392,8 +13398,26 @@ function istensor(p: U): p is Tensor {
     return is_tensor(p);
 }
 
+/**
+ * A symbol where the func is eval_user_symbol.
+ */
 function isusersymbol(p: Sym): boolean {
-    return issymbol(p) && p.func == eval_user_symbol;
+    if (issymbol(p)) {
+        if (p.func === eval_user_symbol) {
+            return true;
+        }
+        else {
+            if (is_native_sym(p)) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    else {
+        return false;
+    }
 }
 
 function isusersymbolsomewhere(p: U): 0 | 1 {

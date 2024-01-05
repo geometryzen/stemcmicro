@@ -1,17 +1,29 @@
 import { create_sym, Sym } from "math-expression-atoms";
 import { Native } from "./Native";
 
-const cache: Map<Native, Sym> = new Map();
+const cacheN: Map<Native, Sym> = new Map();
+const cacheS: Map<string, Sym> = new Map();
 
 export function native_sym(code: Native): Sym {
-    const sym = cache.get(code);
+    const sym = cacheN.get(code);
     if (sym) {
         return sym;
     }
     else {
         const s = build_sym(code);
-        cache.set(code, s);
+        cacheN.set(code, s);
+        cacheS.set(s.printname, s);
         return s;
+    }
+}
+
+export function is_native_sym(sym: Sym): boolean {
+    const candidate = cacheS.get(sym.printname);
+    if (candidate) {
+        return true;
+    }
+    else {
+        return false;
     }
 }
 

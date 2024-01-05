@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { create_engine, EvalConfig, ExprEngine, parse, ParseConfig, RenderConfig } from "../src/api/index";
+import { create_engine, EvalConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
 
 describe("api", function () {
     it("native A", function () {
@@ -8,11 +8,11 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const configParse: ParseConfig = { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false };
-        const { trees, errors } = parse(sourceText, configParse);
-        assert.strictEqual(errors.length, 0);
         const configEval: EvalConfig = { useGeometricAlgebra: true };
         const engine: ExprEngine = create_engine(configEval);
+        const configParse: ParseConfig = { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false };
+        const { trees, errors } = engine.parse(sourceText, configParse);
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             const configInfix: RenderConfig = { useCaretForExponentiation: true, useParenForTensors: true };
@@ -25,9 +25,9 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: false, useParenForTensors: true }), "x**(1/2)");
@@ -39,9 +39,9 @@ describe("api", function () {
             `a**b`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a^b");
@@ -54,9 +54,9 @@ describe("api", function () {
             `a**b`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a^b");
@@ -68,9 +68,9 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: true }), "x^(1/2)");
@@ -82,9 +82,9 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: false, useParenForTensors: true }), "x**(1/2)");
@@ -96,9 +96,9 @@ describe("api", function () {
             `a**b`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: false, useParenForTensors: true }), "a**b");
@@ -111,26 +111,26 @@ describe("api", function () {
             `a**b`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 1);
         assert.strictEqual(trees.length, 0);
         /*
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsInfix(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a**b");
         }
-        engine.release();
         */
+        engine.release();
     });
     it("mixed Eigenmath => Native", function () {
         const lines: string[] = [
             `x*x`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "x^2");
@@ -142,9 +142,9 @@ describe("api", function () {
             `x*x`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "x^2");
@@ -156,9 +156,9 @@ describe("api", function () {
             `sqrt(-1)`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "i");
@@ -170,9 +170,9 @@ describe("api", function () {
             `sqrt(-1)`,
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
-        assert.strictEqual(errors.length, 0);
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
+        assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "i");

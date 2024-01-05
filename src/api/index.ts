@@ -37,24 +37,6 @@ class EigenmathErrorHandler implements ScriptErrorHandler {
     }
 }
 
-export function parse(sourceText: string, options: ParseConfig): { trees: U[], errors: Error[] } {
-    const engineKind = engine_kind_from_parse_config(options);
-    switch (engineKind) {
-        case EngineKind.Native: {
-            const { trees, errors } = parse_native_script("", sourceText, native_parse_config(options));
-            return { trees, errors };
-        }
-        case EngineKind.Eigenmath: {
-            const emErrorHandler = new EigenmathErrorHandler();
-            const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
-            return { trees, errors: emErrorHandler.errors };
-        }
-        default: {
-            throw new Error(`Unexpected options.syntaxKind`);
-        }
-    }
-}
-
 export interface RenderConfig {
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
@@ -70,6 +52,7 @@ export interface ExprEngineListener {
 }
 
 export interface ExprEngine {
+    parse(sourceText: string, options: ParseConfig): { trees: U[], errors: Error[] };
     evaluate(expr: U): U;
     getBinding(sym: Sym): U;
     release(): void;
@@ -91,15 +74,6 @@ enum EngineKind {
     Eigenmath = 2
 }
 
-function engine_kind_from_parse_config(config: ParseConfig): EngineKind {
-    if (config.useGeometricAlgebra) {
-        return EngineKind.Native;
-    }
-    else {
-        return EngineKind.Eigenmath;
-    }
-}
-
 export interface EvalConfig {
     useGeometricAlgebra: boolean;
 }
@@ -118,6 +92,9 @@ class NativeExprEngine implements ExprEngine {
     constructor() {
         this.$ = create_env();
         init_env(this.$, {});
+    }
+    parse(sourceText: string, options: ParseConfig): { trees: U[]; errors: Error[]; } {
+        return parse_native_script("", sourceText, native_parse_config(options));
     }
     getBinding(sym: Sym): U {
         return this.$.getBinding(sym.printname);
@@ -194,6 +171,11 @@ class EigenmathExprEngine implements ExprEngine {
         init(this.$);
         initscript(this.$);
     }
+    parse(sourceText: string, options: ParseConfig): { trees: U[]; errors: Error[]; } {
+        const emErrorHandler = new EigenmathErrorHandler();
+        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
+        return { trees, errors: emErrorHandler.errors };
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(sym: Sym): U {
         return get_binding(sym, this.$);
@@ -264,28 +246,22 @@ class MyExprEngineListener implements ExprEngineListener {
     }
 }
 
-export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandler): void {
-    const engine: ExprEngine = create_engine(config);
+export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandler): void {
     const listen = new MyExprEngineListener(handler);
+    engine.addListener(listen);
+    handler.begin(engine);
     try {
-        engine.addListener(listen);
-        handler.begin(engine);
-        try {
-            for (const input of inputs) {
-                const result = engine.evaluate(input);
-                handler.output(result, input, engine);
-                if (!is_nil(result)) {
-                    engine.setSymbol(engine.symbol(Concept.Last), result, nil);
-                }
+        for (const input of inputs) {
+            const result = engine.evaluate(input);
+            handler.output(result, input, engine);
+            if (!is_nil(result)) {
+                engine.setSymbol(engine.symbol(Concept.Last), result, nil);
             }
-        }
-        finally {
-            handler.end(engine);
-            engine.removeListener(listen);
         }
     }
     finally {
-        engine.release();
+        handler.end(engine);
+        engine.removeListener(listen);
     }
 }
 

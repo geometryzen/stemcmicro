@@ -90,8 +90,11 @@ function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind
 class NativeExprEngine implements ExprEngine {
     $: ExtensionEnv;
     constructor() {
-        this.$ = create_env();
-        init_env(this.$, {});
+        this.$ = create_env({
+            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector']
+        });
+        init_env(this.$, {
+        });
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         return parse_native_script("", sourceText, native_parse_config(options));

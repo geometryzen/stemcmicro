@@ -160,7 +160,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             console.warn("expand", native_directives.get(Directive.expanding));
             // eslint-disable-next-line no-console
             console.warn("factor", native_directives.get(Directive.factoring));
-            throw new SystemError(`No operators for key ${key} in current mode}`);
+            throw new SystemError(`No operators for key ${key} in current mode.`);
         }
     }
 

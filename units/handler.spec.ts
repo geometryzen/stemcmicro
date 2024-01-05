@@ -47,7 +47,7 @@ describe("handler", function () {
     it("Native", function () {
         const lines: string[] = [
             `trace=1`,
-            `f=sin(x)/x`,
+            `f=sin(x)/x+0.5`,
             `f`,
             `yrange=[-1,1]`,
             `yrange`,

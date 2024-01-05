@@ -1,5 +1,6 @@
-import { Sym } from 'math-expression-atoms';
-import { is_nil, nil, U } from 'math-expression-tree';
+import { create_sym, Sym } from 'math-expression-atoms';
+import { LambdaExpr } from 'math-expression-context';
+import { is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
@@ -52,6 +53,7 @@ export interface ExprEngineListener {
 }
 
 export interface ExprEngine {
+    defineFunction(name: string, lambda: LambdaExpr): void;
     parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[], errors: Error[] };
     evaluate(expr: U): U;
     getBinding(sym: Sym): U;
@@ -95,6 +97,10 @@ class NativeExprEngine implements ExprEngine {
         });
         init_env(this.$, {
         });
+    }
+    defineFunction(name: string, lambda: LambdaExpr): void {
+        const match = items_to_cons(create_sym(name));
+        this.$.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         return parse_native_script("", sourceText, native_parse_config(options));
@@ -173,6 +179,9 @@ class EigenmathExprEngine implements ExprEngine {
     constructor() {
         init(this.$);
         initscript(this.$);
+    }
+    defineFunction(name: string, lambda: LambdaExpr): void {
+        this.$.defineFunction(name, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();

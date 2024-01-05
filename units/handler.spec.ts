@@ -73,6 +73,7 @@ describe("handler", function () {
         assert.strictEqual(should_render_svg(engine), true);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 6);
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
         engine.release();
@@ -91,6 +92,8 @@ describe("handler", function () {
         assert.strictEqual(should_render_svg(engine), true);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 6);
+        // assert.strictEqual(is_nil(trees[5]), true);
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
         engine.release();

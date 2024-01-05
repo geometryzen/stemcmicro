@@ -301,7 +301,7 @@ export class PrintScriptHandler implements ScriptHandler {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
-        print_result_and_input(value, input, should_render_svg($), ec, this.outputs);
+        print_result_and_input(value, input, should_render_svg($), ec, [this.listener]);
     }
 }
 

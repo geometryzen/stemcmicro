@@ -5552,7 +5552,6 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
 
                 const output = outbuf.join('');
 
-                $.outputs.push(output);
                 for (const listener of $.listeners) {
                     listener.output(output);
                 }
@@ -8916,7 +8915,7 @@ function eval_print(p1: U, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.outputs);
+        print_result_and_input(result, input, should_render_svg($), ec, $.listeners);
         p1 = cdr(p1);
     }
     push(nil, $);
@@ -8932,7 +8931,7 @@ function should_render_svg($: ScriptVars): boolean {
     }
 }
 
-export function print_result_and_input(result: U, input: U, svg: boolean, ec: EmitContext, outputs: string[]): void {
+export function print_result_and_input(result: U, input: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[]): void {
 
     if (is_nil(result)) {
         return;
@@ -8952,11 +8951,15 @@ export function print_result_and_input(result: U, input: U, svg: boolean, ec: Em
             ymax: +10,
             ymin: -10
         };
-        outputs.push(render_svg(result, dc, ec));
+        for (const listener of listeners) {
+            listener.output(render_svg(result, dc, ec));
+        }
     }
     else {
         const config = infix_config_from_options({});
-        outputs.push(render_as_html_infix(result, config));
+        for (const listener of listeners) {
+            listener.output(render_as_html_infix(result, config));
+        }
     }
 }
 
@@ -9780,7 +9783,7 @@ function eval_run(expr: Cons, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.outputs);
+        print_result_and_input(result, input, should_render_svg($), ec, $.listeners);
         if (!is_nil(result)) {
             set_symbol(symbol(LAST), result, nil, $);
         }
@@ -13081,8 +13084,6 @@ export function init($: ScriptVars): void {
     push_rational(1, 2, $);
     list(3, $);
     imaginaryunit = pop($);
-
-    $.outputs.length = 0;
 }
 const init_script = [
     "i = sqrt(-1)",
@@ -15187,31 +15188,44 @@ export interface ScriptContentHandler {
 export interface ScriptErrorHandler {
     error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void
 }
-export class PrintScriptContentHandler implements ScriptContentHandler {
-    constructor(readonly stdout: HTMLElement) {
 
+class PrintScriptOutputListener implements ScriptOutputListener {
+    constructor(private readonly outer: PrintScriptContentHandler) {
+
+    }
+    output(output: string): void {
+        this.outer.stdout.innerHTML += output;
+        throw new Error('Method not implemented.');
+    }
+
+}
+
+export class PrintScriptContentHandler implements ScriptContentHandler {
+    private readonly listener: PrintScriptOutputListener;
+    constructor(readonly stdout: HTMLElement) {
+        this.listener = new PrintScriptOutputListener(this);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ScriptVars): void {
         this.stdout.innerHTML = "";
+        $.addOutputListener(this.listener);
     }
     end($: ScriptVars): void {
-        for (const output of $.outputs) {
-            this.stdout.innerHTML += output;
-        }
+        $.removeOutputListener(this.listener);
     }
     output(value: U, input: U, $: ScriptVars): void {
         const ec: EmitContext = {
             useImaginaryI: isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
-        print_result_and_input(value, input, should_render_svg($), ec, $.outputs);
+        print_result_and_input(value, input, should_render_svg($), ec, [this.listener]);
     }
 }
+
 export class PrintScriptErrorHandler implements ScriptErrorHandler {
     error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
         const s = html_escape_and_colorize(inbuf.substring(start, end) + "\nStop: " + err, RED);
-        $.outputs.push(s);
+        broadcast(s, $);
     }
 }
 
@@ -15887,7 +15901,7 @@ function scan_error(s: string, $: ScriptVars): never {
 
     const escaped = html_escape_and_colorize(t, RED);
 
-    $.outputs.push(escaped);
+    broadcast(escaped, $);
 
     stopf("");
 }
@@ -16131,7 +16145,13 @@ function trace_input($: ScriptVars): void {
     const p1 = get_binding(symbol(TRACE), $);
     if (p1 != symbol(TRACE) && !iszero(p1)) {
         const escaped = html_escape_and_colorize(instring.substring($.trace1, $.trace2), BLUE);
-        $.outputs.push(escaped);
+        broadcast(escaped, $);
+    }
+}
+
+function broadcast(text: string, $: ScriptVars): void {
+    for (const listener of $.listeners) {
+        listener.output(text);
     }
 }
 
@@ -16193,7 +16213,6 @@ export class ScriptVars implements ExprContext {
     trace2: number = -1;
     stack: U[] = [];
     frame: U[] = [];
-    outputs: string[] = [];
     binding: { [printname: string]: U } = {};
     usrfunc: { [printname: string]: U } = {};
     eval_level: number = -1;

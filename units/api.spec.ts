@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { create_engine, EvalConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
+import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
 
 describe("api", function () {
     it("native A", function () {
@@ -8,8 +8,8 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const configEval: EvalConfig = { useGeometricAlgebra: true };
-        const engine: ExprEngine = create_engine(configEval);
+        const configEngine: EngineConfig = { useGeometricAlgebra: true };
+        const engine: ExprEngine = create_engine(configEngine);
         const configParse: ParseConfig = { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false };
         const { trees, errors } = engine.parse(sourceText, configParse);
         assert.strictEqual(errors.length, 0);

@@ -15,17 +15,17 @@ export interface ParseConfig {
     useParenForTensors: boolean;
 }
 
-function native_parse_config(options: ParseConfig): ParseOptions {
+function native_parse_config(options: Partial<ParseConfig>): ParseOptions {
     return {
-        useCaretForExponentiation: options.useCaretForExponentiation,
-        useParenForTensors: options.useParenForTensors
+        useCaretForExponentiation: !!options.useCaretForExponentiation,
+        useParenForTensors: !!options.useParenForTensors
     };
 }
 
-function eigenmath_parse_config(options: ParseConfig): EigenmathParseConfig {
+function eigenmath_parse_config(options: Partial<ParseConfig>): EigenmathParseConfig {
     return {
-        useCaretForExponentiation: options.useCaretForExponentiation,
-        useParenForTensors: options.useParenForTensors
+        useCaretForExponentiation: !!options.useCaretForExponentiation,
+        useParenForTensors: !!options.useParenForTensors
     };
 }
 
@@ -52,11 +52,11 @@ export interface ExprEngineListener {
 }
 
 export interface ExprEngine {
-    parse(sourceText: string, options: ParseConfig): { trees: U[], errors: Error[] };
+    parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[], errors: Error[] };
     evaluate(expr: U): U;
     getBinding(sym: Sym): U;
     release(): void;
-    renderAsString(expr: U, config: RenderConfig): string;
+    renderAsString(expr: U, config?: Partial<RenderConfig>): string;
     setSymbol(sym: Sym, binding: U, usrfunc: U): void;
     symbol(concept: Concept): Sym;
     addListener(listener: ExprEngineListener): void;
@@ -74,11 +74,11 @@ enum EngineKind {
     Eigenmath = 2
 }
 
-export interface EvalConfig {
+export interface EngineConfig {
     useGeometricAlgebra: boolean;
 }
 
-function engine_kind_from_eval_config(config: EvalConfig): EngineKind {
+function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind {
     if (config.useGeometricAlgebra) {
         return EngineKind.Native;
     }
@@ -93,7 +93,7 @@ class NativeExprEngine implements ExprEngine {
         this.$ = create_env();
         init_env(this.$, {});
     }
-    parse(sourceText: string, options: ParseConfig): { trees: U[]; errors: Error[]; } {
+    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         return parse_native_script("", sourceText, native_parse_config(options));
     }
     getBinding(sym: Sym): U {
@@ -104,9 +104,9 @@ class NativeExprEngine implements ExprEngine {
         return value;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    renderAsString(expr: U, config: RenderConfig): string {
-        this.$.pushDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
-        this.$.pushDirective(Directive.useParenForTensors, config.useParenForTensors);
+    renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
+        this.$.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
+        this.$.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
         try {
             return render_as_infix(expr, this.$);
         }
@@ -148,10 +148,10 @@ class NativeExprEngine implements ExprEngine {
     }
 }
 
-function eigenmath_infix_config(config: RenderConfig): InfixOptions {
+function eigenmath_infix_config(config: Partial<RenderConfig>): InfixOptions {
     const options: InfixOptions = {
-        useCaretForExponentiation: config.useCaretForExponentiation,
-        useParenForTensors: config.useParenForTensors
+        useCaretForExponentiation: !!config.useCaretForExponentiation,
+        useParenForTensors: !!config.useParenForTensors
     };
     return options;
 }
@@ -171,7 +171,7 @@ class EigenmathExprEngine implements ExprEngine {
         init(this.$);
         initscript(this.$);
     }
-    parse(sourceText: string, options: ParseConfig): { trees: U[]; errors: Error[]; } {
+    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
         const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
         return { trees, errors: emErrorHandler.errors };
@@ -183,7 +183,7 @@ class EigenmathExprEngine implements ExprEngine {
     evaluate(expr: U): U {
         return evaluate_expression(expr, this.$);
     }
-    renderAsString(expr: U, config: RenderConfig): string {
+    renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         return to_infix(expr, eigenmath_infix_config(config));
     }
     release(): void {
@@ -215,7 +215,7 @@ class EigenmathExprEngine implements ExprEngine {
     }
 }
 
-export function create_engine(config: EvalConfig): ExprEngine {
+export function create_engine(config: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_eval_config(config);
     switch (engineKind) {
         case EngineKind.Native: {
@@ -303,10 +303,19 @@ export class PrintScriptHandler implements ScriptHandler {
     }
 }
 
-function should_render_svg($: ExprEngine): boolean {
+export function should_render_svg($: ExprEngine): boolean {
     const sym = $.symbol(Concept.TTY);
     const tty = $.getBinding(sym);
-    if (tty.equals(sym) || iszero(tty)) {
+    if (is_nil(tty)) {
+        // Unbound in Native engine.
+        return true;
+    }
+    else if (tty.equals(sym)) {
+        // Unbound in Eigenmath engine.
+        return true;
+    }
+    else if (iszero(tty)) {
+        // Bound to zero.
         return true;
     }
     else {

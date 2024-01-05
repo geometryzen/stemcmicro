@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { U } from "math-expression-tree";
-import { create_engine, ExprEngine, ExprEngineListener, RenderConfig, run_script, ScriptHandler } from "../src/api/index";
+import { create_engine, ExprEngine, ExprEngineListener, RenderConfig, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
 
 class TestScriptListener implements ExprEngineListener {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,7 +44,7 @@ class TestScriptHandler implements ScriptHandler {
 }
 
 describe("handler", function () {
-    xit("Native", function () {
+    it("Native", function () {
         const lines: string[] = [
             `trace=1`,
             `f=sin(x)/x`,
@@ -55,7 +55,8 @@ describe("handler", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine({ useGeometricAlgebra: true });
-        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: true, useCaretForExponentiation: true, useParenForTensors: false });
+        assert.strictEqual(should_render_svg(engine), true);
+        const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
@@ -71,8 +72,9 @@ describe("handler", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_engine({ useGeometricAlgebra: false });
-        const { trees, errors } = engine.parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
+        const engine = create_engine();
+        assert.strictEqual(should_render_svg(engine), true);
+        const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);

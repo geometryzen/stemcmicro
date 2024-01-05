@@ -5552,9 +5552,7 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
 
                 const output = outbuf.join('');
 
-                for (const listener of $.listeners) {
-                    listener.output(output);
-                }
+                broadcast(output, $);
             }
             finally {
                 restore_symbol($);
@@ -15228,7 +15226,7 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
     }
 }
 
-export function parseScript(sourceText: string, config: EigenmathParseConfig, errorHandler: ScriptErrorHandler): U[] {
+export function parse_eigenmath_script(sourceText: string, config: EigenmathParseConfig, errorHandler: ScriptErrorHandler): U[] {
     const exprs: U[] = [];
     const $ = new ScriptVars();
     init($);
@@ -15264,6 +15262,9 @@ export function parseScript(sourceText: string, config: EigenmathParseConfig, er
             }
             errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
         }
+    }
+    finally {
+        // term?
     }
     return exprs;
 }
@@ -15914,7 +15915,7 @@ function scan_inbuf(k: number, $: ScriptVars, config: EigenmathParseConfig): num
     k = scan($.inbuf, k, $, config);
     if (k) {
         $.trace2 = k;
-        trace_input($);
+        trace_source_text($);
     }
     return k;
 }
@@ -16140,7 +16141,7 @@ export function symbol(s: string): Sym {
     return symtab[s];
 }
 
-function trace_input($: ScriptVars): void {
+function trace_source_text($: ScriptVars): void {
     const p1 = get_binding(symbol(TRACE), $);
     if (p1 != symbol(TRACE) && !iszero(p1)) {
         const escaped = html_escape_and_colorize(instring.substring($.trace1, $.trace2), BLUE);

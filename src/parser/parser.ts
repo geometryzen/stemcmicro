@@ -36,7 +36,7 @@ export interface ParseOptions {
 }
 
 export function parse_expr(sourceText: string, options?: ParseOptions): U {
-    const { trees, errors } = parse_script("", sourceText, options);
+    const { trees, errors } = parse_native_script("", sourceText, options);
     if (errors.length == 0) {
         if (trees.length > 0) {
             return trees[0];
@@ -50,7 +50,7 @@ export function parse_expr(sourceText: string, options?: ParseOptions): U {
     }
 }
 
-export function parse_script(fileName: string, sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
+export function parse_native_script(fileName: string, sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
     const syntaxKind = script_kind_from_options(options);
     switch (syntaxKind) {
         case SyntaxKind.Native: {

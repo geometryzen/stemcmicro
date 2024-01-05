@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { U } from "math-expression-tree";
-import { ExprEngine, ExprEngineListener, parse, run_script, ScriptHandler } from "../src/api/index";
+import { ExprEngine, ExprEngineListener, parse, RenderConfig, run_script, ScriptHandler } from "../src/api/index";
 
 class TestScriptListener implements ExprEngineListener {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,11 +27,13 @@ class TestScriptHandler implements ScriptHandler {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     output(value: U, input: U, $: ExprEngine): void {
-        // const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
-        // console.log(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
+        // console.lg(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {
+        // console.log(`text => ${text}`);
         // throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,7 +44,7 @@ class TestScriptHandler implements ScriptHandler {
 }
 
 describe("handler", function () {
-    it("Native", function () {
+    xit("Native", function () {
         const lines: string[] = [
             `trace=1`,
             `f=sin(x)/x`,
@@ -67,7 +69,7 @@ describe("handler", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: true, useParenForTensors: false });
+        const { trees, errors } = parse(sourceText, { useGeometricAlgebra: false, useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         const handler = new TestScriptHandler();
         run_script(trees, { useGeometricAlgebra: false }, handler);

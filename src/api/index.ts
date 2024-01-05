@@ -1,9 +1,9 @@
 import { Sym } from 'math-expression-atoms';
 import { is_nil, nil, U } from 'math-expression-tree';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parseScript, print_result_and_input, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { ParseOptions, parse_script } from '../parser/parser';
+import { ParseOptions, parse_native_script } from '../parser/parser';
 import { render_as_infix } from '../print/render_as_infix';
 import { transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -41,13 +41,13 @@ export function parse(sourceText: string, options: ParseConfig): { trees: U[], e
     const engineKind = engine_kind_from_parse_config(options);
     switch (engineKind) {
         case EngineKind.Native: {
-            const { trees, errors } = parse_script("", sourceText, native_parse_config(options));
+            const { trees, errors } = parse_native_script("", sourceText, native_parse_config(options));
             return { trees, errors };
         }
         case EngineKind.Eigenmath: {
-            const errorHandler = new EigenmathErrorHandler();
-            const trees: U[] = parseScript(sourceText, eigenmath_parse_config(options), errorHandler);
-            return { trees, errors: errorHandler.errors };
+            const emErrorHandler = new EigenmathErrorHandler();
+            const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
+            return { trees, errors: emErrorHandler.errors };
         }
         default: {
             throw new Error(`Unexpected options.syntaxKind`);
@@ -283,7 +283,10 @@ export function run_script(inputs: U[], config: EvalConfig, handler: ScriptHandl
     }
 }
 
-class PrintScriptListener implements ExprEngineListener {
+/**
+ * An adapter for the print_result_and_output(...) function.
+ */
+class PrintScriptListener implements ScriptOutputListener {
     // TODO: This class only really needs stdout.
     // TODO: This class could be the correct location for HTML escaping.
     constructor(private readonly outer: PrintScriptHandler) {
@@ -295,24 +298,24 @@ class PrintScriptListener implements ExprEngineListener {
 }
 
 export class PrintScriptHandler implements ScriptHandler {
-    listener: PrintScriptListener;
     constructor(readonly stdout: HTMLElement) {
-        this.listener = new PrintScriptListener(this);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ExprEngine): void {
-        $.addListener(this.listener);
+        // $.addListener(this.listener);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     end($: ExprEngine): void {
-        $.removeListener(this.listener);
+        // $.removeListener(this.listener);
     }
     output(value: U, input: U, $: ExprEngine): void {
         const ec: EmitContext = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
-        print_result_and_input(value, input, should_render_svg($), ec, [this.listener]);
+        // 
+        const listener = new PrintScriptListener(this);
+        print_result_and_input(value, input, should_render_svg($), ec, [listener]);
     }
     text(text: string): void {
         this.stdout.innerHTML += text;

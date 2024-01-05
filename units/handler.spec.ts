@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { U } from "math-expression-tree";
-import { create_engine, ExprEngine, ExprEngineListener, RenderConfig, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
+import { create_engine, ExprEngine, ExprEngineListener, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
 import { EmitContext, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
 
 class TestScriptListener implements ExprEngineListener {
@@ -36,7 +36,7 @@ class TestScriptHandler implements ScriptHandler {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     output(value: U, input: U, $: ExprEngine): void {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
+        // const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
         // console.log(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
         const listener = new TestScriptOutputListener();
         const ec: EmitContext = {

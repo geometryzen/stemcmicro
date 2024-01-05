@@ -1,11 +1,15 @@
 import { create_sym, Sym } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_nil, items_to_cons, nil, U } from 'math-expression-tree';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_native_script } from '../parser/parser';
+import { render_as_ascii } from '../print/render_as_ascii';
+import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
+import { render_as_latex } from '../print/render_as_latex';
+import { render_as_sexpr } from '../print/render_as_sexpr';
 import { transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
@@ -39,6 +43,7 @@ class EigenmathErrorHandler implements ScriptErrorHandler {
 }
 
 export interface RenderConfig {
+    format: 'Ascii' | 'Human' | 'Infix' | 'LaTeX' | 'SExpr';
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
 }
@@ -117,7 +122,26 @@ class NativeExprEngine implements ExprEngine {
         this.$.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
         this.$.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
         try {
-            return render_as_infix(expr, this.$);
+            switch (config.format) {
+                case 'Ascii': {
+                    return render_as_ascii(expr, this.$);
+                }
+                case 'Human': {
+                    return render_as_human(expr, this.$);
+                }
+                case 'Infix': {
+                    return render_as_infix(expr, this.$);
+                }
+                case 'LaTeX': {
+                    return render_as_latex(expr, this.$);
+                }
+                case 'SExpr': {
+                    return render_as_sexpr(expr, this.$);
+                }
+                default: {
+                    return render_as_infix(expr, this.$);
+                }
+            }
         }
         finally {
             this.$.popDirective();
@@ -196,7 +220,29 @@ class EigenmathExprEngine implements ExprEngine {
         return evaluate_expression(expr, this.$);
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
-        return to_infix(expr, eigenmath_infix_config(config));
+        switch (config.format) {
+            case 'Ascii': {
+                // TODO
+                return to_infix(expr, eigenmath_infix_config(config));
+            }
+            case 'Human': {
+                // TODO
+                return to_infix(expr, eigenmath_infix_config(config));
+            }
+            case 'Infix': {
+                return to_infix(expr, eigenmath_infix_config(config));
+            }
+            case 'LaTeX': {
+                // TODO
+                return to_infix(expr, eigenmath_infix_config(config));
+            }
+            case 'SExpr': {
+                return to_sexpr(expr);
+            }
+            default: {
+                return to_infix(expr, eigenmath_infix_config(config));
+            }
+        }
     }
     release(): void {
         // Do nothing (yet).

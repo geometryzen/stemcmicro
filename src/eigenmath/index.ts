@@ -184,7 +184,7 @@ function cancel_factor($: ScriptVars): void {
     let p2 = pop($);
     const p1 = pop($);
 
-    if (car(p2) == symbol(ADD)) {
+    if (car(p2) == ADD) {
         const h = $.stack.length;
         p2 = cdr(p2);
         while (iscons(p2)) {
@@ -652,7 +652,7 @@ const UNIT = "unit";
 const UOM = "uom";
 const ZERO = "zero";
 
-const ADD = "+";
+const ADD = native_sym(Native.add);
 const MULTIPLY = "*";
 const POWER = native_sym(Native.pow);
 const INDEX = "[";
@@ -735,7 +735,7 @@ function decomp($: ScriptVars) {
 
     // sum?
 
-    if (car(F) == symbol(ADD)) {
+    if (car(F) == ADD) {
         decomp_sum(F, X, $);
         return;
     }
@@ -830,7 +830,7 @@ function decomp_sum(F: U, X: U, $: ScriptVars): void {
 
     if (n > 1) {
         list(n, $);
-        push_symbol(ADD, $);
+        push(ADD, $);
         swap($);
         cons($); // makes ADD head of list
     }
@@ -979,7 +979,7 @@ function emit_args(p: U, $: StackContext, ec: EmitContext): void {
 }
 
 function emit_base(p: U, $: StackContext, ec: EmitContext): void {
-    if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == POWER)
+    if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p) == ADD || car(p) == symbol(MULTIPLY) || car(p) == POWER)
         emit_subexpr(p, $, ec);
     else
         emit_expr(p, $, ec);
@@ -1010,7 +1010,7 @@ function emit_denominators(p: U, $: StackContext, ec: EmitContext) {
 
         if (isminusone(caddr(q))) {
             q = cadr(q);
-            if (car(q) == symbol(ADD) && n == 1)
+            if (car(q) == ADD && n == 1)
                 emit_expr(q, $, ec); // parens not needed
             else
                 emit_factor(q, $, ec);
@@ -1108,12 +1108,12 @@ function emit_exponent(p: U, $: StackContext, ec: EmitContext): void {
 }
 
 function emit_expr(p: U, $: StackContext, ec: EmitContext): void {
-    if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p)))) {
+    if (isnegativeterm(p) || (car(p) == ADD && isnegativeterm(cadr(p)))) {
         emit_roman_char(MINUS_SIGN, $);
         emit_thin_space($);
     }
 
-    if (car(p) == symbol(ADD))
+    if (car(p) == ADD)
         emit_expr_nib(p, $, ec);
     else
         emit_term(p, $, ec);
@@ -1162,7 +1162,7 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     if (iscons(p)) {
         if (car(p) == POWER)
             emit_power(p, $, ec);
-        else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY))
+        else if (car(p) == ADD || car(p) == symbol(MULTIPLY))
             emit_subexpr(p, $, ec);
         else
             emit_function(p, $, ec);
@@ -1382,7 +1382,7 @@ function emit_numerators(p: U, $: StackContext, ec: EmitContext): void {
             continue;
         }
 
-        if (car(q) == symbol(ADD) && n == 1)
+        if (car(q) == ADD && n == 1)
             emit_expr(q, $, ec); // parens not needed
         else
             emit_factor(q, $, ec);
@@ -2612,7 +2612,7 @@ function absfunc($: ScriptVars): void {
         return;
     }
 
-    if (isnegativeterm(p1) || (car(p1) == symbol(ADD) && isnegativeterm(cadr(p1)))) {
+    if (isnegativeterm(p1) || (car(p1) == ADD && isnegativeterm(cadr(p1)))) {
         push(p1, $);
         negate($);
         p1 = pop($);
@@ -2668,7 +2668,7 @@ function add_terms(n: number, $: ScriptVars): void {
 
     if (n > 1) {
         list(n, $);
-        push_symbol(ADD, $);
+        push(ADD, $);
         swap($);
         cons($); // prepend ADD to list
     }
@@ -2696,7 +2696,7 @@ function flatten_terms(h: number, $: ScriptVars): void {
     const n = $.stack.length;
     for (let i = h; i < n; i++) {
         let p1 = $.stack[i];
-        if (car(p1) == symbol(ADD)) {
+        if (car(p1) == ADD) {
             $.stack[i] = cadr(p1);
             p1 = cddr(p1);
             while (iscons(p1)) {
@@ -3974,7 +3974,7 @@ function arg1($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ADD)) {
+    if (car(p1) == ADD) {
         push(p1, $);
         rect($); // convert polar and clock forms
         p1 = pop($);
@@ -4443,7 +4443,7 @@ function cosfunc($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ADD)) {
+    if (car(p1) == ADD) {
         cosfunc_sum(p1, $);
         return;
     }
@@ -4866,7 +4866,7 @@ function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
         return;
     }
 
-    if (car(F) == symbol(ADD)) {
+    if (car(F) == ADD) {
         dsum(F, X, $);
         return;
     }
@@ -7506,7 +7506,7 @@ function integral($: ScriptVars): void {
     if (!(issymbol(X) && isusersymbol(X)))
         stopf("integral: symbol expected");
 
-    if (car(F) == symbol(ADD)) {
+    if (car(F) == ADD) {
         const h = $.stack.length;
         let p1 = cdr(F);
         while (iscons(p1)) {
@@ -7972,7 +7972,7 @@ function mag_nib($: ScriptVars): void {
 
     // sum
 
-    if (car(p1) == symbol(ADD)) {
+    if (car(p1) == ADD) {
         push(p1, $);
         rect($); // convert polar terms, if any
         p1 = pop($);
@@ -8854,7 +8854,7 @@ function power($: ScriptVars): void {
 
     // (a + b) ^ c
 
-    if (car(BASE) == symbol(ADD)) {
+    if (car(BASE) == ADD) {
         power_sum(BASE, EXPO, $);
         return;
     }
@@ -9137,7 +9137,7 @@ function rect($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ADD)) {
+    if (car(p1) == ADD) {
         p1 = cdr(p1);
         const h = $.stack.length;
         while (iscons(p1)) {
@@ -9171,7 +9171,7 @@ function rect($: ScriptVars): void {
 
     // handle sum in exponent
 
-    if (car(EXPO) == symbol(ADD)) {
+    if (car(EXPO) == ADD) {
         p1 = cdr(EXPO);
         const h = $.stack.length;
         while (iscons(p1)) {
@@ -10137,11 +10137,11 @@ function simplify_pass1($: ScriptVars): void {
 
     let T: U;
 
-    if (car(p1) == symbol(ADD)) {
+    if (car(p1) == ADD) {
         push(p1, $);
         rationalize($);
         T = pop($);
-        if (car(T) == symbol(ADD)) {
+        if (car(T) == ADD) {
             push(p1, $); // no change
             return;
         }
@@ -10160,11 +10160,11 @@ function simplify_pass1($: ScriptVars): void {
 
     // if DEN is a sum then rationalize it
 
-    if (car(DEN) == symbol(ADD)) {
+    if (car(DEN) == ADD) {
         push(DEN, $);
         rationalize($);
         T = pop($);
-        if (car(T) != symbol(ADD)) {
+        if (car(T) != ADD) {
             // update NUM
             push(T, $);
             denominator($);
@@ -10181,7 +10181,7 @@ function simplify_pass1($: ScriptVars): void {
 
     // are NUM and DEN congruent sums?
 
-    if (car(NUM) != symbol(ADD) || car(DEN) != symbol(ADD) || lengthf(NUM) != lengthf(DEN)) {
+    if (car(NUM) != ADD || car(DEN) != ADD || lengthf(NUM) != lengthf(DEN)) {
         // no, but NUM over DEN might be simpler than p1
         push(NUM, $);
         push(DEN, $);
@@ -10247,7 +10247,7 @@ function simplify_pass3($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (car(p1) != symbol(ADD) || isusersymbolsomewhere(p1) || !findf(p1, imaginaryunit, $)) {
+    if (car(p1) != ADD || isusersymbolsomewhere(p1) || !findf(p1, imaginaryunit, $)) {
         push(p1, $);
         return;
     }
@@ -10316,7 +10316,7 @@ function sinfunc($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ADD)) {
+    if (car(p1) == ADD) {
         sinfunc_sum(p1, $);
         return;
     }
@@ -10717,7 +10717,7 @@ function tanfunc($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ADD)) {
+    if (car(p1) == ADD) {
         tanfunc_sum(p1, $);
         return;
     }
@@ -11387,7 +11387,7 @@ function expand_sum_factors(h: number, $: ScriptVars): void {
 
     for (i = h; i < n; i++) {
         p2 = $.stack[i];
-        if (car(p2) == symbol(ADD))
+        if (car(p2) == ADD)
             break;
     }
 
@@ -12183,7 +12183,7 @@ function find_denominator(p: U): 0 | 1 {
 // returns 1 with divisor on stack, otherwise returns 0
 
 function find_divisor(p: U, $: ScriptVars): 0 | 1 {
-    if (car(p) == symbol(ADD)) {
+    if (car(p) == ADD) {
         p = cdr(p);
         while (iscons(p)) {
             if (find_divisor_term(car(p), $))
@@ -12546,9 +12546,9 @@ export function to_infix(expr: U, options: InfixOptions = {}): string {
 }
 
 function infixform_expr(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (isnegativeterm(p) || (car(p) == symbol(ADD) && isnegativeterm(cadr(p))))
+    if (isnegativeterm(p) || (car(p) == ADD && isnegativeterm(cadr(p))))
         infixform_write("-", config, outbuf);
-    if (car(p) == symbol(ADD))
+    if (car(p) == ADD)
         infixform_expr_nib(p, config, outbuf);
     else
         infixform_term(p, config, outbuf);
@@ -12717,7 +12717,7 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
         return;
     }
 
-    if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY)) {
+    if (car(p) == ADD || car(p) == symbol(MULTIPLY)) {
         infixform_subexpr(p, config, outbuf);
         return;
     }
@@ -12840,7 +12840,7 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
 
     if (isnum(p))
         infixform_numeric_exponent(p, config, outbuf);
-    else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == POWER || car(p) == symbol(FACTORIAL))
+    else if (car(p) == ADD || car(p) == symbol(MULTIPLY) || car(p) == POWER || car(p) == symbol(FACTORIAL))
         infixform_subexpr(p, config, outbuf);
     else
         infixform_expr(p, config, outbuf);
@@ -12976,7 +12976,7 @@ function infixform_double(p: Flt, config: InfixConfig, outbuf: string[]): void {
 function infixform_base(p: U, config: InfixConfig, outbuf: string[]): void {
     if (isnum(p))
         infixform_numeric_base(p, config, outbuf);
-    else if (car(p) == symbol(ADD) || car(p) == symbol(MULTIPLY) || car(p) == POWER || car(p) == symbol(FACTORIAL))
+    else if (car(p) == ADD || car(p) == symbol(MULTIPLY) || car(p) == POWER || car(p) == symbol(FACTORIAL))
         infixform_subexpr(p, config, outbuf);
     else
         infixform_expr(p, config, outbuf);
@@ -13124,7 +13124,7 @@ function isalpha(s: string): boolean {
 }
 
 function iscomplexnumber(p: U): boolean {
-    return isimaginarynumber(p) || (lengthf(p) == 3 && car(p) == symbol(ADD) && isnum(cadr(p)) && isimaginarynumber(caddr(p)));
+    return isimaginarynumber(p) || (lengthf(p) == 3 && car(p) == ADD && isnum(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
 /**
@@ -13149,7 +13149,7 @@ function isdenominator(p: U) {
 }
 
 function isdenormalpolar(p: U, $: ScriptVars) {
-    if (car(p) == symbol(ADD)) {
+    if (car(p) == ADD) {
         p = cdr(p);
         while (iscons(p)) {
             if (isdenormalpolarterm(car(p), $))
@@ -13214,7 +13214,7 @@ function isdoublesomewhere(p: U) {
 }
 
 function isdoublez(p: U): 0 | 1 {
-    if (car(p) == symbol(ADD)) {
+    if (car(p) == ADD) {
 
         if (lengthf(p) != 3)
             return 0;
@@ -13685,7 +13685,7 @@ function negate($: ScriptVars): void {
 }
 
 function normalize_polar(EXPO: U, $: ScriptVars): void {
-    if (car(EXPO) == symbol(ADD)) {
+    if (car(EXPO) == ADD) {
         const h = $.stack.length;
         let p1 = cdr(EXPO);
         while (iscons(p1)) {
@@ -14224,7 +14224,7 @@ function power_complex_number(BASE: U, EXPO: U, $: ScriptVars): void {
 
     // prefixform(i) = (power -1 1/2)
 
-    if (car(BASE) == symbol(ADD)) {
+    if (car(BASE) == ADD) {
         X = cadr(BASE);
         if (caaddr(BASE) == symbol(MULTIPLY))
             Y = cadaddr(BASE);
@@ -14547,7 +14547,7 @@ function power_natural_number(EXPO: U, $: ScriptVars): void {
     let y: number;
 
     if (isdoublez(EXPO)) {
-        if (car(EXPO) == symbol(ADD)) {
+        if (car(EXPO) == ADD) {
             x = (cadr(EXPO) as Flt).d;
             y = (cadaddr(EXPO) as Flt).d;
         }
@@ -15478,7 +15478,7 @@ function scan_additive_expr($: ScriptVars, config: EigenmathParseConfig): void {
     }
     if ($.stack.length - h > 1) {
         list($.stack.length - h, $);
-        push_symbol(ADD, $);
+        push(ADD, $);
         swap($);
         cons($);
     }
@@ -16354,7 +16354,6 @@ const symtab: { [name: string]: Sym } = {
     "uom": create_sym_with_handler_func(UOM, eval_uom),
     "zero": create_sym_with_handler_func(ZERO, eval_zero),
 
-    "+": create_sym_with_handler_func(ADD, eval_add),
     "*": create_sym_with_handler_func(MULTIPLY, eval_multiply),
     "[": create_sym_with_handler_func(INDEX, eval_index),
     "=": create_sym_with_handler_func(SETQ, eval_setq),
@@ -16385,6 +16384,7 @@ const symtab: { [name: string]: Sym } = {
     "$9": create_sym_with_handler_func(ARG9, eval_user_symbol)
 };
 
+symtab[ADD.printname] = create_sym_with_handler_func(ADD.printname, eval_add);
 symtab[POWER.printname] = create_sym_with_handler_func(POWER.printname, eval_power);
 
 function vector(h: number, $: ScriptVars): void {

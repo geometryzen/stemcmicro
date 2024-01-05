@@ -6,7 +6,7 @@ import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_native_script } from '../parser/parser';
 import { render_as_infix } from '../print/render_as_infix';
 import { transform_tree } from '../runtime/execute';
-import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
+import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
 
 export interface ParseConfig {
@@ -151,8 +151,14 @@ class NativeExprEngine implements ExprEngine {
             case Concept.Last: {
                 return RESERVED_KEYWORD_LAST;
             }
+            case Concept.TTY: {
+                return RESERVED_KEYWORD_TTY;
+            }
+            default: {
+                throw new Error(`symbol(${concept}) not implemented.`);
+            }
+
         }
-        throw new Error(`symbol(${concept}) Method not implemented.`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {
@@ -213,7 +219,7 @@ class EigenmathExprEngine implements ExprEngine {
                 return symbol(TTY);
             }
             default: {
-                throw new Error('Method not implemented.');
+                throw new Error(`symbol(${concept}) not implemented.`);
             }
         }
     }

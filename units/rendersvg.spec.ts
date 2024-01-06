@@ -1,5 +1,6 @@
 
 import { assert } from "chai";
+import { is_blade } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { render_svg } from "../src/eigenmath";
 
@@ -101,6 +102,51 @@ describe("rendersvg", function () {
                 `</svg><br>`,
             ];
             assert.strictEqual(svg, parts.join(''));
+        }
+        engine.release();
+    });
+    it("Uom", function () {
+        const lines: string[] = [
+            `uom("kilogram")`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText);
+        assert.strictEqual(errors.length, 0);
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false });
+            const parts: string[] = [
+                `<svg height='41'width='44'>`,
+                `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>k</text>`,
+                `<text style='font-family:"Times New Roman";font-size:24px;'x='22'y='26'>g</text>`,
+                `</svg><br>`
+            ];
+            assert.strictEqual(svg, parts.join(''));
+        }
+        engine.release();
+    });
+    it("Blade", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `G30[1]`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText);
+        assert.strictEqual(errors.length, 0);
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (is_blade(value)) {
+                const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false });
+                const parts: string[] = [
+                    `<svg height='36'width='43'>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>e</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='20.65234375'y='26'>1</text>`,
+                    `</svg><br>`
+                ];
+                assert.strictEqual(svg, parts.join(''));
+            }
         }
         engine.release();
     });

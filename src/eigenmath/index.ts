@@ -1,4 +1,4 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor, Uom } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
@@ -1156,6 +1156,16 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
         return;
     }
 
+    if (is_uom(p)) {
+        emit_uom(p, $);
+        return;
+    }
+
+    if (is_blade(p)) {
+        emit_blade(p, $);
+        return;
+    }
+
     if (iscons(p)) {
         if (car(p) == POWER)
             emit_power(p, $, ec);
@@ -1666,11 +1676,21 @@ function emit_symbol_fragment(s: string, k: number, $: StackContext): number {
     return k + t.length;
 }
 
+function emit_blade(blade: Blade, $: StackContext): void {
+    const str = blade.toInfixString();
+    emit_roman_string(str, $);
+}
+
 function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext): void {
     if (p.ndim % 2 == 1)
         emit_vector(p, $, ec); // odd rank
     else
         emit_matrix(p, 0, 0, $, ec); // even rank
+}
+
+function emit_uom(uom: Uom, $: StackContext): void {
+    const str = uom.toInfixString();
+    emit_roman_string(str, $);
 }
 
 function emit_term(p: U, $: StackContext, ec: EmitContext): void {

@@ -5,8 +5,10 @@ import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings'
 import { Native } from '../native/Native';
 import { is_native_sym, native_sym } from '../native/native_sym';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { is_imu } from '../operators/imu/is_imu';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
+import { Imu } from '../tree/imu/Imu';
 
 function create_sym_with_handler_func(printname: string, func: (expr: Cons, $: ScriptVars) => void): Sym {
     // By using the global cache of symbols, we are able to evaluate expressions parsed by other engines.
@@ -1166,6 +1168,11 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
         return;
     }
 
+    if (is_imu(p)) {
+        emit_imaginary_unit(p, $, ec);
+        return;
+    }
+
     if (iscons(p)) {
         if (car(p) == POWER)
             emit_power(p, $, ec);
@@ -1679,6 +1686,18 @@ function emit_symbol_fragment(s: string, k: number, $: StackContext): number {
 function emit_blade(blade: Blade, $: StackContext): void {
     const str = blade.toInfixString();
     emit_roman_string(str, $);
+}
+
+function emit_imaginary_unit(imu: Imu, $: StackContext, ec: EmitContext): void {
+    if (ec.useImaginaryI) {
+        emit_italic_string("i", $);
+    }
+    else if (ec.useImaginaryJ) {
+        emit_italic_string("j", $);
+    }
+    else {
+        emit_italic_string("i", $);
+    }
 }
 
 function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext): void {

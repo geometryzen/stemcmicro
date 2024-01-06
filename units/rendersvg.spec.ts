@@ -150,4 +150,24 @@ describe("rendersvg", function () {
         }
         engine.release();
     });
+    it("sqrt(-1)", function () {
+        const lines: string[] = [
+            `sqrt(-1)`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText);
+        assert.strictEqual(errors.length, 0);
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false });
+            const parts: string[] = [
+                `<svg height='36'width='27'>`,
+                `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>i</text>`,
+                `</svg><br>`
+            ];
+            assert.strictEqual(svg, parts.join(''));
+        }
+        engine.release();
+    });
 });

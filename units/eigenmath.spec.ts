@@ -103,11 +103,11 @@ describe("eigenmath", function () {
         executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 6);
-        assert.strictEqual(to_infix(values[0]), " ? ");
-        assert.strictEqual(to_infix(values[1]), " ? ");
+        assert.strictEqual(to_infix(values[0]), "nil");
+        assert.strictEqual(to_infix(values[1]), "nil");
         assert.strictEqual(to_infix(values[2]), "sin(x) / x");
-        assert.strictEqual(to_infix(values[3]), " ? ");
-        assert.strictEqual(to_infix(values[4]), " ? ");
+        assert.strictEqual(to_infix(values[3]), "nil");
+        assert.strictEqual(to_infix(values[4]), "nil");
     });
     it("F", function () {
         const lines: string[] = [

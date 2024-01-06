@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { create_script_context } from "../index";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("schwardchild", function () {

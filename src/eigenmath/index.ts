@@ -12804,8 +12804,13 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
         infixform_arglist(p, config, outbuf);
         return;
     }
+    else if (is_nil(p)) {
+        infixform_write("nil", config, outbuf);
+    }
+    else {
+        infixform_write(" ? ", config, outbuf);
+    }
 
-    infixform_write(" ? ", config, outbuf);
 }
 
 function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
@@ -14916,6 +14921,9 @@ export function to_sexpr(expr: U): string {
     return outbuf.join('');
 }
 
+/**
+ * prefixform means SExpr.
+ */
 function prefixform(p: U, outbuf: string[]) {
     if (iscons(p)) {
         outbuf.push("(");
@@ -14958,6 +14966,9 @@ function prefixform(p: U, outbuf: string[]) {
     }
     else if (is_atom(p)) {
         outbuf.push(`${p}`);
+    }
+    else if (is_nil(p)) {
+        outbuf.push(`()`);
     }
     else {
         outbuf.push(" ? ");

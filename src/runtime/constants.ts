@@ -1,7 +1,7 @@
 import { BigInteger, create_sym } from 'math-expression-atoms';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
-import { MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN } from './ns_math';
+import { MATH_COS, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN, MATH_TAN } from './ns_math';
 
 export const do_simplify_nested_radicals = true;
 export const avoidCalculatingPowersIntoArctans = true;
@@ -37,7 +37,7 @@ export const COMPARE_FACTORS = create_sym('compare-factors');
 export const COMPARE_TERMS = create_sym('compare-terms');
 export const CONDENSE = native_sym(Native.condense);
 export const CONTRACT = create_sym('contract');
-export const COS = native_sym(Native.cos);
+export const COS = MATH_COS;
 export const COSH = create_sym('cosh');
 export const DECOMP = create_sym('decomp');
 export const DEFINT = create_sym('defint');
@@ -124,7 +124,7 @@ export const SUBST = native_sym(Native.subst);
 export const SUBTRACT = create_sym('-');
 export const SUM = create_sym('sum');
 export const SYMBOLSINFO = create_sym('symbolsinfo');
-export const TAN = create_sym('tan');
+export const TAN = MATH_TAN;
 export const TANH = create_sym('tanh');
 export const TAYLOR = native_sym(Native.taylor);
 export const TEST = native_sym(Native.test);

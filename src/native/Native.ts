@@ -94,6 +94,7 @@ export enum Native {
     subtract,
     succ,
     symbol,
+    tan,
     /**
      * tau(x) = 2 * PI * x
      */

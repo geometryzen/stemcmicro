@@ -99,6 +99,7 @@ export function build_sym(code: Native): Sym {
         case Native.subtract: return create_sym('-');
         case Native.succ: return create_sym('succ');
         case Native.symbol: return create_sym('symbol');
+        case Native.tan: return create_sym('tan');
         case Native.tau: return create_sym('tau');
         case Native.taylor: return create_sym('taylor');
         case Native.test: return create_sym('test');

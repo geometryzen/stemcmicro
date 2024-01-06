@@ -630,7 +630,7 @@ const ROTATE = "rotate";
 const RUN = "run";
 const SGN = "sgn";
 const SIMPLIFY = "simplify";
-const SIN = "sin";
+const SIN = native_sym(Native.sin);
 const SINH = "sinh";
 const SQRT = "sqrt";
 const STATUS = "status";
@@ -1518,8 +1518,10 @@ function emit_roman_char(char_num: number, $: StackContext): void {
 }
 
 function emit_roman_string(s: string, $: StackContext): void {
-    for (let i = 0; i < s.length; i++)
+
+    for (let i = 0; i < s.length; i++) {
         emit_roman_char(s.charCodeAt(i), $);
+    }
 }
 
 function emit_string(p: Str, $: StackContext): void {
@@ -1532,7 +1534,6 @@ function emit_subexpr(p: U, $: StackContext, ec: EmitContext): void {
 }
 
 function emit_symbol(p: Sym, $: StackContext): void {
-
     if (p == symbol(EXP1)) {
         emit_roman_string("exp(1)", $);
         return;
@@ -4099,7 +4100,7 @@ function circexp_subst($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(SIN)) {
+    if (car(p1) == SIN) {
         push_symbol(EXPSIN, $);
         push(cadr(p1), $);
         circexp_subst($);
@@ -4895,7 +4896,7 @@ function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
         return;
     }
 
-    if (car(F) == symbol(SIN)) {
+    if (car(F) == SIN) {
         dsin(F, X, $);
         return;
     }
@@ -7604,7 +7605,7 @@ function integral_classify(p: U): number {
     if (p == symbol(LOG))
         return 2;
 
-    if (p == symbol(SIN) || p == symbol(COS) || p == symbol(TAN))
+    if (p == SIN || p == symbol(COS) || p == symbol(TAN))
         return 4;
 
     return 0;
@@ -10361,7 +10362,7 @@ function sinfunc($: ScriptVars): void {
     let p2 = pop($);
 
     if (!isnum(p2)) {
-        push_symbol(SIN, $);
+        push(SIN, $);
         push(p1, $);
         list(2, $);
         return;
@@ -10380,7 +10381,7 @@ function sinfunc($: ScriptVars): void {
     p2 = pop($);
 
     if (!(isrational(p2) && isinteger(p2))) {
-        push_symbol(SIN, $);
+        push(SIN, $);
         push(p1, $);
         list(2, $);
         return;
@@ -10443,7 +10444,7 @@ function sinfunc($: ScriptVars): void {
             push_integer(-1, $);
             break;
         default:
-            push_symbol(SIN, $);
+            push(SIN, $);
             push(p1, $);
             list(2, $);
             break;
@@ -10481,7 +10482,7 @@ function sinfunc_sum(p1: U, $: ScriptVars): void {
         }
         p2 = cdr(p2);
     }
-    push_symbol(SIN, $);
+    push(SIN, $);
     push(p1, $);
     list(2, $);
 }
@@ -16378,7 +16379,6 @@ const symtab: { [name: string]: Sym } = {
     "run": create_sym_with_handler_func(RUN, eval_run),
     "sgn": create_sym_with_handler_func(SGN, eval_sgn),
     "simplify": create_sym_with_handler_func(SIMPLIFY, eval_simplify),
-    "sin": create_sym_with_handler_func(SIN, eval_sin),
     "sinh": create_sym_with_handler_func(SINH, eval_sinh),
     "sqrt": create_sym_with_handler_func(SQRT, eval_sqrt),
     "status": create_sym_with_handler_func(STATUS, eval_status),
@@ -16430,6 +16430,7 @@ symtab[MULTIPLY.printname] = create_sym_with_handler_func(MULTIPLY.printname, ev
 symtab[POWER.printname] = create_sym_with_handler_func(POWER.printname, eval_power);
 symtab[INDEX.printname] = create_sym_with_handler_func(INDEX.printname, eval_index);
 symtab[SETQ.printname] = create_sym_with_handler_func(SETQ.printname, eval_setq);
+symtab[SIN.printname] = create_sym_with_handler_func(SIN.printname, eval_sin);
 
 function vector(h: number, $: ScriptVars): void {
     const n = $.stack.length - h;

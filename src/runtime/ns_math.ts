@@ -11,6 +11,8 @@ import { native_sym } from "../native/native_sym";
 import { create_sym } from "../tree/sym/Sym";
 
 export const MATH_ADD = native_sym(Native.add);
+export const MATH_COS = native_sym(Native.cos);
+export const MATH_TAN = native_sym(Native.tan);
 export const MATH_SUB = native_sym(Native.subtract);
 export const MATH_MUL = native_sym(Native.multiply);
 export const MATH_DIV = native_sym(Native.divide);

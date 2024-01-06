@@ -1306,7 +1306,7 @@ function emit_italic_char(char_num: number, $: StackContext): void {
         emit_thin_space($);
 }
 
-function emit_italic_string(s: string, $: StackContext): void {
+function emit_italic_string(s: 'i' | 'j', $: StackContext): void {
     for (let i = 0; i < s.length; i++)
         emit_italic_char(s.charCodeAt(i), $);
 }
@@ -1540,7 +1540,11 @@ function emit_symbol(p: Sym, $: StackContext): void {
 
     const s = printname(p);
 
-    if ((issymbol(p) && iskeyword(p)) || p == symbol(LAST) || p == symbol(TRACE) || p == symbol(TTY)) {
+    if (issymbol(p) && isusersymbol(p)) {
+        // Fall through
+    }
+    else if ((issymbol(p) && iskeyword(p)) || p == symbol(LAST) || p == symbol(TRACE) || p == symbol(TTY)) {
+        // Keywords are printed Roman without italics.
         emit_roman_string(s, $);
         return;
     }
@@ -13291,7 +13295,22 @@ function isinteger1(p: Rat) {
 }
 
 function iskeyword(p: Sym): boolean {
-    return issymbol(p) && p.func != eval_user_symbol;
+    if (issymbol(p)) {
+        if (p.func === eval_user_symbol) {
+            return false;
+        }
+        else {
+            if (is_native_sym(p)) {
+                return true;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    else {
+        return false;
+    }
 }
 
 function isminusone(p: U): boolean {

@@ -1,9 +1,9 @@
 
-import { Imu } from "../../..";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { HASH_IMU } from "../../hashing/hash_info";
 import { MATH_IMU } from "../../runtime/ns_math";
+import { Imu } from "../../tree/imu/Imu";
 import { cons, Cons, U } from "../../tree/tree";
 
 class Builder implements OperatorBuilder<Imu> {

@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
-import { create_script_context, render_svg } from "../index";
-import { DrawContext, EmitContext } from "../src/eigenmath";
+import { DrawContext, EmitContext, render_svg } from "../src/eigenmath";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("svg", function () {

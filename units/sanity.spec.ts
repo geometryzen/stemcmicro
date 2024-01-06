@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { create_script_context, is_cons, nil } from "../index";
+import { is_cons, nil } from "math-expression-tree";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("sanity", function () {

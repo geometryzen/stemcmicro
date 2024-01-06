@@ -1,5 +1,6 @@
 import { assert } from "chai";
-import { create_script_context, Directive } from "../index";
+import { Directive } from "../src/env/ExtensionEnv";
+import { create_script_context } from "../src/runtime/script_engine";
 
 describe("euler", function () {
     it("exp(0)", function () {

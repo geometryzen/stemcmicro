@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
-import { create_script_context } from "../index";
 import { is_sym } from "../src/operators/sym/is_sym";
+import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("symbol", function () {

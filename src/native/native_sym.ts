@@ -34,7 +34,8 @@ export function build_sym(code: Native): Sym {
         case Native.IMU: return create_sym('IMU');
         case Native.MASH: return create_sym('MASH');
         case Native.NIL: return create_sym('NIL');
-        case Native.PI: return create_sym('PI');
+        // Important for the string value to be lowercase in order to be recognized by SVG rendering.
+        case Native.PI: return create_sym('pi');
         // Functions (lower case)...
         case Native.abs: return create_sym('abs');
         case Native.add: return create_sym('+');

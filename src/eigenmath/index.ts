@@ -659,7 +659,7 @@ const INDEX = native_sym(Native.component);
 const SETQ = native_sym(Native.setq);
 
 export const LAST = "last";
-const PI = "pi";
+const PI = native_sym(Native.PI);
 const TRACE = "trace";
 
 const D_LOWER = "d";
@@ -3342,7 +3342,7 @@ function arccos($: ScriptVars): void {
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3351,7 +3351,7 @@ function arccos($: ScriptVars): void {
 
     if (isminusoneoversqrttwo(p1)) {
         push_rational(3, 4, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3360,7 +3360,7 @@ function arccos($: ScriptVars): void {
 
     if (iszero(p1)) {
         push_rational(1, 2, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3369,7 +3369,7 @@ function arccos($: ScriptVars): void {
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 3, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3385,7 +3385,7 @@ function arccos($: ScriptVars): void {
 
     if (isequalq(p1, -1, 2)) {
         push_rational(2, 3, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3393,7 +3393,7 @@ function arccos($: ScriptVars): void {
     // arccos(-1) = pi
 
     if (isminusone(p1)) {
-        push_symbol(PI, $);
+        push(PI, $);
         return;
     }
 
@@ -3528,7 +3528,7 @@ function arcsin($: ScriptVars): void {
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3544,7 +3544,7 @@ function arcsin($: ScriptVars): void {
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 6, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3553,7 +3553,7 @@ function arcsin($: ScriptVars): void {
 
     if (isplusone(p1)) {
         push_rational(1, 2, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3732,7 +3732,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
 
     if (iszero(Y)) {
         if (isnegativenumber(X))
-            push_symbol(PI, $);
+            push(PI, $);
         else
             push_integer(0, $);
         return;
@@ -3743,7 +3743,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
             push_rational(-1, 2, $);
         else
             push_rational(1, 2, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -3804,7 +3804,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
             push_rational(1, 4, $);
     }
 
-    push_symbol(PI, $);
+    push(PI, $);
     multiply($);
 }
 
@@ -3934,7 +3934,7 @@ function arg1($: ScriptVars): void {
 
     if (isrational(p1)) {
         if (isnegativenumber(p1)) {
-            push_symbol(PI, $);
+            push(PI, $);
             negate($);
         }
         else
@@ -3953,7 +3953,7 @@ function arg1($: ScriptVars): void {
     // (-1) ^ expr
 
     if (car(p1) == POWER && isminusone(cadr(p1))) {
-        push_symbol(PI, $);
+        push(PI, $);
         push(caddr(p1), $);
         multiply($);
         return;
@@ -4201,7 +4201,7 @@ function clockfunc($: ScriptVars): void {
 
     push(p1, $);
     arg($);
-    push_symbol(PI, $);
+    push(PI, $);
     divide($);
 
     power($);
@@ -4488,7 +4488,7 @@ function cosfunc($: ScriptVars): void {
     // n pi ?
 
     push(p1, $);
-    push_symbol(PI, $);
+    push(PI, $);
     divide($);
     let p2 = pop($);
 
@@ -4590,7 +4590,7 @@ function cosfunc_sum(p1: U, $: ScriptVars): void {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
-        push_symbol(PI, $);
+        push(PI, $);
         divide($);
         let p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
@@ -5271,7 +5271,7 @@ function derf(p1: U, p2: U, $: ScriptVars): void {
     push_integer(-1, $);
     multiply($);
     expfunc($);
-    push_symbol(PI, $);
+    push(PI, $);
     push_rational(-1, 2, $);
     power($);
     multiply($);
@@ -5291,7 +5291,7 @@ function derfc(p1: U, p2: U, $: ScriptVars): void {
     push_integer(-1, $);
     multiply($);
     expfunc($);
-    push_symbol(PI, $);
+    push(PI, $);
     push_rational(-1, 2, $);
     power($);
     multiply($);
@@ -6042,7 +6042,7 @@ function floatfunc_subst($: ScriptVars): void {
         return;
     }
 
-    if (p1 == symbol(PI)) {
+    if (p1 == PI) {
         push_double(Math.PI, $);
         return;
     }
@@ -7830,7 +7830,7 @@ function logfunc($: ScriptVars): void {
         negate($);
         logfunc($);
         push(imaginaryunit, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply($);
         add($);
         return;
@@ -8666,7 +8666,7 @@ function polar($: ScriptVars): void {
     const p2 = pop($);
     if (isdouble(p2)) {
         push_double(p2.d / Math.PI, $);
-        push_symbol(PI, $);
+        push(PI, $);
         multiply_factors(3, $);
     }
     else {
@@ -8754,7 +8754,7 @@ function power($: ScriptVars): void {
         BASE = pop($);
     }
 
-    if (BASE == symbol(PI) && isdouble(EXPO)) {
+    if (BASE == PI && isdouble(EXPO)) {
         push_double(Math.PI, $);
         BASE = pop($);
     }
@@ -9701,7 +9701,7 @@ function rotate_q(PSI: Tensor, n: number, $: ScriptVars): void {
             push_integer(i - j, $);
             power($);
             push(imaginaryunit, $);
-            push_symbol(PI, $);
+            push(PI, $);
             evalf($);
             multiply_factors(3, $);
             expfunc($);
@@ -9724,7 +9724,7 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
             push_integer(i - j, $);
             power($);
             push(imaginaryunit, $);
-            push_symbol(PI, $);
+            push(PI, $);
             evalf($);
             multiply_factors(3, $);
             negate($);
@@ -10357,7 +10357,7 @@ function sinfunc($: ScriptVars): void {
     // n pi ?
 
     push(p1, $);
-    push_symbol(PI, $);
+    push(PI, $);
     divide($);
     let p2 = pop($);
 
@@ -10459,7 +10459,7 @@ function sinfunc_sum(p1: U, $: ScriptVars): void {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
-        push_symbol(PI, $);
+        push(PI, $);
         divide($);
         let p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
@@ -10733,7 +10733,7 @@ function tanfunc($: ScriptVars): void {
     // n pi ?
 
     push(p1, $);
-    push_symbol(PI, $);
+    push(PI, $);
     divide($);
     let p2 = pop($);
 
@@ -10824,7 +10824,7 @@ function tanfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
     while (iscons(p2)) {
         push(car(p2), $);
-        push_symbol(PI, $);
+        push(PI, $);
         divide($);
         const p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
@@ -13173,10 +13173,10 @@ function isdenormalpolarterm(p: U, $: ScriptVars) {
     if (car(p) != MULTIPLY)
         return 0;
 
-    if (lengthf(p) == 3 && isimaginaryunit(cadr(p)) && caddr(p) == symbol(PI))
+    if (lengthf(p) == 3 && isimaginaryunit(cadr(p)) && caddr(p) == PI)
         return 1; // exp(i pi)
 
-    if (lengthf(p) != 4 || !isnum(cadr(p)) || !isimaginaryunit(caddr(p)) || cadddr(p) != symbol(PI))
+    if (lengthf(p) != 4 || !isnum(cadr(p)) || !isimaginaryunit(caddr(p)) || cadddr(p) != PI)
         return 0;
 
     p = cadr(p); // p = coeff of term
@@ -13437,7 +13437,7 @@ function isusersymbol(p: Sym): boolean {
 }
 
 function isusersymbolsomewhere(p: U): 0 | 1 {
-    if (issymbol(p) && isusersymbol(p) && p != symbol(PI) && p != symbol(EXP1))
+    if (issymbol(p) && isusersymbol(p) && p != PI && p != symbol(EXP1))
         return 1;
 
     if (iscons(p)) {
@@ -13805,7 +13805,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
             }
@@ -13822,7 +13822,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -13840,7 +13840,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -13863,7 +13863,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -13900,7 +13900,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
             }
@@ -13917,7 +13917,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -13935,7 +13935,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -13958,7 +13958,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push_symbol(PI, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -14365,7 +14365,7 @@ function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U, $: ScriptVars): v
     push(Y, $);
     push(X, $);
     arctan($);
-    push_symbol(PI, $);
+    push(PI, $);
     divide($);
     push(EXPO, $);
     multiply($);
@@ -16400,7 +16400,6 @@ const symtab: { [name: string]: Sym } = {
     "zero": create_sym_with_handler_func(ZERO, eval_zero),
 
     "last": create_sym_with_handler_func(LAST, eval_user_symbol),
-    "pi": create_sym_with_handler_func(PI, eval_user_symbol),
     "trace": create_sym_with_handler_func(TRACE, eval_user_symbol),
     "tty": create_sym_with_handler_func(TTY, eval_user_symbol),
 
@@ -16431,6 +16430,8 @@ symtab[POWER.printname] = create_sym_with_handler_func(POWER.printname, eval_pow
 symtab[INDEX.printname] = create_sym_with_handler_func(INDEX.printname, eval_index);
 symtab[SETQ.printname] = create_sym_with_handler_func(SETQ.printname, eval_setq);
 symtab[SIN.printname] = create_sym_with_handler_func(SIN.printname, eval_sin);
+
+symtab[PI.printname] = create_sym_with_handler_func(PI.printname, eval_user_symbol);
 
 function vector(h: number, $: ScriptVars): void {
     const n = $.stack.length - h;

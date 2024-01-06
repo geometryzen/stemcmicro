@@ -1,7 +1,7 @@
 import { create_sym, Sym } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_nil, items_to_cons, nil, U } from 'math-expression-tree';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_native_script } from '../parser/parser';
@@ -43,7 +43,7 @@ class EigenmathErrorHandler implements ScriptErrorHandler {
 }
 
 export interface RenderConfig {
-    format: 'Ascii' | 'Human' | 'Infix' | 'LaTeX' | 'SExpr';
+    format: 'Ascii' | 'Human' | 'Infix' | 'LaTeX' | 'SExpr' | 'SVG';
     useCaretForExponentiation: boolean;
     useParenForTensors: boolean;
 }
@@ -137,6 +137,9 @@ class NativeExprEngine implements ExprEngine {
                 }
                 case 'SExpr': {
                     return render_as_sexpr(expr, this.$);
+                }
+                case 'SVG': {
+                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
                 }
                 default: {
                     return render_as_infix(expr, this.$);
@@ -238,6 +241,9 @@ class EigenmathExprEngine implements ExprEngine {
             }
             case 'SExpr': {
                 return to_sexpr(expr);
+            }
+            case 'SVG': {
+                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
             }
             default: {
                 return to_infix(expr, eigenmath_infix_config(config));

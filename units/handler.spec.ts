@@ -16,9 +16,12 @@ class TestScriptListener implements ExprEngineListener {
 }
 
 class TestScriptOutputListener implements ScriptOutputListener {
+    constructor(private readonly outer: TestScriptListener) {
+
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     output(output: string): void {
-        // console.log(`${output}`);
+        this.outer.output(output);
     }
 }
 
@@ -38,7 +41,7 @@ class TestScriptHandler implements ScriptHandler {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         // const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
         // console.log(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
-        const listener = new TestScriptOutputListener();
+        const listener = new TestScriptOutputListener(this.listener);
         const ec: EmitContext = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
@@ -76,6 +79,9 @@ describe("handler", function () {
         assert.strictEqual(trees.length, 6);
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
+        assert.strictEqual(handler.outputs.length, 2);
+        // console.log(`${handler.outputs[0]}`);   // f=sin(x)/x
+        // console.log(`${handler.outputs[1]}`);   // yrange
         engine.release();
     });
     it("Eigenmath", function () {
@@ -96,6 +102,10 @@ describe("handler", function () {
         // assert.strictEqual(is_nil(trees[5]), true);
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
+        assert.strictEqual(handler.outputs.length, 3);
+        // console.log(`${handler.outputs[0]}`);   // f=sin(x)/x
+        // console.log(`${handler.outputs[1]}`);   // yrange
+        // console.log(`${handler.outputs[2]}`);   // draw
         engine.release();
     });
 });

@@ -914,7 +914,7 @@ export interface EmitContext {
     useImaginaryJ: boolean;
 }
 
-export function render_svg(expr: U, dc: DrawContext, ec: EmitContext): string {
+export function render_svg(expr: U, ec: EmitContext): string {
     // TODO: We only really need the stack here...
     const $ = new ScriptVars();
 
@@ -922,20 +922,17 @@ export function render_svg(expr: U, dc: DrawContext, ec: EmitContext): string {
 
     emit_list(expr, $, ec);
 
-    const p1 = pop($);
+    const codes = pop($);
 
-    let h = height(p1);
-    const d = depth(p1);
-    let w = width(p1);
+    const h0 = height(codes);
+    const d0 = depth(codes);
+    const w0 = width(codes);
 
     const x = HPAD;
-    const y = Math.round(h + VPAD);
+    const y = Math.round(h0 + VPAD);
 
-    h += d + 2 * VPAD;
-    w += 2 * HPAD;
-
-    h = Math.round(h);
-    w = Math.round(w);
+    const h = Math.round(h0 + d0 + 2 * VPAD);
+    const w = Math.round(w0 + 2 * HPAD);
 
     const heq = "height='" + h + "'";
     const weq = "width='" + w + "'";
@@ -944,7 +941,7 @@ export function render_svg(expr: U, dc: DrawContext, ec: EmitContext): string {
 
     outbuf.push("<svg " + heq + weq + ">");
 
-    draw_formula(x, y, p1, dc, outbuf);
+    draw_formula(x, y, codes, outbuf);
 
     outbuf.push("</svg><br>");
     return outbuf.join('');
@@ -1311,9 +1308,12 @@ function emit_italic_string(s: 'i' | 'j', $: StackContext): void {
         emit_italic_char(s.charCodeAt(i), $);
 }
 
-function emit_list(p: U, $: StackContext, ec: EmitContext): void {
+/**
+ * Converts an expression into an encoded form with opcode, height, depth, width, and data (depends on opcode).
+ */
+function emit_list(expr: U, $: StackContext, ec: EmitContext): void {
     const t = $.stack.length;
-    emit_expr(p, $, ec);
+    emit_expr(expr, $, ec);
     emit_update_list(t, $);
 }
 
@@ -1777,7 +1777,7 @@ function emit_update_fraction($: StackContext): void {
 
 function emit_update_list(t: number, $: StackContext): void {
 
-    if ($.stack.length - t == 1) {
+    if ($.stack.length - t === 1) {
         return;
     }
 
@@ -2060,7 +2060,7 @@ function divide($: ScriptVars): void {
     multiply($);
 }
 
-function draw_formula(x: number, y: number, p: U, dc: DrawContext, outbuf: string[]): void {
+function draw_formula(x: number, y: number, codes: U, outbuf: string[]): void {
     if (isNaN(x)) {
         throw new Error("x is NaN");
     }
@@ -2068,12 +2068,12 @@ function draw_formula(x: number, y: number, p: U, dc: DrawContext, outbuf: strin
         throw new Error("y is NaN");
     }
 
-    const k = opcode(p);
-    const h = height(p);
-    const d = depth(p);
-    const w = width(p);
+    const k = opcode(codes);
+    const h = height(codes);
+    const d = depth(codes);
+    const w = width(codes);
 
-    p = cddddr(p);
+    const data = cddddr(codes);
 
     let font_num: number;
     let char_num: number;
@@ -2084,52 +2084,52 @@ function draw_formula(x: number, y: number, p: U, dc: DrawContext, outbuf: strin
             break;
 
         case EMIT_CHAR:
-            font_num = val1(p);
-            char_num = val2(p);
+            font_num = val1(data);
+            char_num = val2(data);
             draw_char(x, y, font_num, char_num, outbuf);
             break;
 
-        case EMIT_LIST:
-            p = car(p);
+        case EMIT_LIST: {
+            let p = car(data);
             while (iscons(p)) {
-                draw_formula(x, y, car(p), dc, outbuf);
+                draw_formula(x, y, car(p), outbuf);
                 x += width(car(p));
                 p = cdr(p);
             }
             break;
-
+        }
         case EMIT_SUPERSCRIPT:
         case EMIT_SUBSCRIPT: {
-            const dx = val1(p);
-            const dy = val2(p);
-            p = caddr(p);
-            draw_formula(x + dx, y + dy, p, dc, outbuf);
+            const dx = val1(data);
+            const dy = val2(data);
+            const p = caddr(data);
+            draw_formula(x + dx, y + dy, p, outbuf);
             break;
         }
         case EMIT_SUBEXPR: {
-            draw_delims(x, y, h, d, w, FONT_SIZE * DELIM_STROKE, ROMAN_FONT, dc, outbuf);
+            draw_delims(x, y, h, d, w, FONT_SIZE * DELIM_STROKE, ROMAN_FONT, outbuf);
             const dx = get_char_width(ROMAN_FONT, LEFT_PAREN);
-            draw_formula(x + dx, y, car(p), dc, outbuf);
+            draw_formula(x + dx, y, car(data), outbuf);
             break;
         }
         case EMIT_SMALL_SUBEXPR: {
-            draw_delims(x, y, h, d, w, SMALL_FONT_SIZE * DELIM_STROKE, SMALL_ROMAN_FONT, dc, outbuf);
+            draw_delims(x, y, h, d, w, SMALL_FONT_SIZE * DELIM_STROKE, SMALL_ROMAN_FONT, outbuf);
             const dx = get_char_width(SMALL_ROMAN_FONT, LEFT_PAREN);
-            draw_formula(x + dx, y, car(p), dc, outbuf);
+            draw_formula(x + dx, y, car(data), outbuf);
             break;
         }
         case EMIT_FRACTION:
-            draw_fraction(x, y, h, d, w, FONT_SIZE * FRAC_STROKE, ROMAN_FONT, p, dc, outbuf);
+            draw_fraction(x, y, h, d, w, FONT_SIZE * FRAC_STROKE, ROMAN_FONT, data, outbuf);
             break;
 
         case EMIT_SMALL_FRACTION:
-            draw_fraction(x, y, h, d, w, SMALL_FONT_SIZE * FRAC_STROKE, SMALL_ROMAN_FONT, p, dc, outbuf);
+            draw_fraction(x, y, h, d, w, SMALL_FONT_SIZE * FRAC_STROKE, SMALL_ROMAN_FONT, data, outbuf);
             break;
 
         case EMIT_TABLE: {
-            draw_delims(x, y, h, d, w, 1.2 * FONT_SIZE * DELIM_STROKE, ROMAN_FONT, dc, outbuf);
+            draw_delims(x, y, h, d, w, 1.2 * FONT_SIZE * DELIM_STROKE, ROMAN_FONT, outbuf);
             const dx = get_char_width(ROMAN_FONT, LEFT_PAREN);
-            draw_table(x + dx, y - h, p, dc, outbuf);
+            draw_table(x + dx, y - h, data, outbuf);
             break;
         }
     }
@@ -2235,12 +2235,12 @@ function draw_char(x: number, y: number, font_num: number, char_num: number, out
     const xeq = "x='" + x + "'";
     const yeq = "y='" + y + "'";
 
-    t += "'" + xeq + yeq + ">" + s + "</text>\n";
+    t += "'" + xeq + yeq + ">" + s + "</text>";
 
     outbuf.push(t);
 }
 
-function draw_delims(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, dc: DrawContext, outbuf: string[]): void {
+function draw_delims(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, outbuf: string[]): void {
 
     const ch = get_cap_height(font_num);
     const cd = get_char_depth(font_num, LEFT_PAREN);
@@ -2295,7 +2295,7 @@ function draw_stroke(x1: number, y1: number, x2: number, y2: number, stroke_widt
     outbuf.push(s);
 }
 
-function draw_fraction(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, p: U, dc: DrawContext, outbuf: string[]): void {
+function draw_fraction(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, p: U, outbuf: string[]): void {
 
     // horizontal line
 
@@ -2307,17 +2307,17 @@ function draw_fraction(x: number, y: number, h: number, d: number, w: number, st
 
     let dx = (w - width(car(p))) / 2;
     dy = h - height(car(p));
-    draw_formula(x + dx, y - dy, car(p), dc, outbuf);
+    draw_formula(x + dx, y - dy, car(p), outbuf);
 
     // denominator
 
     p = cdr(p);
     dx = (w - width(car(p))) / 2;
     dy = d - depth(car(p));
-    draw_formula(x + dx, y + dy, car(p), dc, outbuf);
+    draw_formula(x + dx, y + dy, car(p), outbuf);
 }
 
-function draw_table(x: number, y: number, p: U, dc: DrawContext, outbuf: string[]): void {
+function draw_table(x: number, y: number, p: U, outbuf: string[]): void {
 
     const n = val1(p);
     const m = val2(p);
@@ -2344,7 +2344,7 @@ function draw_table(x: number, y: number, p: U, dc: DrawContext, outbuf: string[
             const column_width = val1(w);
             const elem_width = width(car(table));
             const cx = x + dx + TABLE_HSPACE + (column_width - elem_width) / 2; // center horizontal
-            draw_formula(cx, y, car(table), dc, outbuf);
+            draw_formula(cx, y, car(table), outbuf);
             dx += column_width + 2 * TABLE_HSPACE;
             table = cdr(table);
             w = cdr(w);
@@ -2490,28 +2490,28 @@ function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: st
     const YMAX = pop($);
     let x = DRAW_LEFT_PAD - width(YMAX) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(YMAX);
-    draw_formula(x, y, YMAX, dc, outbuf);
+    draw_formula(x, y, YMAX, outbuf);
 
     emit_level = 1; // small font
     emit_list(new Flt(dc.ymin), $, ec);
     const YMIN = pop($);
     x = DRAW_LEFT_PAD - width(YMIN) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
-    draw_formula(x, y, YMIN, dc, outbuf);
+    draw_formula(x, y, YMIN, outbuf);
 
     emit_level = 1; // small font
     emit_list(new Flt(dc.xmin), $, ec);
     const XMIN = pop($);
     x = DRAW_LEFT_PAD - width(XMIN) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
-    draw_formula(x, y, XMIN, dc, outbuf);
+    draw_formula(x, y, XMIN, outbuf);
 
     emit_level = 1; // small font
     emit_list(new Flt(dc.xmax), $, ec);
     const XMAX = pop($);
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(XMAX) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
-    draw_formula(x, y, XMAX, dc, outbuf);
+    draw_formula(x, y, XMAX, outbuf);
 }
 
 function emit_points(draw_array: { t: number; x: number; y: number }[], $: DrawContext, outbuf: string[]): void {
@@ -8946,17 +8946,8 @@ export function print_result_and_input(result: U, input: U, svg: boolean, ec: Em
     }
 
     if (svg) {
-        // TODO: Why is this needed for rendering SVG?
-        const dc: DrawContext = {
-            tmax: +Math.PI,
-            tmin: -Math.PI,
-            xmax: +10,
-            xmin: -10,
-            ymax: +10,
-            ymin: -10
-        };
         for (const listener of listeners) {
-            listener.output(render_svg(result, dc, ec));
+            listener.output(render_svg(result, ec));
         }
     }
     else {

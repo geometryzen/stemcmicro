@@ -2246,7 +2246,7 @@ function draw_char(x: number, y: number, font_num: number, char_num: number, out
         s = "&middot;";
     }
     else if (char_num < 32 || char_num > 181) {
-        console.log(`char_num => ${char_num}`);
+        // console.lg(`char_num => ${char_num}`);
         s = "?";
     }
     else if (char_num == 34)

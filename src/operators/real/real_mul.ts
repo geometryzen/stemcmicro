@@ -12,6 +12,7 @@ import { CompositeOperator } from "../CompositeOperator";
 import { is_imu } from "../imu/is_imu";
 import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
+import { is_uom } from "../uom/uom_extension";
 import { compute_r_from_base_and_expo } from "./compute_r_from_base_and_expo";
 import { compute_theta_from_base_and_expo } from "./compute_theta_from_base_and_expo";
 
@@ -126,6 +127,9 @@ class Op extends CompositeOperator {
                 }
                 else if (is_cons(factor) && is_sym(factor.opr)) {
                     cs.push(factor);
+                }
+                else if (is_uom(factor)) {
+                    rs.push(factor);
                 }
                 else {
                     // console.lg("WT...");

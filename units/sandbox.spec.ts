@@ -4,15 +4,12 @@ import { is_nil } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 
 describe("sandbox", function () {
-    it("GA and uom", function () {
+    it("Handling middot", function () {
         const lines: string[] = [
-            `G30=algebra([1,1,1],["e1","e2","e3"])`,
-            `e1=G30[1]`,
-            `e2=G30[2]`,
+            `k=uom("kilogram")`,
             `m=uom("meter")`,
             `s=uom("second")`,
-            `g=9.81*(-e2) * m/s/s`,
-            `g`
+            `k * m / s`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
@@ -21,7 +18,19 @@ describe("sandbox", function () {
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             if (!is_nil(value)) {
-                assert.strictEqual(engine.renderAsString(value), "-9.81*e2*m/s ** 2");
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "kg·m/s");
+                assert.strictEqual(engine.renderAsString(value, { format: 'LaTeX' }), "kg·m/s");
+                const lines: string[] = [
+                    `<svg height='41'width='89'>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>k</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='22'y='26'>g</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='34'y='26'>&middot;</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='44.65234375'y='26'>m</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='63.3203125'y='26'>/</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='69.98828125'y='26'>s</text>`,
+                    `</svg><br>`
+                ];
+                assert.strictEqual(engine.renderAsString(value, { format: 'SVG' }), lines.join(''));
             }
         }
         engine.release();

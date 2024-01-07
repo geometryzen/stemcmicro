@@ -2235,12 +2235,20 @@ const html_name_tab = [
     "&le;",		// 181
 ];
 
+// https://www.ascii-code.com
+const ASCII_CODE_MIDDOT = 183;
+
 function draw_char(x: number, y: number, font_num: number, char_num: number, outbuf: string[]): void {
     let s: string;
     let t: string;
 
-    if (char_num < 32 || char_num > 181)
+    if (char_num === ASCII_CODE_MIDDOT) {
+        s = "&middot;";
+    }
+    else if (char_num < 32 || char_num > 181) {
+        console.log(`char_num => ${char_num}`);
         s = "?";
+    }
     else if (char_num == 34)
         s = "&quot;";
     else if (char_num == 38)

@@ -10,7 +10,7 @@ class TestScriptListener implements ExprEngineListener {
 
     }
     output(output: string): void {
-        // console.log(`${output}`);
+        // console.lg(`${output}`);
         this.outer.outputs.push(output);
     }
 }
@@ -33,14 +33,14 @@ class TestScriptHandler implements ScriptHandler {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ExprEngine): void {
-        // console.log(`begin`);
+        // console.lg(`begin`);
         $.addListener(this.listener);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     output(value: U, input: U, $: ExprEngine): void {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         // const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
-        // console.log(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
+        // console.lg(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
         const listener = new TestScriptOutputListener(this.listener);
         const ec: EmitContext = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
@@ -51,12 +51,12 @@ class TestScriptHandler implements ScriptHandler {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {
-        // console.log(`text => ${text}`);
+        // console.lg(`text => ${text}`);
         // throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     end($: ExprEngine): void {
-        // console.log(`end`);
+        // console.lg(`end`);
         $.removeListener(this.listener);
     }
 }
@@ -80,8 +80,8 @@ describe("handler", function () {
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
         assert.strictEqual(handler.outputs.length, 2);
-        // console.log(`${handler.outputs[0]}`);   // f=sin(x)/x
-        // console.log(`${handler.outputs[1]}`);   // yrange
+        // console.lg(`${handler.outputs[0]}`);   // f=sin(x)/x
+        // console.lg(`${handler.outputs[1]}`);   // yrange
         engine.release();
     });
     it("Eigenmath", function () {
@@ -103,9 +103,9 @@ describe("handler", function () {
         const handler = new TestScriptHandler();
         run_script(engine, trees, handler);
         assert.strictEqual(handler.outputs.length, 3);
-        // console.log(`${handler.outputs[0]}`);   // f=sin(x)/x
-        // console.log(`${handler.outputs[1]}`);   // yrange
-        // console.log(`${handler.outputs[2]}`);   // draw
+        // console.lg(`${handler.outputs[0]}`);   // f=sin(x)/x
+        // console.lg(`${handler.outputs[1]}`);   // yrange
+        // console.lg(`${handler.outputs[2]}`);   // draw
         engine.release();
     });
 });

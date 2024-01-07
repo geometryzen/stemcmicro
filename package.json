@@ -80,7 +80,7 @@
         "unit-transpose": "mocha 'units/transpose.spec.ts'",
         "unit-iscomplex": "mocha 'units/iscomplex.spec.ts'",
         "unit-sandbox": "mocha 'units/sandbox.spec.ts'",
-        "unit-versin": "mocha 'units/versin.spec.ts'",
+        "unit-uom": "mocha 'units/uom.spec.ts'",
         "test-bake": "mocha 'tests/bake.ts'",
         "test-check": "mocha 'tests/check.ts'",
         "test-cos": "mocha 'tests/cos.ts'",

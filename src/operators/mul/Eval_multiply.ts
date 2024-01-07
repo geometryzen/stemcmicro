@@ -1,6 +1,8 @@
 import { is_blade } from "math-expression-atoms";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
+import { contains_single_uom } from "../../calculators/compare/contains_single_uom";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
+import { extract_single_uom } from "../../calculators/compare/extract_single_uom";
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
@@ -59,6 +61,7 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
+    // console.lg(`lhs => ${render_as_infix(lhs, $)} rhs => ${render_as_infix(rhs, $)}`);
     // TODO: Optimize handling of numbers, 0, 1.
 
     // TODO: This function should not known anything about Flt(s) and Rat(s).
@@ -102,6 +105,15 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         const residueL = remove_factors(lhs, is_blade);
         const residueR = remove_factors(rhs, is_blade);
         return $.multiply($.multiply(residueL, residueR), blade);
+    }
+
+    if (contains_single_uom(lhs) && contains_single_uom(rhs)) {
+        const uomL = extract_single_uom(lhs);
+        const uomR = extract_single_uom(rhs);
+        const uom = uomL.mul(uomR);
+        const residueL = remove_factors(lhs, is_uom);
+        const residueR = remove_factors(rhs, is_uom);
+        return $.multiply($.multiply(residueL, residueR), uom);
     }
 
     // Units of Measure shortcut.
@@ -205,12 +217,13 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
                     break;
                 }
                 default: {
+                    // console.lg(`head1 => ${render_as_infix(head1, $)} head2 => ${render_as_infix(head2, $)}`);
                     // Equality here means stable sorting of the head elements.
                     // If we end up here then we already know that the bases are different.
                     // So we definitely can't combine assuming base equality.
                     // This can happen for non-commuting elements. e.g. Blade(s), Tensor(s).
                     // Remove factors that don't commute earlier? Or do we handle them here?
-                    throw new Error(`${render_as_infix(baseL, $)} ${render_as_infix(expoL, $)} ${render_as_infix(baseR, $)} ${render_as_infix(expoR, $)}`);
+                    throw new Error(`baseL => ${render_as_infix(baseL, $)} expoL => ${render_as_infix(expoL, $)} baseR => ${render_as_infix(baseR, $)} expoR => ${render_as_infix(expoR, $)}`);
                 }
             }
         }

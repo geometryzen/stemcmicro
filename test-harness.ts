@@ -112,7 +112,7 @@ function _runTest<T extends unknown[]>(
     // console.time(name);
     try {
         // eslint-disable-next-line no-console
-        // console.log("name:", name);
+        // console.lg("name:", name);
         f(new Asserts(), ...args);
     }
     finally {
@@ -133,7 +133,7 @@ function test<T extends unknown[]>(
         _runTest(name, f, ...args);
         passedTests++;
         // eslint-disable-next-line no-console
-        // console.log('OK');
+        // console.lg('OK');
         process.stdout.write('.');
     }
     catch (e) {
@@ -141,7 +141,7 @@ function test<T extends unknown[]>(
         if (e instanceof Error) {
             if (e.stack) {
                 // eslint-disable-next-line no-console
-                // console.log(filter_stack_trace(e.stack));
+                // console.lg(filter_stack_trace(e.stack));
             }
             else {
                 // eslint-disable-next-line no-console
@@ -363,7 +363,7 @@ export function run_test(s: string[], options?: TestOptions): void {
                     catch (e) {
                         if (e instanceof Error) {
                             console.log('Source:   ', sourceText);
-                            // console.log(e.stack);
+                            // console.lg(e.stack);
                             throw e;
                         }
                     }

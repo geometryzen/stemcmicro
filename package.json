@@ -148,6 +148,6 @@
         "math-expression-tree": "^0.9.11",
         "math-expression-atoms": "^0.9.13",
         "math-expression-context": "^0.9.9",
-        "math-expression-native": "^0.9.8"
+        "math-expression-native": "^0.9.9"
     }
 }

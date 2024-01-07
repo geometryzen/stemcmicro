@@ -552,16 +552,16 @@ function cons($: StackContext): void {
     push(create_cons(pop2, pop1), $);
 }
 
-const ABS = "abs";
+const ABS = native_sym(Native.abs);
 const ADJ = "adj";
 const ALGEBRA = "algebra";
 const AND = "and";
-const ARCCOS = "arccos";
-const ARCCOSH = "arccosh";
-const ARCSIN = "arcsin";
-const ARCSINH = "arcsinh";
-const ARCTAN = "arctan";
-const ARCTANH = "arctanh";
+const ARCCOS = native_sym(Native.arccos);
+const ARCCOSH = native_sym(Native.arccosh);
+const ARCSIN = native_sym(Native.arcsin);
+const ARCSINH = native_sym(Native.arcsinh);
+const ARCTAN = native_sym(Native.arctan);
+const ARCTANH = native_sym(Native.arctanh);
 const ARG = "arg";
 const BINDING = "binding";
 const CEILING = "ceiling";
@@ -572,8 +572,8 @@ const CLOCK = "clock";
 const COFACTOR = "cofactor";
 const CONJ = "conj";
 const CONTRACT = "contract";
-const COS = "cos";
-const COSH = "cosh";
+const COS = native_sym(Native.cos);
+const COSH = native_sym(Native.cosh);
 const DEFINT = "defint";
 const DENOMINATOR = "denominator";
 const DERIVATIVE = "derivative";
@@ -587,7 +587,7 @@ const ERF = "erf";
 const ERFC = "erfc";
 const EVAL = "eval";
 const EXIT = "exit";
-const EXP = "exp";
+const EXP = native_sym(Native.exp);
 const EXPCOS = "expcos";
 const EXPCOSH = "expcosh";
 const EXPSIN = "expsin";
@@ -632,14 +632,14 @@ const RUN = "run";
 const SGN = "sgn";
 const SIMPLIFY = "simplify";
 const SIN = native_sym(Native.sin);
-const SINH = "sinh";
+const SINH = native_sym(Native.sinh);
 const SQRT = "sqrt";
 const STATUS = "status";
 const STOP = "stop";
 const SUBST = "subst";
 const SUM = "sum";
-const TAN = "tan";
-const TANH = "tanh";
+const TAN = native_sym(Native.tan);
+const TANH = native_sym(Native.tanh);
 const TAYLOR = "taylor";
 const TEST = "test";
 const TESTEQ = "testeq";
@@ -2599,7 +2599,7 @@ function absfunc($: ScriptVars): void {
 
     if (istensor(p1)) {
         if (p1.ndim > 1) {
-            push_symbol(ABS, $);
+            push(ABS, $);
             push(p1, $);
             list(2, $);
             return;
@@ -2661,7 +2661,7 @@ function absfunc($: ScriptVars): void {
         p1 = pop($);
     }
 
-    push_symbol(ABS, $);
+    push(ABS, $);
     push(p1, $);
     list(2, $);
 }
@@ -3435,7 +3435,7 @@ function arccos($: ScriptVars): void {
         return;
     }
 
-    push_symbol(ARCCOS, $);
+    push(ARCCOS, $);
     push(p1, $);
     list(2, $);
 }
@@ -3491,12 +3491,12 @@ function arccosh($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(COSH)) {
+    if (car(p1) == COSH) {
         push(cadr(p1), $);
         return;
     }
 
-    push_symbol(ARCCOSH, $);
+    push(ARCCOSH, $);
     push(p1, $);
     list(2, $);
 }
@@ -3596,7 +3596,7 @@ function arcsin($: ScriptVars): void {
         return;
     }
 
-    push_symbol(ARCSIN, $);
+    push(ARCSIN, $);
     push(p1, $);
     list(2, $);
 }
@@ -3660,12 +3660,12 @@ function arcsinh($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(SINH)) {
+    if (car(p1) == SINH) {
         push(cadr(p1), $);
         return;
     }
 
-    push_symbol(ARCSINH, $);
+    push(ARCSINH, $);
     push(p1, $);
     list(2, $);
 }
@@ -3738,12 +3738,12 @@ function arctan($: ScriptVars): void {
         return;
     }
 
-    if (car(Y) == symbol(TAN) && isplusone(X)) {
+    if (car(Y) == TAN && isplusone(X)) {
         push(cadr(Y), $); // x of tan(x)
         return;
     }
 
-    push_symbol(ARCTAN, $);
+    push(ARCTAN, $);
     push(Y, $);
     push(X, $);
     list(3, $);
@@ -3752,7 +3752,7 @@ function arctan($: ScriptVars): void {
 function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
 
     if (iszero(X) && iszero(Y)) {
-        push_symbol(ARCTAN, $);
+        push(ARCTAN, $);
         push_integer(0, $);
         push_integer(0, $);
         list(3, $);
@@ -3811,7 +3811,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
     if (bignum_cmp(Xnum.a, Ynum.a) != 0 || bignum_cmp(Xnum.b, Ynum.b) != 0) {
         // not equal
         if (isnegativenumber(Ynum)) {
-            push_symbol(ARCTAN, $);
+            push(ARCTAN, $);
             push(Ynum, $);
             negate($);
             push(Xnum, $);
@@ -3819,7 +3819,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
             negate($);
         }
         else {
-            push_symbol(ARCTAN, $);
+            push(ARCTAN, $);
             push(Ynum, $);
             push(Xnum, $);
             list(3, $);
@@ -3869,7 +3869,7 @@ function arctanh($: ScriptVars): void {
     }
 
     if (isplusone(p1) || isminusone(p1)) {
-        push_symbol(ARCTANH, $);
+        push(ARCTANH, $);
         push(p1, $);
         list(2, $);
         return;
@@ -3916,12 +3916,12 @@ function arctanh($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(TANH)) {
+    if (car(p1) == TANH) {
         push(cadr(p1), $);
         return;
     }
 
-    push_symbol(ARCTANH, $);
+    push(ARCTANH, $);
     push(p1, $);
     list(2, $);
 }
@@ -4130,7 +4130,7 @@ function circexp_subst($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(COS)) {
+    if (car(p1) == COS) {
         push_symbol(EXPCOS, $);
         push(cadr(p1), $);
         circexp_subst($);
@@ -4146,7 +4146,7 @@ function circexp_subst($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(TAN)) {
+    if (car(p1) == TAN) {
         push_symbol(EXPTAN, $);
         push(cadr(p1), $);
         circexp_subst($);
@@ -4154,7 +4154,7 @@ function circexp_subst($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(COSH)) {
+    if (car(p1) == COSH) {
         push_symbol(EXPCOSH, $);
         push(cadr(p1), $);
         circexp_subst($);
@@ -4162,7 +4162,7 @@ function circexp_subst($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(SINH)) {
+    if (car(p1) == SINH) {
         push_symbol(EXPSINH, $);
         push(cadr(p1), $);
         circexp_subst($);
@@ -4170,7 +4170,7 @@ function circexp_subst($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(TANH)) {
+    if (car(p1) == TANH) {
         push_symbol(EXPTANH, $);
         push(cadr(p1), $);
         circexp_subst($);
@@ -4493,7 +4493,7 @@ function cosfunc($: ScriptVars): void {
 
     // cos(arctan(y,x)) = x (x^2 + y^2)^(-1/2)
 
-    if (car(p1) == symbol(ARCTAN)) {
+    if (car(p1) == ARCTAN) {
         const X = caddr(p1);
         const Y = cadr(p1);
         push(X, $);
@@ -4512,7 +4512,7 @@ function cosfunc($: ScriptVars): void {
 
     // cos(arcsin(x)) = sqrt(1 - x^2)
 
-    if (car(p1) == symbol(ARCSIN)) {
+    if (car(p1) == ARCSIN) {
         push_integer(1, $);
         push(cadr(p1), $);
         push_integer(2, $);
@@ -4531,7 +4531,7 @@ function cosfunc($: ScriptVars): void {
     let p2 = pop($);
 
     if (!isnum(p2)) {
-        push_symbol(COS, $);
+        push(COS, $);
         push(p1, $);
         list(2, $);
         return;
@@ -4550,7 +4550,7 @@ function cosfunc($: ScriptVars): void {
     p2 = pop($);
 
     if (!(isrational(p2) && isinteger(p2))) {
-        push_symbol(COS, $);
+        push(COS, $);
         push(p1, $);
         list(2, $);
         return;
@@ -4613,7 +4613,7 @@ function cosfunc($: ScriptVars): void {
             push_integer(-1, $);
             break;
         default:
-            push_symbol(COS, $);
+            push(COS, $);
             push(p1, $);
             list(2, $);
             break;
@@ -4651,7 +4651,7 @@ function cosfunc_sum(p1: U, $: ScriptVars): void {
         }
         p2 = cdr(p2);
     }
-    push_symbol(COS, $);
+    push(COS, $);
     push(p1, $);
     list(2, $);
 }
@@ -4713,12 +4713,12 @@ function coshfunc($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ARCCOSH)) {
+    if (car(p1) == ARCCOSH) {
         push(cadr(p1), $);
         return;
     }
 
-    push_symbol(COSH, $);
+    push(COSH, $);
     push(p1, $);
     list(2, $);
 }
@@ -4939,57 +4939,57 @@ function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
         return;
     }
 
-    if (car(F) == symbol(COS)) {
+    if (car(F) == COS) {
         dcos(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(TAN)) {
+    if (car(F) == TAN) {
         dtan(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(ARCSIN)) {
+    if (car(F) == ARCSIN) {
         darcsin(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(ARCCOS)) {
+    if (car(F) == ARCCOS) {
         darccos(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(ARCTAN)) {
+    if (car(F) == ARCTAN) {
         darctan(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(SINH)) {
+    if (car(F) == SINH) {
         dsinh(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(COSH)) {
+    if (car(F) == COSH) {
         dcosh(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(TANH)) {
+    if (car(F) == TANH) {
         dtanh(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(ARCSINH)) {
+    if (car(F) == ARCSINH) {
         darcsinh(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(ARCCOSH)) {
+    if (car(F) == ARCCOSH) {
         darccosh(F, X, $);
         return;
     }
 
-    if (car(F) == symbol(ARCTANH)) {
+    if (car(F) == ARCTANH) {
         darctanh(F, X, $);
         return;
     }
@@ -7643,7 +7643,7 @@ function integral_classify(p: U): number {
     if (p == symbol(LOG))
         return 2;
 
-    if (p == SIN || p == symbol(COS) || p == symbol(TAN))
+    if (p == SIN || p == COS || p == TAN)
         return 4;
 
     return 0;
@@ -10362,7 +10362,7 @@ function sinfunc($: ScriptVars): void {
 
     // sin(arctan(y,x)) = y (x^2 + y^2)^(-1/2)
 
-    if (car(p1) == symbol(ARCTAN)) {
+    if (car(p1) == ARCTAN) {
         const X = caddr(p1);
         const Y = cadr(p1);
         push(Y, $);
@@ -10381,7 +10381,7 @@ function sinfunc($: ScriptVars): void {
 
     // sin(arccos(x)) = sqrt(1 - x^2)
 
-    if (car(p1) == symbol(ARCCOS)) {
+    if (car(p1) == ARCCOS) {
         push_integer(1, $);
         push(cadr(p1), $);
         push_integer(2, $);
@@ -10576,12 +10576,12 @@ function sinhfunc($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ARCSINH)) {
+    if (car(p1) == ARCSINH) {
         push(cadr(p1), $);
         return;
     }
 
-    push_symbol(SINH, $);
+    push(SINH, $);
     push(p1, $);
     list(2, $);
 }
@@ -10761,7 +10761,7 @@ function tanfunc($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ARCTAN)) {
+    if (car(p1) == ARCTAN) {
         push(cadr(p1), $);
         push(caddr(p1), $);
         divide($);
@@ -10776,7 +10776,7 @@ function tanfunc($: ScriptVars): void {
     let p2 = pop($);
 
     if (!isnum(p2)) {
-        push_symbol(TAN, $);
+        push(TAN, $);
         push(p1, $);
         list(2, $);
         return;
@@ -10795,7 +10795,7 @@ function tanfunc($: ScriptVars): void {
     p2 = pop($);
 
     if (!(isrational(p2) && isinteger(p2))) {
-        push_symbol(TAN, $);
+        push(TAN, $);
         push(p1, $);
         list(2, $);
         return;
@@ -10849,7 +10849,7 @@ function tanfunc($: ScriptVars): void {
             negate($);
             break;
         default:
-            push_symbol(TAN, $);
+            push(TAN, $);
             push(p1, $);
             list(2, $);
             break;
@@ -10874,7 +10874,7 @@ function tanfunc_sum(p1: U, $: ScriptVars): void {
         }
         p2 = cdr(p2);
     }
-    push_symbol(TAN, $);
+    push(TAN, $);
     push(p1, $);
     list(2, $);
 }
@@ -10925,12 +10925,12 @@ function tanhfunc($: ScriptVars): void {
         return;
     }
 
-    if (car(p1) == symbol(ARCTANH)) {
+    if (car(p1) == ARCTANH) {
         push(cadr(p1), $);
         return;
     }
 
-    push_symbol(TANH, $);
+    push(TANH, $);
     push(p1, $);
     list(2, $);
 }
@@ -16338,16 +16338,9 @@ const minusone: Rat = create_rat(-1, 1);
 let imaginaryunit: U;
 
 const symtab: { [name: string]: Sym } = {
-    "abs": create_sym_with_handler_func(ABS, eval_abs),
     "adj": create_sym_with_handler_func(ADJ, eval_adj),
     "algebra": create_sym_with_handler_func(ALGEBRA, eval_algebra),
     "and": create_sym_with_handler_func(AND, eval_and),
-    "arccos": create_sym_with_handler_func(ARCCOS, eval_arccos),
-    "arccosh": create_sym_with_handler_func(ARCCOSH, eval_arccosh),
-    "arcsin": create_sym_with_handler_func(ARCSIN, eval_arcsin),
-    "arcsinh": create_sym_with_handler_func(ARCSINH, eval_arcsinh),
-    "arctan": create_sym_with_handler_func(ARCTAN, eval_arctan),
-    "arctanh": create_sym_with_handler_func(ARCTANH, eval_arctanh),
     "arg": create_sym_with_handler_func(ARG, eval_arg),
     "binding": create_sym_with_handler_func(BINDING, eval_binding),
     "ceiling": create_sym_with_handler_func(CEILING, eval_ceiling),
@@ -16358,8 +16351,6 @@ const symtab: { [name: string]: Sym } = {
     "cofactor": create_sym_with_handler_func(COFACTOR, eval_cofactor),
     "conj": create_sym_with_handler_func(CONJ, eval_conj),
     "contract": create_sym_with_handler_func(CONTRACT, eval_contract),
-    "cos": create_sym_with_handler_func(COS, eval_cos),
-    "cosh": create_sym_with_handler_func(COSH, eval_cosh),
     "defint": create_sym_with_handler_func(DEFINT, eval_defint),
     "denominator": create_sym_with_handler_func(DENOMINATOR, eval_denominator),
     "derivative": create_sym_with_handler_func(DERIVATIVE, eval_derivative),
@@ -16373,7 +16364,6 @@ const symtab: { [name: string]: Sym } = {
     "erfc": create_sym_with_handler_func(ERFC, eval_erfc),
     "eval": create_sym_with_handler_func(EVAL, eval_eval),
     "exit": create_sym_with_handler_func(EXIT, eval_exit),
-    "exp": create_sym_with_handler_func(EXP, eval_exp),
     "expcos": create_sym_with_handler_func(EXPCOS, eval_expcos),
     "expcosh": create_sym_with_handler_func(EXPCOSH, eval_expcosh),
     "expsin": create_sym_with_handler_func(EXPSIN, eval_expsin),
@@ -16417,14 +16407,11 @@ const symtab: { [name: string]: Sym } = {
     "run": create_sym_with_handler_func(RUN, eval_run),
     "sgn": create_sym_with_handler_func(SGN, eval_sgn),
     "simplify": create_sym_with_handler_func(SIMPLIFY, eval_simplify),
-    "sinh": create_sym_with_handler_func(SINH, eval_sinh),
     "sqrt": create_sym_with_handler_func(SQRT, eval_sqrt),
     "status": create_sym_with_handler_func(STATUS, eval_status),
     "stop": create_sym_with_handler_func(STOP, eval_stop),
     "subst": create_sym_with_handler_func(SUBST, eval_subst),
     "sum": create_sym_with_handler_func(SUM, eval_sum),
-    "tan": create_sym_with_handler_func(TAN, eval_tan),
-    "tanh": create_sym_with_handler_func(TANH, eval_tanh),
     "taylor": create_sym_with_handler_func(TAYLOR, eval_taylor),
     "test": create_sym_with_handler_func(TEST, eval_test),
     "testeq": create_sym_with_handler_func(TESTEQ, eval_testeq),
@@ -16462,12 +16449,25 @@ const symtab: { [name: string]: Sym } = {
     "$9": create_sym_with_handler_func(ARG9, eval_user_symbol)
 };
 
+symtab[ABS.printname] = create_sym_with_handler_func(ABS.printname, eval_abs);
 symtab[ADD.printname] = create_sym_with_handler_func(ADD.printname, eval_add);
+symtab[ARCCOS.printname] = create_sym_with_handler_func(ARCCOS.printname, eval_arccos);
+symtab[ARCCOSH.printname] = create_sym_with_handler_func(ARCCOSH.printname, eval_arccosh);
+symtab[ARCSIN.printname] = create_sym_with_handler_func(ARCSIN.printname, eval_arcsin);
+symtab[ARCSINH.printname] = create_sym_with_handler_func(ARCSINH.printname, eval_arcsinh);
+symtab[ARCTAN.printname] = create_sym_with_handler_func(ARCTAN.printname, eval_arctan);
+symtab[ARCTANH.printname] = create_sym_with_handler_func(ARCTANH.printname, eval_arctanh);
+symtab[COS.printname] = create_sym_with_handler_func(COS.printname, eval_cos);
+symtab[COSH.printname] = create_sym_with_handler_func(COSH.printname, eval_cosh);
+symtab[EXP.printname] = create_sym_with_handler_func(EXP.printname, eval_exp);
 symtab[MULTIPLY.printname] = create_sym_with_handler_func(MULTIPLY.printname, eval_multiply);
 symtab[POWER.printname] = create_sym_with_handler_func(POWER.printname, eval_power);
 symtab[INDEX.printname] = create_sym_with_handler_func(INDEX.printname, eval_index);
 symtab[SETQ.printname] = create_sym_with_handler_func(SETQ.printname, eval_setq);
 symtab[SIN.printname] = create_sym_with_handler_func(SIN.printname, eval_sin);
+symtab[SINH.printname] = create_sym_with_handler_func(SINH.printname, eval_sinh);
+symtab[TAN.printname] = create_sym_with_handler_func(TAN.printname, eval_tan);
+symtab[TANH.printname] = create_sym_with_handler_func(TANH.printname, eval_tanh);
 
 symtab[PI.printname] = create_sym_with_handler_func(PI.printname, eval_user_symbol);
 

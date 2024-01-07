@@ -4,7 +4,7 @@ import { is_nil } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 
 describe("sandbox", function () {
-    it("Handling middot", function () {
+    it("simplifying expressions containing Uom", function () {
         const lines: string[] = [
             `G30 = algebra([1,1,1],["e1","e2","e3"])`,
             `e1  = G30[1]`,

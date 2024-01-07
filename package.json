@@ -127,7 +127,7 @@
         "@rollup/plugin-typescript": "^11.1.5",
         "@types/chai": "^4.3.11",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^20.10.6",
+        "@types/node": "^20.10.7",
         "@types/rollup-plugin-peer-deps-external": "^2.2.4",
         "@typescript-eslint/eslint-plugin": "^6.18.0",
         "@typescript-eslint/parser": "^6.18.0",
@@ -147,6 +147,7 @@
     "peerDependencies": {
         "math-expression-tree": "^0.9.11",
         "math-expression-atoms": "^0.9.13",
-        "math-expression-context": "0.9.9"
+        "math-expression-context": "^0.9.9",
+        "math-expression-native": "^0.9.8"
     }
 }

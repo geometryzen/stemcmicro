@@ -1,9 +1,8 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor, Uom } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
+import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
-import { Native } from '../native/Native';
-import { is_native_sym, native_sym } from '../native/native_sym';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_imu } from '../operators/imu/is_imu';
 import { assert_sym } from '../operators/sym/assert_sym';

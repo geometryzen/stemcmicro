@@ -58,6 +58,31 @@ describe("atom", function () {
             const value = engine.evaluate(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "abs([object Object])");
+                const lines: string[] = [
+                    `<svg height='41'width='213'>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>a</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='20.65234375'y='26'>b</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='32.65234375'y='26'>s</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='41.9921875'y='26'>(</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='194.58203125'y='26'>)</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='49.984375'y='26'>[</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='57.9765625'y='26'>o</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='69.9765625'y='26'>b</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='81.9765625'y='26'>j</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='88.64453125'y='26'>e</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='99.296875'y='26'>c</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='109.94921875'y='26'>t</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='116.6171875'y='26'> </text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='122.6171875'y='26'>O</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='139.94921875'y='26'>b</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='151.94921875'y='26'>j</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='158.6171875'y='26'>e</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='169.26953125'y='26'>c</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='179.921875'y='26'>t</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;'x='186.58984375'y='26'>]</text>`,
+                    `</svg><br>`
+                ];
+                assert.strictEqual(engine.renderAsString(value, { format: 'SVG' }), lines.join(''));
             }
         }
         engine.release();

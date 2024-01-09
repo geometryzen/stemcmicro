@@ -1173,12 +1173,24 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     }
 
     if (iscons(p)) {
-        if (car(p) == POWER)
+        if (car(p) == POWER) {
             emit_power(p, $, ec);
-        else if (car(p) == ADD || car(p) == MULTIPLY)
+        }
+        else if (car(p) == ADD || car(p) == MULTIPLY) {
             emit_subexpr(p, $, ec);
-        else
+        }
+        else {
             emit_function(p, $, ec);
+        }
+        return;
+    }
+
+    if (is_nil(p)) {
+        throw new Error();
+    }
+
+    if (is_atom(p)) {
+        emit_atom(p, $);
         return;
     }
 }
@@ -1684,6 +1696,11 @@ function emit_symbol_fragment(s: string, k: number, $: StackContext): number {
 
 function emit_blade(blade: Blade, $: StackContext): void {
     const str = blade.toInfixString();
+    emit_roman_string(str, $);
+}
+
+function emit_atom(atom: U, $: StackContext): void {
+    const str = atom.toString();
     emit_roman_string(str, $);
 }
 

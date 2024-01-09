@@ -69,17 +69,17 @@ describe("sandbox", function () {
             `kilogram=uom("kilogram")`,
             `meter=uom("meter")
             second=uom("second")
-            g = 9.81 * (-e2) * meter / second / second
-            m = 10 * kilogram
-            F = m * g
+            gravity = g * (-e2) * meter / second / second
+            mass = M * kilogram
+            F = mass * gravity
             # unit vector up the slope
             es = cos(theta) * e1 + sin(theta) * e2
             # unit vector perpendicular and out of the slope
             en = -sin(theta) * e1 + cos(theta) * e2
             # If the block is not accelerating then the net force must be zero
             NetF = R * en + S * es + F
-            # Component in the plane of the slope must be zero
-            simplify(NetF|es)
+            # Component in the plane of the slope must be zero, display S.
+            S-simplify(NetF|es)
             # Component perpendicular must be zero
             # NetF|en`,
         ];
@@ -90,7 +90,7 @@ describe("sandbox", function () {
         for (const tree of trees) {
             const value = engine.evaluate(tree);
             if (!is_nil(value)) {
-                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-98.100000...*sin(theta)*N");
+                assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "M*g*sin(theta)*N");
             }
         }
         engine.release();

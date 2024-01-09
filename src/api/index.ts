@@ -1,7 +1,7 @@
 import { create_sym, Sym } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_nil, items_to_cons, nil, U } from 'math-expression-tree';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_native_script } from '../parser/parser';
@@ -101,6 +101,7 @@ class NativeExprEngine implements ExprEngine {
             dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector']
         });
         init_env(this.$, {
+            useDefinitions: false
         });
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
@@ -205,7 +206,7 @@ class EigenmathExprEngine implements ExprEngine {
     private readonly $: ScriptVars = new ScriptVars();
     constructor() {
         init(this.$);
-        initscript(this.$);
+        // initscript(this.$);
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
         this.$.defineFunction(name, lambda);

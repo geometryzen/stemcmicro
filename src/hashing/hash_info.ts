@@ -2,9 +2,8 @@ import { is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom } f
 import { is_err } from "../operators/err/is_err";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
-import { TYPEOF_ERR } from "../tree/err/TYPEOF_ERR";
 import { Sym } from "../tree/sym/Sym";
-import { is_cons, is_nil, U } from "../tree/tree";
+import { is_atom, is_cons, is_nil, U } from "../tree/tree";
 
 const KIND_NIL = 0;
 const KIND_CONS = 1;
@@ -14,7 +13,7 @@ type INFO = { kind: KIND, parts: string[] };
 
 export const HASH_BLADE = 'Blade';
 export const HASH_BOO = 'Boo';
-export const HASH_ERR = TYPEOF_ERR;
+export const HASH_ERR = 'Err';
 export const HASH_FLT = 'Flt';
 export const HASH_HYP = 'Hyp';
 export const HASH_IMU = 'Imu';
@@ -24,6 +23,7 @@ export const HASH_SYM = 'Sym';
 export const HASH_TENSOR = 'Tensor';
 export const HASH_UOM = 'Uom';
 export const HASH_ANY = 'U';
+export const HASH_ATOM = 'Atom';
 export const HASH_NIL = 'Nil';
 
 export function hash_binop_atom_atom(opr: Sym, lhs: string, rhs: string): string {
@@ -148,9 +148,6 @@ function hash_info_at_level(expr: U, level: number): INFO {
     if (is_flt(expr)) {
         return { kind: KIND_ATOM, parts: [HASH_FLT] };
     }
-    if (is_nil(expr)) {
-        return { kind: KIND_NIL, parts: [HASH_NIL] };
-    }
     if (is_str(expr)) {
         return { kind: KIND_ATOM, parts: [HASH_STR] };
     }
@@ -162,6 +159,12 @@ function hash_info_at_level(expr: U, level: number): INFO {
     }
     if (is_err(expr)) {
         return { kind: KIND_ATOM, parts: [HASH_ERR] };
+    }
+    if (is_atom(expr)) {
+        return { kind: KIND_ATOM, parts: [HASH_ATOM] };
+    }
+    if (is_nil(expr)) {
+        return { kind: KIND_NIL, parts: [HASH_NIL] };
     }
     throw new Error(`hash_string(${expr})`);
 }

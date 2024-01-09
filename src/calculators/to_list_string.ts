@@ -13,6 +13,6 @@ export function to_list_string(expr: U, $: ExtensionEnv): string {
         return retval;
     }
     else {
-        return "";
+        return `${expr}`;
     }
 }

@@ -145,7 +145,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         return {};
     }
 
-    function selectOperator(key: string, expr: U): Operator<U> {
+    function selectOperator(key: string, expr: U): Operator<U> | undefined {
         const ops = currentOps()[key];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
@@ -156,11 +156,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             throw new SystemError(`No matching operator for key ${key}`);
         }
         else {
-            // eslint-disable-next-line no-console
-            console.warn("expand", native_directives.get(Directive.expanding));
-            // eslint-disable-next-line no-console
-            console.warn("factor", native_directives.get(Directive.factoring));
-            throw new SystemError(`No operators for key ${key} in current mode.`);
+            return void 0;
         }
     }
 
@@ -510,7 +506,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         negate(x: U): U {
             return $.multiply(negOne, x);
         },
-        operatorFor(expr: U): Operator<U> {
+        operatorFor(expr: U): Operator<U> | undefined {
             /*
             if (is_imu(expr)) {
                 // This is not good 
@@ -611,15 +607,30 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         toInfixString(expr: U): string {
             const op = $.operatorFor(expr);
-            return op.toInfixString(expr);
+            if (op) {
+                return op.toInfixString(expr);
+            }
+            else {
+                return `${expr}`;
+            }
         },
         toLatexString(expr: U): string {
             const op = $.operatorFor(expr);
-            return op.toLatexString(expr);
+            if (op) {
+                return op.toLatexString(expr);
+            }
+            else {
+                return `${expr}`;
+            }
         },
         toSExprString(expr: U): string {
             const op = $.operatorFor(expr);
-            return op.toListString(expr);
+            if (op) {
+                return op.toListString(expr);
+            }
+            else {
+                return `${expr}`;
+            }
         },
         transform(expr: U): [TFLAGS, U] {
             // console.lg("transform", expr.toString(), "is_sym", is_sym(expr));
@@ -696,7 +707,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             else {
                 // If it's not a list or nil, then it's an atom.
                 const op = $.operatorFor(expr);
-                return op.transform(expr);
+                if (op) {
+                    return op.transform(expr);
+                }
+                else {
+                    return [TFLAG_NONE, expr];
+                }
             }
         },
         valueOf(expr: U): U {

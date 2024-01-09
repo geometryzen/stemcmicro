@@ -35,6 +35,7 @@
         "unit-api": "mocha 'units/api.spec.ts'",
         "unit-arccos": "mocha 'units/arccos.spec.ts'",
         "unit-arg": "mocha 'units/arg.spec.ts'",
+        "unit-atom": "mocha 'units/atom.spec.ts'",
         "unit-calculus": "mocha 'units/calculus.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
         "unit-clock": "mocha 'units/clock.spec.ts'",

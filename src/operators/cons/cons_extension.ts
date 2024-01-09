@@ -94,7 +94,12 @@ class ConsExtension implements Extension<Cons> {
             if (is_nil(expr.cdr)) {
                 // We are being asked to evaluate a list containing a single item.
                 // That's just the evaluation of the item.
-                return hook(operator.valueOf(op), "B");
+                if (operator) {
+                    return hook(operator.valueOf(op), "A");
+                }
+                else {
+                    return hook(op, "B");
+                }
             }
             else {
                 return hook(expr, "C");

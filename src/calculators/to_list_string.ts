@@ -1,4 +1,4 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { ExtensionEnv, Operator } from "../env/ExtensionEnv";
 import { U } from "../tree/tree";
 
 /**
@@ -7,7 +7,12 @@ import { U } from "../tree/tree";
  * @param expr The expression to be serialized.
  */
 export function to_list_string(expr: U, $: ExtensionEnv): string {
-    const op = $.operatorFor(expr);
-    const retval = op.toListString(expr);
-    return retval;
+    const op: Operator<U> | undefined = $.operatorFor(expr);
+    if (op) {
+        const retval = op.toListString(expr);
+        return retval;
+    }
+    else {
+        return "";
+    }
 }

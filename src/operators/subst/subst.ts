@@ -40,6 +40,11 @@ export function subst(expr: U, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
     }
     else {
         const op = $.operatorFor(expr);
-        return op.subst(expr, oldExpr, newExpr);
+        if (op) {
+            return op.subst(expr, oldExpr, newExpr);
+        }
+        else {
+            return expr;
+        }
     }
 }

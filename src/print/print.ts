@@ -67,7 +67,7 @@ import { negOne, one, Rat, zero } from '../tree/rat/Rat';
 import { assert_str } from '../tree/str/assert_str';
 import { create_sym, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, Cons, is_cons, is_nil, nil, U } from '../tree/tree';
+import { car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from '../tree/tree';
 import { print_number } from './print_number';
 import { render_as_ascii } from './render_as_ascii';
 import { render_as_sexpr } from './render_as_sexpr';
@@ -2133,9 +2133,6 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): stri
         if (is_hyp(expr)) {
             return expr.printname;
         }
-        if (is_nil(expr)) {
-            return print_str($.getSymbolPrintName(native_sym(Native.NIL)));
-        }
         if (is_err(expr)) {
             return ENGLISH_UNDEFINED;
         }
@@ -2146,6 +2143,22 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): stri
             else {
                 return print_str($.getSymbolPrintName(MATH_IMU));
             }
+        }
+        if (is_atom(expr)) {
+            // A user-defined atom
+            switch (defs.printMode) {
+                case 'PRINTMODE_ASCII':
+                case 'PRINTMODE_HUMAN':
+                case 'PRINTMODE_INFIX':
+                case 'PRINTMODE_LATEX':
+                case 'PRINTMODE_SEXPR':
+                default: {
+                    return expr.toString();
+                }
+            }
+        }
+        if (is_nil(expr)) {
+            return print_str($.getSymbolPrintName(native_sym(Native.NIL)));
         }
         throw new Error(`${expr} ???`);
     }

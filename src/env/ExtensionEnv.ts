@@ -371,8 +371,9 @@ export interface ExtensionEnv extends ExprContext {
     /**
      * Returns the operator for interacting with the expression.
      * Operator(s) are reference counted and so the operator MUST be released when no longer needed.
+     * User-defined atoms may not have an operator.
      */
-    operatorFor(expr: U): Operator<U>;
+    operatorFor(expr: U): Operator<U> | undefined;
     /**
      *
      */

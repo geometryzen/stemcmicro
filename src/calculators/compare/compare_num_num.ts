@@ -1,7 +1,5 @@
+import { is_flt, is_rat, Num } from "math-expression-atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { is_flt } from "../../operators/flt/flt_extension";
-import { is_rat } from "../../operators/rat/rat_extension";
-import { Num } from "../../tree/num/Num";
 
 export function compare_num_num(lhs: Num, rhs: Num): Sign {
     if (is_rat(lhs) && is_rat(rhs)) {

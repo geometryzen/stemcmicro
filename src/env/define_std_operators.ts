@@ -1,4 +1,4 @@
-import { is_blade } from 'math-expression-atoms';
+import { is_blade, is_flt } from 'math-expression-atoms';
 import { Eval_approxratio } from '../approxratio';
 import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
@@ -140,7 +140,7 @@ import { factor_varargs } from '../operators/factor/factor_varargs';
 import { factorial_varargs } from '../operators/factorial/factorial_varargs';
 import { float_varargs } from '../operators/float/float_varargs';
 import { floor_varargs } from '../operators/floor/floor_varargs';
-import { flt_extension, is_flt } from '../operators/flt/flt_extension';
+import { flt_extension } from '../operators/flt/flt_extension';
 import { for_varargs } from '../operators/for/for_varargs';
 import { gamma_varargs } from '../operators/gamma/gamma_varargs';
 import { gcd_varargs } from '../operators/gcd/gcd_varargs';

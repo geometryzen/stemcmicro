@@ -1,7 +1,7 @@
 import { Directive, Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_RAT } from "../../hashing/hash_info";
 import { create_flt } from '../../tree/flt/Flt';
-import { one, Rat } from "../../tree/rat/Rat";
+import { Rat } from "../../tree/rat/Rat";
 import { cons, Cons, is_cons, is_singleton, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from '../helpers/ExtensionOperatorBuilder';
 
@@ -15,7 +15,7 @@ class RatExtension implements Extension<Rat> {
         // Nothing to see here.
     }
     get key(): 'Rat' {
-        return one.name;
+        return 'Rat';
     }
     get hash(): 'Rat' {
         return HASH_RAT;

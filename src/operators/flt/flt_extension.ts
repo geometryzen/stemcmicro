@@ -1,12 +1,9 @@
+import { Flt, is_flt } from "math-expression-atoms";
+import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { number_to_floating_point_string } from "../../runtime/number_to_floating_point_string";
-import { Flt, oneAsFlt } from "../../tree/flt/Flt";
-import { cons, Cons, U } from "../../tree/tree";
+import { oneAsFlt } from "../../tree/flt/Flt";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
-
-export function is_flt(p: unknown): p is Flt {
-    return p instanceof Flt;
-}
 
 export function compare_flts(lhs: Flt, rhs: Flt): Sign {
     if (lhs.d < rhs.d) {
@@ -38,7 +35,7 @@ export class FltExtension implements Extension<Flt> {
     transform(expr: U): [TFLAGS, U] {
         return [expr instanceof Flt ? TFLAG_HALT : TFLAG_NONE, expr];
     }
-    isKind(arg: unknown): arg is Flt {
+    isKind(arg: U): arg is Flt {
         return is_flt(arg);
     }
     subst(expr: Flt, oldExpr: U, newExpr: U): U {

@@ -1,10 +1,10 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT } from "../../env/ExtensionEnv";
+import { is_flt } from "math-expression-atoms";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { NUMBER } from "../../runtime/constants";
 import { cadr } from "../../tree/helpers";
 import { one, Rat, zero } from "../../tree/rat/Rat";
 import { Cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/flt_extension";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { is_rat } from "../rat/rat_extension";
 

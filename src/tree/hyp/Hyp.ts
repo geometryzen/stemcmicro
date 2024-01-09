@@ -1,11 +1,11 @@
 import { Atom } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 
-export class Hyp extends Atom<'Hyp'> {
+export class Hyp extends Atom {
     constructor(public readonly printname: string, pos?: number, end?: number) {
         super('Hyp', pos, end);
     }
-    equals(other: U): boolean {
+    override equals(other: U): boolean {
         if (other instanceof Hyp) {
             return this.equalsHyp(other);
         }
@@ -23,7 +23,7 @@ export class Hyp extends Atom<'Hyp'> {
     toListString(): string {
         throw new Error("Hyp Method not implemented.");
     }
-    toString(): string {
+    override toString(): string {
         return `${this.name}()`;
     }
 }

@@ -1,6 +1,2 @@
-import { Rat } from "../../tree/rat/Rat";
-import { U } from "../../tree/tree";
+export { is_rat } from 'math-expression-atoms';
 
-export function is_rat(expr: U): expr is Rat {
-    return expr instanceof Rat;
-}

@@ -1,11 +1,11 @@
-import { TFLAG_DIFF, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { is_flt } from "math-expression-atoms";
+import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_cons, HASH_FLT } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/flt_extension";
 import { and } from "../helpers/and";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";

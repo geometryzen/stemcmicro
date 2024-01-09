@@ -1,5 +1,5 @@
-import { Cons } from "../../tree/tree";
-import { is_flt } from "../flt/flt_extension";
+import { is_flt } from "math-expression-atoms";
+import { Cons } from "math-expression-tree";
 import { is_add_2_any_any } from "./is_add_2_any_any";
 
 export function is_add_2_flt_flt(expr: Cons): boolean {

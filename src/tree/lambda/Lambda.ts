@@ -3,7 +3,7 @@ import { LambdaExpr } from 'math-expression-context';
 import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 
-export class Lambda extends Atom<'Lambda'> {
+export class Lambda extends Atom {
     readonly #hash: string;
     readonly #impl: LambdaExpr;
     constructor(impl: LambdaExpr, hash: string, pos?: number, end?: number) {
@@ -17,7 +17,7 @@ export class Lambda extends Atom<'Lambda'> {
     evaluate(argList: Cons, $: ExtensionEnv): U {
         return this.#impl(argList, $);
     }
-    equals(other: U): boolean {
+    override equals(other: U): boolean {
         if (this === other) {
             return true;
         }
@@ -28,7 +28,7 @@ export class Lambda extends Atom<'Lambda'> {
             return false;
         }
     }
-    toString(): string {
+    override toString(): string {
         return '(lambda ...)';
     }
 }

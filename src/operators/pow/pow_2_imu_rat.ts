@@ -1,13 +1,14 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { hash_binop_atom_atom, HASH_IMU, HASH_RAT } from "../../hashing/hash_info";
-import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { MATH_POW } from "../../runtime/ns_math";
+import { Imu } from "../../tree/imu/Imu";
 import { negOne, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
+import { is_imu } from "../imu/is_imu";
 import { is_rat } from "../rat/rat_extension";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -16,7 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = IMU_TYPE;
+type LHS = Imu;
 type RHS = Rat;
 type EXP = BCons<Sym, LHS, RHS>;
 

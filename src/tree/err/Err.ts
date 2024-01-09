@@ -8,7 +8,7 @@ import { TYPEOF_ERR } from "./TYPEOF_ERR";
  * An error that may be used as a return value. This MUST not be thrown.
  * Err may be considered to be synonymous with undefined.
  */
-export class Err extends Atom<'Err'> {
+export class Err extends Atom {
     #cause: U;
     constructor(cause: U, pos?: number, end?: number) {
         super(TYPEOF_ERR, pos, end);
@@ -17,7 +17,7 @@ export class Err extends Atom<'Err'> {
     get cause(): U {
         return this.#cause;
     }
-    equals(other: U): boolean {
+    override equals(other: U): boolean {
         if (this === other) {
             return true;
         }
@@ -31,7 +31,7 @@ export class Err extends Atom<'Err'> {
     equalsErr(other: Err): boolean {
         return this.cause.equals(other.cause);
     }
-    toString(): string {
+    override toString(): string {
         return `${TYPEOF_ERR}(${this.#cause.toString()})`;
     }
     toInfixString(): string {

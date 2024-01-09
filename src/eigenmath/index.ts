@@ -7,12 +7,13 @@ import { convertMetricToNative } from '../operators/algebra/create_algebra_as_te
 import { is_imu } from '../operators/imu/is_imu';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
+import { assert_cons } from '../tree/cons/assert_cons';
 import { Imu } from '../tree/imu/Imu';
 
-function create_sym_with_handler_func(printname: string, func: (expr: Cons, $: ScriptVars) => void): Sym {
+function create_sym_with_handler_func(printname: string, func: (expr: Cons | Sym, $: ScriptVars) => void): Sym {
     // By using the global cache of symbols, we are able to evaluate expressions parsed by other engines.
     const sym = create_sym(printname);
-    sym.func = func as unknown as (expr: Cons, $: unknown) => void;
+    sym.func = func as unknown as (expr: U, $: unknown) => void;
     return sym;
 }
 
@@ -2605,7 +2606,7 @@ function equal(p1: U, p2: U): boolean {
     return cmp(p1, p2) == 0;
 }
 
-function eval_abs(expr: Cons, $: ScriptVars): void {
+function eval_abs(expr: U, $: ScriptVars): void {
     push(cadr(expr), $);
     evalf($);
     absfunc($);
@@ -2691,7 +2692,7 @@ function absfunc($: ScriptVars): void {
     list(2, $);
 }
 
-function eval_add(p1: Cons, $: ScriptVars): void {
+function eval_add(p1: U, $: ScriptVars): void {
     const h = $.stack.length;
     $.expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
@@ -3078,7 +3079,7 @@ function add_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
     push(sum, $);
 }
 
-function eval_adj(p1: Cons, $: ScriptVars): void {
+function eval_adj(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     adj($);
@@ -3137,14 +3138,14 @@ function adj($: ScriptVars): void {
     push(p2, $);
 }
 
-function eval_algebra(expr: Cons, $: ScriptVars): void {
-    push(expr.item(1), $);
+function eval_algebra(expr: U, $: ScriptVars): void {
+    push(assert_cons(expr).item(1), $);
     evalf($);
     const metric = pop($);
     if (!is_tensor(metric)) {
         stopf('');
     }
-    push(expr.item(2), $);
+    push(assert_cons(expr).item(2), $);
     evalf($);
     const labels = pop($);
     if (!is_tensor(labels)) {
@@ -3324,7 +3325,7 @@ function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $:
     return new Tensor(dims, elems);
 }
 
-function eval_and(p1: Cons, $: ScriptVars): void {
+function eval_and(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
     while (iscons(p1)) {
         push(car(p1), $);
@@ -3350,7 +3351,7 @@ export function evaluate_expression(expression: U, $: ScriptVars): U {
     return pop($);
 }
 
-function eval_arccos(p1: Cons, $: ScriptVars) {
+function eval_arccos(p1: U, $: ScriptVars) {
     push(cadr(p1), $);
     evalf($);
     arccos($);
@@ -5574,7 +5575,7 @@ function eval_dot(p1: U, $: ScriptVars): void {
     eval_inner(p1, $);
 }
 
-function eval_draw(expr: Cons, $: ScriptVars): void {
+function eval_draw(expr: U, $: ScriptVars): void {
 
     if ($.drawing) {
         // Do nothing
@@ -5583,8 +5584,8 @@ function eval_draw(expr: Cons, $: ScriptVars): void {
         $.drawing = 1;
         try {
 
-            const F = expr.item(1);
-            let T = expr.item(2);
+            const F = assert_cons(expr).item(1);
+            let T = assert_cons(expr).item(2);
 
             if (!(issymbol(T) && isusersymbol(T))) {
                 T = symbol(X_LOWER);
@@ -8249,7 +8250,7 @@ function mod_integers(p1: Rat, p2: Rat, $: ScriptVars): void {
     push_bignum(p1.sign, a, b, $);
 }
 
-function eval_multiply(p1: Cons, $: ScriptVars): void {
+function eval_multiply(p1: U, $: ScriptVars): void {
     // console.lg(`eval_multiply(${p1})`);
     const h = $.stack.length;
     $.expanding--; // undo expanding++ in evalf
@@ -9804,7 +9805,7 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
  * @param expr 
  * @param $ 
  */
-function eval_run(expr: Cons, $: ScriptVars): void {
+function eval_run(expr: U, $: ScriptVars): void {
 
     push(cadr(expr), $);
     evalf($);
@@ -11212,7 +11213,7 @@ function transpose(n: number, m: number, $: ScriptVars): void {
     push(p2, $);
 }
 
-function eval_unit(p1: Cons, $: ScriptVars): void {
+function eval_unit(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
     evalf($);
@@ -11239,7 +11240,7 @@ function eval_unit(p1: Cons, $: ScriptVars): void {
     push(M, $);
 }
 
-function eval_uom(p1: Cons, $: ScriptVars): void {
+function eval_uom(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
     evalf($);
@@ -16341,8 +16342,8 @@ export class ScriptVars implements ExprContext {
      * 
      */
     defineFunction(name: string, lambda: LambdaExpr): void {
-        const handler = (expr: Cons, $: ScriptVars) => {
-            const retval = lambda(expr.argList, $);
+        const handler = (expr: U, $: ScriptVars) => {
+            const retval = lambda(assert_cons(expr).argList, $);
             push(retval, $);
         };
         symtab[name] = create_sym_with_handler_func(name, handler);

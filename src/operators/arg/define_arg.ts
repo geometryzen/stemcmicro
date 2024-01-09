@@ -1,3 +1,4 @@
+import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { subtract } from '../../calculators/sub/subtract';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { equaln, is_num_and_equal_one_half, is_num_and_gt_zero } from '../../is';
@@ -14,7 +15,6 @@ import { Err } from '../../tree/err/Err';
 import { piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { half, zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { MATH_EXP } from '../exp/MATH_EXP';
 import { is_flt } from '../flt/is_flt';
 import { is_unaop } from '../helpers/is_unaop';

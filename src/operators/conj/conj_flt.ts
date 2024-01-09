@@ -1,8 +1,8 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { is_flt } from "math-expression-atoms";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { is_flt } from "../flt/flt_extension";
 import { Function1 } from "../helpers/Function1";
 import { MATH_CONJ } from "./MATH_CONJ";
 

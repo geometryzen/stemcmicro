@@ -1,3 +1,4 @@
+import { is_blade } from "math-expression-atoms";
 import { count_factors } from "../../calculators/count_factors";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
@@ -42,6 +43,9 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
+ * (re (* ...))
+ * 
+ * The strategy is to remove factors which are themselves real and treat them as scalars.
  */
 class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
@@ -49,7 +53,7 @@ class Op extends CompositeOperator {
     }
     transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg("innerExpr", this.$.toSExprString(innerExpr));
+        // console.lg("opr", $.toSExprString(opr), "innerExpr", $.toSExprString(innerExpr), "outerExpr", $.toSExprString(outerExpr));
         const count_imu = count_factors(innerExpr, is_imu);
         if (count_imu > 0) {
             const z = remove_factors(innerExpr, is_imu);
@@ -129,6 +133,11 @@ class Op extends CompositeOperator {
                     cs.push(factor);
                 }
                 else if (is_uom(factor)) {
+                    // console.lg("Uom factor is real:", $.toInfixString(factor));
+                    rs.push(factor);
+                }
+                else if (is_blade(factor)) {
+                    // console.lg("Blade factor is real:", $.toInfixString(factor));
                     rs.push(factor);
                 }
                 else {
@@ -140,6 +149,15 @@ class Op extends CompositeOperator {
                 }
             }
         });
+        // console.lg(`argList.length=${innerExpr.argList.length}`);
+        // console.lg(`rs.length=${rs.length}`);
+        // console.lg(`cs.length=${cs.length}`);
+        if (cs.length === 0) {
+            // Everything is real. We can throw away the (re ...) wrapper.
+            const A = multiply_factors(rs, $);
+            // console.lg("A", $.toInfixString(A));
+            return [TFLAG_DIFF, A];
+        }
         const A = multiply_factors(rs, $);
         // console.lg("A", $.toInfixString(A));
         const B = multiply_factors(cs, $);

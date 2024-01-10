@@ -64,6 +64,8 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
                 throw new Error(`changedR = ${changedR} newExpr=${rhs} oldExpr=${m.rhs}`);
             }
             */
+            // console.lg(`${$.toInfixString(m.lhs)} becomes lhs=>${$.toInfixString(lhs)}, flagsL=${flagsL}`);
+            // console.lg(`${$.toInfixString(m.rhs)} becomes rhs=>${$.toInfixString(rhs)}, flagsR=${flagsR}`);
             if (diffFlag(flagsL) || diffFlag(flagsR)) {
                 return [TFLAG_DIFF, $.valueOf(items_to_cons(m.opr, lhs, rhs))];
             }

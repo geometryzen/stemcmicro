@@ -38,7 +38,8 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         }
         else if ($.isreal(arg)) {
             // The arg could still be zero, undefined, or pi.
-            return [TFLAG_DIFF, expr];
+            // But we don't know the sign.
+            return [TFLAG_NONE, expr];
         }
         else {
             return [TFLAG_NONE, expr];

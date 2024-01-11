@@ -1,3 +1,4 @@
+import { Blade, is_blade } from 'math-expression-atoms';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
@@ -99,7 +100,7 @@ function printchar(character: string) {
 }
 
 export function render_as_ascii(p: U, $: ExtensionEnv): string {
-    // console.lg("render_as_ascii", $.toInfixString(p));
+    // console.lg(`render_as_ascii: ${p}`);
     yindex = 0;
     level = 0;
     emit_x = 0;
@@ -120,7 +121,7 @@ export function render_as_ascii(p: U, $: ExtensionEnv): string {
 }
 
 function emit_top_expr(p: U, $: ExtensionEnv): void {
-    // console.lg("emi_top_expr", $.toInfixString(p));
+    // console.lg(`emit_top_expr:   ${p}`);
     if (car(p).equals(ASSIGN)) {
         emit_expr(cadr(p), $);
         __emit_str(' = ');
@@ -159,7 +160,7 @@ function will_be_displayed_as_fraction(p: U, $: ExtensionEnv): boolean {
 }
 
 function emit_expr(p: U, $: ExtensionEnv): void {
-    // console.lg("emit_expr", $.toInfixString(p));
+    // console.lg(`emit_expr:       ${p}`);
     //  if (level > 0) {
     //    printexpr(p)
     //    return
@@ -242,7 +243,7 @@ function __is_negative(p: U): boolean {
 }
 
 function emit_term(p: U, $: ExtensionEnv) {
-    // console.lg("emit_term", $.toInfixString(p));
+    // console.lg(`emit_term:       ${p}`);
     if (is_multiply(p)) {
         const n = count_denominators(p, $);
         if (n && level === 0) {
@@ -281,7 +282,8 @@ function count_denominators(p: U, $: ExtensionEnv) {
 }
 
 // n is the number of denominators, not counting a fraction like 1/2
-function emit_multiply(p: U, n: number, $: ExtensionEnv) {
+function emit_multiply(p: Cons, n: number, $: ExtensionEnv) {
+    // console.lg(`emit_multiply:   ${p} n=${n}`);
     if (n === 0) {
         p = cdr(p);
         if ($.isone(car(p)) || is_num_and_eq_minus_one(car(p))) {
@@ -313,6 +315,7 @@ function emit_multiply(p: U, n: number, $: ExtensionEnv) {
 
 // sign of term has already been emitted
 function emit_fraction(p: U, d: number, $: ExtensionEnv) {
+    // console.lg(`emit_fraction:    ${p}`);
     let p1: U, p2: U;
     let count = 0;
     let k1 = 0;
@@ -486,7 +489,7 @@ function emit_denominators(p: U, $: ExtensionEnv) {
 }
 
 function emit_factor(p: U, $: ExtensionEnv) {
-    // console.lg("emit_factor", $.toInfixString(p));
+    // console.lg(`emit_factor:     ${p}`);
     if (is_tensor(p)) {
         if (level === 0) {
             //emit_tensor(p)
@@ -538,6 +541,10 @@ function emit_factor(p: U, $: ExtensionEnv) {
 
     if (is_str(p)) {
         emit_string(p);
+    }
+
+    if (is_blade(p)) {
+        emit_blade(p);
     }
 }
 
@@ -792,7 +799,13 @@ function emit_grouped_expr(p: U, $: ExtensionEnv) {
     __emit_char(')');
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function emit_blade(blade: Blade): void {
+    const representation = blade.toInfixString();
+    for (let i = 0; i < representation.length; i++) {
+        __emit_char(representation[i]);
+    }
+}
+
 function emit_symbol(sym: Sym, $: ExtensionEnv): void {
     // console.lg("emit_symbol", $.toInfixString(sym), $.getSymbolPrintName(sym));
     if (is_base_of_natural_logarithm(sym)) {

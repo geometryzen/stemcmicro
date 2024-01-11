@@ -10,29 +10,16 @@ import { is_rat } from '../rat/is_rat';
 import { is_tensor } from '../tensor/is_tensor';
 
 export function Eval_float(expr: Cons, $: ExtensionEnv): U {
-    // console.lg("Eval_float", render_as_infix(expr, $));
-    // console.lg("Eval_float", render_as_sexpr(expr, $));
-    $.pushDirective(Directive.evaluatingAsFloat, true);
-    try {
-        const A = cadr(expr);
-        // console.lg("A", render_as_infix(A, $), JSON.stringify(A));
-        if (is_base_of_natural_logarithm(A)) {
-            // console.lg("A is the base of natural logs.");
-        }
-        if (is_pi(A)) {
-            // console.lg("A is pi");
-        }
-        const B = $.valueOf(A);
-        // console.lg("B", render_as_infix(B, $));
-        const C = evaluate_as_float(B, $);
-        // console.lg("C", render_as_infix(C, $));
-        const D = $.valueOf(C);
-        // console.lg("D", render_as_infix(D, $));
-        return D;
-    }
-    finally {
-        $.popDirective();
-    }
+    // console.lg("Eval_float", $.toInfixString(expr));
+    const A = cadr(expr);
+    // console.lg("A", $.toInfixString(A));
+    const B = $.valueOf(A);
+    // console.lg("B", $.toInfixString(B));
+    const C = evaluate_as_float(B, $);
+    // console.lg("C", $.toInfixString(C));
+    const D = $.valueOf(C);
+    // console.lg("D", $.toInfixString(D));
+    return D;
 }
 
 /**

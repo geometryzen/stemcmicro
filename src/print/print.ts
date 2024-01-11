@@ -383,6 +383,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
  * @returns 
  */
 export function render_using_non_sexpr_print_mode(expr: U, $: ExtensionEnv): string {
+    // console.lg(`render_using_non_sexpr_print_mode: ${expr}`);
     return print_additive_expr(expr, $);
 }
 
@@ -419,6 +420,7 @@ export function print_additive_expr(p: U, $: ExtensionEnv): string {
     }
     else {
         if (sign_of_term(p) === '-') {
+            // console.lg(`${p} is negative`);
             str += print_str('-');
         }
         str += print_multiplicative_expr(p, $);
@@ -452,7 +454,13 @@ export function sign_of_term(term: U): '+' | '-' {
     }
 }
 
+/**
+ * WARNING: This function treats (* -1 ...) or (* -1.0 ...) as (* ...).
+ * In other words, it skips over the first argument when it is Rat(-1) or Flt(-1).
+ * This means that 
+ */
 function print_multiply_when_no_denominators(expr: Cons, $: ExtensionEnv) {
+    // console.lg(`print_multiply_when_no_denominators: ${expr}`);
     let denom = '';
     let origAccumulator = '';
     let p = cdr(expr);
@@ -551,7 +559,9 @@ export function print_multiplicative_expr(expr: U, $: ExtensionEnv): string {
         if (any_denominators(expr, $)) {
             return print_a_over_b(expr, $);
         }
-        return print_multiply_when_no_denominators(expr, $);
+        else {
+            return print_multiply_when_no_denominators(expr, $);
+        }
     }
     else {
         return print_outer_expr(expr, false, false, $);

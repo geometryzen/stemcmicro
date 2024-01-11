@@ -4,6 +4,7 @@ import { U } from "../tree/tree";
 import { render_using_non_sexpr_print_mode } from "./print";
 
 export function render_as_infix(expr: U, $: ExtensionEnv): string {
+    // console.lg(`render_as_infix: ${expr}`);
     const codeGen = defs.codeGen;
     const printMode = defs.printMode;
 

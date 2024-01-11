@@ -118,7 +118,6 @@ class NativeExprEngine implements ExprEngine {
         const { value } = transform_tree(expr, {}, this.$);
         return value;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         this.$.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
         this.$.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);

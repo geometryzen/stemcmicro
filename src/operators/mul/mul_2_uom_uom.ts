@@ -1,5 +1,5 @@
 
-import { Uom } from "math-expression-atoms";
+import { create_rat, Uom } from "math-expression-atoms";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_UOM } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -25,7 +25,13 @@ class Op extends Function2<Uom, Uom> implements Operator<Cons> {
         this.hash = hash_binop_atom_atom(MATH_MUL, HASH_UOM, HASH_UOM);
     }
     transform2(opr: Sym, lhs: Uom, rhs: Uom): [TFLAGS, U] {
-        return [TFLAG_DIFF, lhs.mul(rhs)];
+        const uom = lhs.mul(rhs);
+        if (uom.isOne()) {
+            return [TFLAG_DIFF, create_rat(1, 1)];
+        }
+        else {
+            return [TFLAG_DIFF, uom];
+        }
     }
 }
 

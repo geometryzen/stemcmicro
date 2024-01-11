@@ -306,8 +306,8 @@ describe("float", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(* -1.0 e2 )");
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "-e2*1");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(* -1.0 e2)");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "-e2");
         engine.release();
     });
     xit("float(Fg/scaling)", function () {

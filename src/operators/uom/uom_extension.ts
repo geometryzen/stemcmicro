@@ -1,6 +1,6 @@
-import { Uom } from "math-expression-atoms";
+import { create_rat, Uom } from "math-expression-atoms";
 import { cons, Cons, U } from "math-expression-tree";
-import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
@@ -41,21 +41,29 @@ class UomExtension implements Extension<Uom> {
         return expr;
     }
     toInfixString(uom: Uom): string {
+        // console.lg(`UomExtension.toInfixString()`);
         return uom.toInfixString();
     }
     toLatexString(uom: Uom): string {
-        // TODO: Can we do better?
+        // console.lg(`UomExtension.toLaTeXString()`);
         return uom.toInfixString();
     }
     toListString(uom: Uom): string {
-        return uom.toListString();
+        // console.lg(`UomExtension.toListString()`);
+        return uom.toString(10, false);
     }
     evaluate(expr: U, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(expr, argList));
     }
     transform(expr: U): [TFLAGS, U] {
+        // console.lg(`UomExtension.transform()`);
         if (is_uom(expr)) {
-            return [TFLAG_HALT, expr];
+            if (expr.isOne()) {
+                return [TFLAG_DIFF, create_rat(1, 1)];
+            }
+            else {
+                return [TFLAG_HALT, expr];
+            }
         }
         return [TFLAG_NONE, expr];
     }

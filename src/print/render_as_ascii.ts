@@ -1,4 +1,4 @@
-import { Blade, is_blade } from 'math-expression-atoms';
+import { Blade, is_blade, is_uom, Uom } from 'math-expression-atoms';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
@@ -546,6 +546,10 @@ function emit_factor(p: U, $: ExtensionEnv) {
     if (is_blade(p)) {
         emit_blade(p);
     }
+
+    if (is_uom(p)) {
+        emit_uom(p);
+    }
 }
 
 function emit_numerical_fraction(num: Num, $: ExtensionEnv): void {
@@ -801,6 +805,13 @@ function emit_grouped_expr(p: U, $: ExtensionEnv) {
 
 function emit_blade(blade: Blade): void {
     const representation = blade.toInfixString();
+    for (let i = 0; i < representation.length; i++) {
+        __emit_char(representation[i]);
+    }
+}
+
+function emit_uom(uom: Uom): void {
+    const representation = uom.toString(10, false);
     for (let i = 0; i < representation.length; i++) {
         __emit_char(representation[i]);
     }

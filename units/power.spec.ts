@@ -1,4 +1,6 @@
 import { assert } from "chai";
+import { is_nil, U } from "math-expression-tree";
+import { create_engine, ExprEngine } from "../src/api";
 import { Directive } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -298,6 +300,115 @@ describe("Exponentiation", function () {
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
+        engine.release();
+    });
+});
+
+describe("Free Body Diagram", function () {
+    it("A", function () {
+        const lines: string[] = [
+            `1/(1/x)`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "x");
+        engine.release();
+    });
+    it("B", function () {
+        const lines: string[] = [
+            `G20=algebra([1],["e"])`,
+            `e=G20[1]`,
+            `1/e`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "e");
+        engine.release();
+    });
+    it("C", function () {
+        const lines: string[] = [
+            `G20=algebra([1],["e"])`,
+            `e=G20[1]`,
+            `1/(1/e)`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "e");
+        engine.release();
+    });
+    it("D", function () {
+        const lines: string[] = [
+            `G20=algebra([1,1],["e1","e2"])`,
+            `e1=G20[1]`,
+            `e2=G20[2]`,
+            `ag = g * (-e2)`,
+            `Fg = m * ag`,
+            `es=cos(theta)*e1+sin(theta)*e2`,
+            `en=-sin(theta)*e1+cos(theta)*e2`,
+            `Fn=K*en`,
+            `Fs=S*es`,
+            `Fnet=Fn+Fs+Fg`,
+            `S=S-simplify(es|Fnet)`,
+            `K=K-simplify(en|Fnet)`,
+            `Fn=K*en`,
+            `Fs=S*es`,
+            `Fn`,
+            `Fs`,
+            `Fg`,
+            `Fnet=simplify(Fn+Fs+Fg)`,
+            `scaling=g*m`,
+            `float(Fg/scaling)`,
+            `float(Fn/scaling)`,
+            `float(Fs/scaling)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 6);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "-g*m*cos(theta)*sin(theta)*e1+g*m*cos(theta)**2*e2");
+        assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), "g*m*cos(theta)*sin(theta)*e1+g*m*sin(theta)**2*e2");
+        assert.strictEqual(engine.renderAsString(values[2], { format: 'Infix' }), "-g*m*e2");
+        assert.strictEqual(engine.renderAsString(values[3], { format: 'Infix' }), "-e2");
+        assert.strictEqual(engine.renderAsString(values[4], { format: 'Infix' }), "-cos(theta)*sin(theta)*e1+cos(theta)**2.0*e2");
+        assert.strictEqual(engine.renderAsString(values[5], { format: 'Infix' }), "cos(theta)*sin(theta)*e1+sin(theta)**2.0*e2");
         engine.release();
     });
 });

@@ -1,4 +1,4 @@
-import { QQ } from "math-expression-atoms";
+import { is_blade, QQ } from "math-expression-atoms";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
@@ -41,7 +41,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // // console.lg(`power base=>${$.toInfixString(base)} expo=>${$.toInfixString(expo)} => ${$.toInfixString(retval)} made by power_v1 at ${description}`);
+        // console.lg(`power base=>${$.toInfixString(base)} expo=>${$.toInfixString(expo)} => ${$.toInfixString(retval)} made by power_v1 at ${description}`);
         // console.lg(`HOOK power ${render_as_sexpr(base, $)} ${render_as_sexpr(expo, $)} => ${render_as_sexpr(retval, $)} made by power_v1 at ${description}`);
         return retval;
     };
@@ -134,12 +134,25 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         return hook(result, "I");
     }
 
+    if (is_blade(base) && is_rat(expo)) {
+        if (expo.isMinusOne()) {
+            // console.log(`base ${base} expo ${expo} reverse(base) ${base.rev()}`);
+            const rev = base.rev();
+            return hook($.divide(rev, $.multiply(base, rev)), "Blade");
+        }
+        else {
+            // ...
+        }
+    }
+
     if (is_uom(base)) {
         if (is_rat(expo)) {
-            const qq = QQ.valueOf(expo.a.toJSNumber(), expo.b.toJSNumber());
-            return hook(base.pow(qq), "J");
+            const exponent: QQ = QQ.valueOf(expo.a.toJSNumber(), expo.b.toJSNumber());
+            return hook(base.pow(exponent), "J");
         }
         else if (is_flt(expo)) {
+            // TODO: I don't think units are supposed to handle non-rational components.
+            // There should be a check here that the Flt is a small integer.
             const qq = QQ.valueOf(expo.d, 1);
             return hook(base.pow(qq), "K");
         }

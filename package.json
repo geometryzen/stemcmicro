@@ -42,6 +42,7 @@
         "unit-complex": "mocha 'units/complex.spec.ts'",
         "unit-conj": "mocha 'units/conj.spec.ts'",
         "unit-cos": "mocha 'units/cos.spec.ts'",
+        "unit-coverage": "mocha 'units/coverage.spec.ts'",
         "unit-defint": "mocha 'units/defint.spec.ts'",
         "unit-derivative": "mocha 'units/derivative.spec.ts'",
         "unit-divide": "mocha 'units/divide.spec.ts'",

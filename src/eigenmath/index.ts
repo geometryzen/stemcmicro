@@ -8741,57 +8741,70 @@ function polar($: ScriptVars): void {
     multiply($);
 }
 
-function eval_power(p1: U, $: ScriptVars) {
-
+function eval_power(expr: U, $: ScriptVars) {
+    const powerExpr = assert_cons(expr);
     $.expanding--;
-
-    // base
-
-    push(cadr(p1), $);
-
-    // exponent
-
-    push(caddr(p1), $);
-    evalf($);
-    dupl($);
-    const p2 = pop($);
-
-    // if exponent is negative then evaluate base without expanding
-
-    swap($);
-    if (isnum(p2) && isnegativenumber(p2)) {
-        const t = $.expanding;
-        $.expanding = 0;
+    try {
+        push(powerExpr.base, $);
+        push(powerExpr.expo, $);
         evalf($);
-        $.expanding = t;
+        dupl($);
+        const expo = pop($);
+
+        // if exponent is negative then evaluate base without expanding,
+        // otherwise, evaluate the base normally.
+        swap($);
+        if (isnum(expo) && isnegativenumber(expo)) {
+            const t = $.expanding;
+            $.expanding = 0;
+            try {
+                evalf($);
+            }
+            finally {
+                $.expanding = t;
+            }
+        }
+        else {
+            evalf($);
+        }
+        swap($);
+
+        power($);
     }
-    else
-        evalf($);
-    swap($);
-
-    power($);
-
-    $.expanding++;
+    finally {
+        $.expanding++;
+    }
 }
 
+/**
+ * Expects top elements of stack to be...
+ * 
+ * --------
+ * | expo |
+ * --------
+ * | base |
+ * --------
+ * 
+ * Both expressions have been evaluated.
+ */
 function power($: ScriptVars): void {
 
-    const EXPO = pop($);
-    let BASE = pop($);
+    const expo = pop($);
+    let base = pop($);
 
-    if (istensor(BASE) && istensor(EXPO)) {
+    if (istensor(base) && istensor(expo)) {
         push(POWER, $);
-        push(BASE, $);
-        push(EXPO, $);
+        push(base, $);
+        push(expo, $);
         list(3, $);
         return;
     }
 
-    if (istensor(EXPO)) {
-        const T = copy_tensor(EXPO);
+    if (istensor(expo)) {
+        const T = copy_tensor(expo);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
-            push(BASE, $);
+            push(base, $);
             push(T.elems[i], $);
             power($);
             T.elems[i] = pop($);
@@ -8800,12 +8813,12 @@ function power($: ScriptVars): void {
         return;
     }
 
-    if (istensor(BASE)) {
-        const T = copy_tensor(BASE);
+    if (istensor(base)) {
+        const T = copy_tensor(base);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
-            push(EXPO, $);
+            push(expo, $);
             power($);
             T.elems[i] = pop($);
         }
@@ -8813,59 +8826,59 @@ function power($: ScriptVars): void {
         return;
     }
 
-    if (BASE == symbol(EXP1) && isdouble(EXPO)) {
+    if (base == symbol(EXP1) && isdouble(expo)) {
         push_double(Math.E, $);
-        BASE = pop($);
+        base = pop($);
     }
 
-    if (BASE == PI && isdouble(EXPO)) {
+    if (base == PI && isdouble(expo)) {
         push_double(Math.PI, $);
-        BASE = pop($);
+        base = pop($);
     }
 
-    if (isnum(BASE) && isnum(EXPO)) {
-        power_numbers(BASE, EXPO, $);
+    if (isnum(base) && isnum(expo)) {
+        power_numbers(base, expo, $);
         return;
     }
 
     // expr^0
 
-    if (iszero(EXPO)) {
+    if (iszero(expo)) {
         push_integer(1, $);
         return;
     }
 
     // 0^expr
 
-    if (iszero(BASE)) {
+    if (iszero(base)) {
         push(POWER, $);
-        push(BASE, $);
-        push(EXPO, $);
+        push(base, $);
+        push(expo, $);
         list(3, $);
         return;
     }
 
     // 1^expr
 
-    if (isplusone(BASE)) {
+    if (isplusone(base)) {
         push_integer(1, $);
         return;
     }
 
     // expr^1
 
-    if (isplusone(EXPO)) {
-        push(BASE, $);
+    if (isplusone(expo)) {
+        push(base, $);
         return;
     }
 
     // BASE is an integer?
 
-    if (isrational(BASE) && isinteger(BASE)) {
+    if (isrational(base) && isinteger(base)) {
         // raise each factor in BASE to power EXPO
         // EXPO is not numerical, that case was handled by power_numbers() above
         const h = $.stack.length;
-        push(BASE, $);
+        push(base, $);
         factor_factor($);
         const n = $.stack.length - h;
         for (let i = 0; i < n; i++) {
@@ -8874,14 +8887,14 @@ function power($: ScriptVars): void {
                 push(POWER, $);
                 push(cadr(p1), $); // base
                 push(caddr(p1), $); // expo
-                push(EXPO, $);
+                push(expo, $);
                 multiply($);
                 list(3, $);
             }
             else {
                 push(POWER, $);
                 push(p1, $);
-                push(EXPO, $);
+                push(expo, $);
                 list(3, $);
             }
             $.stack[h + i] = pop($);
@@ -8898,16 +8911,16 @@ function power($: ScriptVars): void {
 
     // BASE is a numerical fraction?
 
-    if (isrational(BASE) && isfraction(BASE)) {
+    if (isrational(base) && isfraction(base)) {
         // power numerator, power denominator
         // EXPO is not numerical, that case was handled by power_numbers() above
-        push(BASE, $);
+        push(base, $);
         numerator($);
-        push(EXPO, $);
+        push(expo, $);
         power($);
-        push(BASE, $);
+        push(base, $);
         denominator($);
-        push(EXPO, $);
+        push(expo, $);
         negate($);
         power($);
         multiply($);
@@ -8916,39 +8929,39 @@ function power($: ScriptVars): void {
 
     // BASE = e ?
 
-    if (BASE == symbol(EXP1)) {
-        power_natural_number(EXPO, $);
+    if (base == symbol(EXP1)) {
+        power_natural_number(expo, $);
         return;
     }
 
     // (a + b) ^ c
 
-    if (car(BASE) == ADD) {
-        power_sum(BASE, EXPO, $);
+    if (car(base) == ADD) {
+        power_sum(base, expo, $);
         return;
     }
 
-    // (a b) ^ c  -->  (a ^ c) (b ^ c)
+    // (a1 * a2 * a3) ^ c  -->  (a1 ^ c) * (a2 ^ c) * (a3 ^ c)
 
-    if (car(BASE) == MULTIPLY) {
+    if (car(base) == MULTIPLY) {
         const h = $.stack.length;
-        let p1 = cdr(BASE);
-        while (iscons(p1)) {
-            push(car(p1), $);
-            push(EXPO, $);
+        let argList = cdr(base);
+        while (iscons(argList)) {
+            push(car(argList), $);
+            push(expo, $);
             power($);
-            p1 = cdr(p1);
+            argList = cdr(argList);
         }
         multiply_factors($.stack.length - h, $);
         return;
     }
 
-    // (a ^ b) ^ c  -->  a ^ (b c)
+    // (a ^ b) ^ c  -->  a ^ (b * c)
 
-    if (car(BASE) == POWER) {
-        push(cadr(BASE), $);
-        push(caddr(BASE), $);
-        push(EXPO, $);
+    if (car(base) == POWER) {
+        push(cadr(base), $);
+        push(caddr(base), $);
+        push(expo, $);
         multiply_expand($); // always expand products of exponents
         power($);
         return;
@@ -8957,8 +8970,8 @@ function power($: ScriptVars): void {
     // none of the above
 
     push(POWER, $);
-    push(BASE, $);
-    push(EXPO, $);
+    push(base, $);
+    push(expo, $);
     list(3, $);
 }
 
@@ -13567,15 +13580,25 @@ function ensure_cached_symbol(s: string): Sym {
     }
 }
 
+/**
+ * A convenience function for multiplying 2 factors on the stack.
+ */
 function multiply($: ScriptVars): void {
     multiply_factors(2, $);
 }
 
-function multiply_expand($: ScriptVars): void {
+/**
+ * A convenience function for multiplying 2 factors on the stack with the expanding flag set.
+ */
+ function multiply_expand($: ScriptVars): void {
     const t = $.expanding;
     $.expanding = 1;
-    multiply($);
-    $.expanding = t;
+    try {
+        multiply($);
+    }
+    finally {
+        $.expanding = t;
+    }
 }
 /**
  * 

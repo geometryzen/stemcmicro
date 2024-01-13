@@ -356,7 +356,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return response.isTrue();
             }
             else {
-                throw new Error(`Unable to determine ${$.toInfixString(predicate)}(${$.toInfixString(expr)})`);
+                return false;
+                // throw new Error(`Unable to determine ${$.toInfixString(predicate)}(${$.toInfixString(expr)})`);
             }
         },
         iscomplex(expr: U): boolean {

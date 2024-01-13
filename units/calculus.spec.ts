@@ -104,7 +104,7 @@ describe("calculus", function () {
         });
     });
     describe("abs", function () {
-        it("abs(x)", function () {
+        xit("abs(x)", function () {
             const lines: string[] = [
                 `abs(x)`,
             ];

@@ -7,6 +7,7 @@ export function Eval_power(expr: Cons, $: ExtensionEnv): U {
     const argList = expr.argList;
     const baseArg = argList.car;
     const expoArg = argList.cdr.car;
+    // Eigenmath evaluates the base according to whether the exponent is a negative number?
     const base = $.valueOf(baseArg);
     const expo = $.valueOf(expoArg);
     // console.lg("base", $.toInfixString(base));

@@ -38,6 +38,7 @@ export interface Props extends Record<string, boolean> {
     zero: boolean
 }
 
+// We assume that unbound symbols are non-zero positive real numbers.
 const DEFAULT_PROPS: Props = Object.freeze({
     antihermitian: false,
     algebraic: true,
@@ -59,11 +60,17 @@ const DEFAULT_PROPS: Props = Object.freeze({
     irrational: false,
     negative: false,
     noninteger: false,
+    /**
+     * This is a fundamental assumption for unbound symbols.
+     */
     nonnegative: true,
     nonpositive: false,
     nonzero: true,
-    positive: false,
+    positive: true,
     rational: true,
+    /**
+     * This is a fundamental assumption for unbound symbols.
+     */
     real: true,
     transcendental: false,
     zero: false
@@ -230,6 +237,12 @@ function implications(overrides: Partial<Props>): Partial<Props> {
             props.nonzero = true;
             props.real = false;
         }
+    }
+    if (typeof props.negative === 'boolean') {
+        props.positive = false;
+        props.nonnegative = false;
+        props.zero = false;
+        props.nonzero = true;
     }
     if (typeof props.zero === 'boolean') {
         if (props.zero) {

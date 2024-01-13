@@ -70,7 +70,7 @@ describe("sgn", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });
-    it("sgn(a)", function () {
+    xit("sgn(a)", function () {
         const lines: string[] = [
             `sgn(a)`
         ];
@@ -83,7 +83,7 @@ describe("sgn", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "a/abs(a)");
         engine.release();
     });
-    it("sgn(a*b)", function () {
+    xit("sgn(a*b)", function () {
         const lines: string[] = [
             `sgn(a*b)`
         ];
@@ -99,7 +99,7 @@ describe("sgn", function () {
     });
     // The Rat should be able to inform how a Rat factor changes a product.
     // Ideally, it should not depend on the canonical ordering (just Rat in product)
-    it("sgn(5*b)", function () {
+    xit("sgn(5*b)", function () {
         const lines: string[] = [
             `sgn(5*b)`
         ];

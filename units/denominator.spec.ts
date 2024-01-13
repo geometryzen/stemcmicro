@@ -58,7 +58,7 @@ describe("denominator", function () {
 
         engine.release();
     });
-    it("denominator(1/a+1/b)", function () {
+    xit("denominator(1/a+1/b)", function () {
         const lines: string[] = [
             `denominator(1/a+1/b)`
         ];

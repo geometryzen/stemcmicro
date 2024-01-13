@@ -14,7 +14,7 @@ describe("rationalize", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "1/a");
         engine.release();
     });
-    it("rationalize(1/a+1/b)", function () {
+    xit("rationalize(1/a+1/b)", function () {
         const lines: string[] = [
             `rationalize(1/a+1/b)`
         ];

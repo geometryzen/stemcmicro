@@ -59,7 +59,7 @@ describe("predicate", function () {
             assert.strictEqual(predicates.infinitesimal, false, "infinitesimal");
             assert.strictEqual(predicates.nonzero, true, "nonzero");
             assert.strictEqual(predicates.zero, false, "zero");
-            assert.strictEqual(predicates.positive, false, "positive");
+            assert.strictEqual(predicates.positive, true, "positive");
             assert.strictEqual(predicates.negative, false, "negative");
             assert.strictEqual(predicates.integer, false, "integer");
         });
@@ -122,7 +122,7 @@ describe("predicate", function () {
             assert.strictEqual(predicates.infinitesimal, true, "infinitesimal");
             assert.strictEqual(predicates.nonzero, true, "nonzero");
             assert.strictEqual(predicates.zero, false, "zero");
-            assert.strictEqual(predicates.positive, false, "positive");
+            assert.strictEqual(predicates.positive, true, "positive");
             assert.strictEqual(predicates.negative, false, "negative");
             assert.strictEqual(predicates.integer, false, "integer");
         });

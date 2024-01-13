@@ -19,13 +19,9 @@ import { is_rat } from "../rat/is_rat";
 import { is_tensor } from "../tensor/is_tensor";
 import { is_uom } from "../uom/is_uom";
 
-/**
- * TODO: A better name might be transform_multiplicative_expr
- * @param expr
- */
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
-    // console.lg($.toSExprString(expr));
+    // console.lg(`Eval_multiply ${$.toInfixString(expr)}`);
     const args = expr.argList;
     const vals = args.map($.valueOf);
     if (vals.equals(args)) {
@@ -198,12 +194,11 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
             p1 = p1.cdr;
             p2 = p2.cdr;
         }
-        // TODO: There should be a check here that baseL and baseR commute under multiplication...
-        else if ($.isFactoring() && is_both_expos_minus_one(expoL, expoR)) {
-            combine_exponentials_with_common_expo(factors, baseL, baseR, expoL, $);
-            p1 = p1.cdr;
-            p2 = p2.cdr;
-        }
+        // else if ($.isFactoring() && is_both_expos_minus_one(expoL, expoR)) {
+        //    combine_exponentials_with_common_expo(factors, baseL, baseR, expoL, $);
+        //    p1 = p1.cdr;
+        //    p2 = p2.cdr;
+        //}
         else {
             switch (compareFactors(head1, head2)) {
                 case SIGN_LT: {
@@ -336,11 +331,14 @@ function combine_exponentials_with_common_base(factors: U[], base: U, expoL: U, 
 
 /**
  * Computes (baseL*baseR)^expo then finds the most efficient way to add the result to the list of factors.
+ * We generally don't want to do this "factorization" because it conflicts with power evaluation.
  */
+/*
 function combine_exponentials_with_common_expo(factors: U[], baseL: U, baseR: U, expo: U, $: ExtensionEnv): void {
     const X = $.power($.multiply(baseL, baseR), expo);
     combine_with_factors(factors, X);
 }
+*/
 
 function combine_with_factors(factors: U[], X: U): void {
     if (is_num(X)) {
@@ -380,9 +378,11 @@ function is_both_bases_equal(baseL: U, baseR: U, $: ExtensionEnv): boolean {
  * @param $ 
  * @returns 
  */
+/*
 function is_both_expos_minus_one(expoL: U, expoR: U): boolean {
     return is_rat(expoL) && is_rat(expoR) && expoL.isMinusOne() && expoR.isMinusOne();
 }
+*/
 
 /**
  * A runtime check to ensure that a value is not undefined.

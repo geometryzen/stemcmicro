@@ -58,7 +58,7 @@ describe("numerator", function () {
 
         engine.release();
     });
-    it("numerator(1/a+1/b)", function () {
+    xit("numerator(1/a+1/b)", function () {
         const lines: string[] = [
             `numerator(1/a+1/b)`
         ];

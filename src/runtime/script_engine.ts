@@ -76,7 +76,6 @@ export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
     $.clearOperators();
 
     if (options && options.assumes) {
-        // console.lg(JSON.stringify(options.assumes));
         const names = Object.keys(options.assumes);
         for (const name of names) {
             const props = options.assumes[name];

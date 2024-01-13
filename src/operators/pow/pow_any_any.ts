@@ -39,4 +39,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
+/**
+ * This is currently dead code.
+ */
 export const pow_2_any_any = new Builder();

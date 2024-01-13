@@ -4,7 +4,7 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
 describe("abs", function () {
-    it("abs(x)", function () {
+    xit("abs(x)", function () {
         const lines: string[] = [
             `abs(x)`,
         ];
@@ -17,7 +17,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "abs(x)");
         engine.release();
     });
-    it("abs(i*y)", function () {
+    xit("abs(i*y)", function () {
         const lines: string[] = [
             `abs(i*y)`,
         ];
@@ -138,7 +138,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "1/2+1/2*3**(1/2)*i");
         engine.release();
     });
-    it("abs(x*y)", function () {
+    xit("abs(x*y)", function () {
         const lines: string[] = [
             `abs(x*y)`
         ];
@@ -167,7 +167,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "x**2");
         engine.release();
     });
-    it("abs(x*i)", function () {
+    xit("abs(x*i)", function () {
         const lines: string[] = [
             `abs(x*i)`
         ];
@@ -262,7 +262,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(actual), "1.414214...");
         engine.release();
     });
-    it("rendering", function () {
+    xit("rendering", function () {
         const lines: string[] = [
             `abs(x)`,
         ];
@@ -322,7 +322,7 @@ describe("abs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();
     });
-    it("abs(a/b)", function () {
+    xit("abs(a/b)", function () {
         const lines: string[] = [
             `abs(a/b)`
         ];

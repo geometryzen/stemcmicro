@@ -25,7 +25,9 @@ class Op extends Function1<Sym> {
     }
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         const $ = this.$;
+        // console.lg(`${this.name} ${$.toInfixString(arg)}`);
         const predicates = $.getSymbolPredicates(arg);
+        // console.lg(`${this.name} ${$.toInfixString(arg)} ${JSON.stringify(predicates, null, 2)}`);
         return [TFLAG_DIFF, create_boo(this.which(predicates))];
     }
 }

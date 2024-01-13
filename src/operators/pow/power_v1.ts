@@ -1,6 +1,5 @@
 import { QQ } from "math-expression-atoms";
 import { nativeDouble, rational } from "../../bignum";
-import { gt_num_num } from "../../calculators/compare/gt_num_num";
 import { complex_conjugate } from "../../complex_conjugate";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
@@ -16,8 +15,8 @@ import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWE
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { power_tensor } from "../../tensor";
 import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
-import { caddr, cadr } from "../../tree/helpers";
-import { half, negOne, one, two, zero } from "../../tree/rat/Rat";
+import { cadr } from "../../tree/helpers";
+import { half, negOne, one, two } from "../../tree/rat/Rat";
 import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { is_num } from "../num/is_num";
@@ -42,7 +41,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg(`power base=>${$.toInfixString(base)} expo=>${$.toInfixString(expo)} => ${$.toInfixString(retval)} made by power_v1 at ${description}`);
+        // // console.lg(`power base=>${$.toInfixString(base)} expo=>${$.toInfixString(expo)} => ${$.toInfixString(retval)} made by power_v1 at ${description}`);
         // console.lg(`HOOK power ${render_as_sexpr(base, $)} ${render_as_sexpr(expo, $)} => ${render_as_sexpr(retval, $)} made by power_v1 at ${description}`);
         return retval;
     };
@@ -198,67 +197,43 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // sqrt(x*y) != x^(1/2) y^(1/2) (counterexample" x = -1 and y = -1)
     // BUT we can carve-out here some cases where this
     // transformation is correct.
-    // TODO Do we need Directive.expandPowerProduct, like expandPowerSum?
-    // N.B Eval_multiply or mul_varargs is going in the reverse direction when $.isExpanding().
-    if ($.isExpanding()) {
-        if (is_multiply(base)) {
-            // TODO: Check that every factor commutes with every other one.
-            // We do need this to ensure that tests pass.
-            if (is_rat_and_integer(expo)) {
-                // const factors = base.tail();
-                // This is a bit too restrictive. e.g. complex numbers would work.
-                // We really do need to ask about how they commute under multiplication.
-                // if (factors.every($.isreal)) {
-                const aList = base.argList;
+    if (is_multiply(base)) {
+        // const factors = base.tail();
+        // This is a bit too restrictive. e.g. complex numbers would work.
+        // We really do need to ask about how they commute under multiplication.
+        // if (factors.every($.isreal)) {
+        const aList = base.argList;
 
-                if (is_cons(aList)) {
-                    const a1 = aList.car;
-                    let result = $.power(a1, expo);
-                    if (is_cons(aList)) {
-                        const others = aList.tail();
-                        result = others.reduce((prev: U, curr: U) => $.multiply(prev, $.power(curr, expo)), result);
-                    }
-                    return hook(result, "P");
-                }
-                if (is_nil(aList)) {
-                    // Slightly strange case of no a's means (*) => 1, and then 1 ^ m is simply 1.
-                    return hook(one, "Q");
-                }
-                // }
+        if (is_cons(aList)) {
+            const a1 = aList.car;
+            let result = $.power(a1, expo);
+            if (is_cons(aList)) {
+                const others = aList.tail();
+                result = others.reduce((prev: U, curr: U) => $.multiply(prev, $.power(curr, expo)), result);
             }
+            return hook(result, "P");
+        }
+        if (is_nil(aList)) {
+            // Slightly strange case of no a's means (*) => 1, and then 1 ^ m is simply 1.
+            return hook(one, "Q");
         }
     }
-    // (a ^ b) ^ c  ->  a ^ (b * c)
+
+    // (x ^ a) ^ b  ->  x ^ (a * b)
     // note that we can't in general do this, for example
     // sqrt(x^y) !=  x^(1/2 y) (counterexample x = -1)
     // BUT we can carve-out here some cases where this
     // transformation is correct
     // simple numeric check to see if a is a number > 0
-    let is_a_moreThanZero = false;
-    const cadrBase = cadr(base);
-    if (is_num(cadrBase)) {
-        is_a_moreThanZero = gt_num_num(cadrBase, zero);
-    }
-
-    // when c is an integer and when a is >= 0
-    if (is_power(base) && (is_rat_and_integer(expo) || is_a_moreThanZero)) {
-        const result = $.power(cadr(base), $.multiply(caddr(base), expo));
-        return hook(result, "R");
-    }
-
     if (is_power(base)) {
-        // console.lg("base", $.toSExprString(base));
-        if (is_rat_and_even_integer(base.expo)) {
-            const expoProduct = $.multiply(base.expo, expo);
-            if (is_rat(expoProduct) && expoProduct.isOne()) {
-                if ($.getDirective(Directive.factoring)) {
-                    const result = $.abs(base.base);
-                    return hook(result, "S");
-                }
-                else {
-                    return hook(items_to_cons(POWER, base, expo), "S");
-                }
-            }
+        const x = base.base;
+        const a = base.expo;
+        const b = expo;
+        // console.lg(`x => ${$.toInfixString(x)} a => ${$.toInfixString(a)} b => ${$.toInfixString(b)}`);
+        // console.lg(`ispositive(${$.toInfixString(x)}) => ${$.ispositive(x)}`);
+        if ($.ispositive(x)) {
+            const result = $.power(x, $.multiply(a, b));
+            return hook(result, "R");
         }
     }
 

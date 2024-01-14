@@ -3,14 +3,14 @@ import { assert } from "chai";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
 
-const nativeConfig: EngineConfig = {
+const engineConfig: EngineConfig = {
     useGeometricAlgebra: true
 };
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/*
 const eigenmathConfig: EngineConfig = {
     useGeometricAlgebra: false
 };
+*/
 
 function stripWhitespace(s: string): string {
     return s.replace(/\s/g, '');
@@ -35,7 +35,7 @@ describe("coverage", function () {
             `abs(X)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -55,7 +55,7 @@ describe("coverage", function () {
             `adj(A) == det(A) * inv(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -74,7 +74,7 @@ describe("coverage", function () {
             `and(1=1,2=2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -93,7 +93,7 @@ describe("coverage", function () {
             `arccos(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -112,7 +112,7 @@ describe("coverage", function () {
             `arccosh(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -131,7 +131,7 @@ describe("coverage", function () {
             `arcsin(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -150,7 +150,7 @@ describe("coverage", function () {
             `arcsinh(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -169,7 +169,7 @@ describe("coverage", function () {
             `arctan(1,0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -188,7 +188,7 @@ describe("coverage", function () {
             `arctanh(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -208,7 +208,7 @@ describe("coverage", function () {
             `arg(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -222,13 +222,51 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-arctan(3,2)"));
         engine.release();
     });
+    it("besselj(x,n)", function () {
+        const lines: string[] = [
+            `besselj(0,0)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
+    xit("bessely(x,n)", function () {
+        const lines: string[] = [
+            `bessely(0,0)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
     xit("binding(s)", function () {
         const lines: string[] = [
             `p = quote((x + 1)^2)`,
             `binding(p)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -247,7 +285,7 @@ describe("coverage", function () {
             `ceiling(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -271,7 +309,7 @@ describe("coverage", function () {
             `check(A==B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -297,7 +335,7 @@ describe("coverage", function () {
             `choose(52,5)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -322,7 +360,7 @@ describe("coverage", function () {
             `circexp(cos(x) + i * sin(x))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -346,7 +384,30 @@ describe("coverage", function () {
             `clear`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 0);
+        engine.release();
+    });
+    it("clearall", function () {
+        const lines: string[] = [
+            `clearall`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -370,7 +431,7 @@ describe("coverage", function () {
             `clock(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -389,13 +450,43 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("13^(1/2)(-1)^(-1arctan(3,2)/pi)"));
         engine.release();
     });
+    it("coeff(p,x,n)", function () {
+        const lines: string[] = [
+            `coeff(a*x^3+b*x^2+c*x+d,x,3)`,
+            `coeff(a*x^3+b*x^2+c*x+d,x,2)`,
+            `coeff(a*x^3+b*x^2+c*x+d,x,1)`,
+            `coeff(a*x^3+b*x^2+c*x+d,x,0)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 4);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("a"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("b"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("c"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("d"));
+        engine.release();
+    });
     it("cofactor(m,i,j)", function () {
         const lines: string[] = [
             `A=((a,b),(c,d))`,
             `cofactor(A,1,2) == adj(A)[2,1]`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -420,7 +511,7 @@ describe("coverage", function () {
             `conj(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -445,7 +536,7 @@ describe("coverage", function () {
             `contract(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -469,7 +560,7 @@ describe("coverage", function () {
             `cos(pi/4)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -493,7 +584,7 @@ describe("coverage", function () {
             `circexp(cosh(x))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -517,7 +608,7 @@ describe("coverage", function () {
             `cross(u,v)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -541,7 +632,7 @@ describe("coverage", function () {
             `curl(v)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -566,7 +657,7 @@ describe("coverage", function () {
             `d(sin(x),x,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -592,7 +683,7 @@ describe("coverage", function () {
             `defint(f, theta, 0, pi, phi, 0, 2 * pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -612,12 +703,36 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-sin(x)"));
         engine.release();
     });
+    xit("deg(p,x)", function () {
+        const lines: string[] = [
+            `deg(a*x^2+b*x+c,x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("b"));
+        engine.release();
+    });
     it("denominator(x)", function () {
         const lines: string[] = [
             `denominator(a/b)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -642,7 +757,7 @@ describe("coverage", function () {
             `det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -667,7 +782,7 @@ describe("coverage", function () {
             `dim(A,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -691,7 +806,7 @@ describe("coverage", function () {
             `div(v)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -710,6 +825,30 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("div(v)"));
         engine.release();
     });
+    it("do(a,b,...)", function () {
+        const lines: string[] = [
+            `do(1,2,3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("3"));
+        engine.release();
+    });
     it("dot(a,b,...)", function () {
         const lines: string[] = [
             `A=((1,2),(3,4))`,
@@ -718,7 +857,7 @@ describe("coverage", function () {
             `X`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -742,7 +881,7 @@ describe("coverage", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -760,6 +899,31 @@ describe("coverage", function () {
         assert.strictEqual(values.length, 0);
         engine.release();
     });
+    xit("eigenval(m)", function () {
+        const lines: string[] = [
+            `A=((1,2),(3,4))`,
+            `eigenval(A)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
     xit("eigenvec(m)", function () {
         const lines: string[] = [
             `A=((1,2),(3,4))`,
@@ -769,7 +933,7 @@ describe("coverage", function () {
             `dot(Q,D,tanspose(Q))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -794,7 +958,7 @@ describe("coverage", function () {
             `eval(f,x,3,y,4)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -813,13 +977,61 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("5"));
         engine.release();
     });
+    xit("erf(x)", function () {
+        const lines: string[] = [
+            `erf(1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
+    xit("erfc(x)", function () {
+        const lines: string[] = [
+            `erfc(1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
     it("exp(x)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `exp(i * pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -838,13 +1050,37 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-1"));
         engine.release();
     });
+    it("expand(r,x)", function () {
+        const lines: string[] = [
+            `expand(r,x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("r"));
+        engine.release();
+    });
     it("expcos(z)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `expcos(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -869,7 +1105,7 @@ describe("coverage", function () {
             `expcosh(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -894,7 +1130,7 @@ describe("coverage", function () {
             `expsin(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -919,7 +1155,7 @@ describe("coverage", function () {
             `expsinh(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -944,7 +1180,7 @@ describe("coverage", function () {
             `exptan(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -969,7 +1205,7 @@ describe("coverage", function () {
             `exptanh(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -988,12 +1224,36 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
         engine.release();
     });
+    it("factor(n)", function () {
+        const lines: string[] = [
+            `factor(100!)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2^97*3^48*5^24*7^16*11^9*13^7*17^5*19^5*23^4*29^3*31^3*37^2*41^2*43^2*47^2*53*59*61*67*71*73*79*83*89*97"));
+        engine.release();
+    });
     it("factorial(n)", function () {
         const lines: string[] = [
             `factorial(20)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1017,7 +1277,7 @@ describe("coverage", function () {
             `float(212^17)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1041,7 +1301,7 @@ describe("coverage", function () {
             `floor(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1065,7 +1325,7 @@ describe("coverage", function () {
             `for(k,1,3,A=k,print(A))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1084,12 +1344,36 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
         engine.release();
     });
+    it("gcd(a,b,...)", function () {
+        const lines: string[] = [
+            `gcd(30,42)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("6"));
+        engine.release();
+    });
     xit("grad(f)", function () {
         const lines: string[] = [
             `grad(f())`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1115,7 +1399,7 @@ describe("coverage", function () {
             `hadamard(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1134,13 +1418,65 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
         engine.release();
     });
+    it("hermite(x,n)", function () {
+        const lines: string[] = [
+            `hermite(x,0)`,
+            `hermite(x,1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 2);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("2*x"));
+        engine.release();
+    });
+    xit("hilbert(n)", function () {
+        const lines: string[] = [
+            `hilbert(0)`,
+            `hilbert(1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 2);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("2*x"));
+        engine.release();
+    });
     it("i", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `exp(i* pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1165,7 +1501,7 @@ describe("coverage", function () {
             `imag(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1190,7 +1526,7 @@ describe("coverage", function () {
             `iinfixform(p)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1216,7 +1552,7 @@ describe("coverage", function () {
             `inner(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1240,7 +1576,7 @@ describe("coverage", function () {
             `integral(x^2,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1265,7 +1601,7 @@ describe("coverage", function () {
             `inv(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1284,13 +1620,47 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("((-2,1),(3/2,-1/2))"));
         engine.release();
     });
+    it("isprime(n)", function () {
+        const lines: string[] = [
+            `isprime(0)`,
+            `isprime(1)`,
+            `isprime(2)`,
+            `isprime(3)`,
+            `isprime(4)`,
+            `isprime(5)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 6);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[4], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[5], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
     it("j", function () {
         const lines: string[] = [
             `j=sqrt(-1)`,
             `1/sqrt(-1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1316,7 +1686,7 @@ describe("coverage", function () {
             `kronecker(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1335,13 +1705,63 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("((a,b,2a,2b),(c,d,2c,2d),(3a,3b,4a,4b),(3c,3d,4c,4d))"));
         engine.release();
     });
+    it("laguerre(x,n,a)", function () {
+        const lines: string[] = [
+            `laguerre(x,0)`,
+            `laguerre(x,1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 2);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("1-x"));
+        engine.release();
+    });
+    it("lcm(a,b,...)", function () {
+        const lines: string[] = [
+            `lcm(4,6)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("12"));
+        engine.release();
+    });
     xit("last", function () {
         const lines: string[] = [
             `212^17`,
             `last^(1/17)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1360,12 +1780,62 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("212"));
         engine.release();
     });
+    it("leading(p,x)", function () {
+        const lines: string[] = [
+            `leading(5*x^2+x+1,x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("5"));
+        engine.release();
+    });
+    it("legendre(x,n,m)", function () {
+        const lines: string[] = [
+            `legendre(x,0)`,
+            `legendre(x,1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 2);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("x"));
+        engine.release();
+    });
     it("log(x)", function () {
         const lines: string[] = [
             `log(x^y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1384,13 +1854,38 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("y * log(x)"));
         engine.release();
     });
+    xit("lookup(x)", function () {
+        const lines: string[] = [
+            `x=quote(1+2)`,
+            `lookup(x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1 + 2"));
+        engine.release();
+    });
     xit("mag(z)", function () {
         const lines: string[] = [
             `i=sqrt(-1)`,
             `mag(x + i * y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1415,7 +1910,7 @@ describe("coverage", function () {
             `minor(A,1,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1440,7 +1935,7 @@ describe("coverage", function () {
             `minormatrix(A,1,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1464,7 +1959,7 @@ describe("coverage", function () {
             `mod(5,3/8)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1488,7 +1983,7 @@ describe("coverage", function () {
             `noexpand((x+1)^2/(x+1))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1512,7 +2007,7 @@ describe("coverage", function () {
             `not(1=1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1537,7 +2032,7 @@ describe("coverage", function () {
             `nroots(p,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1561,7 +2056,7 @@ describe("coverage", function () {
             `numerator(a/b)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1585,7 +2080,7 @@ describe("coverage", function () {
             `or(1=1,2=2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1611,7 +2106,7 @@ describe("coverage", function () {
             `outer(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1636,7 +2131,7 @@ describe("coverage", function () {
             `exp(i * pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1661,7 +2156,7 @@ describe("coverage", function () {
             `polar(x - i * y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1685,7 +2180,7 @@ describe("coverage", function () {
             `x^(-1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1704,12 +2199,184 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/x^(1/2)"));
         engine.release();
     });
+    it("prime(n)", function () {
+        const lines: string[] = [
+            `prime(1)`,
+            `prime(2)`,
+            `prime(3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 3);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("3"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("5"));
+        engine.release();
+    });
+    xit("print(a,b,...)", function () {
+        const lines: string[] = [
+            `print(1,2,3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
+    xit("print2dascii(a,b,...)", function () {
+        const lines: string[] = [
+            `print2dascii(1,2,3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
+    xit("printcomputer(a,b,...)", function () {
+        const lines: string[] = [
+            `printcomputer(1,2,3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
+    xit("printlatex(a,b,...)", function () {
+        const lines: string[] = [
+            `printlatex(1,2,3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
+    xit("printlist(a,b,...)", function () {
+        const lines: string[] = [
+            `printlist(1,2,3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
+    xit("printhuman(a,b,...)", function () {
+        const lines: string[] = [
+            `printhuman(1,2,3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        engine.release();
+    });
     xit("product(i,j,k,f)", function () {
         const lines: string[] = [
             `product(j,1,3,x + j)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1734,7 +2401,7 @@ describe("coverage", function () {
             `product(y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1758,7 +2425,7 @@ describe("coverage", function () {
             `quote((x + 1)^2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1777,13 +2444,37 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(x + 1)^2"));
         engine.release();
     });
+    it("quotient(p,q,x)", function () {
+        const lines: string[] = [
+            `quotient(x^2+1,x+1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-1+x"));
+        engine.release();
+    });
     it("rank(a)", function () {
         const lines: string[] = [
             `A=((a,b),(c,d))`,
             `rank(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1807,7 +2498,7 @@ describe("coverage", function () {
             `rationalize(1/a+1/b+1/c)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1832,7 +2523,7 @@ describe("coverage", function () {
             `real(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1857,7 +2548,7 @@ describe("coverage", function () {
             `rect(exp(i*x))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1882,7 +2573,7 @@ describe("coverage", function () {
             `roots(p,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1907,7 +2598,7 @@ describe("coverage", function () {
             `rotate(psi,H,0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1931,7 +2622,7 @@ describe("coverage", function () {
             `run("foo.txt")`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1950,12 +2641,36 @@ describe("coverage", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("()"));
         engine.release();
     });
+    it("shape(x)", function () {
+        const lines: string[] = [
+            `shape((a,b,c))`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(3)"));
+        engine.release();
+    });
     it("simplify(x)", function () {
         const lines: string[] = [
             `simplify(cos(x)^2+sin(x)^2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1979,7 +2694,7 @@ describe("coverage", function () {
             `sin(pi/4)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2003,7 +2718,7 @@ describe("coverage", function () {
             `sinh(x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2027,7 +2742,7 @@ describe("coverage", function () {
             `sqrt(factorial(10))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2051,7 +2766,7 @@ describe("coverage", function () {
             `stop`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -2065,12 +2780,36 @@ describe("coverage", function () {
         }
         engine.release();
     });
+    it("subst(a,b,c)", function () {
+        const lines: string[] = [
+            `subst(a,b,c)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("c"));
+        engine.release();
+    });
     xit("sum(i,j,k,f)", function () {
         const lines: string[] = [
             `sum(j,1,5,x^j)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(nativeConfig);
+        const engine: ExprEngine = create_engine(engineConfig);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2087,6 +2826,227 @@ describe("coverage", function () {
         }
         assert.strictEqual(values.length, 1);
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("x^5+x^4+x^3+x^2+x"));
+        engine.release();
+    });
+    it("tan(x)", function () {
+        const lines: string[] = [
+            `tan(pi/4)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
+    it("tanh(x)", function () {
+        const lines: string[] = [
+            `circexp(tanh(x))`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("exp(2*x)/(1+exp(2*x))-1/(1+exp(2*x))"));
+        engine.release();
+    });
+    xit("taylor(f,x,n,a)", function () {
+        const lines: string[] = [
+            `taylor(1/(1-x),x,5)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("x^5+x^4+x^3+x^2+x+1"));
+        engine.release();
+    });
+    it("test(a,b,c,d,...)", function () {
+        const lines: string[] = [
+            `A=1`,
+            `B=1`,
+            `test(A=B, "yes", "no")`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`"yes"`));
+        engine.release();
+    });
+    it("trace", function () {
+        const lines: string[] = [
+            `trace=1`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 0);
+        engine.release();
+    });
+    it("transpose(a,i,j)", function () {
+        const lines: string[] = [
+            `A=((a,b),(c,d))`,
+            `transpose(A)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`((a,c),(b,d))`));
+        engine.release();
+    });
+    it("tty", function () {
+        const lines: string[] = [
+            `tty=1`,
+            `(x+1)^2`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1+2*x+x^2`));
+        engine.release();
+    });
+    it("unit(n)", function () {
+        const lines: string[] = [
+            `unit(3)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`((1,0,0),(0,1,0),(0,0,1))`));
+        engine.release();
+    });
+    xit("zero(i,j,...)", function () {
+        const lines: string[] = [
+            `A=zero(3,3)`,
+            `for(k,1,3,A[k,k]=k)`,
+            `A`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.evaluate(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`((1,0,0),(0,1,0),(0,0,1))`));
         engine.release();
     });
 });

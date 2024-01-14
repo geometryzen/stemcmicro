@@ -4,6 +4,7 @@ import { create_env, EnvOptions } from "../../env/env";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
+import { init_env } from "../../runtime/script_engine";
 import { Eval_add } from "./Eval_add";
 import { Eval_multiply } from "./Eval_multiply";
 import { Eval_program } from "./Eval_program";
@@ -54,6 +55,9 @@ export class State {
      * The evaluator is responsible for updating the value to false if it chooses to use it.
      */
     firstTime = true;
+    /**
+     * MUST be initialized to false.
+     */
     done: boolean = false;
     doneArg: boolean[] = [];
     /**
@@ -98,13 +102,15 @@ export class Interpreter {
     #globalObject: Thing;
     #globalScope: Scope;
     #initFunc: ((runner: Interpreter, globalObject: Thing) => void) | undefined;
-    #env: ExtensionEnv;
+    #baseEnv: ExtensionEnv;
     /**
-     * @param code 
+     * @param program
+     * @param options 
      * @param initFunc 
      */
-    constructor(readonly code: U, options?: EnvOptions, initFunc?: (runner: Interpreter, globalObject: Thing) => void) {
-        this.#env = create_env(options);
+    constructor(readonly program: Cons, options?: EnvOptions, initFunc?: (runner: Interpreter, globalObject: Thing) => void) {
+        this.#baseEnv = create_env(options);
+        init_env(this.#baseEnv);
         this.#currentInterpreter = this;
         this.#stepFunctions = Object.create(null);
         this.#initFunc = initFunc;
@@ -114,11 +120,8 @@ export class Interpreter {
         this.#stepFunctions['*'] = Eval_multiply;
         this.#globalScope = this.createScope(this.createScope, null);
         this.#globalObject = this.#globalScope.thing;
-        // Run the polyfills.
         this.#runPolyfills();
-        // Point at the main program.
-        const state = new State(code, this.#globalScope);
-        state.done = false;
+        const state = new State(program, this.#globalScope);
         this.#stack = [state];
     }
     createScope(node: unknown, parentScope: Scope | null): Scope {
@@ -193,7 +196,7 @@ export class Interpreter {
                     const stepper = this.#stepFunctions[key];
                     if (stepper) {
                         // console.lg(`Calling StepFunction for key ${JSON.stringify(key)} with node ${node}`);
-                        const nextState = stepper(node, stack, state, this.#env);
+                        const nextState = stepper(node, stack, state, this.#baseEnv);
                         if (nextState) {
                             stack.push(nextState);
                         }
@@ -277,7 +280,6 @@ export class Interpreter {
         /*
         this.ast = ...
         const state = new State(this.ast, this.#globalScope);
-        state.done = false;
         this.#stack = [state];
         this.run();
         this.#value = void 0;

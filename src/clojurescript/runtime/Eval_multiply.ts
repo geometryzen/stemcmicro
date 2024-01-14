@@ -1,6 +1,6 @@
-import { Cons, items_to_cons, nil, U } from "math-expression-tree";
+import { Native } from "math-expression-native";
+import { Cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { multiply_values } from "../../operators/mul/Eval_multiply";
 import { State } from "./Interpreter";
 
 export function Eval_multiply(expr: Cons, stack: State[], state: State, $: ExtensionEnv): State | undefined {
@@ -24,7 +24,6 @@ export function Eval_multiply(expr: Cons, stack: State[], state: State, $: Exten
         state.argValues[n - 1] = state.value;
     }
     stack.pop();
-    const vals: Cons = items_to_cons(...state.argValues);
-    const value = multiply_values(vals, expr, $);
+    const value = $.evaluate(Native.multiply, ...state.argValues);
     stack[stack.length - 1].value = value;
 }

@@ -1,6 +1,6 @@
-import { Cons, items_to_cons, nil, U } from "math-expression-tree";
+import { Native } from "math-expression-native";
+import { Cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { add_values } from "../../operators/add/Eval_add";
 import { State } from "./Interpreter";
 
 export function Eval_add(expr: Cons, stack: State[], state: State, $: ExtensionEnv): State | undefined {
@@ -24,7 +24,6 @@ export function Eval_add(expr: Cons, stack: State[], state: State, $: ExtensionE
         state.argValues[n - 1] = state.value;
     }
     stack.pop();
-    const vals: Cons = items_to_cons(...state.argValues);
-    const value = add_values(vals, expr, $);
+    const value = $.evaluate(Native.add, ...state.argValues);
     stack[stack.length - 1].value = value;
 }

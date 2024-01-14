@@ -2,17 +2,20 @@ import { CharStream, consume_num, NumHandler } from "../brite/consume_num";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { Boo } from "../tree/boo/Boo";
-import { Flt, create_flt } from "../tree/flt/Flt";
+import { create_flt, Flt } from "../tree/flt/Flt";
 import { Num } from "../tree/num/Num";
 import { create_int } from "../tree/rat/Rat";
 import { Str } from "../tree/str/Str";
 import { create_sym, Sym } from "../tree/sym/Sym";
-import { cons, items_to_cons, nil, U } from "../tree/tree";
+import { cons, nil, U } from "../tree/tree";
 import { Char } from "./char";
+import { ClojureScriptParseOptions } from "./ClojureScriptParseOptions";
 import { CommentMarker } from "./CommentMarker";
+import { Dictionary } from "./Dictionary";
 import { EOS } from "./EOS";
+import { Keyword } from "./Keyword";
 import { Pair } from "./Pair";
-import { SchemeParseOptions } from "./SchemeParseOptions";
+import { Vector } from "./Vector";
 
 const endOfString = new EOS();
 const sexpCommentMarker = new CommentMarker();
@@ -57,7 +60,7 @@ class NumBuilder implements NumHandler {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function scheme_parse(fileName: string, sourceText: string, options?: SchemeParseOptions): { trees: U[], errors: Error[] } {
+export function parse_clojure_script(sourceText: string, options?: ClojureScriptParseOptions): { trees: U[], errors: Error[] } {
     const parser = new Parser(sourceText, options);
     const trees: U[] = [];
     let done = false;
@@ -76,7 +79,7 @@ export function scheme_parse(fileName: string, sourceText: string, options?: Sch
 class Parser {
     #tokenIdx = 0;
     readonly #tokens: string[] = [];
-    constructor(sourceText: string, private readonly options: SchemeParseOptions | undefined) {
+    constructor(sourceText: string, private readonly options: ClojureScriptParseOptions | undefined) {
         this.#tokens = tokenize(sourceText);
     }
     value(): U {
@@ -128,7 +131,7 @@ class Parser {
         }
         return list;
     }
-    #consumeAtom(): Sym | Flt | Boo | Str | Pair | CommentMarker | EOS {
+    #consumeAtom(): Boo | Sym | Flt | Keyword | Str | Pair | CommentMarker | EOS {
         if (this.#tokenIdx >= this.#tokens.length) {
             return endOfString;
         }
@@ -151,11 +154,18 @@ class Parser {
                 return new Pair(sym_from_lexeme(s, this.options), new Pair(this.#consumeObject(), nil));
             }
             else {
-                if (t == '(' || t == '[' || t == '{') {
+                if (t === '(') {
                     return this.#consumeList(t);
                 }
-                else {
+                else if (t === '[') {
                     return this.#consumeVector(t);
+                }
+                else if (t === '{') {
+                    // This will be  a Map
+                    return this.#consumeMap(t);
+                }
+                else {
+                    throw new Error(`Unexpected ${t}`);
                 }
             }
         }
@@ -180,10 +190,18 @@ class Parser {
                 }
             }
 
-            if (t == '#f' || t == '#F') {
+            if (t.startsWith("::")) {
+                const localName = t.substring(2);
+                return new Keyword(localName, "cljs.user");
+            }
+            else if (t.startsWith(":")) {
+                const localName = t.substring(1);
+                return new Keyword(localName, "");
+            }
+            else if (t === 'false') {
                 return Boo.valueOf(false);
             }
-            else if (t == '#t' || t == '#T') {
+            else if (t === 'true') {
                 return Boo.valueOf(true);
             }
             else if (t.toLowerCase() == '#\\newline') {
@@ -230,12 +248,24 @@ class Parser {
         const items: U[] = [];
         while (this.#tokenIdx < this.#tokens.length) {
             this.#consumeObjectsInSexpComment("Input stream terminated unexpectedly(in vector)");
-            if (this.#tokens[this.#tokenIdx] == ')' || this.#tokens[this.#tokenIdx] == ']' || this.#tokens[this.#tokenIdx] == '}') {
+            if (this.#tokens[this.#tokenIdx] == ']') {
                 this.#tokenIdx++; break;
             }
             items[items.length] = this.#consumeObject();
         }
-        return items_to_cons(...items);
+        return new Vector(items);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    #consumeMap(t: string): U {
+        const items: U[] = [];
+        while (this.#tokenIdx < this.#tokens.length) {
+            this.#consumeObjectsInSexpComment("Input stream terminated unexpectedly(in vector)");
+            if (this.#tokens[this.#tokenIdx] == '}') {
+                this.#tokenIdx++; break;
+            }
+            items[items.length] = this.#consumeObject();
+        }
+        return new Dictionary(items);
     }
     #consumeObjectsInSexpComment(err_msg: string): void {
         while (this.#tokens[this.#tokenIdx] == '#;') {
@@ -296,7 +326,7 @@ function tokenize(txt: string): string[] {
     return tokens;
 }
 
-export function sym_from_lexeme(lexeme: string, options: SchemeParseOptions | undefined): Sym {
+export function sym_from_lexeme(lexeme: string, options: ClojureScriptParseOptions | undefined): Sym {
     // console.lg("sym_from_lexeme", JSON.stringify(lexeme), JSON.stringify(options, null, 2));
     if (options) {
         if (options.lexicon) {

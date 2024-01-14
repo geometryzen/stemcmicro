@@ -4,7 +4,7 @@ import { is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { ParseOptions, parse_native_script } from '../parser/parser';
+import { ParseOptions, parse_algebrite_script } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -13,6 +13,7 @@ import { render_as_sexpr } from '../print/render_as_sexpr';
 import { transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
+import { parse_clojure_script } from '../scheme/parse_clojure_script';
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
@@ -74,23 +75,120 @@ export interface ExprEngine {
  * This is an implementation detail. 
  */
 enum EngineKind {
-    /**
-     * Based on Algebrite, which was derived from Eigenmath.
-     */
-    Native = 1,
-    Eigenmath = 2
+    Algebrite = 1,
+    Eigenmath = 2,
+    ClojureScript = 3
 }
 
 export interface EngineConfig {
     useGeometricAlgebra: boolean;
+    useClojureScript: boolean;
 }
 
 function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind {
-    if (config.useGeometricAlgebra) {
-        return EngineKind.Native;
+    if (config.useClojureScript) {
+        return EngineKind.ClojureScript;
     }
     else {
-        return EngineKind.Eigenmath;
+        if (config.useGeometricAlgebra) {
+            return EngineKind.Algebrite;
+        }
+        else {
+            return EngineKind.Eigenmath;
+        }
+    }
+}
+
+class ClojureScriptExprEngine implements ExprEngine {
+    $: ExtensionEnv;
+    constructor() {
+        this.$ = create_env({
+            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector']
+        });
+        init_env(this.$, {
+            useDefinitions: false
+        });
+    }
+    defineFunction(name: string, lambda: LambdaExpr): void {
+        const match = items_to_cons(create_sym(name));
+        this.$.defineFunction(match, lambda);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
+        return parse_clojure_script(sourceText, {
+            lexicon: {}
+        });
+    }
+    getBinding(sym: Sym): U {
+        return this.$.getBinding(sym.printname);
+    }
+    evaluate(expr: U): U {
+        const { value } = transform_tree(expr, {}, this.$);
+        return value;
+    }
+    renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
+        this.$.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
+        this.$.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
+        try {
+            switch (config.format) {
+                case 'Ascii': {
+                    return render_as_ascii(expr, this.$);
+                }
+                case 'Human': {
+                    return render_as_human(expr, this.$);
+                }
+                case 'Infix': {
+                    return render_as_infix(expr, this.$);
+                }
+                case 'LaTeX': {
+                    return render_as_latex(expr, this.$);
+                }
+                case 'SExpr': {
+                    return render_as_sexpr(expr, this.$);
+                }
+                case 'SVG': {
+                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
+                }
+                default: {
+                    return render_as_infix(expr, this.$);
+                }
+            }
+        }
+        finally {
+            this.$.popDirective();
+            this.$.popDirective();
+        }
+    }
+    release(): void {
+        env_term(this.$);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setSymbol(sym: Sym, binding: U, usrfunc: U): void {
+        this.$.setBinding(sym.printname, binding);
+        this.$.setUsrFunc(sym.printname, usrfunc);
+    }
+    symbol(concept: Concept): Sym {
+        switch (concept) {
+            case Concept.Last: {
+                return RESERVED_KEYWORD_LAST;
+            }
+            case Concept.TTY: {
+                return RESERVED_KEYWORD_TTY;
+            }
+            default: {
+                throw new Error(`symbol(${concept}) not implemented.`);
+            }
+
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addListener(listener: ExprEngineListener): void {
+        // The native engine currently does not support listeners.
+        // throw new Error('addListener() Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeListener(listener: ExprEngineListener): void {
+        // throw new Error('removeListener() Method not implemented.');
     }
 }
 
@@ -109,7 +207,7 @@ class NativeExprEngine implements ExprEngine {
         this.$.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        return parse_native_script("", sourceText, native_parse_config(options));
+        return parse_algebrite_script("", sourceText, native_parse_config(options));
     }
     getBinding(sym: Sym): U {
         return this.$.getBinding(sym.printname);
@@ -282,7 +380,10 @@ class EigenmathExprEngine implements ExprEngine {
 export function create_engine(config: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_eval_config(config);
     switch (engineKind) {
-        case EngineKind.Native: {
+        case EngineKind.ClojureScript: {
+            return new ClojureScriptExprEngine();
+        }
+        case EngineKind.Algebrite: {
             return new NativeExprEngine();
         }
         case EngineKind.Eigenmath: {

@@ -4,7 +4,8 @@ import { is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
 
 const engineConfig: EngineConfig = {
-    useGeometricAlgebra: true
+    useGeometricAlgebra: true,
+    useClojureScript: false
 };
 /*
 const eigenmathConfig: EngineConfig = {

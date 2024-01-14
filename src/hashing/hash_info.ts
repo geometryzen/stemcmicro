@@ -2,6 +2,7 @@ import { is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom } f
 import { is_err } from "../operators/err/is_err";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
+import { is_keyword } from "../scheme/Keyword";
 import { Sym } from "../tree/sym/Sym";
 import { is_atom, is_cons, is_nil, U } from "../tree/tree";
 
@@ -174,11 +175,15 @@ function hash_info_at_level(expr: U, level: number): INFO {
  */
 function hash_arg(arg: U): string {
     if (is_sym(arg)) {
-        // For a symbol, what distinguishes it is the text of the symbol.
         return arg.key();
     }
     else if (is_rat(arg)) {
-        // We know that this is 'Rat' and is the same as the hash.
+        return arg.name;
+    }
+    else if (is_keyword(arg)) {
+        return arg.toString();
+    }
+    else if (is_str(arg)) {
         return arg.name;
     }
     else {

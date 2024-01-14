@@ -1,6 +1,6 @@
 import { Sym } from "../tree/sym/Sym";
 
-export interface SchemeParseOptions {
+export interface ClojureScriptParseOptions {
     lexicon: { [op: string]: Sym };
     /**
      * Determines whether the parser makes associativity explicit or implicit in additive expressions.

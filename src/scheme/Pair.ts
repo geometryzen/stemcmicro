@@ -1,7 +1,7 @@
 import { U } from "../tree/tree";
 
 /**
- * The parser requires a mutable for of Cons.
+ * The parser requires a mutable for our Cons.
  */
 export class Pair implements U {
     constructor(public car: U, public cdr: U) {

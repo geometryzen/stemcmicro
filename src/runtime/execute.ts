@@ -8,7 +8,7 @@ import { native_sym } from "../native/native_sym";
 import { is_imu } from '../operators/imu/is_imu';
 import { subst } from '../operators/subst/subst';
 import { is_sym } from "../operators/sym/is_sym";
-import { parse_native_script } from "../parser/parser";
+import { parse_algebrite_script } from "../parser/parser";
 import { TreeTransformer } from '../transform/Transformer';
 import { Sym } from "../tree/sym/Sym";
 import { Cons, is_cons, is_nil, nil, U } from '../tree/tree';
@@ -46,7 +46,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  */
 export function execute_script(fileName: string, sourceText: string, options: ScriptExecuteOptions, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
     // console.lg(sourceText);
-    const { trees, errors } = parse_native_script(fileName, sourceText, options);
+    const { trees, errors } = parse_algebrite_script(fileName, sourceText, options);
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }
@@ -94,7 +94,7 @@ function transform_trees(trees: U[], values: U[], prints: string[], errors: Erro
 }
 
 export function transform_script(fileName: string, sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = parse_native_script(fileName, sourceText, scan_options($));
+    const { trees, errors } = parse_algebrite_script(fileName, sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }

@@ -1,4 +1,4 @@
-import { U } from "../tree/tree";
+import { U } from "math-expression-tree";
 
 export class EOS implements U {
     name = "EOS";

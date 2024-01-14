@@ -1,4 +1,4 @@
-import { U } from "../tree/tree";
+import { U } from "math-expression-tree";
 
 export class CommentMarker implements U {
     name = "CommentMarker";

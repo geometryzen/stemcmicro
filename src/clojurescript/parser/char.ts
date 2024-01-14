@@ -3,7 +3,8 @@
 // import Class from "./class.js"
 //import { Bug } from "./error.js"
 
-import { Str } from "../tree/str/Str";
+import { Str } from "math-expression-atoms";
+
 
 const Chars: Record<string, Str> = {};
 

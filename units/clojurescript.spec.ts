@@ -3,9 +3,9 @@ import { assert } from "chai";
 import { is_boo, is_flt, is_rat, is_str, is_sym } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { is_dictionary } from "../src/scheme/Dictionary";
-import { is_keyword } from "../src/scheme/Keyword";
-import { is_vector } from "../src/scheme/Vector";
+import { is_dictionary } from "../src/clojurescript/atoms/Dictionary";
+import { is_keyword } from "../src/clojurescript/atoms/Keyword";
+import { is_vector } from "../src/clojurescript/atoms/Vector";
 
 describe("ClojureScript", function () {
     it("Rat", function () {

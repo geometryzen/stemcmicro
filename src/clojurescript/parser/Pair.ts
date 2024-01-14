@@ -1,4 +1,4 @@
-import { U } from "../tree/tree";
+import { U } from "math-expression-tree";
 
 /**
  * The parser requires a mutable for our Cons.

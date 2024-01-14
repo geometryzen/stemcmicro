@@ -2,7 +2,7 @@ import { is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom } f
 import { is_err } from "../operators/err/is_err";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
-import { is_keyword } from "../scheme/Keyword";
+import { is_keyword } from "../clojurescript/atoms/Keyword";
 import { Sym } from "../tree/sym/Sym";
 import { is_atom, is_cons, is_nil, U } from "../tree/tree";
 

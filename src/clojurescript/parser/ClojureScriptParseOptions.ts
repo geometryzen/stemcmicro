@@ -1,4 +1,4 @@
-import { Sym } from "../tree/sym/Sym";
+import { Sym } from "math-expression-atoms";
 
 export interface ClojureScriptParseOptions {
     lexicon: { [op: string]: Sym };

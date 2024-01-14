@@ -13,7 +13,7 @@ import { render_as_sexpr } from '../print/render_as_sexpr';
 import { transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
-import { parse_clojure_script } from '../scheme/parse_clojure_script';
+import { parse_clojure_script } from '../clojurescript/parser/parse_clojure_script';
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;

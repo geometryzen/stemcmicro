@@ -71,6 +71,7 @@
         "unit-product": "mocha 'units/product.spec.ts'",
         "unit-rect": "mocha 'units/rect.spec.ts'",
         "unit-rendersvg": "mocha 'units/rendersvg.spec.ts'",
+        "unit-runtime": "mocha 'units/runtime.spec.ts'",
         "unit-schwarzchild": "mocha 'units/schwarzchild.spec.ts'",
         "unit-simplify": "mocha 'units/simplify.spec.ts'",
         "unit-sin": "mocha 'units/sin.spec.ts'",

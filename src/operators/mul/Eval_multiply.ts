@@ -24,6 +24,11 @@ export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`Eval_multiply ${$.toInfixString(expr)}`);
     const args = expr.argList;
     const vals = args.map($.valueOf);
+    return multiply_values(vals, expr, $);
+}
+
+export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
+    const args = expr.argList;
     if (vals.equals(args)) {
         // For multiplication, the expression (*) evaluates to 1.
         if (is_nil(vals)) {

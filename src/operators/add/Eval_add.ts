@@ -23,10 +23,15 @@ const ADD = native_sym(Native.add);
 
 export function Eval_add(expr: Cons, $: ExtensionEnv): U {
     // console.lg("Eval_add", $.toInfixString(expr));
-    const terms: U[] = [];
     const args = expr.argList;
     const vals = args.map($.valueOf);
+    return add_values(vals, expr, $);
+}
+
+export function add_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
+    const args = expr.argList;
     if (vals.equals(args)) {
+        const terms: U[] = [];
         const values = [...vals];
         const some_term_is_zero_float = values.some((term) => is_flt(term) && term.isZero());
         if (some_term_is_zero_float) {

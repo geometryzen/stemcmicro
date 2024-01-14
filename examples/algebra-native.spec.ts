@@ -1,7 +1,6 @@
 import { assert } from 'chai';
-// Replace '../index' with 'jsxmath' in your code.
-import { create_script_context } from '../index';
-
+import { create_script_context } from '../src/runtime/script_engine';
+// TODO: This is no longer the API we are exposing.
 describe("algebra", function () {
     it("Native", function () {
         const sourceText = [
@@ -24,3 +23,4 @@ describe("algebra", function () {
         context.release();
     });
 });
+

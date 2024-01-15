@@ -2,10 +2,11 @@
 export class Stack<T> {
     tos = 0;
     readonly #elements: T[] = [];
-    peek(): T {
-        const length = this.#elements.length;
-        const last = length - 1;
-        return this.#elements[last];
+    get length(): number {
+        return this.#elements.length;
+    }
+    get top(): T {
+        return this.#elements[this.#elements.length - 1];
     }
     push(element: T): void {
         this.tos++;

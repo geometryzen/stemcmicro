@@ -166,12 +166,18 @@ export enum Directive {
     useParenForTensors
 }
 
+/**
+ * @hidden
+ */
 export interface PrintHandler {
     print(...items: string[]): void;
 }
 
 export type CompareFn = (lhs: U, rhs: U) => Sign;
 
+/**
+ * @hidden
+ */
 export interface ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign;
 }
@@ -262,6 +268,9 @@ export interface Predicates {
     zero: boolean
 }
 
+/**
+ * @hidden
+ */
 export interface ExtensionEnv extends ExprContext {
     getPrintHandler(): PrintHandler;
     setPrintHandler(handler: PrintHandler): void;

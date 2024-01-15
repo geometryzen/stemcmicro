@@ -1,23 +1,30 @@
-import { Cons, is_nil } from "math-expression-tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { Cons, nil, U } from "math-expression-tree";
+import { Stack } from "../../env/Stack";
 import { State } from "./Interpreter";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function Eval_program(node: Cons, stack: State[], state: State, $: ExtensionEnv): State | undefined {
-    // The first time we are called, state.started will be false.
+export function Eval_program(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+    const args: Cons = expr.argList;
+    const n = args.length;
     if (state.firstTime) {
         state.firstTime = false;
-        const expression = node.arg;
-        if (is_nil(expression)) {
-            state.done = true;
-        }
-        else {
-            state.done = false;
-            return new State(expression, state.scope);
+        state.doneArg = Array<boolean>(n).fill(false);
+        state.argValues = Array<U>(n).fill(nil);
+    }
+    for (let i = 0; i < n; i++) {
+        if (!state.doneArg[i]) {
+            state.doneArg[i] = true;
+            if (i > 0) {
+                state.argValues[i - 1] = state.value;
+            }
+            return new State(args.item(i), state.$);
         }
     }
-    else {
-        // We'll ony process the first argument.
-        state.done = true;
+    if (n > 0) {
+        state.argValues[n - 1] = state.value;
     }
+    state.done = true;
+    stack.top.values = state.argValues;
+    // Don't pop the stateStack.
+    // Leave the root scope on the tree in case the program is appended to.
 }

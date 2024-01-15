@@ -1,10 +1,10 @@
 
 import { assert } from "chai";
-import { create_sym, is_rat } from "math-expression-atoms";
+import { is_rat, is_sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { Interpreter } from '../src/clojurescript/runtime/Interpreter';
-import { items_to_cons } from "../src/makeList";
+import { Interpreter, State } from '../src/clojurescript/runtime/Interpreter';
+import { Stack } from "../src/env/Stack";
 
 describe("runtime", function () {
     it("+", function () {
@@ -13,15 +13,14 @@ describe("runtime", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useClojureScript: true });
-        const { trees, errors } = engine.parse(sourceText, {});
+        const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const program = items_to_cons(create_sym('program'), ...trees);
         const runner = new Interpreter(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
-        const value = stack[stack.length - 1].value;
+        const value = stack.top.value;
         /*
         const value = engine.evaluate(tree);
         */
@@ -39,15 +38,14 @@ describe("runtime", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useClojureScript: true });
-        const { trees, errors } = engine.parse(sourceText, {});
+        const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const program = items_to_cons(create_sym('program'), ...trees);
         const runner = new Interpreter(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
-        const value = stack[stack.length - 1].value;
+        const value = stack.top.value;
         /*
         const value = engine.evaluate(tree);
         */
@@ -65,15 +63,14 @@ describe("runtime", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useClojureScript: true });
-        const { trees, errors } = engine.parse(sourceText, {});
+        const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const program = items_to_cons(create_sym('program'), ...trees);
         const runner = new Interpreter(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
-        const value = stack[stack.length - 1].value;
+        const value = stack.top.value;
         /*
         const value = engine.evaluate(tree);
         */
@@ -91,15 +88,14 @@ describe("runtime", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useClojureScript: true });
-        const { trees, errors } = engine.parse(sourceText, {});
+        const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const program = items_to_cons(create_sym('program'), ...trees);
         const runner = new Interpreter(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
-        const value = stack[stack.length - 1].value;
+        const value = stack.top.value;
         /*
         const value = engine.evaluate(tree);
         */
@@ -111,4 +107,29 @@ describe("runtime", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
+    it("program returning multiple values", function () {
+        const lines: string[] = [
+            `a`,
+            `b`,
+            `c`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const { program, errors } = engine.parseModule(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const runner = new Interpreter(program);
+        runner.run();
+        const stack: Stack<State> = runner.getStateStack();
+        assert.strictEqual(stack.length, 1);
+        const values = stack.top.values;
+        assert.strictEqual(values.length, 3);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "a");
+        assert.strictEqual(is_sym(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), "b");
+        assert.strictEqual(is_sym(values[1]), true);
+        assert.strictEqual(engine.renderAsString(values[2], { format: 'Infix' }), "c");
+        assert.strictEqual(is_sym(values[2]), true);
+        engine.release();
+    });
+
 });

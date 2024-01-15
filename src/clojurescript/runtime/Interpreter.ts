@@ -1,7 +1,11 @@
-import { create_sym } from "math-expression-atoms";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { create_sym, Rat, Sym, Tensor } from "math-expression-atoms";
+import { LambdaExpr } from "math-expression-context";
+import { Native } from "math-expression-native";
 import { Cons, is_atom, is_cons, nil, U } from "math-expression-tree";
 import { create_env, EnvOptions } from "../../env/env";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
+import { Stack } from "../../env/Stack";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { init_env } from "../../runtime/script_engine";
@@ -31,7 +35,7 @@ function stepper_key(x: U): string {
     }
 }
 
-class Thing {
+export class Thing {
     getter: unknown;
     setter: unknown;
     properties: unknown;
@@ -43,9 +47,538 @@ class Thing {
     }
 }
 
-class Scope {
-    constructor(readonly parentScope: Scope | null, readonly strict: boolean, readonly thing: Thing) {
+export interface Scope extends ExtensionEnv {
+    thing: Thing;
+    /*
+    parentScope: Scope | null;
+    strict: boolean;
+    */
+}
 
+class BaseEnv implements Scope {
+    #baseEnv: ExtensionEnv;
+    constructor(baseEnv: ExtensionEnv, readonly thing: Thing) {
+        this.#baseEnv = baseEnv;
+    }
+    getPrintHandler(): PrintHandler {
+        throw new Error("Method not implemented.");
+    }
+    setPrintHandler(handler: PrintHandler): void {
+        throw new Error("Method not implemented.");
+    }
+    abs(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    algebra(metric: Tensor<U>, labels: Tensor<U>): Tensor<U> {
+        throw new Error("Method not implemented.");
+    }
+    add(...args: U[]): U {
+        throw new Error("Method not implemented.");
+    }
+    arccos(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    arcsin(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    arctan(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    arg(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    clock(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    conj(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    cos(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    evaluate(opr: Native, ...args: U[]): U {
+        return this.#baseEnv.evaluate(opr, ...args);
+    }
+    exp(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    clearBindings(): void {
+        throw new Error("Method not implemented.");
+    }
+    clearOperators(): void {
+        throw new Error("Method not implemented.");
+    }
+    compareFn(sym: Sym): CompareFn {
+        throw new Error("Method not implemented.");
+    }
+    component(tensor: Tensor<U>, indices: U): U {
+        throw new Error("Method not implemented.");
+    }
+    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
+        throw new Error("Method not implemented.");
+    }
+    defineFunction(match: U, lambda: LambdaExpr): void {
+        throw new Error("Method not implemented.");
+    }
+    defineKeyword(sym: Sym, runner: KeywordRunner): void {
+        throw new Error("Method not implemented.");
+    }
+    defineOperator(builder: OperatorBuilder<U>): void {
+        throw new Error("Method not implemented.");
+    }
+    defineAssociative(opr: Sym, id: Rat): void {
+        throw new Error("Method not implemented.");
+    }
+    divide(lhs: U, rhs: U): U {
+        throw new Error("Method not implemented.");
+    }
+    equals(lhs: U, rhs: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    factor(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    factorize(poly: U, x: U): U {
+        throw new Error("Method not implemented.");
+    }
+    float(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    getCustomDirective(directive: string): boolean {
+        throw new Error("Method not implemented.");
+    }
+    getDirective(directive: Directive): boolean {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolPredicates(sym: string | Sym): Predicates {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolPrintName(sym: Sym): string {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolBinding(sym: string | Sym): U {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolUsrFunc(sym: string | Sym): U {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolsInfo(): {
+        sym: Sym; // at the right spot.  But 'push' & 'sort' is just two lines of code.
+        // at the right spot.  But 'push' & 'sort' is just two lines of code.
+        value: U;
+    }[] {
+        throw new Error("Method not implemented.");
+    }
+    buildOperators(): void {
+        throw new Error("Method not implemented.");
+    }
+    im(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    inner(lhs: U, rhs: U): U {
+        throw new Error("Method not implemented.");
+    }
+    is(predicate: Sym, expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    iscomplex(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isExpanding(): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isFactoring(): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isimag(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isinfinite(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isinfinitesimal(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isminusone(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isnegative(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isone(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    ispositive(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isreal(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isscalar(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    iszero(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    log(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    multiply(...args: U[]): U {
+        throw new Error("Method not implemented.");
+    }
+    negate(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    operatorFor(expr: U): Operator<U> | undefined {
+        throw new Error("Method not implemented.");
+    }
+    outer(...args: U[]): U {
+        throw new Error("Method not implemented.");
+    }
+    polar(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    power(base: U, expo: U): U {
+        throw new Error("Method not implemented.");
+    }
+    re(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    rect(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    remove(varName: Sym): void {
+        throw new Error("Method not implemented.");
+    }
+    setCustomDirective(directive: string, value: boolean): void {
+        throw new Error("Method not implemented.");
+    }
+    pushDirective(directive: Directive, value: boolean): void {
+        throw new Error("Method not implemented.");
+    }
+    popDirective(): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolOrder(sym: Sym, order: ExprComparator): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolPrintName(sym: Sym, printName: string): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolBinding(sym: string | Sym, binding: U): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
+        throw new Error("Method not implemented.");
+    }
+    simplify(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    sin(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    sqrt(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    st(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    subst(newExpr: U, oldExpr: U, expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    subtract(lhs: U, rhs: U): U {
+        throw new Error("Method not implemented.");
+    }
+    toInfixString(expr: U): string {
+        throw new Error("Method not implemented.");
+    }
+    toLatexString(expr: U): string {
+        throw new Error("Method not implemented.");
+    }
+    toSExprString(expr: U): string {
+        throw new Error("Method not implemented.");
+    }
+    transform(expr: U): [number, U] {
+        throw new Error("Method not implemented.");
+    }
+    valueOf(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    getBinding(printname: string): U {
+        throw new Error("Method not implemented.");
+    }
+    setBinding(printname: string, binding: U): void {
+        throw new Error("Method not implemented.");
+    }
+    getUsrFunc(printname: string): U {
+        throw new Error("Method not implemented.");
+    }
+    setUsrFunc(printname: string, usrfunc: U): void {
+        throw new Error("Method not implemented.");
+    }
+}
+
+class DerivedEnv implements Scope {
+    constructor(readonly parentEnv: Scope, readonly strict: boolean, readonly thing: Thing) {
+
+    }
+    getPrintHandler(): PrintHandler {
+        throw new Error("Method not implemented.");
+    }
+    setPrintHandler(handler: PrintHandler): void {
+        throw new Error("Method not implemented.");
+    }
+    abs(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    algebra(metric: Tensor<U>, labels: Tensor<U>): Tensor<U> {
+        throw new Error("Method not implemented.");
+    }
+    add(...args: U[]): U {
+        throw new Error("Method not implemented.");
+    }
+    arccos(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    arcsin(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    arctan(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    arg(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    clock(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    conj(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    cos(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    evaluate(opr: Native, ...args: U[]): U {
+        return this.parentEnv.evaluate(opr, ...args);
+    }
+    exp(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    clearBindings(): void {
+        throw new Error("Method not implemented.");
+    }
+    clearOperators(): void {
+        throw new Error("Method not implemented.");
+    }
+    compareFn(sym: Sym): CompareFn {
+        throw new Error("Method not implemented.");
+    }
+    component(tensor: Tensor<U>, indices: U): U {
+        throw new Error("Method not implemented.");
+    }
+    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
+        throw new Error("Method not implemented.");
+    }
+    defineFunction(match: U, lambda: LambdaExpr): void {
+        throw new Error("Method not implemented.");
+    }
+    defineKeyword(sym: Sym, runner: KeywordRunner): void {
+        throw new Error("Method not implemented.");
+    }
+    defineOperator(builder: OperatorBuilder<U>): void {
+        throw new Error("Method not implemented.");
+    }
+    defineAssociative(opr: Sym, id: Rat): void {
+        throw new Error("Method not implemented.");
+    }
+    divide(lhs: U, rhs: U): U {
+        throw new Error("Method not implemented.");
+    }
+    equals(lhs: U, rhs: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    factor(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    factorize(poly: U, x: U): U {
+        throw new Error("Method not implemented.");
+    }
+    float(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    getCustomDirective(directive: string): boolean {
+        throw new Error("Method not implemented.");
+    }
+    getDirective(directive: Directive): boolean {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolPredicates(sym: string | Sym): Predicates {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolPrintName(sym: Sym): string {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolBinding(sym: string | Sym): U {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolUsrFunc(sym: string | Sym): U {
+        throw new Error("Method not implemented.");
+    }
+    getSymbolsInfo(): { sym: Sym; value: U; }[] {
+        throw new Error("Method not implemented.");
+    }
+    buildOperators(): void {
+        throw new Error("Method not implemented.");
+    }
+    im(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    inner(lhs: U, rhs: U): U {
+        throw new Error("Method not implemented.");
+    }
+    is(predicate: Sym, expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    iscomplex(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isExpanding(): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isFactoring(): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isimag(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isinfinite(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isinfinitesimal(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isminusone(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isnegative(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isone(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    ispositive(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isreal(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    isscalar(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    iszero(expr: U): boolean {
+        throw new Error("Method not implemented.");
+    }
+    log(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    multiply(...args: U[]): U {
+        throw new Error("Method not implemented.");
+    }
+    negate(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    operatorFor(expr: U): Operator<U> | undefined {
+        throw new Error("Method not implemented.");
+    }
+    outer(...args: U[]): U {
+        throw new Error("Method not implemented.");
+    }
+    polar(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    power(base: U, expo: U): U {
+        throw new Error("Method not implemented.");
+    }
+    re(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    rect(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    remove(varName: Sym): void {
+        throw new Error("Method not implemented.");
+    }
+    setCustomDirective(directive: string, value: boolean): void {
+        throw new Error("Method not implemented.");
+    }
+    pushDirective(directive: Directive, value: boolean): void {
+        throw new Error("Method not implemented.");
+    }
+    popDirective(): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolOrder(sym: Sym, order: ExprComparator): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolPrintName(sym: Sym, printName: string): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolBinding(sym: string | Sym, binding: U): void {
+        throw new Error("Method not implemented.");
+    }
+    setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
+        throw new Error("Method not implemented.");
+    }
+    simplify(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    sin(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    sqrt(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    st(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    subst(newExpr: U, oldExpr: U, expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    subtract(lhs: U, rhs: U): U {
+        throw new Error("Method not implemented.");
+    }
+    toInfixString(expr: U): string {
+        throw new Error("Method not implemented.");
+    }
+    toLatexString(expr: U): string {
+        throw new Error("Method not implemented.");
+    }
+    toSExprString(expr: U): string {
+        throw new Error("Method not implemented.");
+    }
+    transform(expr: U): [number, U] {
+        throw new Error("Method not implemented.");
+    }
+    valueOf(expr: U): U {
+        throw new Error("Method not implemented.");
+    }
+    getBinding(printname: string): U {
+        throw new Error("Method not implemented.");
+    }
+    setBinding(printname: string, binding: U): void {
+        throw new Error("Method not implemented.");
+    }
+    getUsrFunc(printname: string): U {
+        throw new Error("Method not implemented.");
+    }
+    setUsrFunc(printname: string, usrfunc: U): void {
+        throw new Error("Method not implemented.");
     }
 }
 
@@ -68,12 +601,16 @@ export class State {
      * Contains the value from the previous invocation of the evaluator.
      */
     value: U = nil;
+    /**
+     * The values from the invocation of the program.
+     */
+    values: U[] = [];
     doneCallee: number = 0;
     doneArgs: boolean = false;
     funcThis: unknown;
     func: unknown;
     arguments: unknown;
-    constructor(readonly node: U, readonly scope: Scope) {
+    constructor(readonly node: U, readonly $: Scope) {
     }
 }
 
@@ -87,30 +624,27 @@ class Task {
     }
 }
 
-export type StepFunction = (node: Cons, stack: State[], state: State, $: ExtensionEnv) => State | undefined;
+export type StepFunction = (node: Cons, stack: Stack<State>, state: State) => State | undefined;
 
 export class Interpreter {
     POLYFILL_TIMEOUT = 1000;
     #paused: boolean = false;
     #currentInterpreter: Interpreter;
-    #stack: State[] = [];
+    #stack: Stack<State> = new Stack();
     #tasks: Task[] = [];
     #stepFunctions: { [type: string]: StepFunction };
     #getterStep: boolean = false;
     #setterStep: boolean = false;
     #value: unknown;
-    #globalObject: Thing;
+    #globalThing: Thing;
     #globalScope: Scope;
     #initFunc: ((runner: Interpreter, globalObject: Thing) => void) | undefined;
-    #baseEnv: ExtensionEnv;
     /**
      * @param program
      * @param options 
      * @param initFunc 
      */
     constructor(readonly program: Cons, options?: EnvOptions, initFunc?: (runner: Interpreter, globalObject: Thing) => void) {
-        this.#baseEnv = create_env(options);
-        init_env(this.#baseEnv);
         this.#currentInterpreter = this;
         this.#stepFunctions = Object.create(null);
         this.#initFunc = initFunc;
@@ -118,16 +652,18 @@ export class Interpreter {
         this.#stepFunctions['program'] = Eval_program;
         this.#stepFunctions['+'] = Eval_add;
         this.#stepFunctions['*'] = Eval_multiply;
-        this.#globalScope = this.createScope(this.createScope, null);
-        this.#globalObject = this.#globalScope.thing;
+        const coreEnv = create_env(options);
+        init_env(coreEnv);
+        this.#globalScope = this.createScope(null, new BaseEnv(coreEnv, this.createObjectProto(null)));
+        this.#globalThing = this.#globalScope.thing;
         this.#runPolyfills();
         const state = new State(program, this.#globalScope);
-        this.#stack = [state];
+        this.#stack.push(state);
     }
-    createScope(node: unknown, parentScope: Scope | null): Scope {
+    createScope(node: unknown, parentScope: Scope): Scope {
         const strict = false;
         const thing = this.createObjectProto(null);
-        const scope = new Scope(parentScope, strict, thing);
+        const scope = new DerivedEnv(parentScope, strict, thing);
         if (!parentScope) {
             this.initGlobal(scope.thing);
         }
@@ -166,14 +702,14 @@ export class Interpreter {
      * @returns true if a step was executed, false if no more instructions.
      */
     step(): boolean {
-        const stack = this.#stack;
+        const stack: Stack<State> = this.#stack;
         let endTime = Date.now() + this.POLYFILL_TIMEOUT;
         let node: U;
         do {
             if (this.#paused) {
                 return true;
             }
-            let state: State | null = stack[stack.length - 1];
+            let state: State | null = stack.top;
             node = state.node;
             // console.lg(`node => ${node}`);
             if (!state || (is_cons(node) && is_program(node) && state.done)) {
@@ -196,7 +732,7 @@ export class Interpreter {
                     const stepper = this.#stepFunctions[key];
                     if (stepper) {
                         // console.lg(`Calling StepFunction for key ${JSON.stringify(key)} with node ${node}`);
-                        const nextState = stepper(node, stack, state, this.#baseEnv);
+                        const nextState = stepper(node, stack, state);
                         if (nextState) {
                             stack.push(nextState);
                         }
@@ -207,7 +743,7 @@ export class Interpreter {
                 }
                 else if (is_atom(node)) {
                     stack.pop();
-                    stack[stack.length - 1].value = node;
+                    stack.top.value = node;
                 }
                 else {
                     throw Error(`${node} is not a Cons`);
@@ -242,7 +778,7 @@ export class Interpreter {
         while (!node.end && endTime > Date.now());
         return true;
     }
-    getStateStack(): State[] {
+    getStateStack(): Stack<State> {
         return this.#stack;
     }
     #nextTask(): State | null {
@@ -260,7 +796,7 @@ export class Interpreter {
         if (task.functionRef) {
             // setTimeout/setInterval with a function reference.
             state.doneCallee = 2;
-            state.funcThis = this.#globalObject;
+            state.funcThis = this.#globalThing;
             state.func = task.functionRef;
             state.doneArgs = true;
             state.arguments = task.argsArray;

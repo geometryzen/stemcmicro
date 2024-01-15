@@ -1,9 +1,9 @@
 import { Native } from "math-expression-native";
 import { Cons, nil, U } from "math-expression-tree";
-import { ExtensionEnv } from "../../env/ExtensionEnv";
+import { Stack } from "../../env/Stack";
 import { State } from "./Interpreter";
 
-export function Eval_multiply(expr: Cons, stack: State[], state: State, $: ExtensionEnv): State | undefined {
+export function Eval_multiply(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {
@@ -17,13 +17,13 @@ export function Eval_multiply(expr: Cons, stack: State[], state: State, $: Exten
             if (i > 0) {
                 state.argValues[i - 1] = state.value;
             }
-            return new State(args.item(i), state.scope);
+            return new State(args.item(i), state.$);
         }
     }
     if (n > 0) {
         state.argValues[n - 1] = state.value;
     }
     stack.pop();
-    const value = $.evaluate(Native.multiply, ...state.argValues);
-    stack[stack.length - 1].value = value;
+    const value = state.$.evaluate(Native.multiply, ...state.argValues);
+    stack.top.value = value;
 }

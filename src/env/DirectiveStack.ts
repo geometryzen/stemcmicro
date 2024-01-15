@@ -9,7 +9,7 @@ export class DirectiveStack {
         this.#data.push(initial_directives());
     }
     push(directive: Directive, value: boolean): void {
-        const directives = copy_directives(this.#data.peek());
+        const directives = copy_directives(this.#data.top);
         update_directives(directives, directive, value);
         const frozen = Object.freeze(directives);
         this.#data.push(frozen);
@@ -18,7 +18,7 @@ export class DirectiveStack {
         this.#data.pop();
     }
     get(directive: Directive): boolean {
-        const directives = this.#data.peek();
+        const directives = this.#data.top;
         const value = directives[directive];
         return value;
     }

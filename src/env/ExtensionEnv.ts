@@ -167,7 +167,7 @@ export enum Directive {
 }
 
 /**
- * @hidden
+ *
  */
 export interface PrintHandler {
     print(...items: string[]): void;
@@ -176,7 +176,7 @@ export interface PrintHandler {
 export type CompareFn = (lhs: U, rhs: U) => Sign;
 
 /**
- * @hidden
+ *
  */
 export interface ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign;
@@ -269,7 +269,7 @@ export interface Predicates {
 }
 
 /**
- * @hidden
+ *
  */
 export interface ExtensionEnv extends ExprContext {
     getPrintHandler(): PrintHandler;

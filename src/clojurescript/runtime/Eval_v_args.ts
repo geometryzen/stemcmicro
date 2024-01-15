@@ -3,7 +3,7 @@ import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
 /**
- *
+ * (op a1 a2 a3 ...)
  */
 export function Eval_v_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;

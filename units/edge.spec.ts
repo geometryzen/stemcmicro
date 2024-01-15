@@ -2534,6 +2534,23 @@ describe("edge", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("exp(2*x)/(1+exp(2*x))-1/(1+exp(2*x))"));
         engine.release();
     });
+    it("tau(n)", function () {
+        const lines: string[] = [
+            `tau(0)`,
+            `tau(1/2)`,
+            `tau(1)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 3);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("pi"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("2*pi"));
+        engine.release();
+    });
     it("taylor(f,x,n,a)", function () {
         const lines: string[] = [
             `taylor(1/(1-x),x,5)`
@@ -2676,6 +2693,20 @@ describe("edge", function () {
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`[[0,0,0],[0,0,0],[0,0,0]]`));
+        engine.release();
+    });
+    it("xyz(a,b,c,...)", function () {
+        const lines: string[] = [
+            `A=xyz(1,2,3)`,
+            `A`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`xyz(1,2,3)`));
         engine.release();
     });
 });

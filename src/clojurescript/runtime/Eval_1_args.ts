@@ -2,6 +2,9 @@ import { Cons, items_to_cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
+/**
+ * (op a1)
+ */
 export function Eval_1_args(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;

@@ -239,7 +239,12 @@ export class Stepper {
                         }
                     }
                     else {
-                        throw Error(`operator ${key} is not supported.`);
+                        // Assume operators that are not recognized require all their arguments to be evaluated.
+                        // This allows users to create DSL languages with externally defined functions.
+                        const nextState = Eval_v_args(node, stack, state);
+                        if (nextState) {
+                            stack.push(nextState);
+                        }
                     }
                 }
                 else if (is_nil(node)) {
@@ -406,6 +411,7 @@ export class Stepper {
         this.#stepFunctions['subst'] = Eval_n_args;
         this.#stepFunctions['tan'] = Eval_1_args;
         this.#stepFunctions['tanh'] = Eval_1_args;
+        this.#stepFunctions['tau'] = Eval_1_args;
         this.#stepFunctions['taylor'] = Eval_taylor;
         this.#stepFunctions['test'] = Eval_test;
         this.#stepFunctions['transpose'] = Eval_transpose;

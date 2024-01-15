@@ -2381,6 +2381,43 @@ describe("edge", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`[[1,0,0],[0,1,0],[0,0,1]]`));
         engine.release();
     });
+    it("uom(s)", function () {
+        const lines: string[] = [
+            `uom("kilogram")`,
+            `uom("meter")`,
+            `uom("second")`,
+            `uom("coulomb")`,
+            `uom("ampere")`,
+            `uom("kelvin")`,
+            `uom("mole")`,
+            `uom("candela")`,
+            `uom("newton")`,
+            `uom("joule")`,
+            `uom("watt")`,
+            `uom("volt")`,
+            `uom("tesla")`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values = stepModule(module);
+        assert.strictEqual(values.length, 13);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`kg`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`m`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`s`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`C`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[4], renderConfig)), stripWhitespace(`A`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[5], renderConfig)), stripWhitespace(`K`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[6], renderConfig)), stripWhitespace(`mol`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[7], renderConfig)), stripWhitespace(`cd`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[8], renderConfig)), stripWhitespace(`N`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[9], renderConfig)), stripWhitespace(`J`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[10], renderConfig)), stripWhitespace(`W`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[11], renderConfig)), stripWhitespace(`V`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[12], renderConfig)), stripWhitespace(`T`));
+        engine.release();
+    });
     it("zero(i,j,...)", function () {
         const lines: string[] = [
             `A=zero(3,3)`,

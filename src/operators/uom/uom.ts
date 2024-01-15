@@ -1,6 +1,12 @@
 import { Uom } from "math-expression-atoms";
 
-export type TYPE_UOM_NAME = 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelvin' | 'mole' | 'candela';
+const NEWTON = Uom.KILOGRAM.mul(Uom.METER).div(Uom.SECOND).div(Uom.SECOND);
+const JOULE = NEWTON.mul(Uom.METER);
+const WATT = JOULE.div(Uom.SECOND);
+const VOLT = JOULE.div(Uom.COULOMB);
+const TESLA = NEWTON.div(Uom.COULOMB).div(Uom.METER.div(Uom.SECOND));
+
+export type TYPE_UOM_NAME = 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelvin' | 'mole' | 'candela' | 'newton' | 'joule' | 'watt' | 'volt' | 'tesla';
 
 export function is_uom_name(name: string): name is TYPE_UOM_NAME {
     switch (name) {
@@ -26,6 +32,21 @@ export function is_uom_name(name: string): name is TYPE_UOM_NAME {
             return true;
         }
         case 'candela': {
+            return true;
+        }
+        case 'newton': {
+            return true;
+        }
+        case 'joule': {
+            return true;
+        }
+        case 'watt': {
+            return true;
+        }
+        case 'volt': {
+            return true;
+        }
+        case 'tesla': {
             return true;
         }
         default: {
@@ -59,6 +80,21 @@ export function create_uom(name: TYPE_UOM_NAME): Uom {
         }
         case 'candela': {
             return Uom.CANDELA;
+        }
+        case 'newton': {
+            return NEWTON;
+        }
+        case 'joule': {
+            return JOULE;
+        }
+        case 'watt': {
+            return WATT;
+        }
+        case 'volt': {
+            return VOLT;
+        }
+        case 'tesla': {
+            return TESLA;
         }
         default: {
             throw new Error(`Unknown name ${name}`);

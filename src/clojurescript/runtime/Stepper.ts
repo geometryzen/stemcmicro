@@ -928,6 +928,7 @@ export class Stepper {
         this.#stepFunctions['test'] = Eval_test;
         this.#stepFunctions['transpose'] = Eval_transpose;
         this.#stepFunctions['unit'] = Eval_unit;
+        this.#stepFunctions['uom'] = Eval_1_args;
         this.#stepFunctions['zero'] = Eval_zero;
     }
     #runPolyfills(): void {

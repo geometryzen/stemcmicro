@@ -46,7 +46,7 @@ import { is_sym } from '../sym/is_sym';
  * 
  * @param assignExpr (= (f paramList) body)
  */
-export function define_function(assignExpr: BCons<Sym, U, U>, $: ExtensionEnv): U {
+export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): U {
     // console.lg("define_function", $.toSExprString(assignExpr));
     /**
      * The function name.

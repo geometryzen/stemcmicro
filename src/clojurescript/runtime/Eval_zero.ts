@@ -1,9 +1,11 @@
-import { Cons, nil, U } from "math-expression-tree";
+import { Cons, items_to_cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function Eval_program(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+/**
+ * zero(i,j,...)
+ */
+export function Eval_zero(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {
@@ -23,8 +25,7 @@ export function Eval_program(expr: Cons, stack: Stack<State>, state: State): Sta
     if (n > 0) {
         state.argValues[n - 1] = state.value;
     }
-    state.done = true;
-    stack.top.values = state.argValues;
-    // Don't pop the stateStack.
-    // Leave the root scope on the tree in case the program is appended to.
+    stack.pop();
+    const value = state.$.valueOf(items_to_cons(expr.opr, ...state.argValues));
+    stack.top.value = value;
 }

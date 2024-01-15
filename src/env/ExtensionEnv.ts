@@ -455,7 +455,6 @@ export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTO
  * Use to handle an expression, especially to evaluate it.
  * This is the means of extending the system to include other atoms.
  * Every object in the system is an opaque handle.
- * Methods don't take a $ parameter because it is hidden state.
  */
 export interface Operator<T extends U> {
     readonly key?: string;

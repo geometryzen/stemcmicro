@@ -1,35 +1,44 @@
-import { Native } from "math-expression-native";
-import { Cons, nil, U } from "math-expression-tree";
+import { is_sym, Sym } from "math-expression-atoms";
+import { Cons, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
+import { setq } from "../../operators/assign/assign_any_any";
+import { BCons } from "../../operators/helpers/BCons";
+import { is_binop } from "../../operators/helpers/is_binop";
 import { State } from "./Stepper";
 
+function is_sym_any_any(expr: Cons): expr is BCons<Sym, U, U> {
+    const opr = expr.car;
+    if (is_sym(opr) && is_binop(expr)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function assert_sym_any_any(expr: Cons): BCons<Sym, U, U> {
+    if (is_sym_any_any(expr)) {
+        return expr;
+    }
+    else {
+        throw new Error();
+    }
+}
+
 /**
- * TODO:
- * We don't evaluate the LHS item(1).
- * We do evaluate the RHS item(2).
+ *
  */
 export function Eval_assign(expr: Cons, stack: Stack<State>, state: State): State | undefined {
-    const args: Cons = expr.argList;
-    const n = args.length;
     if (state.firstTime) {
         state.firstTime = false;
-        state.doneArg = Array<boolean>(n).fill(false);
-        state.argValues = Array<U>(n).fill(nil);
-    }
-    for (let i = 0; i < n; i++) {
-        if (!state.doneArg[i]) {
-            state.doneArg[i] = true;
-            if (i > 0) {
-                state.argValues[i - 1] = state.value;
-            }
-            return new State(args.item(i), state.$);
-        }
-    }
-    if (n > 0) {
-        state.argValues[n - 1] = state.value;
+        // We MUST not evaluate the left hand side of the assignment.
+        // We only evaluate the right hand side.
+        return new State(expr.rhs, state.$);
     }
     stack.pop();
-    // Defaulting this way could cause the assignment to impact the wrong scope.
-    const value = state.$.evaluate(Native.setq, ...state.argValues);
+    const lhs = expr.lhs;
+    const rhs = state.value;
+    const value = setq(lhs, rhs, assert_sym_any_any(expr), state.$);
     stack.top.value = value;
+    return void 0;
 }

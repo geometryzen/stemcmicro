@@ -61,7 +61,7 @@ export interface ExprEngineListener {
 export interface ExprEngine {
     defineFunction(name: string, lambda: LambdaExpr): void;
     parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[], errors: Error[] };
-    parseModule(sourceText: string, options?: Partial<ParseConfig>): { program: Cons, errors: Error[] };
+    parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons, errors: Error[] };
     evaluate(expr: U): U;
     getBinding(sym: Sym): U;
     release(): void;
@@ -121,12 +121,12 @@ class ClojureScriptExprEngine implements ExprEngine {
         });
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { program: Cons; errors: Error[]; } {
+    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
         const { trees, errors } = parse_clojure_script(sourceText, {
             lexicon: {}
         });
-        const program = items_to_cons(create_sym('program'), ...trees);
-        return { program, errors };
+        const module = items_to_cons(create_sym('module'), ...trees);
+        return { module, errors };
     }
     getBinding(sym: Sym): U {
         return this.$.getBinding(sym.printname);
@@ -218,10 +218,10 @@ class NativeExprEngine implements ExprEngine {
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         return parse_algebrite_script("", sourceText, native_parse_config(options));
     }
-    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { program: Cons; errors: Error[]; } {
+    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
         const { trees, errors } = parse_algebrite_script("", sourceText, native_parse_config(options));
-        const program = items_to_cons(create_sym('program'), ...trees);
-        return { program, errors };
+        const module = items_to_cons(create_sym('module'), ...trees);
+        return { module, errors };
     }
     getBinding(sym: Sym): U {
         return this.$.getBinding(sym.printname);
@@ -327,11 +327,11 @@ class EigenmathExprEngine implements ExprEngine {
         const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
         return { trees, errors: emErrorHandler.errors };
     }
-    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { program: Cons; errors: Error[]; } {
+    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
         const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
-        const program = items_to_cons(create_sym('program'), ...trees);
-        return { program, errors: emErrorHandler.errors };
+        const module = items_to_cons(create_sym('module'), ...trees);
+        return { module, errors: emErrorHandler.errors };
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(sym: Sym): U {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { create_sym, Rat, Sym, Tensor } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
-import { Native } from "math-expression-native";
+import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { create_env, EnvOptions } from "../../env/env";
 import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
@@ -9,17 +9,29 @@ import { Stack } from "../../env/Stack";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { init_env } from "../../runtime/script_engine";
+import { Eval_1_args } from "./Eval_1_args";
+import { Eval_2_args } from "./Eval_2_args";
+import { Eval_3_args } from "./Eval_3_args";
 import { Eval_abs } from "./Eval_abs";
 import { Eval_add } from "./Eval_add";
 import { Eval_assign } from "./Eval_assign";
+import { Eval_module } from "./Eval_module";
 import { Eval_multiply } from "./Eval_multiply";
-import { Eval_program } from "./Eval_program";
+import { Eval_n_args } from "./Eval_n_args";
+import { Eval_power } from "./Eval_power";
+import { Eval_taylor } from "./Eval_taylor";
+import { Eval_test } from "./Eval_test";
+import { Eval_testeq } from "./Eval_testeq";
+import { Eval_transpose } from "./Eval_transpose";
+import { Eval_unit } from "./Eval_unit";
+import { Eval_v_args } from "./Eval_v_args";
+import { Eval_zero } from "./Eval_zero";
 
 const STEP_ERROR = { 'STEP_ERROR': true };
-const PROGRAM = create_sym("program");
+const MODULE = create_sym('module');
 
-function is_program(x: Cons): boolean {
-    return is_cons_opr_eq_sym(x, PROGRAM);
+function is_module(x: Cons): boolean {
+    return is_cons_opr_eq_sym(x, MODULE);
 }
 
 function stepper_key(x: U): string {
@@ -53,6 +65,9 @@ export interface Scope {
     thing: Thing;
     evaluate(opr: Native, ...args: U[]): U;
     getSymbolBinding(sym: string | Sym): U;
+    operatorFor(expr: U): Operator<U> | undefined;
+    setSymbolBinding(sym: string | Sym, binding: U): void;
+    valueOf(expr: U): U;
     /*
     parentScope: Scope | null;
     strict: boolean;
@@ -234,7 +249,7 @@ class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     operatorFor(expr: U): Operator<U> | undefined {
-        throw new Error("Method not implemented.");
+        return this.#baseEnv.operatorFor(expr);
     }
     outer(...args: U[]): U {
         throw new Error("Method not implemented.");
@@ -273,7 +288,7 @@ class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     setSymbolBinding(sym: string | Sym, binding: U): void {
-        throw new Error("Method not implemented.");
+        this.#baseEnv.setSymbolBinding(sym, binding);
     }
     setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
         throw new Error("Method not implemented.");
@@ -309,7 +324,7 @@ class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     valueOf(expr: U): U {
-        throw new Error("Method not implemented.");
+        return this.#baseEnv.valueOf(expr);
     }
     getBinding(printname: string): U {
         throw new Error("Method not implemented.");
@@ -495,7 +510,7 @@ class DerivedEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     operatorFor(expr: U): Operator<U> | undefined {
-        throw new Error("Method not implemented.");
+        return this.parentEnv.operatorFor(expr);
     }
     outer(...args: U[]): U {
         throw new Error("Method not implemented.");
@@ -534,7 +549,7 @@ class DerivedEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     setSymbolBinding(sym: string | Sym, binding: U): void {
-        throw new Error("Method not implemented.");
+        this.parentEnv.setSymbolBinding(sym, binding);
     }
     setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
         throw new Error("Method not implemented.");
@@ -570,7 +585,7 @@ class DerivedEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     valueOf(expr: U): U {
-        throw new Error("Method not implemented.");
+        return this.parentEnv.valueOf(expr);
     }
     getBinding(printname: string): U {
         throw new Error("Method not implemented.");
@@ -606,7 +621,7 @@ export class State {
      */
     value: U = nil;
     /**
-     * The values from the invocation of the program.
+     * The values from the invocation of the module.
      */
     values: U[] = [];
     doneCallee: number = 0;
@@ -655,26 +670,21 @@ export class Stepper {
     #globalScope: Scope;
     #initFunc: ((runner: Stepper, globalObject: Thing) => void) | undefined;
     /**
-     * @param program
+     * @param module
      * @param options 
      * @param initFunc 
      */
-    constructor(readonly program: Cons, options?: Partial<StepperConfig>, initFunc?: (runner: Stepper, globalObject: Thing) => void) {
+    constructor(readonly module: Cons, options?: Partial<StepperConfig>, initFunc?: (runner: Stepper, globalObject: Thing) => void) {
         this.#currStepper = this;
         this.#stepFunctions = Object.create(null);
         this.#initFunc = initFunc;
-        // TODO: Initialize #stepFunctions
-        this.#stepFunctions['program'] = Eval_program;
-        this.#stepFunctions['abs'] = Eval_abs;
-        this.#stepFunctions['+'] = Eval_add;
-        this.#stepFunctions['*'] = Eval_multiply;
-        this.#stepFunctions['='] = Eval_assign;
+        this.#initStepFunctions();
         const coreEnv = create_env(env_options_from_stepper_options(options));
         init_env(coreEnv);
         this.#globalScope = this.createScope(null, new BaseEnv(coreEnv, this.createObjectProto(null)));
         this.#globalThing = this.#globalScope.thing;
         this.#runPolyfills();
-        const state = new State(program, this.#globalScope);
+        const state = new State(module, this.#globalScope);
         this.#stack.push(state);
     }
     createScope(node: unknown, parentScope: Scope): Scope {
@@ -729,14 +739,14 @@ export class Stepper {
             let state: State | null = stack.top;
             node = state.node;
             // console.lg(`node => ${node}`);
-            if (!state || (is_cons(node) && is_program(node) && state.done)) {
+            if (!state || (is_cons(node) && is_module(node) && state.done)) {
                 if (!this.#tasks.length) {
-                    // Main program complete and no queued tasks.  We're done!
+                    // Module complete and no queued tasks.  We're done!
                     return false;
                 }
                 state = this.#nextTask();
                 if (!state) {
-                    // console.lg("Main program complete, queued tasks, but nothing to run right now.");
+                    // console.lg("Module complete, queued tasks, but nothing to run right now.");
                     return true;
                 }
             }
@@ -758,23 +768,21 @@ export class Stepper {
                         throw Error(`operator ${key} is not supported.`);
                     }
                 }
+                else if (is_nil(node)) {
+                    stack.top.value = node;
+                }
                 else if (is_atom(node)) {
                     stack.pop();
-                    if (is_sym(node)) {
-                        const binding = state.$.getSymbolBinding(node);
-                        if (is_nil(binding) || binding.equals(node)) {
-                            stack.top.value = node;
-                        }
-                        else {
-                            stack.top.value = binding;
-                        }
+                    const op = stack.top.$.operatorFor(node);
+                    if (op) {
+                        stack.top.value = op.valueOf(node);
                     }
                     else {
                         stack.top.value = node;
                     }
                 }
                 else {
-                    throw Error(`${node} is not a Cons`);
+                    throw Error(`${node} is not a cons, nil, or atom.`);
                 }
             }
             catch (e) {
@@ -839,6 +847,88 @@ export class Stepper {
         this.#tasks.sort(function (a, b) {
             return a.time - b.time;
         });
+    }
+    #initStepFunctions(): void {
+        this.#stepFunctions[native_sym(Native.add).printname] = Eval_add;
+        this.#stepFunctions[native_sym(Native.multiply).printname] = Eval_multiply;
+        this.#stepFunctions['='] = Eval_assign;
+        this.#stepFunctions[native_sym(Native.testeq).printname] = Eval_testeq;
+        this.#stepFunctions['module'] = Eval_module;
+        this.#stepFunctions['abs'] = Eval_abs;
+        this.#stepFunctions['adj'] = Eval_1_args;
+        this.#stepFunctions['and'] = Eval_v_args;
+        this.#stepFunctions['arccos'] = Eval_1_args;
+        this.#stepFunctions['arccosh'] = Eval_1_args;
+        this.#stepFunctions['arcsin'] = Eval_1_args;
+        this.#stepFunctions['arcsinh'] = Eval_1_args;
+        this.#stepFunctions['arctan'] = Eval_1_args;
+        this.#stepFunctions['arctanh'] = Eval_1_args;
+        this.#stepFunctions['arg'] = Eval_1_args;
+        this.#stepFunctions['besselj'] = Eval_2_args;
+        this.#stepFunctions['bessely'] = Eval_2_args;
+        this.#stepFunctions['ceiling'] = Eval_1_args;
+        this.#stepFunctions['choose'] = Eval_2_args;
+        this.#stepFunctions['coeff'] = Eval_3_args;
+        this.#stepFunctions['cofactor'] = Eval_3_args;
+        this.#stepFunctions[native_sym(Native.component).printname] = Eval_3_args;
+        this.#stepFunctions['conj'] = Eval_1_args;
+        this.#stepFunctions['contract'] = Eval_v_args;
+        this.#stepFunctions['cos'] = Eval_1_args;
+        this.#stepFunctions['cosh'] = Eval_1_args;
+        this.#stepFunctions['circexp'] = Eval_1_args;
+        this.#stepFunctions['cross'] = Eval_2_args;
+        this.#stepFunctions['curl'] = Eval_1_args;
+        this.#stepFunctions['denominator'] = Eval_1_args;
+        this.#stepFunctions['det'] = Eval_1_args;
+        this.#stepFunctions['dim'] = Eval_2_args;
+        this.#stepFunctions['div'] = Eval_1_args;
+        this.#stepFunctions['do'] = Eval_v_args;
+        this.#stepFunctions['dot'] = Eval_v_args;
+        this.#stepFunctions['draw'] = Eval_2_args;
+        this.#stepFunctions['eval'] = Eval_v_args;
+        this.#stepFunctions['exp'] = Eval_1_args;
+        this.#stepFunctions['expand'] = Eval_2_args;
+        this.#stepFunctions['expcos'] = Eval_1_args;
+        this.#stepFunctions['expsin'] = Eval_1_args;
+        this.#stepFunctions['factor'] = Eval_v_args;
+        this.#stepFunctions['factorial'] = Eval_1_args;
+        this.#stepFunctions['float'] = Eval_1_args;
+        this.#stepFunctions['floor'] = Eval_1_args;
+        this.#stepFunctions['gcd'] = Eval_v_args;
+        this.#stepFunctions['hermite'] = Eval_2_args;
+        this.#stepFunctions['inner'] = Eval_v_args;
+        this.#stepFunctions['integral'] = Eval_2_args;
+        this.#stepFunctions['inv'] = Eval_1_args;
+        this.#stepFunctions['isprime'] = Eval_1_args;
+        this.#stepFunctions[native_sym(Native.pow).printname] = Eval_power;
+        this.#stepFunctions['laguerre'] = Eval_v_args;
+        this.#stepFunctions['lcm'] = Eval_v_args;
+        this.#stepFunctions['leading'] = Eval_2_args;
+        this.#stepFunctions['legendre'] = Eval_v_args;
+        this.#stepFunctions['log'] = Eval_1_args;
+        this.#stepFunctions['not'] = Eval_1_args;
+        this.#stepFunctions['numerator'] = Eval_1_args;
+        this.#stepFunctions['or'] = Eval_v_args;
+        this.#stepFunctions['outer'] = Eval_v_args;
+        this.#stepFunctions['prime'] = Eval_1_args;
+        this.#stepFunctions['quotient'] = Eval_n_args;
+        this.#stepFunctions['rank'] = Eval_1_args;
+        this.#stepFunctions['rationalize'] = Eval_1_args;
+        this.#stepFunctions['rect'] = Eval_1_args;
+        this.#stepFunctions['roots'] = Eval_n_args;
+        this.#stepFunctions['shape'] = Eval_1_args;
+        this.#stepFunctions['simplify'] = Eval_1_args;
+        this.#stepFunctions['sin'] = Eval_1_args;
+        this.#stepFunctions['sinh'] = Eval_1_args;
+        this.#stepFunctions['sqrt'] = Eval_1_args;
+        this.#stepFunctions['subst'] = Eval_n_args;
+        this.#stepFunctions['tan'] = Eval_1_args;
+        this.#stepFunctions['tanh'] = Eval_1_args;
+        this.#stepFunctions['taylor'] = Eval_taylor;
+        this.#stepFunctions['test'] = Eval_test;
+        this.#stepFunctions['transpose'] = Eval_transpose;
+        this.#stepFunctions['unit'] = Eval_unit;
+        this.#stepFunctions['zero'] = Eval_zero;
     }
     #runPolyfills(): void {
         /*

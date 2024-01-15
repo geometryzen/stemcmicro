@@ -47,6 +47,10 @@ type EXP = BCons<Sym, LHS, RHS>;
 function Eval_assign(expr: EXP, $: ExtensionEnv): U {
     const lhs = expr.lhs;
     const rhs = expr.rhs;
+    return setq(lhs, rhs, expr, $);
+}
+
+export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): U {
 
     // case of tensor
     if (caadr(expr).equals(COMPONENT)) {

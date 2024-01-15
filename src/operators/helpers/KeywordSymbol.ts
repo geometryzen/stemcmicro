@@ -38,6 +38,6 @@ export abstract class KeywordOperator implements Operator<Sym> {
         throw new Error("Keyword.transform Symbol Method not implemented.");
     }
     valueOf(expr: Sym): U {
-        throw new Error("Keyword.valueOf Symbol Method not implemented.");
+        throw new Error(`Keyword.valueOf(${expr.printname}) Symbol Method not implemented.`);
     }
 }

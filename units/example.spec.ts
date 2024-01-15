@@ -14,9 +14,9 @@ describe("example", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useClojureScript: true });
-        const { program, errors } = engine.parseModule(sourceText, {});
+        const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
-        const runner = new Stepper(program);
+        const runner = new Stepper(module);
         runner.run();
         const stack: Stack<State> = runner.getStateStack();
         assert.strictEqual(stack.length, 1);

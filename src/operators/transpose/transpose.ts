@@ -30,7 +30,7 @@ export function Eval_transpose(p1: U, $: ExtensionEnv): U {
 // p3: index to be transposed
 // p2: other index to be transposed
 // p1: what needs to be transposed
-export function transpose(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
+export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'equals' | 'inner' | 'isExpanding' | 'isone' | 'iszero' | 'multiply'>): U {
     let t = 0;
     const ai: number[] = Array(MAXDIM).fill(0);
     const an: number[] = Array(MAXDIM).fill(0);

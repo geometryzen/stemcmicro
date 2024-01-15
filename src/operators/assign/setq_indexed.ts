@@ -36,7 +36,8 @@ import { is_sym } from "../sym/is_sym";
  * @param $ 
  * @returns 
  */
-export function setq_indexed(assignExpr: Cons, $: ExtensionEnv): U {
+export function setq_indexed(assignExpr: Cons, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): U {
+    // console.lg(`setq_indexed ${$.toInfixString(assignExpr)}`);
     const p4 = cadadr(assignExpr);
     // console.lg(`p4: ${toInfixString(p4)}`);
     if (!is_sym(p4)) {

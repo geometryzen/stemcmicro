@@ -85,6 +85,138 @@ describe("edge", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("120"));
         engine.release();
     });
+    it("^", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `e1^e1`,
+            `e1^e2`,
+            `e1^e3`,
+            `e2^e1`,
+            `e2^e2`,
+            `e2^e3`,
+            `e3^e1`,
+            `e3^e2`,
+            `e3^e3`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 9);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("e1^e2"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("e1^e3"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("-e1^e2"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[4], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[5], renderConfig)), stripWhitespace("e2^e3"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[6], renderConfig)), stripWhitespace("-e1^e3"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[7], renderConfig)), stripWhitespace("-e2^e3"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[8], renderConfig)), stripWhitespace("0"));
+        engine.release();
+    });
+    it("|", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `e1|e1`,
+            `e1|e2`,
+            `e1|e3`,
+            `e2|e1`,
+            `e2|e2`,
+            `e2|e3`,
+            `e3|e1`,
+            `e3|e2`,
+            `e3|e3`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 9);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[4], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[5], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[6], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[7], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[8], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
+    it("<<", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `e1<<e1`,
+            `e1<<e2`,
+            `e1<<e3`,
+            `e2<<e1`,
+            `e2<<e2`,
+            `e2<<e3`,
+            `e3<<e1`,
+            `e3<<e2`,
+            `e3<<e3`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 9);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[4], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[5], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[6], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[7], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[8], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
+    it(">>", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `e1=G30[1]`,
+            `e2=G30[2]`,
+            `e3=G30[3]`,
+            `e1>>e1`,
+            `e1>>e2`,
+            `e1>>e3`,
+            `e2>>e1`,
+            `e2>>e2`,
+            `e2>>e3`,
+            `e3>>e1`,
+            `e3>>e2`,
+            `e3>>e3`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 9);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[4], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[5], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[6], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[7], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[8], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
     it("=", function () {
         const lines: string[] = [
             `x=24`,
@@ -101,17 +233,116 @@ describe("edge", function () {
     });
     it("==", function () {
         const lines: string[] = [
-            `A=1`,
-            `B=1`,
-            `A==B`
+            `0==0`,
+            `0==1`,
+            `1==0`,
+            `1==1`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
-        assert.strictEqual(values.length, 1);
+        assert.strictEqual(values.length, 4);
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`0`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`0`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`1`));
+        engine.release();
+    });
+    it("!=", function () {
+        const lines: string[] = [
+            `0!=0`,
+            `0!=1`,
+            `1!=0`,
+            `1!=1`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 4);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`0`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`0`));
+        engine.release();
+    });
+    it(">", function () {
+        const lines: string[] = [
+            `0>0`,
+            `0>1`,
+            `1>0`,
+            `1>1`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 4);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`false`));
+        engine.release();
+    });
+    it(">=", function () {
+        const lines: string[] = [
+            `0>=0`,
+            `0>=1`,
+            `1>=0`,
+            `1>=1`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 4);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`0`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`1`));
+        engine.release();
+    });
+    it("<", function () {
+        const lines: string[] = [
+            `0<0`,
+            `0<1`,
+            `1<0`,
+            `1<1`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 4);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`false`));
+        engine.release();
+    });
+    it("<=", function () {
+        const lines: string[] = [
+            `0<=0`,
+            `0<=1`,
+            `1<=0`,
+            `1<=1`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 4);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`0`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`1`));
         engine.release();
     });
     it("A[i,j,...]=", function () {
@@ -163,6 +394,20 @@ describe("edge", function () {
         }
         assert.strictEqual(values.length, 1);
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        engine.release();
+    });
+    it("algebra(metric,labels)", function () {
+        const lines: string[] = [
+            `G30=algebra([1,1,1],["e1","e2","e3"])`,
+            `G30`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { module, errors } = engine.parseModule(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = stepModule(module);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("[e1,e2,e3]"));
         engine.release();
     });
     it("and(a,b,...)", function () {

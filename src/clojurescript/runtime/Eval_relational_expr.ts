@@ -3,9 +3,9 @@ import { Stack } from "../../env/Stack";
 import { State } from "./Stepper";
 
 /**
- * A==B
+ * ==, !=, >, >=, <, <=
  */
-export function Eval_testeq(expr: Cons, stack: Stack<State>, state: State): State | undefined {
+export function Eval_relational_expr(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;
     const n = args.length;
     if (state.firstTime) {

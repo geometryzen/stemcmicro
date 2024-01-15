@@ -21,7 +21,7 @@ import { Eval_n_args } from "./Eval_n_args";
 import { Eval_power } from "./Eval_power";
 import { Eval_taylor } from "./Eval_taylor";
 import { Eval_test } from "./Eval_test";
-import { Eval_testeq } from "./Eval_testeq";
+import { Eval_relational_expr } from "./Eval_relational_expr";
 import { Eval_transpose } from "./Eval_transpose";
 import { Eval_unit } from "./Eval_unit";
 import { Eval_v_args } from "./Eval_v_args";
@@ -651,7 +651,7 @@ export interface StepperConfig {
 
 function env_options_from_stepper_options(options?: Partial<StepperConfig>): EnvOptions {
     const config: EnvOptions = {
-        // Nothing yet.
+        dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector']
     };
     return config;
 }
@@ -851,11 +851,19 @@ export class Stepper {
     #initStepFunctions(): void {
         this.#stepFunctions[native_sym(Native.add).printname] = Eval_add;
         this.#stepFunctions[native_sym(Native.multiply).printname] = Eval_multiply;
+        this.#stepFunctions[native_sym(Native.lco).printname] = Eval_v_args;
+        this.#stepFunctions[native_sym(Native.rco).printname] = Eval_v_args;
         this.#stepFunctions['='] = Eval_assign;
-        this.#stepFunctions[native_sym(Native.testeq).printname] = Eval_testeq;
+        this.#stepFunctions[native_sym(Native.testeq).printname] = Eval_relational_expr;
+        this.#stepFunctions[native_sym(Native.testne).printname] = Eval_relational_expr;
+        this.#stepFunctions[native_sym(Native.testge).printname] = Eval_relational_expr;
+        this.#stepFunctions[native_sym(Native.testgt).printname] = Eval_relational_expr;
+        this.#stepFunctions[native_sym(Native.testle).printname] = Eval_relational_expr;
+        this.#stepFunctions[native_sym(Native.testlt).printname] = Eval_relational_expr;
         this.#stepFunctions['module'] = Eval_module;
         this.#stepFunctions['abs'] = Eval_abs;
         this.#stepFunctions['adj'] = Eval_1_args;
+        this.#stepFunctions['algebra'] = Eval_2_args;
         this.#stepFunctions['and'] = Eval_v_args;
         this.#stepFunctions['arccos'] = Eval_1_args;
         this.#stepFunctions['arccosh'] = Eval_1_args;
@@ -873,8 +881,8 @@ export class Stepper {
         this.#stepFunctions[native_sym(Native.component).printname] = Eval_3_args;
         this.#stepFunctions['conj'] = Eval_1_args;
         this.#stepFunctions['contract'] = Eval_v_args;
-        this.#stepFunctions['cos'] = Eval_1_args;
-        this.#stepFunctions['cosh'] = Eval_1_args;
+        this.#stepFunctions[native_sym(Native.cos).printname] = Eval_1_args;
+        this.#stepFunctions[native_sym(Native.cosh).printname] = Eval_1_args;
         this.#stepFunctions['circexp'] = Eval_1_args;
         this.#stepFunctions['cross'] = Eval_2_args;
         this.#stepFunctions['curl'] = Eval_1_args;
@@ -896,7 +904,7 @@ export class Stepper {
         this.#stepFunctions['floor'] = Eval_1_args;
         this.#stepFunctions['gcd'] = Eval_v_args;
         this.#stepFunctions['hermite'] = Eval_2_args;
-        this.#stepFunctions['inner'] = Eval_v_args;
+        this.#stepFunctions[native_sym(Native.inner).printname] = Eval_v_args;
         this.#stepFunctions['integral'] = Eval_2_args;
         this.#stepFunctions['inv'] = Eval_1_args;
         this.#stepFunctions['isprime'] = Eval_1_args;
@@ -909,7 +917,7 @@ export class Stepper {
         this.#stepFunctions['not'] = Eval_1_args;
         this.#stepFunctions['numerator'] = Eval_1_args;
         this.#stepFunctions['or'] = Eval_v_args;
-        this.#stepFunctions['outer'] = Eval_v_args;
+        this.#stepFunctions[native_sym(Native.outer).printname] = Eval_v_args;
         this.#stepFunctions['prime'] = Eval_1_args;
         this.#stepFunctions['quotient'] = Eval_n_args;
         this.#stepFunctions['rank'] = Eval_1_args;
@@ -918,8 +926,8 @@ export class Stepper {
         this.#stepFunctions['roots'] = Eval_n_args;
         this.#stepFunctions['shape'] = Eval_1_args;
         this.#stepFunctions['simplify'] = Eval_1_args;
-        this.#stepFunctions['sin'] = Eval_1_args;
-        this.#stepFunctions['sinh'] = Eval_1_args;
+        this.#stepFunctions[native_sym(Native.sin).printname] = Eval_1_args;
+        this.#stepFunctions[native_sym(Native.sinh).printname] = Eval_1_args;
         this.#stepFunctions['sqrt'] = Eval_1_args;
         this.#stepFunctions['subst'] = Eval_n_args;
         this.#stepFunctions['tan'] = Eval_1_args;

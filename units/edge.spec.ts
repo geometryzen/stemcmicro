@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
-import { Interpreter } from "../src/clojurescript/runtime/Interpreter";
+import { Stepper } from "../src/clojurescript/runtime/Stepper";
 
 const engineConfig: EngineConfig = {
     useGeometricAlgebra: true,
@@ -31,13 +31,13 @@ const renderConfig: RenderConfig = {
 };
 
 /**
- * Uses the Interpreter to evaluate a module.
+ * Uses the Stepper to evaluate a module.
  * @param module The module created by parsing a script as a module. 
  * @returns The non-nil values returned by the module.
  */
 function evaluateModule(module: Cons): U[] {
     const values: U[] = [];
-    const runner = new Interpreter(module);
+    const runner = new Stepper(module);
     runner.run();
     const stack = runner.getStateStack();
     for (const value of stack.top.values) {

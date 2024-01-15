@@ -1,7 +1,7 @@
 import { Native } from "math-expression-native";
 import { Cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
-import { State } from "./Interpreter";
+import { State } from "./Stepper";
 
 export function Eval_multiply(expr: Cons, stack: Stack<State>, state: State): State | undefined {
     const args: Cons = expr.argList;

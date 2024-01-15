@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_rat } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { Interpreter, State } from '../src/clojurescript/runtime/Interpreter';
+import { State, Stepper } from '../src/clojurescript/runtime/Stepper';
 import { Stack } from "../src/env/Stack";
 
 describe("example", function () {
@@ -16,7 +16,7 @@ describe("example", function () {
         const engine: ExprEngine = create_engine({ useClojureScript: true });
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
-        const runner = new Interpreter(program);
+        const runner = new Stepper(program);
         runner.run();
         const stack: Stack<State> = runner.getStateStack();
         assert.strictEqual(stack.length, 1);

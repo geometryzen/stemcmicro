@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { is_rat, is_sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { Interpreter, State } from '../src/clojurescript/runtime/Interpreter';
+import { State, Stepper } from '../src/clojurescript/runtime/Stepper';
 import { Stack } from "../src/env/Stack";
 
 describe("runtime", function () {
@@ -16,7 +16,7 @@ describe("runtime", function () {
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const runner = new Interpreter(program);
+        const runner = new Stepper(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
@@ -41,7 +41,7 @@ describe("runtime", function () {
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const runner = new Interpreter(program);
+        const runner = new Stepper(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
@@ -66,7 +66,7 @@ describe("runtime", function () {
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const runner = new Interpreter(program);
+        const runner = new Stepper(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
@@ -91,7 +91,7 @@ describe("runtime", function () {
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
-        const runner = new Interpreter(program);
+        const runner = new Stepper(program);
         runner.run();
         const stack = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
@@ -117,7 +117,7 @@ describe("runtime", function () {
         const engine: ExprEngine = create_engine({ useClojureScript: true });
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
-        const runner = new Interpreter(program);
+        const runner = new Stepper(program);
         runner.run();
         const stack: Stack<State> = runner.getStateStack();
         assert.strictEqual(stack.length, 1);

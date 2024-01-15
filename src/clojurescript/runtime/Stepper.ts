@@ -49,8 +49,10 @@ export class Thing {
     }
 }
 
-export interface Scope extends ExtensionEnv {
+export interface Scope {
     thing: Thing;
+    evaluate(opr: Native, ...args: U[]): U;
+    getSymbolBinding(sym: string | Sym): U;
     /*
     parentScope: Scope | null;
     strict: boolean;
@@ -628,10 +630,21 @@ class Task {
 
 export type StepFunction = (node: Cons, stack: Stack<State>, state: State) => State | undefined;
 
-export class Interpreter {
+export interface StepperConfig {
+
+}
+
+function env_options_from_stepper_options(options?: Partial<StepperConfig>): EnvOptions {
+    const config: EnvOptions = {
+        // Nothing yet.
+    };
+    return config;
+}
+
+export class Stepper {
     POLYFILL_TIMEOUT = 1000;
     #paused: boolean = false;
-    #currentInterpreter: Interpreter;
+    #currStepper: Stepper;
     #stack: Stack<State> = new Stack();
     #tasks: Task[] = [];
     #stepFunctions: { [type: string]: StepFunction };
@@ -640,14 +653,14 @@ export class Interpreter {
     #value: unknown;
     #globalThing: Thing;
     #globalScope: Scope;
-    #initFunc: ((runner: Interpreter, globalObject: Thing) => void) | undefined;
+    #initFunc: ((runner: Stepper, globalObject: Thing) => void) | undefined;
     /**
      * @param program
      * @param options 
      * @param initFunc 
      */
-    constructor(readonly program: Cons, options?: EnvOptions, initFunc?: (runner: Interpreter, globalObject: Thing) => void) {
-        this.#currentInterpreter = this;
+    constructor(readonly program: Cons, options?: Partial<StepperConfig>, initFunc?: (runner: Stepper, globalObject: Thing) => void) {
+        this.#currStepper = this;
         this.#stepFunctions = Object.create(null);
         this.#initFunc = initFunc;
         // TODO: Initialize #stepFunctions
@@ -656,7 +669,7 @@ export class Interpreter {
         this.#stepFunctions['+'] = Eval_add;
         this.#stepFunctions['*'] = Eval_multiply;
         this.#stepFunctions['='] = Eval_assign;
-        const coreEnv = create_env(options);
+        const coreEnv = create_env(env_options_from_stepper_options(options));
         init_env(coreEnv);
         this.#globalScope = this.createScope(null, new BaseEnv(coreEnv, this.createObjectProto(null)));
         this.#globalThing = this.#globalScope.thing;
@@ -727,8 +740,8 @@ export class Interpreter {
                     return true;
                 }
             }
-            const previousInterpreter = this.#currentInterpreter;
-            this.#currentInterpreter = this;
+            const prevStepper = this.#currStepper;
+            this.#currStepper = this;
             try {
                 if (is_cons(node)) {
                     const key = stepper_key(node);
@@ -773,7 +786,7 @@ export class Interpreter {
                 }
             }
             finally {
-                this.#currentInterpreter = previousInterpreter;
+                this.#currStepper = prevStepper;
                 //
             }
             if (this.#getterStep) {

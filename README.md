@@ -5,10 +5,11 @@ JsxMath is a Javascript (Typescript) library for symbolic mathematics.
 ## Example
 
 ```typescript
+
 import { assert } from "chai";
 import { is_rat } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { Interpreter, State } from '../src/clojurescript/runtime/Interpreter';
+import { State, Stepper } from '../src/clojurescript/runtime/Interpreter';
 import { Stack } from "../src/env/Stack";
 
 describe("example", function () {
@@ -22,7 +23,7 @@ describe("example", function () {
         const engine: ExprEngine = create_engine({ useClojureScript: true });
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
-        const runner = new Interpreter(program);
+        const runner = new Stepper(program);
         runner.run();
         const stack: Stack<State> = runner.getStateStack();
         assert.strictEqual(stack.length, 1);
@@ -36,8 +37,7 @@ describe("example", function () {
         assert.strictEqual(is_rat(values[2]), true);
         engine.release();
     });
-});
-```
+});```
 
 ## Features
 

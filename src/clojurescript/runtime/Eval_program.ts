@@ -1,6 +1,6 @@
 import { Cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
-import { State } from "./Interpreter";
+import { State } from "./Stepper";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function Eval_program(expr: Cons, stack: Stack<State>, state: State): State | undefined {

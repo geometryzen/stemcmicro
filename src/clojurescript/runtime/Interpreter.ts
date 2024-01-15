@@ -2,14 +2,16 @@
 import { create_sym, Rat, Sym, Tensor } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
-import { Cons, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { create_env, EnvOptions } from "../../env/env";
 import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { init_env } from "../../runtime/script_engine";
+import { Eval_abs } from "./Eval_abs";
 import { Eval_add } from "./Eval_add";
+import { Eval_assign } from "./Eval_assign";
 import { Eval_multiply } from "./Eval_multiply";
 import { Eval_program } from "./Eval_program";
 
@@ -157,7 +159,7 @@ class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     getSymbolBinding(sym: string | Sym): U {
-        throw new Error("Method not implemented.");
+        return this.#baseEnv.getSymbolBinding(sym);
     }
     getSymbolUsrFunc(sym: string | Sym): U {
         throw new Error("Method not implemented.");
@@ -422,7 +424,7 @@ class DerivedEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     getSymbolBinding(sym: string | Sym): U {
-        throw new Error("Method not implemented.");
+        return this.parentEnv.getSymbolBinding(sym);
     }
     getSymbolUsrFunc(sym: string | Sym): U {
         throw new Error("Method not implemented.");
@@ -650,8 +652,10 @@ export class Interpreter {
         this.#initFunc = initFunc;
         // TODO: Initialize #stepFunctions
         this.#stepFunctions['program'] = Eval_program;
+        this.#stepFunctions['abs'] = Eval_abs;
         this.#stepFunctions['+'] = Eval_add;
         this.#stepFunctions['*'] = Eval_multiply;
+        this.#stepFunctions['='] = Eval_assign;
         const coreEnv = create_env(options);
         init_env(coreEnv);
         this.#globalScope = this.createScope(null, new BaseEnv(coreEnv, this.createObjectProto(null)));
@@ -743,7 +747,18 @@ export class Interpreter {
                 }
                 else if (is_atom(node)) {
                     stack.pop();
-                    stack.top.value = node;
+                    if (is_sym(node)) {
+                        const binding = state.$.getSymbolBinding(node);
+                        if (is_nil(binding) || binding.equals(node)) {
+                            stack.top.value = node;
+                        }
+                        else {
+                            stack.top.value = binding;
+                        }
+                    }
+                    else {
+                        stack.top.value = node;
+                    }
                 }
                 else {
                     throw Error(`${node} is not a Cons`);

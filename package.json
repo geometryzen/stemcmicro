@@ -49,6 +49,7 @@
         "unit-divide": "mocha 'units/divide.spec.ts'",
         "unit-dot": "mocha 'units/dot.spec.ts'",
         "unit-draw": "mocha 'units/draw.spec.ts'",
+        "unit-edge": "mocha 'units/edge.spec.ts'",
         "unit-eigenmath": "mocha 'units/eigenmath.spec.ts'",
         "unit-eigenmath-mul": "mocha 'units/eigenmath-mul.spec.ts'",
         "unit-eigenvec": "mocha 'units/eigenvec.spec.ts'",

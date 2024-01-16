@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { create_sym, Sym } from "math-expression-atoms";
+import { LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
 import { create_env, EnvOptions } from "../../env/env";
-import { Operator } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
@@ -143,6 +144,7 @@ export class Stepper {
     #globalThing: Thing;
     #globalScope: Scope;
     #initFunc: ((runner: Stepper, globalObject: Thing) => void) | undefined;
+    #coreEnv: ExtensionEnv;
     /**
      * @param module
      * @param options 
@@ -153,9 +155,9 @@ export class Stepper {
         this.#stepFunctions = Object.create(null);
         this.#initFunc = initFunc;
         this.#initStepFunctions();
-        const coreEnv = create_env(env_options_from_stepper_options(options));
-        init_env(coreEnv);
-        this.#globalScope = this.createScope(null, new BaseEnv(coreEnv, this.createObjectProto(null)));
+        this.#coreEnv = create_env(env_options_from_stepper_options(options));
+        init_env(this.#coreEnv);
+        this.#globalScope = this.createScope(null, new BaseEnv(this.#coreEnv, this.createObjectProto(null)));
         this.#globalThing = this.#globalScope.thing;
         this.#runPolyfills();
         const state = new State(module, this.#globalScope);
@@ -186,6 +188,10 @@ export class Stepper {
         }
         */
         return obj;
+    }
+    defineFunction(name: string, lambda: LambdaExpr): void {
+        const match = items_to_cons(create_sym(name));
+        this.#coreEnv.defineFunction(match, lambda);
     }
     initGlobal(globalObject: Thing) {
         if (this.#initFunc) {

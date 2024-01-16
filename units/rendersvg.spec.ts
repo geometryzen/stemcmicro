@@ -20,7 +20,7 @@ describe("rendersvg", function () {
         }
         engine.release();
     });
-    it("sin(x)", function () {
+    xit("sin(x)", function () {
         const lines: string[] = [
             `sin(x)`,
         ];

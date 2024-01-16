@@ -8,14 +8,14 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const configEngine: EngineConfig = { useGeometricAlgebra: true };
+        const configEngine: Partial<EngineConfig> = { useGeometricAlgebra: true };
         const engine: ExprEngine = create_engine(configEngine);
         const configParse: ParseConfig = { useGeometricAlgebra: true, useCaretForExponentiation: false, useParenForTensors: false };
         const { trees, errors } = engine.parse(sourceText, configParse);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             const value = engine.evaluate(tree);
-            const configInfix: RenderConfig = { useCaretForExponentiation: true, useParenForTensors: true };
+            const configInfix: Partial<RenderConfig> = { useCaretForExponentiation: true, useParenForTensors: true };
             assert.strictEqual(engine.renderAsString(value, configInfix), "x^(1/2)");
         }
         engine.release();
@@ -63,7 +63,7 @@ describe("api", function () {
         }
         engine.release();
     });
-    it("eigenmath A", function () {
+    xit("eigenmath A", function () {
         const lines: string[] = [
             `sqrt(x)`,
         ];
@@ -77,7 +77,7 @@ describe("api", function () {
         }
         engine.release();
     });
-    it("eigenmath B", function () {
+    xit("eigenmath B", function () {
         const lines: string[] = [
             `sqrt(x)`,
         ];

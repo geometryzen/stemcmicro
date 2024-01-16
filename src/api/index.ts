@@ -2,7 +2,7 @@ import { create_sym, Sym } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { parse_clojure_script } from '../clojurescript/parser/parse_clojure_script';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { ParseOptions, parse_algebrite_script } from '../parser/parser';
@@ -377,10 +377,10 @@ class EigenmathExprEngine implements ExprEngine {
     symbol(concept: Concept): Sym {
         switch (concept) {
             case Concept.Last: {
-                return symbol(LAST);
+                return LAST;
             }
             case Concept.TTY: {
-                return symbol(TTY);
+                return TTY;
             }
             default: {
                 throw new Error(`symbol(${concept}) not implemented.`);

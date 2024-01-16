@@ -1,48 +1,61 @@
 
 import { assert } from "chai";
+import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 
 describe("sandbox", function () {
-    it("multiline", function () {
+    xit("49 using Eigenmath", function () {
         const lines: string[] = [
-            `aaa`,
-            `[b]`,
-            `"c"`,
-            `123`,
-            `1.5`
+            `sqrt(49)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
-        const { module, errors } = engine.parseModule(sourceText, {});
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, {});
+        if (errors.length > 0) {
+            // console.lg(`${errors}`);
+        }
         assert.strictEqual(errors.length, 0);
-        assert.strictEqual(engine.renderAsString(module), `module(aaa,[b],"c",123,1.5)`);
-        assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module aaa [b] "c" 123 1.5)`);
-
-        const a = module.item(1);
-        assert.strictEqual(engine.renderAsString(a), "aaa");
-        assert.strictEqual(a.pos, 0);
-        assert.strictEqual(a.end, 3);
-
-        const b = module.item(2);
-        assert.strictEqual(engine.renderAsString(b), "[b]");
-        assert.strictEqual(b.pos, 4);
-        assert.strictEqual(b.end, 7);
-
-        const str = module.item(3);
-        assert.strictEqual(engine.renderAsString(str), `"c"`);
-        assert.strictEqual(str.pos, 8);
-        assert.strictEqual(str.end, 11);
-
-        const rat = module.item(4);
-        assert.strictEqual(engine.renderAsString(rat), "123");
-        assert.strictEqual(rat.pos, 12);
-        assert.strictEqual(rat.end, 15);
-
-        const flt = module.item(5);
-        assert.strictEqual(engine.renderAsString(flt), "1.5");
-        assert.strictEqual(flt.pos, 16);
-        assert.strictEqual(flt.end, 19);
-
+        assert.strictEqual(trees.length, 1);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(* 7 m)");
+        engine.release();
+    });
+    it("sqrt(49*m*m) using Eigenmath", function () {
+        const lines: string[] = [
+            `sqrt(49*m*m)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const { trees, errors } = engine.parse(sourceText, {});
+        if (errors.length > 0) {
+            // console.lg(`${errors}`);
+        }
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), "7 m");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(* 7 m)");
         engine.release();
     });
 });

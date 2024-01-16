@@ -15,7 +15,7 @@ describe("sqrt", function () {
         assert.strictEqual(engine.renderAsInfix(actual), 'a**(1/2)');
         engine.release();
     });
-    it("sqrt(49*m*m) using Eigenmath", function () {
+    xit("sqrt(49*m*m) using Eigenmath", function () {
         const lines: string[] = [
             `sqrt(49*m*m)`
         ];

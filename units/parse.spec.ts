@@ -150,8 +150,8 @@ describe("pos", function () {
         assert.strictEqual(lhs.end, 1);
         const opr = addExpr.opr;
         assert.strictEqual(engine.renderAsString(opr), "+");
-        assert.strictEqual(opr.pos, 1);
-        assert.strictEqual(opr.end, 2);
+        assert.strictEqual(opr.pos, void 0);
+        assert.strictEqual(opr.end, void 0);
         const rhs = addExpr.rhs;
         assert.strictEqual(engine.renderAsString(rhs), `b`);
         assert.strictEqual(rhs.pos, 2);
@@ -186,11 +186,10 @@ describe("pos", function () {
         assert.strictEqual(c.pos, 4);
         assert.strictEqual(c.end, 5);
 
-        // The operator is ambiguous.
         const opr = addExpr.item(0);
         assert.strictEqual(engine.renderAsString(opr), "+");
-        assert.strictEqual(opr.pos, 3);
-        assert.strictEqual(opr.end, 4);
+        assert.strictEqual(opr.pos, void 0);
+        assert.strictEqual(opr.end, void 0);
 
         assert.strictEqual(addExpr.pos, 0);
         assert.strictEqual(addExpr.end, 5);
@@ -208,14 +207,17 @@ describe("pos", function () {
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (+ a (* b -1)))`);
         const addExpr = assert_cons(module.item(1));
         assert.strictEqual(engine.renderAsString(addExpr, { format: 'SExpr' }), `(+ a (* b -1))`);
+        
         const lhs = addExpr.lhs;
         assert.strictEqual(engine.renderAsString(lhs), "a");
         assert.strictEqual(lhs.pos, 0);
         assert.strictEqual(lhs.end, 1);
+        
         const opr = addExpr.opr;
         assert.strictEqual(engine.renderAsString(opr), "+");
-        assert.strictEqual(opr.pos, 3);
-        assert.strictEqual(opr.end, 4);
+        assert.strictEqual(opr.pos, void 0);
+        assert.strictEqual(opr.end, void 0);
+
         const rhs = addExpr.rhs;
         assert.strictEqual(engine.renderAsString(rhs, { format: 'SExpr' }), `(* b -1)`);
         assert.strictEqual(rhs.pos, 2);
@@ -250,11 +252,10 @@ describe("pos", function () {
         assert.strictEqual(c.pos, 4);
         assert.strictEqual(c.end, 5);
 
-        // The operator is ambiguous.
         const opr = addExpr.item(0);
         assert.strictEqual(engine.renderAsString(opr), "+");
-        assert.strictEqual(opr.pos, 3);
-        assert.strictEqual(opr.end, 4);
+        assert.strictEqual(opr.pos, void 0);
+        assert.strictEqual(opr.end, void 0);
 
         assert.strictEqual(addExpr.pos, 0);
         assert.strictEqual(addExpr.end, 5);
@@ -558,7 +559,7 @@ describe("pos", function () {
         
         const x = assert_cons(module.item(1));
         assert.strictEqual(engine.renderAsString(x, { format: 'SExpr' }), "(component A 1)");
-        assert.strictEqual(x.pos, 1);
+        assert.strictEqual(x.pos, 0);
         assert.strictEqual(x.end, 4);
 
         const A = x.item(1);

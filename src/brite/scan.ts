@@ -885,10 +885,15 @@ function scan_string(state: InputState): U {
 }
 
 function scan_factor(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_factor(state.code.text=${state.code.text} ${state.code.code})`);
+
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
     const ff = scan_atom(state, options);
     const ff_is_num = ff[0];
     let result = ff[1];
+    pos = Math.min(assert_pos(result.pos), pos);
+    end = Math.max(assert_end(result.end), end);
 
     // after the main initial part of the factor that
     // we just scanned above,
@@ -903,10 +908,14 @@ function scan_factor(state: InputState, options: ScanOptions): U {
     while (state.code === T_LSQB || (state.code === T_LPAR && !ff_is_num)) {
         if (state.code === T_LSQB) {
             result = scan_index(result, state, options);
+            pos = Math.min(assert_pos(result.pos), pos);
+            end = Math.max(assert_end(result.end), end);
         }
         else if (state.code === T_LPAR) {
             // console.lg "( as function call without function name "
             result = scan_function_call_without_function_name(result, state, options);
+            pos = Math.min(assert_pos(result.pos), pos);
+            end = Math.max(assert_end(result.end), end);
         }
     }
 
@@ -925,6 +934,8 @@ function scan_factor(state: InputState, options: ScanOptions): U {
         result = items_to_cons(TRANSPOSE, result);
     }
 
+    result.pos = assert_pos(pos);
+    result.end = assert_end(end);
     return result;
 }
 

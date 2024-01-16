@@ -2,6 +2,10 @@
 export class Stack<T> {
     tos = 0;
     readonly #elements: T[] = [];
+    constructor(elements: T[] = []) {
+        this.#elements = elements;
+        this.tos = elements.length;
+    }
     get length(): number {
         return this.#elements.length;
     }
@@ -33,6 +37,10 @@ export class Stack<T> {
             items.push(this.pop());
         }
         return items;
+    }
+    copy(): Stack<T> {
+        const elements = this.#elements.slice();
+        return new Stack<T>(elements);
     }
     /**
      * Changes the order of the top two elements on the stack.

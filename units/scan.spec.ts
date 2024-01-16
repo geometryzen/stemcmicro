@@ -447,13 +447,13 @@ describe("scan", function () {
         }
     });
     it("multiline", function () {
-        const { trees } = parse_algebrite_script("fileName", "A=1\nB=2\nC=3");
+        const { trees } = parse_algebrite_script("A=1\nB=2\nC=3");
         assert.strictEqual(trees.length, 3);
     });
 });
 
 function expect_one_tree(sourceText: string, options?: ParseOptions): U {
-    const { trees, errors } = parse_algebrite_script("fileName", sourceText, options);
+    const { trees, errors } = parse_algebrite_script(sourceText, options);
     // console.lg(`tree => ${tree}`);
     // console.lg(`errors => ${JSON.stringify(errors)}`);
     if (errors.length > 0) {

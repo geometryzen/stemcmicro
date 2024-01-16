@@ -1,4 +1,4 @@
-import { EigenmathParseOptions, eigenmath_parse } from "../brite/eigenmath_parse";
+import { algebrite_parse, EigenmathParseOptions } from "../brite/eigenmath_parse";
 import { U } from "../tree/tree";
 
 export enum SyntaxKind {
@@ -36,7 +36,7 @@ export interface ParseOptions {
 }
 
 export function parse_expr(sourceText: string, options?: ParseOptions): U {
-    const { trees, errors } = parse_algebrite_script("", sourceText, options);
+    const { trees, errors } = parse_algebrite_script(sourceText, options);
     if (errors.length == 0) {
         if (trees.length > 0) {
             return trees[0];
@@ -50,11 +50,11 @@ export function parse_expr(sourceText: string, options?: ParseOptions): U {
     }
 }
 
-export function parse_algebrite_script(fileName: string, sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
+export function parse_algebrite_script(sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
     const syntaxKind = script_kind_from_options(options);
     switch (syntaxKind) {
         case SyntaxKind.Native: {
-            return eigenmath_parse(fileName, sourceText, eigenmath_parse_options(options));
+            return algebrite_parse(sourceText, eigenmath_parse_options(options));
         }
         default: {
             throw new Error(`options.syntaxKind ${syntaxKind} must be one of ${JSON.stringify(syntaxKinds.map(human_readable_syntax_kind).sort())}.`);

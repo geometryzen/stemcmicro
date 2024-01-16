@@ -216,10 +216,10 @@ class NativeExprEngine implements ExprEngine {
         this.$.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        return parse_algebrite_script("", sourceText, native_parse_config(options));
+        return parse_algebrite_script(sourceText, native_parse_config(options));
     }
     parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
-        const { trees, errors } = parse_algebrite_script("", sourceText, native_parse_config(options));
+        const { trees, errors } = parse_algebrite_script(sourceText, native_parse_config(options));
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors };
     }

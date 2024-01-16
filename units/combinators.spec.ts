@@ -192,7 +192,7 @@ function binary(lhs: Combinator, op: Combinator, rhs: Combinator): Combinator {
 
 describe("combinators", function () {
     it("hello world", function () {
-        const source = new InputState("hello world", 0);
+        const source = new InputState("hello world", 0, 0);
         assert.isFalse(source.done);
         const hello = str("hello");
         const world = str("world");
@@ -206,7 +206,7 @@ describe("combinators", function () {
         assert.strictEqual(sA?.end, 5);
     });
     it("12 + 34", function () {
-        const source = new InputState("12 + 34", 0);
+        const source = new InputState("12 + 34", 0, 0);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [tA, a, sA] = digit()(source.read(1));
         assert.strictEqual(a, '2');
@@ -222,7 +222,7 @@ describe("combinators", function () {
     });
     it("Language 101", function () {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [t, v, s] = exp(new InputState("34 + 567", 0));
+        const [t, v, s] = exp(new InputState("34 + 567", 0, 0));
         if (s) {
             const elements = assert_array(v);
             assert.strictEqual(elements[0], '+');
@@ -232,7 +232,7 @@ describe("combinators", function () {
     });
     it("7 + 8 + 9", function () {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [t, v, s] = exp(new InputState("7 + 8 + 9", 0));
+        const [t, v, s] = exp(new InputState("7 + 8 + 9", 0, 0));
         if (s) {
             // console.lg(`${JSON.stringify(v)}`);
             const elements = assert_array(v);

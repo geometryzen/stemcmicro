@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { eigenmath_parse } from "../src/brite/eigenmath_parse";
+import { algebrite_parse } from "../src/brite/eigenmath_parse";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("eigenmath-parse", function () {
@@ -11,7 +11,7 @@ describe("eigenmath-parse", function () {
 
         const engine = create_script_context({});
 
-        const { trees } = eigenmath_parse('foo.ts', lines.join('\n'));
+        const { trees } = algebrite_parse(lines.join('\n'));
         assert.isArray(trees);
         assert.strictEqual(trees.length, 1);
         const tree = trees[0];

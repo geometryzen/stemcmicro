@@ -81,9 +81,10 @@ export class InputState {
 
     /**
      * @param sourceText The text that will be used for the scan.
-     * @param start The zero-based starting position in the text. 
+     * @param start The zero-based starting position in the text.
+     * @param offset The number which must be added to make the (pos, end) values absolute. 
      */
-    constructor(private readonly sourceText: string, start = 0) {
+    constructor(private readonly sourceText: string, start: number, private readonly offset: number) {
         this.#token = { txt: '', pos: 0, end: start };
         this.scan_level = 0;
         this.input_str = 0;
@@ -104,7 +105,7 @@ export class InputState {
      * Returns a new InputState n characters to the right of the this input state.
      */
     read(n: number): InputState {
-        return new InputState(this.sourceText, this.#token.end + n);
+        return new InputState(this.sourceText, this.#token.end + n, this.offset);
     }
     get done(): boolean {
         return this.#token.end === this.sourceText.length;
@@ -112,11 +113,17 @@ export class InputState {
     get text(): string {
         return this.#token.txt;
     }
+    /**
+     * The absolute 0-based pos.
+     */
     get pos(): number {
-        return this.#token.pos;
+        return this.#token.pos + this.offset;
     }
+    /**
+     * The absolute 0-based end.
+     */
     get end(): number {
-        return this.#token.end;
+        return this.#token.end + this.offset;
     }
     get scanned(): number {
         return this.#token.pos - this.input_str;
@@ -165,18 +172,14 @@ export class InputState {
         }
     }
     tokenToFlt(): U {
-        return scanConfig.fltParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
+        return scanConfig.fltParser.parse(this.#token.txt, this.#token.pos + this.offset, this.#token.end + this.offset);
     }
     tokenToInt(): U {
-        // console.lg(`tokenToInt(txt=${this.#token.txt} pos=${this.#token.pos}, end=${this.#token.end})`);
-        const atom = scanConfig.intParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
-        // console.lg(`atom(txt=${atom.name} pos=${atom.pos}, end=${atom.end})`);
+        const atom = scanConfig.intParser.parse(this.#token.txt, this.#token.pos + this.offset, this.#token.end + this.offset);
         return atom;
     }
     tokenToStr(): U {
-        // console.lg(`tokenToStr(txt=${this.#token.txt} pos=${this.#token.pos}, end=${this.#token.end})`);
-        const atom = scanConfig.strParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
-        // console.lg(`atom(txt=${atom.name} pos=${atom.pos}, end=${atom.end})`);
+        const atom = scanConfig.strParser.parse(this.#token.txt, this.#token.pos + this.offset, this.#token.end + this.offset);
         return atom;
     }
     tokenToSym(): Sym {
@@ -191,11 +194,10 @@ export class InputState {
             }
         }
         if (scanConfig.lexicon[key]) {
-            return scanConfig.lexicon[key].clone(this.#token.pos, this.#token.end);
+            return scanConfig.lexicon[key].clone(this.#token.pos + this.offset, this.#token.end + this.offset);
         }
         else {
-            const atom = create_sym(key, this.#token.pos, this.#token.end);
-            // console.lg(`atom(txt=${atom.name} pos=${atom.pos}, end=${atom.end})`);
+            const atom = create_sym(key, this.#token.pos + this.offset, this.#token.end + this.offset);
             return atom;
         }
     }

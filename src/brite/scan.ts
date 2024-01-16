@@ -64,12 +64,12 @@ export interface ScanOptions {
  * Scans the input string, s, leaving the expression on the stack.
  * Returns zero when there is nothing left to scan.
  * @param sourceText The input string.
+ * @param offset The number which must be added to all (pos,end) pairs to make positions.
  * @returns The number of characters scanned.
  */
-export function scan(sourceText: string, options: ScanOptions): [scanned: number, tree: U] {
-    // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
+export function scan(sourceText: string, offset: number, options: ScanOptions): [scanned: number, tree: U] {
 
-    const state = new InputState(sourceText);
+    const state = new InputState(sourceText, 0, offset);
 
     state.get_token_skip_newlines();
 
@@ -83,7 +83,7 @@ export function scan(sourceText: string, options: ScanOptions): [scanned: number
 }
 
 export function scan_meta(sourceText: string, options: ScanOptions): U {
-    const state = new InputState(sourceText);
+    const state = new InputState(sourceText, 0, 0);
     state.meta_mode = true;
     state.get_token();
     if (state.code === T_END) {

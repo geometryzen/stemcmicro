@@ -52,11 +52,10 @@ function config_from_options(options: EigenmathParseOptions | undefined): ScanCo
 
 /**
  * Each line of a multiline source text creates a tree in the array of trees.
- * @param fileName The name of the file containing the sourceText.
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the parsing behaves.
  */
-export function eigenmath_parse(fileName: string, sourceText: string, options?: EigenmathParseOptions): { trees: U[], errors: Error[] } {
+export function algebrite_parse(sourceText: string, options?: EigenmathParseOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config: ScanConfig = config_from_options(options);
@@ -114,7 +113,7 @@ export function eigenmath_parse(fileName: string, sourceText: string, options?: 
 }
 
 function scan_substring(sourceText: string, start: number, config: ScanConfig): [scanned: number, tree: U] {
-    return scan(sourceText.substring(start), {
+    return scan(sourceText.substring(start), start, {
         useCaretForExponentiation: config.useCaretForExponentiation,
         useParenForTensors: config.useParenForTensors,
         explicitAssocAdd: config.explicitAssocAdd,

@@ -157,7 +157,7 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     // Fails when the text is aleady contains double quotes.
     const sourceText = '"' + text + '"';
     // TOOD: Need a better routing to initialize the ScanOptions.
-    const [scanned, tree] = scan(sourceText, {
+    const [scanned, tree] = scan(sourceText, 0, {
         useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
         useParenForTensors: $.getDirective(Directive.useParenForTensors),
         explicitAssocAdd: false,

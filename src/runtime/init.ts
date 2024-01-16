@@ -63,7 +63,7 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
     const originalCodeGen = defs.codeGen;
     defs.codeGen = false;
     try {
-        const [scanned, tree] = scan(sourceText, {
+        const [scanned, tree] = scan(sourceText, 0, {
             useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
             useParenForTensors: $.getDirective(Directive.useParenForTensors),
             explicitAssocAdd: false,

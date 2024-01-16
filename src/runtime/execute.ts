@@ -46,7 +46,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  */
 export function execute_script(fileName: string, sourceText: string, options: ScriptExecuteOptions, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
     // console.lg(sourceText);
-    const { trees, errors } = parse_algebrite_script(fileName, sourceText, options);
+    const { trees, errors } = parse_algebrite_script(sourceText, options);
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }
@@ -94,7 +94,7 @@ function transform_trees(trees: U[], values: U[], prints: string[], errors: Erro
 }
 
 export function transform_script(fileName: string, sourceText: string, transformer: TreeTransformer, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    const { trees, errors } = parse_algebrite_script(fileName, sourceText, scan_options($));
+    const { trees, errors } = parse_algebrite_script(sourceText, scan_options($));
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
     }

@@ -546,6 +546,33 @@ describe("pos", function () {
 
         engine.release();
     });
+    it("Indexing", function () {
+        const lines: string[] = [
+            `A[1]`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const { module, errors } = engine.parseModule(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (component A 1))`);
+        
+        const x = assert_cons(module.item(1));
+        assert.strictEqual(engine.renderAsString(x, { format: 'SExpr' }), "(component A 1)");
+        assert.strictEqual(x.pos, 1);
+        assert.strictEqual(x.end, 4);
+
+        const A = x.item(1);
+        assert.strictEqual(engine.renderAsString(A, { format: 'SExpr' }), "A");
+        assert.strictEqual(A.pos, 0);
+        assert.strictEqual(A.end, 1);
+
+        const idx = x.item(2);
+        assert.strictEqual(engine.renderAsString(idx, { format: 'SExpr' }), "1");
+        assert.strictEqual(idx.pos, 2);
+        assert.strictEqual(idx.end, 3);
+
+        engine.release();
+    });
     it("multiline", function () {
         const lines: string[] = [
             `aaa`,

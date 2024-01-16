@@ -929,20 +929,47 @@ function scan_factor(state: InputState, options: ScanOptions): U {
 }
 
 function scan_index(indexable: U, state: InputState, options: ScanOptions): U {
+
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
     state.expect(T_LSQB);
+    const lsqb = state.tokenToSym();
+    pos = Math.min(assert_pos(lsqb.pos), pos);
+    end = Math.max(assert_end(lsqb.end), end);
     state.get_token();
+
     const items: U[] = [COMPONENT, indexable];
     if (state.code !== T_RSQB) {
-        items.push(scan_additive_expr(state, options));
+
+        const arg = scan_additive_expr(state, options);
+        pos = Math.min(assert_pos(arg.pos), pos);
+        end = Math.max(assert_end(arg.end), end);
+
+        items.push(arg);
         while (state.code === T_COMMA) {
+            state.expect(T_COMMA);
+            const comma = state.tokenToSym();
+            pos = Math.min(assert_pos(comma.pos), pos);
+            end = Math.max(assert_end(comma.end), end);
             state.get_token();
-            items.push(scan_additive_expr(state, options));
+
+            const more = scan_additive_expr(state, options);
+            pos = Math.min(assert_pos(more.pos), pos);
+            end = Math.max(assert_end(more.end), end);
+            items.push(more);
         }
     }
     state.expect(T_RSQB);
+    const rsqb = state.tokenToSym();
+    pos = Math.min(assert_pos(rsqb.pos), pos);
+    end = Math.max(assert_end(rsqb.end), end);
     state.get_token();
 
-    return items_to_cons(...items);
+    const x = items_to_cons(...items);
+    x.pos = assert_pos(pos);
+    x.end = assert_end(end);
+    return x;
 }
 
 function scan_symbol(state: InputState): U {

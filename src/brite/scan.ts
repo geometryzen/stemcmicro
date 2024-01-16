@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { pos_end_items_to_cons } from 'math-expression-tree';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { is_num } from '../operators/num/is_num';
@@ -161,16 +162,12 @@ function scan_assignment_stmt(state: InputState, options: ScanOptions): U {
         if (was_quote_assign) {
             const quoteExpr = items_to_cons(QUOTE.clone(op.pos, op.end), rhs);
             // TODO: Do we need to save off the op.pos and op.end earlier b/c mutable?
-            const x = items_to_cons(ASSIGN.clone(op.pos, op.end), lhs, quoteExpr);
-            x.pos = pos;
-            x.end = end;
+            const x = pos_end_items_to_cons(pos, end, ASSIGN.clone(op.pos, op.end), lhs, quoteExpr);
             return hook(x, "A1");
         }
         else {
             // TODO: Do we need to save off the op.pos and op.end earlier b/c mutable?
-            const x = items_to_cons(ASSIGN.clone(op.pos, op.end), lhs, rhs);
-            x.pos = pos;
-            x.end = end;
+            const x = pos_end_items_to_cons(pos, end, ASSIGN.clone(op.pos, op.end), lhs, rhs);
             return hook(x, "A2");
         }
     }
@@ -229,9 +226,7 @@ function scan_relational_expr(state: InputState, options: ScanOptions): U {
         pos = Math.min(assert_pos(rhs.pos), pos);
         end = Math.max(assert_end(rhs.end), end);
 
-        const x = items_to_cons(opr, lhs, rhs);
-        x.pos = pos;
-        x.end = end;
+        const x = pos_end_items_to_cons(pos, end, opr, lhs, rhs);
         return hook(x, "B1");
     }
     else {
@@ -350,10 +345,7 @@ function scan_additive_expr_implicit(state: InputState, options: ScanOptions): U
         return x;
     }
     else {
-        const x = items_to_cons(...terms);
-        x.pos = assert_pos(pos);
-        x.end = assert_end(end);
-        return x;
+        return pos_end_items_to_cons(pos, end, ...terms);
     }
 }
 
@@ -362,10 +354,7 @@ function negate(expr: U): U {
         return expr.neg();
     }
     else {
-        const x = items_to_cons(MATH_MUL, expr, negOne);
-        x.pos = assert_pos(expr.pos);
-        x.end = assert_pos(expr.end);
-        return x;
+        return pos_end_items_to_cons(assert_pos(expr.pos), assert_end(expr.end), MATH_MUL, expr, negOne);
     }
 }
 
@@ -514,10 +503,7 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Sc
         return x;
     }
     else {
-        const x = items_to_cons(MATH_MUL, ...results);
-        x.pos = assert_pos(pos);
-        x.end = assert_end(end);
-        return x;
+        return pos_end_items_to_cons(pos, end, MATH_MUL, ...results);
     }
 }
 
@@ -977,10 +963,7 @@ function scan_index(indexable: U, state: InputState, options: ScanOptions): U {
     end = Math.max(assert_end(rsqb.end), end);
     state.get_token();
 
-    const x = items_to_cons(...items);
-    x.pos = assert_pos(pos);
-    x.end = assert_end(end);
-    return x;
+    return pos_end_items_to_cons(assert_pos(pos), assert_end(end), ...items);
 }
 
 function scan_symbol(state: InputState): U {
@@ -1001,11 +984,7 @@ function scan_symbol(state: InputState): U {
 }
 
 function scan_function_call(state: InputState, options: ScanOptions): U {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const hook = function (retval: U, description: string): U {
-        // console.lg(`scan_function_call => ${retval} @ ${description}`);
-        return retval;
-    };
+
     state.expect(T_FUNCTION);
 
     let pos: number = Number.MAX_SAFE_INTEGER;
@@ -1048,10 +1027,7 @@ function scan_function_call(state: InputState, options: ScanOptions): U {
     end = Math.max(assert_end(rpar.end), end);
     state.get_token();
 
-    const x = items_to_cons(...fcall);
-    x.pos = assert_pos(pos);
-    x.end = assert_end(end);
-    return hook(x, "A");
+    return pos_end_items_to_cons(assert_pos(pos), assert_end(end), ...fcall);
 }
 
 function scan_function_call_without_function_name(lhs: U, state: InputState, options: ScanOptions): U {
@@ -1081,7 +1057,6 @@ function scan_function_call_without_function_name(lhs: U, state: InputState, opt
  * An expression that is enclosed in parentheses.
  */
 function scan_grouping(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_grouping(state.code.text=${state.code.text})`);
     state.expect(T_LPAR);
     state.get_token();
     const result = scan_assignment_stmt(state, options);

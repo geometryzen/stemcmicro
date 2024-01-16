@@ -136,7 +136,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
 
     if (is_blade(base) && is_rat(expo)) {
         if (expo.isMinusOne()) {
-            // console.log(`base ${base} expo ${expo} reverse(base) ${base.rev()}`);
+            // console.lg(`base ${base} expo ${expo} reverse(base) ${base.rev()}`);
             const rev = base.rev();
             return hook($.divide(rev, $.multiply(base, rev)), "Blade");
         }

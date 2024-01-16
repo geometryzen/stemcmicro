@@ -186,16 +186,14 @@ describe("scan", function () {
         it("(-1)**0 => (** -1 0)", function () {
             const expr = expect_cons(expect_one_tree(" (-1)  **  0 ", { explicitAssocAdd: true }));
             expect_sym(cadnr(expr, 0), MATH_POW, '**', 7, 9);
-            // Because the '-' sign is absorbed as a unary minus, the position is recorded for the number without the minus sign.
-            expect_rat(cadnr(expr, 1), negOne, 3, 4);
+            expect_rat(cadnr(expr, 1), negOne, 2, 4);
             expect_rat(cadnr(expr, 2), zero, 11, 12);
         });
     });
     it("(-1)**0 => (** -1 0)", function () {
         const expr = expect_cons(expect_one_tree(" (-1)  **  0 ", { explicitAssocAdd: false }));
         expect_sym(cadnr(expr, 0), MATH_POW, '**', 7, 9);
-        // Because the '-' sign is absorbed as a unary minus, the position is recorded for the number without the minus sign.
-        expect_rat(cadnr(expr, 1), negOne, 3, 4);
+        expect_rat(cadnr(expr, 1), negOne, 2, 4);
         expect_rat(cadnr(expr, 2), zero, 11, 12);
     });
     describe("<<", function () {

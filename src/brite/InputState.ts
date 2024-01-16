@@ -168,12 +168,19 @@ export class InputState {
         return scanConfig.fltParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
     }
     tokenToInt(): U {
-        return scanConfig.intParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
+        // console.lg(`tokenToInt(txt=${this.#token.txt} pos=${this.#token.pos}, end=${this.#token.end})`);
+        const atom = scanConfig.intParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
+        // console.lg(`atom(txt=${atom.name} pos=${atom.pos}, end=${atom.end})`);
+        return atom;
     }
     tokenToStr(): U {
-        return scanConfig.strParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
+        // console.lg(`tokenToStr(txt=${this.#token.txt} pos=${this.#token.pos}, end=${this.#token.end})`);
+        const atom = scanConfig.strParser.parse(this.#token.txt, this.#token.pos, this.#token.end);
+        // console.lg(`atom(txt=${atom.name} pos=${atom.pos}, end=${atom.end})`);
+        return atom;
     }
     tokenToSym(): Sym {
+        // console.lg(`tokenToSym(txt=${this.#token.txt} pos=${this.#token.pos}, end=${this.#token.end})`);
         // TODO: This stuff seems like it could go into a parser, but we would need the meta_mode.
         // Maybe we use two different symbol parsers?
         const key = this.#token.txt;
@@ -187,7 +194,9 @@ export class InputState {
             return scanConfig.lexicon[key].clone(this.#token.pos, this.#token.end);
         }
         else {
-            return create_sym(key, this.#token.pos, this.#token.end);
+            const atom = create_sym(key, this.#token.pos, this.#token.end);
+            // console.lg(`atom(txt=${atom.name} pos=${atom.pos}, end=${atom.end})`);
+            return atom;
         }
     }
     /**

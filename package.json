@@ -68,6 +68,7 @@
         "unit-not": "mocha 'units/not.spec.ts'",
         "unit-outer": "mocha 'units/outer.spec.ts'",
         "unit-parens": "mocha 'units/parens.spec.ts'",
+        "unit-parse": "mocha 'units/parse.spec.ts'",
         "unit-polar": "mocha 'units/polar.spec.ts'",
         "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-product": "mocha 'units/product.spec.ts'",
@@ -133,10 +134,10 @@
         "@rollup/plugin-typescript": "^11.1.6",
         "@types/chai": "^4.3.11",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^20.11.0",
+        "@types/node": "^20.11.3",
         "@types/rollup-plugin-peer-deps-external": "^2.2.4",
-        "@typescript-eslint/eslint-plugin": "^6.18.1",
-        "@typescript-eslint/parser": "^6.18.1",
+        "@typescript-eslint/eslint-plugin": "^6.19.0",
+        "@typescript-eslint/parser": "^6.19.0",
         "chai": "^4.3.10",
         "eslint": "^8.56.0",
         "gh-pages": "^6.1.1",
@@ -151,8 +152,8 @@
         "typescript": "^5.3.3"
     },
     "peerDependencies": {
-        "math-expression-tree": "^0.9.11",
-        "math-expression-atoms": "^0.9.15",
+        "math-expression-tree": "^0.9.12",
+        "math-expression-atoms": "^0.9.16",
         "math-expression-context": "^0.9.9",
         "math-expression-native": "^0.9.9"
     }

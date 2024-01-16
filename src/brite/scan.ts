@@ -25,6 +25,26 @@ import { one_divided_by } from './one_divided_by';
 import { scanner_negate } from './scanner_negate';
 import { TokenCode } from './Token';
 
+function assert_pos(pos: number | undefined): number {
+    if (typeof pos === 'number') {
+        return pos;
+    }
+    else {
+        return pos as unknown as number;
+        // throw new Error();
+    }
+}
+
+function assert_end(pos: number | undefined): number {
+    if (typeof pos === 'number') {
+        return pos;
+    }
+    else {
+        return pos as unknown as number;
+        // throw new Error();
+    }
+}
+
 export const COMPONENT = native_sym(Native.component);
 
 export interface ScanOptions {
@@ -116,27 +136,48 @@ function scan_assignment_stmt(state: InputState, options: ScanOptions): U {
         return retval;
     };
 
-    let result = scan_relational_expr(state, options);
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
+    const lhs = scan_relational_expr(state, options);
+    pos = Math.min(assert_pos(lhs.pos), pos);
+    end = Math.max(assert_end(lhs.end), end);
 
     if (is_assignment_operator(state.code)) {
 
         // Keep the scanning information for the operator so that we can add it to the tree.
-        const { pos, end } = state.tokenToSym();
+        const op = state.tokenToSym();
+        pos = Math.min(assert_pos(op.pos), pos);
+        end = Math.max(assert_end(op.end), pos);
         const was_quote_assign = is_quote_assign(state.code);
 
         state.get_token_skip_newlines();
 
-        let rhs = scan_relational_expr(state, options);
+        const rhs = scan_relational_expr(state, options);
+        pos = Math.min(assert_pos(rhs.pos), pos);
+        end = Math.max(assert_end(rhs.end), end);
 
         // if it's a := then add a quote
         if (was_quote_assign) {
-            rhs = items_to_cons(QUOTE.clone(pos, end), rhs);
+            const quoteExpr = items_to_cons(QUOTE.clone(op.pos, op.end), rhs);
+            // TODO: Do we need to save off the op.pos and op.end earlier b/c mutable?
+            const x = items_to_cons(ASSIGN.clone(op.pos, op.end), lhs, quoteExpr);
+            x.pos = pos;
+            x.end = end;
+            return hook(x, "A1");
         }
-
-        result = items_to_cons(ASSIGN.clone(pos, end), result, rhs);
+        else {
+            // TODO: Do we need to save off the op.pos and op.end earlier b/c mutable?
+            const x = items_to_cons(ASSIGN.clone(op.pos, op.end), lhs, rhs);
+            x.pos = pos;
+            x.end = end;
+            return hook(x, "A2");
+        }
+    }
+    else {
+        return hook(lhs, "A3");
     }
 
-    return hook(result, "A");
 }
 
 /**
@@ -169,16 +210,34 @@ function scan_relational_expr(state: InputState, options: ScanOptions): U {
         return retval;
     };
 
-    const result = scan_additive_expr(state, options);
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
+    const lhs = scan_additive_expr(state, options);
+    pos = Math.min(assert_pos(lhs.pos), pos);
+    end = Math.max(assert_end(lhs.end), end);
 
     if (is_relational(state.code)) {
+
         const opr = state.tokenToSym();
+        pos = Math.min(assert_pos(opr.pos), pos);
+        end = Math.max(assert_end(opr.end), end);
+
         state.get_token_skip_newlines();
+
         const rhs = scan_additive_expr(state, options);
-        return hook(items_to_cons(opr, result, rhs), "A");
+        pos = Math.min(assert_pos(rhs.pos), pos);
+        end = Math.max(assert_end(rhs.end), end);
+
+        const x = items_to_cons(opr, lhs, rhs);
+        x.pos = pos;
+        x.end = end;
+        return hook(x, "B1");
+    }
+    else {
+        return hook(lhs, "B2");
     }
 
-    return hook(result, "B");
 }
 
 /**
@@ -209,38 +268,93 @@ function scan_additive_expr(state: InputState, options: ScanOptions): U {
  * 
  */
 function scan_additive_expr_implicit(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_additive_expr_imp(state.code.text=${state.code.text})`);
-    // TODO: We could cache the symbol.
     const terms: U[] = [native_sym(Native.add)];
 
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
     switch (state.code) {
-        case T_PLUS:
+        case T_PLUS: {
+            const plus = state.tokenToSym();
+            pos = Math.min(assert_pos(plus.pos), pos);
+            end = Math.max(assert_end(plus.end), end);
+
             state.get_token_skip_newlines();
-            terms.push(scan_multiplicative_expr(state, options));
+
+            const term = scan_multiplicative_expr(state, options);
+            pos = Math.min(assert_pos(term.pos), pos);
+            end = Math.max(assert_end(term.end), end);
+
+            terms.push(term);
             break;
-        case T_MINUS:
+        }
+        case T_MINUS: {
+            const minus = state.tokenToSym();
+            pos = Math.min(assert_pos(minus.pos), pos);
+            end = Math.max(assert_end(minus.end), end);
+
             state.get_token_skip_newlines();
-            terms.push(negate(scan_multiplicative_expr(state, options)));
+
+            const term = scan_multiplicative_expr(state, options);
+            pos = Math.min(assert_pos(term.pos), pos);
+            end = Math.max(assert_end(term.end), end);
+
+            const neg = negate(term);
+            neg.pos = assert_pos(term.pos);
+            neg.end = assert_pos(term.end);
+
+            terms.push(neg);
             break;
-        default:
-            terms.push(scan_multiplicative_expr(state, options));
+        }
+        default: {
+            const term = scan_multiplicative_expr(state, options);
+            pos = Math.min(assert_pos(term.pos), pos);
+            end = Math.max(assert_end(term.end), end);
+            terms.push(term);
+        }
     }
 
     while (state.code === T_PLUS || state.code === T_MINUS) {
         if (state.code === T_PLUS) {
+            const plus = state.tokenToSym();
+            pos = Math.min(assert_pos(plus.pos), pos);
+            end = Math.max(assert_end(plus.end), end);
+
             state.get_token_skip_newlines();
-            terms.push(scan_multiplicative_expr(state, options));
+
+            const term = scan_multiplicative_expr(state, options);
+            pos = Math.min(assert_pos(term.pos), pos);
+            end = Math.max(assert_end(term.end), end);
+
+            terms.push(term);
         }
         else {
+            const minus = state.tokenToSym();
+            pos = Math.min(assert_pos(minus.pos), pos);
+            end = Math.max(assert_end(minus.end), end);
+
             state.get_token_skip_newlines();
-            terms.push(negate(scan_multiplicative_expr(state, options)));
+
+            const term = scan_multiplicative_expr(state, options);
+            pos = Math.min(assert_pos(term.pos), pos);
+            end = Math.max(assert_end(term.end), end);
+
+            terms.push(negate(term));
         }
     }
 
     if (terms.length === 2) {
-        return terms[1];
+        const x = terms[1];
+        x.pos = assert_pos(pos);
+        x.end = assert_end(end);
+        return x;
     }
-    return items_to_cons(...terms);
+    else {
+        const x = items_to_cons(...terms);
+        x.pos = assert_pos(pos);
+        x.end = assert_end(end);
+        return x;
+    }
 }
 
 function negate(expr: U): U {
@@ -248,12 +362,14 @@ function negate(expr: U): U {
         return expr.neg();
     }
     else {
-        return items_to_cons(MATH_MUL, expr, negOne);
+        const x = items_to_cons(MATH_MUL, expr, negOne);
+        x.pos = assert_pos(expr.pos);
+        x.end = assert_pos(expr.end);
+        return x;
     }
 }
 
 function scan_additive_expr_explicit(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_additive_expr_exp(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_additive => ${retval} @ ${description}`);
@@ -330,8 +446,14 @@ export function scan_multiplicative_expr(state: InputState, options: ScanOptions
  * 
  */
 export function scan_multiplicative_expr_implicit(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_multiplicative_expr_imp(state.code.text=${state.code.text})`);
-    const results = [scan_outer_expr(state, options)];
+
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
+    const lhs = scan_outer_expr(state, options);
+    pos = Math.min(assert_pos(lhs.pos), pos);
+    end = Math.max(assert_end(lhs.end), end);
+    const results = [lhs];
     /*
     if (parse_time_simplifications) {
         simplify_1_in_products(results);
@@ -341,7 +463,10 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Sc
     while (is_multiplicative_operator_or_factor_pending(state.code)) {
         if (state.code === T_ASTRX) {
             state.get_token_skip_newlines();
-            results.push(scan_outer_expr(state, options));
+            const outer = scan_outer_expr(state, options);
+            pos = Math.min(assert_pos(outer.pos), pos);
+            end = Math.max(assert_end(outer.end), end);
+            results.push(outer);
         }
         else if (state.code === T_FWDSLASH) {
             // in case of 1/... then
@@ -352,7 +477,10 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Sc
             // 1/(2*a) become 1*(1/(2*a))
             simplify_1_in_products(results);
             state.get_token_skip_newlines();
-            results.push(one_divided_by(scan_outer_expr(state, options)));
+            const outer = scan_outer_expr(state, options);
+            pos = Math.min(assert_pos(outer.pos), pos);
+            end = Math.max(assert_end(outer.end), end);
+            results.push(one_divided_by(outer));
         }
         /*
         else if (tokenCharCode() === dotprod_unicode) {
@@ -363,7 +491,10 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Sc
         else {
             // This will be dead code unless perhaps if we allow juxtaposition.
             // console.lg(`state.code.code=${state.code.code}, state.code.text=${state.code.text}`);
-            results.push(scan_outer_expr(state, options));
+            const outer = scan_outer_expr(state, options);
+            pos = Math.min(assert_pos(outer.pos), pos);
+            end = Math.max(assert_end(outer.end), end);
+            results.push(outer);
         }
         /*
         if (parse_time_simplifications) {
@@ -377,9 +508,17 @@ export function scan_multiplicative_expr_implicit(state: InputState, options: Sc
         return one;
     }
     else if (results.length == 1) {
-        return results[0];
+        const x = results[0];
+        x.pos = assert_pos(pos);
+        x.end = assert_end(end);
+        return x;
     }
-    return items_to_cons(MATH_MUL, ...results);
+    else {
+        const x = items_to_cons(MATH_MUL, ...results);
+        x.pos = assert_pos(pos);
+        x.end = assert_end(end);
+        return x;
+    }
 }
 
 function simplify_1_in_products(factors: U[]): void {
@@ -453,16 +592,32 @@ function is_outer(code: TokenCode, useCaretForExponentiation: boolean): boolean 
 }
 
 function scan_outer_expr(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_outer_expr(state.code.text=${state.code.text})`);
+
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
 
     let result = scan_inner_expr(state, options);
+    pos = Math.min(assert_pos(result.pos), pos);
+    end = Math.max(assert_end(result.end), end);
 
     while (is_outer(state.code, options.useCaretForExponentiation)) {
         const opr = clone_symbol_using_info(MATH_OUTER, state.tokenToSym());
+        pos = Math.min(assert_pos(opr.pos), pos);
+        end = Math.max(assert_end(opr.end), end);
+
         state.get_token();
-        result = items_to_cons(opr, result, scan_inner_expr(state, options));
+
+        const inner = scan_inner_expr(state, options);
+        pos = Math.min(assert_pos(inner.pos), pos);
+        end = Math.max(assert_end(inner.end), end);
+
+        result = items_to_cons(opr, result, inner);
+        result.pos = assert_pos(pos);
+        result.end = assert_end(end);
     }
 
+    result.pos = assert_pos(pos);
+    result.end = assert_end(end);
     return result;
 }
 
@@ -474,44 +629,70 @@ function is_inner_or_contraction(code: TokenCode): boolean {
 }
 
 function scan_inner_expr(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_inner_expr(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`results (INNER) => ${retval} @ ${description}`);
         return retval;
     };
 
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
     let result = scan_power_expr(state, options);
+    pos = Math.min(assert_pos(result.pos), pos);
+    end = Math.max(assert_end(result.end), end);
 
     while (is_inner_or_contraction(state.code)) {
         switch (state.code) {
             case T_LTLT: {
                 const opr = clone_symbol_using_info(MATH_LCO, state.tokenToSym());
                 state.get_token();
-                result = items_to_cons(opr, result, scan_power_expr(state, options));
+                const pow = scan_power_expr(state, options);
+                pos = Math.min(assert_pos(pow.pos), pos);
+                end = Math.max(assert_end(pow.end), end);
+                result = items_to_cons(opr, result, pow);
+                result.pos = assert_pos(pos);
+                result.end = assert_end(end);
                 break;
             }
             case T_GTGT: {
                 const opr = clone_symbol_using_info(MATH_RCO, state.tokenToSym());
                 state.get_token();
-                result = items_to_cons(opr, result, scan_power_expr(state, options));
+                const pow = scan_power_expr(state, options);
+                pos = Math.min(assert_pos(pow.pos), pos);
+                end = Math.max(assert_end(pow.end), end);
+                result = items_to_cons(opr, result, pow);
+                result.pos = assert_pos(pos);
+                result.end = assert_end(end);
                 break;
             }
             case T_VBAR: {
                 const opr = clone_symbol_using_info(MATH_INNER, state.tokenToSym());
                 state.get_token();
-                result = items_to_cons(opr, result, scan_power_expr(state, options));
+                const pow = scan_power_expr(state, options);
+                pos = Math.min(assert_pos(pow.pos), pos);
+                end = Math.max(assert_end(pow.end), end);
+                result = items_to_cons(opr, result, pow);
+                result.pos = assert_pos(pos);
+                result.end = assert_end(end);
                 break;
             }
             default: {
                 state.expect(T_MIDDLE_DOT);
                 const opr = clone_symbol_using_info(MATH_INNER, state.tokenToSym());
                 state.get_token();
-                result = items_to_cons(opr, result, scan_power_expr(state, options));
+                const pow = scan_power_expr(state, options);
+                pos = Math.min(assert_pos(pow.pos), pos);
+                end = Math.max(assert_end(pow.end), end);
+                result = items_to_cons(opr, result, pow);
+                result.pos = assert_pos(pos);
+                result.end = assert_end(end);
                 break;
             }
         }
     }
+    result.pos = assert_pos(pos);
+    result.end = assert_end(end);
     return hook(result, "A");
 }
 
@@ -531,16 +712,25 @@ function is_power(code: TokenCode, useCaretForExponentiation: boolean): boolean 
 }
 
 function scan_power_expr(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_power_expr(state.code.text=${state.code.text})`);
     // Using a stack because exponentiation is right-associative.
     // We'll push the operands as well in order to retain scanning location information.
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
     const stack: U[] = [];
-    stack.push(scan_unary_expr(state, options));
+    const lhs = scan_unary_expr(state, options);
+    pos = Math.min(assert_pos(lhs.pos), pos);
+    end = Math.max(assert_end(lhs.end), end);
+
+    stack.push(lhs);
 
     while (is_power(state.code, options.useCaretForExponentiation)) {
         stack.push(state.tokenToSym());
         state.get_token();
-        stack.push(scan_unary_expr(state, options));
+        const rhs = scan_unary_expr(state, options);
+        pos = Math.min(assert_pos(rhs.pos), pos);
+        end = Math.max(assert_end(rhs.end), end);
+        stack.push(rhs);
     }
 
     while (stack.length > 0) {
@@ -551,6 +741,8 @@ function scan_power_expr(state: InputState, options: ScanOptions): U {
             stack.push(items_to_cons(clone_symbol_using_info(MATH_POW, opr), lhs, rhs));
         }
         else {
+            rhs.pos = assert_pos(pos);
+            rhs.end = assert_end(end);
             return rhs;
         }
     }
@@ -558,16 +750,46 @@ function scan_power_expr(state: InputState, options: ScanOptions): U {
 }
 
 function scan_unary_expr(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_unary_expr(state.code.text=${state.code.text})`);
+
     const code = state.code;
     switch (code) {
         case T_PLUS: {
+            let pos: number = Number.MAX_SAFE_INTEGER;
+            let end: number = Number.MIN_SAFE_INTEGER;
+
+            const opr = state.tokenToSym();
+
+            pos = Math.min(assert_pos(opr.pos), pos);
+            end = Math.max(assert_end(opr.end), end);
+
             state.get_token();
-            return scan_unary_expr(state, options);
+
+            const x = scan_unary_expr(state, options);
+            pos = Math.min(assert_pos(x.pos), pos);
+            end = Math.max(assert_end(x.end), end);
+
+            x.pos = assert_pos(pos);
+            x.end = assert_end(end);
+            return x;
         }
         case T_MINUS: {
+            let pos: number = Number.MAX_SAFE_INTEGER;
+            let end: number = Number.MIN_SAFE_INTEGER;
+
+            const opr = state.tokenToSym();
+
+            pos = Math.min(assert_pos(opr.pos), pos);
+            end = Math.max(assert_end(opr.end), end);
+
             state.get_token();
-            return scanner_negate(scan_unary_expr(state, options));
+
+            const x = scan_unary_expr(state, options);
+            pos = Math.min(assert_pos(x.pos), pos);
+            end = Math.max(assert_end(x.end), end);
+
+            x.pos = assert_pos(pos);
+            x.end = assert_end(end);
+            return scanner_negate(x);
         }
         default: {
             return scan_grouping_expr(state, options);
@@ -741,7 +963,6 @@ function scan_symbol(state: InputState): U {
 }
 
 function scan_function_call(state: InputState, options: ScanOptions): U {
-    // console.lg(`scan_function_call(pos=${state.pos}, end=${state.end})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         // console.lg(`scan_function_call => ${retval} @ ${description}`);
@@ -749,29 +970,50 @@ function scan_function_call(state: InputState, options: ScanOptions): U {
     };
     state.expect(T_FUNCTION);
 
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
     const name = state.tokenToSym();
+    pos = Math.min(assert_pos(name.pos), pos);
+    end = Math.max(assert_end(name.end), end);
+
     const fcall: U[] = [name];
 
-    state.get_token(); // open parens
-    // console.lg(`LPAR is at (pos=${state.pos}, end=${state.end})`);
+    state.get_token();
+
     state.expect(T_LPAR);
-    state.get_token(); // 1st parameter or closing paren.
+    const lpar = state.tokenToSym();
+    pos = Math.min(assert_pos(lpar.pos), pos);
+    end = Math.max(assert_end(lpar.end), end);
+    state.get_token();
+
     if (state.code !== T_RPAR) {
         fcall.push(scan_assignment_stmt(state, options));
         while (state.code === T_COMMA) {
+
+            state.expect(T_COMMA);
+            const comma = state.tokenToSym();
+            pos = Math.min(assert_pos(comma.pos), pos);
+            end = Math.max(assert_end(comma.end), end);
             state.get_token();
 
-            fcall.push(scan_assignment_stmt(state, options));
+            const x = scan_assignment_stmt(state, options);
+            pos = Math.min(assert_pos(x.pos), pos);
+            end = Math.max(assert_end(x.end), end);
+            fcall.push(x);
         }
     }
 
     state.expect(T_RPAR);
-    // console.lg(`RPAR is at (pos=${state.pos}, end=${state.end})`);
+    const rpar = state.tokenToSym();
+    pos = Math.min(assert_pos(rpar.pos), pos);
+    end = Math.max(assert_end(rpar.end), end);
     state.get_token();
-    // console.lg(`Next is at (pos=${state.pos}, end=${state.end})`);
 
-    // console.lg('-- scan_function_call_with_function_name end');
-    return hook(items_to_cons(...fcall), "A");
+    const x = items_to_cons(...fcall);
+    x.pos = assert_pos(pos);
+    x.end = assert_end(end);
+    return hook(x, "A");
 }
 
 function scan_function_call_without_function_name(lhs: U, state: InputState, options: ScanOptions): U {
@@ -811,7 +1053,8 @@ function scan_grouping(state: InputState, options: ScanOptions): U {
 }
 
 function scan_tensor(state: InputState, options: ScanOptions): Tensor {
-    // console.lg(`scan_tensor(state.code.text=${state.code.text})`);
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
 
     if (options.useParenForTensors) {
         state.expect(T_LPAR);
@@ -819,15 +1062,29 @@ function scan_tensor(state: InputState, options: ScanOptions): Tensor {
     else {
         state.expect(T_LSQB);
     }
+    const lsqb = state.tokenToSym();
+    pos = Math.min(assert_pos(lsqb.pos), pos);
+    end = Math.max(assert_end(lsqb.end), end);
+
     state.get_token();
 
     const element = scan_assignment_stmt(state, options);
+    pos = Math.min(assert_pos(element.pos), pos);
+    end = Math.max(assert_end(element.end), end);
 
     const elements: U[] = [element];
 
     while (state.code === T_COMMA) {
+        const comma = state.tokenToSym();
+        pos = Math.min(assert_pos(comma.pos), pos);
+        end = Math.max(assert_end(comma.end), end);
+
         state.get_token();
-        elements.push(scan_assignment_stmt(state, options));
+
+        const x = scan_assignment_stmt(state, options);
+        pos = Math.min(assert_pos(x.pos), pos);
+        end = Math.max(assert_end(x.end), end);
+        elements.push(x);
     }
 
     const M = create_tensor(elements);
@@ -838,7 +1095,13 @@ function scan_tensor(state: InputState, options: ScanOptions): Tensor {
     else {
         state.expect(T_RSQB);
     }
+    const rsqb = state.tokenToSym();
+    pos = Math.min(assert_pos(rsqb.pos), pos);
+    end = Math.max(assert_end(rsqb.end), end);
+
     state.get_token();
 
+    M.pos = assert_pos(pos);
+    M.end = assert_end(end);
     return M;
 }

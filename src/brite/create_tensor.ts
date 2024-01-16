@@ -6,7 +6,7 @@ import { U } from "math-expression-tree";
  * then that elements must be flattened, but the dimensionality is computed and incorporated
  * into the created Tensor.
  */
-export function create_tensor(elements: U[]): Tensor {
+export function create_tensor(elements: U[], pos?: number, end?: number): Tensor {
     if (elements.length > 0) {
         // The dimensions of the new tensor.
         const dims: number[] = [elements.length];
@@ -37,9 +37,9 @@ export function create_tensor(elements: U[]): Tensor {
             }
 
         }
-        return new Tensor(dims, elems);
+        return new Tensor(dims, elems, pos, end);
     }
     else {
-        return new Tensor([0], []);
+        return new Tensor([0], [], pos, end);
     }
 }

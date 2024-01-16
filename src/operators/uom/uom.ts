@@ -1,103 +1,74 @@
-import { Uom } from "math-expression-atoms";
+import { QQ, Uom } from "math-expression-atoms";
 
 const NEWTON = Uom.KILOGRAM.mul(Uom.METER).div(Uom.SECOND).div(Uom.SECOND);
 const JOULE = NEWTON.mul(Uom.METER);
 const WATT = JOULE.div(Uom.SECOND);
 const VOLT = JOULE.div(Uom.COULOMB);
 const TESLA = NEWTON.div(Uom.COULOMB).div(Uom.METER.div(Uom.SECOND));
+const OHM = VOLT.div(Uom.AMPERE);
+const FARAD = Uom.COULOMB.div(VOLT);
+const HENRY = OHM.mul(Uom.SECOND);
+const WEBER = HENRY.mul(Uom.AMPERE);
+const HERTZ = Uom.ONE.div(Uom.SECOND);
+const PASCAL = JOULE.div(Uom.METER.pow(QQ.valueOf(3, 1)));
+const SIEMENS = Uom.ONE.div(OHM);
 
-export type TYPE_UOM_NAME = 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelvin' | 'mole' | 'candela' | 'newton' | 'joule' | 'watt' | 'volt' | 'tesla';
+export type TYPE_UOM_NAME =
+    'ampere' |
+    'candela' |
+    'coulomb' |
+    'farad' |
+    'henry' |
+    'hertz' |
+    'joule' |
+    'kelvin' |
+    'kilogram' |
+    'meter' |
+    'metre' |
+    'mole' |
+    'newton' |
+    'ohm' |
+    'pascal' |
+    'second' |
+    'siemens' |
+    'tesla' |
+    'volt' |
+    'watt' |
+    'weber';
+
+const units: Map<TYPE_UOM_NAME, Uom> = new Map();
+
+units.set('ampere', Uom.AMPERE);
+units.set('candela', Uom.CANDELA);
+units.set('coulomb', Uom.COULOMB);
+units.set('farad', FARAD);
+units.set('henry', HENRY);
+units.set('hertz', HERTZ);
+units.set('joule', JOULE);
+units.set('kelvin', Uom.KELVIN);
+units.set('kilogram', Uom.KILOGRAM);
+units.set('meter', Uom.METER);
+units.set('metre', Uom.METER);
+units.set('mole', Uom.MOLE);
+units.set('newton', NEWTON);
+units.set('ohm', OHM);
+units.set('pascal', PASCAL);
+units.set('second', Uom.SECOND);
+units.set('siemens', SIEMENS);
+units.set('tesla', TESLA);
+units.set('volt', VOLT);
+units.set('watt', WATT);
+units.set('weber', WEBER);
 
 export function is_uom_name(name: string): name is TYPE_UOM_NAME {
-    switch (name) {
-        case 'kilogram': {
-            return true;
-        }
-        case 'meter': {
-            return true;
-        }
-        case 'second': {
-            return true;
-        }
-        case 'coulomb': {
-            return true;
-        }
-        case 'ampere': {
-            return true;
-        }
-        case 'kelvin': {
-            return true;
-        }
-        case 'mole': {
-            return true;
-        }
-        case 'candela': {
-            return true;
-        }
-        case 'newton': {
-            return true;
-        }
-        case 'joule': {
-            return true;
-        }
-        case 'watt': {
-            return true;
-        }
-        case 'volt': {
-            return true;
-        }
-        case 'tesla': {
-            return true;
-        }
-        default: {
-            return false;
-        }
-    }
+    return units.has(name as TYPE_UOM_NAME);
 }
 
 export function create_uom(name: TYPE_UOM_NAME): Uom {
-    switch (name) {
-        case 'kilogram': {
-            return Uom.KILOGRAM;
-        }
-        case 'meter': {
-            return Uom.METER;
-        }
-        case 'second': {
-            return Uom.SECOND;
-        }
-        case 'coulomb': {
-            return Uom.COULOMB;
-        }
-        case 'ampere': {
-            return Uom.AMPERE;
-        }
-        case 'kelvin': {
-            return Uom.KELVIN;
-        }
-        case 'mole': {
-            return Uom.MOLE;
-        }
-        case 'candela': {
-            return Uom.CANDELA;
-        }
-        case 'newton': {
-            return NEWTON;
-        }
-        case 'joule': {
-            return JOULE;
-        }
-        case 'watt': {
-            return WATT;
-        }
-        case 'volt': {
-            return VOLT;
-        }
-        case 'tesla': {
-            return TESLA;
-        }
-        default: {
-            throw new Error(`Unknown name ${name}`);
-        }
+    if (units.has(name)) {
+        return units.get(name) as Uom;
+    }
+    else {
+        throw new Error(`Unknown name ${name}`);
     }
 }

@@ -287,8 +287,6 @@ export interface ExtensionEnv extends ExprContext {
     clock(expr: U): U;
     conj(expr: U): U;
     cos(expr: U): U;
-    evaluate(opr: Native, ...args: U[]): U;
-    exp(expr: U): U;
     clearBindings(): void;
     clearOperators(): void;
     compareFn(sym: Sym): CompareFn;
@@ -306,6 +304,8 @@ export interface ExtensionEnv extends ExprContext {
      *
      */
     equals(lhs: U, rhs: U): boolean;
+    evaluate(opr: Native, ...args: U[]): U;
+    exp(expr: U): U;
     factor(expr: U): U;
     /**
      *

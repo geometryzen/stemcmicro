@@ -1125,8 +1125,6 @@ function scan_tensor(state: InputState, options: ScanOptions): Tensor {
         elements.push(x);
     }
 
-    const M = create_tensor(elements);
-
     if (options.useParenForTensors) {
         state.expect(T_RPAR);
     }
@@ -1139,7 +1137,5 @@ function scan_tensor(state: InputState, options: ScanOptions): Tensor {
 
     state.get_token();
 
-    M.pos = assert_pos(pos);
-    M.end = assert_end(end);
-    return M;
+    return create_tensor(elements, assert_pos(pos), assert_end(end));
 }

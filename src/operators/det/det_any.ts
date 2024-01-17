@@ -25,10 +25,13 @@ function Eval_det(expr: Cons, $: ExtensionEnv): U {
 }
 
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('determinant', DET, is_any, $);
-        this.hash = hash_unaop_atom(DET, HASH_ANY);
+        this.#hash = hash_unaop_atom(DET, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

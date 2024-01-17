@@ -14,10 +14,13 @@ class ExpRatBuilder implements OperatorBuilder<U> {
 }
 
 class ExpRat extends Function1<Rat> implements Operator<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('exp_rat', create_sym('exp'), is_rat, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
         // console.lg(this.name);

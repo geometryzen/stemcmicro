@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -26,10 +26,13 @@ type RHS = UCons<Sym, U>;
 type EXPR = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(name: string, opr: Sym, lhs: Sym, rhs: Sym, $: ExtensionEnv) {
         super(name, opr, and(is_cons, is_opr_1_any(lhs)), and(is_cons, is_opr_1_any(rhs)), $);
-        this.hash = hash_binop_cons_cons(opr, lhs, rhs);
+        this.#hash = hash_binop_cons_cons(opr, lhs, rhs);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
         const $ = this.$;

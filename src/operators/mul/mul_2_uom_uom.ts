@@ -18,11 +18,14 @@ class Builder implements OperatorBuilder<Cons> {
  * Uom * Uom
  */
 class Op extends Function2<Uom, Uom> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Uom'];
     constructor($: ExtensionEnv) {
         super('mul_2_uom_uom', MATH_MUL, is_uom, is_uom, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_UOM, HASH_UOM);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_UOM, HASH_UOM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Uom, rhs: Uom): [TFLAGS, U] {
         const uom = lhs.mul(rhs);

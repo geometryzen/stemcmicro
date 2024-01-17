@@ -16,7 +16,7 @@ class PluggableBuilder implements OperatorBuilder<U> {
 class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
     readonly #hash: string;
     constructor(opr: Sym, hash: string, private readonly evaluator: ConsExpr, $: ExtensionEnv) {
-        super(opr.text, opr, $);
+        super(opr.key(), opr, $);
         this.#hash = hash;
     }
     get hash(): string {

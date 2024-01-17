@@ -16,10 +16,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('is_complex_any', IS_COMPLEX, is_any, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: U, expr: U): [TFLAGS, U] {
         return [TFLAG_NONE, expr];

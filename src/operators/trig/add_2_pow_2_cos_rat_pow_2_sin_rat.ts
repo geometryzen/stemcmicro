@@ -44,11 +44,14 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * cos(x)**2+sin(x)**2 => 1
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = MODE_FACTORING;
     constructor($: ExtensionEnv) {
         super('add_2_pow_2_cos_rat_pow_2_sin_rat', MATH_ADD, guardL, guardR, cross, $);
-        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_POW, MATH_POW);
+        this.#hash = hash_binop_cons_cons(MATH_ADD, MATH_POW, MATH_POW);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {

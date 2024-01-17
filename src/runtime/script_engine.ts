@@ -87,7 +87,7 @@ export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
 
     $.buildOperators();
 
-    execute_definition(`${VARNAME_MAX_FIXED_PRINTOUT_DIGITS.text}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`, $);
+    execute_definition(`${VARNAME_MAX_FIXED_PRINTOUT_DIGITS.key()}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`, $);
 
     if (options && options.useDefinitions) {
         execute_std_definitions($);

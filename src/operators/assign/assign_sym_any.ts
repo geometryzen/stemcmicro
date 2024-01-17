@@ -1,4 +1,4 @@
-import { diffFlag, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { diffFlag, ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { ASSIGN } from "../../runtime/constants";
 import { Sym } from "../../tree/sym/Sym";
@@ -19,10 +19,13 @@ type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('assign_sym_any', ASSIGN, is_sym, is_any, $);
-        this.hash = hash_binop_atom_atom(ASSIGN, HASH_SYM, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(ASSIGN, HASH_SYM, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform(expr: U): [TFLAGS, U] {
         const m = this.match(expr);

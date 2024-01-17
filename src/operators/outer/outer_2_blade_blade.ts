@@ -17,11 +17,14 @@ class OuterBladeBladeBuilder implements OperatorBuilder<Cons> {
  * Blade ^ Blade
  */
 class OuterBladeBlade extends Function2<Blade, Blade> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('outer_2_blade_blade', MATH_OUTER, is_blade, is_blade, $);
-        this.hash = hash_binop_atom_atom(MATH_OUTER, HASH_BLADE, HASH_BLADE);
+        this.#hash = hash_binop_atom_atom(MATH_OUTER, HASH_BLADE, HASH_BLADE);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
         return [TFLAG_DIFF, lhs.wedge(rhs)];

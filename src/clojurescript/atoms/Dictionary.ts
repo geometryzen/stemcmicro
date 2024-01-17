@@ -6,7 +6,9 @@ export class Dictionary extends Atom {
         super("Dictionary");
     }
     toString(): string {
-        return `{${this.elements.map((element) => element.toString()).join(' ')}}`;
+        // This is only for debugging.
+        throw new Error(`{${this.elements.map((element) => element.toString()).join(' ')}}`);
+        // return `{${this.elements.map((element) => element.toString()).join(' ')}}`;
     }
 }
 

@@ -19,10 +19,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 export abstract class Function1Atom<T extends U> extends Function1<T> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(opr: Sym, guard: GUARD<U, T>, hash: string, $: ExtensionEnv) {
-        super(`${opr.text}_${hash}`, opr, guard, $);
-        this.hash = hash_unaop_atom(this.opr, hash);
+        super(`${opr.key()}_${hash}`, opr, guard, $);
+        this.#hash = hash_unaop_atom(this.opr, hash);
+    }
+    get hash(): string {
+        return this.#hash;
     }
 }
 

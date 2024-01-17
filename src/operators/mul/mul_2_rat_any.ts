@@ -39,10 +39,13 @@ function multiply_rat_any(lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
  * Rat * X
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_any', MATH_MUL, is_rat, is_any, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {

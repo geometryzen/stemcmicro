@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Sym> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('log_sym', MATH_LOG, is_sym, $);
-        this.hash = hash_unaop_atom(MATH_LOG, HASH_SYM);
+        this.#hash = hash_unaop_atom(MATH_LOG, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, x: Sym, expr: U): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(x));

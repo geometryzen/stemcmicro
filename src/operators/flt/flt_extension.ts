@@ -20,11 +20,14 @@ export class FltExtension implements Extension<Flt> {
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
+    get hash(): string {
         return oneAsFlt.name;
     }
     get name(): string {
         return 'FltExtension';
+    }
+    get key(): string {
+        return oneAsFlt.name;
     }
     get dependencies(): FEATURE[] {
         return ['Flt'];

@@ -1,13 +1,11 @@
+import { is_sym, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2X } from "../helpers/Function2X";
-import { is_sym } from "../sym/is_sym";
 
 const LOG = native_sym(Native.log);
 const POW = native_sym(Native.pow);
@@ -41,10 +39,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * exp(log(x)) => x
  */
 class Op extends Function2X<LHS, RHS> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_e_log', POW, is_sym, is_cons, cross, $);
-        this.hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {

@@ -15,11 +15,14 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Vector'];
     constructor($: ExtensionEnv) {
         super('outer_2_sym_sym', MATH_OUTER, is_sym, is_sym, $);
-        this.hash = hash_binop_atom_atom(MATH_OUTER, HASH_SYM, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_OUTER, HASH_SYM, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Sym, rhs: Sym, expr: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         return [TFLAG_HALT, expr];

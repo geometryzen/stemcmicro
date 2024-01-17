@@ -16,10 +16,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class SgnFlt extends Function1<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sgn_any', SGN, is_any, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // This may not be needed for uniqueness because of hash in other operators.
     isKind(expr: U): expr is UCons<Sym, U> {

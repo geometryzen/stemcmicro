@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Hyp> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('infinitesimal_hyp', ISINFINITESIMAL, is_hyp, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_HYP);
+        this.#hash = hash_unaop_atom(this.opr, HASH_HYP);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Hyp): [TFLAGS, U] {

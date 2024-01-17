@@ -15,10 +15,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class IsRealImu extends Function1<Imu> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super(`${ISREAL.text}(expr: ${HASH_IMU}) => ${HASH_BOO}`, ISREAL, is_imu, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_IMU);
+        super(`${ISREAL.key()}(expr: ${HASH_IMU}) => ${HASH_BOO}`, ISREAL, is_imu, $);
+        this.#hash = hash_unaop_atom(this.opr, HASH_IMU);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Imu): [TFLAGS, U] {

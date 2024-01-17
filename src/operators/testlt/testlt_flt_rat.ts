@@ -21,10 +21,13 @@ type RHS = Rat;
 type EXPR = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('testlt_flt_rat', MATH_LT, is_flt, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_LT, HASH_FLT, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_LT, HASH_FLT, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         return [TFLAG_DIFF, predicate_return_value(compare_num_num(lhs, rhs) < 0, this.$)];

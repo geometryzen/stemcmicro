@@ -16,10 +16,13 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Flt, Rat> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_flt_rat', MATH_POW, is_flt, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_POW, HASH_FLT, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_POW, HASH_FLT, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Flt, rhs: Rat): [TFLAGS, U] {
         return [TFLAG_DIFF, create_flt(Math.pow(lhs.d, rhs.toNumber()))];

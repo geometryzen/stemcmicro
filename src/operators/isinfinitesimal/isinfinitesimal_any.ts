@@ -16,10 +16,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('isinfinitesimal_any', ISINFINITESIMAL, is_any, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: U, expr: U): [TFLAGS, U] {

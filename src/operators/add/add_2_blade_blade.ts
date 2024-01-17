@@ -45,10 +45,13 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * Blade + Blade
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv, private readonly comparator: (lhs: U, rhs: U, $: ExtensionEnv) => Sign) {
         super('add_2_blade_blade', MATH_ADD, is_blade, is_blade, cross, $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_BLADE, HASH_BLADE);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_BLADE, HASH_BLADE);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: LHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

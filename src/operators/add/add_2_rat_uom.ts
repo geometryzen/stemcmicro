@@ -21,10 +21,13 @@ type RHS = Uom;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_rat_uom', MATH_ADD, is_rat, is_uom, $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_UOM);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_UOM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Rat, rhs: RHS, expr: EXP): [TFLAGS, U] {
         throw new TypeError(this.$.toInfixString(expr));

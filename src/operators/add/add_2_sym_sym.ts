@@ -20,10 +20,13 @@ class Builder implements OperatorBuilder<Cons> {
  * a + a => 2 * a
  */
 class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_sym_sym', MATH_ADD, is_sym, is_sym, $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_SYM, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_SYM, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Sym, rhs: Sym, orig: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
         switch (compare_sym_sym(lhs, rhs)) {

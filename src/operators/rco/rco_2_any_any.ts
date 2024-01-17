@@ -1,5 +1,5 @@
 
-import { ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -15,10 +15,13 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<U, U> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('rco_2_any_any', MATH_RCO, is_any, is_any, $);
-        this.hash = hash_binop_atom_atom(MATH_RCO, HASH_ANY, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(MATH_RCO, HASH_ANY, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: U, rhs: U, expr: BCons<Sym, U, U>): [TFLAGS, U] {
         return [TFLAG_NONE, expr];

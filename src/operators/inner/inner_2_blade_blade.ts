@@ -17,10 +17,13 @@ class Builder implements OperatorBuilder<Cons> {
  * Blade1 | Blade2 => Blade1.scp(Blade2)
  */
 class Op extends Function2<Blade, Blade> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('inner_2_blade_blade', MATH_INNER, is_blade, is_blade, $);
-        this.hash = hash_binop_atom_atom(MATH_INNER, HASH_BLADE, HASH_BLADE);
+        this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_BLADE, HASH_BLADE);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Blade, rhs: Blade): [TFLAGS, U] {
         return [TFLAG_DIFF, this.$.valueOf(lhs.scp(rhs))];

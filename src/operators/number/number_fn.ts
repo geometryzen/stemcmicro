@@ -23,10 +23,13 @@ function Eval_number(expr: Cons, $: ExtensionEnv): Rat {
 }
 
 class Op extends FunctionVarArgs implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('number', NUMBER, $);
-        this.hash = hash_nonop_cons(this.opr);
+        this.#hash = hash_nonop_cons(this.opr);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;

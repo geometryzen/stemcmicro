@@ -14,10 +14,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class SuccRat extends Function1<Rat> implements Operator<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('succ_rat', create_sym('succ'), is_rat, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Rat, expr: UCons<Sym, Rat>): [TFLAGS, U] {

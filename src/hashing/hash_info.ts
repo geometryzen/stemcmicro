@@ -1,8 +1,9 @@
 import { is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
+import { Dictionary, is_dictionary } from "../clojurescript/atoms/Dictionary";
+import { is_keyword } from "../clojurescript/atoms/Keyword";
 import { is_err } from "../operators/err/is_err";
 import { is_hyp } from "../operators/hyp/is_hyp";
 import { is_imu } from "../operators/imu/is_imu";
-import { is_keyword } from "../clojurescript/atoms/Keyword";
 import { Sym } from "../tree/sym/Sym";
 import { is_atom, is_cons, is_nil, U } from "../tree/tree";
 
@@ -12,8 +13,12 @@ const KIND_ATOM = 2;
 type KIND = typeof KIND_NIL | typeof KIND_CONS | typeof KIND_ATOM;
 type INFO = { kind: KIND, parts: string[] };
 
+// The following constants should be synchronized by the atom's name property in the case of concrete atoms.
+// A convenient way to do this, and maintain integrity, is to create an exemplar atom and then read off its name.
+// TODO: How do we make this extensible with respect to atoms?
 export const HASH_BLADE = 'Blade';
 export const HASH_BOO = 'Boo';
+export const HASH_DICTIONARY = new Dictionary([]).name;
 export const HASH_ERR = 'Err';
 export const HASH_FLT = 'Flt';
 export const HASH_HYP = 'Hyp';
@@ -23,6 +28,9 @@ export const HASH_STR = 'Str';
 export const HASH_SYM = 'Sym';
 export const HASH_TENSOR = 'Tensor';
 export const HASH_UOM = 'Uom';
+/**
+ * A special wildcard hash that matches any item.
+ */
 export const HASH_ANY = 'U';
 export const HASH_ATOM = 'Atom';
 export const HASH_NIL = 'Nil';
@@ -128,6 +136,8 @@ function hash_info_at_level(expr: U, level: number): INFO {
             return { kind: KIND_CONS, parts: [hash_arg(expr.opr)] };
         }
     }
+    // TODO: The idea of extensibility doesn't work if we have to add an entry here.
+    // We should be consulting all the extensions.
     if (is_sym(expr)) {
         return { kind: KIND_ATOM, parts: [HASH_SYM] };
     }
@@ -163,6 +173,9 @@ function hash_info_at_level(expr: U, level: number): INFO {
     }
     if (is_atom(expr)) {
         return { kind: KIND_ATOM, parts: [HASH_ATOM] };
+    }
+    if (is_dictionary(expr)) {
+        return { kind: KIND_ATOM, parts: [HASH_DICTIONARY] };
     }
     if (is_nil(expr)) {
         return { kind: KIND_NIL, parts: [HASH_NIL] };

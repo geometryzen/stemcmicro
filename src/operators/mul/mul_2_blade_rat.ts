@@ -25,11 +25,14 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Blade * Rat => Rat * Blade
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('mul_2_blade_rat', MATH_MUL, is_blade, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_BLADE, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_BLADE, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

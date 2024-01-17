@@ -31,7 +31,7 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     get key(): string | undefined {
         return this.extension.key;
     }
-    get hash(): string | undefined {
+    get hash(): string {
         return this.extension.hash;
     }
     get name(): string {

@@ -26,10 +26,13 @@ type RHS = BCons<Sym, RL, RR>;
 type EXP = BCons<Sym, LHS, RHS>
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv, private readonly config: EnvConfig) {
         super('add_2_blade_mul_2_rat_blade', MATH_ADD, is_blade, and(is_cons, is_mul_2_rat_blade), $);
-        this.hash = hash_binop_atom_cons(MATH_ADD, HASH_BLADE, MATH_MUL);
+        this.#hash = hash_binop_atom_cons(MATH_ADD, HASH_BLADE, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

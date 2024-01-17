@@ -22,10 +22,13 @@ type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(opr: Sym, $: ExtensionEnv) {
         super('outer_2_any_any', opr, is_any, is_any, $);
-        this.hash = hash_binop_atom_atom(this.opr, HASH_ANY, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(this.opr, HASH_ANY, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {

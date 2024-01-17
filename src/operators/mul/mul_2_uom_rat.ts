@@ -28,11 +28,14 @@ type EXP = BCons<Sym, LHS, RHS>
  *             => Uom if Rat is one
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Uom'];
     constructor($: ExtensionEnv) {
         super('mul_2_uom_rat', MATH_MUL, is_uom, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_UOM, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_UOM, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         if (rhs.isZero()) {

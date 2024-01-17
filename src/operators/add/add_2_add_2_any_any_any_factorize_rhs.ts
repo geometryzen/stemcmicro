@@ -35,10 +35,13 @@ function cross($: ExtensionEnv) {
  * (X + Y) + Z => (X + m * A) + n * A => X + (m + n) * A, where Y = m * A, and Z = n * A.
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_add_2_any_any_any_factorize_rhs', MATH_ADD, and(is_cons, is_add_2_any_any), is_any, cross($), $);
-        this.hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
+        this.#hash = hash_binop_cons_atom(MATH_ADD, MATH_ADD, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

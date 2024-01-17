@@ -30,10 +30,13 @@ const guardR = is_rat;
  * (b**m)**n => b**(m*n), for any positive integers m and n.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_pow_2_any_rat_rat', MATH_POW, guardL, guardR, $);
-        this.hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
+        this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     isKind(expr: U): expr is BCons<Sym, LHS, Rat> {
         if (super.isKind(expr)) {

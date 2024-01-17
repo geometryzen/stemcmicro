@@ -8,10 +8,13 @@ import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 
 export class PrintModeOperator extends Function1<U> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(opr: string, private readonly printMode: () => PrintMode, $: ExtensionEnv) {
         super(opr, create_sym(opr), is_any, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: U): [TFLAGS, U] {
         const $ = this.$;

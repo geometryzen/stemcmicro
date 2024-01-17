@@ -21,10 +21,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Sym | Sym
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('inner_2_sym_sym', MATH_INNER, is_sym, is_sym, $);
-        this.hash = hash_binop_atom_atom(MATH_INNER, HASH_SYM, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_SYM, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {

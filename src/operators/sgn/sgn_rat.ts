@@ -15,10 +15,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class SgnRat extends Function1<Rat> implements Operator<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sgn_rat', SGN, is_rat, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
         return [TFLAG_DIFF, sgn_of_rat(arg)];

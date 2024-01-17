@@ -52,11 +52,14 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * sin(a)*cos(b)-cos(a)*sin(b) => sin(a-b)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = MODE_FACTORING;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_sin_cos_mul_2_mul_2_rat_cos_sin', MATH_ADD, guardL, guardR, cross, $);
-        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
+        this.#hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

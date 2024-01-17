@@ -33,10 +33,13 @@ function cross($: ExtensionEnv) {
 }
 
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_any_any_factorize_rhs', MATH_ADD, is_any, is_any, cross($), $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

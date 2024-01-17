@@ -2151,7 +2151,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): stri
             if (defs.printMode === PRINTMODE_LATEX) {
                 return $.toLatexString(expr);
             }
-            return expr.text;
+            return expr.key();
         }
         if (is_hyp(expr)) {
             return expr.printname;

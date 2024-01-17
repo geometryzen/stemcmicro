@@ -12,11 +12,14 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends FunctionVarArgs implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
         super('coeff', COEFF, $);
-        this.hash = hash_nonop_cons(this.opr);
+        this.#hash = hash_nonop_cons(this.opr);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;

@@ -20,10 +20,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Flt> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('log_flt', LOG, is_flt, $);
-        this.hash = hash_unaop_atom(LOG, HASH_FLT);
+        this.#hash = hash_unaop_atom(LOG, HASH_FLT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, x: Flt, expr: U): [TFLAGS, U] {

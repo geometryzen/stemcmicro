@@ -23,10 +23,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Rat | x => Rat * x
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('inner_2_rat_sym', MATH_INNER, is_rat, is_sym, $);
-        this.hash = hash_binop_atom_atom(MATH_INNER, HASH_RAT, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_RAT, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         return [TFLAG_DIFF, items_to_cons(MATH_MUL.clone(opr.pos, opr.end), lhs, rhs)];

@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "./and";
@@ -21,8 +21,13 @@ class Builder<L extends U, R extends U> implements OperatorBuilder<BCons<Sym, BC
  * (X * Z) * A => (X * A) * Z
  */
 class Op<L extends U, R extends U> extends Function2<BCons<Sym, U, L>, R> implements Operator<BCons<Sym, BCons<Sym, U, L>, R>> {
-    constructor(public readonly name: string, public readonly hash: string, sym: Sym, guardL: GUARD<U, L>, guardR: GUARD<U, R>, $: ExtensionEnv) {
+    readonly #hash: string;
+    constructor(public readonly name: string, hash: string, sym: Sym, guardL: GUARD<U, L>, guardR: GUARD<U, R>, $: ExtensionEnv) {
         super(name, sym, and(is_cons, is_opr_2_lhs_rhs(sym, is_any, guardL)), guardR, $);
+        this.#hash = hash;
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: BCons<Sym, U, L>, rhs: R): [TFLAGS, U] {
         const X = lhs.lhs;

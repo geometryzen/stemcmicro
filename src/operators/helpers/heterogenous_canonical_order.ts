@@ -1,5 +1,5 @@
 
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
@@ -17,8 +17,13 @@ class Builder<L extends U, R extends U> implements OperatorBuilder<BCons<Sym, L,
 }
 
 class FlipOperator<L extends U, R extends U> extends Function2<L, R> implements Operator<BCons<Sym, L, R>> {
-    constructor(public readonly name: string, public readonly hash: string, opr: Sym, guardL: GUARD<U, L>, guardR: GUARD<U, R>, $: ExtensionEnv) {
+    readonly #hash: string;
+    constructor(public readonly name: string, hash: string, opr: Sym, guardL: GUARD<U, L>, guardR: GUARD<U, R>, $: ExtensionEnv) {
         super(name, opr, guardL, guardR, $);
+        this.#hash = hash;
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: L, rhs: R): [TFLAGS, U] {
         return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];

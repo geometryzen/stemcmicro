@@ -22,10 +22,13 @@ type ARG = Imu;
 type EXP = UCons<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('clock_imu', CLOCK, is_imu, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_IMU);
+        this.#hash = hash_unaop_atom(this.opr, HASH_IMU);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {

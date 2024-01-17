@@ -20,10 +20,13 @@ type ARG = U;
 type EXP = UCons<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sin_any', MATH_SIN, is_any, $);
-        this.hash = hash_unaop_atom(MATH_SIN, HASH_ANY);
+        this.#hash = hash_unaop_atom(MATH_SIN, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         return [TFLAG_NONE, expr];

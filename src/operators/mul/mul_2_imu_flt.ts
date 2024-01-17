@@ -24,11 +24,14 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Imu * Flt
  */
 class Op extends Function2<LHS, RHS> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt', 'Imu'];
     constructor($: ExtensionEnv) {
         super('mul_2_imu_flt', MATH_MUL, is_imu, is_flt, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_IMU, HASH_FLT);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_IMU, HASH_FLT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {

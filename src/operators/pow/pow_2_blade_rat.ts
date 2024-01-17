@@ -15,10 +15,13 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Blade, Rat> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_blade_rat', MATH_POW, is_blade, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_POW, HASH_BLADE, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_POW, HASH_BLADE, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Blade, rhs: Rat): [TFLAGS, U] {
         if (rhs.isTwo()) {

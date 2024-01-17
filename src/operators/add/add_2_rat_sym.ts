@@ -25,10 +25,13 @@ class Builder implements OperatorBuilder<Cons> {
  *           => Sym       (Rat == 0)
  */
 class Op extends Function2<Rat, Sym> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_rat_sym', MATH_ADD, is_rat, is_sym, $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     override transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {

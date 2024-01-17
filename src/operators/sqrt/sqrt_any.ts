@@ -20,10 +20,13 @@ class Builder implements OperatorBuilder<U> {
  * sqrt(x) => (pow x 1/2)
  */
 class Sqrt extends Function1<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sqrt_any', MATH_SQRT, is_any, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: U): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(arg));

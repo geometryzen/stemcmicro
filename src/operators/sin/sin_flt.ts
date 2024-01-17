@@ -17,10 +17,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Flt> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sin_flt', MATH_SIN, is_flt, $);
-        this.hash = hash_unaop_atom(MATH_SIN, HASH_FLT);
+        this.#hash = hash_unaop_atom(MATH_SIN, HASH_FLT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Flt): [TFLAGS, U] {
         const d = Math.sin(arg.d);

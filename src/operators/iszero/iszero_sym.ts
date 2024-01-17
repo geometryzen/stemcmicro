@@ -17,10 +17,13 @@ class ExpRatBuilder implements OperatorBuilder<U> {
 const ISZERO = native_sym(Native.iszero);
 
 class Op extends Function1<Sym> implements Operator<U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('iszero_sym', ISZERO, is_sym, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_SYM);
+        this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(arg));

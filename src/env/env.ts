@@ -1,4 +1,5 @@
 import { LambdaExpr } from 'math-expression-context';
+import { is_atom } from 'math-expression-tree';
 import { yyfactorpoly } from "../factorpoly";
 import { hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
@@ -110,7 +111,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     /**
      * The operators in buckets that are determined by the phase and operator.
      */
-    const ops_by_mode: { [key: string]: Operator<U>[] }[] = [];
+    const ops_by_mode: { [hash: string]: Operator<U>[] }[] = [];
     for (const mode of MODE_SEQUENCE) {
         ops_by_mode[mode] = {};
     }
@@ -127,7 +128,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const sym_order: Record<string, ExprComparator> = {};
 
-    function currentOps(): { [key: string]: Operator<U>[] } {
+    function currentOps(): { [hash: string]: Operator<U>[] } {
         if (native_directives.get(Directive.expanding)) {
             const ops = ops_by_mode[MODE_EXPANDING];
             if (typeof ops === 'undefined') {
@@ -145,15 +146,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         return {};
     }
 
-    function selectOperator(key: string, expr: U): Operator<U> | undefined {
-        const ops = currentOps()[key];
+    /**
+     * @param atom The expression is the atom.
+     * @returns The operator for the atom.
+     */
+    function selectOperator(atom: U): Operator<U> | undefined {
+        const hash = atom.name;
+        const ops = currentOps()[hash];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
-                if (op.isKind(expr)) {
+                if (op.isKind(atom)) {
                     return op;
                 }
             }
-            throw new SystemError(`No matching operator for key ${key}`);
+            throw new SystemError(`No matching operator for hash ${hash}`);
         }
         else {
             return void 0;
@@ -164,17 +170,17 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
-        getBinding(printname: string): U {
-            return $.getSymbolBinding(printname);
+        getBinding(key: string): U {
+            return $.getSymbolBinding(key);
         },
-        setBinding(printname: string, binding: U): void {
-            return $.setSymbolBinding(printname, binding);
+        setBinding(key: string, binding: U): void {
+            return $.setSymbolBinding(key, binding);
         },
-        getUsrFunc(printname: string): U {
-            return $.getSymbolUsrFunc(printname);
+        getUsrFunc(key: string): U {
+            return $.getSymbolUsrFunc(key);
         },
-        setUsrFunc(printname: string, usrfunc: U): void {
-            return $.setSymbolUsrFunc(printname, usrfunc);
+        setUsrFunc(key: string, usrfunc: U): void {
+            return $.setSymbolUsrFunc(key, usrfunc);
         },
         getPrintHandler(): PrintHandler {
             return printHandler;
@@ -210,8 +216,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         clearOperators(): void {
             builders.length = 0;
-            for (const phase of MODE_SEQUENCE) {
-                const ops = ops_by_mode[phase];
+            for (const mode of MODE_SEQUENCE) {
+                const ops = ops_by_mode[mode];
                 for (const key in ops) {
                     ops[key] = [];
                 }
@@ -307,9 +313,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
                 // If an operator does not restrict the modes to which it applies then it applies to all modes.
                 const phaseFlags = typeof op.phases === 'number' ? op.phases : MODE_FLAGS_ALL;
-                for (const phase of MODE_SEQUENCE) {
-                    if (phaseFlags & phase) {
-                        const ops = ops_by_mode[phase];
+                for (const mode of MODE_SEQUENCE) {
+                    if (phaseFlags & mode) {
+                        const ops = ops_by_mode[mode];
                         if (op.hash) {
                             if (!Array.isArray(ops[op.hash])) {
                                 ops[op.hash] = [op];
@@ -319,6 +325,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             }
                         }
                         else {
+                            // Does this mean that 'key' and 'hash' are equivalent properties.
+                            // Maybe this was an expedient for earlier work?
+                            // At least for new extensions they should be the same. 
                             if (op.key) {
                                 if (!Array.isArray(ops[op.key])) {
                                     ops[op.key] = [op];
@@ -328,7 +337,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                 }
                             }
                             else {
-                                throw new SystemError(`${op.name} has no key and nohash`);
+                                throw new SystemError(`${op.name} has no 'key' (string) property and no 'hash' (string) property.`);
                             }
                         }
 
@@ -336,17 +345,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
             // Inspect which operators are assigned to which buckets...
-            /*
-            for (const key in keydOps) {
-                const ops = keydOps[key];
-                console.lg(`${key} ${ops.length}`);
-                if (ops.length > 5) {
-                    for (const op of ops) {
-                        console.lg(`${key} ${op.name}  <<<<<<<`);
+            for (const mode of MODE_SEQUENCE) {
+                const ops = ops_by_mode[mode];
+                for (const hash in ops) {
+                    const candidates: Operator<U>[] = ops[hash];
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    for (const candidate of candidates) {
+                        // console.lg(`${hash} is implemented by "${candidate.name}" in mode ${JSON.stringify(decodeMode(mode))}.`);
                     }
                 }
             }
-            */
         },
         is(predicate: Sym, expr: U): boolean {
             // In the new way we don't require every operator to provide the answer.
@@ -508,16 +516,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.multiply(negOne, x);
         },
         operatorFor(expr: U): Operator<U> | undefined {
-            /*
-            if (is_imu(expr)) {
-                // This is not good 
-                return selectOperator(MATH_POW.key());
-            }
-            */
             if (is_cons(expr)) {
-                const keys = hash_info(expr);
-                for (const key of keys) {
-                    const ops = currentOps()[key];
+                const hashes = hash_info(expr);
+                for (const hash of hashes) {
+                    const ops = currentOps()[hash];
                     if (Array.isArray(ops)) {
                         for (const op of ops) {
                             if (op.isKind(expr)) {
@@ -532,8 +534,15 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // The consumer is trying to answer a question
                 // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
             }
+            else if (is_atom(expr)) {
+                return selectOperator(expr);
+            }
+            else if (is_nil(expr)) {
+                // TODO: Why does this make sense for nil, which is not an atom?
+                return selectOperator(expr);
+            }
             else {
-                return selectOperator(expr.name, expr);
+                throw new Error();
             }
         },
         outer(...args: U[]): U {
@@ -624,13 +633,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return `${expr}`;
             }
         },
-        toSExprString(expr: U): string {
-            const op = $.operatorFor(expr);
+        toSExprString(x: U): string {
+            const op = $.operatorFor(x);
             if (op) {
-                return op.toListString(expr);
+                return op.toListString(x);
             }
             else {
-                return `${expr}`;
+                throw new Error(`No operator found for expression of type ${JSON.stringify(x.name)}`);
             }
         },
         transform(expr: U): [TFLAGS, U] {
@@ -648,7 +657,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                 }
                 else if (is_rat(head)) {
+                    // Why do we have a special case for rat?
                     // We know that the key and hash are both 'Rat'
+                    // const hash = head.name;
                     const ops: Operator<U>[] = currentOps()['Rat'];
                     // TODO: The operator will be acting on the argList, not the entire expression.
                     const op = unambiguous_operator(expr.argList, ops, $);
@@ -662,12 +673,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                 }
                 // let changedExpr = false;
-                const pops = currentOps();
-                // keys are the buckets we should look in for operators from specific to generic.
-                const keys = hash_info(expr);
+                const hash_to_ops = currentOps();
+                // hashes are the buckets we should look in for operators from specific to generic.
+                const hashes: string[] = hash_info(expr);
                 // console.lg("keys", JSON.stringify(keys));
-                for (const key of keys) {
-                    const ops = pops[key];
+                for (const hash of hashes) {
+                    const ops = hash_to_ops[hash];
                     // console.lg(`Looking for key: ${JSON.stringify(key)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
                     // Determine whether there are handlers in the bucket.
                     if (Array.isArray(ops)) {

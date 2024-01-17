@@ -20,10 +20,13 @@ type ARG = U;
 type EXP = UCons<Sym, ARG>;
 
 class Op extends Function1<ARG> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('rect_any', RECT, is_any, $);
-        this.hash = hash_unaop_atom(RECT, HASH_ANY);
+        this.#hash = hash_unaop_atom(RECT, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG, rectExpr: EXP): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(rectExpr));

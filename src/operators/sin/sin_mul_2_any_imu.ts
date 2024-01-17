@@ -27,10 +27,13 @@ type EXP = UCons<Sym, ARG>;
  * sin(X * i) => sinh(X) * i 
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sin_mul_2_any_imu', MATH_SIN, and(is_cons, is_opr_2_any_rhs(MATH_MUL, is_imu)), $);
-        this.hash = hash_unaop_cons(MATH_SIN, MATH_MUL);
+        this.#hash = hash_unaop_cons(MATH_SIN, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

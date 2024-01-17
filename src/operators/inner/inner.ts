@@ -26,10 +26,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * So it only makes sense to implement a strictly binary operator.
  */
 class Inner extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('inner_extension', MATH_INNER, is_any, is_any, $);
-        this.hash = hash_binop_atom_atom(MATH_INNER, HASH_ANY, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_ANY, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

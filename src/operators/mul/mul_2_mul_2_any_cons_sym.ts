@@ -35,10 +35,13 @@ function crossGuard($: ExtensionEnv) {
  *
  */
 class Op extends Function2X<BCons<Sym, U, Cons>, Sym> implements Operator<BCons<Sym, BCons<Sym, U, Cons>, Sym>> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_cons_sym', MATH_MUL, and(is_cons, is_mul_2_any_cons), is_sym, crossGuard($), $);
-        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
+        this.#hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: BCons<Sym, U, Cons>, rhs: Sym/*, orig: BCons<Sym, BCons<Sym, U, Cons>, Sym>*/): [TFLAGS, U] {
         const $ = this.$;

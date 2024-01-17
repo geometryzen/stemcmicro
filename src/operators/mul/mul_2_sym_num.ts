@@ -21,10 +21,13 @@ class Builder implements OperatorBuilder<Cons> {
  * Sym * Num => Num * Sym
  */
 class Op extends Function2<Sym, Num> implements Operator<BCons<Sym, Sym, Num>> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_num', MATH_MUL, is_sym, is_num, $);
-        this.hash = `(* Sym Num)`;
+        this.#hash = `(* Sym Num)`;
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Sym, rhs: Num): [TFLAGS, U] {
         if (rhs.isZero()) {

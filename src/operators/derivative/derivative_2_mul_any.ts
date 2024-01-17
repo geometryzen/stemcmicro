@@ -28,10 +28,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * TODO: This should now be covered elsewhere.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('derivative_2_mul_any', MATH_DERIVATIVE, and(is_cons, is_opr_2_any_any(MATH_MUL)), is_sym, $);
-        this.hash = hash_binop_cons_atom(MATH_DERIVATIVE, MATH_MUL, HASH_ANY);
+        this.#hash = hash_binop_cons_atom(MATH_DERIVATIVE, MATH_MUL, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

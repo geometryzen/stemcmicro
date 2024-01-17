@@ -137,7 +137,7 @@ class ClojureScriptExprEngine implements ExprEngine {
         return { module, errors };
     }
     getBinding(sym: Sym): U {
-        return this.$.getBinding(sym.printname);
+        return this.$.getBinding(sym.key());
     }
     evaluate(expr: U): U {
         const { value } = transform_tree(expr, {}, this.$);
@@ -181,8 +181,8 @@ class ClojureScriptExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        this.$.setBinding(sym.printname, binding);
-        this.$.setUsrFunc(sym.printname, usrfunc);
+        this.$.setBinding(sym.key(), binding);
+        this.$.setUsrFunc(sym.key(), usrfunc);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -234,7 +234,7 @@ class AlgebriteExprEngine implements ExprEngine {
         return { module, errors };
     }
     getBinding(sym: Sym): U {
-        return this.$.getBinding(sym.printname);
+        return this.$.getBinding(sym.key());
     }
     evaluate(expr: U): U {
         const { value } = transform_tree(expr, {}, this.$);
@@ -278,8 +278,8 @@ class AlgebriteExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        this.$.setBinding(sym.printname, binding);
-        this.$.setUsrFunc(sym.printname, usrfunc);
+        this.$.setBinding(sym.key(), binding);
+        this.$.setUsrFunc(sym.key(), usrfunc);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {

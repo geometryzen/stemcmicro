@@ -15,11 +15,14 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Tensor> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
     constructor($: ExtensionEnv) {
         super('typeof_tensor', create_sym('typeof'), is_tensor, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_TENSOR);
+        this.#hash = hash_unaop_atom(this.opr, HASH_TENSOR);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Tensor<U>, expr: UCons<Sym, Tensor<U>>): [TFLAGS, U] {

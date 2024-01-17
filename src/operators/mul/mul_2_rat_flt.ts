@@ -20,11 +20,14 @@ class Builder implements OperatorBuilder<Cons> {
  * (Rat * Flt) => Flt
  */
 class Op extends Function2<Rat, Flt> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt'];
     constructor($: ExtensionEnv) {
         super('mul_2_rat_flt', MATH_MUL, is_rat, is_flt, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_FLT);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_FLT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Rat, rhs: Flt): [TFLAGS, U] {
         return [TFLAG_DIFF, create_flt(lhs.toNumber() * rhs.toNumber())];

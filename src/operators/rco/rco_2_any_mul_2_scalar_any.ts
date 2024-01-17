@@ -1,4 +1,4 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<Cons> {
  * x >> (a * y) => a * (x >> y)
  */
 class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('rco_2_any_mul_2_scalar_any', MATH_RCO, is_any, is_mul_2_scalar_any($), $);
-        this.hash = hash_binop_atom_cons(MATH_RCO, HASH_ANY, MATH_MUL);
+        this.#hash = hash_binop_atom_cons(MATH_RCO, HASH_ANY, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>): [TFLAGS, U] {
         const $ = this.$;

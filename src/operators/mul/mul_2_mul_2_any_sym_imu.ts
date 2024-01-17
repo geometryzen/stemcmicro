@@ -25,10 +25,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * (X * a) * i => (X * i) * a or (X * a) * i, consistent with compare_factors
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_sym_imu', MATH_MUL, and(is_cons, is_mul_2_any_sym), is_imu, $);
-        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_IMU);
+        this.#hash = hash_binop_cons_atom(MATH_MUL, MATH_MUL, HASH_IMU);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

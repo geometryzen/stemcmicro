@@ -14,10 +14,13 @@ class Builder implements OperatorBuilder<U> {
 
 class Pred extends Function1<U> implements Operator<Cons> {
     readonly name = 'pred_any';
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pred_any', create_sym('pred'), is_any, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
         return [TFLAG_NONE, expr];

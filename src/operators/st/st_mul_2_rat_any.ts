@@ -31,11 +31,14 @@ const guardA: GUARD<U, ARG> = and(is_cons, is_opr_2_lhs_rhs(MATH_MUL, is_rat, is
  * st(k*X) => k*st(X) 
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('st_mul_2_rat_any', MATH_STANDARD_PART, guardA, $);
-        this.hash = hash_unaop_cons(MATH_STANDARD_PART, MATH_MUL);
+        this.#hash = hash_unaop_cons(MATH_STANDARD_PART, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         const $ = this.$;

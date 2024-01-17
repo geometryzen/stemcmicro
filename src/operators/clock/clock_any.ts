@@ -21,10 +21,13 @@ type ARG = U;
 type EXP = UCons<Sym, ARG>;
 
 class Op extends Function1<ARG> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('clock_any', CLOCK, is_any, $);
-        this.hash = hash_unaop_atom(CLOCK, HASH_ANY);
+        this.#hash = hash_unaop_atom(CLOCK, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, oldExpr: EXP): [TFLAGS, U] {

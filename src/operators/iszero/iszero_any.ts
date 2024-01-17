@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<U> {
 const ISZERO = native_sym(Native.iszero);
 
 class Op extends Function1<U> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('iszero_any', ISZERO, is_any, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_ANY);
+        this.#hash = hash_unaop_atom(this.opr, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {

@@ -30,11 +30,14 @@ function cross($: ExtensionEnv) {
  * Sym * Blade => Sym * Blade (STABLE)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('mul_2_sym_blade', MATH_MUL, is_sym, is_blade, cross($), $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_BLADE);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_BLADE);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         // TODO: Be aware that this may prevent the processing of Sym * Blade more generally.

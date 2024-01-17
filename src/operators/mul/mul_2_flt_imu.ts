@@ -24,11 +24,14 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Flt * Imu
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt', 'Imu'];
     constructor($: ExtensionEnv) {
         super('mul_2_flt_imu', MATH_MUL, is_flt, is_imu, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_FLT, HASH_IMU);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_FLT, HASH_IMU);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // TODO
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {

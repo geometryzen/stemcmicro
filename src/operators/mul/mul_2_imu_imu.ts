@@ -22,11 +22,14 @@ type EXP = BCons<Sym, LHS, RHS>;
  * i * i => -1
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Imu'];
     constructor($: ExtensionEnv) {
         super('mul_2_imu_imu', MATH_MUL, is_imu, is_imu, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_IMU, HASH_IMU);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_IMU, HASH_IMU);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {

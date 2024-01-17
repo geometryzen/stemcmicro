@@ -37,10 +37,13 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * (pow (pow e (* 2 x)) 1/2) => (pow e x)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_pow_2_e_any_rat', MATH_POW, guardL, guardR, cross, $);
-        this.hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
+        this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {

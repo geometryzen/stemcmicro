@@ -27,10 +27,13 @@ type EXP = BCons<Sym, LHS, RHS>
  *             => Sym if Rat is one
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_rat', MATH_MUL, is_sym, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_SYM, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         // If the base class binds the symbol to something else then none of this code below will be called.

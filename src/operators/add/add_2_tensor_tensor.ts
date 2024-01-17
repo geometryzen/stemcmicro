@@ -23,10 +23,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Tensor + Tensor => Tensor
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_tensor_tensor', MATH_ADD, is_tensor, is_tensor, $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_TENSOR, HASH_TENSOR);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_TENSOR, HASH_TENSOR);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

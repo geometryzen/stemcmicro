@@ -26,10 +26,13 @@ function cross(lhs: BCons<Sym, Rat, Sym>, rhs: Sym): boolean {
 // (Rat * zzz) + aaa => aaa + (Rat * zzz)
 //
 class Op extends Function2X<BCons<Sym, Rat, Sym>, Sym> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_rat_zzz_aaa', MATH_ADD, and(is_cons, is_mul_2_rat_sym), is_sym, cross, $);
-        this.hash = hash_binop_cons_atom(MATH_ADD, MATH_MUL, HASH_SYM);
+        this.#hash = hash_binop_cons_atom(MATH_ADD, MATH_MUL, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: BCons<Sym, Rat, Sym>, rhs: Sym, orig: BCons<Sym, BCons<Sym, Rat, Sym>, Sym>): [TFLAGS, U] {
         return [TFLAG_DIFF, binswap(orig)];

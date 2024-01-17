@@ -1,5 +1,5 @@
 import { is_zero_sum } from "../../calculators/factorize/is_zero_sum";
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
@@ -26,10 +26,13 @@ function cross($: ExtensionEnv) {
 }
 
 class Op extends Function2X<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_any_any_zero_sum', MATH_ADD, is_any, is_any, cross($), $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_ANY, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {

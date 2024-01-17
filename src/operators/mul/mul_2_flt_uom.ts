@@ -20,11 +20,14 @@ class Builder implements OperatorBuilder<Cons> {
  * Flt * Uom
  */
 class Op extends Function2<Flt, Uom> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt', 'Uom'];
     constructor($: ExtensionEnv) {
         super('mul_2_flt_uom', MATH_MUL, is_flt, is_uom, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_FLT, HASH_UOM);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_FLT, HASH_UOM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Flt, rhs: Uom, expr: BCons<Sym, Flt, Uom>): [TFLAGS, U] {
         if (lhs.isZero()) {

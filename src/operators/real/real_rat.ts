@@ -18,10 +18,13 @@ type ARG = Rat;
 type EXP = UCons<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('real_rat', RE, is_rat, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {

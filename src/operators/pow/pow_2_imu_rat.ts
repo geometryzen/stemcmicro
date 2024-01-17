@@ -22,10 +22,13 @@ type RHS = Rat;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_imu_rat', MATH_POW, is_imu, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_POW, HASH_IMU, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_POW, HASH_IMU, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

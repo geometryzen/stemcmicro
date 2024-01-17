@@ -1,5 +1,5 @@
 
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_SYM } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
@@ -28,10 +28,13 @@ function cross(lhs: BCons<Sym, Sym, Rat>, rhs: Sym): boolean {
  * (xxx ** Rat) * xxx => xxx ** (succ(Rat)) 
  */
 class Op extends Function2X<BCons<Sym, Sym, Rat>, Sym> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_pow_2_xxx_rat_xxx', MATH_MUL, and(is_cons, is_pow_2_sym_rat), is_sym, cross, $);
-        this.hash = hash_binop_cons_atom(MATH_MUL, MATH_POW, HASH_SYM);
+        this.#hash = hash_binop_cons_atom(MATH_MUL, MATH_POW, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: BCons<Sym, Sym, Rat>, rhs: Sym, expr: BCons<Sym, BCons<Sym, Sym, Rat>, Sym>): [TFLAGS, U] {

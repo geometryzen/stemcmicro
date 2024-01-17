@@ -12,6 +12,12 @@ export abstract class FunctionVarArgs extends AbstractOperator {
         super(name, $);
         this.key = `(${opr.key()})`;
     }
+    /**
+     * Ideally, we'd leave this out...
+     */
+    get hash(): string {
+        return this.key;
+    }
     evaluate(argList: Cons): [number, U] {
         const expr = cons(this.opr, argList);
         return this.transform(expr, this.$);

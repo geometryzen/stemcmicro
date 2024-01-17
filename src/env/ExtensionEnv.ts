@@ -319,7 +319,15 @@ export interface ExtensionEnv extends ExprContext {
      * Used during rendering.
      */
     getSymbolPrintName(sym: Sym): string;
+    /**
+     * 
+     * @param sym The symol or the key for the symbol.
+     */
     getSymbolBinding(sym: Sym | string): U;
+    /**
+     * 
+     * @param sym The symbol or the key for the symbol.
+     */
     getSymbolUsrFunc(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[];
     /**
@@ -459,7 +467,7 @@ export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTO
 export interface Operator<T extends U> {
     readonly key?: string;
     readonly name: string;
-    readonly hash?: string;
+    readonly hash: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
     /**
@@ -486,12 +494,23 @@ export interface Operator<T extends U> {
 }
 
 /**
- *
+ * FIXME: key and hash are duplicate functionality. Remove key as hash better reflects the intention of the extension.
  */
 export interface Extension<T extends U> {
+    /**
+     * The key property is required for extensions.
+     * It MUST return the same value as the corresponding atom name property.
+     */
     readonly key?: string;
+    /**
+     * The hash property is required for extensions.
+     * It MUST return the same value as the corresponding atom name property.
+     */
+    readonly hash: string;
+    /**
+     * A name which will be used for diagnostics.
+     */
     readonly name: string;
-    readonly hash?: string;
     readonly phases?: number;
     readonly dependencies?: FEATURE[];
     isKind(expr: U, $: ExtensionEnv): boolean;

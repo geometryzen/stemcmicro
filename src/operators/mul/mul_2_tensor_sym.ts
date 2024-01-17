@@ -31,11 +31,14 @@ function cross($: ExtensionEnv) {
  *
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
     constructor($: ExtensionEnv) {
         super('mul_2_tensor_sym', MATH_MUL, is_tensor, is_sym, cross($), $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_TENSOR, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_TENSOR, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

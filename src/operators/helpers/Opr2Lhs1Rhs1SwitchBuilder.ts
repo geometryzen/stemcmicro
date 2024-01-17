@@ -33,10 +33,13 @@ type EXPR = BCons<Sym, LHS, RHS>;
  * (opr (lhs) (rhs)) => (opr (rhs) (lhs))
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(opr: Sym, lhs: Sym, rhs: Sym, $: ExtensionEnv) {
         super(`${opr.key()}_2_${lhs.key()}_1_any_${rhs.key()}_1_any`, opr, and(is_cons, is_opr_1_any(lhs)), and(is_cons, is_opr_1_any(rhs)), $);
-        this.hash = hash_binop_cons_cons(opr, lhs, rhs);
+        this.#hash = hash_binop_cons_cons(opr, lhs, rhs);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
         const $ = this.$;

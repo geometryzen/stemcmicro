@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<U> {
  * (+ a b c ...)
  */
 class AddOperator extends FunctionVarArgs implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_varargs', ADD, $);
-        this.hash = hash_nonop_cons(this.opr);
+        this.#hash = hash_nonop_cons(this.opr);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform(expr: Cons): [number, U] {
         const $ = this.$;

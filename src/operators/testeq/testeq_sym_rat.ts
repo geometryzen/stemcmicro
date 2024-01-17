@@ -24,10 +24,13 @@ type RHS = Rat;
 type EXPR = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('testeq_sym_rat', testeq, is_sym, is_rat, $);
-        this.hash = hash_binop_atom_atom(testeq, HASH_SYM, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(testeq, HASH_SYM, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, sym: LHS, rat: RHS, expr: EXPR): [TFLAGS, U] {

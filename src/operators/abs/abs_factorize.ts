@@ -33,11 +33,14 @@ const guardR = is_rat;
  * (pow (pow x 2) 1/2) => abs(x)
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = MODE_FACTORING;
     constructor($: ExtensionEnv) {
         super('abs_factorize', MATH_POW, guardL, guardR, $);
-        this.hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
+        this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const x = lhs.lhs;

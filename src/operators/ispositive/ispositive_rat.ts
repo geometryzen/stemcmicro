@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Rat> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('ispositive_rat', ISPOS, is_rat, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
         return [TFLAG_DIFF, create_boo(arg.isPositive())];

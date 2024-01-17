@@ -15,10 +15,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class IsRealFlt extends Function1<Flt> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super(`${ISREAL.text}(expr: ${HASH_FLT}) => ${HASH_BOO}`, ISREAL, is_flt, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_FLT);
+        super(`${ISREAL.key()}(expr: ${HASH_FLT}) => ${HASH_BOO}`, ISREAL, is_flt, $);
+        this.#hash = hash_unaop_atom(this.opr, HASH_FLT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Flt): [TFLAGS, U] {

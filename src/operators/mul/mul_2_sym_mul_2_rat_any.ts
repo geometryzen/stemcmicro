@@ -27,10 +27,13 @@ type EXP = BCons<Sym, LHS, RHS>
  * a * (n * X) => n * (a * X), where n is a number, a is a symbol, and X is anything.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_mul_2_rat_any', MATH_MUL, is_sym, and(is_cons, is_mul_2_rat_any), $);
-        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_MUL);
+        this.#hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

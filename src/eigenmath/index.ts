@@ -11413,7 +11413,7 @@ function evalf_nib($: ScriptVars): void {
         if (iskeyword(sym)) {
             $.expanding++;
             try {
-                const evalFunction = evalFunctions.get(sym.printname) as EvalFunction;
+                const evalFunction = evalFunctions.get(sym.key()) as EvalFunction;
                 evalFunction(p1, $);
             }
             finally {
@@ -12581,7 +12581,7 @@ export function get_binding(p1: Sym, $: ScriptVars): U {
     if (!isusersymbol(p1)) {
         stopf(`get_binding(${p1}) symbol error`);
     }
-    let p2 = $.getBinding(p1.printname);
+    let p2 = $.getBinding(p1.key());
     if (typeof (p2) === 'undefined' || is_nil(p2)) {
         p2 = p1; // symbol binds to itself
     }
@@ -12591,7 +12591,7 @@ export function get_binding(p1: Sym, $: ScriptVars): U {
 function get_usrfunc(p: Sym, $: ScriptVars): U {
     if (!isusersymbol(p))
         stopf("symbol error");
-    let f = $.getUsrFunc(p.printname);
+    let f = $.getUsrFunc(p.key());
     if (typeof (f) === 'undefined') {
         f = nil;
     }
@@ -13375,7 +13375,7 @@ function isinteger1(p: Rat) {
 }
 
 function iskeyword(p: Sym): boolean {
-    return evalFunctions.has(p.printname);
+    return evalFunctions.has(p.key());
 }
 
 function isminusone(p: U): boolean {
@@ -13486,7 +13486,7 @@ function istensor(p: U): p is Tensor {
  * A symbol where the func is eval_user_symbol.
  */
 function isusersymbol(p: Sym): boolean {
-    return userFunctions.has(p.printname);
+    return userFunctions.has(p.key());
 }
 
 function isusersymbolsomewhere(p: U): 0 | 1 {
@@ -15005,7 +15005,7 @@ function prefixform(p: U, outbuf: string[]) {
         outbuf.push(s);
     }
     else if (issymbol(p))
-        outbuf.push(p.printname);
+        outbuf.push(p.key());
     else if (isstring(p))
         outbuf.push("'" + p.str + "'");
     else if (istensor(p)) {
@@ -15064,7 +15064,7 @@ function html_escape_and_colorize(s: string, color: 1 | 2 | 3): string {
 }
 
 function printname(p: Sym) {
-    return p.printname;
+    return p.key();
 }
 
 function promote_tensor($: ScriptVars): void {
@@ -16029,8 +16029,8 @@ export function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): voi
     if (!isusersymbol(sym)) {
         stopf("symbol error");
     }
-    $.setBinding(sym.printname, binding);
-    $.setUsrFunc(sym.printname, usrfunc);
+    $.setBinding(sym.key(), binding);
+    $.setUsrFunc(sym.key(), usrfunc);
 }
 
 function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
@@ -16290,17 +16290,17 @@ export class ScriptVars implements ExprContext {
     constructor() {
         // Do nothing yet.
     }
-    getBinding(printname: string): U {
-        return this.binding[printname];
+    getBinding(key: string): U {
+        return this.binding[key];
     }
-    setBinding(printname: string, binding: U): void {
-        this.binding[printname] = binding;
+    setBinding(key: string, binding: U): void {
+        this.binding[key] = binding;
     }
-    getUsrFunc(printname: string): U {
-        return this.usrfunc[printname];
+    getUsrFunc(key: string): U {
+        return this.usrfunc[key];
     }
-    setUsrFunc(printname: string, usrfunc: U): void {
-        this.usrfunc[printname] = usrfunc;
+    setUsrFunc(key: string, usrfunc: U): void {
+        this.usrfunc[key] = usrfunc;
     }
     inbuf: string = "";
     /**
@@ -16313,8 +16313,8 @@ export class ScriptVars implements ExprContext {
     trace2: number = -1;
     stack: U[] = [];
     frame: U[] = [];
-    binding: { [printname: string]: U } = {};
-    usrfunc: { [printname: string]: U } = {};
+    binding: { [key: string]: U } = {};
+    usrfunc: { [key: string]: U } = {};
     eval_level: number = -1;
     expanding: number = -1;
     drawing: number = -1;
@@ -16357,11 +16357,11 @@ const evalFunctions: Map<string, EvalFunction> = new Map();
 const userFunctions: Map<string, UserFunction> = new Map();
 
 function defineEvalFunction(name: Sym, func: EvalFunction): void {
-    evalFunctions.set(name.printname, func);
+    evalFunctions.set(name.key(), func);
 }
 
 function defineUserFunction(name: Sym): void {
-    userFunctions.set(name.printname, eval_user_symbol);
+    userFunctions.set(name.key(), eval_user_symbol);
 }
 
 defineEvalFunction(ABS, eval_abs);

@@ -19,10 +19,13 @@ class Builder implements OperatorBuilder<Cons> {
  * Num | Num => Num * Num
  */
 class Op extends Function2<Num, Num> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('inner_2_num_num', MATH_INNER, is_num, is_num, $);
-        this.hash = hash_binop_atom_atom(MATH_INNER, HASH_RAT, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_RAT, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Num, rhs: Num): [TFLAGS, U] {
         return [TFLAG_DIFF, multiply_num_num(lhs, rhs)];

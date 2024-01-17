@@ -22,11 +22,14 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
  * (upper (lower x1 x2 x3 ...) Z)
  */
 export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv, upper: Sym, lower: Sym) {
         super(`${upper} right-distributive over ${lower}`, upper, make_is_cons_and_opr_eq_sym(lower), is_any, $);
-        this.hash = hash_binop_cons_atom(upper, lower, HASH_ANY);
+        this.#hash = hash_binop_cons_atom(upper, lower, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {

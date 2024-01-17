@@ -20,10 +20,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 export abstract class FunctionTensor extends Function1<Tensor> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(opr: Sym, $: ExtensionEnv) {
-        super(`${opr.text}_${HASH_TENSOR}`, opr, is_tensor, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_TENSOR);
+        super(`${opr.key()}_${HASH_TENSOR}`, opr, is_tensor, $);
+        this.#hash = hash_unaop_atom(this.opr, HASH_TENSOR);
+    }
+    get hash(): string {
+        return this.#hash;
     }
 }
 

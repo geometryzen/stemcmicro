@@ -15,10 +15,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class PredicateSym extends Function1<Sym> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(predicate: Sym, $: ExtensionEnv) {
-        super(`${predicate.text}(sym: ${HASH_SYM}) => ${HASH_BOO}`, predicate, is_sym, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_SYM);
+        super(`${predicate.key()}(sym: ${HASH_SYM}) => ${HASH_BOO}`, predicate, is_sym, $);
+        this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         const $ = this.$;

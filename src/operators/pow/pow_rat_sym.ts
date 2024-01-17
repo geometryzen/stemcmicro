@@ -23,10 +23,13 @@ type RHS = Sym;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_rat_sym', POW, is_rat, is_sym, $);
-        this.hash = hash_binop_atom_atom(POW, HASH_RAT, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(POW, HASH_RAT, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, base: LHS, expo: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;

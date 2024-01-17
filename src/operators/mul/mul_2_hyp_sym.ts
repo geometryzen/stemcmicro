@@ -25,11 +25,14 @@ type EXPR = BCons<Sym, LHS, RHS>
  * Hyp * Sym => Sym * Hyp
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
     constructor($: ExtensionEnv) {
         super('mul_2_hyp_sym', MATH_MUL, is_hyp, is_sym, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_HYP, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_HYP, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

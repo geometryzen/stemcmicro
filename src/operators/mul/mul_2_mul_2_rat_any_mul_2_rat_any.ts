@@ -23,10 +23,13 @@ type EXPR = BCons<Sym, LHS, RHS>;
  * (n * X) * (m * Y) => (n * m) * (X * Y) 
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_rat_any_mul_2_rat_any', MATH_MUL, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), $);
-        this.hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_MUL);
+        this.#hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: BCons<Sym, LHS, RHS>): [TFLAGS, U] {

@@ -23,10 +23,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * x ^ (a * y) => a * (x ^ y)
  */
 class Op extends Function2<LHS, RHS> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('outer_2_any_mul_2_scalar_any', MATH_OUTER, is_any, is_mul_2_scalar_any($), $);
-        this.hash = hash_binop_atom_atom(this.opr, HASH_ANY, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(this.opr, HASH_ANY, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {

@@ -17,10 +17,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Flt> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('rect_flt', RECT, is_flt, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_FLT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_FLT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Flt): [TFLAGS, U] {
         return [TFLAG_DIFF, arg];

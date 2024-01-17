@@ -19,10 +19,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Rat> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sin_rat', MATH_SIN, is_rat, $);
-        this.hash = hash_unaop_atom(MATH_SIN, HASH_RAT);
+        this.#hash = hash_unaop_atom(MATH_SIN, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, x: Rat, expr: U): [TFLAGS, U] {
         // console.lg(this.name, this.$.toInfixString(x));

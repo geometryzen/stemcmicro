@@ -21,10 +21,13 @@ class Builder implements OperatorBuilder<U> {
  * (infinitesimal Str) 
  */
 class OP extends Function1<Str> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('infinitesimal', INFINITESIMAL, is_str, $);
-        this.hash = hash_unaop_atom(INFINITESIMAL, HASH_STR);
+        this.#hash = hash_unaop_atom(INFINITESIMAL, HASH_STR);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Str): [TFLAGS, U] {
         return [TFLAG_DIFF, create_hyp(arg.str)];

@@ -24,10 +24,13 @@ type EXP = UCons<Sym, ARG>;
  * sin(Hyp) => Hyp
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sin_hyp', MATH_SIN, is_hyp, $);
-        this.hash = hash_unaop_atom(MATH_SIN, HASH_HYP);
+        this.#hash = hash_unaop_atom(MATH_SIN, HASH_HYP);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         return [TFLAG_DIFF, arg];

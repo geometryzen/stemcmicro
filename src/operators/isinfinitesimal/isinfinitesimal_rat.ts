@@ -20,10 +20,13 @@ class Builder implements OperatorBuilder<U> {
 type ARG = Rat;
 
 class IsRealRat extends Function1<ARG> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('isinfinitesimal_rat', ISINFINITESIMAL, is_rat, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_RAT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {

@@ -11,6 +11,7 @@ export abstract class KeywordOperator implements Operator<Sym> {
     constructor(protected readonly keyword: Sym, protected readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
+    abstract readonly hash: string;
     abstract readonly name: string;
     isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {
@@ -22,7 +23,7 @@ export abstract class KeywordOperator implements Operator<Sym> {
         throw new Error("Keyword.subst Symbol Method not implemented.");
     }
     toInfixString(expr: Sym): string {
-        return expr.text;
+        return expr.key();
     }
     toLatexString(expr: Sym): string {
         throw new Error("Keyword.toLatexString Symbol Method not implemented.");
@@ -38,6 +39,6 @@ export abstract class KeywordOperator implements Operator<Sym> {
         throw new Error("Keyword.transform Symbol Method not implemented.");
     }
     valueOf(expr: Sym): U {
-        throw new Error(`Keyword.valueOf(${expr.printname}) Symbol Method not implemented.`);
+        throw new Error(`Keyword.valueOf(${expr.key()}) Symbol Method not implemented.`);
     }
 }

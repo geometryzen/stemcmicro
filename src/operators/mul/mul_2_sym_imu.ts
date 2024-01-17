@@ -23,10 +23,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * Sym * Imu may be ordered consistently using compare_factors.
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_imu', MATH_MUL, is_sym, is_imu, $);
-        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_POW);
+        this.#hash = hash_binop_atom_cons(MATH_MUL, HASH_SYM, MATH_POW);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

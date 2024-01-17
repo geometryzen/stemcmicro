@@ -16,10 +16,13 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Uom, Rat> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('pow_2_uom_rat', MATH_POW, is_uom, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_POW, HASH_UOM, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_POW, HASH_UOM, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Uom, rhs: Rat): [TFLAGS, U] {
         const expo = QQ.valueOf(rhs.numer().toNumber(), rhs.denom().toNumber());

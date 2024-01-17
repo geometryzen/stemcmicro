@@ -20,10 +20,13 @@ class Builder implements OperatorBuilder<U> {
  * complex(x, y) => x + i * y
  */
 class Op extends Function2<U, U> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('complex_2_any_any', COMPLEX, is_any, is_any, $);
-        this.hash = hash_binop_atom_atom(COMPLEX, HASH_ANY, HASH_ANY);
+        this.#hash = hash_binop_atom_atom(COMPLEX, HASH_ANY, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, x: U, y: U): [TFLAGS, U] {
         const $ = this.$;

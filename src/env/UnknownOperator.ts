@@ -14,9 +14,11 @@ export class UnknownOperator implements Operator<U> {
         this.name = "unknown";
     }
     key?: string | undefined;
-    hash?: string | undefined;
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    get hash(): string {
+        throw new Error("UnknownOperator.hash Method not implemented.");
+    }
     isKind(expr: U): expr is U {
         throw new Error("UnknownOperator.isKind Method not implemented.");
     }

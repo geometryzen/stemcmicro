@@ -4,13 +4,13 @@ import { hash_binop_atom_atom, HASH_HYP, HASH_RAT } from "../../hashing/hash_inf
 import { items_to_cons } from "../../makeList";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
-import { is_rat } from "../rat/is_rat";
 import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_hyp } from "../hyp/is_hyp";
+import { is_rat } from "../rat/is_rat";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -28,10 +28,13 @@ type EXP = BCons<Sym, LHS, RHS>
  *             => Sym if Rat is one
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_hyp_rat', MATH_MUL, is_hyp, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_HYP, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_HYP, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         // If the base class binds the symbol to something else then none of this code below will be called.

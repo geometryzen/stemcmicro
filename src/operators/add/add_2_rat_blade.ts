@@ -20,10 +20,13 @@ type RHS = Blade;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_rat_blade', MATH_ADD, is_rat, is_blade, $);
-        this.hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_BLADE);
+        this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_BLADE);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         if (lhs.isZero()) {

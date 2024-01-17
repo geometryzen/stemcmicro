@@ -19,10 +19,13 @@ type UOM_STRING = 'kilogram' | 'meter' | 'second' | 'coulomb' | 'ampere' | 'kelv
  * (uom Str) 
  */
 class UomStr extends Function1<Str> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('uom_1_str', create_sym('uom'), is_str, $);
-        this.hash = hash_unaop_atom(create_sym('uom'), HASH_STR);
+        this.#hash = hash_unaop_atom(create_sym('uom'), HASH_STR);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Str): [TFLAGS, U] {
         // We are casting away the type safety knowing that the creation function will raise an exception.

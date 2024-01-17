@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Sym> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor(readonly predicate: Sym, readonly which: (predicates: Predicates) => boolean, $: ExtensionEnv) {
         super("ispositive_sym", predicate, is_sym, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_SYM);
+        this.#hash = hash_unaop_atom(this.opr, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Sym): [TFLAGS, U] {
         const $ = this.$;

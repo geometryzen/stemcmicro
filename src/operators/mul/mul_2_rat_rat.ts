@@ -15,10 +15,13 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 class Op extends Function2<Rat, Rat> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_rat', MATH_MUL, is_rat, is_rat, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: Rat, rhs: Rat, orig: U): [TFLAGS, U] {

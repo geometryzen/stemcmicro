@@ -27,11 +27,14 @@ type EXP = UCons<Sym, ARG>;
  * cos(a+b) => cos(a)*cos(b)-sin(a)*sin(b) 
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('cos_add_2_any_any', MATH_COS, and(is_cons, is_opr_2_lhs_any(MATH_ADD, is_any)), $);
-        this.hash = hash_unaop_cons(MATH_COS, MATH_ADD);
+        this.#hash = hash_unaop_cons(MATH_COS, MATH_ADD);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         const $ = this.$;

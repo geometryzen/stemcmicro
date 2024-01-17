@@ -1,3 +1,4 @@
+import { create_sym_ns } from 'math-expression-atoms';
 import { CharStream, consume_num, NumHandler } from "../../algebrite/consume_num";
 import { FltTokenParser } from "../../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../../operators/int/IntTokenParser";
@@ -192,11 +193,23 @@ class Parser {
 
             if (t.startsWith("::")) {
                 const localName = t.substring(2);
-                return new Keyword(localName, "cljs.user");
+                // Using Sym rather than Keyword for now...
+                return create_sym_ns(localName, "cljs.user");
             }
             else if (t.startsWith(":")) {
-                const localName = t.substring(1);
-                return new Keyword(localName, "");
+                // TODO: Need to split the name
+                const qualifiedName = t.substring(1);
+                const slash = qualifiedName.indexOf('/');
+                if (slash >= 0) {
+                    const namespace = qualifiedName.substring(0, slash);
+                    const localName = qualifiedName.substring(slash + 1);
+                    // Using Sym rather than Keyword for now...
+                    return create_sym_ns(localName, namespace);
+                }
+                else {
+                    // Using Sym rather than Keyword for now...
+                    return create_sym(qualifiedName);
+                }
             }
             else if (t === 'false') {
                 return Boo.valueOf(false);

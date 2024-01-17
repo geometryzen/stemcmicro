@@ -21,11 +21,14 @@ class Builder implements OperatorBuilder<Cons> {
  * Flt1 * (Flt2 * X) => (Flt1 * Flt2) * X
  */
 class Op extends Function2<Flt, BCons<Sym, Flt, U>> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt'];
     constructor($: ExtensionEnv) {
         super('mul_2_flt_mul_2_flt_any', MATH_MUL, is_flt, and(is_cons, is_mul_2_flt_any), $);
-        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_FLT, MATH_MUL);
+        this.#hash = hash_binop_atom_cons(MATH_MUL, HASH_FLT, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: Flt, rhs: BCons<Sym, Flt, U>): [TFLAGS, U] {
         const $ = this.$;

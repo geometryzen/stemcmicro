@@ -31,11 +31,14 @@ const guardA: GUARD<U, ARG> = and(is_cons, is_opr_2_lhs_rhs(MATH_ADD, is_any, is
  * st(a+Hyp) => st(a) 
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv) {
         super('st_add_2_any_hyp', MATH_STANDARD_PART, guardA, $);
-        this.hash = hash_unaop_cons(MATH_STANDARD_PART, MATH_ADD);
+        this.#hash = hash_unaop_cons(MATH_STANDARD_PART, MATH_ADD);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {
         const $ = this.$;

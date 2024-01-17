@@ -24,10 +24,13 @@ type EXPR = BCons<Sym, LHS, RHS>;
  * Blade1 * (Blade2 * X) => (Blade1 * Blade2) * X
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('simplify_mul_2_blade_mul_2_blade_any', MATH_MUL, is_blade, and(is_cons, is_mul_2_blade_any), $);
-        this.hash = hash_binop_atom_cons(MATH_MUL, HASH_BLADE, MATH_MUL);
+        this.#hash = hash_binop_atom_cons(MATH_MUL, HASH_BLADE, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

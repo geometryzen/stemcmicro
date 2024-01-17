@@ -1,6 +1,6 @@
+import { nil } from 'math-expression-tree';
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Err } from "../../tree/err/Err";
-import { TYPEOF_ERR } from "../../tree/err/TYPEOF_ERR";
 import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
@@ -23,15 +23,19 @@ export function error_compare(lhs: Err, rhs: Err): Sign {
 */
 
 export class ErrExtension implements Extension<Err> {
+    readonly #hash = new Err(nil).name;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return TYPEOF_ERR;
+    get hash(): string {
+        return this.#hash;
     }
     get name(): string {
         return 'ErrExtension';
+    }
+    get key(): string {
+        return this.#hash;
     }
     evaluate(expr: Err, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(expr, argList));

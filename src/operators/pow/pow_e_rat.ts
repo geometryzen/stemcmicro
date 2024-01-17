@@ -41,10 +41,13 @@ type EXP = BCons<Sym, LHS, RHS>;
  * (pow e X) is equivalent to exp(X)
  */
 class Op extends Function2X<LHS, RHS> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('pow_2_e_rat', MATH_POW, is_sym, is_rat, cross, $);
-        this.hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
+        super('pow_e_rat', MATH_POW, is_sym, is_rat, cross, $);
+        this.#hash = hash_binop_atom_atom(this.opr, HASH_SYM, HASH_ANY);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, base: Sym, expo: Rat, expr: EXP): [TFLAGS, U] {

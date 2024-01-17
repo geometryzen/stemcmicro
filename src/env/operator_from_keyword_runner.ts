@@ -31,7 +31,7 @@ class Op extends KeywordOperator {
         return HASH_SYM;
     }
     get name(): string {
-        return this.keyword.text;
+        return this.keyword.key();
     }
     transform(expr: U): [TFLAGS, U] {
         // Because of our hash, we are being matched with any symbol.

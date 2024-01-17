@@ -39,10 +39,13 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * (X * Y) * (pow Y k) => X * (pow Y k+1) 
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_X_pow_2_X_rat', MATH_MUL, guardL, guardR, cross, $);
-        this.hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_POW);
+        this.#hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_POW);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

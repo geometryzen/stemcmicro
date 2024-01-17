@@ -113,6 +113,7 @@ import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_a
 import { derivative_fn } from '../operators/derivative/derivative_fn';
 import { d_to_derivative } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
+import { map_extension } from '../operators/dictionary/dictionary_extension';
 import { dim_varargs } from '../operators/dim/dim_varargs';
 import { dirac_varargs } from '../operators/dirac/dirac_varargs';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
@@ -1052,6 +1053,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(hyp_extension);
     $.defineOperator(err_extension);
     $.defineOperator(imu_extension);
+    $.defineOperator(map_extension);
 
     $.defineOperator(unit_any);
 

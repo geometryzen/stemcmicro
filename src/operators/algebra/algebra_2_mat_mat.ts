@@ -20,11 +20,14 @@ class Builder implements OperatorBuilder<U> {
  * e3 = G[3]
  */
 class Op extends Function2<Tensor, Tensor> implements Operator<U> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('algebra_2_tensor_tensor', create_sym('algebra'), is_tensor, is_tensor, $);
-        this.hash = hash_binop_atom_atom(create_sym('algebra'), HASH_TENSOR, HASH_TENSOR);
+        this.#hash = hash_binop_atom_atom(create_sym('algebra'), HASH_TENSOR, HASH_TENSOR);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, metric: Tensor<U>, labels: Tensor<U>): [TFLAGS, U] {
         return [TFLAG_DIFF, algebra(metric, labels, this.$)];

@@ -22,10 +22,13 @@ type EXP = UCons<Sym, ARG>;
  * cos(Hyp) => 1
  */
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('cos_hyp', MATH_COS, is_hyp, $);
-        this.hash = hash_unaop_atom(MATH_COS, HASH_HYP);
+        this.#hash = hash_unaop_atom(MATH_COS, HASH_HYP);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG): [TFLAGS, U] {

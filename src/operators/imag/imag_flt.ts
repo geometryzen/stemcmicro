@@ -21,10 +21,13 @@ type ARG = Flt;
 type EXP = UCons<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('imag_flt', IM, is_flt, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_FLT);
+        this.#hash = hash_unaop_atom(this.opr, HASH_FLT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {

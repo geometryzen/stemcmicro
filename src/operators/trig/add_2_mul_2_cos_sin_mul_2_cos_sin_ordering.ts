@@ -42,11 +42,14 @@ function cross(lhs: LHS, rhs: RHS): boolean {
  * cos(b)*sin(a)+cos(a)*sin(b) => cos(a)*sin(b)+cos(b)*sin(a)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly phases = PHASE_FLAGS_EXPANDING_UNION_FACTORING;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_cos_sin_mul_2_cos_sin_ordering', MATH_ADD, guardL, guardR, cross, $);
-        this.hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
+        this.#hash = hash_binop_cons_cons(MATH_ADD, MATH_MUL, MATH_MUL);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;

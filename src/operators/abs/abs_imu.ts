@@ -18,10 +18,13 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Imu> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('abs_imu', native_sym(Native.abs), is_imu, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_IMU);
+        this.#hash = hash_unaop_atom(this.opr, HASH_IMU);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Imu, expr: UCons<Sym, Imu>): [TFLAGS, U] {
         return wrap_as_transform(one, expr);

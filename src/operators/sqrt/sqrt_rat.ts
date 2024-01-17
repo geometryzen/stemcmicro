@@ -20,10 +20,13 @@ class Builder implements OperatorBuilder<U> {
  * sqrt(x: Rat) => (pow x 1/2)
  */
 class Op extends Function1<Rat> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('sqrt_rat', MATH_SQRT, is_rat, $);
-        this.hash = hash_unaop_atom(MATH_SQRT, HASH_RAT);
+        this.#hash = hash_unaop_atom(MATH_SQRT, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
         // TODO: 

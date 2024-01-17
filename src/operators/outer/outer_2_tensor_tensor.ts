@@ -41,11 +41,14 @@ type RHS = Tensor;
 type EXP = BCons<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
     constructor($: ExtensionEnv) {
         super('outer_2_tensor_tensor', MATH_OUTER, is_tensor, is_tensor, $);
-        this.hash = hash_binop_atom_atom(MATH_OUTER, HASH_TENSOR, HASH_TENSOR);
+        this.#hash = hash_binop_atom_atom(MATH_OUTER, HASH_TENSOR, HASH_TENSOR);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

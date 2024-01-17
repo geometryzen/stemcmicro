@@ -49,10 +49,13 @@ const guardR: GUARD<U, RHS> = and(is_cons, is_opr_2_lhs_rhs(MATH_POW, is_sym, is
  *      (x op1 a) op2 (x op1 b) =>       x op1 (a op2 b)
  */
 class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_pow_2_xxx_any_pow_2_xxx_any', MATH_MUL, guardL, guardR, cross, $);
-        this.hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_POW);
+        this.#hash = hash_binop_cons_cons(MATH_MUL, MATH_MUL, MATH_POW);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
         const $ = this.$;

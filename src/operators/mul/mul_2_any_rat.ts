@@ -24,11 +24,14 @@ type RHS = Rat;
 type EXP = BCons<Sym, LHS, RHS>
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = [];
     constructor($: ExtensionEnv, opr: Sym) {
         super('mul_2_any_rat', opr, is_any, is_rat, $);
-        this.hash = hash_binop_atom_atom(opr, HASH_ANY, HASH_RAT);
+        this.#hash = hash_binop_atom_atom(opr, HASH_ANY, HASH_RAT);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {

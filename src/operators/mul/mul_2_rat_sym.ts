@@ -26,10 +26,13 @@ type EXP = BCons<Sym, LHS, RHS>
  *             => Sym if Rat is one
  */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
-    readonly hash: string;
+    readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_sym', MATH_MUL, is_rat, is_sym, $);
-        this.hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_SYM);
+        this.#hash = hash_binop_atom_atom(MATH_MUL, HASH_RAT, HASH_SYM);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     isKind(expr: U): expr is EXP {
         if (super.isKind(expr)) {

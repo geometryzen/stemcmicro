@@ -14,11 +14,14 @@ class Builder implements OperatorBuilder<U> {
 }
 
 class Op extends Function1<Blade> implements Operator<Cons> {
-    readonly hash: string;
+    readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Blade'];
     constructor($: ExtensionEnv) {
         super('typeof_blade', create_sym('typeof'), is_blade, $);
-        this.hash = hash_unaop_atom(this.opr, HASH_BLADE);
+        this.#hash = hash_unaop_atom(this.opr, HASH_BLADE);
+    }
+    get hash(): string {
+        return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: Blade, expr: UCons<Sym, Blade>): [TFLAGS, U] {

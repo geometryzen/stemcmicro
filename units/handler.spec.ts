@@ -1,14 +1,14 @@
 
 import { assert } from "chai";
-import { Sym } from "math-expression-atoms";
+import { create_sym, Sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
-import { Concept, create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
+import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
 import { Scope, Stepper } from "../src/clojurescript/runtime/Stepper";
 import { EmitContext, iszero, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
 
 export function should_stepper_render_svg(stepper: Stepper): boolean {
     const $: Scope = stepper.getStateStack().top.$;
-    const sym: Sym = $.symbol(Concept.TTY);
+    const sym: Sym = create_sym("tty");
     const tty = $.getSymbolBinding(sym);
     if (is_nil(tty)) {
         // Unbound in Native engine.

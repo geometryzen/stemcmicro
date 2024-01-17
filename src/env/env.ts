@@ -77,7 +77,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
             useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false,
-            syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Native,
+            syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Algebrite,
         };
         return config;
     }
@@ -92,7 +92,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useDefinitions: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
-            syntaxKind: SyntaxKind.Native
+            syntaxKind: SyntaxKind.Algebrite
         };
         return config;
     }

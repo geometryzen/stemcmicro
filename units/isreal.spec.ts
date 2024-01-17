@@ -13,7 +13,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
@@ -31,7 +31,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
@@ -49,7 +49,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
@@ -66,7 +66,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Native });
+        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);

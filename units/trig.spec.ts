@@ -99,7 +99,7 @@ describe("trig", function () {
                 assumes: {},
                 dependencies: [],
                 disable: [],
-                syntaxKind: SyntaxKind.Native,
+                syntaxKind: SyntaxKind.Algebrite,
                 useCaretForExponentiation: false,
                 useDefinitions: false
             });

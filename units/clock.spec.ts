@@ -13,7 +13,7 @@ xdescribe("clock", function () {
 
         const context = create_script_context({});
 
-        const value = assert_one_value_execute(sourceText, context, { syntaxKind: SyntaxKind.Native });
+        const value = assert_one_value_execute(sourceText, context, { syntaxKind: SyntaxKind.Algebrite });
         assert.strictEqual(context.renderAsInfix(value), "(-1)**(1/2)");
         context.release();
     });
@@ -26,7 +26,7 @@ xdescribe("clock", function () {
 
         const context = create_script_context({});
 
-        const value = assert_one_value_execute(sourceText, context, { syntaxKind: SyntaxKind.Native });
+        const value = assert_one_value_execute(sourceText, context, { syntaxKind: SyntaxKind.Algebrite });
         assert.strictEqual(context.renderAsInfix(value), "1/(-1)**(1/2)");
         context.release();
     });

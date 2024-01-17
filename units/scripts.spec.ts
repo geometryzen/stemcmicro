@@ -10,7 +10,7 @@ describe("scripts", function () {
             ];
             const sourceText = lines.join('\n');
             const context = create_script_context({
-                syntaxKind: SyntaxKind.Native
+                syntaxKind: SyntaxKind.Algebrite
             });
             const { values } = context.executeScript(sourceText);
             assert.isArray(values);
@@ -30,7 +30,7 @@ describe("scripts", function () {
             ];
             const sourceText = lines.join('\n');
             const context = create_script_context({
-                syntaxKind: SyntaxKind.Native
+                syntaxKind: SyntaxKind.Algebrite
             });
             const { values } = context.executeScript(sourceText);
             assert.isArray(values);
@@ -51,7 +51,7 @@ describe("scripts", function () {
             ];
             const sourceText = lines.join('\n');
             const context = create_script_context({
-                syntaxKind: SyntaxKind.Native,
+                syntaxKind: SyntaxKind.Algebrite,
                 useCaretForExponentiation: true
             });
             const { values } = context.executeScript(sourceText);
@@ -73,7 +73,7 @@ describe("scripts", function () {
             ];
             const sourceText = lines.join('\n');
             const context = create_script_context({
-                syntaxKind: SyntaxKind.Native,
+                syntaxKind: SyntaxKind.Algebrite,
                 useCaretForExponentiation: true
             });
             const { values } = context.executeScript(sourceText);

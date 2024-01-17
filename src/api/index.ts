@@ -6,7 +6,7 @@ import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { ParseOptions, parse_algebrite_script } from '../parser/parser';
+import { delegate_parse_script, ParseOptions } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -29,14 +29,14 @@ function native_parse_config(options: Partial<ParseConfig>): ParseOptions {
     };
 }
 
-function eigenmath_parse_config(options: Partial<ParseConfig>): EigenmathParseConfig {
+export function eigenmath_parse_config(options: Partial<ParseConfig>): EigenmathParseConfig {
     return {
         useCaretForExponentiation: !!options.useCaretForExponentiation,
         useParenForTensors: !!options.useParenForTensors
     };
 }
 
-class EigenmathErrorHandler implements ScriptErrorHandler {
+export class EigenmathErrorHandler implements ScriptErrorHandler {
     errors: Error[] = [];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
@@ -79,17 +79,23 @@ export interface ExprEngine {
 enum EngineKind {
     Algebrite = 1,
     Eigenmath = 2,
-    ClojureScript = 3
+    ClojureScript = 3,
+    Python = 4
 }
 
 export interface EngineConfig {
     useGeometricAlgebra: boolean;
     useClojureScript: boolean;
+    usePython: boolean;
 }
 
 function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind {
+    // FIXME: Needs to be more orthogonal. 
     if (config.useClojureScript) {
         return EngineKind.ClojureScript;
+    }
+    else if (config.usePython) {
+        return EngineKind.Python;
     }
     else {
         if (config.useGeometricAlgebra) {
@@ -202,7 +208,7 @@ class ClojureScriptExprEngine implements ExprEngine {
     }
 }
 
-class NativeExprEngine implements ExprEngine {
+class AlgebriteExprEngine implements ExprEngine {
     $: ExtensionEnv;
     constructor() {
         this.$ = create_env({
@@ -217,10 +223,12 @@ class NativeExprEngine implements ExprEngine {
         this.$.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        return parse_algebrite_script(sourceText, native_parse_config(options));
+        // Don't go through the delegate.
+        return delegate_parse_script(sourceText, native_parse_config(options));
     }
     parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
-        const { trees, errors } = parse_algebrite_script(sourceText, native_parse_config(options));
+        // Don't fo through delegate.
+        const { trees, errors } = delegate_parse_script(sourceText, native_parse_config(options));
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors };
     }
@@ -397,17 +405,66 @@ class EigenmathExprEngine implements ExprEngine {
     }
 }
 
+class PythonExprEngine implements ExprEngine {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    defineFunction(name: string, lambda: LambdaExpr): void {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[]; errors: Error[]; } {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons; errors: Error[]; } {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    evaluate(expr: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getBinding(sym: Sym): U {
+        throw new Error('Method not implemented.');
+    }
+    release(): void {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    renderAsString(expr: U, config?: Partial<RenderConfig>): string {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setSymbol(sym: Sym, binding: U, usrfunc: U): void {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    symbol(concept: Concept): Sym {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addListener(listener: ExprEngineListener): void {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeListener(listener: ExprEngineListener): void {
+        throw new Error('Method not implemented.');
+    }
+}
+
 export function create_engine(config: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_eval_config(config);
     switch (engineKind) {
+        case EngineKind.Algebrite: {
+            return new AlgebriteExprEngine();
+        }
         case EngineKind.ClojureScript: {
             return new ClojureScriptExprEngine();
         }
-        case EngineKind.Algebrite: {
-            return new NativeExprEngine();
-        }
         case EngineKind.Eigenmath: {
             return new EigenmathExprEngine();
+        }
+        case EngineKind.Python: {
+            return new PythonExprEngine();
         }
         default: {
             throw new Error(`Unexpected options.syntaxKind`);

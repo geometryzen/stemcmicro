@@ -1,20 +1,34 @@
-import { algebrite_parse, EigenmathParseOptions } from "../brite/eigenmath_parse";
+import { EigenmathErrorHandler } from "../api";
+import { AlgebriteParseOptions, algebrite_parse } from "../brite/algebrite_parse";
+import { EigenmathParseConfig, parse_eigenmath_script } from "../eigenmath";
 import { U } from "../tree/tree";
+import { PythonParseOptions } from "../typhon/PythonParseOptions";
+import { python_parse } from "../typhon/python_parse";
 
 export enum SyntaxKind {
     /**
-     * Based on Algebrite, which was derived from Eigenmath.
+     * Algebrite Scripting Language.
      */
-    Native = 1,
+    Algebrite = 1,
+    /**
+     * Python Programming Language.
+     */
+    Python = 2,
+    /**
+     * Eigenmath Scripting Language.
+     */
+    Eigenmath = 3
 }
 
 export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
     switch (syntaxKind) {
-        case SyntaxKind.Native: return "Native";
+        case SyntaxKind.Algebrite: return "Algebrite";
+        case SyntaxKind.Eigenmath: return "Eigenmath";
+        case SyntaxKind.Python: return "Python";
     }
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Native];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Algebrite, SyntaxKind.Eigenmath, SyntaxKind.Python];
 
 export interface ParseOptions {
     catchExceptions?: boolean,
@@ -36,7 +50,7 @@ export interface ParseOptions {
 }
 
 export function parse_expr(sourceText: string, options?: ParseOptions): U {
-    const { trees, errors } = parse_algebrite_script(sourceText, options);
+    const { trees, errors } = delegate_parse_script(sourceText, options);
     if (errors.length == 0) {
         if (trees.length > 0) {
             return trees[0];
@@ -50,11 +64,19 @@ export function parse_expr(sourceText: string, options?: ParseOptions): U {
     }
 }
 
-export function parse_algebrite_script(sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
+export function delegate_parse_script(sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
     const syntaxKind = script_kind_from_options(options);
     switch (syntaxKind) {
-        case SyntaxKind.Native: {
-            return algebrite_parse(sourceText, eigenmath_parse_options(options));
+        case SyntaxKind.Algebrite: {
+            return algebrite_parse(sourceText, algebrite_parse_options(options));
+        }
+        case SyntaxKind.Eigenmath: {
+            const emErrorHandler = new EigenmathErrorHandler();
+            const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_options(options), emErrorHandler);
+            return { trees, errors: emErrorHandler.errors };
+        }
+        case SyntaxKind.Python: {
+            return python_parse(sourceText, typhon_parse_options(options));
         }
         default: {
             throw new Error(`options.syntaxKind ${syntaxKind} must be one of ${JSON.stringify(syntaxKinds.map(human_readable_syntax_kind).sort())}.`);
@@ -62,7 +84,7 @@ export function parse_algebrite_script(sourceText: string, options?: ParseOption
     }
 }
 
-function eigenmath_parse_options(options?: ParseOptions): EigenmathParseOptions {
+function algebrite_parse_options(options?: ParseOptions): AlgebriteParseOptions {
     if (options) {
         return {
             explicitAssocAdd: options.explicitAssocAdd,
@@ -76,16 +98,49 @@ function eigenmath_parse_options(options?: ParseOptions): EigenmathParseOptions 
     }
 }
 
+function eigenmath_parse_options(options?: ParseOptions): EigenmathParseConfig {
+    if (options) {
+        return {
+            useCaretForExponentiation: !!options.useCaretForExponentiation,
+            useParenForTensors: !!options.useParenForTensors
+        };
+    }
+    else {
+        return {
+            useCaretForExponentiation: true,
+            useParenForTensors: true
+        };
+    }
+}
+
+function typhon_parse_options(options?: ParseOptions): PythonParseOptions {
+    if (options) {
+        if (options.useCaretForExponentiation) {
+            throw new Error("useCaretForExponentiation is not supported by the Python parser.");
+        }
+        if (options.useParenForTensors) {
+            throw new Error("useParenForTensors is not supported by the Python parser.");
+        }
+        return {
+            explicitAssocAdd: options.explicitAssocAdd,
+            explicitAssocMul: options.explicitAssocMul
+        };
+    }
+    else {
+        return {};
+    }
+}
+
 function script_kind_from_options(options?: ParseOptions): SyntaxKind {
     if (options) {
         if (options.syntaxKind) {
             return options.syntaxKind;
         }
         else {
-            return SyntaxKind.Native;
+            return SyntaxKind.Algebrite;
         }
     }
     else {
-        return SyntaxKind.Native;
+        return SyntaxKind.Algebrite;
     }
 }

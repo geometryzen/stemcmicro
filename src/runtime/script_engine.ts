@@ -150,7 +150,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             useDefinitions: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
-            syntaxKind: SyntaxKind.Native
+            syntaxKind: SyntaxKind.Algebrite
         };
         return hook(config, "B");
     }
@@ -195,7 +195,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
             // console.lg("executeScript", sourceText);
-            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> = { syntaxKind: SyntaxKind.Native };
+            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> = { syntaxKind: SyntaxKind.Algebrite };
             if (contextOptions) {
                 if (typeof contextOptions.catchExceptions === 'boolean') {
                     picks.catchExceptions = contextOptions.catchExceptions;
@@ -213,7 +213,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
                     picks.syntaxKind = options.syntaxKind;
                 }
             }
-            return execute_script("", sourceText, parse_options_from_script_context_options(picks, $), $);
+            return execute_script(sourceText, parse_options_from_script_context_options(picks, $), $);
         },
         renderAsAscii(expr: U): string {
             return render_as_ascii(expr, $);
@@ -293,7 +293,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
     else {
         return {
             catchExceptions: false,
-            syntaxKind: SyntaxKind.Native,
+            syntaxKind: SyntaxKind.Algebrite,
             useCaretForExponentiation: false,
             useParenForTensors: false,
             explicitAssocAdd: false,

@@ -3,7 +3,7 @@ import { normalize_unicode_dots } from "../runtime/normalize_dots";
 import { U } from "../tree/tree";
 import { scan } from "./scan";
 
-export interface EigenmathParseOptions {
+export interface AlgebriteParseOptions {
     catchExceptions?: boolean;
     /**
      * Determines whether the caret symbol '^' is used to denote exponentiation.
@@ -31,7 +31,7 @@ interface ScanConfig {
     explicitAssocMul: boolean;
 }
 
-function config_from_options(options: EigenmathParseOptions | undefined): ScanConfig {
+function config_from_options(options: AlgebriteParseOptions | undefined): ScanConfig {
     if (options) {
         return {
             useCaretForExponentiation: !!options.useCaretForExponentiation,
@@ -55,7 +55,7 @@ function config_from_options(options: EigenmathParseOptions | undefined): ScanCo
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the parsing behaves.
  */
-export function algebrite_parse(sourceText: string, options?: EigenmathParseOptions): { trees: U[], errors: Error[] } {
+export function algebrite_parse(sourceText: string, options?: AlgebriteParseOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config: ScanConfig = config_from_options(options);

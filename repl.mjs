@@ -2,6 +2,22 @@ import process from 'node:process';
 import repl from 'node:repl';
 import { create_script_context, human_readable_syntax_kind, SyntaxKind, syntaxKinds } from './dist/commonjs/index.js';
 
+/**
+ * See https://nodejs.org/en/learn/command-line/how-to-use-the-nodejs-repl
+ * 
+ * The REPL has some special commands, all starting with a dot '.'. They are:
+ * 
+ * .break
+ * .clear
+ * .editor
+ * .exit
+ * .help
+ * .load
+ * .native
+ * .python
+ * .save
+ */
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function isRecoverableError(error) {
     if (error.name === 'SyntaxError') {
@@ -15,7 +31,7 @@ function prompt(syntaxKind) {
 }
 
 const contextOptions = {
-    syntaxKind: SyntaxKind.Native,
+    syntaxKind: SyntaxKind.Python,
     useCaretForExponentiation: false,
     useDefinitions: false
 };

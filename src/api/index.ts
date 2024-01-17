@@ -2,6 +2,7 @@ import { create_sym, Sym } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { parse_clojure_script } from '../clojurescript/parser/parse_clojure_script';
+import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
@@ -282,7 +283,6 @@ class NativeExprEngine implements ExprEngine {
             default: {
                 throw new Error(`symbol(${concept}) not implemented.`);
             }
-
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -415,15 +415,15 @@ export function create_engine(config: Partial<EngineConfig> = {}): ExprEngine {
     }
 }
 
-export interface ScriptHandler {
-    begin($: ExprEngine): void;
-    output(value: U, input: U, $: ExprEngine): void;
+export interface ScriptHandler<T> {
+    begin($: T): void;
+    output(value: U, input: U, $: T): void;
     text(text: string): void;
-    end($: ExprEngine): void;
+    end($: T): void;
 }
 
-class MyExprEngineListener implements ExprEngineListener {
-    constructor(private readonly handler: ScriptHandler) {
+class MyExprEngineListener<T> implements ExprEngineListener {
+    constructor(private readonly handler: ScriptHandler<T>) {
 
     }
     output(output: string): void {
@@ -431,7 +431,7 @@ class MyExprEngineListener implements ExprEngineListener {
     }
 }
 
-export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandler): void {
+export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandler<ExprEngine>): void {
     const listen = new MyExprEngineListener(handler);
     engine.addListener(listen);
     handler.begin(engine);
@@ -450,6 +450,56 @@ export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandl
     }
 }
 
+function symbol_from_concept(concept: Concept): Sym {
+    switch (concept) {
+        case Concept.Last: {
+            return RESERVED_KEYWORD_LAST;
+        }
+        case Concept.TTY: {
+            return RESERVED_KEYWORD_TTY;
+        }
+        default: {
+            throw new Error(`symbol(${concept}) not implemented.`);
+        }
+    }
+}
+
+/**
+ * This is a proof of concept. Do not expose.
+ */
+export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void {
+    const stepper = new Stepper(module);
+    const listen: ExprEngineListener = new MyExprEngineListener(handler);
+    stepper.addListener(listen);
+    handler.begin(stepper);
+    try {
+        while (stepper.next()) {
+            // const state = stepper.getStateStack().top;
+            // const $: Scope = state.$;
+            // $.getSymbolBindings();
+            // console.log(`${state.node}`);
+            // console.log(`${state.done}`);
+        }
+        const state = stepper.getStateStack().top;
+        const $: Scope = state.$;
+
+        const inputs = state.inputs;
+        const values = state.values;
+        for (let i = 0; i < values.length; i++) {
+            const input = inputs[i];
+            const value = values[i];
+            handler.output(value, input, stepper);
+            if (!is_nil(value)) {
+                $.setSymbolBinding(symbol_from_concept(Concept.Last), value);
+            }
+        }
+    }
+    finally {
+        handler.end(stepper);
+        stepper.removeListener(listen);
+    }
+}
+
 /**
  * An adapter for the print_result_and_output(...) function.
  */
@@ -463,7 +513,7 @@ class PrintScriptListener implements ScriptOutputListener {
     }
 }
 
-export class PrintScriptHandler implements ScriptHandler {
+export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
     constructor(readonly stdout: HTMLElement) {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -507,3 +557,25 @@ export function should_render_svg($: ExprEngine): boolean {
         return false;
     }
 }
+/*
+export function should_stepper_render_svg(stepper: Stepper): boolean {
+    const $: Scope = stepper.getStateStack().top.$;
+    const sym: Sym = $.symbol(Concept.TTY);
+    const tty = $.getSymbolBinding(sym);
+    if (is_nil(tty)) {
+        // Unbound in Native engine.
+        return true;
+    }
+    else if (tty.equals(sym)) {
+        // Unbound in Eigenmath engine.
+        return true;
+    }
+    else if (iszero(tty)) {
+        // Bound to zero.
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+*/

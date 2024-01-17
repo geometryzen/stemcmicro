@@ -39,7 +39,7 @@ function stepModule(module: Cons): U[] {
     const values: U[] = [];
     const runner = new Stepper(module);
     let steps = 0;
-    while (runner.step()) {
+    while (runner.next()) {
         steps++;
     }
     steps;

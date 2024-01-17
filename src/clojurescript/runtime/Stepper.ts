@@ -3,6 +3,7 @@ import { create_sym, Sym } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
+import { Concept, ExprEngineListener } from "../../api";
 import { create_env, EnvOptions } from "../../env/env";
 import { ExtensionEnv, Operator } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
@@ -96,8 +97,12 @@ export class State {
      */
     value: U = nil;
     /**
-     * The values from the invocation of the module.
+     * The inputs from the invocation of the module.
      */
+    inputs: U[] = [];
+    /**
+    * The values from the invocation of the module.
+    */
     values: U[] = [];
     doneCallee: number = 0;
     doneArgs: boolean = false;
@@ -199,16 +204,16 @@ export class Stepper {
         }
     }
     run(): boolean {
-        while (!this.#paused && this.step()) {
+        while (!this.#paused && this.next()) {
             // 
         }
         return this.#paused;
     }
     /**
      * Execute one step of the interpreter.
-     * @returns true if a step was executed, false if no more instructions.
+     * @returns true if there are more instructions to execute.
      */
-    step(): boolean {
+    next(): boolean {
         const stack: Stack<State> = this.#stack;
         let endTime = Date.now() + this.POLYFILL_TIMEOUT;
         let node: U;
@@ -301,6 +306,12 @@ export class Stepper {
     }
     getStateStack(): Stack<State> {
         return this.#stack;
+    }
+    addListener(listener: ExprEngineListener): void {
+
+    }
+    removeListener(listener: ExprEngineListener): void {
+
     }
     #nextTask(): State | null {
         // console.lg(`Interpreter.#nextTask()`);

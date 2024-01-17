@@ -23,6 +23,7 @@ export function Eval_module(expr: Cons, stack: Stack<State>, state: State): Stat
         state.argValues[n - 1] = state.value;
     }
     state.done = true;
+    stack.top.inputs = [...args];
     stack.top.values = state.argValues;
     // Don't pop the stateStack.
     // Leave the root scope on the tree in case the program is appended to.

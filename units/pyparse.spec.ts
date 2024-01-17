@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
-import { python_parse } from "../src/typhon/python_parse";
+import { pythonscript_parse } from "../src/pythonscript/pythonscript_parse";
 
 describe("Python parse", function () {
     it("def f(x): return x", function () {
@@ -12,7 +12,7 @@ describe("Python parse", function () {
 
         const context = create_script_context({});
 
-        const { trees } = python_parse(lines.join('\n'));
+        const { trees } = pythonscript_parse(lines.join('\n'));
         assert.isArray(trees);
         assert.strictEqual(trees.length, 1);
         const tree = trees[0];
@@ -29,7 +29,7 @@ describe("Python parse", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Python });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.PythonScript });
         assert.isArray(values);
         assert.strictEqual(values.length, 2);
         // TODO: This should create a binding which contains the lambda expression.

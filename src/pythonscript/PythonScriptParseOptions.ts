@@ -1,4 +1,4 @@
-export interface PythonParseOptions {
+export interface PythonScriptParseOptions {
     /**
      * Determines whether the parser makes associativity explicit or implicit in additive expressions.
      */

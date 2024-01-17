@@ -1,5 +1,5 @@
 import { polyform } from './bake';
-import { scan_meta } from './brite/scan';
+import { scan_meta } from './algebrite/scan';
 import { decomp } from './decomp';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { items_to_cons } from './makeList';

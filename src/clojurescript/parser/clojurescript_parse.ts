@@ -1,6 +1,7 @@
-import { CharStream, consume_num, NumHandler } from "../../brite/consume_num";
+import { CharStream, consume_num, NumHandler } from "../../algebrite/consume_num";
 import { FltTokenParser } from "../../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../../operators/int/IntTokenParser";
+import { create_tensor } from "../../tensor/create_tensor";
 import { Boo } from "../../tree/boo/Boo";
 import { create_flt, Flt } from "../../tree/flt/Flt";
 import { Num } from "../../tree/num/Num";
@@ -8,14 +9,13 @@ import { create_int } from "../../tree/rat/Rat";
 import { Str } from "../../tree/str/Str";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { cons, nil, U } from "../../tree/tree";
-import { Char } from "./char";
-import { ClojureScriptParseOptions } from "./ClojureScriptParseOptions";
 import { CommentMarker } from "../atoms/CommentMarker";
 import { Dictionary } from "../atoms/Dictionary";
 import { EOS } from "../atoms/EOS";
 import { Keyword } from "../atoms/Keyword";
+import { Char } from "./char";
+import { ClojureScriptParseOptions } from "./ClojureScriptParseOptions";
 import { Pair } from "./Pair";
-import { Vector } from "../atoms/Vector";
 
 const endOfString = new EOS();
 const sexpCommentMarker = new CommentMarker();
@@ -60,7 +60,7 @@ class NumBuilder implements NumHandler {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function parse_clojure_script(sourceText: string, options?: ClojureScriptParseOptions): { trees: U[], errors: Error[] } {
+export function clojurescript_parse(sourceText: string, options?: ClojureScriptParseOptions): { trees: U[], errors: Error[] } {
     const parser = new Parser(sourceText, options);
     const trees: U[] = [];
     let done = false;
@@ -245,15 +245,16 @@ class Parser {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     #consumeVector(t: string): U {
-        const items: U[] = [];
+        const elements: U[] = [];
         while (this.#tokenIdx < this.#tokens.length) {
             this.#consumeObjectsInSexpComment("Input stream terminated unexpectedly(in vector)");
             if (this.#tokens[this.#tokenIdx] == ']') {
                 this.#tokenIdx++; break;
             }
-            items[items.length] = this.#consumeObject();
+            elements[elements.length] = this.#consumeObject();
         }
-        return new Vector(items);
+        return create_tensor(elements);
+        // return new Vector(items);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     #consumeMap(t: string): U {

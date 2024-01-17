@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { algebrite_parse } from "../src/brite/algebrite_parse";
+import { algebrite_parse } from "../src/algebrite/algebrite_parse";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("eigenmath-parse", function () {

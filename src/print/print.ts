@@ -1,6 +1,6 @@
 import { is_blade } from 'math-expression-atoms';
+import { scan } from '../algebrite/scan';
 import { mp_denominator, mp_numerator } from '../bignum';
-import { scan } from '../brite/scan';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
@@ -913,15 +913,18 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_tensor(p: Tensor<U>, $: ExtensionEnv): string {
-    let accumulator = '';
-    accumulator += print_tensor_inner(p, 0, 0, $)[1];
-    return accumulator;
+export function print_tensor(p: Tensor<U>, $: ExtensionEnv): string {
+    return print_tensor_inner(p, 0, 0, $)[1];
 }
 
-// j scans the dimensions
-// k is an increment for all the printed elements
-//   since they are all together in sequence in one array
+/**
+ * 
+ * @param p 
+ * @param j scans the dimensions
+ * @param k is an increment for all the printed elements
+ * @param $ 
+ * @returns 
+ */
 function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv): [number, string] {
     let accumulator = '';
 
@@ -952,7 +955,12 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
             // add separator between elements dimensions
             // "above" the inner-most dimension
             if (i !== p.dim(j) - 1) {
-                accumulator += print_str(',');
+                if (defs.printMode === PRINTMODE_SEXPR) {
+                    accumulator += print_str(' ');
+                }
+                else {
+                    accumulator += print_str(',');
+                }
             }
         }
         // if we reached the last dimension, we print the actual
@@ -964,7 +972,12 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
             // add separator between elements in the
             // inner-most dimension
             if (i !== p.dim(j) - 1) {
-                accumulator += print_str(',');
+                if (defs.printMode === PRINTMODE_SEXPR) {
+                    accumulator += print_str(' ');
+                }
+                else {
+                    accumulator += print_str(',');
+                }
             }
             k++;
         }

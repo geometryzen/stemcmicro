@@ -27,11 +27,11 @@ function isRecoverableError(error) {
 }
 
 function prompt(syntaxKind) {
-    return `jsxmath:${human_readable_syntax_kind(syntaxKind).toLowerCase()}> `;
+    return `${human_readable_syntax_kind(syntaxKind).toLowerCase()}> `;
 }
 
 const contextOptions = {
-    syntaxKind: SyntaxKind.Python,
+    syntaxKind: SyntaxKind.ClojureScript,
     useCaretForExponentiation: false,
     useDefinitions: false
 };

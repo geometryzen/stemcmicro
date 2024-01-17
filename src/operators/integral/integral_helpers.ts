@@ -1,4 +1,4 @@
-import { scan_meta } from '../../brite/scan';
+import { scan_meta } from '../../algebrite/scan';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { guess } from '../../guess';
 import { is_num_and_equalq, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one } from '../../is';

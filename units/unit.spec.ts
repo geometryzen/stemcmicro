@@ -35,7 +35,7 @@ describe("unit", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1,0],[0,1]]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1 0] [0 1]]");
         assert.strictEqual(engine.renderAsInfix(values[0]), "[[1,0],[0,1]]");
         engine.release();
     });
@@ -46,7 +46,7 @@ describe("unit", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1,0,0],[0,1,0],[0,0,1]]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1 0 0] [0 1 0] [0 0 1]]");
         assert.strictEqual(engine.renderAsInfix(values[0]), "[[1,0,0],[0,1,0],[0,0,1]]");
         engine.release();
     });
@@ -57,7 +57,7 @@ describe("unit", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[[1 0 0 0] [0 1 0 0] [0 0 1 0] [0 0 0 1]]");
         assert.strictEqual(engine.renderAsInfix(values[0]), "[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]");
         engine.release();
     });

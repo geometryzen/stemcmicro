@@ -1,6 +1,6 @@
 import { assert } from "chai";
-import { InputState } from "../src/brite/InputState";
-import { is_digit } from "../src/brite/is_digit";
+import { InputState } from "../src/algebrite/InputState";
+import { is_digit } from "../src/algebrite/is_digit";
 
 type CombinatorOutput = [sym: 'str' | 'digit' | 'seq' | 'rep' | 'alt' | undefined, value: unknown, state: InputState | undefined];
 const NOTHING: CombinatorOutput = [void 0, void 0, void 0];

@@ -1,12 +1,12 @@
 import { create_sym, Sym } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
-import { parse_clojure_script } from '../clojurescript/parser/parse_clojure_script';
+import { clojurescript_parse } from '../clojurescript/parser/clojurescript_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { delegate_parse_script, ParseOptions } from '../parser/parser';
+import { delegate_parse_script, ParseOptions, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -80,13 +80,14 @@ enum EngineKind {
     Algebrite = 1,
     Eigenmath = 2,
     ClojureScript = 3,
-    Python = 4
+    PythonScript = 4
 }
 
 export interface EngineConfig {
     useGeometricAlgebra: boolean;
+    syntaxKind: SyntaxKind;
     useClojureScript: boolean;
-    usePython: boolean;
+    usePythonScript: boolean;
 }
 
 function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind {
@@ -94,8 +95,8 @@ function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind
     if (config.useClojureScript) {
         return EngineKind.ClojureScript;
     }
-    else if (config.usePython) {
-        return EngineKind.Python;
+    else if (config.usePythonScript) {
+        return EngineKind.PythonScript;
     }
     else {
         if (config.useGeometricAlgebra) {
@@ -123,13 +124,13 @@ class ClojureScriptExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        return parse_clojure_script(sourceText, {
+        return clojurescript_parse(sourceText, {
             lexicon: {}
         });
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
-        const { trees, errors } = parse_clojure_script(sourceText, {
+        const { trees, errors } = clojurescript_parse(sourceText, {
             lexicon: {}
         });
         const module = items_to_cons(create_sym('module'), ...trees);
@@ -463,7 +464,7 @@ export function create_engine(config: Partial<EngineConfig> = {}): ExprEngine {
         case EngineKind.Eigenmath: {
             return new EigenmathExprEngine();
         }
-        case EngineKind.Python: {
+        case EngineKind.PythonScript: {
             return new PythonExprEngine();
         }
         default: {

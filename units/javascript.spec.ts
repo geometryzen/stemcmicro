@@ -1,9 +1,9 @@
 import { assert } from "chai";
 import { create_int, Str } from "math-expression-atoms";
-import { create_tensor } from "../src/brite/create_tensor";
 import { ExtensionEnv } from "../src/env/ExtensionEnv";
 import { create_uom } from "../src/operators/uom/uom";
 import { create_script_context, ScriptContext } from "../src/runtime/script_engine";
+import { create_tensor } from "../src/tensor/create_tensor";
 
 function create_str(s: string): Str {
     return new Str(s);

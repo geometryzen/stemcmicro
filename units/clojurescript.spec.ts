@@ -1,11 +1,10 @@
 
 import { assert } from "chai";
-import { is_boo, is_flt, is_rat, is_str, is_sym } from "math-expression-atoms";
+import { is_boo, is_flt, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { is_dictionary } from "../src/clojurescript/atoms/Dictionary";
 import { is_keyword } from "../src/clojurescript/atoms/Keyword";
-import { is_vector } from "../src/clojurescript/atoms/Vector";
 
 describe("ClojureScript", function () {
     it("Rat", function () {
@@ -65,6 +64,7 @@ describe("ClojureScript", function () {
         }
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `"Quick! Brown foxes!"`);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `"Quick! Brown foxes!"`);
         assert.strictEqual(is_str(values[0]), true);
         engine.release();
     });
@@ -165,7 +165,7 @@ describe("ClojureScript", function () {
     });
     it("Vectors", function () {
         const lines: string[] = [
-            `["Alice" "Bob"]`
+            `["Alice" "Bob" "Carol"]`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useClojureScript: true });
@@ -179,8 +179,8 @@ describe("ClojureScript", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `[Str(Alice) Str(Bob)]`);
-        assert.strictEqual(is_vector(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `["Alice" "Bob" "Carol"]`);
+        assert.strictEqual(is_tensor(values[0]), true);
         engine.release();
     });
     it("Maps", function () {

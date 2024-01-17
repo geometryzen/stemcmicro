@@ -1,7 +1,9 @@
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_TENSOR } from "../../hashing/hash_info";
+import { print_tensor } from "../../print/print";
 import { to_infix_string } from "../../print/to_infix_string";
 import { MAXDIM } from "../../runtime/constants";
+import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { cons, Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
@@ -115,7 +117,14 @@ class TensorExtension implements Extension<Tensor> {
         return to_infix_string(matrix, $);
     }
     toListString(matrix: Tensor, $: ExtensionEnv): string {
-        return to_infix_string(matrix, $);
+        const printMode: PrintMode = defs.printMode;
+        defs.setPrintMode(PRINTMODE_SEXPR);
+        try {
+            return print_tensor(matrix, $);
+        }
+        finally {
+            defs.setPrintMode(printMode);
+        }
     }
     evaluate(matrix: Tensor, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(matrix, argList));

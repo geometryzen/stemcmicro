@@ -22,7 +22,7 @@ describe("zero", function () {
         const context = create_script_context({
         });
         const { values } = context.executeScript(lines.join('\n'));
-        assert.strictEqual(context.renderAsSExpr(values[0]), "[[0,0],[0,0]]");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "[[0 0] [0 0]]");
         assert.strictEqual(context.renderAsInfix(values[0]), "[[0,0],[0,0]]");
         context.release();
     });

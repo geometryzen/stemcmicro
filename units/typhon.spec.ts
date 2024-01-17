@@ -9,7 +9,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -23,7 +23,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -37,7 +37,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -51,7 +51,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -65,7 +65,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -80,7 +80,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -94,7 +94,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -109,7 +109,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -124,7 +124,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -139,7 +139,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -154,7 +154,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -169,7 +169,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -185,7 +185,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -200,7 +200,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -216,7 +216,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -232,7 +232,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -248,7 +248,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -263,7 +263,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -278,12 +278,12 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
-        assert.strictEqual(context.renderAsSExpr(values[0]), `[a,b,c]`);
+        assert.strictEqual(context.renderAsSExpr(values[0]), `[a b c]`);
         assert.strictEqual(context.renderAsInfix(values[0]), `[a,b,c]`);
         context.release();
     });
@@ -294,7 +294,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -325,12 +325,12 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");
-        assert.strictEqual(context.renderAsSExpr(values[0]), `[i,j,k]`);
+        assert.strictEqual(context.renderAsSExpr(values[0]), `[i j k]`);
         assert.strictEqual(context.renderAsInfix(values[0]), `[i,j,k]`);
         context.release();
     });
@@ -346,7 +346,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
@@ -366,7 +366,7 @@ describe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Python
+            syntaxKind: SyntaxKind.PythonScript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);

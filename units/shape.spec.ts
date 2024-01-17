@@ -20,7 +20,7 @@ describe("shape", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[1,3]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[1 3]");
         assert.strictEqual(engine.renderAsInfix(values[0]), "[1,3]");
         engine.release();
     });
@@ -31,7 +31,7 @@ describe("shape", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[3,1]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[3 1]");
         assert.strictEqual(engine.renderAsInfix(values[0]), "[3,1]");
         engine.release();
     });

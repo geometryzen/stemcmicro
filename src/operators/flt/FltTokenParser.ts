@@ -1,4 +1,4 @@
-import { TokenParser } from "../../brite/ScanConfig";
+import { TokenParser } from "../../algebrite/ScanConfig";
 import { Flt } from "../../tree/flt/Flt";
 
 export class FltTokenParser implements TokenParser {

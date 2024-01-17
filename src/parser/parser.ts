@@ -1,9 +1,11 @@
 import { EigenmathErrorHandler } from "../api";
-import { AlgebriteParseOptions, algebrite_parse } from "../brite/algebrite_parse";
+import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
+import { ClojureScriptParseOptions } from "../clojurescript/parser/ClojureScriptParseOptions";
+import { clojurescript_parse } from "../clojurescript/parser/clojurescript_parse";
 import { EigenmathParseConfig, parse_eigenmath_script } from "../eigenmath";
 import { U } from "../tree/tree";
-import { PythonParseOptions } from "../typhon/PythonParseOptions";
-import { python_parse } from "../typhon/python_parse";
+import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
+import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 
 export enum SyntaxKind {
     /**
@@ -11,24 +13,34 @@ export enum SyntaxKind {
      */
     Algebrite = 1,
     /**
-     * Python Programming Language.
+     * ClojureScript Programming Language.
      */
-    Python = 2,
+    ClojureScript = 2,
     /**
      * Eigenmath Scripting Language.
      */
-    Eigenmath = 3
+    Eigenmath = 3,
+    /**
+     * Python Programming Language.
+     */
+    PythonScript = 4,
 }
 
 export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
-    switch (syntaxKind) {
-        case SyntaxKind.Algebrite: return "Algebrite";
-        case SyntaxKind.Eigenmath: return "Eigenmath";
-        case SyntaxKind.Python: return "Python";
+    if (syntaxKind) {
+        switch (syntaxKind) {
+            case SyntaxKind.Algebrite: return "Algebrite";
+            case SyntaxKind.ClojureScript: return "ClojureScript";
+            case SyntaxKind.Eigenmath: return "Eigenmath";
+            case SyntaxKind.PythonScript: return "PythonScript";
+        }
+    }
+    else {
+        throw new Error("syntaxKind MUST be specified.");
     }
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Algebrite, SyntaxKind.Eigenmath, SyntaxKind.Python];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Algebrite, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript];
 
 export interface ParseOptions {
     catchExceptions?: boolean,
@@ -70,13 +82,16 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
         case SyntaxKind.Algebrite: {
             return algebrite_parse(sourceText, algebrite_parse_options(options));
         }
+        case SyntaxKind.ClojureScript: {
+            return clojurescript_parse(sourceText, clojurescript_parse_options(options));
+        }
         case SyntaxKind.Eigenmath: {
             const emErrorHandler = new EigenmathErrorHandler();
             const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_options(options), emErrorHandler);
             return { trees, errors: emErrorHandler.errors };
         }
-        case SyntaxKind.Python: {
-            return python_parse(sourceText, typhon_parse_options(options));
+        case SyntaxKind.PythonScript: {
+            return pythonscript_parse(sourceText, python_parse_options(options));
         }
         default: {
             throw new Error(`options.syntaxKind ${syntaxKind} must be one of ${JSON.stringify(syntaxKinds.map(human_readable_syntax_kind).sort())}.`);
@@ -98,6 +113,23 @@ function algebrite_parse_options(options?: ParseOptions): AlgebriteParseOptions 
     }
 }
 
+function clojurescript_parse_options(options?: ParseOptions): ClojureScriptParseOptions {
+    if (options) {
+        return {
+            explicitAssocAdd: options.explicitAssocAdd,
+            explicitAssocMul: options.explicitAssocMul,
+            // useCaretForExponentiation: options.useCaretForExponentiation,
+            // useParenForTensors: options.useParenForTensors,
+            lexicon: {}
+        };
+    }
+    else {
+        return {
+            lexicon: {}
+        };
+    }
+}
+
 function eigenmath_parse_options(options?: ParseOptions): EigenmathParseConfig {
     if (options) {
         return {
@@ -113,7 +145,7 @@ function eigenmath_parse_options(options?: ParseOptions): EigenmathParseConfig {
     }
 }
 
-function typhon_parse_options(options?: ParseOptions): PythonParseOptions {
+function python_parse_options(options?: ParseOptions): PythonScriptParseOptions {
     if (options) {
         if (options.useCaretForExponentiation) {
             throw new Error("useCaretForExponentiation is not supported by the Python parser.");

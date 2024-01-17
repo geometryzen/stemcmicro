@@ -523,9 +523,9 @@ describe("pos", function () {
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
-        assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module [[a,b],[c,d]])`);
+        assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module [[a b] [c d]])`);
         const tensor = module.item(1);
-        assert.strictEqual(engine.renderAsString(tensor, { format: 'SExpr' }), "[[a,b],[c,d]]");
+        assert.strictEqual(engine.renderAsString(tensor, { format: 'SExpr' }), "[[a b] [c d]]");
         assert.strictEqual(tensor.pos, 0);
         assert.strictEqual(tensor.end, 23);
 

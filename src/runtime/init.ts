@@ -1,4 +1,4 @@
-import { scan } from '../brite/scan';
+import { scan } from '../algebrite/scan';
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { clear_patterns } from '../pattern';
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";

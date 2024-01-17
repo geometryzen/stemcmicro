@@ -64,9 +64,9 @@ describe("tensor", function () {
         const actual = assert_one_value_execute(sourceText, engine);
         assert.strictEqual(engine.renderAsAscii(actual), "a   b\n\nc   d");
         assert.strictEqual(engine.renderAsHuman(actual), "((a,b),(c,d))");
+        assert.strictEqual(engine.renderAsInfix(actual), "((a,b),(c,d))");
         assert.strictEqual(engine.renderAsLaTeX(actual), "\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}");
-        assert.strictEqual(engine.renderAsSExpr(actual), "((a,b),(c,d))");
-        assert.strictEqual(engine.renderAsSExpr(actual), "((a,b),(c,d))");
+        assert.strictEqual(engine.renderAsSExpr(actual), "((a b) (c d))");
 
         engine.release();
     });
@@ -82,7 +82,7 @@ describe("tensor", function () {
         assert.strictEqual(engine.renderAsHuman(actual), "[[a,b],[c,d]]");
         assert.strictEqual(engine.renderAsLaTeX(actual), "\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}");
         assert.strictEqual(engine.renderAsInfix(actual), "[[a,b],[c,d]]");
-        assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[a b] [c d]]");
 
         engine.release();
     });
@@ -96,7 +96,7 @@ describe("tensor", function () {
             const sourceText = lines.join('\n');
             const engine = create_script_context();
             const actual = assert_one_value_execute(sourceText, engine);
-            assert.strictEqual(engine.renderAsSExpr(actual), "[[a,b],[c,d]]");
+            assert.strictEqual(engine.renderAsSExpr(actual), "[[a b] [c d]]");
             assert.strictEqual(engine.renderAsInfix(actual), "[[a,b],[c,d]]");
             engine.release();
         });
@@ -265,6 +265,7 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[d -b] [-c a]]");
         assert.strictEqual(engine.renderAsInfix(actual), "[[d,-b],[-c,a]]");
         engine.release();
     });
@@ -276,6 +277,7 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "(+ (* a d) (* -1 b c))");
         assert.strictEqual(engine.renderAsInfix(actual), "a*d-b*c");
         engine.release();
     });
@@ -287,6 +289,7 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[d/(a*d-b*c) -b/(a*d-b*c)] [-c/(a*d-b*c) a/(a*d-b*c)]]");
         assert.strictEqual(engine.renderAsInfix(actual), "[[d/(a*d-b*c),-b/(a*d-b*c)],[-c/(a*d-b*c),a/(a*d-b*c)]]");
         engine.release();
     });
@@ -298,7 +301,7 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
-        assert.strictEqual(engine.renderAsSExpr(actual), "[[0,0],[0,0]]");
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[0 0] [0 0]]");
         assert.strictEqual(engine.renderAsInfix(actual), "[[0,0],[0,0]]");
         engine.release();
     });
@@ -312,7 +315,7 @@ describe("tensor", function () {
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[0,0]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[0 0]");
         assert.strictEqual(engine.renderAsInfix(values[0]), "[0,0]");
         engine.release();
     });
@@ -324,6 +327,7 @@ describe("tensor", function () {
         const sourceText = lines.join('\n');
         const engine = create_script_context();
         const actual = assert_one_value_execute(sourceText, engine);
+        assert.strictEqual(engine.renderAsSExpr(actual), "[[1.020408... -0.102041...] [0.204082... -1.020408...]]");
         assert.strictEqual(engine.renderAsInfix(actual), "[[1.020408...,-0.102041...],[0.204082...,-1.020408...]]");
         engine.release();
     });

@@ -1,4 +1,4 @@
-import { TokenParser } from "../../brite/ScanConfig";
+import { TokenParser } from "../../algebrite/ScanConfig";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 
 export class SymTokenParser implements TokenParser {

@@ -12,7 +12,7 @@ describe("dot", function () {
         const engine = create_script_context({
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "[-4,9/2]");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "[-4 9/2]");
         // | -4  |
         // | 9/2 |
         assert.strictEqual(engine.renderAsInfix(values[0]), "[-4,9/2]");

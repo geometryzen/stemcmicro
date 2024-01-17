@@ -1,4 +1,4 @@
-import { car, cdr, is_cons, nil, U } from "math-expression-tree";
+import { car, cdr, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 
 /**
@@ -7,7 +7,6 @@ import { ExtensionEnv } from "../env/ExtensionEnv";
  * @param $ The extension environment.
  */
 export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
-    // console.lg(`render_as_sexpr ${JSON.stringify(expr)}`);
     if (is_cons(expr)) {
         let str = '';
         str += '(';
@@ -25,5 +24,13 @@ export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
         str += ')';
         return str;
     }
-    return $.toSExprString(expr);
+    else if (is_atom(expr)) {
+        return $.toSExprString(expr);
+    }
+    else if (is_nil(expr)) {
+        return $.toSExprString(expr);
+    }
+    else {
+        throw new Error();
+    }
 }

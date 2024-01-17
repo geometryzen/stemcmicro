@@ -1,5 +1,5 @@
 import { bake } from "../bake";
-import { ScanOptions } from '../brite/scan';
+import { ScanOptions } from '../algebrite/scan';
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { items_to_cons } from "../makeList";

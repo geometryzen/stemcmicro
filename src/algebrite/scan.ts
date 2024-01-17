@@ -1,30 +1,30 @@
 /* eslint-disable no-console */
-import { pos_end_items_to_cons } from 'math-expression-tree';
-import { Native } from '../native/Native';
-import { native_sym } from '../native/native_sym';
-import { is_num } from '../operators/num/is_num';
-import { is_rat } from '../operators/rat/rat_extension';
-import { assert_sym } from '../operators/sym/assert_sym';
+import { assert_sym, create_boo, is_num, is_rat, negOne, one, Tensor } from 'math-expression-atoms';
+import { Native, native_sym } from 'math-expression-native';
+import { items_to_cons, nil, pos_end_items_to_cons, U } from 'math-expression-tree';
 import {
-    ASSIGN,
-    FACTORIAL,
     QUOTE,
     TRANSPOSE,
     TRANSPOSE_CHAR_CODE
 } from '../runtime/constants';
-import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
-import { create_boo } from '../tree/boo/Boo';
-import { negOne, one } from '../tree/rat/Rat';
-import { Tensor } from '../tree/tensor/Tensor';
-import { items_to_cons, nil, U } from '../tree/tree';
+import { create_tensor } from '../tensor/create_tensor';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
 import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
-import { create_tensor } from './create_tensor';
 import { InputState } from './InputState';
 import { one_divided_by } from './one_divided_by';
 import { scanner_negate } from './scanner_negate';
 import { TokenCode } from './Token';
+
+// TODO: Obtain ALL Sym constants from math-expression-native using native_sym(Native.xyz)
+const ASSIGN = native_sym(Native.setq);
+const FACTORIAL = native_sym(Native.factorial);
+const MATH_INNER = native_sym(Native.inner);
+const MATH_LCO = native_sym(Native.lco);
+const MATH_MUL = native_sym(Native.multiply);
+const MATH_OUTER = native_sym(Native.outer);
+const MATH_POW = native_sym(Native.pow);
+const MATH_RCO = native_sym(Native.rco);
 
 function assert_pos(pos: number | undefined): number {
     if (typeof pos === 'number') {

@@ -186,6 +186,7 @@ export class InputState {
         // console.lg(`tokenToSym(txt=${this.#token.txt} pos=${this.#token.pos}, end=${this.#token.end})`);
         // TODO: This stuff seems like it could go into a parser, but we would need the meta_mode.
         // Maybe we use two different symbol parsers?
+        // TODO: We should be picking up user symbols
         const key = this.#token.txt;
         if (this.meta_mode && typeof this.#token.txt == 'string') {
             const metaKey = scanConfig.meta[key];

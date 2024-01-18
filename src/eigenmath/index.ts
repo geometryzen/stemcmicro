@@ -13,9 +13,13 @@ import { Imu } from '../tree/imu/Imu';
 /**
  * 
  */
-export interface EigenmathScope {
+export interface EigenmathReadScope {
     isConsSymbol(sym: Sym): boolean;
     isUserSymbol(sym: Sym): boolean;
+}
+
+export interface EigenmathWriteScope {
+    defineUserSymbol(sym: Sym): void;
 }
 
 function alloc_tensor(): Tensor {
@@ -918,9 +922,12 @@ export interface EmitContext {
     useImaginaryJ: boolean;
 }
 
-export function render_svg(expr: U, ec: EmitContext, scope: EigenmathScope): string {
-    // TODO: We only really need the stack here...
-    const $ = new ScriptVars();
+class SvgStackContext implements StackContext {
+    readonly stack: U[] = [];
+}
+
+export function render_svg(expr: U, ec: EmitContext, scope: EigenmathReadScope): string {
+    const $ = new SvgStackContext();
 
     emit_level = 0;
 
@@ -951,7 +958,7 @@ export function render_svg(expr: U, ec: EmitContext, scope: EigenmathScope): str
     return outbuf.join('');
 }
 
-function emit_args(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_args(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
 
     p = cdr(p);
 
@@ -979,14 +986,14 @@ function emit_args(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope
     emit_update_subexpr($);
 }
 
-function emit_base(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_base(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER))
         emit_subexpr(p, $, ec, scope);
     else
         emit_expr(p, $, ec, scope);
 }
 
-function emit_denominators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope) {
+function emit_denominators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope) {
 
     const t = $.stack.length;
     const n = count_denominators(p);
@@ -1095,7 +1102,7 @@ function emit_double(p: Flt, $: StackContext): void {
     emit_update_superscript($);
 }
 
-function emit_exponent(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_exponent(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (isnum(p) && !isnegativenumber(p)) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
@@ -1108,7 +1115,7 @@ function emit_exponent(p: U, $: StackContext, ec: EmitContext, scope: EigenmathS
     emit_update_superscript($);
 }
 
-function emit_expr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_expr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (isnegativeterm(p) || (car(p).equals(ADD) && isnegativeterm(cadr(p)))) {
         emit_roman_char(MINUS_SIGN, $);
         emit_thin_space($);
@@ -1120,7 +1127,7 @@ function emit_expr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope
         emit_term(p, $, ec, scope);
 }
 
-function emit_expr_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_expr_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     p = cdr(p);
     emit_term(car(p), $, ec, scope);
     p = cdr(p);
@@ -1134,7 +1141,7 @@ function emit_expr_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathS
     }
 }
 
-function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope) {
+function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope) {
     if (isrational(p)) {
         emit_rational(p, $);
         return;
@@ -1198,13 +1205,13 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathSco
     }
 }
 
-function emit_fraction(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_fraction(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     emit_numerators(p, $, ec, scope);
     emit_denominators(p, $, ec, scope);
     emit_update_fraction($);
 }
 
-function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     // d(f(x),x)
 
     if (car(p).equals(DERIVATIVE)) {
@@ -1284,7 +1291,7 @@ function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathS
     emit_args(p, $, ec, scope);
 }
 
-function emit_indices(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_indices(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     emit_roman_string("[", $);
 
     p = cdr(p);
@@ -1342,13 +1349,13 @@ function emit_italic_string(s: 'i' | 'j', $: StackContext): void {
 /**
  * Converts an expression into an encoded form with opcode, height, depth, width, and data (depends on opcode).
  */
-function emit_list(expr: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_list(expr: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     const t = $.stack.length;
     emit_expr(expr, $, ec, scope);
     emit_update_list(t, $);
 }
 
-function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
 
     if (d === p.ndim) {
         emit_list(p.elems[k], $, ec, scope);
@@ -1390,7 +1397,7 @@ function emit_medium_space($: StackContext): void {
     list(4, $);
 }
 
-function emit_numerators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_numerators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
 
     const t = $.stack.length;
     const n = count_numerators(p);
@@ -1453,7 +1460,7 @@ function emit_numeric_exponent(p: Num, $: StackContext) {
     emit_update_superscript($);
 }
 
-function emit_power(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_power(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (cadr(p).equals(EXP1)) {
         emit_roman_string("exp", $);
         emit_args(cdr(p), $, ec, scope);
@@ -1508,7 +1515,7 @@ function emit_rational(p: Rat, $: StackContext): void {
 
 // p = y^x where x is a negative number
 
-function emit_reciprocal(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_reciprocal(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
 
     emit_roman_string("1", $); // numerator
 
@@ -1559,12 +1566,12 @@ function emit_string(p: Str, $: StackContext): void {
     emit_roman_string(p.str, $);
 }
 
-function emit_subexpr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_subexpr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     emit_list(p, $, ec, scope);
     emit_update_subexpr($);
 }
 
-function emit_symbol(sym: Sym, $: StackContext, scope: EigenmathScope): void {
+function emit_symbol(sym: Sym, $: StackContext, scope: Pick<EigenmathReadScope, 'isConsSymbol' | 'isUserSymbol'>): void {
     if (sym.equalsSym(EXP1)) {
         emit_roman_string("exp(1)", $);
         return;
@@ -1721,7 +1728,7 @@ function emit_imaginary_unit(imu: Imu, $: StackContext, ec: EmitContext): void {
     }
 }
 
-function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (p.ndim % 2 === 1)
         emit_vector(p, $, ec, scope); // odd rank
     else
@@ -1733,14 +1740,14 @@ function emit_uom(uom: Uom, $: StackContext): void {
     emit_roman_string(str, $);
 }
 
-function emit_term(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_term(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (car(p).equals(MULTIPLY))
         emit_term_nib(p, $, ec, scope);
     else
         emit_factor(p, $, ec, scope);
 }
 
-function emit_term_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_term_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (find_denominator(p)) {
         emit_fraction(p, $, ec, scope);
         return;
@@ -2074,7 +2081,7 @@ function emit_update_table(n: number, m: number, $: StackContext): void {
     list(10, $);
 }
 
-function emit_vector(p: Tensor, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+function emit_vector(p: Tensor, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     // compute element span
 
     let span = 1;
@@ -2534,7 +2541,7 @@ function emit_box(dc: DrawContext, outbuf: string[]): void {
     draw_line(x2, y1, x2, y2, 0.5, outbuf); // right line
 }
 
-function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathScope): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathReadScope): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -2552,7 +2559,7 @@ function emit_graph(draw_array: { t: number; x: number; y: number }[], $: Script
     outbuf.push("</svg><br>");
 }
 
-function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathScope): void {
+function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathReadScope): void {
     // TODO; Why do we need ScriptVars here?
     emit_level = 1; // small font
     emit_list(new Flt(dc.ymax), $, ec, scope);
@@ -4233,7 +4240,8 @@ function eval_clear(expr: U, $: ScriptVars) {
     $.binding = {};
     $.usrfunc = {};
 
-    initscript($);
+    // TODO: A restore or rest would be better here.
+    $.initscript(eigenmath_init_script);
 
     restore_symbol($);
     restore_symbol($);
@@ -7696,10 +7704,10 @@ function integral_search(h: number, F: U, table: string[], n: number, $: ScriptV
 
     for (i = 0; i < n; i += 3) {
 
-        scan1(table[i + 0], $, config); // integrand
+        scan_integrals(table[i + 0], $, config); // integrand
         I = pop($);
 
-        scan1(table[i + 2], $, config); // condition
+        scan_integrals(table[i + 2], $, config); // condition
         C = pop($);
 
         if (integral_search_nib(h, F, I, C, $))
@@ -7711,7 +7719,7 @@ function integral_search(h: number, F: U, table: string[], n: number, $: ScriptV
 
     $.stack.splice(h); // pop all
 
-    scan1(table[i + 1], $, config); // answer
+    scan_integrals(table[i + 1], $, config); // answer
     evalf($);
 
     return 1;
@@ -8991,7 +8999,7 @@ function eval_prefixform(p1: U, $: ScriptVars): void {
     push_string(s, $);
 }
 
-function make_should_annotate(scope: EigenmathScope) {
+function make_should_annotate(scope: EigenmathReadScope) {
     return function should_annotate_symbol(x: Sym, value: U): boolean {
         if (scope.isUserSymbol(x)) {
             if (x.equals(value) || is_nil(value)) {
@@ -9060,7 +9068,7 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
  * @returns 
  */
-export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction, scope: EigenmathScope): void {
+export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction, scope: EigenmathReadScope): void {
 
     if (is_nil(value)) {
         return;
@@ -13180,26 +13188,7 @@ function infixform_write(s: string, config: InfixConfig, outbuf: string[]): void
     outbuf.push(s);
 }
 
-export function init($: ScriptVars): void {
-    $.eval_level = 0;
-    $.expanding = 1;
-    $.drawing = 0;
-    $.nonstop = 0;
-
-    $.stack = [];
-    $.frame = [];
-
-    $.binding = {};
-    $.usrfunc = {};
-
-    push(POWER, $);
-    push_integer(-1, $);
-    push_rational(1, 2, $);
-    list(3, $);
-    imaginaryunit = pop($);
-}
-
-const init_script: string[] = [
+export const eigenmath_init_script: string[] = [
     "i = sqrt(-1)",
     "grad(f) = d(f,(x,y,z))",
     "cross(a,b) = (dot(a[2],b[3])-dot(a[3],b[2]),dot(a[3],b[1])-dot(a[1],b[3]),dot(a[1],b[2])-dot(a[2],b[1]))",
@@ -13211,18 +13200,6 @@ const init_script: string[] = [
     "binomial(n,k) = n! / k! / (n - k)!",
     "choose(n,k) = n! / k! / (n - k)!",
 ];
-
-export function initscript($: ScriptVars): void {
-    // The configuration should match the syntax in the initialization script.
-    const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
-    const n = init_script.length;
-
-    for (let i = 0; i < n; i++) {
-        scan(init_script[i], 0, $, config);
-        evalf($);
-        pop($);
-    }
-}
 
 function inrange(x: number, y: number): boolean {
     return x > -0.5 && x < DRAW_WIDTH + 0.5 && y > -0.5 && y < DRAW_HEIGHT + 0.5;
@@ -13502,7 +13479,7 @@ function istensor(p: U): p is Tensor {
     return is_tensor(p);
 }
 
-function isusersymbolsomewhere(p: U, scope: EigenmathScope): 0 | 1 {
+function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
     if (issymbol(p) && scope.isUserSymbol(p) && !p.equalsSym(PI) && !p.equalsSym(EXP1))
         return 1;
 
@@ -13557,10 +13534,12 @@ function list(n: number, $: StackContext): void {
         cons($);
 }
 
-function ensure_user_function(sym: Sym, scope: EigenmathScope): Sym {
-    if (!scope.isUserSymbol(sym)) {
-        defineUserFunction(sym);
-    }
+/**
+ * A convenience function for setting the symbol in the scope as a user symbol.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function define_user_symbol(sym: Sym, scope: EigenmathWriteScope): Sym {
+    scope.defineUserSymbol(sym);
     return sym;
 }
 
@@ -15368,14 +15347,18 @@ export class PrintScriptErrorHandler implements ScriptErrorHandler {
     }
 }
 
-export function parse_eigenmath_script(sourceText: string, config: EigenmathParseConfig, errorHandler: ScriptErrorHandler): U[] {
+/**
+ * 
+ * @param sourceText 
+ * @param config 
+ * @param errorHandler 
+ * @param $ The scripting context, assumed to have been initialized.
+ * @returns 
+ */
+export function parse_eigenmath_script(sourceText: string, config: EigenmathParseConfig, errorHandler: ScriptErrorHandler, $: ScriptVars): U[] {
     const exprs: U[] = [];
-    const $ = new ScriptVars();
-    init($);
     try {
         $.inbuf = sourceText;
-
-        initscript($);
 
         let k = 0;
 
@@ -15419,21 +15402,15 @@ function parse_config_from_options(options: Partial<EigenmathParseConfig>): Eige
     return config;
 }
 
-/**
- * 
- * @param sourceText 
- * @param contentHandler 
- * @param errorHandler 
- */
 export function executeScript(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<EigenmathParseConfig> = {}): void {
     const config = parse_config_from_options(options);
     const $ = new ScriptVars();
-    init($);
+    $.init();
     contentHandler.begin($);
     try {
         $.inbuf = sourceText;
 
-        initscript($);
+        $.initscript(eigenmath_init_script);
 
         let k = 0;
 
@@ -15521,7 +15498,10 @@ const T_EQ = 1009;
 const T_EXPONENTIATION = 1010;
 const T_END = 1011;
 
-let scan_mode: 0 | 1;
+/**
+ * TODO: Push into ScriptVars?
+ */
+let scanning_integrals: boolean = false;
 let instring: string;
 let scan_index: number;
 let scan_level: number;
@@ -15530,12 +15510,12 @@ let token_index: number;
 let token_buf: string;
 
 function scan(s: string, k: number, $: ScriptVars, config: EigenmathParseConfig) {
-    scan_mode = 0;
+    scanning_integrals = false;
     return scan_nib(s, k, $, config);
 }
 
-function scan1(s: string, $: ScriptVars, config: EigenmathParseConfig): number {
-    scan_mode = 1; // mode for table of integrals
+function scan_integrals(s: string, $: ScriptVars, config: EigenmathParseConfig): number {
+    scanning_integrals = true;
     return scan_nib(s, 0, $, config);
 }
 
@@ -15776,8 +15756,12 @@ function scan_factor($: ScriptVars, config: EigenmathParseConfig): void {
     }
 }
 
+/**
+ * See InputState.tokenToSym
+ */
 function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
-    if (scan_mode === 1 && token_buf.length === 1) {
+    if (scanning_integrals && token_buf.length === 1) {
+        // When scanning inegrals, we don't make user symbols out of the special variables, a, b, and x.
         switch (token_buf[0]) {
             case "a":
                 push(SA, $);
@@ -15789,12 +15773,12 @@ function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
                 push(SX, $);
                 break;
             default:
-                push(ensure_user_function(create_sym(token_buf), $), $);
+                push(define_user_symbol(create_sym(token_buf), $), $);
                 break;
         }
     }
     else {
-        push(ensure_user_function(create_sym(token_buf), $), $);
+        push(define_user_symbol(create_sym(token_buf), $), $);
     }
     get_token($, config);
 }
@@ -15807,7 +15791,7 @@ function scan_string($: ScriptVars, config: EigenmathParseConfig): void {
 function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     scan_level++;
-    push(ensure_user_function(create_sym(token_buf), $), $); // push function name
+    push(define_user_symbol(create_sym(token_buf), $), $); // push function name
     get_token($, config); // get token after function name
     get_token($, config); // get token after (
     if (token === ")") {
@@ -16091,7 +16075,7 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmin = -Math.PI;
     dc.tmax = Math.PI;
 
-    let p1: U = ensure_user_function(create_sym("trange"), $);
+    let p1: U = define_user_symbol(create_sym("trange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16116,7 +16100,7 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmin = -10;
     dc.xmax = 10;
 
-    let p1: U = ensure_user_function(create_sym("xrange"), $);
+    let p1: U = define_user_symbol(create_sym("xrange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16140,7 +16124,7 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymin = -10;
     dc.ymax = 10;
 
-    let p1: U = ensure_user_function(create_sym("yrange"), $);
+    let p1: U = define_user_symbol(create_sym("yrange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16324,27 +16308,6 @@ export interface ScriptOutputListener {
 }
 
 export class ScriptVars implements ExprContext {
-    constructor() {
-        // Do nothing yet.
-    }
-    getBinding(sym: Sym): U {
-        return this.binding[sym.key()];
-    }
-    getUsrFunc(key: string): U {
-        return this.usrfunc[key];
-    }
-    isConsSymbol(sym: Sym): boolean {
-        return consFunctions.has(sym.key());
-    }
-    isUserSymbol(sym: Sym): boolean {
-        return userFunctions.has(sym.key());
-    }
-    setBinding(sym: Sym, binding: U): void {
-        this.binding[sym.key()] = binding;
-    }
-    setUsrFunc(sym: Sym, usrfunc: U): void {
-        this.usrfunc[sym.key()] = usrfunc;
-    }
     inbuf: string = "";
     /**
      * The start index into inbuf.
@@ -16363,6 +16326,84 @@ export class ScriptVars implements ExprContext {
     drawing: number = -1;
     nonstop: number = -1;
     listeners: ScriptOutputListener[] = [];
+    readonly #userFunctions: Map<string, UserFunction> = new Map();
+    constructor() {
+        this.defineUserSymbol(PI);
+        this.defineUserSymbol(EXP1);
+
+        this.defineUserSymbol(LAST);
+        this.defineUserSymbol(TRACE);
+        this.defineUserSymbol(TTY);
+
+        this.defineUserSymbol(D_LOWER);
+        this.defineUserSymbol(I_LOWER);
+        this.defineUserSymbol(J_LOWER);
+        this.defineUserSymbol(X_LOWER);
+
+        this.defineUserSymbol(SA);
+        this.defineUserSymbol(SB);
+        this.defineUserSymbol(SX);
+
+        this.defineUserSymbol(ARG1);
+        this.defineUserSymbol(ARG2);
+        this.defineUserSymbol(ARG3);
+        this.defineUserSymbol(ARG4);
+        this.defineUserSymbol(ARG5);
+        this.defineUserSymbol(ARG6);
+        this.defineUserSymbol(ARG7);
+        this.defineUserSymbol(ARG8);
+        this.defineUserSymbol(ARG9);
+    }
+    init(): void {
+        this.eval_level = 0;
+        this.expanding = 1;
+        this.drawing = 0;
+        this.nonstop = 0;
+
+        this.stack = [];
+        this.frame = [];
+
+        this.binding = {};
+        this.usrfunc = {};
+
+        push(POWER, this);
+        push_integer(-1, this);
+        push_rational(1, 2, this);
+        list(3, this);
+        imaginaryunit = pop(this);
+    }
+    initscript(script: string[]): void {
+        // The configuration should match the syntax in the initialization script.
+        const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
+        const n = script.length;
+
+        for (let i = 0; i < n; i++) {
+            scan(script[i], 0, this, config);
+            evalf(this);
+            pop(this);
+        }
+    }
+    defineUserSymbol(sym: Sym): void {
+        this.#userFunctions.set(sym.key(), eval_user_symbol);
+    }
+    getBinding(sym: Sym): U {
+        return this.binding[sym.key()];
+    }
+    getUsrFunc(key: string): U {
+        return this.usrfunc[key];
+    }
+    isConsSymbol(sym: Sym): boolean {
+        return consFunctions.has(sym.key());
+    }
+    isUserSymbol(sym: Sym): boolean {
+        return this.#userFunctions.has(sym.key());
+    }
+    setBinding(sym: Sym, binding: U): void {
+        this.binding[sym.key()] = binding;
+    }
+    setUsrFunc(sym: Sym, usrfunc: U): void {
+        this.usrfunc[sym.key()] = usrfunc;
+    }
     /**
      * 
      */
@@ -16397,14 +16438,9 @@ interface UserFunction {
 }
 
 const consFunctions: Map<string, ConsFunction> = new Map();
-const userFunctions: Map<string, UserFunction> = new Map();
 
 function defineConsFunction(sym: Sym, func: ConsFunction): void {
     consFunctions.set(sym.key(), func);
-}
-
-function defineUserFunction(sym: Sym): void {
-    userFunctions.set(sym.key(), eval_user_symbol);
 }
 
 defineConsFunction(ABS, eval_abs);
@@ -16512,32 +16548,6 @@ defineConsFunction(TRANSPOSE, eval_transpose);
 defineConsFunction(UNIT, eval_unit);
 defineConsFunction(UOM, eval_uom);
 defineConsFunction(ZERO, eval_zero);
-
-defineUserFunction(PI);
-defineUserFunction(EXP1);
-
-defineUserFunction(LAST);
-defineUserFunction(TRACE);
-defineUserFunction(TTY);
-
-defineUserFunction(D_LOWER);
-defineUserFunction(I_LOWER);
-defineUserFunction(J_LOWER);
-defineUserFunction(X_LOWER);
-
-defineUserFunction(SA);
-defineUserFunction(SB);
-defineUserFunction(SX);
-
-defineUserFunction(ARG1);
-defineUserFunction(ARG2);
-defineUserFunction(ARG3);
-defineUserFunction(ARG4);
-defineUserFunction(ARG5);
-defineUserFunction(ARG6);
-defineUserFunction(ARG7);
-defineUserFunction(ARG8);
-defineUserFunction(ARG9);
 
 function vector(h: number, $: ScriptVars): void {
     const n = $.stack.length - h;

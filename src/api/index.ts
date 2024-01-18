@@ -4,7 +4,7 @@ import { is_native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { clojurescript_parse } from '../clojurescript/parser/clojurescript_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
+import { EigenmathParseConfig, eigenmath_init_script, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { delegate_parse_script, ParseOptions, SyntaxKind } from '../parser/parser';
@@ -342,20 +342,20 @@ class EigenmathOutputListener implements ScriptOutputListener {
 class EigenmathExprEngine implements ExprEngine {
     private readonly $: ScriptVars = new ScriptVars();
     constructor() {
-        init(this.$);
-        initscript(this.$);
+        this.$.init();
+        this.$.initscript(eigenmath_init_script);
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
         this.$.defineFunction(name, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
+        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.$);
         return { trees, errors: emErrorHandler.errors };
     }
     parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler);
+        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.$);
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors: emErrorHandler.errors };
     }

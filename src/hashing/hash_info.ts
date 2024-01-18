@@ -20,7 +20,7 @@ type INFO = { kind: KIND, parts: string[] };
 
 /**
  * Computes the hash for an atom.
- * The atom argument MUST satisfy is_atom(atom) 
+ * The atom argument MUST satisfy is_atom(atom). 
  * @param atom An exemplar atom for which the hash string is required.
  */
 export function hash_for_atom(atom: U): string | never {

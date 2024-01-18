@@ -2,7 +2,7 @@ import { EigenmathErrorHandler } from "../api";
 import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
 import { ClojureScriptParseOptions } from "../clojurescript/parser/ClojureScriptParseOptions";
 import { clojurescript_parse } from "../clojurescript/parser/clojurescript_parse";
-import { EigenmathParseConfig, parse_eigenmath_script } from "../eigenmath";
+import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath";
 import { U } from "../tree/tree";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
@@ -87,7 +87,9 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
         }
         case SyntaxKind.Eigenmath: {
             const emErrorHandler = new EigenmathErrorHandler();
-            const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_options(options), emErrorHandler);
+            const scriptVars = new ScriptVars();
+            scriptVars.init();
+            const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_options(options), emErrorHandler, scriptVars);
             return { trees, errors: emErrorHandler.errors };
         }
         case SyntaxKind.PythonScript: {

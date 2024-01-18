@@ -22,6 +22,10 @@ export interface EigenmathWriteScope {
     defineUserSymbol(sym: Sym): void;
 }
 
+export interface EigenmathScope extends EigenmathReadScope, EigenmathWriteScope {
+
+}
+
 function alloc_tensor(): Tensor {
     return new Tensor([], []);
 }
@@ -1578,6 +1582,10 @@ function emit_symbol(sym: Sym, $: StackContext, scope: Pick<EigenmathReadScope, 
     }
 
     const s = printname(sym);
+
+    if (scope.isConsSymbol(sym)) {
+        // OK, just asking.
+    }
 
     if (scope.isUserSymbol(sym)) {
         // Fall through
@@ -13534,12 +13542,10 @@ function list(n: number, $: StackContext): void {
         cons($);
 }
 
-/**
- * A convenience function for setting the symbol in the scope as a user symbol.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function define_user_symbol(sym: Sym, scope: EigenmathWriteScope): Sym {
-    scope.defineUserSymbol(sym);
+function lookup(sym: Sym, scope: EigenmathScope): Sym {
+    if (!scope.isConsSymbol(sym)) {
+        scope.defineUserSymbol(sym);
+    }
     return sym;
 }
 
@@ -15773,12 +15779,12 @@ function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
                 push(SX, $);
                 break;
             default:
-                push(define_user_symbol(create_sym(token_buf), $), $);
+                push(lookup(create_sym(token_buf), $), $);
                 break;
         }
     }
     else {
-        push(define_user_symbol(create_sym(token_buf), $), $);
+        push(lookup(create_sym(token_buf), $), $);
     }
     get_token($, config);
 }
@@ -15791,7 +15797,7 @@ function scan_string($: ScriptVars, config: EigenmathParseConfig): void {
 function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     scan_level++;
-    push(define_user_symbol(create_sym(token_buf), $), $); // push function name
+    push(lookup(create_sym(token_buf), $), $); // push function name
     get_token($, config); // get token after function name
     get_token($, config); // get token after (
     if (token === ")") {
@@ -16075,7 +16081,7 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmin = -Math.PI;
     dc.tmax = Math.PI;
 
-    let p1: U = define_user_symbol(create_sym("trange"), $);
+    let p1: U = lookup(create_sym("trange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16100,7 +16106,7 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmin = -10;
     dc.xmax = 10;
 
-    let p1: U = define_user_symbol(create_sym("xrange"), $);
+    let p1: U = lookup(create_sym("xrange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16124,7 +16130,7 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymin = -10;
     dc.ymax = 10;
 
-    let p1: U = define_user_symbol(create_sym("yrange"), $);
+    let p1: U = lookup(create_sym("yrange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);

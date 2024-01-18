@@ -78,6 +78,7 @@ describe("sandbox", function () {
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
+        // TODO: The handler needs context from the parse?
         const handler = new TestHandler();
         run_script(engine, trees, handler);
         const outputs = handler.outputs;
@@ -87,19 +88,7 @@ describe("sandbox", function () {
         // The following is the output for useGeometricAlgebra: false
         // It's still not correct because sin should have the same font-size.
         // It is correctly determining that the symbol f is a user symbol and so should annotate the output.
-        const svg: string[] = [
-            `<svg height='72'width='125'>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='48'>f</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='31.66796875'y='48'>=</text>`,
-            `<line x1='57.203125'y1='40.0546875'x2='115.1806640625'y2='40.0546875'style='stroke:black;stroke-width:1.6800000000000002'/>\n`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='60.203125'y='26.150390625'>s</text>`,
-            `<text style='font-family:"Times New Roman";font-size:18px;font-style:italic;'x='71.54296875'y='34.095703125'>i</text>`,
-            `<text style='font-family:"Times New Roman";font-size:18px;font-style:italic;'x='76.5439453125'y='34.095703125'>n</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='85.5439453125'y='26.150390625'>(</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='104.1884765625'y='26.150390625'>)</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='93.5361328125'y='26.150390625'>x</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='80.86572265625'y='61.904296875'>x</text>`,
-            `</svg><br>`];
+        const svg: string[] = [``];
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const expected = svg.join('');
         // assert.strictEqual(actual, expected);

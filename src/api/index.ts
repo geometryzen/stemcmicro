@@ -4,7 +4,7 @@ import { is_native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { clojurescript_parse } from '../clojurescript/parser/clojurescript_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { EigenmathParseConfig, eigenmath_init_script, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { delegate_parse_script, ParseOptions, SyntaxKind } from '../parser/parser';
@@ -223,6 +223,8 @@ class ClojureScriptExprEngine implements ExprEngine {
 class AlgebriteExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor() {
+        // console.lg();
+        // console.lg(`constructor AlgebriteExpEngine`);
         this.#env = create_env({
             dependencies: ALL_FEATURES
         });
@@ -231,10 +233,14 @@ class AlgebriteExprEngine implements ExprEngine {
         });
     }
     isConsSymbol(sym: Sym): boolean {
-        return this.#env.isConsSymbol(sym);
+        const answer: boolean = this.#env.isConsSymbol(sym);
+        // console.lg(`AlgebriteExprEngine.isConsSymbol ${sym} => ${answer}`);
+        return answer;
     }
     isUserSymbol(sym: Sym): boolean {
-        return this.#env.isUserSymbol(sym);
+        const answer: boolean = this.#env.isUserSymbol(sym);
+        // console.lg(`AlgebriteExprEngine.isUserSymbol ${sym} => ${answer}`);
+        return answer;
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
         const match = items_to_cons(create_sym(name));
@@ -342,8 +348,10 @@ class EigenmathOutputListener implements ScriptOutputListener {
 class EigenmathExprEngine implements ExprEngine {
     private readonly $: ScriptVars = new ScriptVars();
     constructor() {
+        // console.lg();
+        // console.lg(`constructor EigenmathExpEngine`);
         this.$.init();
-        this.$.initscript(eigenmath_init_script);
+        // this.$.initscript(eigenmath_init_script);
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
         this.$.defineFunction(name, lambda);
@@ -364,10 +372,15 @@ class EigenmathExprEngine implements ExprEngine {
         return get_binding(sym, this.$);
     }
     isConsSymbol(sym: Sym): boolean {
-        return this.$.isConsSymbol(sym);
+        const answer: boolean = this.$.isConsSymbol(sym);
+        // console.lg(`EigenmathExprEngine.isConsSymbol ${sym} => ${answer}`);
+        return answer;
     }
     isUserSymbol(sym: Sym): boolean {
-        return this.$.isUserSymbol(sym);
+        const answer: boolean = this.$.isUserSymbol(sym);
+        // console.lg(`EigenmathExprEngine.isUserSymbol ${sym} => ${answer}`);
+        return answer;
+
     }
     evaluate(expr: U): U {
         return evaluate_expression(expr, this.$);

@@ -83,8 +83,11 @@ class TensorExtension implements Extension<Tensor> {
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return HASH_TENSOR;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash(): string {
         return HASH_TENSOR;

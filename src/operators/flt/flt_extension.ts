@@ -26,8 +26,11 @@ export class FltExtension implements Extension<Flt> {
     get name(): string {
         return 'FltExtension';
     }
-    get key(): string {
-        return oneAsFlt.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get dependencies(): FEATURE[] {
         return ['Flt'];

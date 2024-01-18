@@ -10,6 +10,9 @@ export class DerivedEnv implements Scope {
     constructor(readonly parentEnv: Scope, readonly strict: boolean, readonly thing: Thing) {
 
     }
+    isConsSymbol(sym: Sym): boolean {
+        return this.parentEnv.isConsSymbol(sym);
+    }
     isUserSymbol(sym: Sym): boolean {
         return this.parentEnv.isUserSymbol(sym);
     }

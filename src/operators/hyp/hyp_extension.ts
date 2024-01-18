@@ -1,19 +1,33 @@
+import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_HYP } from "../../hashing/hash_info";
+import { hash_for_atom } from "../../hashing/hash_info";
 import { epsilon, Hyp } from "../../tree/hyp/Hyp";
-import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { is_hyp } from "./is_hyp";
+
+function verify_hyp(hyp: Hyp): Hyp | never {
+    if (is_hyp(hyp)) {
+        return hyp;
+    }
+    else {
+        throw new Error();
+    }
+}
 
 class HypExtension implements Extension<Hyp> {
+    readonly #hash: string = hash_for_atom(verify_hyp(epsilon));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key() {
-        return epsilon.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash() {
-        return HASH_HYP;
+        return this.#hash;
     }
     get name() {
         return 'HypExtension';

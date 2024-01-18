@@ -1,10 +1,8 @@
+import { is_sym, Sym } from "math-expression-atoms";
+import { cons, Cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
 import { MATH_ADD } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
-import { cons, Cons, U } from "../../tree/tree";
-import { is_sym } from "./is_sym";
-import { TYPE_NAME_SYM } from "./TYPE_NAME_SYM";
 
 class Builder implements OperatorBuilder<Sym> {
     create($: ExtensionEnv): Operator<Sym> {
@@ -19,8 +17,11 @@ class SymMathAdd implements Operator<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
     }
-    get key(): string {
-        return TYPE_NAME_SYM.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash(): string {
         return HASH_SYM;

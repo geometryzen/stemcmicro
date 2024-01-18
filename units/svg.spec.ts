@@ -7,6 +7,10 @@ import { assert_one_value_execute } from "./assert_one_value_execute";
 
 class TestScope implements EigenmathScope {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isConsSymbol(sym: Sym): boolean {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isUserSymbol(sym: Sym): boolean {
         throw new Error("Method not implemented.");
     }

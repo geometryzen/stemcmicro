@@ -1,20 +1,34 @@
 import { Dictionary, is_dictionary } from "../../clojurescript/atoms/Dictionary";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { hash_for_atom } from "../../hashing/hash_info";
 import { print_str } from "../../print/print";
 import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
 import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
+function verify_map(x: Dictionary): Dictionary | never {
+    if (is_dictionary(x)) {
+        return x;
+    }
+    else {
+        throw new Error();
+    }
+}
+
 class DictionaryExtension implements Extension<Dictionary> {
     // Create an exemplar of the atom we control to discover it's name for hashing purposes.
-    readonly #hash: string = new Dictionary([]).name;
+    readonly #atom: Dictionary = verify_map(new Dictionary([]));
+    readonly #hash: string = hash_for_atom(verify_map(this.#atom));
     readonly dependencies: FEATURE[] = ['Map'];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key() {
-        return this.#hash;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash() {
         return this.#hash;

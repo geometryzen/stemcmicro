@@ -1,7 +1,7 @@
 import { LambdaExpr } from 'math-expression-context';
-import { is_atom } from 'math-expression-tree';
+import { is_atom, nil } from 'math-expression-tree';
 import { yyfactorpoly } from "../factorpoly";
-import { hash_info } from "../hashing/hash_info";
+import { hash_for_atom, hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
@@ -28,7 +28,7 @@ import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, 
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
-import { UnknownOperator } from "./UnknownOperator";
+import { UnknownConsOperator } from "./UnknownOperator";
 
 const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
@@ -109,11 +109,18 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const builders: OperatorBuilder<U>[] = [];
     /**
-     * The operators in buckets that are determined by the phase and operator.
+     * The operators in buckets that are determined by the phase and operator hash.
      */
     const ops_by_mode: { [hash: string]: Operator<U>[] }[] = [];
     for (const mode of MODE_SEQUENCE) {
         ops_by_mode[mode] = {};
+    }
+    /**
+     * The cons operators in buckets determined by the phase and operator key.
+     */
+    const cons_by_mode: { [key: string]: Operator<Cons>[] }[] = [];
+    for (const mode of MODE_SEQUENCE) {
+        cons_by_mode[mode] = {};
     }
 
     let printHandler: PrintHandler = new NoopPrintHandler();
@@ -128,34 +135,79 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const sym_order: Record<string, ExprComparator> = {};
 
-    function currentOps(): { [hash: string]: Operator<U>[] } {
+    function currentOpsByHash(): { [hash: string]: Operator<U>[] } {
         if (native_directives.get(Directive.expanding)) {
             const ops = ops_by_mode[MODE_EXPANDING];
             if (typeof ops === 'undefined') {
-                throw new Error(`currentOps(${MODE_EXPANDING})`);
+                throw new Error();
             }
             return ops;
         }
         if (native_directives.get(Directive.factoring)) {
             const ops = ops_by_mode[MODE_FACTORING];
             if (typeof ops === 'undefined') {
-                throw new Error(`currentOps(${MODE_FACTORING})`);
+                throw new Error();
             }
             return ops;
         }
         return {};
     }
 
+    function currentConsByOperator(): { [operator: string]: Operator<Cons>[] } {
+        if (native_directives.get(Directive.expanding)) {
+            const cons = cons_by_mode[MODE_EXPANDING];
+            if (cons) {
+                return cons;
+            }
+            else {
+                throw new Error();
+            }
+        }
+        if (native_directives.get(Directive.factoring)) {
+            const cons = cons_by_mode[MODE_FACTORING];
+            if (cons) {
+                return cons;
+            }
+            else {
+                throw new Error();
+            }
+        }
+        return {};
+    }
+
     /**
+     * TODO: It should be possible to separate ConsOperator and AtomOperator?
      * @param atom The expression is the atom.
      * @returns The operator for the atom.
      */
-    function selectOperator(atom: U): Operator<U> | undefined {
-        const hash = atom.name;
-        const ops = currentOps()[hash];
+    function selectAtomOperator(atom: U): Operator<U> | undefined {
+        const hash = hash_for_atom(atom);
+        const ops = currentOpsByHash()[hash];
         if (Array.isArray(ops) && ops.length > 0) {
             for (const op of ops) {
                 if (op.isKind(atom)) {
+                    return op;
+                }
+            }
+            throw new SystemError(`No matching operator for hash ${hash}`);
+        }
+        else {
+            return void 0;
+        }
+    }
+
+    /**
+     * TODO: The NilExtension is actually typed as Operator<Cons>
+     */
+    function selectNilOperator(): Operator<U> | undefined {
+        // We could simply create a Nil operator and cache it.
+        // How many do you need?
+        // TODO: DRY. What is the hash for Nil?
+        const hash = nil.name;
+        const ops = currentOpsByHash()[hash];
+        if (Array.isArray(ops) && ops.length > 0) {
+            for (const op of ops) {
+                if (op.isKind(nil)) {
                     return op;
                 }
             }
@@ -176,8 +228,17 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getUsrFunc(sym: Sym): U {
             return $.getSymbolUsrFunc(sym);
         },
-        isBinding(sym: Sym): boolean {
-            return symTab.isBinding(sym);
+        isConsSymbol(sym: Sym): boolean {
+            const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
+            const cons: Operator<U>[] = currents[sym.key()];
+            if (Array.isArray(cons) && cons.length > 0) {
+                return true;
+            }
+            else {
+                // TODO: May need to adjust the ordering.
+                // Do we check the symTab first?
+                return symTab.isBinding(sym);
+            }
         },
         isUserSymbol(sym: Sym): boolean {
             return symTab.isUsrFunc(sym);
@@ -224,8 +285,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             builders.length = 0;
             for (const mode of MODE_SEQUENCE) {
                 const ops = ops_by_mode[mode];
-                for (const key in ops) {
-                    ops[key] = [];
+                for (const hash in ops) {
+                    ops[hash] = [];
+                }
+                const cons = cons_by_mode[mode];
+                for (const key in cons) {
+                    cons[key] = [];
                 }
             }
         },
@@ -321,8 +386,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const phaseFlags = typeof op.phases === 'number' ? op.phases : MODE_FLAGS_ALL;
                 for (const mode of MODE_SEQUENCE) {
                     if (phaseFlags & mode) {
-                        const ops = ops_by_mode[mode];
                         if (op.hash) {
+                            const ops = ops_by_mode[mode];
                             if (!Array.isArray(ops[op.hash])) {
                                 ops[op.hash] = [op];
                             }
@@ -333,7 +398,17 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         else {
                             throw new SystemError(`operator MUST have a 'hash' property.`);
                         }
-
+                        if (op.iscons()) {
+                            // The generic ConsExtension is unable to provide an operator. 
+                            const operator: string = op.operator().key();
+                            const cons = cons_by_mode[mode];
+                            if (!Array.isArray(cons[operator])) {
+                                cons[operator] = [op];
+                            }
+                            else {
+                                cons[operator].push(op);
+                            }
+                        }
                     }
                 }
             }
@@ -512,7 +587,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             if (is_cons(expr)) {
                 const hashes = hash_info(expr);
                 for (const hash of hashes) {
-                    const ops = currentOps()[hash];
+                    const ops = currentOpsByHash()[hash];
                     if (Array.isArray(ops)) {
                         for (const op of ops) {
                             if (op.isKind(expr)) {
@@ -522,17 +597,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         }
                     }
                 }
-                return new UnknownOperator(expr, $);
+                return new UnknownConsOperator(expr, $);
                 // We can end up here for user-defined functions.
                 // The consumer is trying to answer a question
                 // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
             }
             else if (is_atom(expr)) {
-                return selectOperator(expr);
+                return selectAtomOperator(expr);
             }
             else if (is_nil(expr)) {
-                // TODO: Why does this make sense for nil, which is not an atom?
-                return selectOperator(expr);
+                return selectNilOperator();
             }
             else {
                 throw new Error();
@@ -653,7 +727,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // Why do we have a special case for rat?
                     // We know that the key and hash are both 'Rat'
                     // const hash = head.name;
-                    const ops: Operator<U>[] = currentOps()['Rat'];
+                    const ops: Operator<U>[] = currentOpsByHash()['Rat'];
                     // TODO: The operator will be acting on the argList, not the entire expression.
                     const op = unambiguous_operator(expr.argList, ops, $);
                     if (op) {
@@ -666,7 +740,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                 }
                 // let changedExpr = false;
-                const hash_to_ops = currentOps();
+                const hash_to_ops = currentOpsByHash();
                 // hashes are the buckets we should look in for operators from specific to generic.
                 const hashes: string[] = hash_info(expr);
                 // console.lg("keys", JSON.stringify(keys));

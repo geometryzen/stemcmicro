@@ -1,3 +1,4 @@
+import { Sym } from "math-expression-atoms";
 import { Extension, ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { Cons, U } from "../../tree/tree";
 
@@ -27,6 +28,12 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     constructor(private readonly extension: Extension<T>, private readonly $: ExtensionEnv) {
         // Nothing going on here because this is a crude adaption of the Extension.
         // This would be a good place to cache symbols that will be needed later.
+    }
+    iscons(): boolean {
+        return this.extension.iscons();
+    }
+    operator(): Sym {
+        return this.extension.operator();
     }
     get hash(): string {
         return this.extension.hash;

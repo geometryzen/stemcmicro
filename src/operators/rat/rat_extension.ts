@@ -1,24 +1,36 @@
+import { create_flt, one, Rat } from "math-expression-atoms";
+import { cons, Cons, is_cons, is_singleton, U } from "math-expression-tree";
 import { Directive, Extension, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_RAT } from "../../hashing/hash_info";
-import { create_flt } from '../../tree/flt/Flt';
-import { Rat } from "../../tree/rat/Rat";
-import { cons, Cons, is_cons, is_singleton, U } from "../../tree/tree";
+import { hash_for_atom } from "../../hashing/hash_info";
 import { ExtensionOperatorBuilder } from '../helpers/ExtensionOperatorBuilder';
 
 export function is_rat(p: unknown): p is Rat {
     return p instanceof Rat;
 }
 
+function verify_rat(x: Rat): Rat | never {
+    if (is_rat(x)) {
+        return x;
+    }
+    else {
+        throw new Error();
+    }
+}
+
 class RatExtension implements Extension<Rat> {
+    readonly #hash = hash_for_atom(verify_rat(one));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): 'Rat' {
-        return 'Rat';
+    iscons(): false {
+        return false;
     }
-    get hash(): 'Rat' {
-        return HASH_RAT;
+    operator(): never {
+        throw new Error();
+    }
+    get hash(): string {
+        return this.#hash;
     }
     get name(): string {
         return 'RatExtension';

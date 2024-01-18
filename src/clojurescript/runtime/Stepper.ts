@@ -69,6 +69,7 @@ export interface Scope {
     evaluate(opr: Native, ...args: U[]): U;
     getSymbolBinding(sym: string | Sym): U;
     getSymbolUsrFunc(sym: Sym): U;
+    isConsSymbol(sym: Sym): boolean;
     isUserSymbol(sym: Sym): boolean;
     setSymbolBinding(sym: Sym, binding: U): void;
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void;

@@ -1,21 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { render_as_sexpr } from "../print/render_as_sexpr";
+import { assert_sym, Sym } from "math-expression-atoms";
 import { Cons, U } from "../tree/tree";
 import { ExtensionEnv, FEATURE, Operator } from "./ExtensionEnv";
 
-export class UnknownOperator implements Operator<U> {
+export class UnknownConsOperator implements Operator<U> {
     name: string;
+    readonly #operator: Sym;
     /**
      * 
      * @param expr An expression, probably user-defined.
      * @param $ The extension environment.
      */
-    constructor(private readonly expr: U, private readonly $: ExtensionEnv) {
+    constructor(expr: Cons, private readonly $: ExtensionEnv) {
         this.name = "unknown";
+        this.#operator = assert_sym(expr.opr);
     }
     key?: string | undefined;
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
+    iscons(): boolean {
+        return true;
+    }
+    operator(): Sym {
+        return this.#operator;
+    }
     get hash(): string {
         throw new Error("UnknownOperator.hash Method not implemented.");
     }

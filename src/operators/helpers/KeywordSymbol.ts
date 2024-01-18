@@ -1,21 +1,32 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { assert_sym } from "math-expression-atoms";
 import { ExtensionEnv, Operator, TFLAGS } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { cons, Cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 
 /**
- * Base class for symbols that are keywords.
+ * 
  */
-export abstract class KeywordOperator implements Operator<Sym> {
-    constructor(protected readonly keyword: Sym, protected readonly $: ExtensionEnv) {
-        // Nothing to see here.
+export abstract class AbstractKeywordOperator implements Operator<Sym> {
+    readonly #keyword: Sym;
+    constructor(keyword: Sym, protected readonly $: ExtensionEnv) {
+        this.#keyword = assert_sym(keyword);
     }
     abstract readonly hash: string;
     abstract readonly name: string;
+    keyword(): Sym {
+        return this.#keyword;
+    }
+    iscons(): boolean {
+        return false;
+    }
+    operator(): Sym {
+        throw new Error();
+    }
     isKind(expr: U): expr is Sym {
         if (is_sym(expr)) {
-            return expr.equalsSym(this.keyword);
+            return expr.equalsSym(this.#keyword);
         }
         return false;
     }
@@ -29,7 +40,7 @@ export abstract class KeywordOperator implements Operator<Sym> {
         throw new Error("Keyword.toLatexString Symbol Method not implemented.");
     }
     toListString(expr: Sym): string {
-        return this.keyword.key();
+        return this.#keyword.key();
     }
     evaluate(expr: U, argList: Cons): [TFLAGS, U] {
         // TODO: expr should be the same as the keyword.

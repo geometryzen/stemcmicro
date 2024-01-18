@@ -14,6 +14,7 @@ import { Imu } from '../tree/imu/Imu';
  * 
  */
 export interface EigenmathScope {
+    isConsSymbol(sym: Sym): boolean;
     isUserSymbol(sym: Sym): boolean;
 }
 
@@ -1575,7 +1576,7 @@ function emit_symbol(sym: Sym, $: StackContext, scope: EigenmathScope): void {
         // Fall through
         // console.lg(`${sym} is user symbol`);
     }
-    else if ((iskeyword(sym)) || sym.equals(LAST) || sym.equals(TRACE) || sym.equals(TTY)) {
+    else if ((scope.isConsSymbol(sym)) || sym.equals(LAST) || sym.equals(TRACE) || sym.equals(TTY)) {
         // Keywords are printed Roman without italics.
         // console.lg(`${sym} is keyword`);
         emit_roman_string(s, $);
@@ -9003,7 +9004,7 @@ function make_should_annotate(scope: EigenmathScope) {
             if (x.equals(J_LOWER) && isimaginaryunit(value))
                 return false;
             */
-    
+
             return true;
         }
         else {
@@ -9014,7 +9015,7 @@ function make_should_annotate(scope: EigenmathScope) {
                 return true;
             }
         }
-    };    
+    };
 }
 
 
@@ -11433,10 +11434,10 @@ function evalf_nib($: ScriptVars): void {
 
     const sym = car(p1);
     if (iscons(p1) && issymbol(sym)) {
-        if (iskeyword(sym)) {
+        if ($.isConsSymbol(sym)) {
             $.expanding++;
             try {
-                const evalFunction = evalFunctions.get(sym.key()) as EvalFunction;
+                const evalFunction = consFunctions.get(sym.key()) as ConsFunction;
                 evalFunction(p1, $);
             }
             finally {
@@ -11450,7 +11451,7 @@ function evalf_nib($: ScriptVars): void {
         }
     }
 
-    if (issymbol(p1) && iskeyword(p1)) { // bare keyword
+    if (issymbol(p1) && $.isConsSymbol(p1)) { // bare keyword
         push(p1, $);
         push(LAST, $); // default arg
         list(2, $);
@@ -13397,10 +13398,6 @@ function isinteger1(p: Rat) {
     return isinteger(p) && isplusone(p);
 }
 
-function iskeyword(p: Sym): boolean {
-    return evalFunctions.has(p.key());
-}
-
 function isminusone(p: U): boolean {
     // Optimize by avoiding object creation...
     /*
@@ -13503,19 +13500,6 @@ function issymbol(p: U): p is Sym {
 
 function istensor(p: U): p is Tensor {
     return is_tensor(p);
-}
-
-function isevalfunction(p: Sym): boolean {
-    return evalFunctions.has(p.key());
-}
-
-/**
- * A symbol where the func is eval_user_symbol.
- * TODO: Everywhere this is used should be replaced by a call to ScriptVars, eventually indicating an interface extraction.
- * This would allow safe reuse of functions in this module by making them pure. 
- */
-function isusersymbol(sym: Sym): boolean {
-    return userFunctions.has(sym.key());
 }
 
 function isusersymbolsomewhere(p: U, scope: EigenmathScope): 0 | 1 {
@@ -15805,12 +15789,12 @@ function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
                 push(SX, $);
                 break;
             default:
-                push(ensure_user_function(create_sym(token_buf),$), $);
+                push(ensure_user_function(create_sym(token_buf), $), $);
                 break;
         }
     }
     else {
-        push(ensure_user_function(create_sym(token_buf),$), $);
+        push(ensure_user_function(create_sym(token_buf), $), $);
     }
     get_token($, config);
 }
@@ -15823,7 +15807,7 @@ function scan_string($: ScriptVars, config: EigenmathParseConfig): void {
 function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     scan_level++;
-    push(ensure_user_function(create_sym(token_buf),$), $); // push function name
+    push(ensure_user_function(create_sym(token_buf), $), $); // push function name
     get_token($, config); // get token after function name
     get_token($, config); // get token after (
     if (token === ")") {
@@ -16107,7 +16091,7 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmin = -Math.PI;
     dc.tmax = Math.PI;
 
-    let p1: U = ensure_user_function(create_sym("trange"),$);
+    let p1: U = ensure_user_function(create_sym("trange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16132,7 +16116,7 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmin = -10;
     dc.xmax = 10;
 
-    let p1: U = ensure_user_function(create_sym("xrange"),$);
+    let p1: U = ensure_user_function(create_sym("xrange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16156,7 +16140,7 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymin = -10;
     dc.ymax = 10;
 
-    let p1: U = ensure_user_function(create_sym("yrange"),$);
+    let p1: U = ensure_user_function(create_sym("yrange"), $);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16349,11 +16333,11 @@ export class ScriptVars implements ExprContext {
     getUsrFunc(key: string): U {
         return this.usrfunc[key];
     }
-    isBinding(sym: Sym): boolean {
-        return isevalfunction(sym);
+    isConsSymbol(sym: Sym): boolean {
+        return consFunctions.has(sym.key());
     }
     isUserSymbol(sym: Sym): boolean {
-        return isusersymbol(sym);
+        return userFunctions.has(sym.key());
     }
     setBinding(sym: Sym, binding: U): void {
         this.binding[sym.key()] = binding;
@@ -16383,11 +16367,11 @@ export class ScriptVars implements ExprContext {
      * 
      */
     defineFunction(name: string, lambda: LambdaExpr): void {
-        const handler: EvalFunction = (expr: Cons, $: ScriptVars) => {
+        const handler: ConsFunction = (expr: Cons, $: ScriptVars) => {
             const retval = lambda(assert_cons(expr).argList, $);
             push(retval, $);
         };
-        evalFunctions.set(name, handler);
+        consFunctions.set(name, handler);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addOutputListener(listener: ScriptOutputListener): void {
@@ -16404,7 +16388,7 @@ const one: Rat = create_rat(1, 1);
 const minusone: Rat = create_rat(-1, 1);
 let imaginaryunit: U;
 
-interface EvalFunction {
+interface ConsFunction {
     (x: Cons, $: ScriptVars): void
 }
 
@@ -16412,122 +16396,122 @@ interface UserFunction {
     (x: Sym, $: ScriptVars): void
 }
 
-const evalFunctions: Map<string, EvalFunction> = new Map();
+const consFunctions: Map<string, ConsFunction> = new Map();
 const userFunctions: Map<string, UserFunction> = new Map();
 
-function defineEvalFunction(sym: Sym, func: EvalFunction): void {
-    evalFunctions.set(sym.key(), func);
+function defineConsFunction(sym: Sym, func: ConsFunction): void {
+    consFunctions.set(sym.key(), func);
 }
 
 function defineUserFunction(sym: Sym): void {
     userFunctions.set(sym.key(), eval_user_symbol);
 }
 
-defineEvalFunction(ABS, eval_abs);
-defineEvalFunction(ADD, eval_add);
-defineEvalFunction(ADJ, eval_adj);
-defineEvalFunction(ALGEBRA, eval_algebra);
-defineEvalFunction(ARCCOS, eval_arccos);
-defineEvalFunction(ARCCOSH, eval_arccosh);
-defineEvalFunction(ARCSIN, eval_arcsin);
-defineEvalFunction(ARCSINH, eval_arcsinh);
-defineEvalFunction(ARCTAN, eval_arctan);
-defineEvalFunction(ARCTANH, eval_arctanh);
-defineEvalFunction(AND, eval_and);
-defineEvalFunction(ARG, eval_arg);
-defineEvalFunction(BINDING, eval_binding);
-defineEvalFunction(CEILING, eval_ceiling);
-defineEvalFunction(CHECK, eval_check);
-defineEvalFunction(CIRCEXP, eval_circexp);
-defineEvalFunction(CLEAR, eval_clear);
-defineEvalFunction(CLOCK, eval_clock);
-defineEvalFunction(COFACTOR, eval_cofactor);
-defineEvalFunction(CONJ, eval_conj);
-defineEvalFunction(CONTRACT, eval_contract);
-defineEvalFunction(COS, eval_cos);
-defineEvalFunction(COSH, eval_cosh);
-defineEvalFunction(DEFINT, eval_defint);
-defineEvalFunction(DENOMINATOR, eval_denominator);
-defineEvalFunction(DET, eval_det);
-defineEvalFunction(DERIVATIVE, eval_derivative);
-defineEvalFunction(DIM, eval_dim);
-defineEvalFunction(DO, eval_do);
-defineEvalFunction(DOT, eval_dot);
-defineEvalFunction(DRAW, eval_draw);
-defineEvalFunction(EIGENVEC, eval_eigenvec);
-defineEvalFunction(ERF, eval_erf);
-defineEvalFunction(ERFC, eval_erfc);
-defineEvalFunction(EVAL, eval_eval);
-defineEvalFunction(EXIT, eval_exit);
-defineEvalFunction(EXP, eval_exp);
-defineEvalFunction(EXPCOS, eval_expcos);
-defineEvalFunction(EXPCOSH, eval_expcosh);
-defineEvalFunction(EXPSIN, eval_expsin);
-defineEvalFunction(EXPSINH, eval_expsinh);
-defineEvalFunction(EXPTAN, eval_exptan);
-defineEvalFunction(EXPTANH, eval_exptanh);
-defineEvalFunction(FACTORIAL, eval_factorial);
-defineEvalFunction(FLOAT, eval_float);
-defineEvalFunction(FLOOR, eval_floor);
-defineEvalFunction(INTEGRAL, eval_integral);
-defineEvalFunction(LOG, eval_log);
-defineEvalFunction(MULTIPLY, eval_multiply);
-defineEvalFunction(POWER, eval_power);
-defineEvalFunction(ROTATE, eval_rotate);
-defineEvalFunction(INDEX, eval_index);
-defineEvalFunction(SETQ, eval_setq);
-defineEvalFunction(SIN, eval_sin);
-defineEvalFunction(SINH, eval_sinh);
-defineEvalFunction(SQRT, eval_sqrt);
-defineEvalFunction(TAN, eval_tan);
-defineEvalFunction(TANH, eval_tanh);
-defineEvalFunction(TESTEQ, eval_testeq);
-defineEvalFunction(TESTGE, eval_testge);
-defineEvalFunction(TESTGT, eval_testgt);
-defineEvalFunction(TESTLE, eval_testle);
-defineEvalFunction(TESTLT, eval_testlt);
+defineConsFunction(ABS, eval_abs);
+defineConsFunction(ADD, eval_add);
+defineConsFunction(ADJ, eval_adj);
+defineConsFunction(ALGEBRA, eval_algebra);
+defineConsFunction(ARCCOS, eval_arccos);
+defineConsFunction(ARCCOSH, eval_arccosh);
+defineConsFunction(ARCSIN, eval_arcsin);
+defineConsFunction(ARCSINH, eval_arcsinh);
+defineConsFunction(ARCTAN, eval_arctan);
+defineConsFunction(ARCTANH, eval_arctanh);
+defineConsFunction(AND, eval_and);
+defineConsFunction(ARG, eval_arg);
+defineConsFunction(BINDING, eval_binding);
+defineConsFunction(CEILING, eval_ceiling);
+defineConsFunction(CHECK, eval_check);
+defineConsFunction(CIRCEXP, eval_circexp);
+defineConsFunction(CLEAR, eval_clear);
+defineConsFunction(CLOCK, eval_clock);
+defineConsFunction(COFACTOR, eval_cofactor);
+defineConsFunction(CONJ, eval_conj);
+defineConsFunction(CONTRACT, eval_contract);
+defineConsFunction(COS, eval_cos);
+defineConsFunction(COSH, eval_cosh);
+defineConsFunction(DEFINT, eval_defint);
+defineConsFunction(DENOMINATOR, eval_denominator);
+defineConsFunction(DET, eval_det);
+defineConsFunction(DERIVATIVE, eval_derivative);
+defineConsFunction(DIM, eval_dim);
+defineConsFunction(DO, eval_do);
+defineConsFunction(DOT, eval_dot);
+defineConsFunction(DRAW, eval_draw);
+defineConsFunction(EIGENVEC, eval_eigenvec);
+defineConsFunction(ERF, eval_erf);
+defineConsFunction(ERFC, eval_erfc);
+defineConsFunction(EVAL, eval_eval);
+defineConsFunction(EXIT, eval_exit);
+defineConsFunction(EXP, eval_exp);
+defineConsFunction(EXPCOS, eval_expcos);
+defineConsFunction(EXPCOSH, eval_expcosh);
+defineConsFunction(EXPSIN, eval_expsin);
+defineConsFunction(EXPSINH, eval_expsinh);
+defineConsFunction(EXPTAN, eval_exptan);
+defineConsFunction(EXPTANH, eval_exptanh);
+defineConsFunction(FACTORIAL, eval_factorial);
+defineConsFunction(FLOAT, eval_float);
+defineConsFunction(FLOOR, eval_floor);
+defineConsFunction(INTEGRAL, eval_integral);
+defineConsFunction(LOG, eval_log);
+defineConsFunction(MULTIPLY, eval_multiply);
+defineConsFunction(POWER, eval_power);
+defineConsFunction(ROTATE, eval_rotate);
+defineConsFunction(INDEX, eval_index);
+defineConsFunction(SETQ, eval_setq);
+defineConsFunction(SIN, eval_sin);
+defineConsFunction(SINH, eval_sinh);
+defineConsFunction(SQRT, eval_sqrt);
+defineConsFunction(TAN, eval_tan);
+defineConsFunction(TANH, eval_tanh);
+defineConsFunction(TESTEQ, eval_testeq);
+defineConsFunction(TESTGE, eval_testge);
+defineConsFunction(TESTGT, eval_testgt);
+defineConsFunction(TESTLE, eval_testle);
+defineConsFunction(TESTLT, eval_testlt);
 
-defineEvalFunction(FOR, eval_for);
-defineEvalFunction(HADAMARD, eval_hadamard);
-defineEvalFunction(IMAG, eval_imag);
-defineEvalFunction(INFIXFORM, eval_infixform);
-defineEvalFunction(INNER, eval_inner);
-defineEvalFunction(INV, eval_inv);
-defineEvalFunction(KRONECKER, eval_kronecker);
-defineEvalFunction(MAG, eval_mag);
-defineEvalFunction(MINOR, eval_minor);
-defineEvalFunction(MINORMATRIX, eval_minormatrix);
-defineEvalFunction(MOD, eval_mod);
-defineEvalFunction(NOEXPAND, eval_noexpand);
-defineEvalFunction(NOT, eval_not);
-defineEvalFunction(NROOTS, eval_nroots);
-defineEvalFunction(NUMBER, eval_number);
-defineEvalFunction(NUMERATOR, eval_numerator);
-defineEvalFunction(OR, eval_or);
-defineEvalFunction(OUTER, eval_outer);
-defineEvalFunction(POLAR, eval_polar);
-defineEvalFunction(PREFIXFORM, eval_prefixform);
-defineEvalFunction(PRINT, eval_print);
-defineEvalFunction(PRODUCT, eval_product);
-defineEvalFunction(QUOTE, eval_quote);
-defineEvalFunction(RANK, eval_rank);
-defineEvalFunction(RATIONALIZE, eval_rationalize);
-defineEvalFunction(REAL, eval_real);
-defineEvalFunction(RECT, eval_rect);
-defineEvalFunction(ROOTS, eval_roots);
-defineEvalFunction(RUN, eval_run);
-defineEvalFunction(SGN, eval_sgn);
-defineEvalFunction(SIMPLIFY, eval_simplify);
-defineEvalFunction(STATUS, eval_status);
-defineEvalFunction(STOP, eval_stop);
-defineEvalFunction(SUBST, eval_subst);
-defineEvalFunction(SUM, eval_sum);
-defineEvalFunction(TAYLOR, eval_taylor);
-defineEvalFunction(TEST, eval_test);
-defineEvalFunction(TRANSPOSE, eval_transpose);
-defineEvalFunction(UNIT, eval_unit);
-defineEvalFunction(UOM, eval_uom);
-defineEvalFunction(ZERO, eval_zero);
+defineConsFunction(FOR, eval_for);
+defineConsFunction(HADAMARD, eval_hadamard);
+defineConsFunction(IMAG, eval_imag);
+defineConsFunction(INFIXFORM, eval_infixform);
+defineConsFunction(INNER, eval_inner);
+defineConsFunction(INV, eval_inv);
+defineConsFunction(KRONECKER, eval_kronecker);
+defineConsFunction(MAG, eval_mag);
+defineConsFunction(MINOR, eval_minor);
+defineConsFunction(MINORMATRIX, eval_minormatrix);
+defineConsFunction(MOD, eval_mod);
+defineConsFunction(NOEXPAND, eval_noexpand);
+defineConsFunction(NOT, eval_not);
+defineConsFunction(NROOTS, eval_nroots);
+defineConsFunction(NUMBER, eval_number);
+defineConsFunction(NUMERATOR, eval_numerator);
+defineConsFunction(OR, eval_or);
+defineConsFunction(OUTER, eval_outer);
+defineConsFunction(POLAR, eval_polar);
+defineConsFunction(PREFIXFORM, eval_prefixform);
+defineConsFunction(PRINT, eval_print);
+defineConsFunction(PRODUCT, eval_product);
+defineConsFunction(QUOTE, eval_quote);
+defineConsFunction(RANK, eval_rank);
+defineConsFunction(RATIONALIZE, eval_rationalize);
+defineConsFunction(REAL, eval_real);
+defineConsFunction(RECT, eval_rect);
+defineConsFunction(ROOTS, eval_roots);
+defineConsFunction(RUN, eval_run);
+defineConsFunction(SGN, eval_sgn);
+defineConsFunction(SIMPLIFY, eval_simplify);
+defineConsFunction(STATUS, eval_status);
+defineConsFunction(STOP, eval_stop);
+defineConsFunction(SUBST, eval_subst);
+defineConsFunction(SUM, eval_sum);
+defineConsFunction(TAYLOR, eval_taylor);
+defineConsFunction(TEST, eval_test);
+defineConsFunction(TRANSPOSE, eval_transpose);
+defineConsFunction(UNIT, eval_unit);
+defineConsFunction(UOM, eval_uom);
+defineConsFunction(ZERO, eval_zero);
 
 defineUserFunction(PI);
 defineUserFunction(EXP1);

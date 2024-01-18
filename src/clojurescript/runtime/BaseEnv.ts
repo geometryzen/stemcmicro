@@ -168,6 +168,9 @@ export class BaseEnv implements Scope {
     isscalar(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
+    isConsSymbol(sym: Sym): boolean {
+        return this.#baseEnv.isConsSymbol(sym);
+    }
     isUserSymbol(sym: Sym): boolean {
         return this.#baseEnv.isUserSymbol(sym);
     }

@@ -1,7 +1,6 @@
+import { Boo, booT } from "math-expression-atoms";
+import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_BOO } from "../../hashing/hash_info";
-import { Boo, booT } from "../../tree/boo/Boo";
-import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
 export class BooExtension implements Extension<Boo> {
@@ -9,11 +8,14 @@ export class BooExtension implements Extension<Boo> {
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return booT.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash(): string {
-        return HASH_BOO;
+        return booT.name;
     }
     get name(): string {
         return 'BooExtension';

@@ -306,7 +306,7 @@ import { pow_rat_rat } from '../operators/pow/pow_rat_rat';
 import { pow_rat_sym } from '../operators/pow/pow_rat_sym';
 import { pred_any } from '../operators/pred/pred_any';
 import { pred_rat } from '../operators/pred/pred_rat';
-import { make_printmode_keyword } from '../operators/printing/make_printmode_keyword';
+import { make_printmode_function } from '../operators/printing/make_printmode_keyword';
 import { make_printmode_operator } from '../operators/printing/make_printmode_operator';
 import { product_varargs } from '../operators/product/product_varargs';
 import { Eval_quote } from '../operators/quote/quote_varargs';
@@ -614,6 +614,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(degree_varargs);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // TODO: I don't think we should be using defineKeyword for (factor n) and factor(p, x)
     $.defineKeyword(FACTOR, function ($: ExtensionEnv) {
         const last = $.getSymbolBinding(RESERVED_KEYWORD_LAST);
         const factored = $.factor(last);
@@ -915,12 +916,12 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(make_printmode_operator('printlatex', () => PRINTMODE_LATEX));
     $.defineOperator(make_printmode_operator('printsexpr', () => PRINTMODE_SEXPR));
 
-    $.defineOperator(make_printmode_keyword('print', () => defs.printMode));
-    $.defineOperator(make_printmode_keyword('printascii', () => PRINTMODE_ASCII));
-    $.defineOperator(make_printmode_keyword('printhuman', () => PRINTMODE_HUMAN));
-    $.defineOperator(make_printmode_keyword('printinfix', () => PRINTMODE_INFIX));
-    $.defineOperator(make_printmode_keyword('printlatex', () => PRINTMODE_LATEX));
-    $.defineOperator(make_printmode_keyword('printsexpr', () => PRINTMODE_SEXPR));
+    $.defineOperator(make_printmode_function('print', () => defs.printMode));
+    $.defineOperator(make_printmode_function('printascii', () => PRINTMODE_ASCII));
+    $.defineOperator(make_printmode_function('printhuman', () => PRINTMODE_HUMAN));
+    $.defineOperator(make_printmode_function('printinfix', () => PRINTMODE_INFIX));
+    $.defineOperator(make_printmode_function('printlatex', () => PRINTMODE_LATEX));
+    $.defineOperator(make_printmode_function('printsexpr', () => PRINTMODE_SEXPR));
 
     $.defineOperator(product_varargs);
 

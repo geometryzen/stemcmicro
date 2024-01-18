@@ -7,16 +7,25 @@ import { AbstractOperator } from "./AbstractOperator";
  * An operator that matches (opr ...), with a variable number of arguments.
  */
 export abstract class FunctionVarArgs extends AbstractOperator {
-    readonly key: string;
+    readonly #hash: string;
+    readonly #operator: Sym;
     constructor(name: string, readonly opr: Sym, $: ExtensionEnv) {
         super(name, $);
-        this.key = `(${opr.key()})`;
+        // TODO: Is there a more DRY way to do this?
+        this.#hash = `(${opr.key()})`;
+        this.#operator = opr;
     }
     /**
-     * Ideally, we'd leave this out...
+     * TODO: Is it good to provide this generic base implementation?
      */
     get hash(): string {
-        return this.key;
+        return this.#hash;
+    }
+    iscons(): boolean {
+        return true;
+    }
+    operator(): Sym {
+        return this.#operator;
     }
     evaluate(argList: Cons): [number, U] {
         const expr = cons(this.opr, argList);

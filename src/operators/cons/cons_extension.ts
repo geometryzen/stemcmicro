@@ -17,8 +17,12 @@ class ConsExtension implements Extension<Cons> {
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return 'Cons';
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        // We'd like to return a Sym but we don't know it yet.
+        throw new Error();
     }
     get hash(): string {
         return 'Cons';

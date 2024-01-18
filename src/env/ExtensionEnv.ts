@@ -298,6 +298,9 @@ export interface ExtensionEnv extends ExprContext {
      */
     defineConsTransformer(opr: Sym, consExpr: ConsExpr): void;
     defineFunction(match: U, lambda: LambdaExpr): void;
+    /**
+     * e.g. clearall 
+     */
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
@@ -454,7 +457,7 @@ export const MODE_FLAGS_ALL = MODE_EXPANDING | MODE_FACTORING;
 export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTORING;
 
 /**
- * Use to handle an expression, especially to evaluate it.
+ * Use to evaluate any kind of expression.
  * This is the means of extending the system to include other atoms.
  * Every object in the system is an opaque handle.
  */
@@ -463,6 +466,18 @@ export interface Operator<T extends U> {
      * Determines which expressions this operator matches.
      */
     readonly hash: string;
+    /**
+     * Determines whether this operator is for evaluating list expressions.
+     */
+    iscons(): this is Operator<Cons>;
+    /**
+     * The symbol that this operator represents.
+     * 
+     * i.e. (operator arg0 arg1 ...)
+     * 
+     * If this operator is not for list expressions, the implementation should throw an error.
+     */
+    operator(): Sym | never;
     /**
      * Determines the modes in which this operator is active.
      */
@@ -494,24 +509,13 @@ export interface Operator<T extends U> {
     valueOf(expr: T): U;
 }
 
-/**
- *
- */
 export interface Extension<T extends U> {
-    /**
-     * It MUST return the same value as the corresponding atom name property.
-     * The hash property is required for extensions.
-     */
     readonly hash: string;
-    /**
-     * A name which will be used for diagnostics.
-     */
     readonly name: string;
     readonly phases?: number;
-    /**
-     * Determines which features this extension requires (in order to be loaded).
-     */
     readonly dependencies?: FEATURE[];
+    iscons(): this is Extension<Cons>;
+    operator(): Sym;
     isKind(expr: U, $: ExtensionEnv): boolean;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;
     toInfixString(expr: T, $: ExtensionEnv): string;

@@ -66,6 +66,7 @@ export interface ExprEngine {
     parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons, errors: Error[] };
     evaluate(expr: U): U;
     getBinding(sym: Sym): U;
+    isConsSymbol(sym: Sym): boolean;
     isUserSymbol(sym: Sym): boolean;
     release(): void;
     renderAsString(expr: U, config?: Partial<RenderConfig>): string;
@@ -119,6 +120,10 @@ class ClojureScriptExprEngine implements ExprEngine {
         init_env(this.$, {
             useDefinitions: false
         });
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isConsSymbol(sym: Sym): boolean {
+        throw new Error('Method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isUserSymbol(sym: Sym): boolean {
@@ -224,6 +229,9 @@ class AlgebriteExprEngine implements ExprEngine {
         init_env(this.#env, {
             useDefinitions: false
         });
+    }
+    isConsSymbol(sym: Sym): boolean {
+        return this.#env.isConsSymbol(sym);
     }
     isUserSymbol(sym: Sym): boolean {
         return this.#env.isUserSymbol(sym);
@@ -355,6 +363,9 @@ class EigenmathExprEngine implements ExprEngine {
     getBinding(sym: Sym): U {
         return get_binding(sym, this.$);
     }
+    isConsSymbol(sym: Sym): boolean {
+        return this.$.isConsSymbol(sym);
+    }
     isUserSymbol(sym: Sym): boolean {
         return this.$.isUserSymbol(sym);
     }
@@ -419,6 +430,10 @@ class EigenmathExprEngine implements ExprEngine {
 }
 
 class PythonExprEngine implements ExprEngine {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isConsSymbol(sym: Sym): boolean {
+        throw new Error('Method not implemented.');
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isUserSymbol(sym: Sym): boolean {
         throw new Error('Method not implemented.');
@@ -629,7 +644,7 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol,$);
+        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
     }
     text(text: string): void {
         this.stdout.innerHTML += text;

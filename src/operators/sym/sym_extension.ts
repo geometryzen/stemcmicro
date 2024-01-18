@@ -1,24 +1,36 @@
+import { create_sym, Sym } from "math-expression-atoms";
 import { Directive, Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { HASH_SYM } from "../../hashing/hash_info";
+import { hash_for_atom } from "../../hashing/hash_info";
 import { piAsFlt } from "../../tree/flt/Flt";
-import { Sym } from "../../tree/sym/Sym";
 import { cons, Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_pi } from "../pi/is_pi";
 import { get_binding } from "./get_binding";
 import { is_sym } from "./is_sym";
-import { TYPE_NAME_SYM } from "./TYPE_NAME_SYM";
+
+function verify_sym(x: Sym): Sym | never {
+    if (is_sym(x)) {
+        return x;
+    }
+    else {
+        throw new Error();
+    }
+}
 
 class SymExtension implements Extension<Sym> {
+    readonly #hash = hash_for_atom(verify_sym(create_sym('foo')));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return TYPE_NAME_SYM.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash(): string {
-        return HASH_SYM;
+        return this.#hash;
     }
     get name(): string {
         return 'SymExtension';

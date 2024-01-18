@@ -34,8 +34,11 @@ export class ErrExtension implements Extension<Err> {
     get name(): string {
         return 'ErrExtension';
     }
-    get key(): string {
-        return this.#hash;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     evaluate(expr: Err, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(expr, argList));

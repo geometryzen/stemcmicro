@@ -1,4 +1,4 @@
-import { Blade, is_blade } from "math-expression-atoms";
+import { Blade, is_blade, Sym } from "math-expression-atoms";
 import { Extension, ExtensionEnv, FEATURE, Sign, SIGN_EQ, SIGN_GT, SIGN_LT, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_BLADE } from "../../hashing/hash_info";
 import { cons, Cons, U } from "../../tree/tree";
@@ -34,10 +34,14 @@ class BladeExtension implements Extension<Blade> {
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return 'Blade';
+    iscons(): boolean {
+        return false;
+    }
+    operator(): Sym {
+        throw new Error();
     }
     get hash(): string {
+        // TODO: How do we create an exemplar from which to compute the hash?
         return HASH_BLADE;
     }
     get name(): string {

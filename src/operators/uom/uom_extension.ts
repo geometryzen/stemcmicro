@@ -13,8 +13,11 @@ class UomExtension implements Extension<Uom> {
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return Uom.ONE.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash(): string {
         return HASH_UOM;

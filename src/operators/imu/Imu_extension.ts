@@ -16,8 +16,11 @@ class ImuExtension implements Operator<Imu> {
     constructor(private readonly $: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return imu.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash(): string {
         return HASH_IMU;

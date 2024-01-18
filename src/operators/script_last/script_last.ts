@@ -2,8 +2,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE
 import { HASH_SYM } from "../../hashing/hash_info";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { cons, Cons, U } from "../../tree/tree";
-import { KeywordOperator } from "../helpers/KeywordSymbol";
-import { TYPE_NAME_SYM } from "../sym/TYPE_NAME_SYM";
+import { AbstractKeywordOperator } from "../helpers/KeywordSymbol";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -11,12 +10,9 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-class ScriptLast extends KeywordOperator {
+class ScriptLast extends AbstractKeywordOperator {
     constructor($: ExtensionEnv) {
         super(RESERVED_KEYWORD_LAST, $);
-    }
-    get key(): string {
-        return TYPE_NAME_SYM.name;
     }
     get hash(): string {
         return HASH_SYM;

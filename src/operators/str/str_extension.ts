@@ -1,6 +1,6 @@
 import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
-import { emptyStr, Str } from "../../tree/str/Str";
+import { Str } from "../../tree/str/Str";
 import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
@@ -26,8 +26,11 @@ class StrExtension implements Extension<Str> {
     constructor($: ExtensionEnv) {
         // Nothing to see here.
     }
-    get key(): string {
-        return emptyStr.name;
+    iscons(): false {
+        return false;
+    }
+    operator(): never {
+        throw new Error();
     }
     get hash(): string {
         return HASH_STR;

@@ -6,7 +6,6 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, cons, U } from "../../tree/tree";
 import { assert_sym } from "./assert_sym";
 import { is_sym } from "./is_sym";
-import { TYPE_NAME_SYM } from "./TYPE_NAME_SYM";
 
 const MATH_POW = native_sym(Native.pow);
 
@@ -23,8 +22,11 @@ class SymMathPow implements Operator<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
     }
-    get key(): string {
-        return TYPE_NAME_SYM.name;
+    iscons(): boolean {
+        return false;
+    }
+    operator(): Sym {
+        throw new Error();
     }
     get hash(): string {
         return HASH_SYM;

@@ -10,6 +10,13 @@ import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Imu } from '../tree/imu/Imu';
 
+/**
+ * 
+ */
+export interface EigenmathScope {
+    isUserSymbol(sym: Sym): boolean;
+}
+
 function alloc_tensor(): Tensor {
     return new Tensor([], []);
 }
@@ -910,13 +917,13 @@ export interface EmitContext {
     useImaginaryJ: boolean;
 }
 
-export function render_svg(expr: U, ec: EmitContext): string {
+export function render_svg(expr: U, ec: EmitContext, scope: EigenmathScope): string {
     // TODO: We only really need the stack here...
     const $ = new ScriptVars();
 
     emit_level = 0;
 
-    emit_list(expr, $, ec);
+    emit_list(expr, $, ec, scope);
 
     const codes = pop($);
 
@@ -943,7 +950,7 @@ export function render_svg(expr: U, ec: EmitContext): string {
     return outbuf.join('');
 }
 
-function emit_args(p: U, $: StackContext, ec: EmitContext): void {
+function emit_args(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
 
     p = cdr(p);
 
@@ -955,14 +962,14 @@ function emit_args(p: U, $: StackContext, ec: EmitContext): void {
 
     const t = $.stack.length;
 
-    emit_expr(car(p), $, ec);
+    emit_expr(car(p), $, ec, scope);
 
     p = cdr(p);
 
     while (iscons(p)) {
         emit_roman_string(",", $);
         emit_thin_space($);
-        emit_expr(car(p), $, ec);
+        emit_expr(car(p), $, ec, scope);
         p = cdr(p);
     }
 
@@ -971,14 +978,14 @@ function emit_args(p: U, $: StackContext, ec: EmitContext): void {
     emit_update_subexpr($);
 }
 
-function emit_base(p: U, $: StackContext, ec: EmitContext): void {
+function emit_base(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER))
-        emit_subexpr(p, $, ec);
+        emit_subexpr(p, $, ec, scope);
     else
-        emit_expr(p, $, ec);
+        emit_expr(p, $, ec, scope);
 }
 
-function emit_denominators(p: U, $: StackContext, ec: EmitContext) {
+function emit_denominators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope) {
 
     const t = $.stack.length;
     const n = count_denominators(p);
@@ -1004,12 +1011,12 @@ function emit_denominators(p: U, $: StackContext, ec: EmitContext) {
         if (isminusone(caddr(q))) {
             q = cadr(q);
             if (car(q).equals(ADD) && n === 1)
-                emit_expr(q, $, ec); // parens not needed
+                emit_expr(q, $, ec, scope); // parens not needed
             else
-                emit_factor(q, $, ec);
+                emit_factor(q, $, ec, scope);
         }
         else {
-            emit_base(cadr(q), $, ec);
+            emit_base(cadr(q), $, ec, scope);
             emit_numeric_exponent(caddr(q) as Num, $); // sign is not emitted
         }
     }
@@ -1087,46 +1094,46 @@ function emit_double(p: Flt, $: StackContext): void {
     emit_update_superscript($);
 }
 
-function emit_exponent(p: U, $: StackContext, ec: EmitContext): void {
+function emit_exponent(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     if (isnum(p) && !isnegativenumber(p)) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
     }
 
     emit_level++;
-    emit_list(p, $, ec);
+    emit_list(p, $, ec, scope);
     emit_level--;
 
     emit_update_superscript($);
 }
 
-function emit_expr(p: U, $: StackContext, ec: EmitContext): void {
+function emit_expr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     if (isnegativeterm(p) || (car(p).equals(ADD) && isnegativeterm(cadr(p)))) {
         emit_roman_char(MINUS_SIGN, $);
         emit_thin_space($);
     }
 
     if (car(p).equals(ADD))
-        emit_expr_nib(p, $, ec);
+        emit_expr_nib(p, $, ec, scope);
     else
-        emit_term(p, $, ec);
+        emit_term(p, $, ec, scope);
 }
 
-function emit_expr_nib(p: U, $: StackContext, ec: EmitContext): void {
+function emit_expr_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     p = cdr(p);
-    emit_term(car(p), $, ec);
+    emit_term(car(p), $, ec, scope);
     p = cdr(p);
     while (iscons(p)) {
         if (isnegativeterm(car(p)))
             emit_infix_operator(MINUS_SIGN, $);
         else
             emit_infix_operator(PLUS_SIGN, $);
-        emit_term(car(p), $, ec);
+        emit_term(car(p), $, ec, scope);
         p = cdr(p);
     }
 }
 
-function emit_factor(p: U, $: StackContext, ec: EmitContext) {
+function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope) {
     if (isrational(p)) {
         emit_rational(p, $);
         return;
@@ -1138,7 +1145,7 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     }
 
     if (issymbol(p)) {
-        emit_symbol(p, $);
+        emit_symbol(p, $, scope);
         return;
     }
 
@@ -1148,7 +1155,7 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     }
 
     if (istensor(p)) {
-        emit_tensor(p, $, ec);
+        emit_tensor(p, $, ec, scope);
         return;
     }
 
@@ -1169,13 +1176,13 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
 
     if (iscons(p)) {
         if (car(p).equals(POWER)) {
-            emit_power(p, $, ec);
+            emit_power(p, $, ec, scope);
         }
         else if (car(p).equals(ADD) || car(p).equals(MULTIPLY)) {
-            emit_subexpr(p, $, ec);
+            emit_subexpr(p, $, ec, scope);
         }
         else {
-            emit_function(p, $, ec);
+            emit_function(p, $, ec, scope);
         }
         return;
     }
@@ -1190,18 +1197,18 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     }
 }
 
-function emit_fraction(p: U, $: StackContext, ec: EmitContext): void {
-    emit_numerators(p, $, ec);
-    emit_denominators(p, $, ec);
+function emit_fraction(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+    emit_numerators(p, $, ec, scope);
+    emit_denominators(p, $, ec, scope);
     emit_update_fraction($);
 }
 
-function emit_function(p: U, $: StackContext, ec: EmitContext): void {
+function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     // d(f(x),x)
 
     if (car(p).equals(DERIVATIVE)) {
         emit_roman_string("d", $);
-        emit_args(p, $, ec);
+        emit_args(p, $, ec, scope);
         return;
     }
 
@@ -1210,9 +1217,9 @@ function emit_function(p: U, $: StackContext, ec: EmitContext): void {
     if (car(p).equals(FACTORIAL)) {
         p = cadr(p);
         if (isrational(p) && isposint(p) || issymbol(p))
-            emit_expr(p, $, ec);
+            emit_expr(p, $, ec, scope);
         else
-            emit_subexpr(p, $, ec);
+            emit_subexpr(p, $, ec, scope);
         emit_roman_string("!", $);
         return;
     }
@@ -1223,45 +1230,45 @@ function emit_function(p: U, $: StackContext, ec: EmitContext): void {
         p = cdr(p);
         const leading = car(p);
         if (issymbol(leading))
-            emit_symbol(leading, $);
+            emit_symbol(leading, $, scope);
         else
-            emit_subexpr(leading, $, ec);
-        emit_indices(p, $, ec);
+            emit_subexpr(leading, $, ec, scope);
+        emit_indices(p, $, ec, scope);
         return;
     }
 
     if (car(p).equals(SETQ) || car(p).equals(TESTEQ)) {
-        emit_expr(cadr(p), $, ec);
+        emit_expr(cadr(p), $, ec, scope);
         emit_infix_operator(EQUALS_SIGN, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(p), $, ec, scope);
         return;
     }
 
     if (car(p).equals(TESTGE)) {
-        emit_expr(cadr(p), $, ec);
+        emit_expr(cadr(p), $, ec, scope);
         emit_infix_operator(GREATEREQUAL, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(p), $, ec, scope);
         return;
     }
 
     if (car(p).equals(TESTGT)) {
-        emit_expr(cadr(p), $, ec);
+        emit_expr(cadr(p), $, ec, scope);
         emit_infix_operator(GREATER_SIGN, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(p), $, ec, scope);
         return;
     }
 
     if (car(p).equals(TESTLE)) {
-        emit_expr(cadr(p), $, ec);
+        emit_expr(cadr(p), $, ec, scope);
         emit_infix_operator(LESSEQUAL, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(p), $, ec, scope);
         return;
     }
 
     if (car(p).equals(TESTLT)) {
-        emit_expr(cadr(p), $, ec);
+        emit_expr(cadr(p), $, ec, scope);
         emit_infix_operator(LESS_SIGN, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(p), $, ec, scope);
         return;
     }
 
@@ -1269,25 +1276,25 @@ function emit_function(p: U, $: StackContext, ec: EmitContext): void {
 
     const leading = car(p);
     if (issymbol(leading))
-        emit_symbol(leading, $);
+        emit_symbol(leading, $, scope);
     else
-        emit_subexpr(leading, $, ec);
+        emit_subexpr(leading, $, ec, scope);
 
-    emit_args(p, $, ec);
+    emit_args(p, $, ec, scope);
 }
 
-function emit_indices(p: U, $: StackContext, ec: EmitContext): void {
+function emit_indices(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     emit_roman_string("[", $);
 
     p = cdr(p);
 
     if (iscons(p)) {
-        emit_expr(car(p), $, ec);
+        emit_expr(car(p), $, ec, scope);
         p = cdr(p);
         while (iscons(p)) {
             emit_roman_string(",", $);
             emit_thin_space($);
-            emit_expr(car(p), $, ec);
+            emit_expr(car(p), $, ec, scope);
             p = cdr(p);
         }
     }
@@ -1334,16 +1341,16 @@ function emit_italic_string(s: 'i' | 'j', $: StackContext): void {
 /**
  * Converts an expression into an encoded form with opcode, height, depth, width, and data (depends on opcode).
  */
-function emit_list(expr: U, $: StackContext, ec: EmitContext): void {
+function emit_list(expr: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     const t = $.stack.length;
-    emit_expr(expr, $, ec);
+    emit_expr(expr, $, ec, scope);
     emit_update_list(t, $);
 }
 
-function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: EmitContext): void {
+function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
 
     if (d === p.ndim) {
-        emit_list(p.elems[k], $, ec);
+        emit_list(p.elems[k], $, ec, scope);
         return;
     }
 
@@ -1361,7 +1368,7 @@ function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: EmitC
 
     for (let i = 0; i < n; i++)
         for (let j = 0; j < m; j++)
-            emit_matrix(p, d + 2, k + (i * m + j) * span, $, ec);
+            emit_matrix(p, d + 2, k + (i * m + j) * span, $, ec, scope);
 
     emit_update_table(n, m, $);
 }
@@ -1382,7 +1389,7 @@ function emit_medium_space($: StackContext): void {
     list(4, $);
 }
 
-function emit_numerators(p: U, $: StackContext, ec: EmitContext): void {
+function emit_numerators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
 
     const t = $.stack.length;
     const n = count_numerators(p);
@@ -1406,9 +1413,9 @@ function emit_numerators(p: U, $: StackContext, ec: EmitContext): void {
         }
 
         if (car(q).equals(ADD) && n === 1)
-            emit_expr(q, $, ec); // parens not needed
+            emit_expr(q, $, ec, scope); // parens not needed
         else
-            emit_factor(q, $, ec);
+            emit_factor(q, $, ec, scope);
     }
 
     if ($.stack.length === t)
@@ -1445,10 +1452,10 @@ function emit_numeric_exponent(p: Num, $: StackContext) {
     emit_update_superscript($);
 }
 
-function emit_power(p: U, $: StackContext, ec: EmitContext): void {
+function emit_power(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     if (cadr(p).equals(EXP1)) {
         emit_roman_string("exp", $);
-        emit_args(cdr(p), $, ec);
+        emit_args(cdr(p), $, ec, scope);
         return;
     }
 
@@ -1465,12 +1472,12 @@ function emit_power(p: U, $: StackContext, ec: EmitContext): void {
 
     const X = caddr(p);
     if (isnum(X) && isnegativenumber(X)) {
-        emit_reciprocal(p, $, ec);
+        emit_reciprocal(p, $, ec, scope);
         return;
     }
 
-    emit_base(cadr(p), $, ec);
-    emit_exponent(caddr(p), $, ec);
+    emit_base(cadr(p), $, ec, scope);
+    emit_exponent(caddr(p), $, ec, scope);
 }
 
 function emit_rational(p: Rat, $: StackContext): void {
@@ -1500,16 +1507,16 @@ function emit_rational(p: Rat, $: StackContext): void {
 
 // p = y^x where x is a negative number
 
-function emit_reciprocal(p: U, $: StackContext, ec: EmitContext): void {
+function emit_reciprocal(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
 
     emit_roman_string("1", $); // numerator
 
     const t = $.stack.length;
 
     if (isminusone(caddr(p)))
-        emit_expr(cadr(p), $, ec);
+        emit_expr(cadr(p), $, ec, scope);
     else {
-        emit_base(cadr(p), $, ec);
+        emit_base(cadr(p), $, ec, scope);
         emit_numeric_exponent(caddr(p) as Num, $); // sign is not emitted
     }
 
@@ -1551,12 +1558,12 @@ function emit_string(p: Str, $: StackContext): void {
     emit_roman_string(p.str, $);
 }
 
-function emit_subexpr(p: U, $: StackContext, ec: EmitContext): void {
-    emit_list(p, $, ec);
+function emit_subexpr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
+    emit_list(p, $, ec, scope);
     emit_update_subexpr($);
 }
 
-function emit_symbol(sym: Sym, $: StackContext): void {
+function emit_symbol(sym: Sym, $: StackContext, scope: EigenmathScope): void {
     if (sym.equalsSym(EXP1)) {
         emit_roman_string("exp(1)", $);
         return;
@@ -1564,7 +1571,7 @@ function emit_symbol(sym: Sym, $: StackContext): void {
 
     const s = printname(sym);
 
-    if (isusersymbol(sym)) {
+    if (scope.isUserSymbol(sym)) {
         // Fall through
         // console.lg(`${sym} is user symbol`);
     }
@@ -1713,11 +1720,11 @@ function emit_imaginary_unit(imu: Imu, $: StackContext, ec: EmitContext): void {
     }
 }
 
-function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext): void {
+function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     if (p.ndim % 2 === 1)
-        emit_vector(p, $, ec); // odd rank
+        emit_vector(p, $, ec, scope); // odd rank
     else
-        emit_matrix(p, 0, 0, $, ec); // even rank
+        emit_matrix(p, 0, 0, $, ec, scope); // even rank
 }
 
 function emit_uom(uom: Uom, $: StackContext): void {
@@ -1725,16 +1732,16 @@ function emit_uom(uom: Uom, $: StackContext): void {
     emit_roman_string(str, $);
 }
 
-function emit_term(p: U, $: StackContext, ec: EmitContext): void {
+function emit_term(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     if (car(p).equals(MULTIPLY))
-        emit_term_nib(p, $, ec);
+        emit_term_nib(p, $, ec, scope);
     else
-        emit_factor(p, $, ec);
+        emit_factor(p, $, ec, scope);
 }
 
-function emit_term_nib(p: U, $: StackContext, ec: EmitContext): void {
+function emit_term_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     if (find_denominator(p)) {
-        emit_fraction(p, $, ec);
+        emit_fraction(p, $, ec, scope);
         return;
     }
 
@@ -1745,13 +1752,13 @@ function emit_term_nib(p: U, $: StackContext, ec: EmitContext): void {
     if (isminusone(car(p)) && !isdouble(car(p)))
         p = cdr(p); // sign already emitted
 
-    emit_factor(car(p), $, ec);
+    emit_factor(car(p), $, ec, scope);
 
     p = cdr(p);
 
     while (iscons(p)) {
         emit_medium_space($);
-        emit_factor(car(p), $, ec);
+        emit_factor(car(p), $, ec, scope);
         p = cdr(p);
     }
 }
@@ -2066,7 +2073,7 @@ function emit_update_table(n: number, m: number, $: StackContext): void {
     list(10, $);
 }
 
-function emit_vector(p: Tensor, $: StackContext, ec: EmitContext): void {
+function emit_vector(p: Tensor, $: StackContext, ec: EmitContext, scope: EigenmathScope): void {
     // compute element span
 
     let span = 1;
@@ -2079,7 +2086,7 @@ function emit_vector(p: Tensor, $: StackContext, ec: EmitContext): void {
     n = p.dims[0]; // number of rows
 
     for (let i = 0; i < n; i++)
-        emit_matrix(p, 1, i * span, $, ec);
+        emit_matrix(p, 1, i * span, $, ec, scope);
 
     emit_update_table(n, 1, $); // n rows, 1 column
 }
@@ -2526,7 +2533,7 @@ function emit_box(dc: DrawContext, outbuf: string[]): void {
     draw_line(x2, y1, x2, y2, 0.5, outbuf); // right line
 }
 
-function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathScope): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -2538,37 +2545,37 @@ function emit_graph(draw_array: { t: number; x: number; y: number }[], $: Script
 
     emit_axes(dc, outbuf);
     emit_box(dc, outbuf);
-    emit_labels($, dc, ec, outbuf);
+    emit_labels($, dc, ec, outbuf, scope);
     emit_points(draw_array, dc, outbuf);
 
     outbuf.push("</svg><br>");
 }
 
-function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
+function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathScope): void {
     // TODO; Why do we need ScriptVars here?
     emit_level = 1; // small font
-    emit_list(new Flt(dc.ymax), $, ec);
+    emit_list(new Flt(dc.ymax), $, ec, scope);
     const YMAX = pop($);
     let x = DRAW_LEFT_PAD - width(YMAX) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(YMAX);
     draw_formula(x, y, YMAX, outbuf);
 
     emit_level = 1; // small font
-    emit_list(new Flt(dc.ymin), $, ec);
+    emit_list(new Flt(dc.ymin), $, ec, scope);
     const YMIN = pop($);
     x = DRAW_LEFT_PAD - width(YMIN) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
     draw_formula(x, y, YMIN, outbuf);
 
     emit_level = 1; // small font
-    emit_list(new Flt(dc.xmin), $, ec);
+    emit_list(new Flt(dc.xmin), $, ec, scope);
     const XMIN = pop($);
     x = DRAW_LEFT_PAD - width(XMIN) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, XMIN, outbuf);
 
     emit_level = 1; // small font
-    emit_list(new Flt(dc.xmax), $, ec);
+    emit_list(new Flt(dc.xmax), $, ec, scope);
     const XMAX = pop($);
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(XMAX) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
@@ -4914,7 +4921,7 @@ function derivative($: ScriptVars): void {
 }
 
 function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
-    if (!(issymbol(X) && isusersymbol(X)))
+    if (!(issymbol(X) && $.isUserSymbol(X)))
         stopf("derivative: symbol expected");
 
     // d(x,x)?
@@ -5583,7 +5590,7 @@ function eval_draw(expr: U, $: ScriptVars): void {
             const F = assert_cons(expr).item(1);
             let T = assert_cons(expr).item(2);
 
-            if (!(issymbol(T) && isusersymbol(T))) {
+            if (!(issymbol(T) && $.isUserSymbol(T))) {
                 T = X_LOWER;
             }
 
@@ -5615,7 +5622,7 @@ function eval_draw(expr: U, $: ScriptVars): void {
                     useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
                     useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
                 };
-                emit_graph(draw_array, $, dc, ec, outbuf);
+                emit_graph(draw_array, $, dc, ec, outbuf, $);
 
                 const output = outbuf.join('');
 
@@ -6213,7 +6220,7 @@ function floorfunc($: ScriptVars): void {
 function eval_for(p1: U, $: ScriptVars): void {
 
     const p2 = cadr(p1);
-    if (!(issymbol(p2) && isusersymbol(p2)))
+    if (!(issymbol(p2) && $.isUserSymbol(p2)))
         stopf("for: symbol error");
 
     push(caddr(p1), $);
@@ -6353,7 +6360,7 @@ function eval_index(p1: U, $: ScriptVars): void {
 
     // try to optimize by indexing before eval
 
-    if (issymbol(T) && isusersymbol(T)) {
+    if (issymbol(T) && $.isUserSymbol(T)) {
         p1 = get_binding(T, $);
         const n = $.stack.length - h;
         if (istensor(p1) && n <= p1.ndim) {
@@ -7535,7 +7542,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
             continue;
         }
 
-        if (!(issymbol(X) && isusersymbol(X)))
+        if (!(issymbol(X) && $.isUserSymbol(X)))
             stopf("integral");
 
         if (iscons(p1)) {
@@ -7568,7 +7575,7 @@ function integral($: ScriptVars): void {
     const X = pop($);
     let F = pop($);
 
-    if (!(issymbol(X) && isusersymbol(X)))
+    if (!(issymbol(X) && $.isUserSymbol(X)))
         stopf("integral: symbol expected");
 
     if (car(F).equals(ADD)) {
@@ -8983,30 +8990,33 @@ function eval_prefixform(p1: U, $: ScriptVars): void {
     push_string(s, $);
 }
 
-function should_annotate_symbol(x: Sym, value: U): boolean {
-    if (isusersymbol(x)) {
-        if (x.equals(value) || is_nil(value)) {
-            return false;
-        }
-        /*
-        if (x.equals(I_LOWER) && isimaginaryunit(value))
-            return false;
-
-        if (x.equals(J_LOWER) && isimaginaryunit(value))
-            return false;
-        */
-
-        return true;
-    }
-    else {
-        if (is_native_sym(x)) {
-            return false;
-        }
-        else {
+function make_should_annotate(scope: EigenmathScope) {
+    return function should_annotate_symbol(x: Sym, value: U): boolean {
+        if (scope.isUserSymbol(x)) {
+            if (x.equals(value) || is_nil(value)) {
+                return false;
+            }
+            /*
+            if (x.equals(I_LOWER) && isimaginaryunit(value))
+                return false;
+    
+            if (x.equals(J_LOWER) && isimaginaryunit(value))
+                return false;
+            */
+    
             return true;
         }
-    }
+        else {
+            if (is_native_sym(x)) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    };    
 }
+
 
 function eval_print(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
@@ -9020,7 +9030,7 @@ function eval_print(p1: U, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, should_annotate_symbol);
+        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
         p1 = cdr(p1);
     }
     push(nil, $);
@@ -9049,7 +9059,7 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
  * @returns 
  */
-export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
+export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction, scope: EigenmathScope): void {
 
     if (is_nil(value)) {
         return;
@@ -9065,7 +9075,7 @@ export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitCon
 
     if (svg) {
         for (const listener of listeners) {
-            listener.output(render_svg(value, ec));
+            listener.output(render_svg(value, ec, scope));
         }
     }
     else {
@@ -9075,31 +9085,6 @@ export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitCon
         }
     }
 }
-/*
-function should_annotate_symbol(x: Sym, value: U): boolean {
-    if (isusersymbol(x)) {
-        if (x.equals(value) || is_nil(value)) {
-            return false;
-        }
-
-        if (x.equals(I_LOWER) && isimaginaryunit(value))
-            return false;
-
-        if (x.equals(J_LOWER) && isimaginaryunit(value))
-            return false;
-
-        return true;
-    }
-    else {
-        if (is_native_sym(x)) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-}
-*/
 
 function annotate(input: U, result: U): U {
     return items_to_cons(SETQ, input, result);
@@ -9123,7 +9108,7 @@ function eval_product(p1: U, $: ScriptVars): void {
     }
 
     const p2 = cadr(p1);
-    if (!(issymbol(p2) && isusersymbol(p2)))
+    if (!(issymbol(p2) && $.isUserSymbol(p2)))
         stopf("product: symbol error");
 
     push(caddr(p1), $);
@@ -9895,7 +9880,7 @@ function eval_run(expr: U, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, should_annotate_symbol);
+        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
         if (!is_nil(result)) {
             set_symbol(LAST, result, nil, $);
         }
@@ -9923,7 +9908,7 @@ function eval_setq(x: Cons, $: ScriptVars): void {
     }
 
     const sym = x.lhs;
-    if (issymbol(sym) && isusersymbol(sym)) {
+    if (issymbol(sym) && $.isUserSymbol(sym)) {
         push(x.rhs, $);
         evalf($);
         const rhs = pop($);
@@ -9951,7 +9936,7 @@ function setq_indexed(p1: U, $: ScriptVars): void {
 
     const S = cadadr(p1);
 
-    if (!(issymbol(S) && isusersymbol(S))) {
+    if (!(issymbol(S) && $.isUserSymbol(S))) {
         stopf(`user symbol expected S=${S}`);
     }
 
@@ -10055,7 +10040,7 @@ function setq_usrfunc(p1: U, $: ScriptVars): void {
     const A = cdadr(p1); // function args
     const B = caddr(p1); // function body
 
-    if (issymbol(F) && isusersymbol(F)) {
+    if (issymbol(F) && $.isUserSymbol(F)) {
         if (lengthf(A) > 9) {
             stopf("more than 9 arguments");
         }
@@ -10359,7 +10344,7 @@ function simplify_pass3($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (!car(p1).equals(ADD) || isusersymbolsomewhere(p1) || !findf(p1, imaginaryunit, $)) {
+    if (!car(p1).equals(ADD) || isusersymbolsomewhere(p1, $) || !findf(p1, imaginaryunit, $)) {
         push(p1, $);
         return;
     }
@@ -10752,7 +10737,7 @@ function eval_sum(p1: U, $: ScriptVars): void {
     }
 
     const p2 = cadr(p1);
-    if (!(issymbol(p2) && isusersymbol(p2)))
+    if (!(issymbol(p2) && $.isUserSymbol(p2)))
         stopf("sum: symbol error");
 
     push(caddr(p1), $);
@@ -11459,7 +11444,7 @@ function evalf_nib($: ScriptVars): void {
             }
             return;
         }
-        if (isusersymbol(sym)) {
+        if ($.isUserSymbol(sym)) {
             eval_user_function(p1, $);
             return;
         }
@@ -11473,7 +11458,7 @@ function evalf_nib($: ScriptVars): void {
         return;
     }
 
-    if (issymbol(p1) && isusersymbol(p1)) {
+    if (issymbol(p1) && $.isUserSymbol(p1)) {
         eval_user_symbol(p1, $);
         return;
     }
@@ -12616,7 +12601,7 @@ export function get_binding(p1: Sym, $: ScriptVars): U {
     if (!is_sym(p1)) {
         stopf(`get_binding(${p1}) argument must be a Sym.`);
     }
-    if (!isusersymbol(p1)) {
+    if (!$.isUserSymbol(p1)) {
         stopf(`get_binding(${p1}) symbol error`);
     }
     let p2 = $.getBinding(p1);
@@ -12627,7 +12612,7 @@ export function get_binding(p1: Sym, $: ScriptVars): U {
 }
 
 function get_usrfunc(p: Sym, $: ScriptVars): U {
-    if (!isusersymbol(p))
+    if (!$.isUserSymbol(p))
         stopf("symbol error");
     let f = $.getUsrFunc(p.key());
     if (typeof (f) === 'undefined') {
@@ -13526,19 +13511,21 @@ function isevalfunction(p: Sym): boolean {
 
 /**
  * A symbol where the func is eval_user_symbol.
+ * TODO: Everywhere this is used should be replaced by a call to ScriptVars, eventually indicating an interface extraction.
+ * This would allow safe reuse of functions in this module by making them pure. 
  */
 function isusersymbol(sym: Sym): boolean {
     return userFunctions.has(sym.key());
 }
 
-function isusersymbolsomewhere(p: U): 0 | 1 {
-    if (issymbol(p) && isusersymbol(p) && !p.equalsSym(PI) && !p.equalsSym(EXP1))
+function isusersymbolsomewhere(p: U, scope: EigenmathScope): 0 | 1 {
+    if (issymbol(p) && scope.isUserSymbol(p) && !p.equalsSym(PI) && !p.equalsSym(EXP1))
         return 1;
 
     if (iscons(p)) {
         p = cdr(p);
         while (iscons(p)) {
-            if (isusersymbolsomewhere(car(p)))
+            if (isusersymbolsomewhere(car(p), scope))
                 return 1;
             p = cdr(p);
         }
@@ -13586,8 +13573,8 @@ function list(n: number, $: StackContext): void {
         cons($);
 }
 
-function ensure_user_function(sym: Sym): Sym {
-    if (!isusersymbol(sym)) {
+function ensure_user_function(sym: Sym, scope: EigenmathScope): Sym {
+    if (!scope.isUserSymbol(sym)) {
         defineUserFunction(sym);
     }
     return sym;
@@ -15363,7 +15350,7 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
         function should_annotate_symbol(x: Sym, value: U): boolean {
-            if (isusersymbol(x)) {
+            if ($.isUserSymbol(x)) {
                 if (x.equals(value) || is_nil(value)) {
                     return false;
                 }
@@ -15386,7 +15373,7 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [this.listener], should_annotate_symbol);
+        print_result_and_input(value, input, should_render_svg($), ec, [this.listener], should_annotate_symbol, $);
     }
 }
 
@@ -15818,12 +15805,12 @@ function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
                 push(SX, $);
                 break;
             default:
-                push(ensure_user_function(create_sym(token_buf)), $);
+                push(ensure_user_function(create_sym(token_buf),$), $);
                 break;
         }
     }
     else {
-        push(ensure_user_function(create_sym(token_buf)), $);
+        push(ensure_user_function(create_sym(token_buf),$), $);
     }
     get_token($, config);
 }
@@ -15836,7 +15823,7 @@ function scan_string($: ScriptVars, config: EigenmathParseConfig): void {
 function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     scan_level++;
-    push(ensure_user_function(create_sym(token_buf)), $); // push function name
+    push(ensure_user_function(create_sym(token_buf),$), $); // push function name
     get_token($, config); // get token after function name
     get_token($, config); // get token after (
     if (token === ")") {
@@ -16092,7 +16079,7 @@ function scan_inbuf(k: number, $: ScriptVars, config: EigenmathParseConfig): num
 }
 
 export function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): void {
-    if (!isusersymbol(sym)) {
+    if (!$.isUserSymbol(sym)) {
         stopf("symbol error");
     }
     $.setBinding(sym, binding);
@@ -16120,7 +16107,7 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmin = -Math.PI;
     dc.tmax = Math.PI;
 
-    let p1: U = ensure_user_function(create_sym("trange"));
+    let p1: U = ensure_user_function(create_sym("trange"),$);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16145,7 +16132,7 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmin = -10;
     dc.xmax = 10;
 
-    let p1: U = ensure_user_function(create_sym("xrange"));
+    let p1: U = ensure_user_function(create_sym("xrange"),$);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16169,7 +16156,7 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymin = -10;
     dc.ymax = 10;
 
-    let p1: U = ensure_user_function(create_sym("yrange"));
+    let p1: U = ensure_user_function(create_sym("yrange"),$);
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16365,7 +16352,7 @@ export class ScriptVars implements ExprContext {
     isBinding(sym: Sym): boolean {
         return isevalfunction(sym);
     }
-    isUsrFunc(sym: Sym): boolean {
+    isUserSymbol(sym: Sym): boolean {
         return isusersymbol(sym);
     }
     setBinding(sym: Sym, binding: U): void {

@@ -1,4 +1,4 @@
-import { Cons, is_cons, nil, U } from "math-expression-tree";
+import { is_cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -80,25 +80,18 @@ export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEn
 
     const value = $.valueOf(rhs);
 
-    return setq_sym_value(lhs, value, $);
+    return set_symbol(lhs, value, nil, $);
 }
 
 /**
  * The implementation of assignment when the LHS is a symbol and the RHS has been evaluated.
  * @param lhs The symbol on the LHS.
- * @param rhs The evaluated RHS.
- * @param $ 
+ * @param binding The evaluated RHS.
  * @returns nil
  */
-export function setq_sym_value(lhs: Sym, rhs: U, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'setSymbolUsrFunc'>): Cons {
-    $.setSymbolBinding(lhs, rhs);
-    $.setSymbolUsrFunc(lhs, nil);
-
-    // An assignment returns nothing.
-    // This is unlike most programming languages
-    // where an assignment does return the
-    // assigned value.
-    // TODO Could be changed.
+export function set_symbol(lhs: Sym, binding: U, usrfunc: U, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'setSymbolUsrFunc'>): U {
+    $.setSymbolBinding(lhs, binding);
+    $.setSymbolUsrFunc(lhs, usrfunc);
     return nil;
 }
 

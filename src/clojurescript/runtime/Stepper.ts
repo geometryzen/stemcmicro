@@ -70,7 +70,7 @@ export interface Scope {
     getSymbolBinding(sym: string | Sym): U;
     getSymbolUsrFunc(sym: Sym): U;
     isUserSymbol(sym: Sym): boolean;
-    setSymbolBinding(sym: string | Sym, binding: U): void;
+    setSymbolBinding(sym: Sym, binding: U): void;
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void;
     valueOf(expr: U): U;
     /*

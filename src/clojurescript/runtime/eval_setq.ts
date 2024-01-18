@@ -1,7 +1,7 @@
 import { is_sym, Sym } from "math-expression-atoms";
-import { Cons, is_cons, U } from "math-expression-tree";
+import { Cons, is_cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
-import { COMPONENT, setq_sym_value } from "../../operators/assign/assign_any_any";
+import { COMPONENT } from "../../operators/assign/assign_any_any";
 import { define_function } from "../../operators/assign/define_function";
 import { setq_indexed } from "../../operators/assign/setq_indexed";
 import { BCons } from "../../operators/helpers/BCons";
@@ -68,6 +68,9 @@ export function eval_setq(x: Cons, stack: Stack<State>, state: State): State | u
         return new State(expr.rhs, state.$);
     }
     stack.pop();
-    stack.top.value = setq_sym_value(lhs, state.value, state.$);
+    const scope = state.$;
+    scope.setSymbolBinding(lhs, state.value);
+    scope.setSymbolUsrFunc(lhs, nil);
+    stack.top.value = nil;
     return void 0;
 }

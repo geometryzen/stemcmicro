@@ -214,7 +214,7 @@ export class DerivedEnv implements Scope {
     setSymbolPrintName(sym: Sym, printName: string): void {
         throw new Error("Method not implemented.");
     }
-    setSymbolBinding(sym: string | Sym, binding: U): void {
+    setSymbolBinding(sym: Sym, binding: U): void {
         this.parentEnv.setSymbolBinding(sym, binding);
     }
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void {

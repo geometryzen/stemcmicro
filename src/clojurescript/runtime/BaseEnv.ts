@@ -169,7 +169,7 @@ export class BaseEnv implements Scope {
         throw new Error("Method not implemented.");
     }
     isUserSymbol(sym: Sym): boolean {
-        return this.#baseEnv.isUsrFunc(sym);
+        return this.#baseEnv.isUserSymbol(sym);
     }
     iszero(expr: U): boolean {
         throw new Error("Method not implemented.");

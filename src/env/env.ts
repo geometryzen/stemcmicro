@@ -179,7 +179,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         isBinding(sym: Sym): boolean {
             return symTab.isBinding(sym);
         },
-        isUsrFunc(sym: Sym): boolean {
+        isUserSymbol(sym: Sym): boolean {
             return symTab.isUsrFunc(sym);
         },
         setBinding(sym: Sym, binding: U): void {

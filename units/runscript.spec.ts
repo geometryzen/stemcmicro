@@ -55,7 +55,7 @@ class TestHandler implements ScriptHandler<ExprEngine>{
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol);
+        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {

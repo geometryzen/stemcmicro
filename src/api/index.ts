@@ -170,7 +170,7 @@ class ClojureScriptExprEngine implements ExprEngine {
                     return render_as_sexpr(expr, this.$);
                 }
                 case 'SVG': {
-                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
+                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.$);
                 }
                 default: {
                     return render_as_infix(expr, this.$);
@@ -226,7 +226,7 @@ class AlgebriteExprEngine implements ExprEngine {
         });
     }
     isUserSymbol(sym: Sym): boolean {
-        return this.#env.isUsrFunc(sym.key());
+        return this.#env.isUserSymbol(sym);
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
         const match = items_to_cons(create_sym(name));
@@ -270,7 +270,7 @@ class AlgebriteExprEngine implements ExprEngine {
                     return render_as_sexpr(expr, this.#env);
                 }
                 case 'SVG': {
-                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
+                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.#env);
                 }
                 default: {
                     return render_as_infix(expr, this.#env);
@@ -356,7 +356,7 @@ class EigenmathExprEngine implements ExprEngine {
         return get_binding(sym, this.$);
     }
     isUserSymbol(sym: Sym): boolean {
-        return this.$.isUsrFunc(sym);
+        return this.$.isUserSymbol(sym);
     }
     evaluate(expr: U): U {
         return evaluate_expression(expr, this.$);
@@ -382,7 +382,7 @@ class EigenmathExprEngine implements ExprEngine {
                 return to_sexpr(expr);
             }
             case 'SVG': {
-                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
+                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.$);
             }
             default: {
                 return to_infix(expr, eigenmath_infix_config(config));
@@ -629,7 +629,7 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol);
+        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol,$);
     }
     text(text: string): void {
         this.stdout.innerHTML += text;

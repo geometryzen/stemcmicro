@@ -10,6 +10,9 @@ export class DerivedEnv implements Scope {
     constructor(readonly parentEnv: Scope, readonly strict: boolean, readonly thing: Thing) {
 
     }
+    isUserSymbol(sym: Sym): boolean {
+        return this.parentEnv.isUserSymbol(sym);
+    }
     getPrintHandler(): PrintHandler {
         throw new Error("Method not implemented.");
     }
@@ -100,7 +103,7 @@ export class DerivedEnv implements Scope {
     getDirective(directive: Directive): boolean {
         throw new Error("Method not implemented.");
     }
-    getSymbolPredicates(sym: string | Sym): Predicates {
+    getSymbolPredicates(sym: Sym): Predicates {
         throw new Error("Method not implemented.");
     }
     getSymbolPrintName(sym: Sym): string {
@@ -214,8 +217,8 @@ export class DerivedEnv implements Scope {
     setSymbolBinding(sym: string | Sym, binding: U): void {
         this.parentEnv.setSymbolBinding(sym, binding);
     }
-    setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
-        throw new Error("Method not implemented.");
+    setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
+        this.parentEnv.setSymbolUsrFunc(sym, usrfunc);
     }
     simplify(expr: U): U {
         throw new Error("Method not implemented.");

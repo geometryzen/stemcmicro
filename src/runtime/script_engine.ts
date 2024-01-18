@@ -175,10 +175,10 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         defineFunction(pattern: U, impl: LambdaExpr): void {
             $.defineFunction(pattern, impl);
         },
-        getSymbolProps(sym: Sym | string): Predicates {
+        getSymbolProps(sym: Sym): Predicates {
             return $.getSymbolPredicates(sym);
         },
-        getSymbolValue(sym: Sym | string): U {
+        getSymbolValue(sym: Sym): U {
             return $.getSymbolBinding(sym);
         },
         getSymbolsInfo(): { sym: Sym, value: U }[] {

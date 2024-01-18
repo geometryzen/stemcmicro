@@ -101,17 +101,17 @@ export class BaseEnv implements Scope {
     getDirective(directive: Directive): boolean {
         throw new Error("Method not implemented.");
     }
-    getSymbolPredicates(sym: string | Sym): Predicates {
+    getSymbolPredicates(sym: Sym): Predicates {
         throw new Error("Method not implemented.");
     }
     getSymbolPrintName(sym: Sym): string {
         throw new Error("Method not implemented.");
     }
-    getSymbolBinding(sym: string | Sym): U {
+    getSymbolBinding(sym: Sym): U {
         return this.#baseEnv.getSymbolBinding(sym);
     }
-    getSymbolUsrFunc(sym: string | Sym): U {
-        throw new Error("Method not implemented.");
+    getSymbolUsrFunc(sym: Sym): U {
+        return this.#baseEnv.getSymbolUsrFunc(sym);
     }
     getSymbolsInfo(): {
         sym: Sym; // at the right spot.  But 'push' & 'sort' is just two lines of code.
@@ -168,6 +168,9 @@ export class BaseEnv implements Scope {
     isscalar(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
+    isUserSymbol(sym: Sym): boolean {
+        return this.#baseEnv.isUsrFunc(sym);
+    }
     iszero(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
@@ -216,11 +219,11 @@ export class BaseEnv implements Scope {
     setSymbolPrintName(sym: Sym, printName: string): void {
         throw new Error("Method not implemented.");
     }
-    setSymbolBinding(sym: string | Sym, binding: U): void {
+    setSymbolBinding(sym: Sym, binding: U): void {
         this.#baseEnv.setSymbolBinding(sym, binding);
     }
-    setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
-        throw new Error("Method not implemented.");
+    setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
+        this.#baseEnv.setSymbolUsrFunc(sym, usrfunc);
     }
     simplify(expr: U): U {
         throw new Error("Method not implemented.");

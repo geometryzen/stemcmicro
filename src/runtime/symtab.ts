@@ -87,8 +87,10 @@ export interface SymTab {
      * Returns NIL if the symbol is not bound to anything.
      */
     getBinding(sym: Sym | string): U;
-    setBinding(sym: Sym, value: U): void;
     getUsrFunc(sym: Sym | string): U;
+    isBinding(sym: Sym | string): boolean;
+    isUsrFunc(sym: Sym | string): boolean;
+    setBinding(sym: Sym, value: U): void;
     setUsrFunc(sym: Sym, value: U): void;
     entries(): { sym: Sym, value: U }[];
     delete(sym: Sym): void;
@@ -146,17 +148,6 @@ export function createSymTab(): SymTab {
                 return this.getBinding(sym.key());
             }
         },
-        setBinding(sym: Sym, value: U): void {
-            assert_sym(sym);
-            const key = sym.key();
-            if (is_nil(value)) {
-                binding_from_key.delete(key);
-            }
-            else {
-                binding_from_key.set(key, value);
-                sym_from_key.set(key, sym);
-            }
-        },
         getUsrFunc(sym: Sym | string): U {
             if (typeof sym === 'string') {
                 const value = usrfunc_from_key.get(sym);
@@ -169,6 +160,33 @@ export function createSymTab(): SymTab {
             }
             else {
                 return this.getUsrFunc(sym.key());
+            }
+        },
+        isBinding(sym: Sym | string): boolean {
+            if (typeof sym === 'string') {
+                return binding_from_key.has(sym);
+            }
+            else {
+                return this.isBinding(sym.key());
+            }
+        },
+        isUsrFunc(sym: Sym | string): boolean {
+            if (typeof sym === 'string') {
+                return usrfunc_from_key.has(sym);
+            }
+            else {
+                return this.isUsrFunc(sym.key());
+            }
+        },
+        setBinding(sym: Sym, value: U): void {
+            assert_sym(sym);
+            const key = sym.key();
+            if (is_nil(value)) {
+                binding_from_key.delete(key);
+            }
+            else {
+                binding_from_key.set(key, value);
+                sym_from_key.set(key, sym);
             }
         },
         setUsrFunc(sym: Sym, value: U): void {

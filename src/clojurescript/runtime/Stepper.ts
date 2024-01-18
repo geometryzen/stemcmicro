@@ -17,12 +17,12 @@ import { Eval_2_args } from "./Eval_2_args";
 import { Eval_3_args } from "./Eval_3_args";
 import { Eval_abs } from "./Eval_abs";
 import { Eval_add } from "./Eval_add";
-import { Eval_assign } from "./Eval_assign";
 import { Eval_module } from "./Eval_module";
 import { Eval_multiply } from "./Eval_multiply";
 import { Eval_n_args } from "./Eval_n_args";
 import { Eval_power } from "./Eval_power";
 import { Eval_relational_expr } from "./Eval_relational_expr";
+import { eval_setq } from "./eval_setq";
 import { Eval_taylor } from "./Eval_taylor";
 import { Eval_test } from "./Eval_test";
 import { Eval_transpose } from "./Eval_transpose";
@@ -68,7 +68,10 @@ export interface Scope {
     thing: Thing;
     evaluate(opr: Native, ...args: U[]): U;
     getSymbolBinding(sym: string | Sym): U;
+    getSymbolUsrFunc(sym: Sym): U;
+    isUserSymbol(sym: Sym): boolean;
     setSymbolBinding(sym: string | Sym, binding: U): void;
+    setSymbolUsrFunc(sym: Sym, usrfunc: U): void;
     valueOf(expr: U): U;
     /*
     parentScope: Scope | null;
@@ -344,7 +347,7 @@ export class Stepper {
         this.#stepFunctions[native_sym(Native.multiply).key()] = Eval_multiply;
         this.#stepFunctions[native_sym(Native.lco).key()] = Eval_v_args;
         this.#stepFunctions[native_sym(Native.rco).key()] = Eval_v_args;
-        this.#stepFunctions['='] = Eval_assign;
+        this.#stepFunctions['='] = eval_setq;
         this.#stepFunctions[native_sym(Native.testeq).key()] = Eval_relational_expr;
         this.#stepFunctions[native_sym(Native.testne).key()] = Eval_relational_expr;
         this.#stepFunctions[native_sym(Native.testge).key()] = Eval_relational_expr;

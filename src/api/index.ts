@@ -1,5 +1,6 @@
 import { create_sym, Sym } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
+import { is_native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { clojurescript_parse } from '../clojurescript/parser/clojurescript_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
@@ -65,6 +66,7 @@ export interface ExprEngine {
     parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons, errors: Error[] };
     evaluate(expr: U): U;
     getBinding(sym: Sym): U;
+    isUserSymbol(sym: Sym): boolean;
     release(): void;
     renderAsString(expr: U, config?: Partial<RenderConfig>): string;
     setSymbol(sym: Sym, binding: U, usrfunc: U): void;
@@ -109,7 +111,7 @@ function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind
 }
 
 class ClojureScriptExprEngine implements ExprEngine {
-    $: ExtensionEnv;
+    readonly $: ExtensionEnv;
     constructor() {
         this.$ = create_env({
             dependencies: ALL_FEATURES
@@ -117,6 +119,10 @@ class ClojureScriptExprEngine implements ExprEngine {
         init_env(this.$, {
             useDefinitions: false
         });
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isUserSymbol(sym: Sym): boolean {
+        throw new Error('Method not implemented.');
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
         const match = items_to_cons(create_sym(name));
@@ -137,7 +143,7 @@ class ClojureScriptExprEngine implements ExprEngine {
         return { module, errors };
     }
     getBinding(sym: Sym): U {
-        return this.$.getBinding(sym.key());
+        return this.$.getBinding(sym);
     }
     evaluate(expr: U): U {
         const { value } = transform_tree(expr, {}, this.$);
@@ -210,18 +216,21 @@ class ClojureScriptExprEngine implements ExprEngine {
 }
 
 class AlgebriteExprEngine implements ExprEngine {
-    $: ExtensionEnv;
+    readonly #env: ExtensionEnv;
     constructor() {
-        this.$ = create_env({
+        this.#env = create_env({
             dependencies: ALL_FEATURES
         });
-        init_env(this.$, {
+        init_env(this.#env, {
             useDefinitions: false
         });
     }
+    isUserSymbol(sym: Sym): boolean {
+        return this.#env.isUsrFunc(sym.key());
+    }
     defineFunction(name: string, lambda: LambdaExpr): void {
         const match = items_to_cons(create_sym(name));
-        this.$.defineFunction(match, lambda);
+        this.#env.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         // Don't go through the delegate.
@@ -234,52 +243,52 @@ class AlgebriteExprEngine implements ExprEngine {
         return { module, errors };
     }
     getBinding(sym: Sym): U {
-        return this.$.getBinding(sym.key());
+        return this.#env.getBinding(sym);
     }
     evaluate(expr: U): U {
-        const { value } = transform_tree(expr, {}, this.$);
+        const { value } = transform_tree(expr, {}, this.#env);
         return value;
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
-        this.$.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
-        this.$.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
+        this.#env.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
+        this.#env.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
         try {
             switch (config.format) {
                 case 'Ascii': {
-                    return render_as_ascii(expr, this.$);
+                    return render_as_ascii(expr, this.#env);
                 }
                 case 'Human': {
-                    return render_as_human(expr, this.$);
+                    return render_as_human(expr, this.#env);
                 }
                 case 'Infix': {
-                    return render_as_infix(expr, this.$);
+                    return render_as_infix(expr, this.#env);
                 }
                 case 'LaTeX': {
-                    return render_as_latex(expr, this.$);
+                    return render_as_latex(expr, this.#env);
                 }
                 case 'SExpr': {
-                    return render_as_sexpr(expr, this.$);
+                    return render_as_sexpr(expr, this.#env);
                 }
                 case 'SVG': {
                     return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
                 }
                 default: {
-                    return render_as_infix(expr, this.$);
+                    return render_as_infix(expr, this.#env);
                 }
             }
         }
         finally {
-            this.$.popDirective();
-            this.$.popDirective();
+            this.#env.popDirective();
+            this.#env.popDirective();
         }
     }
     release(): void {
-        env_term(this.$);
+        env_term(this.#env);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        this.$.setBinding(sym.key(), binding);
-        this.$.setUsrFunc(sym.key(), usrfunc);
+        this.#env.setBinding(sym, binding);
+        this.#env.setUsrFunc(sym, usrfunc);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -346,6 +355,9 @@ class EigenmathExprEngine implements ExprEngine {
     getBinding(sym: Sym): U {
         return get_binding(sym, this.$);
     }
+    isUserSymbol(sym: Sym): boolean {
+        return this.$.isUsrFunc(sym);
+    }
     evaluate(expr: U): U {
         return evaluate_expression(expr, this.$);
     }
@@ -407,6 +419,10 @@ class EigenmathExprEngine implements ExprEngine {
 }
 
 class PythonExprEngine implements ExprEngine {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isUserSymbol(sym: Sym): boolean {
+        throw new Error('Method not implemented.');
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     defineFunction(name: string, lambda: LambdaExpr): void {
         throw new Error('Method not implemented.');
@@ -535,8 +551,8 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
             // const state = stepper.getStateStack().top;
             // const $: Scope = state.$;
             // $.getSymbolBindings();
-            // console.log(`${state.node}`);
-            // console.log(`${state.done}`);
+            // console.lg(`${state.node}`);
+            // console.lg(`${state.done}`);
         }
         const state = stepper.getStateStack().top;
         const $: Scope = state.$;
@@ -589,7 +605,31 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
         };
         // 
         const listener = new PrintScriptListener(this);
-        print_result_and_input(value, input, should_render_svg($), ec, [listener]);
+        function should_annotate_symbol(x: Sym, value: U): boolean {
+            if ($.isUserSymbol(x)) {
+                if (x.equals(value) || is_nil(value)) {
+                    return false;
+                }
+                /*
+                if (x.equals(I_LOWER) && isimaginaryunit(value))
+                    return false;
+        
+                if (x.equals(J_LOWER) && isimaginaryunit(value))
+                    return false;
+                */
+
+                return true;
+            }
+            else {
+                if (is_native_sym(x)) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol);
     }
     text(text: string): void {
         this.stdout.innerHTML += text;

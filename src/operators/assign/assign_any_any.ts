@@ -1,3 +1,4 @@
+import { Cons, is_cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
@@ -5,7 +6,6 @@ import { ASSIGN } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { caadr } from "../../tree/helpers";
 import { Sym } from "../../tree/sym/Sym";
-import { is_cons, nil, U } from "../../tree/tree";
 import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
@@ -42,15 +42,26 @@ type EXP = BCons<Sym, LHS, RHS>;
 //   g
 //   > x
 /**
- * @param expr (= lhs rhs)
+ * @param expr (= lhs rhs) The expression for the assignment, assumed not to have been evaluated yet.
  */
-function Eval_assign(expr: EXP, $: ExtensionEnv): U {
+function eval_setq(expr: EXP, $: ExtensionEnv): U {
     const lhs = expr.lhs;
     const rhs = expr.rhs;
     return setq(lhs, rhs, expr, $);
 }
 
-export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): U {
+/**
+ * Handles three cases:
+ * 1) LHS is a tensor element, T[i,j,...],
+ * 2) LHS is a function definition.
+ * 3) LHS is a symbol.
+ * 
+ * @param lhs The unevaluated LHS.
+ * @param rhs The unevaluated RHS.
+ * @param expr The unevaluated original expression.
+ * @returns nil
+ */
+export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'setSymbolUsrFunc' | 'valueOf'>): U {
 
     // case of tensor
     if (caadr(expr).equals(COMPONENT)) {
@@ -67,9 +78,21 @@ export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEn
         halt('symbol assignment: error in symbol');
     }
 
-    // TODO: The evaluation of the right hand side is not really necessary.
-    const binding = $.valueOf(rhs);
-    $.setSymbolBinding(lhs, binding);
+    const value = $.valueOf(rhs);
+
+    return setq_sym_value(lhs, value, $);
+}
+
+/**
+ * The implementation of assignment when the LHS is a symbol and the RHS has been evaluated.
+ * @param lhs The symbol on the LHS.
+ * @param rhs The evaluated RHS.
+ * @param $ 
+ * @returns nil
+ */
+export function setq_sym_value(lhs: Sym, rhs: U, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'setSymbolUsrFunc'>): Cons {
+    $.setSymbolBinding(lhs, rhs);
+    $.setSymbolUsrFunc(lhs, nil);
 
     // An assignment returns nothing.
     // This is unlike most programming languages
@@ -101,7 +124,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // That's a bit unfortunate for chained assignments.
         // The kernel of the problem is the printing of expressions by default in the REPL.
         // Notice here that Eval_assign is called with the original expression.
-        return [TFLAG_DIFF, Eval_assign(expr, $)];
+        return [TFLAG_DIFF, eval_setq(expr, $)];
     }
 }
 

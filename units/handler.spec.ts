@@ -1,10 +1,12 @@
 
 import { assert } from "chai";
 import { create_sym, Sym } from "math-expression-atoms";
+import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
-import { Scope, Stepper } from "../src/clojurescript/runtime/Stepper";
+import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
 import { EmitContext, iszero, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
+import { Stack } from "../src/env/Stack";
 
 export function should_stepper_render_svg(stepper: Stepper): boolean {
     const $: Scope = stepper.getStateStack().top.$;
@@ -90,7 +92,31 @@ class TestScriptHandler implements ScriptHandler<ExprEngine> {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
-        print_result_and_input(value, input, should_render_svg($), ec, [listener]);
+        function should_annotate_symbol(x: Sym, value: U): boolean {
+            if ($.isUserSymbol(x)) {
+                if (x.equals(value) || is_nil(value)) {
+                    return false;
+                }
+                /*
+                if (x.equals(I_LOWER) && isimaginaryunit(value))
+                    return false;
+        
+                if (x.equals(J_LOWER) && isimaginaryunit(value))
+                    return false;
+                */
+
+                return true;
+            }
+            else {
+                if (is_native_sym(x)) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -126,7 +152,34 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
-        print_result_and_input(value, input, should_stepper_render_svg($), ec, [listener]);
+        function should_annotate_symbol(x: Sym, value: U): boolean {
+            const state: Stack<State> = $.getStateStack();
+            const top: State = state.top;
+            const scope: Scope = top.$;
+            if (scope.isUserSymbol(x)) {
+                if (x.equals(value) || is_nil(value)) {
+                    return false;
+                }
+                /*
+                if (x.equals(I_LOWER) && isimaginaryunit(value))
+                    return false;
+        
+                if (x.equals(J_LOWER) && isimaginaryunit(value))
+                    return false;
+                */
+
+                return true;
+            }
+            else {
+                if (is_native_sym(x)) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        print_result_and_input(value, input, should_stepper_render_svg($), ec, [listener], should_annotate_symbol);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -206,8 +259,8 @@ describe("handler", function () {
         const handler = new TestStepperHandler();
         run_module(module, handler);
         assert.strictEqual(handler.outputs.length, 2);
-        // console.log(`${handler.outputs[0]}`);   // f=sin(x)/x
-        // console.log(`${handler.outputs[1]}`);   // yrange
+        // console.lg(`${handler.outputs[0]}`);   // f=sin(x)/x
+        // console.lg(`${handler.outputs[1]}`);   // yrange
         // console.lg(`${handler.outputs[2]}`);   // draw
         engine.release();
     });

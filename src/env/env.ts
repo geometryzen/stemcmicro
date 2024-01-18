@@ -170,17 +170,23 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
-        getBinding(key: string): U {
-            return $.getSymbolBinding(key);
+        getBinding(sym: Sym): U {
+            return $.getSymbolBinding(sym);
         },
-        setBinding(key: string, binding: U): void {
-            return $.setSymbolBinding(key, binding);
+        getUsrFunc(sym: Sym): U {
+            return $.getSymbolUsrFunc(sym);
         },
-        getUsrFunc(key: string): U {
-            return $.getSymbolUsrFunc(key);
+        isBinding(sym: Sym): boolean {
+            return symTab.isBinding(sym);
         },
-        setUsrFunc(key: string, usrfunc: U): void {
-            return $.setSymbolUsrFunc(key, usrfunc);
+        isUsrFunc(sym: Sym): boolean {
+            return symTab.isUsrFunc(sym);
+        },
+        setBinding(sym: Sym, binding: U): void {
+            return $.setSymbolBinding(sym, binding);
+        },
+        setUsrFunc(sym: Sym, usrfunc: U): void {
+            return $.setSymbolUsrFunc(sym, usrfunc);
         },
         getPrintHandler(): PrintHandler {
             return printHandler;
@@ -289,13 +295,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         float(expr: U): U {
             return $.evaluate(Native.float, expr);
         },
-        getSymbolPredicates(sym: Sym | string): Predicates {
+        getSymbolPredicates(sym: Sym): Predicates {
             return symTab.getProps(sym);
         },
-        getSymbolBinding(sym: Sym | string): U {
+        getSymbolBinding(sym: Sym): U {
             return symTab.getBinding(sym);
         },
-        getSymbolUsrFunc(sym: Sym | string): U {
+        getSymbolUsrFunc(sym: Sym): U {
             return symTab.getUsrFunc(sym);
         },
         getSymbolsInfo() {

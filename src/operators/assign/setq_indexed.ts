@@ -21,22 +21,22 @@
 //  cadadr(p1) -> a
 //
 
+import { is_sym } from "math-expression-atoms";
+import { Cons, is_cons, nil } from "math-expression-tree";
 import { set_component } from "../../calculators/set_component";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { defs } from "../../runtime/defs";
 import { stack_pop, stack_push, stack_push_items } from "../../runtime/stack";
 import { cadadr, caddr, cdadr } from "../../tree/helpers";
-import { Cons, is_cons, nil, U } from "../../tree/tree";
-import { is_sym } from "../sym/is_sym";
 
 //-----------------------------------------------------------------------------
 /**
  * 
  * @param assignExpr (= )
  * @param $ 
- * @returns 
+ * @returns nil
  */
-export function setq_indexed(assignExpr: Cons, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): U {
+export function setq_indexed(assignExpr: Cons, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): Cons {
     // console.lg(`setq_indexed ${$.toInfixString(assignExpr)}`);
     const p4 = cadadr(assignExpr);
     // console.lg(`p4: ${toInfixString(p4)}`);

@@ -1556,19 +1556,21 @@ function emit_subexpr(p: U, $: StackContext, ec: EmitContext): void {
     emit_update_subexpr($);
 }
 
-function emit_symbol(p: Sym, $: StackContext): void {
-    if (p.equalsSym(EXP1)) {
+function emit_symbol(sym: Sym, $: StackContext): void {
+    if (sym.equalsSym(EXP1)) {
         emit_roman_string("exp(1)", $);
         return;
     }
 
-    const s = printname(p);
+    const s = printname(sym);
 
-    if (issymbol(p) && isusersymbol(p)) {
+    if (isusersymbol(sym)) {
         // Fall through
+        // console.lg(`${sym} is user symbol`);
     }
-    else if ((issymbol(p) && iskeyword(p)) || p.equals(LAST) || p.equals(TRACE) || p.equals(TTY)) {
+    else if ((iskeyword(sym)) || sym.equals(LAST) || sym.equals(TRACE) || sym.equals(TTY)) {
         // Keywords are printed Roman without italics.
+        // console.lg(`${sym} is keyword`);
         emit_roman_string(s, $);
         return;
     }
@@ -8981,6 +8983,31 @@ function eval_prefixform(p1: U, $: ScriptVars): void {
     push_string(s, $);
 }
 
+function should_annotate_symbol(x: Sym, value: U): boolean {
+    if (isusersymbol(x)) {
+        if (x.equals(value) || is_nil(value)) {
+            return false;
+        }
+        /*
+        if (x.equals(I_LOWER) && isimaginaryunit(value))
+            return false;
+
+        if (x.equals(J_LOWER) && isimaginaryunit(value))
+            return false;
+        */
+
+        return true;
+    }
+    else {
+        if (is_native_sym(x)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+}
+
 function eval_print(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
     while (iscons(p1)) {
@@ -8993,7 +9020,7 @@ function eval_print(p1: U, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.listeners);
+        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, should_annotate_symbol);
         p1 = cdr(p1);
     }
     push(nil, $);
@@ -9009,59 +9036,70 @@ function should_render_svg($: ScriptVars): boolean {
     }
 }
 
-export function print_result_and_input(result: U, input: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[]): void {
+export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
 
-    if (is_nil(result)) {
+/**
+ * FIXME: A possible problem with this function is that it has access to module level variables.
+ * This makes it unsuitable as a pure function.
+ * @param value 
+ * @param x 
+ * @param svg 
+ * @param ec 
+ * @param listeners The destination for the rendering.
+ * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
+ * @returns 
+ */
+export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
+
+    if (is_nil(value)) {
         return;
     }
 
-    if (should_annotate_result(input, result)) {
-        result = annotate(input, result);
+    if (is_sym(x) && should_annotate_symbol(x, value)) {
+        // console.lg("The result WILL be annotated.");
+        value = annotate(x, value);
+    }
+    else {
+        // console.lg("The result will NOT be annotated.");
     }
 
     if (svg) {
         for (const listener of listeners) {
-            listener.output(render_svg(result, ec));
+            listener.output(render_svg(value, ec));
         }
     }
     else {
         const config = infix_config_from_options({});
         for (const listener of listeners) {
-            listener.output(render_as_html_infix(result, config));
+            listener.output(render_as_html_infix(value, config));
         }
     }
 }
-
-// returns 1 if result should be annotated
-
-function should_annotate_result(input: U, result: U): 0 | 1 {
-    if (issymbol(input)) {
-        if (isusersymbol(input)) {
-            // Eigenmath
-            if (input.equals(result))
-                return 0; // A = A
-
-            if (input.equals(I_LOWER) && isimaginaryunit(result))
-                return 0;
-
-            if (input.equals(J_LOWER) && isimaginaryunit(result))
-                return 0;
-
-            return 1;
+/*
+function should_annotate_symbol(x: Sym, value: U): boolean {
+    if (isusersymbol(x)) {
+        if (x.equals(value) || is_nil(value)) {
+            return false;
         }
-        else {
-            if (is_native_sym(input)) {
-                return 0;
-            }
-            else {
-                return 1;
-            }
-        }
+
+        if (x.equals(I_LOWER) && isimaginaryunit(value))
+            return false;
+
+        if (x.equals(J_LOWER) && isimaginaryunit(value))
+            return false;
+
+        return true;
     }
     else {
-        return 0;
+        if (is_native_sym(x)) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
+*/
 
 function annotate(input: U, result: U): U {
     return items_to_cons(SETQ, input, result);
@@ -9857,7 +9895,7 @@ function eval_run(expr: U, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.listeners);
+        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, should_annotate_symbol);
         if (!is_nil(result)) {
             set_symbol(LAST, result, nil, $);
         }
@@ -9870,27 +9908,27 @@ function eval_run(expr: U, $: ScriptVars): void {
     push(nil, $);
 }
 
-function eval_setq(p1: U, $: ScriptVars): void {
+function eval_setq(x: Cons, $: ScriptVars): void {
 
     push(nil, $); // return value
 
-    if (caadr(p1).equals(INDEX)) {
-        setq_indexed(p1, $);
+    if (caadr(x).equals(INDEX)) {
+        setq_indexed(x, $);
         return;
     }
 
-    if (iscons(cadr(p1))) {
-        setq_usrfunc(p1, $);
+    if (iscons(cadr(x))) {
+        setq_usrfunc(x, $);
         return;
     }
 
-    const sym = cadr(p1);
+    const sym = x.lhs;
     if (issymbol(sym) && isusersymbol(sym)) {
-        push(caddr(p1), $);
+        push(x.rhs, $);
         evalf($);
-        const p2 = pop($);
+        const rhs = pop($);
 
-        set_symbol(sym, p2, nil, $);
+        set_symbol(sym, rhs, nil, $);
     }
     else {
         stopf(`user symbol expected sym=${sym}`);
@@ -12581,7 +12619,7 @@ export function get_binding(p1: Sym, $: ScriptVars): U {
     if (!isusersymbol(p1)) {
         stopf(`get_binding(${p1}) symbol error`);
     }
-    let p2 = $.getBinding(p1.key());
+    let p2 = $.getBinding(p1);
     if (typeof (p2) === 'undefined' || is_nil(p2)) {
         p2 = p1; // symbol binds to itself
     }
@@ -13482,11 +13520,15 @@ function istensor(p: U): p is Tensor {
     return is_tensor(p);
 }
 
+function isevalfunction(p: Sym): boolean {
+    return evalFunctions.has(p.key());
+}
+
 /**
  * A symbol where the func is eval_user_symbol.
  */
-function isusersymbol(p: Sym): boolean {
-    return userFunctions.has(p.key());
+function isusersymbol(sym: Sym): boolean {
+    return userFunctions.has(sym.key());
 }
 
 function isusersymbolsomewhere(p: U): 0 | 1 {
@@ -13544,11 +13586,11 @@ function list(n: number, $: StackContext): void {
         cons($);
 }
 
-function ensure_cached_symbol(printname: string): Sym {
-    if (!userFunctions.has(printname)) {
-        userFunctions.set(printname, eval_user_symbol);
+function ensure_user_function(sym: Sym): Sym {
+    if (!isusersymbol(sym)) {
+        defineUserFunction(sym);
     }
-    return create_sym(printname);
+    return sym;
 }
 
 /**
@@ -15320,7 +15362,31 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_result_and_input(value, input, should_render_svg($), ec, [this.listener]);
+        function should_annotate_symbol(x: Sym, value: U): boolean {
+            if (isusersymbol(x)) {
+                if (x.equals(value) || is_nil(value)) {
+                    return false;
+                }
+                /*
+                if (x.equals(I_LOWER) && isimaginaryunit(value))
+                    return false;
+        
+                if (x.equals(J_LOWER) && isimaginaryunit(value))
+                    return false;
+                */
+
+                return true;
+            }
+            else {
+                if (is_native_sym(x)) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        print_result_and_input(value, input, should_render_svg($), ec, [this.listener], should_annotate_symbol);
     }
 }
 
@@ -15752,12 +15818,12 @@ function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
                 push(SX, $);
                 break;
             default:
-                push(ensure_cached_symbol(token_buf), $);
+                push(ensure_user_function(create_sym(token_buf)), $);
                 break;
         }
     }
     else {
-        push(ensure_cached_symbol(token_buf), $);
+        push(ensure_user_function(create_sym(token_buf)), $);
     }
     get_token($, config);
 }
@@ -15770,7 +15836,7 @@ function scan_string($: ScriptVars, config: EigenmathParseConfig): void {
 function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
     scan_level++;
-    push(ensure_cached_symbol(token_buf), $); // push function name
+    push(ensure_user_function(create_sym(token_buf)), $); // push function name
     get_token($, config); // get token after function name
     get_token($, config); // get token after (
     if (token === ")") {
@@ -16029,8 +16095,8 @@ export function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): voi
     if (!isusersymbol(sym)) {
         stopf("symbol error");
     }
-    $.setBinding(sym.key(), binding);
-    $.setUsrFunc(sym.key(), usrfunc);
+    $.setBinding(sym, binding);
+    $.setUsrFunc(sym, usrfunc);
 }
 
 function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
@@ -16054,7 +16120,7 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmin = -Math.PI;
     dc.tmax = Math.PI;
 
-    let p1: U = ensure_cached_symbol("trange");
+    let p1: U = ensure_user_function(create_sym("trange"));
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16079,7 +16145,7 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmin = -10;
     dc.xmax = 10;
 
-    let p1: U = ensure_cached_symbol("xrange");
+    let p1: U = ensure_user_function(create_sym("xrange"));
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16103,7 +16169,7 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymin = -10;
     dc.ymax = 10;
 
-    let p1: U = ensure_cached_symbol("yrange");
+    let p1: U = ensure_user_function(create_sym("yrange"));
     push(p1, $);
     eval_nonstop($);
     floatfunc($);
@@ -16290,17 +16356,23 @@ export class ScriptVars implements ExprContext {
     constructor() {
         // Do nothing yet.
     }
-    getBinding(key: string): U {
-        return this.binding[key];
-    }
-    setBinding(key: string, binding: U): void {
-        this.binding[key] = binding;
+    getBinding(sym: Sym): U {
+        return this.binding[sym.key()];
     }
     getUsrFunc(key: string): U {
         return this.usrfunc[key];
     }
-    setUsrFunc(key: string, usrfunc: U): void {
-        this.usrfunc[key] = usrfunc;
+    isBinding(sym: Sym): boolean {
+        return isevalfunction(sym);
+    }
+    isUsrFunc(sym: Sym): boolean {
+        return isusersymbol(sym);
+    }
+    setBinding(sym: Sym, binding: U): void {
+        this.binding[sym.key()] = binding;
+    }
+    setUsrFunc(sym: Sym, usrfunc: U): void {
+        this.usrfunc[sym.key()] = usrfunc;
     }
     inbuf: string = "";
     /**
@@ -16356,12 +16428,12 @@ interface UserFunction {
 const evalFunctions: Map<string, EvalFunction> = new Map();
 const userFunctions: Map<string, UserFunction> = new Map();
 
-function defineEvalFunction(name: Sym, func: EvalFunction): void {
-    evalFunctions.set(name.key(), func);
+function defineEvalFunction(sym: Sym, func: EvalFunction): void {
+    evalFunctions.set(sym.key(), func);
 }
 
-function defineUserFunction(name: Sym): void {
-    userFunctions.set(name.key(), eval_user_symbol);
+function defineUserFunction(sym: Sym): void {
+    userFunctions.set(sym.key(), eval_user_symbol);
 }
 
 defineEvalFunction(ABS, eval_abs);

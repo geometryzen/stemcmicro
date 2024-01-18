@@ -1,5 +1,5 @@
+import { Cons, items_to_cons } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { items_to_cons } from '../../makeList';
 import { EVAL, FUNCTION } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { caadr, caddr, cadr, cdadr } from '../../tree/helpers';
@@ -45,8 +45,9 @@ import { is_sym } from '../sym/is_sym';
  * The assignment is converted info a binding of f to (function body argList).
  * 
  * @param assignExpr (= (f paramList) body)
+ * @returns nil
  */
-export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): U {
+export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): Cons {
     // console.lg("define_function", $.toSExprString(assignExpr));
     /**
      * The function name.

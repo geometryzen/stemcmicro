@@ -316,21 +316,13 @@ export interface ExtensionEnv extends ExprContext {
     float(expr: U): U;
     getCustomDirective(directive: string): boolean;
     getDirective(directive: Directive): boolean;
-    getSymbolPredicates(sym: Sym | string): Predicates;
+    getSymbolPredicates(sym: Sym): Predicates;
     /**
      * Used during rendering.
      */
     getSymbolPrintName(sym: Sym): string;
-    /**
-     * 
-     * @param sym The symol or the key for the symbol.
-     */
-    getSymbolBinding(sym: Sym | string): U;
-    /**
-     * 
-     * @param sym The symbol or the key for the symbol.
-     */
-    getSymbolUsrFunc(sym: Sym | string): U;
+    getSymbolBinding(sym: Sym): U;
+    getSymbolUsrFunc(sym: Sym): U;
     getSymbolsInfo(): { sym: Sym, value: U }[];
     /**
      * Used to make the environment ready after all operator builders have been added.
@@ -411,8 +403,8 @@ export interface ExtensionEnv extends ExprContext {
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;
-    setSymbolBinding(sym: Sym | string, binding: U): void;
-    setSymbolUsrFunc(sym: Sym | string, usrfunc: U): void;
+    setSymbolBinding(sym: Sym, binding: U): void;
+    setSymbolUsrFunc(sym: Sym, usrfunc: U): void;
     simplify(expr: U): U;
     sin(expr: U): U;
     sqrt(expr: U): U;

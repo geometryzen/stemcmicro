@@ -49,9 +49,11 @@ export function keepFlag(flags: TFLAGS): boolean {
 }
 
 /**
- *
+ * Corresponds to the 'name' property on an Atom.
  */
-export type FEATURE = 'Blade' | 'Flt' | 'Imu' | 'Uom' | 'Vector';
+export type FEATURE = 'Blade' | 'Boo' | 'Flt' | 'Imu' | 'Map' | 'Rat' | 'Sym' | 'Tensor' | 'Uom';
+
+export const ALL_FEATURES: FEATURE[] = ['Blade', 'Boo', 'Flt', 'Imu', 'Map', 'Rat', 'Sym', 'Tensor', 'Uom'];
 
 /**
  * Determines how an expression is evaluated.
@@ -465,10 +467,17 @@ export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTO
  * Every object in the system is an opaque handle.
  */
 export interface Operator<T extends U> {
-    readonly key?: string;
-    readonly name: string;
+    /**
+     * Determines which expressions this operator matches.
+     */
     readonly hash: string;
+    /**
+     * Determines the modes in which this operator is active.
+     */
     readonly phases?: number;
+    /**
+     *
+     */
     readonly dependencies?: FEATURE[];
     /**
      * Determines whether this operator can be used to evaluate the expression.
@@ -494,17 +503,12 @@ export interface Operator<T extends U> {
 }
 
 /**
- * FIXME: key and hash are duplicate functionality. Remove key as hash better reflects the intention of the extension.
+ *
  */
 export interface Extension<T extends U> {
     /**
-     * The key property is required for extensions.
      * It MUST return the same value as the corresponding atom name property.
-     */
-    readonly key?: string;
-    /**
      * The hash property is required for extensions.
-     * It MUST return the same value as the corresponding atom name property.
      */
     readonly hash: string;
     /**
@@ -512,6 +516,9 @@ export interface Extension<T extends U> {
      */
     readonly name: string;
     readonly phases?: number;
+    /**
+     * Determines which features this extension requires (in order to be loaded).
+     */
     readonly dependencies?: FEATURE[];
     isKind(expr: U, $: ExtensionEnv): boolean;
     subst(expr: T, oldExpr: U, newExpr: U, $: ExtensionEnv): U;

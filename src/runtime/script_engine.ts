@@ -1,7 +1,7 @@
 import { LambdaExpr } from "math-expression-context";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
+import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
@@ -127,7 +127,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
     if (options) {
         const config: EnvOptions = {
             assumes: options.assumes,
-            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
+            dependencies: ALL_FEATURES,
             enable: options.enable,
             disable: options.disable,
             noOptimize: false,
@@ -142,7 +142,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
     else {
         const config: EnvOptions = {
             assumes: {},
-            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector'],
+            dependencies: ALL_FEATURES,
             enable: [],
             disable: [],
             noOptimize: false,
@@ -157,8 +157,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
 }
 
 /**
- * Creates an engine for executing scripts.
- * The returned engine is reference counted and should be released when no longer needed.
+ * @deprecated Used only by development REPL.
  */
 export function create_script_context(contextOptions?: ScriptContextOptions): ScriptContext {
     // console.lg("create_script_context");

@@ -5,7 +5,7 @@ import { clojurescript_parse } from '../clojurescript/parser/clojurescript_parse
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, init, initscript, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
-import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
+import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { delegate_parse_script, ParseOptions, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
@@ -112,7 +112,7 @@ class ClojureScriptExprEngine implements ExprEngine {
     $: ExtensionEnv;
     constructor() {
         this.$ = create_env({
-            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector']
+            dependencies: ALL_FEATURES
         });
         init_env(this.$, {
             useDefinitions: false
@@ -213,7 +213,7 @@ class AlgebriteExprEngine implements ExprEngine {
     $: ExtensionEnv;
     constructor() {
         this.$ = create_env({
-            dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector']
+            dependencies: ALL_FEATURES
         });
         init_env(this.$, {
             useDefinitions: false

@@ -28,9 +28,6 @@ class ExtensionOperator<T extends U> implements Operator<T> {
         // Nothing going on here because this is a crude adaption of the Extension.
         // This would be a good place to cache symbols that will be needed later.
     }
-    get key(): string | undefined {
-        return this.extension.key;
-    }
     get hash(): string {
         return this.extension.hash;
     }

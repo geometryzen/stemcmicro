@@ -16,7 +16,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
     readonly #hash: string;
-    readonly dependencies: FEATURE[] = ['Vector'];
+    readonly dependencies: FEATURE[] = ['Sym'];
     constructor($: ExtensionEnv) {
         super('outer_2_sym_sym', MATH_OUTER, is_sym, is_sym, $);
         this.#hash = hash_binop_atom_atom(MATH_OUTER, HASH_SYM, HASH_SYM);

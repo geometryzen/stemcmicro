@@ -5,7 +5,7 @@ import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
 import { ExprEngineListener } from "../../api";
 import { create_env, EnvOptions } from "../../env/env";
-import { ExtensionEnv, Operator } from "../../env/ExtensionEnv";
+import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
@@ -68,7 +68,6 @@ export interface Scope {
     thing: Thing;
     evaluate(opr: Native, ...args: U[]): U;
     getSymbolBinding(sym: string | Sym): U;
-    operatorFor(expr: U): Operator<U> | undefined;
     setSymbolBinding(sym: string | Sym, binding: U): void;
     valueOf(expr: U): U;
     /*
@@ -131,7 +130,7 @@ export interface StepperConfig {
 
 function env_options_from_stepper_options(options?: Partial<StepperConfig>): EnvOptions {
     const config: EnvOptions = {
-        dependencies: ['Blade', 'Flt', 'Imu', 'Uom', 'Vector']
+        dependencies: ALL_FEATURES
     };
     return config;
 }
@@ -263,13 +262,9 @@ export class Stepper {
                 }
                 else if (is_atom(node)) {
                     stack.pop();
-                    const op = stack.top.$.operatorFor(node);
-                    if (op) {
-                        stack.top.value = op.valueOf(node);
-                    }
-                    else {
-                        stack.top.value = node;
-                    }
+                    const top: State = stack.top;
+                    const scope: Scope = top.$;
+                    top.value = scope.valueOf(node);
                 }
                 else {
                     throw Error(`${node} is not a cons, nil, or atom.`);

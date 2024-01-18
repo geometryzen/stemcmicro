@@ -21,7 +21,7 @@ class Builder implements OperatorBuilder<Cons> {
  */
 class Op extends Function2<Rat, Flt> implements Operator<Cons> {
     readonly #hash: string;
-    readonly dependencies: FEATURE[] = ['Flt'];
+    readonly dependencies: FEATURE[] = ['Flt', 'Rat'];
     constructor($: ExtensionEnv) {
         super('add_rat_flt', MATH_ADD, is_rat, is_flt, $);
         this.#hash = hash_binop_atom_atom(MATH_ADD, HASH_RAT, HASH_FLT);

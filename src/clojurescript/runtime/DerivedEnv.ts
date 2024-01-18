@@ -3,7 +3,7 @@ import { Rat, Sym, Tensor } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native } from "math-expression-native";
 import { U } from "math-expression-tree";
-import { CompareFn, ConsExpr, Directive, ExprComparator, KeywordRunner, Operator, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
+import { CompareFn, ConsExpr, Directive, ExprComparator, KeywordRunner, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
 import { Scope, Thing } from "./Stepper";
 
 export class DerivedEnv implements Scope {
@@ -174,9 +174,6 @@ export class DerivedEnv implements Scope {
     }
     negate(expr: U): U {
         throw new Error("Method not implemented.");
-    }
-    operatorFor(expr: U): Operator<U> | undefined {
-        return this.parentEnv.operatorFor(expr);
     }
     outer(...args: U[]): U {
         throw new Error("Method not implemented.");

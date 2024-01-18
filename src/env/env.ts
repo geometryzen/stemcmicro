@@ -303,7 +303,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         buildOperators(): void {
             for (const builder of builders) {
-                const op = builder.create($, config);
+                const op: Operator<U> = builder.create($, config);
                 if (dependencies_satisfied(op.dependencies, config.dependencies)) {
                     // No problem.
                 }
@@ -325,20 +325,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             }
                         }
                         else {
-                            // Does this mean that 'key' and 'hash' are equivalent properties.
-                            // Maybe this was an expedient for earlier work?
-                            // At least for new extensions they should be the same. 
-                            if (op.key) {
-                                if (!Array.isArray(ops[op.key])) {
-                                    ops[op.key] = [op];
-                                }
-                                else {
-                                    ops[op.key].push(op);
-                                }
-                            }
-                            else {
-                                throw new SystemError(`${op.name} has no 'key' (string) property and no 'hash' (string) property.`);
-                            }
+                            throw new SystemError(`operator MUST have a 'hash' property.`);
                         }
 
                     }

@@ -3,7 +3,7 @@ import { U } from "math-expression-tree";
 
 export class Dictionary extends Atom {
     constructor(readonly elements: U[]) {
-        super("Dictionary");
+        super('Map');
     }
     toString(): string {
         // This is only for debugging.

@@ -10,8 +10,8 @@ import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/is_rat";
 
-export const LOG = native_sym(Native.log);
-export const PI = native_sym(Native.PI);
+const LOG = native_sym(Native.log);
+const Pi = native_sym(Native.mathematical_constant_Pi);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -38,7 +38,7 @@ class Op extends Function1<Rat> {
         }
         else if (x.isMinusOne()) {
             const $ = this.$;
-            return [TFLAG_DIFF, $.multiply(imu, PI)];
+            return [TFLAG_DIFF, $.multiply(imu, Pi)];
         }
         else if (x.isFraction()) {
             const $ = this.$;
@@ -49,7 +49,7 @@ class Op extends Function1<Rat> {
         else if (x.isNegative()) {
             const $ = this.$;
             const termRe = $.log($.negate(x));
-            const termIm = $.multiply(imu, PI);
+            const termIm = $.multiply(imu, Pi);
             return [TFLAG_DIFF, $.add(termRe, termIm)];
         }
         return [TFLAG_NONE, expr];

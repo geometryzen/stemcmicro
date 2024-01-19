@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { Directive } from "../src/env/ExtensionEnv";
+import { algebrite_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -31,7 +32,7 @@ describe("exp", function () {
             `exp(i*pi)`
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "-1");
@@ -42,7 +43,7 @@ describe("exp", function () {
             `exp(pi*i)`
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "-1");
@@ -54,7 +55,7 @@ describe("exp", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "cos(x)+i*sin(x)");
@@ -66,7 +67,7 @@ describe("exp", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "cos(x)-i*sin(x)");
@@ -78,7 +79,7 @@ describe("exp", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "2*cos(x)");
@@ -90,7 +91,7 @@ describe("exp", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "2*cos(x)");
@@ -102,7 +103,7 @@ describe("exp", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "2*i*sin(x)");
@@ -114,7 +115,7 @@ describe("exp", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "-2*i*sin(x)");
@@ -125,7 +126,7 @@ describe("exp", function () {
             `exp(-3/4*i*pi)`
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "-1/2*2**(1/2)-1/2*2**(1/2)*i");

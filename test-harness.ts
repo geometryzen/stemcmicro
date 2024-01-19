@@ -4,6 +4,7 @@ import process from 'process';
 import { Predicates } from './src/env/ExtensionEnv';
 import { SyntaxKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
+import { algebrite_prolog } from './src/runtime/init';
 import { create_script_context, ScriptContext, ScriptContextOptions } from './src/runtime/script_engine';
 import { U } from './src/tree/tree';
 
@@ -193,13 +194,7 @@ function setup_test(f: () => void, engine: ScriptContext, options: ScriptContext
     // We need to redo these...
     engine.clearBindings();
 
-    // TODO: Do away with the coarse useStandardDefinitions...
-    if (options.useDefinitions) {
-        engine.executeScript("e=exp(1)");
-        engine.executeScript("i=sqrt(-1)");
-        engine.executeScript("pi=tau(1)/2");
-        engine.useStandardDefinitions();
-    }
+    engine.executeProlog(algebrite_prolog);
 
     // TODO: Remove these comments when everything is working.
     // Not going to do this anymore.
@@ -240,7 +235,6 @@ export interface TestOptions {
     assumes?: { [name: string]: Partial<Predicates> };
     dependencies?: DEPENDENCY[];
     useCaretForExponentiation?: boolean;
-    useDefinitions?: boolean;
     useIntegersForPredicates?: boolean;
     verbose?: boolean;
     name?: string;
@@ -250,7 +244,6 @@ interface TestConfig {
     assumes: { [name: string]: Partial<Predicates> };
     dependencies: DEPENDENCY[];
     useCaretForExponentiation: boolean;
-    useDefinitions: boolean;
     useIntegersForPredicates: boolean;
     verbose: boolean;
 }
@@ -262,7 +255,6 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
@@ -273,7 +265,6 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             assumes: {},
             dependencies: [],
             useCaretForExponentiation: true,
-            useDefinitions: true,
             useIntegersForPredicates: true,
             verbose: false
         };
@@ -289,17 +280,15 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
         return {
             assumes: options.assumes,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : true,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
-            syntaxKind: SyntaxKind.Native
+            syntaxKind: SyntaxKind.Algebrite
         };
     }
     else {
         return {
             useCaretForExponentiation: true,
-            useDefinitions: true,
             useIntegersForPredicates: true,
-            syntaxKind: SyntaxKind.Native
+            syntaxKind: SyntaxKind.Algebrite
         };
     }
 }

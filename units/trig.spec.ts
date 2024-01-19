@@ -100,8 +100,7 @@ describe("trig", function () {
                 dependencies: [],
                 disable: [],
                 syntaxKind: SyntaxKind.Algebrite,
-                useCaretForExponentiation: false,
-                useDefinitions: false
+                useCaretForExponentiation: false
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             // assert.strictEqual(engine.renderAsSExpr(value), '(+ (pow (cos x) 2) (pow (sin x) 2))');

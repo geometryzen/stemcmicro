@@ -7,8 +7,7 @@ describe("subst", function () {
             `subst((-1)^(1/2),i,-3+10/9*3^(1/2)*i)`
         ];
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "-3+10/9*3^(1/2)*i");

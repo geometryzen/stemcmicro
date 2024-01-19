@@ -74,9 +74,9 @@ import { render_as_sexpr } from './render_as_sexpr';
 
 const ENGLISH_UNDEFINED = 'undefined';
 
-const MATH_E = native_sym(Native.E);
+const MATH_E = native_sym(Native.mathematical_constant_Eulers_number_Napiers_constant);
 const MATH_IMU = native_sym(Native.IMU);
-const MATH_PI = native_sym(Native.PI);
+const MATH_PI = native_sym(Native.mathematical_constant_Pi);
 const TESTEQ = native_sym(Native.testeq);
 const COMPONENT = native_sym(Native.component);
 

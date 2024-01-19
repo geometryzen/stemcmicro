@@ -10,7 +10,6 @@ describe("function", function () {
             `f`
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "function (x) -> 2*x");
@@ -23,7 +22,6 @@ describe("function", function () {
             `f(a)`
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "2*a");

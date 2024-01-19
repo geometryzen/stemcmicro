@@ -21,8 +21,7 @@ describe("user", function () {
             `f(0,0)`
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "1.0");
@@ -35,8 +34,7 @@ describe("user", function () {
             `f(0,0)`
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "1.0");
@@ -45,12 +43,14 @@ describe("user", function () {
     });
     it("f(180,0)", function () {
         const lines: string[] = [
-            `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
+            `f(a,x)=1+tan(float(a/360*2*Pi))-float(x)+tan(a/360*2*Pi)-x`,
             `f(180,0)`
         ];
         const engine = create_script_context({
             dependencies: ['Flt'],
-            useDefinitions: true
+            prolog: [
+                `Pi=tau(1)/2`
+            ]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "1.0");
@@ -63,7 +63,6 @@ describe("user", function () {
             `f`
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "function (x) -> 2*x");
@@ -76,7 +75,6 @@ describe("user", function () {
             `f(a)`
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "2*a");

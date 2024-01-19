@@ -23,7 +23,7 @@
         "examples": "mocha 'examples/**/*.spec.ts' --sort",
         "pages": "npm run docs:typedoc && gh-pages -d docs",
         "pretest": "npm run build",
-        "prepublishOnly": "npm run units",
+        "prepublishOnly": "npm run units && npm run examples",
         "release": "npm run build && npm run units && release-it",
         "repl": "node repl.mjs",
         "test": "npm run units && npm run examples && npm run tests",
@@ -42,6 +42,7 @@
         "unit-clock": "mocha 'units/clock.spec.ts'",
         "unit-complex": "mocha 'units/complex.spec.ts'",
         "unit-conj": "mocha 'units/conj.spec.ts'",
+        "unit-constants": "mocha 'units/constants.spec.ts'",
         "unit-cos": "mocha 'units/cos.spec.ts'",
         "unit-coverage": "mocha 'units/coverage.spec.ts'",
         "unit-defint": "mocha 'units/defint.spec.ts'",
@@ -157,7 +158,7 @@
     "peerDependencies": {
         "math-expression-atoms": "^0.9.20",
         "math-expression-context": "^0.9.9",
-        "math-expression-native": "^0.9.9",
+        "math-expression-native": "^0.9.10",
         "math-expression-tree": "^0.9.13"
     }
 }

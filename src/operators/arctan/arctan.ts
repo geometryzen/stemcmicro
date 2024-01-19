@@ -3,9 +3,10 @@ import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { equaln, is_num_and_equalq } from '../../is';
 import { items_to_cons } from '../../makeList';
 import { is_negative } from '../../predicates/is_negative';
-import { ARCTAN, COS, PI, POWER, SIN, TAN } from '../../runtime/constants';
+import { ARCTAN, COS, POWER, SIN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_multiply, is_power } from '../../runtime/helpers';
+import { MATH_PI } from '../../runtime/ns_math';
 import { create_flt, piAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { third, zero } from '../../tree/rat/Rat';
@@ -72,7 +73,7 @@ function arctan(x: U, $: ExtensionEnv): U {
             equaln(car(cdr(car(cdr(cdr(x))))), 3) &&
             is_num_and_equalq(car(cdr(cdr(car(cdr(cdr(x)))))), 1, 2))
     ) {
-        return $.multiply(rational(1, 6), $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI);
+        return $.multiply(rational(1, 6), $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI);
     }
 
     // arctan(1) -> pi/4

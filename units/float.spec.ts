@@ -65,8 +65,7 @@ describe("float", function () {
             `float(x)`
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "x");
@@ -75,11 +74,11 @@ describe("float", function () {
     });
     it("G", function () {
         const lines: string[] = [
-            `float(pi)`
+            `Pi=tau(1/2)`,
+            `float(Pi)`
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "3.141593...");
@@ -91,7 +90,7 @@ describe("float", function () {
             `float(exp(1))`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {
@@ -108,7 +107,7 @@ describe("float", function () {
             `log(-1.0)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_context({ useDefinitions: true });
+        const engine = create_script_context({});
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {
@@ -125,7 +124,7 @@ describe("float", function () {
             `log(-1.0)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {

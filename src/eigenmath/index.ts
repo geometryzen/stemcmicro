@@ -9,6 +9,7 @@ import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Imu } from '../tree/imu/Imu';
+import { two } from '../tree/rat/Rat';
 
 export interface EigenmathReadScope {
     isConsSymbol(sym: Sym): boolean;
@@ -259,8 +260,10 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     if (isstring(rhs))
         return 1;
 
-    if (issymbol(lhs) && issymbol(rhs))
-        return cmp_strings(printname(lhs), printname(rhs));
+    if (issymbol(lhs) && issymbol(rhs)) {
+        // The comparison is by namespace then localName.
+        return lhs.compare(rhs);
+    }
 
     if (issymbol(lhs))
         return -1;
@@ -647,6 +650,7 @@ const SUBST = create_sym("subst");
 const SUM = create_sym("sum");
 const TAN = native_sym(Native.tan);
 const TANH = native_sym(Native.tanh);
+const TAU = native_sym(Native.tau);
 const TAYLOR = create_sym("taylor");
 const TEST = create_sym("test");
 const TESTEQ = create_sym("testeq");
@@ -667,7 +671,10 @@ const INDEX = native_sym(Native.component);
 const SETQ = native_sym(Native.setq);
 
 export const LAST = create_sym("last");
-const PI = native_sym(Native.PI);
+/**
+ * mathematical constant Pi
+ */
+const Pi = native_sym(Native.mathematical_constant_Pi);
 const TRACE = create_sym("trace");
 
 const D_LOWER = create_sym("d");
@@ -675,10 +682,10 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const X_LOWER = create_sym("x");
 
-const EXP1 = create_sym("$e");
-const SA = create_sym("$a");
-const SB = create_sym("$b");
-const SX = create_sym("$x");
+const DOLLAR_E = create_sym("$e");
+const DOLLAR_A = create_sym("$a");
+const DOLLAR_B = create_sym("$b");
+const DOLLAR_X = create_sym("$x");
 
 const ARG1 = create_sym("$1");
 const ARG2 = create_sym("$2");
@@ -1462,7 +1469,7 @@ function emit_numeric_exponent(p: Num, $: StackContext) {
 }
 
 function emit_power(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
-    if (cadr(p).equals(EXP1)) {
+    if (cadr(p).equals(DOLLAR_E)) {
         emit_roman_string("exp", $);
         emit_args(cdr(p), $, ec, scope);
         return;
@@ -1572,17 +1579,23 @@ function emit_subexpr(p: U, $: StackContext, ec: EmitContext, scope: EigenmathRe
     emit_update_subexpr($);
 }
 
+function printname_from_symbol(sym: Sym): string {
+    if (sym.equalsSym(Pi)) {
+        return 'pi';
+    }
+    else {
+        return sym.key();
+    }
+}
+
 function emit_symbol(sym: Sym, $: StackContext, scope: Pick<EigenmathReadScope, 'isConsSymbol' | 'isUserSymbol'>): void {
-    if (sym.equalsSym(EXP1)) {
+
+    if (sym.equalsSym(DOLLAR_E)) {
         emit_roman_string("exp(1)", $);
         return;
     }
 
-    const s = printname(sym);
-
-    if (scope.isConsSymbol(sym)) {
-        // OK, just asking.
-    }
+    const s = printname_from_symbol(sym);
 
     if (scope.isUserSymbol(sym)) {
         // Fall through
@@ -3418,38 +3431,38 @@ function arccos($: ScriptVars): void {
         return;
     }
 
-    // arccos(1 / sqrt(2)) = 1/4 pi
+    // arccos(1 / sqrt(2)) = 1/4 Pi
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
 
-    // arccos(-1 / sqrt(2)) = 3/4 pi
+    // arccos(-1 / sqrt(2)) = 3/4 Pi
 
     if (isminusoneoversqrttwo(p1)) {
         push_rational(3, 4, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
 
-    // arccos(0) = 1/2 pi
+    // arccos(0) = 1/2 Pi
 
     if (iszero(p1)) {
         push_rational(1, 2, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
 
-    // arccos(1/2) = 1/3 pi
+    // arccos(1/2) = 1/3 Pi
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 3, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
@@ -3461,19 +3474,19 @@ function arccos($: ScriptVars): void {
         return;
     }
 
-    // arccos(-1/2) = 2/3 pi
+    // arccos(-1/2) = 2/3 Pi
 
     if (isequalq(p1, -1, 2)) {
         push_rational(2, 3, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
 
-    // arccos(-1) = pi
+    // arccos(-1) = Pi
 
     if (isminusone(p1)) {
-        push(PI, $);
+        push(Pi, $);
         return;
     }
 
@@ -3604,11 +3617,11 @@ function arcsin($: ScriptVars): void {
         return;
     }
 
-    // arcsin(1 / sqrt(2)) = 1/4 pi
+    // arcsin(1 / sqrt(2)) = 1/4 Pi
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
@@ -3620,20 +3633,20 @@ function arcsin($: ScriptVars): void {
         return;
     }
 
-    // arcsin(1/2) = 1/6 pi
+    // arcsin(1/2) = 1/6 Pi
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 6, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
 
-    // arcsin(1) = 1/2 pi
+    // arcsin(1) = 1/2 Pi
 
     if (isplusone(p1)) {
         push_rational(1, 2, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
@@ -3812,7 +3825,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
 
     if (iszero(Y)) {
         if (isnegativenumber(X))
-            push(PI, $);
+            push(Pi, $);
         else
             push_integer(0, $);
         return;
@@ -3823,7 +3836,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
             push_rational(-1, 2, $);
         else
             push_rational(1, 2, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         return;
     }
@@ -3884,7 +3897,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
             push_rational(1, 4, $);
     }
 
-    push(PI, $);
+    push(Pi, $);
     multiply($);
 }
 
@@ -4014,7 +4027,7 @@ function arg1($: ScriptVars): void {
 
     if (isrational(p1)) {
         if (isnegativenumber(p1)) {
-            push(PI, $);
+            push(Pi, $);
             negate($);
         }
         else
@@ -4033,7 +4046,7 @@ function arg1($: ScriptVars): void {
     // (-1) ^ expr
 
     if (car(p1).equals(POWER) && isminusone(cadr(p1))) {
-        push(PI, $);
+        push(Pi, $);
         push(caddr(p1), $);
         multiply($);
         return;
@@ -4041,7 +4054,7 @@ function arg1($: ScriptVars): void {
 
     // e ^ expr
 
-    if (car(p1).equals(POWER) && cadr(p1).equals(EXP1)) {
+    if (car(p1).equals(POWER) && cadr(p1).equals(DOLLAR_E)) {
         push(caddr(p1), $);
         imag($);
         return;
@@ -4246,7 +4259,7 @@ function eval_clear(expr: U, $: ScriptVars) {
     $.usrfunc = {};
 
     // TODO: A restore or rest would be better here.
-    $.initscript(eigenmath_init_script);
+    $.executeProlog(eigenmath_prolog);
 
     restore_symbol($);
     restore_symbol($);
@@ -4282,7 +4295,7 @@ function clockfunc($: ScriptVars): void {
 
     push(p1, $);
     arg($);
-    push(PI, $);
+    push(Pi, $);
     divide($);
 
     power($);
@@ -4566,10 +4579,10 @@ function cosfunc($: ScriptVars): void {
         return;
     }
 
-    // n pi ?
+    // n Pi ?
 
     push(p1, $);
-    push(PI, $);
+    push(Pi, $);
     divide($);
     let p2 = pop($);
 
@@ -4663,7 +4676,7 @@ function cosfunc($: ScriptVars): void {
     }
 }
 
-// cos(x + n/2 pi) = cos(x) cos(n/2 pi) - sin(x) sin(n/2 pi)
+// cos(x + n/2 Pi) = cos(x) cos(n/2 Pi) - sin(x) sin(n/2 Pi)
 
 function cosfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
@@ -4671,7 +4684,7 @@ function cosfunc_sum(p1: U, $: ScriptVars): void {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
-        push(PI, $);
+        push(Pi, $);
         divide($);
         let p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
@@ -5352,7 +5365,7 @@ function derf(p1: U, p2: U, $: ScriptVars): void {
     push_integer(-1, $);
     multiply($);
     expfunc($);
-    push(PI, $);
+    push(Pi, $);
     push_rational(-1, 2, $);
     power($);
     multiply($);
@@ -5372,7 +5385,7 @@ function derfc(p1: U, p2: U, $: ScriptVars): void {
     push_integer(-1, $);
     multiply($);
     expfunc($);
-    push(PI, $);
+    push(Pi, $);
     push_rational(-1, 2, $);
     power($);
     multiply($);
@@ -5911,7 +5924,7 @@ function eval_exp(p1: U, $: ScriptVars): void {
 }
 
 function expfunc($: ScriptVars): void {
-    push(EXP1, $);
+    push(DOLLAR_E, $);
     swap($);
     power($);
 }
@@ -6104,7 +6117,7 @@ function eval_float(p1: U, $: ScriptVars): void {
 function floatfunc($: ScriptVars): void {
     floatfunc_subst($);
     evalf($);
-    floatfunc_subst($); // in case pi popped up
+    floatfunc_subst($); // in case Pi popped up
     evalf($);
 }
 
@@ -6123,12 +6136,12 @@ function floatfunc_subst($: ScriptVars): void {
         return;
     }
 
-    if (p1.equals(PI)) {
+    if (p1.equals(Pi)) {
         push_double(Math.PI, $);
         return;
     }
 
-    if (p1.equals(EXP1)) {
+    if (p1.equals(DOLLAR_E)) {
         push_double(Math.E, $);
         return;
     }
@@ -6140,9 +6153,9 @@ function floatfunc_subst($: ScriptVars): void {
 
     // don't float exponential
 
-    if (car(p1).equals(POWER) && cadr(p1).equals(EXP1)) {
+    if (car(p1).equals(POWER) && cadr(p1).equals(DOLLAR_E)) {
         push(POWER, $);
-        push(EXP1, $);
+        push(DOLLAR_E, $);
         push(caddr(p1), $);
         floatfunc_subst($);
         list(3, $);
@@ -7620,11 +7633,11 @@ function integral($: ScriptVars): void {
 
 function integral_nib(F: U, X: U, $: ScriptVars): void {
 
-    save_symbol(SA, $);
-    save_symbol(SB, $);
-    save_symbol(SX, $);
+    save_symbol(DOLLAR_A, $);
+    save_symbol(DOLLAR_B, $);
+    save_symbol(DOLLAR_X, $);
 
-    set_symbol(SX, X, nil, $);
+    set_symbol(DOLLAR_X, X, nil, $);
 
     // put constants in F(X) on the stack
 
@@ -7680,7 +7693,7 @@ function integral_classify(p: U): number {
         return t;
     }
 
-    if (p.equals(EXP1))
+    if (p.equals(DOLLAR_E))
         return 1;
 
     if (p.equals(LOG))
@@ -7734,11 +7747,11 @@ function integral_search_nib(h: number, F: U, I: U, C: U, $: ScriptVars): 0 | 1 
 
     for (let i = h; i < $.stack.length; i++) {
 
-        set_symbol(SA, $.stack[i], nil, $);
+        set_symbol(DOLLAR_A, $.stack[i], nil, $);
 
         for (let j = h; j < $.stack.length; j++) {
 
-            set_symbol(SB, $.stack[j], nil, $);
+            set_symbol(DOLLAR_B, $.stack[j], nil, $);
 
             push(C, $);			// condition ok?
             evalf($);
@@ -7901,7 +7914,7 @@ function logfunc($: ScriptVars): void {
 
     // log(e) -> 1
 
-    if (p1.equals(EXP1)) {
+    if (p1.equals(DOLLAR_E)) {
         push_integer(1, $);
         return;
     }
@@ -7911,7 +7924,7 @@ function logfunc($: ScriptVars): void {
         negate($);
         logfunc($);
         push(imaginaryunit, $);
-        push(PI, $);
+        push(Pi, $);
         multiply($);
         add($);
         return;
@@ -8035,7 +8048,7 @@ function mag_nib($: ScriptVars): void {
 
     // exponential
 
-    if (car(p1).equals(POWER) && cadr(p1).equals(EXP1)) {
+    if (car(p1).equals(POWER) && cadr(p1).equals(DOLLAR_E)) {
         push(caddr(p1), $);
         real($);
         expfunc($);
@@ -8749,7 +8762,7 @@ function polar($: ScriptVars): void {
     const p2 = pop($);
     if (isdouble(p2)) {
         push_double(p2.d / Math.PI, $);
-        push(PI, $);
+        push(Pi, $);
         multiply_factors(3, $);
     }
     else {
@@ -8845,12 +8858,12 @@ function power($: ScriptVars): void {
         return;
     }
 
-    if (base.equals(EXP1) && isdouble(expo)) {
+    if (base.equals(DOLLAR_E) && isdouble(expo)) {
         push_double(Math.E, $);
         base = pop($);
     }
 
-    if (base.equals(PI) && isdouble(expo)) {
+    if (base.equals(Pi) && isdouble(expo)) {
         push_double(Math.PI, $);
         base = pop($);
     }
@@ -8948,7 +8961,7 @@ function power($: ScriptVars): void {
 
     // BASE = e ?
 
-    if (base.equals(EXP1)) {
+    if (base.equals(DOLLAR_E)) {
         power_natural_number(expo, $);
         return;
     }
@@ -9811,7 +9824,7 @@ function rotate_q(PSI: Tensor, n: number, $: ScriptVars): void {
             push_integer(i - j, $);
             power($);
             push(imaginaryunit, $);
-            push(PI, $);
+            push(Pi, $);
             evalf($);
             multiply_factors(3, $);
             expfunc($);
@@ -9834,7 +9847,7 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
             push_integer(i - j, $);
             power($);
             push(imaginaryunit, $);
-            push(PI, $);
+            push(Pi, $);
             evalf($);
             multiply_factors(3, $);
             negate($);
@@ -10464,10 +10477,10 @@ function sinfunc($: ScriptVars): void {
         return;
     }
 
-    // n pi ?
+    // n Pi ?
 
     push(p1, $);
-    push(PI, $);
+    push(Pi, $);
     divide($);
     let p2 = pop($);
 
@@ -10561,7 +10574,7 @@ function sinfunc($: ScriptVars): void {
     }
 }
 
-// sin(x + n/2 pi) = sin(x) cos(n/2 pi) + cos(x) sin(n/2 pi)
+// sin(x + n/2 Pi) = sin(x) cos(n/2 Pi) + cos(x) sin(n/2 Pi)
 
 function sinfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
@@ -10569,7 +10582,7 @@ function sinfunc_sum(p1: U, $: ScriptVars): void {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
-        push(PI, $);
+        push(Pi, $);
         divide($);
         let p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
@@ -10840,10 +10853,10 @@ function tanfunc($: ScriptVars): void {
         return;
     }
 
-    // n pi ?
+    // n Pi ?
 
     push(p1, $);
-    push(PI, $);
+    push(Pi, $);
     divide($);
     let p2 = pop($);
 
@@ -10928,13 +10941,13 @@ function tanfunc($: ScriptVars): void {
     }
 }
 
-// tan(x + n pi) = tan(x)
+// tan(x + n Pi) = tan(x)
 
 function tanfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
     while (iscons(p2)) {
         push(car(p2), $);
-        push(PI, $);
+        push(Pi, $);
         divide($);
         const p3 = pop($);
         if (isrational(p3) && isinteger(p3)) {
@@ -11005,6 +11018,42 @@ function tanhfunc($: ScriptVars): void {
     push(TANH, $);
     push(p1, $);
     list(2, $);
+}
+
+function expect_n_arguments(x: Cons, n: number): void | never {
+    const opr = assert_sym(x.opr);
+    const argList = x.argList;
+    if (argList.length !== n) {
+        if (n > 1) {
+            stopf(`Expecting ${n} argument(s) for ${opr.key()} but got ${argList.length}.`);
+        }
+        else if (n === 1) {
+            stopf(`Expecting 1 argument for ${opr.key()} but got ${argList.length}.`);
+        }
+        else if (n === 0) {
+            stopf(`Expecting 0 arguments for ${opr.key()} but got ${argList.length}.`);
+        }
+        else {
+            throw new Error();
+        }
+    }
+}
+
+function eval_tau(x: Cons, $: ScriptVars): void {
+    expect_n_arguments(x, 1);
+    const argList = x.argList;
+    const arg = argList.item(0);
+    push(arg, $);
+    evalf($);
+    taufunc($);
+}
+
+function taufunc($: ScriptVars): void {
+    const n = pop($);
+    push(two, $);
+    push(Pi, $);
+    push(n, $);
+    multiply_factors(3, $);
 }
 
 function eval_taylor(p1: U, $: ScriptVars): void {
@@ -12813,11 +12862,13 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
     }
 
     // Sym
-    if (issymbol(p)) {
-        if (p.equalsSym(EXP1))
+    if (is_sym(p)) {
+        if (p.equalsSym(DOLLAR_E)) {
             infixform_write("exp(1)", config, outbuf);
-        else
-            infixform_write(printname(p), config, outbuf);
+        }
+        else {
+            infixform_write(printname_from_symbol(p), config, outbuf);
+        }
         return;
     }
 
@@ -12925,7 +12976,7 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
 }
 
 function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (cadr(p).equals(EXP1)) {
+    if (cadr(p).equals(DOLLAR_E)) {
         infixform_write("exp(", config, outbuf);
         infixform_expr(caddr(p), config, outbuf);
         infixform_write(")", config, outbuf);
@@ -13193,7 +13244,7 @@ function infixform_write(s: string, config: InfixConfig, outbuf: string[]): void
     outbuf.push(s);
 }
 
-export const eigenmath_init_script: string[] = [
+export const eigenmath_prolog: string[] = [
     "i = sqrt(-1)",
     "grad(f) = d(f,(x,y,z))",
     "cross(a,b) = (dot(a[2],b[3])-dot(a[3],b[2]),dot(a[3],b[1])-dot(a[1],b[3]),dot(a[1],b[2])-dot(a[2],b[1]))",
@@ -13262,10 +13313,10 @@ function isdenormalpolarterm(p: U, $: ScriptVars) {
     if (!car(p).equals(MULTIPLY))
         return 0;
 
-    if (lengthf(p) === 3 && isimaginaryunit(cadr(p)) && caddr(p).equals(PI))
-        return 1; // exp(i pi)
+    if (lengthf(p) === 3 && isimaginaryunit(cadr(p)) && caddr(p).equals(Pi))
+        return 1; // exp(i Pi)
 
-    if (lengthf(p) !== 4 || !isnum(cadr(p)) || !isimaginaryunit(caddr(p)) || !cadddr(p).equals(PI))
+    if (lengthf(p) !== 4 || !isnum(cadr(p)) || !isimaginaryunit(caddr(p)) || !cadddr(p).equals(Pi))
         return 0;
 
     p = cadr(p); // p = coeff of term
@@ -13485,7 +13536,7 @@ function istensor(p: U): p is Tensor {
 }
 
 function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
-    if (issymbol(p) && scope.isUserSymbol(p) && !p.equalsSym(PI) && !p.equalsSym(EXP1))
+    if (issymbol(p) && scope.isUserSymbol(p) && !p.equalsSym(Pi) && !p.equalsSym(DOLLAR_E))
         return 1;
 
     if (iscons(p)) {
@@ -13662,7 +13713,7 @@ function multiply_scalar_factors(start: number, $: ScriptVars): void {
     combine_factors(start, $);
     normalize_power_factors(start, $);
 
-    // do again in case exp(1/2 i pi) changed to i
+    // do again in case exp(1/2 i Pi) changed to i
 
     combine_factors(start, $);
     // console.lg(`after combine factors: ${$.stack}`);
@@ -13790,7 +13841,7 @@ function normalize_polar(EXPO: U, $: ScriptVars): void {
                 normalize_polar_term(EXPO, $);
             else {
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(EXPO, $);
                 list(3, $);
             }
@@ -13804,7 +13855,7 @@ function normalize_polar(EXPO: U, $: ScriptVars): void {
 
 function normalize_polar_term(EXPO: U, $: ScriptVars): void {
 
-    // exp(i pi) = -1
+    // exp(i Pi) = -1
 
     if (lengthf(EXPO) === 3) {
         push_integer(-1, $);
@@ -13857,11 +13908,11 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push_integer(1, $);
             else {
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
             }
@@ -13874,11 +13925,11 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(imaginaryunit, $);
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -13892,11 +13943,11 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_integer(-1, $);
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -13915,11 +13966,11 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push_integer(-1, $);
                 push(imaginaryunit, $);
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -13952,11 +14003,11 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push_integer(1, $);
             else {
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
             }
@@ -13969,11 +14020,11 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(imaginaryunit, $);
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -13987,11 +14038,11 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_integer(-1, $);
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -14010,11 +14061,11 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push_integer(-1, $);
                 push(imaginaryunit, $);
                 push(POWER, $);
-                push(EXP1, $);
+                push(DOLLAR_E, $);
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(PI, $);
+                push(Pi, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -14062,7 +14113,7 @@ function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
     if (isnum(p))
         return 1;
 
-    if (p.equals(EXP1))
+    if (p.equals(DOLLAR_E))
         return 5;
 
     if (car(p).equals(DERIVATIVE) || car(p).equals(D_LOWER))
@@ -14078,7 +14129,7 @@ function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
         if (isnum(p))
             return 2;
 
-        if (p.equals(EXP1))
+        if (p.equals(DOLLAR_E))
             return 5;
 
         if (car(p).equals(DERIVATIVE) || car(p).equals(D_LOWER))
@@ -14416,19 +14467,19 @@ function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U, $: ScriptVars): v
     multiply($);
     power($);
 
-    // calculate (-1) ^ (EXPO * arctan(Y, X) / pi)
+    // calculate (-1) ^ (EXPO * arctan(Y, X) / Pi)
 
     push(Y, $);
     push(X, $);
     arctan($);
-    push(PI, $);
+    push(Pi, $);
     divide($);
     push(EXPO, $);
     multiply($);
     EXPO = pop($);
     power_minusone(EXPO, $);
 
-    // result = sqrt(X^2 + Y^2) ^ (1/2 * EXPO) * (-1) ^ (EXPO * arctan(Y, X) / pi)
+    // result = sqrt(X^2 + Y^2) ^ (1/2 * EXPO) * (-1) ^ (EXPO * arctan(Y, X) / Pi)
 
     multiply($);
 }
@@ -14676,7 +14727,7 @@ function power_natural_number(EXPO: U, $: ScriptVars): void {
     }
 
     push(POWER, $);
-    push(EXP1, $);
+    push(DOLLAR_E, $);
     push(EXPO, $);
     list(3, $);
 }
@@ -15002,8 +15053,14 @@ function prefixform(p: U, outbuf: string[]) {
         }
         outbuf.push(s);
     }
-    else if (issymbol(p))
-        outbuf.push(p.key());
+    else if (is_sym(p)) {
+        if (Pi.equalsSym(p)) {
+            outbuf.push('pi');
+        }
+        else {
+            outbuf.push(p.key());
+        }
+    }
     else if (isstring(p))
         outbuf.push("'" + p.str + "'");
     else if (istensor(p)) {
@@ -15059,10 +15116,6 @@ function html_escape_and_colorize(s: string, color: 1 | 2 | 3): string {
     }
 
     return s;
-}
-
-function printname(p: Sym) {
-    return p.key();
 }
 
 function promote_tensor($: ScriptVars): void {
@@ -15416,7 +15469,7 @@ export function executeScript(sourceText: string, contentHandler: ScriptContentH
     try {
         $.inbuf = sourceText;
 
-        $.initscript(eigenmath_init_script);
+        $.executeProlog(eigenmath_prolog);
 
         let k = 0;
 
@@ -15770,13 +15823,13 @@ function scan_symbol($: ScriptVars, config: EigenmathParseConfig): void {
         // When scanning inegrals, we don't make user symbols out of the special variables, a, b, and x.
         switch (token_buf[0]) {
             case "a":
-                push(SA, $);
+                push(DOLLAR_A, $);
                 break;
             case "b":
-                push(SB, $);
+                push(DOLLAR_B, $);
                 break;
             case "x":
-                push(SX, $);
+                push(DOLLAR_X, $);
                 break;
             default:
                 push(lookup(create_sym(token_buf), $), $);
@@ -16332,10 +16385,11 @@ export class ScriptVars implements ExprContext {
     drawing: number = -1;
     nonstop: number = -1;
     listeners: ScriptOutputListener[] = [];
+    readonly #prolog: string[] = [];
     readonly #userFunctions: Map<string, UserFunction> = new Map();
     constructor() {
-        this.defineUserSymbol(PI);
-        this.defineUserSymbol(EXP1);
+        this.defineUserSymbol(Pi);
+        this.defineUserSymbol(DOLLAR_E);
 
         this.defineUserSymbol(LAST);
         this.defineUserSymbol(TRACE);
@@ -16346,9 +16400,9 @@ export class ScriptVars implements ExprContext {
         this.defineUserSymbol(J_LOWER);
         this.defineUserSymbol(X_LOWER);
 
-        this.defineUserSymbol(SA);
-        this.defineUserSymbol(SB);
-        this.defineUserSymbol(SX);
+        this.defineUserSymbol(DOLLAR_A);
+        this.defineUserSymbol(DOLLAR_B);
+        this.defineUserSymbol(DOLLAR_X);
 
         this.defineUserSymbol(ARG1);
         this.defineUserSymbol(ARG2);
@@ -16378,7 +16432,7 @@ export class ScriptVars implements ExprContext {
         list(3, this);
         imaginaryunit = pop(this);
     }
-    initscript(script: string[]): void {
+    executeProlog(script: string[]): void {
         // The configuration should match the syntax in the initialization script.
         const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
         const n = script.length;
@@ -16507,6 +16561,7 @@ defineConsFunction(SINH, eval_sinh);
 defineConsFunction(SQRT, eval_sqrt);
 defineConsFunction(TAN, eval_tan);
 defineConsFunction(TANH, eval_tanh);
+defineConsFunction(TAU, eval_tau);
 defineConsFunction(TESTEQ, eval_testeq);
 defineConsFunction(TESTGE, eval_testge);
 defineConsFunction(TESTGT, eval_testgt);

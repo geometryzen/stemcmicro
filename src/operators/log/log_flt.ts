@@ -10,8 +10,7 @@ import { U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { Function1 } from "../helpers/Function1";
 
-export const LOG = native_sym(Native.log);
-export const PI = native_sym(Native.PI);
+const LOG = native_sym(Native.log);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

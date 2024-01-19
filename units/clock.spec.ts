@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { SyntaxKind } from "../src/parser/parser";
+import { algebrite_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -36,7 +37,7 @@ xdescribe("clock", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(-1)**(1/2)");
@@ -48,7 +49,7 @@ xdescribe("clock", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(pow (+ (pow x 2) (pow y 2)) 1/2)");
@@ -61,7 +62,7 @@ xdescribe("clock", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "(pow (+ (pow x 2) (pow y 2)) 1/2)");

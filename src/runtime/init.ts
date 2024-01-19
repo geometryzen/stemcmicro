@@ -12,18 +12,15 @@ export function soft_reset($: ExtensionEnv): void {
 
     $.clearBindings();
 
-    // We need to redo these...
-    execute_std_definitions($);
+    $.executeProlog($.getProlog());
 }
 
 /**
- * A bunch of strings that are scanned and evaluated, therby changing some bindings.
- * Concretely, the string "var = expr" becomes (set! var expr), where the expr has been evaluated.
- * This (set! var expr) is then evaluated and it becomes a binding of var to the expanded expression.
+ * These should only be used in tests as a convenience.
  */
-const defn_strings = [
+export const algebrite_prolog = [
     'e=exp(1)',
-    'i=sqrt(-1)',   // TODO: This is ambiguous when blades are considered.
+    'i=sqrt(-1)',
     'pi=tau(1)/2',
     'autoexpand=1',
     // TODO: remove these and make sure it still works when these are not bound.
@@ -42,14 +39,13 @@ const defn_strings = [
     // 'div(v)=d(v[1],x)+d(v[2],y)+d(v[3],z)'
 ];
 
-export function execute_std_definitions($: ExtensionEnv): void {
-    // console.lg('execute_std_definitions()');
+export function execute_definitions(definitions: readonly string[], $: ExtensionEnv): void {
     const originalCodeGen = defs.codeGen;
     defs.codeGen = false;
     try {
-        for (let i = 0; i < defn_strings.length; i++) {
-            const defn_string = defn_strings[i];
-            execute_definition(defn_string, $);
+        for (let i = 0; i < definitions.length; i++) {
+            const line = definitions[i];
+            execute_definition(line, $);
         }
     }
     finally {

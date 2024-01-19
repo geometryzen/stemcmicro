@@ -244,8 +244,7 @@ describe("isreal", function () {
             `isreal(x**(3/2))`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: true
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "false");

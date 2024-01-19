@@ -54,6 +54,7 @@ class SymMathPi implements Operator<Sym> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     toLatexString(expr: Sym): string {
+        // console.lg(`SymMathPi.toLatexString ${expr}`);
         return '\\pi';
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

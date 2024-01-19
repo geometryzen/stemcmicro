@@ -21,7 +21,7 @@ describe("svg", function () {
         const lines: string[] = [
             `x`,
         ];
-        const engine: ScriptContext = create_script_context({ useDefinitions: false });
+        const engine: ScriptContext = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x");
         const ec: EmitContext = {

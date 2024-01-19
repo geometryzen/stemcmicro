@@ -13,8 +13,7 @@ describe("sanity", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Flt', 'Imu'],
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), "i");

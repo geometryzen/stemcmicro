@@ -10,8 +10,8 @@ import { UCons } from "../helpers/UCons";
 import { is_sym } from "../sym/is_sym";
 
 const ARG = native_sym(Native.arg);
-const E = native_sym(Native.E);
-const PI = native_sym(Native.PI);
+const MATH_E = native_sym(Native.mathematical_constant_Eulers_number_Napiers_constant);
+const Pi = native_sym(Native.mathematical_constant_Pi);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -33,10 +33,10 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        if (arg.equalsSym(E)) {
+        if (arg.equalsSym(MATH_E)) {
             return [TFLAG_DIFF, zero];
         }
-        else if (arg.equalsSym(PI)) {
+        else if (arg.equalsSym(Pi)) {
             return [TFLAG_DIFF, zero];
         }
         else if ($.isreal(arg)) {

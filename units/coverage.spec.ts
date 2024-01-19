@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
 
-const engineConfig: EngineConfig = {
+const engineConfig: Partial<EngineConfig> = {
     useGeometricAlgebra: true,
     useClojureScript: false
 };
@@ -1028,8 +1028,9 @@ describe("coverage", function () {
     });
     it("exp(x)", function () {
         const lines: string[] = [
+            `Pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i * pi)`
+            `exp(i * Pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -1473,8 +1474,9 @@ describe("coverage", function () {
     });
     it("i", function () {
         const lines: string[] = [
+            `Pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i* pi)`
+            `exp(i* Pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -2128,8 +2130,9 @@ describe("coverage", function () {
     });
     it("pi", function () {
         const lines: string[] = [
+            `Pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i * pi)`
+            `exp(i * Pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -2831,7 +2834,8 @@ describe("coverage", function () {
     });
     it("tan(x)", function () {
         const lines: string[] = [
-            `tan(pi/4)`
+            `Pi=tau(1/2)`,
+            `tan(Pi/4)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);

@@ -120,7 +120,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `(-2)**(3/2)`
         ];
-        const engine = create_script_context({ useDefinitions: true });
+        const engine = create_script_context({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), '-2*2**(1/2)*i');
         engine.release();
@@ -129,7 +129,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `a*a`
         ];
-        const engine = create_script_context({ useDefinitions: true });
+        const engine = create_script_context({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(pow a 2)');
         assert.strictEqual(engine.renderAsInfix(actual), 'a**2');
@@ -139,7 +139,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `a*a*a`
         ];
-        const engine = create_script_context({ useDefinitions: true });
+        const engine = create_script_context({});
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(actual), '(pow a 3)');
         assert.strictEqual(engine.renderAsInfix(actual), 'a**3');
@@ -150,8 +150,7 @@ describe("Exponentiation", function () {
             `(b/a)^2`,
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -166,7 +165,7 @@ describe("Exponentiation", function () {
         const lines: string[] = [
             `1^a`,
         ];
-        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();

@@ -54,7 +54,7 @@ xdescribe("factorize Rat", function () {
         const lines: string[] = [
             `k*x+k*y`,
         ];
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "k*(x+y)");
         engine.release();
@@ -63,7 +63,7 @@ xdescribe("factorize Rat", function () {
         const lines: string[] = [
             `k*x-k*y`,
         ];
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "k*(x-y)");
         engine.release();
@@ -244,7 +244,7 @@ xdescribe("factorize right", function () {
         const lines: string[] = [
             `a*b+b`,
         ];
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
         assert.strictEqual(engine.renderAsInfix(value), "(1+a)*b");
@@ -254,7 +254,7 @@ xdescribe("factorize right", function () {
         const lines: string[] = [
             `a*b*c+c`,
         ];
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
         assert.strictEqual(engine.renderAsInfix(value), "(a*b+1)*c");
@@ -264,7 +264,7 @@ xdescribe("factorize right", function () {
         const lines: string[] = [
             `a*b*c*d*e+c*d*e`,
         ];
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(print_list(value, $), "");
         assert.strictEqual(engine.renderAsInfix(value), "(a*b+1)*c*d*e");

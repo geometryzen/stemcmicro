@@ -8,7 +8,6 @@ export interface EnvConfig {
     disable: Directive[];
     noOptimize: boolean;
     useCaretForExponentiation: boolean;
-    useDefinitions: boolean;
     useIntegersForPredicates: boolean;
     useParenForTensors: boolean;
     syntaxKind: SyntaxKind;

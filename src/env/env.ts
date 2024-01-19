@@ -14,6 +14,7 @@ import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
 import { FUNCTION } from "../runtime/constants";
+import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { Lambda } from "../tree/lambda/Lambda";
@@ -72,7 +73,6 @@ export interface EnvOptions {
     disable?: Directive[];
     noOptimize?: boolean;
     useCaretForExponentiation?: boolean;
-    useDefinitions?: boolean;
     useIntegersForPredicates?: boolean;
     useParenForTensors?: boolean;
     syntaxKind?: SyntaxKind;
@@ -87,7 +87,6 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             disable: Array.isArray(options.disable) ? options.disable : [],
             noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
-            useDefinitions: typeof options.useDefinitions === 'boolean' ? options.useDefinitions : false,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
             useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false,
             syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Algebrite,
@@ -102,7 +101,6 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
-            useDefinitions: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
             syntaxKind: SyntaxKind.Algebrite
@@ -114,6 +112,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
 export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const config: EnvConfig = config_from_options(options);
+    const prolog: string[] = [];
 
     // console.lg(`config: ${JSON.stringify(config, null, 2)}`);
 
@@ -329,7 +328,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // This will allow us to report back correctly later in isUserSymbol(sym), which is used for SVG rendering.
             userSymbols.set(sym.key(), sym);
 
-            // Given that we already have an Operator for Sym (SymExtension) installed,
+            // Given that we already have an Operator for Sym installed,
             // which has the same (standard) implementation of valueOf as the user symbol runner,
             // there's really no value in adding the following operator.
             // Leaving it for now as it does no harm and may have utility later.
@@ -379,6 +378,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             const argList = items_to_cons(...args);
             const expr = cons(native_sym(opr), argList);
             return $.valueOf(expr);
+        },
+        executeProlog(prolog: readonly string[]): void {
+            execute_definitions(prolog, $);
         },
         exp(expr: U): U {
             return $.evaluate(Native.exp, expr);
@@ -653,6 +655,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         power(base: U, expo: U): U {
             return $.evaluate(Native.pow, base, expo);
         },
+        getProlog(): readonly string[] {
+            // Do we make a defensive copy?
+            return prolog;
+        },
         re(expr: U): U {
             return $.evaluate(Native.re, expr);
         },
@@ -841,8 +847,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolPrintName(native_sym(Native.outer), '^');
     $.setSymbolPrintName(native_sym(Native.abs), 'abs');
 
-    $.setSymbolPrintName(native_sym(Native.E), 'e');
-    $.setSymbolPrintName(native_sym(Native.PI), 'pi');
+    $.setSymbolPrintName(native_sym(Native.mathematical_constant_Eulers_number_Napiers_constant), 'e');
+    $.setSymbolPrintName(native_sym(Native.mathematical_constant_Pi), 'pi');
     $.setSymbolPrintName(native_sym(Native.NIL), '()');
     $.setSymbolPrintName(native_sym(Native.IMU), 'i');
     $.setSymbolPrintName(native_sym(Native.exp), 'exp');

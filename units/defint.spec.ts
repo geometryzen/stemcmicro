@@ -23,8 +23,7 @@ describe("defint", function () {
             //            `defint(a,y,-sqrt(1-x^2),sqrt(1-x^2),x,-1,1)`
         ];
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "(1-2*d(x,y)*d(y,x)+d(x,y)^2*d(y,x)^2)^(1/2)");

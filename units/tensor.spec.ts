@@ -174,7 +174,6 @@ describe("tensor", function () {
             ];
             const engine = create_script_context({
                 dependencies: [],
-                useDefinitions: false,
                 useCaretForExponentiation: false
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -187,7 +186,6 @@ describe("tensor", function () {
             ];
             const engine = create_script_context({
                 dependencies: [],
-                useDefinitions: false,
                 useCaretForExponentiation: false
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -200,7 +198,6 @@ describe("tensor", function () {
             ];
             const engine = create_script_context({
                 dependencies: [],
-                useDefinitions: false,
                 useCaretForExponentiation: false
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -213,7 +210,6 @@ describe("tensor", function () {
             ];
             const engine = create_script_context({
                 dependencies: [],
-                useDefinitions: false,
                 useCaretForExponentiation: false
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -226,7 +222,6 @@ describe("tensor", function () {
             ];
             const engine = create_script_context({
                 dependencies: [],
-                useDefinitions: false,
                 useCaretForExponentiation: false
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -239,7 +234,6 @@ describe("tensor", function () {
             ];
             const engine = create_script_context({
                 dependencies: [],
-                useDefinitions: false,
                 useCaretForExponentiation: false
             });
             const { values } = engine.executeScript(lines.join('\n'));
@@ -311,7 +305,6 @@ describe("tensor", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useDefinitions: true,
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

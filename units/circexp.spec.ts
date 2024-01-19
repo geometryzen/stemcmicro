@@ -26,7 +26,6 @@ describe("circexp", function () {
         const engine = create_script_context({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
-            useDefinitions: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "1/2*exp(-i*x)+1/2*exp(i*x)");
@@ -39,7 +38,7 @@ describe("circexp", function () {
         const engine = create_script_context({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
-            useDefinitions: false
+
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: The factor of (1/2) is not factored out, presumably because of the -1 factor.
@@ -53,7 +52,7 @@ describe("circexp", function () {
         const engine = create_script_context({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
-            useDefinitions: false
+
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
@@ -67,7 +66,7 @@ describe("circexp", function () {
         const engine = create_script_context({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
-            useDefinitions: false
+
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
@@ -81,7 +80,7 @@ describe("circexp", function () {
         const engine = create_script_context({
             dependencies: ['Imu'],
             useCaretForExponentiation: false,
-            useDefinitions: false
+
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?

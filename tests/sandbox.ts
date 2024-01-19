@@ -6,8 +6,7 @@ run_test([
 ], {
     assumes: {
         'a': { real: true }
-    },
-    useDefinitions: false
+    }
 });
 
 run_test([
@@ -16,6 +15,5 @@ run_test([
 ], {
     assumes: {
         'a': { real: false }
-    },
-    useDefinitions: false
+    }
 });

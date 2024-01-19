@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { Directive } from "../src/env/ExtensionEnv";
+import { algebrite_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("euler", function () {
@@ -8,7 +9,6 @@ describe("euler", function () {
             `exp(0)`
         ];
         const engine = create_script_context({
-            useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "1");
@@ -19,7 +19,6 @@ describe("euler", function () {
             `exp(1)`
         ];
         const engine = create_script_context({
-            useDefinitions: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "e");
@@ -30,7 +29,7 @@ describe("euler", function () {
             `exp(-1)`
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "exp(-1)");
@@ -42,7 +41,7 @@ describe("euler", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "cos(1)+i*sin(1)");
@@ -54,7 +53,7 @@ describe("euler", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "cos(1)-i*sin(1)");
@@ -66,7 +65,7 @@ describe("euler", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)+i*sin(x)");
@@ -78,7 +77,7 @@ describe("euler", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.convertExpToTrig],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)-i*sin(x)");

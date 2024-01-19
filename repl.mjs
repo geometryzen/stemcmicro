@@ -32,8 +32,7 @@ function prompt(syntaxKind) {
 
 const contextOptions = {
     syntaxKind: SyntaxKind.ClojureScript,
-    useCaretForExponentiation: false,
-    useDefinitions: false
+    useCaretForExponentiation: false
 };
 
 const ctxt = create_script_context(contextOptions);

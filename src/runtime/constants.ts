@@ -1,7 +1,7 @@
 import { BigInteger, create_sym } from 'math-expression-atoms';
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
-import { MATH_COS, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_PI, MATH_POW, MATH_SIN, MATH_TAN } from './ns_math';
+import { MATH_COS, MATH_FACTORIAL, MATH_INV, MATH_MUL, MATH_POW, MATH_SIN, MATH_TAN } from './ns_math';
 
 export const do_simplify_nested_radicals = true;
 export const avoidCalculatingPowersIntoArctans = true;
@@ -159,11 +159,6 @@ export const METAX = create_sym('$METAX');
 export const SECRETX = create_sym('$SECRETX');
 
 export const VERSION = create_sym('version');
-
-/**
- * TODO: Don't use this. Just use MATH_PI. It's the same thing.
- */
-export const PI = MATH_PI;
 /**
  * 'a'
  */

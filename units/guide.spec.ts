@@ -8,8 +8,7 @@ describe("guide", function () {
             `sin(z)`
         ];
         const engine = create_script_context({
-            dependencies: [],
-            useDefinitions: false
+            dependencies: []
         });
         const { values } = engine.executeScript(lines.join('\n'));
         // assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)*sin(i*y)+cos(i*y)*sin(x)");
@@ -23,11 +22,10 @@ describe("guide", function () {
         ];
         // The problem is that we need the imaginary unit dependency.
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: true
+            dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        // TODO: This should expand.
+        // TODO: This should expand?
         // assert.strictEqual(engine.renderAsInfix(values[0]), "cos(x)*sin(i*y)+cos(i*y)*sin(x)");
         assert.strictEqual(engine.renderAsInfix(values[0]), "sin(x+i*y)");
         engine.release();

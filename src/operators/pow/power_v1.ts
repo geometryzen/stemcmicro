@@ -11,8 +11,9 @@ import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
-import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, PI, POWER, SIN } from "../../runtime/constants";
+import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, POWER, SIN } from "../../runtime/constants";
 import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
+import { MATH_PI } from "../../runtime/ns_math";
 import { power_tensor } from "../../tensor";
 import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
@@ -192,12 +193,12 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // complex number in exponential form, get it to rectangular
     // but only if we are not in the process of calculating a polar form,
     // otherwise we'd just undo the work we want to do
-    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(PI) && !$.getDirective(Directive.complexAsPolar)) {
+    if (is_base_of_natural_logarithm(base) && expo.contains(imu) && expo.contains(MATH_PI) && !$.getDirective(Directive.complexAsPolar)) {
         // TODO: We could simply use origExpr now that it is an argument.
         // TODO: Given that we have exp(i*pi*something), why don't we remove the imu and use Euler's formula? 
         const tmp = items_to_cons(POWER, base, expo);
         const retval = $.rect(tmp); // put new (hopefully simplified expr) in exponent
-        if (!retval.contains(PI)) {
+        if (!retval.contains(MATH_PI)) {
             // console.lg(`hopefullySimplified=${hopefullySimplified}`);
             return hook(retval, "O");
         }
@@ -328,7 +329,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             // need to evaluate PI to its actual double
             // value
 
-            const pi = $.getDirective(Directive.evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : PI;
+            const pi = $.getDirective(Directive.evaluatingAsFloat) || (iscomplexnumberdouble(base, $) && is_flt(expo)) ? create_flt(Math.PI) : MATH_PI;
             let tmp = $.multiply(
                 $.power($.abs(base), expo),
                 $.power(negOne, $.divide($.multiply($.arg(base), expo), pi))

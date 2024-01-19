@@ -8,7 +8,6 @@ describe("rect", function () {
             `rect(a)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "a");
@@ -19,7 +18,6 @@ describe("rect", function () {
             `rect(1)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1");
@@ -30,7 +28,6 @@ describe("rect", function () {
             `rect(1.0)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1.0");
@@ -41,7 +38,6 @@ describe("rect", function () {
             `rect(exp(a))`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "exp(a)");
@@ -53,7 +49,6 @@ describe("rect", function () {
             `rect(1/(x+i*y))`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x/(x**2+y**2)-i*y/(x**2+y**2)");
@@ -66,8 +61,7 @@ describe("rect", function () {
             `rect(exp(i*pi/3))`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1/2+1/2*3**(1/2)*i");
@@ -81,8 +75,7 @@ describe("rect", function () {
             `rect(5*exp(i*arctan(4/3)))`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "3+4*i");
@@ -96,8 +89,7 @@ describe("rect", function () {
             `rect(polar(3+4*i))`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "3+4*i");

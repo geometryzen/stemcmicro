@@ -7,7 +7,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 import { UCons } from "../helpers/UCons";
 
-const PI = native_sym(Native.PI);
+const Pi = native_sym(Native.mathematical_constant_Pi);
 const POW = native_sym(Native.pow);
 const RE = native_sym(Native.re);
 
@@ -46,7 +46,7 @@ class Op extends CompositeOperator {
             // log(x+iy) = s*log(-1) = s*i*pi
             // x+iy = exp(i*s*pi) = cos(s*pi)+i*sin(s*pi) 
             const s = assert_rat(innerExpr.rhs);
-            return [TFLAG_DIFF, $.cos($.multiply(s, PI))];
+            return [TFLAG_DIFF, $.cos($.multiply(s, Pi))];
         }
         else if (base.isPositive()) {
             return [TFLAG_DIFF, innerExpr];

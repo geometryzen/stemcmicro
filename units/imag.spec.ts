@@ -87,7 +87,6 @@ describe("imag", function () {
         const sourceText = lines.join('\n');
         const context = create_script_context({
             dependencies: ['Imu'],
-            useDefinitions: false,
             useCaretForExponentiation: true
         });
         const { values } = context.executeScript(sourceText, {});
@@ -158,8 +157,7 @@ describe("imag", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useCaretForExponentiation: false,
-            useDefinitions: false
+            useCaretForExponentiation: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
@@ -173,8 +171,7 @@ describe("imag", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useCaretForExponentiation: false,
-            useDefinitions: false
+            useCaretForExponentiation: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
@@ -188,8 +185,7 @@ describe("imag", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useCaretForExponentiation: false,
-            useDefinitions: false
+            useCaretForExponentiation: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?

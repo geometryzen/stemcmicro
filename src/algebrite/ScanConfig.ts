@@ -23,6 +23,7 @@ export interface ScanConfig {
     lexicon: { [op: string]: Sym }
     /**
     * Substitutions to be made for various meta symbols (only in meta mode).
+    * This is typically used when scanning tables of integrals.
     * The key to the map is the token, which is the representation obtained by the scanner.
     * The value of the map is the namespace qualified name of the substitution.
     */

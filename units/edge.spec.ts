@@ -4,7 +4,7 @@ import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
 import { Stepper } from "../src/clojurescript/runtime/Stepper";
 
-const engineConfig: EngineConfig = {
+const engineOptions: Partial<EngineConfig> = {
     useGeometricAlgebra: true,
     useClojureScript: false
 };
@@ -63,7 +63,7 @@ describe("edge", function () {
             `1+2+3+4+5`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -76,7 +76,7 @@ describe("edge", function () {
             `1*2*3*4*5`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -101,7 +101,7 @@ describe("edge", function () {
             `e3^e3`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -134,7 +134,7 @@ describe("edge", function () {
             `e3|e3`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -167,7 +167,7 @@ describe("edge", function () {
             `e3<<e3`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -200,7 +200,7 @@ describe("edge", function () {
             `e3>>e3`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -222,7 +222,7 @@ describe("edge", function () {
             `x`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -238,7 +238,7 @@ describe("edge", function () {
             `1==1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -257,7 +257,7 @@ describe("edge", function () {
             `1!=1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -276,7 +276,7 @@ describe("edge", function () {
             `1>1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -295,7 +295,7 @@ describe("edge", function () {
             `1>=1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -314,7 +314,7 @@ describe("edge", function () {
             `1<1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -333,7 +333,7 @@ describe("edge", function () {
             `1<=1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -354,7 +354,7 @@ describe("edge", function () {
             `A`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -367,7 +367,7 @@ describe("edge", function () {
             `abs([x,y,z])`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -381,7 +381,7 @@ describe("edge", function () {
             `adj(A) == det(A) * inv(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -401,7 +401,7 @@ describe("edge", function () {
             `G30`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -417,7 +417,7 @@ describe("edge", function () {
             `and(1,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -433,7 +433,7 @@ describe("edge", function () {
             `arccos(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -446,7 +446,7 @@ describe("edge", function () {
             `arccosh(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -459,7 +459,7 @@ describe("edge", function () {
             `arcsin(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -472,7 +472,7 @@ describe("edge", function () {
             `arcsinh(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -485,7 +485,7 @@ describe("edge", function () {
             `arctan(1,0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -504,7 +504,7 @@ describe("edge", function () {
             `arctanh(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -521,7 +521,7 @@ describe("edge", function () {
             `arg(-i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -537,7 +537,7 @@ describe("edge", function () {
             `besselj(0,0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -550,7 +550,7 @@ describe("edge", function () {
             `bessely(0,0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -570,7 +570,7 @@ describe("edge", function () {
             `binding(p)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -589,7 +589,7 @@ describe("edge", function () {
             `ceiling(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -607,7 +607,7 @@ describe("edge", function () {
             `check(A==B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -633,7 +633,7 @@ describe("edge", function () {
             `choose(52,5)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -647,7 +647,7 @@ describe("edge", function () {
             `circexp(cos(x) + i * sin(x))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -660,7 +660,7 @@ describe("edge", function () {
             `clear`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -683,7 +683,7 @@ describe("edge", function () {
             `clearall`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -696,7 +696,7 @@ describe("edge", function () {
             `clock(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -723,7 +723,7 @@ describe("edge", function () {
             `coeff(a*x**3+b*x**2+c*x+d,x,0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -740,7 +740,7 @@ describe("edge", function () {
             `cofactor(A,1,2) == adj(A)[2,1]`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -754,7 +754,7 @@ describe("edge", function () {
             `conj(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -768,7 +768,7 @@ describe("edge", function () {
             `contract(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -781,7 +781,7 @@ describe("edge", function () {
             `cos(0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -794,7 +794,7 @@ describe("edge", function () {
             `circexp(cosh(x))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -818,7 +818,7 @@ describe("edge", function () {
             `cross(u,v)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -831,7 +831,7 @@ describe("edge", function () {
             `curl(v)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -845,7 +845,7 @@ describe("edge", function () {
             `d(sin(x),x,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -871,7 +871,7 @@ describe("edge", function () {
             `defint(f, theta, 0, pi, phi, 0, 2 * pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -896,7 +896,7 @@ describe("edge", function () {
             `deg(a*x^2+b*x+c,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -920,7 +920,7 @@ describe("edge", function () {
             `denominator(a/b)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -934,7 +934,7 @@ describe("edge", function () {
             `det(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -948,7 +948,7 @@ describe("edge", function () {
             `dim(A,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -961,7 +961,7 @@ describe("edge", function () {
             `div(v)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -974,7 +974,7 @@ describe("edge", function () {
             `do(1,2,3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -990,7 +990,7 @@ describe("edge", function () {
             `X`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1003,7 +1003,7 @@ describe("edge", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1016,7 +1016,7 @@ describe("edge", function () {
             `eigenval(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1044,7 +1044,7 @@ describe("edge", function () {
             `dot(Q,D,tanspose(Q))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1069,7 +1069,7 @@ describe("edge", function () {
             `eval(f,x,3,y,4)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1082,7 +1082,7 @@ describe("edge", function () {
             `erf(1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1106,7 +1106,7 @@ describe("edge", function () {
             `erfc(1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1127,11 +1127,12 @@ describe("edge", function () {
     });
     it("exp(x)", function () {
         const lines: string[] = [
+            `Pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i * pi)`
+            `exp(i * Pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1144,7 +1145,7 @@ describe("edge", function () {
             `expand(r,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1158,7 +1159,7 @@ describe("edge", function () {
             `expcos(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1172,7 +1173,7 @@ describe("edge", function () {
             `expcosh(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1197,7 +1198,7 @@ describe("edge", function () {
             `expsin(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1211,7 +1212,7 @@ describe("edge", function () {
             `expsinh(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1236,7 +1237,7 @@ describe("edge", function () {
             `exptan(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1261,7 +1262,7 @@ describe("edge", function () {
             `exptanh(z)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1285,7 +1286,7 @@ describe("edge", function () {
             `factor(100!)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1298,7 +1299,7 @@ describe("edge", function () {
             `factorial(20)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1311,7 +1312,7 @@ describe("edge", function () {
             `float(212**17)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1324,7 +1325,7 @@ describe("edge", function () {
             `floor(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1337,7 +1338,7 @@ describe("edge", function () {
             `for(k,1,3,A=k,print(A))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1361,7 +1362,7 @@ describe("edge", function () {
             `gcd(30,42)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1374,7 +1375,7 @@ describe("edge", function () {
             `grad(f())`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1400,7 +1401,7 @@ describe("edge", function () {
             `hadamard(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1425,7 +1426,7 @@ describe("edge", function () {
             `hermite(x,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1440,7 +1441,7 @@ describe("edge", function () {
             `hilbert(1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1462,11 +1463,12 @@ describe("edge", function () {
     });
     it("i", function () {
         const lines: string[] = [
+            `Pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i* pi)`
+            `exp(i* Pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1480,7 +1482,7 @@ describe("edge", function () {
             `imag(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1505,7 +1507,7 @@ describe("edge", function () {
             `iinfixform(p)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1531,7 +1533,7 @@ describe("edge", function () {
             `inner(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1544,7 +1546,7 @@ describe("edge", function () {
             `integral(x**2,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1558,7 +1560,7 @@ describe("edge", function () {
             `inv(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1576,7 +1578,7 @@ describe("edge", function () {
             `isprime(5)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1595,7 +1597,7 @@ describe("edge", function () {
             `1/sqrt(-1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1610,7 +1612,7 @@ describe("edge", function () {
             `kronecker(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1635,7 +1637,7 @@ describe("edge", function () {
             `laguerre(x,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1649,7 +1651,7 @@ describe("edge", function () {
             `lcm(4,6)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1663,7 +1665,7 @@ describe("edge", function () {
             `last^(1/17)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1687,7 +1689,7 @@ describe("edge", function () {
             `leading(5*x**2+x+1,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1701,7 +1703,7 @@ describe("edge", function () {
             `legendre(x,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1715,7 +1717,7 @@ describe("edge", function () {
             `log(x**y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1729,7 +1731,7 @@ describe("edge", function () {
             `lookup(x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1754,7 +1756,7 @@ describe("edge", function () {
             `mag(x + i * y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1779,7 +1781,7 @@ describe("edge", function () {
             `minor(A,1,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1804,7 +1806,7 @@ describe("edge", function () {
             `minormatrix(A,1,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1828,7 +1830,7 @@ describe("edge", function () {
             `mod(5,3/8)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1852,7 +1854,7 @@ describe("edge", function () {
             `noexpand((x+1)^2/(x+1))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1877,7 +1879,7 @@ describe("edge", function () {
             `not(1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1892,7 +1894,7 @@ describe("edge", function () {
             `nroots(p,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -1916,7 +1918,7 @@ describe("edge", function () {
             `numerator(a/b)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1932,7 +1934,7 @@ describe("edge", function () {
             `or(1,1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1950,7 +1952,7 @@ describe("edge", function () {
             `outer(A,B)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1960,11 +1962,12 @@ describe("edge", function () {
     });
     it("pi", function () {
         const lines: string[] = [
+            `Pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i * pi)`
+            `exp(i * Pi)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -1978,7 +1981,7 @@ describe("edge", function () {
             `polar(x - i * y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2002,7 +2005,7 @@ describe("edge", function () {
             `x**(1/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2017,7 +2020,7 @@ describe("edge", function () {
             `prime(3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2032,7 +2035,7 @@ describe("edge", function () {
             `print(1,2,3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2056,7 +2059,7 @@ describe("edge", function () {
             `print2dascii(1,2,3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2080,7 +2083,7 @@ describe("edge", function () {
             `printcomputer(1,2,3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2104,7 +2107,7 @@ describe("edge", function () {
             `printlatex(1,2,3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2128,7 +2131,7 @@ describe("edge", function () {
             `printlist(1,2,3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2152,7 +2155,7 @@ describe("edge", function () {
             `printhuman(1,2,3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2176,7 +2179,7 @@ describe("edge", function () {
             `product(j,1,3,x + j)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2201,7 +2204,7 @@ describe("edge", function () {
             `product(y)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2225,7 +2228,7 @@ describe("edge", function () {
             `quote((x + 1)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2249,7 +2252,7 @@ describe("edge", function () {
             `quotient(x**2+1,x+1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2263,7 +2266,7 @@ describe("edge", function () {
             `rank(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2276,7 +2279,7 @@ describe("edge", function () {
             `rationalize(1/a+1/b+1/c)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2290,7 +2293,7 @@ describe("edge", function () {
             `real(2 - 3 * i)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2315,7 +2318,7 @@ describe("edge", function () {
             `rect(exp(i*x))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2329,7 +2332,7 @@ describe("edge", function () {
             `roots(p,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2343,7 +2346,7 @@ describe("edge", function () {
             `rotate(psi,H,0)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2367,7 +2370,7 @@ describe("edge", function () {
             `run("foo.txt")`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2391,7 +2394,7 @@ describe("edge", function () {
             `shape([a,b,c])`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2404,7 +2407,7 @@ describe("edge", function () {
             `simplify(cos(x)**2+sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2414,10 +2417,11 @@ describe("edge", function () {
     });
     it("sin(x)", function () {
         const lines: string[] = [
-            `sin(pi/2)`
+            `Pi=tau(1/2)`,
+            `sin(Pi/2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2430,7 +2434,7 @@ describe("edge", function () {
             `sinh(x)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2443,7 +2447,7 @@ describe("edge", function () {
             `sqrt(factorial(10))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2456,7 +2460,7 @@ describe("edge", function () {
             `stop`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -2475,7 +2479,7 @@ describe("edge", function () {
             `subst(a,b,c)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2488,7 +2492,7 @@ describe("edge", function () {
             `sum(j,1,5,x**j)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2509,10 +2513,11 @@ describe("edge", function () {
     });
     it("tan(x)", function () {
         const lines: string[] = [
-            `tan(pi/4)`
+            `Pi=tau(1/2)`,
+            `tan(Pi/4)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2525,7 +2530,7 @@ describe("edge", function () {
             `circexp(tanh(x))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2540,7 +2545,7 @@ describe("edge", function () {
             `tau(1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2555,7 +2560,7 @@ describe("edge", function () {
             `taylor(1/(1-x),x,5)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2570,7 +2575,7 @@ describe("edge", function () {
             `test(A==B, "yes", "no")`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2583,7 +2588,7 @@ describe("edge", function () {
             `trace=1`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2596,7 +2601,7 @@ describe("edge", function () {
             `transpose(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2610,7 +2615,7 @@ describe("edge", function () {
             `(x+1)**2`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -2634,7 +2639,7 @@ describe("edge", function () {
             `unit(3)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values = stepModule(module);
@@ -2659,7 +2664,7 @@ describe("edge", function () {
             `uom("tesla")`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values = stepModule(module);
@@ -2686,7 +2691,7 @@ describe("edge", function () {
             `A`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
@@ -2700,7 +2705,7 @@ describe("edge", function () {
             `A`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
+        const engine: ExprEngine = create_engine(engineOptions);
         const { module, errors } = engine.parseModule(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);

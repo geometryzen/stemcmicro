@@ -11,7 +11,7 @@ import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
 
 const ARG = native_sym(Native.arg);
-const PI = native_sym(Native.PI);
+const Pi = native_sym(Native.mathematical_constant_Pi);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -33,7 +33,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
-        return [TFLAG_DIFF, this.$.divide(PI, two)];
+        return [TFLAG_DIFF, this.$.divide(Pi, two)];
     }
 }
 

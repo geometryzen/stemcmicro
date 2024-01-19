@@ -8,8 +8,7 @@ describe("real", function () {
             `re(z)`
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: true
+            dependencies: ['Imu']
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(values.length, 1);
@@ -143,8 +142,7 @@ describe("real", function () {
             `re(i*log(3))`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -159,7 +157,6 @@ describe("real", function () {
         const sourceText = lines.join('\n');
         const context = create_script_context({
             dependencies: ['Imu'],
-            useDefinitions: false,
             useCaretForExponentiation: true
         });
         const { values } = context.executeScript(sourceText, {});
@@ -175,8 +172,7 @@ describe("real", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useCaretForExponentiation: false,
-            useDefinitions: false
+            useCaretForExponentiation: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
@@ -190,8 +186,7 @@ describe("real", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useCaretForExponentiation: false,
-            useDefinitions: false
+            useCaretForExponentiation: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?
@@ -205,8 +200,7 @@ describe("real", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            useCaretForExponentiation: false,
-            useDefinitions: false
+            useCaretForExponentiation: false
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // TODO: Can this be presented better?

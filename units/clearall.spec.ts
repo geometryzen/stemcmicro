@@ -9,7 +9,7 @@ describe("clearall", function () {
         ].join('\n');
         const engine = create_script_context({
             useCaretForExponentiation: true,
-            useDefinitions: false
+            
         });
         const beginCount = engine.getSymbolsInfo().length;
         engine.executeScript("E=m*c^2");
@@ -29,7 +29,7 @@ describe("clearall", function () {
         ].join('\n');
         const engine = create_script_context({
             useCaretForExponentiation: true,
-            useDefinitions: false
+            
         });
         const beginCount = engine.getSymbolsInfo().length;
         engine.executeScript("E=m*c^2");

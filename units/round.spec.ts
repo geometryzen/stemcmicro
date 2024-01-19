@@ -7,8 +7,7 @@ describe("round", function () {
             `round(5/2)`,
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "3");
@@ -19,8 +18,7 @@ describe("round", function () {
             `round(5/2.0)`,
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "3.0");
@@ -31,8 +29,7 @@ describe("round", function () {
             `round(5/2) - round(5/2.0)`,
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "0.0");

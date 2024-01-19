@@ -37,7 +37,6 @@ describe("log", function () {
             `log(-2.0)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "0.693147...+3.141593...*i");
@@ -48,7 +47,6 @@ describe("log", function () {
             `log(-2)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "log(2)+i*pi");
@@ -59,7 +57,6 @@ describe("log", function () {
             `log(0.0)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "undefined");
@@ -70,7 +67,6 @@ describe("log", function () {
             `log(0)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "undefined");
@@ -81,7 +77,6 @@ describe("log", function () {
             `log(-x)`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "log(x)+i*pi");

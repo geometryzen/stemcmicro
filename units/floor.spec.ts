@@ -7,8 +7,7 @@ describe("floor", function () {
             `floor(3/2)`,
         ];
         const engine = create_script_context({
-            dependencies: ['Flt'],
-            useDefinitions: true
+            dependencies: ['Flt']
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "1");

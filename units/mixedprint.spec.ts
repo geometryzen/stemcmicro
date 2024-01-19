@@ -68,8 +68,7 @@ describe("mixedprint", function () {
             `printhuman(x*y)`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -85,8 +84,7 @@ describe("mixedprint", function () {
             `printhuman`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -103,8 +101,7 @@ describe("mixedprint", function () {
             `printhuman`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -121,8 +118,7 @@ describe("mixedprint", function () {
             `printsexpr(x*y)`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -138,8 +134,7 @@ describe("mixedprint", function () {
             `printsexpr`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -155,8 +150,7 @@ describe("mixedprint", function () {
             `printinfix`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -173,8 +167,7 @@ describe("mixedprint", function () {
             `printinfix`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -196,8 +189,7 @@ describe("mixedprint", function () {
             `printsexpr`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -226,8 +218,7 @@ describe("mixedprint", function () {
             `printsexpr`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);
@@ -256,8 +247,7 @@ describe("mixedprint", function () {
             `printsexpr`
         ].join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: false
+            useCaretForExponentiation: true
         });
         const { values, prints } = engine.executeScript(sourceText);
         assert.isArray(values);

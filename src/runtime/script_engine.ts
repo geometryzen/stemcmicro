@@ -13,7 +13,7 @@ import { U } from "../tree/tree";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { move_top_of_stack } from "./defs";
 import { execute_script, transform_tree } from "./execute";
-import { execute_definition, execute_std_definitions } from "./init";
+import { execute_definition, execute_definitions } from "./init";
 
 export interface ExprTransformOptions {
     autoExpand?: boolean;
@@ -52,9 +52,9 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
      */
     useCaretForExponentiation?: boolean;
     /**
-     *
+     * 
      */
-    useDefinitions?: boolean;
+    prolog?: string[]
     /**
      * Determines whether test functions will return boolean or integer values.
      * 
@@ -89,8 +89,13 @@ export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
 
     execute_definition(`${VARNAME_MAX_FIXED_PRINTOUT_DIGITS.key()}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`, $);
 
-    if (options && options.useDefinitions) {
-        execute_std_definitions($);
+    if (options && options.prolog) {
+        if (Array.isArray(options.prolog)) {
+            execute_definitions(options.prolog, $);
+        }
+        else {
+            throw new Error("prolog must be a string[]");
+        }
     }
 }
 
@@ -107,7 +112,7 @@ export interface ScriptContext {
     getSymbolValue(sym: Sym | string): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
     evaluate(tree: U, options?: ExprTransformOptions): { value: U, prints: string[], errors: Error[] };
-    useStandardDefinitions(): void;
+    executeProlog(prolog: string[]): void;
     executeScript(sourceText: string, options?: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] };
     renderAsAscii(expr: U): string;
     renderAsHuman(expr: U): string;
@@ -132,7 +137,6 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             disable: options.disable,
             noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
-            useDefinitions: options.useDefinitions,
             useIntegersForPredicates: options.useIntegersForPredicates,
             useParenForTensors: options.useParenForTensors,
             syntaxKind: options.syntaxKind
@@ -147,7 +151,6 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
             disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
-            useDefinitions: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
             syntaxKind: SyntaxKind.Algebrite
@@ -188,8 +191,8 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
             const merged = merge_options(options, contextOptions);
             return transform_tree(tree, merged, $);
         },
-        useStandardDefinitions(): void {
-            execute_std_definitions($);
+        executeProlog(prolog: string[]): void {
+            execute_definitions(prolog, $);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {

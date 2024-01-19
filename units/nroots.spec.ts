@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { algebrite_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("nroots", function () {
@@ -8,8 +9,7 @@ describe("nroots", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(sourceText);
         assert.strictEqual(engine.renderAsInfix(values[0]), "0.0");
@@ -21,8 +21,7 @@ describe("nroots", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(sourceText);
         assert.strictEqual(engine.renderAsInfix(values[0]), "1.0");
@@ -34,8 +33,7 @@ describe("nroots", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(sourceText);
         assert.strictEqual(engine.renderAsInfix(values[0]), "-1.0");
@@ -46,8 +44,8 @@ describe("nroots", function () {
             `nroots((1+i)*x^2+1)`
         ];
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            prolog: algebrite_prolog,
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.171780...-0.727673...*i,0.171780...+0.727673...*i]");
@@ -58,8 +56,8 @@ describe("nroots", function () {
             `nroots(sqrt(2)*exp(i*pi/4)*x^2+1)`
         ];
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            prolog: algebrite_prolog,
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.171780...-0.727673...*i,0.171780...+0.727673...*i]");
@@ -70,8 +68,7 @@ describe("nroots", function () {
             `nroots(x^2+1)`
         ];
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "[-1.000000...*i,1.000000...*i]");
@@ -83,8 +80,7 @@ describe("nroots", function () {
             `nroots(x^4+1)`
         ];
         const engine = create_script_context({
-            useCaretForExponentiation: true,
-            useDefinitions: true
+            useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "[-0.707107...-0.707107...*i,-0.707107...+0.707107...*i,0.707107...+0.707107...*i,0.707107...-0.707107...*i]");

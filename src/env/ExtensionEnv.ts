@@ -274,6 +274,7 @@ export interface Predicates {
  *
  */
 export interface ExtensionEnv extends ExprContext {
+    getProlog(): readonly string[];
     getPrintHandler(): PrintHandler;
     setPrintHandler(handler: PrintHandler): void;
     abs(expr: U): U;
@@ -311,6 +312,7 @@ export interface ExtensionEnv extends ExprContext {
      */
     equals(lhs: U, rhs: U): boolean;
     evaluate(opr: Native, ...args: U[]): U;
+    executeProlog(prolog: readonly string[]): void;
     exp(expr: U): U;
     factor(expr: U): U;
     /**

@@ -11,7 +11,7 @@ describe("for", function () {
             `float(y)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const { values, errors } = engine.executeScript(sourceText);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const error of errors) {

@@ -8,7 +8,6 @@ describe("current", function () {
         ];
         const engine = create_script_context({
             dependencies: [],
-            useDefinitions: false,
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

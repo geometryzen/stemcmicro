@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { algebrite_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -10,8 +11,7 @@ describe("polar", function () {
             `polar(i)`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsInfix(value), "e**(1/2*i*pi)");
@@ -25,8 +25,7 @@ describe("polar", function () {
             `polar(1+i)`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsInfix(value), "2**(1/2)*e**(1/4*i*pi)");
@@ -40,8 +39,7 @@ describe("polar", function () {
             `polar(3+4*i)`,
         ];
         const engine = create_script_context({
-            dependencies: ['Imu'],
-            useDefinitions: false
+            dependencies: ['Imu']
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsInfix(value), "5*e**(i*arctan(4/3))");
@@ -52,7 +50,7 @@ describe("polar", function () {
         const lines: string[] = [
             `polar((-1)^a)`,
         ];
-        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "exp(i*pi*a)");
         engine.release();
@@ -61,7 +59,12 @@ describe("polar", function () {
         const lines: string[] = [
             `polar(x+i*y)`,
         ];
-        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const engine = create_script_context(
+            {
+                prolog: algebrite_prolog,
+                useCaretForExponentiation: true
+            }
+        );
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(x^2+y^2)^(1/2)*exp(i*arctan(y/x))");
         engine.release();
@@ -70,7 +73,12 @@ describe("polar", function () {
         const lines: string[] = [
             `polar(x-i*y)`,
         ];
-        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const engine = create_script_context(
+            {
+                prolog: algebrite_prolog,
+                useCaretForExponentiation: true
+            }
+        );
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(x^2+y^2)^(1/2)*exp(-i*arctan(y/x))");
         engine.release();

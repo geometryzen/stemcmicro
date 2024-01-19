@@ -18,8 +18,8 @@ import { half, negOne, one, Rat, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Cons, U } from './tree/tree';
 
-export const E = native_sym(Native.E);
-export const PI = native_sym(Native.PI);
+export const E = native_sym(Native.mathematical_constant_Eulers_number_Napiers_constant);
+export const PI = native_sym(Native.mathematical_constant_Pi);
 export const POWER = native_sym(Native.pow);
 
 // Rational power function

@@ -7,7 +7,7 @@ describe("0", function () {
             `2 + 3`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_script_context({ useDefinitions: true });
+        const engine = create_script_context();
         const { values } = engine.executeScript(sourceText);
         const value = values[0];
         assert.strictEqual(engine.renderAsInfix(value), "5");

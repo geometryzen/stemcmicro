@@ -1,16 +1,15 @@
+import { Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_IMU, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
 import { Imu } from "../../tree/imu/Imu";
 import { half } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
 
-const PI = native_sym(Native.PI);
+const Pi = native_sym(Native.mathematical_constant_Pi);
 const POLAR = native_sym(Native.polar);
 
 class Builder implements OperatorBuilder<U> {
@@ -34,7 +33,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        return [TFLAG_DIFF, $.exp($.multiply(half, PI))];
+        return [TFLAG_DIFF, $.exp($.multiply(half, Pi))];
     }
 }
 

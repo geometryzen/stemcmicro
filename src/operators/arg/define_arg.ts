@@ -8,9 +8,9 @@ import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natura
 import { is_cons_opr_eq_sym } from '../../predicates/is_cons_opr_eq_sym';
 import { is_negative } from '../../predicates/is_negative';
 import { is_num_and_negative } from '../../predicates/is_negative_number';
-import { PI } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
+import { MATH_PI } from '../../runtime/ns_math';
 import { Err } from '../../tree/err/Err';
 import { piAsFlt, zeroAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
@@ -135,7 +135,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
     }
 
     if (is_num_and_negative(expr)) {
-        const pi = is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : PI;
+        const pi = is_flt(expr) || $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
         return $.negate(pi);
     }
 

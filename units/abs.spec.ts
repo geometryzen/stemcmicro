@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { Directive } from "../src/env/ExtensionEnv";
+import { algebrite_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -25,7 +26,7 @@ describe("abs", function () {
             assumes: {
                 'y': { real: false }
             },
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "abs(y)");
@@ -36,7 +37,7 @@ describe("abs", function () {
             `abs(x+i*y)`,
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "(pow (+ (pow x 2) (pow y 2)) 1/2)");
@@ -48,7 +49,7 @@ describe("abs", function () {
             `abs(a+i*b)`,
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(a**2+b**2)**(1/2)");
@@ -60,7 +61,7 @@ describe("abs", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.expandPowSum],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(2*a*b+a**2+b**2+c**2)**(1/2)");
@@ -72,7 +73,7 @@ describe("abs", function () {
         ];
         const engine = create_script_context({
             disable: [Directive.expandPowSum],
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "(c**2+(a+b)**2)**(1/2)");
@@ -84,7 +85,7 @@ describe("abs", function () {
             `i=sqrt(-1)`,
             `x * i`,
         ];
-        const engine = create_script_context({ useDefinitions: false });
+        const engine = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "i*x");
         engine.release();
@@ -96,7 +97,7 @@ describe("abs", function () {
             `-i * i * x * x`,
         ];
         const engine = create_script_context({
-            useDefinitions: false
+
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x**2");
@@ -107,7 +108,7 @@ describe("abs", function () {
             `(x-i*y)*(x+i*y)`,
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsSExpr(value), "(+ (pow x 2) (pow y 2))");
@@ -132,7 +133,7 @@ describe("abs", function () {
             `exp(i*pi/3)`,
         ];
         const engine = create_script_context({
-            useDefinitions: true
+            prolog: algebrite_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1/2+1/2*3**(1/2)*i");
@@ -147,7 +148,6 @@ describe("abs", function () {
                 'x': { real: false },
                 'y': { real: false }
             },
-            useDefinitions: true,
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -160,7 +160,6 @@ describe("abs", function () {
             `abs(x)*abs(x)`
         ];
         const engine = create_script_context({
-            useDefinitions: true,
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -175,7 +174,6 @@ describe("abs", function () {
             assumes: {
                 'x': { real: false }
             },
-            useDefinitions: true,
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -189,8 +187,8 @@ describe("abs", function () {
         ];
         const engine = create_script_context({
             enable: [Directive.expandPowSum],
-            useCaretForExponentiation: false,
-            useDefinitions: true
+            prolog: algebrite_prolog,
+            useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "(2*a*b+a**2+b**2+c**2)**(1/2)");
@@ -317,7 +315,7 @@ describe("abs", function () {
         const lines: string[] = [
             `abs(1^a)`,
         ];
-        const engine = create_script_context({ useDefinitions: true, useCaretForExponentiation: true });
+        const engine = create_script_context({ useCaretForExponentiation: true });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1");
         engine.release();
@@ -331,7 +329,6 @@ describe("abs", function () {
                 'a': { real: false },
                 'b': { real: false }
             },
-            useDefinitions: true,
             useCaretForExponentiation: false
         });
         const { values } = engine.executeScript(lines.join('\n'));

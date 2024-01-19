@@ -95,22 +95,42 @@ enum EngineKind {
 }
 
 export interface EngineConfig {
-    useGeometricAlgebra: boolean;
     syntaxKind: SyntaxKind;
+    prolog: string[];
+    useGeometricAlgebra: boolean;
     useClojureScript: boolean;
     usePythonScript: boolean;
 }
 
-function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind {
-    // FIXME: Needs to be more orthogonal. 
-    if (config.useClojureScript) {
+function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
+    if (options.syntaxKind) {
+        switch (options.syntaxKind) {
+            case SyntaxKind.Algebrite: {
+                return EngineKind.Algebrite;
+            }
+            case SyntaxKind.ClojureScript: {
+                return EngineKind.ClojureScript;
+            }
+            case SyntaxKind.Eigenmath: {
+                return EngineKind.Eigenmath;
+            }
+            case SyntaxKind.PythonScript: {
+                return EngineKind.PythonScript;
+            }
+            default: {
+                // Fall through for backwards compatibility.
+            }
+        }
+    }
+    // Backwards Compatibility
+    if (options.useClojureScript) {
         return EngineKind.ClojureScript;
     }
-    else if (config.usePythonScript) {
+    else if (options.usePythonScript) {
         return EngineKind.PythonScript;
     }
     else {
-        if (config.useGeometricAlgebra) {
+        if (options.useGeometricAlgebra) {
             return EngineKind.Algebrite;
         }
         else {
@@ -121,13 +141,12 @@ function engine_kind_from_eval_config(config: Partial<EngineConfig>): EngineKind
 
 class ClojureScriptExprEngine implements ExprEngine {
     readonly $: ExtensionEnv;
-    constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(options: Partial<EngineConfig>) {
         this.$ = create_env({
             dependencies: ALL_FEATURES
         });
-        init_env(this.$, {
-            useDefinitions: false
-        });
+        init_env(this.$, {});
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isConsSymbol(sym: Sym): boolean {
@@ -278,14 +297,14 @@ class AlgebriteVisitor implements Visitor {
 
 class AlgebriteExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
-    constructor() {
+    constructor(options: Partial<EngineConfig>) {
         // console.lg();
         // console.lg(`constructor AlgebriteExpEngine`);
         this.#env = create_env({
             dependencies: ALL_FEATURES
         });
         init_env(this.#env, {
-            useDefinitions: false
+            prolog: options.prolog
         });
     }
     isConsSymbol(sym: Sym): boolean {
@@ -407,11 +426,17 @@ class EigenmathOutputListener implements ScriptOutputListener {
 
 class EigenmathExprEngine implements ExprEngine {
     private readonly $: ScriptVars = new ScriptVars();
-    constructor() {
-        // console.lg();
-        // console.lg(`constructor EigenmathExpEngine`);
+    constructor(options: Partial<EngineConfig>) {
+        // Determine whether options requested are compatible with Eigenmath.
         this.$.init();
-        // this.$.initscript(eigenmath_init_script);
+        if (options.prolog) {
+            if (Array.isArray(options.prolog)) {
+                this.$.executeProlog(options.prolog);
+            }
+            else {
+                throw new Error("prolog must be string[]");
+            }
+        }
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
         this.$.defineFunction(name, lambda);
@@ -459,8 +484,10 @@ class EigenmathExprEngine implements ExprEngine {
                 return to_infix(expr, eigenmath_infix_config(config));
             }
             case 'LaTeX': {
-                // TODO
-                return to_infix(expr, eigenmath_infix_config(config));
+                // TODO: Eigenmath can't do LaTeX.
+                throw new Error("Eigenmath can't do LaTeX.");
+                // TODO: Make render_as_latex more reusable.
+                // return render_as_latex(expr, this.$);
             }
             case 'SExpr': {
                 return to_sexpr(expr);
@@ -503,6 +530,10 @@ class EigenmathExprEngine implements ExprEngine {
 }
 
 class PythonExprEngine implements ExprEngine {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(options: Partial<EngineConfig>) {
+
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isConsSymbol(sym: Sym): boolean {
         throw new Error('Method not implemented.');
@@ -556,23 +587,23 @@ class PythonExprEngine implements ExprEngine {
     }
 }
 
-export function create_engine(config: Partial<EngineConfig> = {}): ExprEngine {
-    const engineKind = engine_kind_from_eval_config(config);
+export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
+    const engineKind = engine_kind_from_engine_options(options);
     switch (engineKind) {
         case EngineKind.Algebrite: {
-            return new AlgebriteExprEngine();
+            return new AlgebriteExprEngine(options);
         }
         case EngineKind.ClojureScript: {
-            return new ClojureScriptExprEngine();
+            return new ClojureScriptExprEngine(options);
         }
         case EngineKind.Eigenmath: {
-            return new EigenmathExprEngine();
+            return new EigenmathExprEngine(options);
         }
         case EngineKind.PythonScript: {
-            return new PythonExprEngine();
+            return new PythonExprEngine(options);
         }
         default: {
-            throw new Error(`Unexpected options.syntaxKind`);
+            throw new Error();
         }
     }
 }

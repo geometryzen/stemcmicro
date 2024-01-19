@@ -11,7 +11,6 @@ describe("symbol", function () {
             `x`
         ];
         const context = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), context);
         assert.strictEqual(context.renderAsInfix(value), "description");
@@ -28,7 +27,6 @@ describe("symbol", function () {
             `x`
         ];
         const context = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), context);
         assert.strictEqual(context.renderAsInfix(value), "description");
@@ -45,7 +43,6 @@ describe("symbol", function () {
             `x`
         ];
         const context = create_script_context({
-            useDefinitions: false
         });
         const value = assert_one_value_execute(lines.join('\n'), context);
         assert.strictEqual(context.renderAsInfix(value), "description");

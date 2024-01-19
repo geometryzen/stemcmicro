@@ -119,6 +119,11 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const symTab: SymTab = createSymTab();
 
+    /**
+     * Keep track of which symbols are user symbols.
+     */
+    const userSymbols: Map<string, Sym> = new Map();
+
     const builders: OperatorBuilder<U>[] = [];
     /**
      * The operators in buckets that are determined by the phase and operator hash.
@@ -253,7 +258,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         isUserSymbol(sym: Sym): boolean {
-            return symTab.isUsrFunc(sym);
+            return userSymbols.has(sym.key());
         },
         setBinding(sym: Sym, binding: U): void {
             return $.setSymbolBinding(sym, binding);
@@ -320,7 +325,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             $.defineOperator(operator_from_keyword_runner(sym, runner));
         },
         defineUserSymbol(sym: Sym): void {
+            // The most important thing to do is to keep track of which symbols are user symbols.
+            // This will allow us to report back correctly later in isUserSymbol(sym), which is used for SVG rendering.
+            userSymbols.set(sym.key(), sym);
+
+            // Given that we already have an Operator for Sym (SymExtension) installed,
+            // which has the same (standard) implementation of valueOf as the user symbol runner,
+            // there's really no value in adding the following operator.
+            // Leaving it for now as it does no harm and may have utility later.
             $.defineKeyword(sym, make_user_symbol_runner(sym));
+            $.buildOperators();
         },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);
@@ -427,6 +441,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     }
                 }
             }
+            // Make the building idempotent?
+            // Is there a case where we need to re-start.
+            builders.length = 0;
             // Inspect which operators are assigned to which buckets...
             for (const mode of MODE_SEQUENCE) {
                 const ops = ops_by_mode[mode];

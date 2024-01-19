@@ -2,7 +2,7 @@ import { create_sym, Sym } from "math-expression-atoms";
 import { Directive, Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { piAsFlt } from "../../tree/flt/Flt";
-import { cons, Cons, nil, U } from "../../tree/tree";
+import { cons, Cons, is_nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_pi } from "../pi/is_pi";
 import { get_binding } from "./get_binding";
@@ -36,28 +36,19 @@ class SymExtension implements Extension<Sym> {
         return 'SymExtension';
     }
     valueOf(sym: Sym, $: ExtensionEnv): U {
-        // console.lg("SymExtension.valueOf");
-        // Doing the dirty work for PI. Why do we need a special case?
-        // What about E from the math namespace?
+
+        verify_sym(sym);
+
         if (is_pi(sym) && $.getDirective(Directive.evaluatingAsFloat)) {
             return piAsFlt;
         }
 
-        // Evaluate symbol's binding
         const binding = $.getSymbolBinding(sym);
 
-        // console.lg(`binding ${$.toInfixString(sym)} => ${$.toInfixString(binding)}`);
-
-        if (nil === binding) {
+        if (is_nil(binding) || binding.equals(sym)) {
             return sym;
         }
-
-        if (sym !== binding) {
-            return $.valueOf(binding);
-        }
-        else {
-            return sym;
-        }
+        return $.valueOf(binding);
     }
     isKind(sym: U): sym is Sym {
         if (is_sym(sym)) {

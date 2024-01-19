@@ -6,6 +6,29 @@ import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
 import { EmitContext, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
 
+const lines: string[] = [
+    `trace=1`,
+    `tty=0`,
+    `f=sin(x)/x`,
+    `f`
+];
+
+const svg: string[] = [
+    `<svg height='69'width='128'>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='45'>f</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;'x='31.66796875'y='45'>=</text>`,
+    `<line x1='57.203125'y1='37.0546875'x2='117.84765625'y2='37.0546875'style='stroke:black;stroke-width:1.6800000000000002'/>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;'x='60.203125'y='25.904296875'>s</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;'x='69.54296875'y='25.904296875'>i</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;'x='76.2109375'y='25.904296875'>n</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;'x='88.2109375'y='25.904296875'>(</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;'x='106.85546875'y='25.904296875'>)</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='96.203125'y='25.904296875'>x</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='82.19921875'y='58.904296875'>x</text>`,
+    `</svg><br>`
+];
+
+
 class TestScriptOutputListener implements ScriptOutputListener {
     readonly #outer: TestHandler;
     constructor(outer: TestHandler) {
@@ -68,12 +91,6 @@ class TestHandler implements ScriptHandler<ExprEngine>{
 
 describe("runscript", function () {
     it("Eigenmath", function () {
-        const lines: string[] = [
-            `trace=1`,
-            `tty=0`,
-            `f=sin(x)/x`,
-            `f`
-        ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
         const { trees, errors } = engine.parse(sourceText, {});
@@ -83,31 +100,12 @@ describe("runscript", function () {
         const outputs = handler.outputs;
         assert.strictEqual(outputs.length, 1);
         const actual = outputs[0];
-        const svg: string[] = [
-            `<svg height='69'width='128'>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='45'>f</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='31.66796875'y='45'>=</text>`,
-            `<line x1='57.203125'y1='37.0546875'x2='117.84765625'y2='37.0546875'style='stroke:black;stroke-width:1.6800000000000002'/>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='60.203125'y='25.904296875'>s</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='69.54296875'y='25.904296875'>i</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='76.2109375'y='25.904296875'>n</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='88.2109375'y='25.904296875'>(</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='106.85546875'y='25.904296875'>)</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='96.203125'y='25.904296875'>x</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='82.19921875'y='58.904296875'>x</text>`,
-            `</svg><br>`];
         const expected = svg.join('');
         assert.strictEqual(actual.length, expected.length);
         assert.strictEqual(actual, expected);
         engine.release();
     });
     it("Algebrite", function () {
-        const lines: string[] = [
-            `trace=1`,
-            `tty=0`,
-            `f=sin(x)/x`,
-            `f`
-        ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
         const { trees, errors } = engine.parse(sourceText, {});
@@ -117,19 +115,6 @@ describe("runscript", function () {
         const outputs = handler.outputs;
         assert.strictEqual(outputs.length, 1);
         const actual = outputs[0];
-        // TOD: Not getting the "f = "
-        const svg: string[] = [
-            `<svg height='69'width='81'>`,
-            `<line x1='10'y1='37.0546875'x2='70.64453125'y2='37.0546875'style='stroke:black;stroke-width:1.6800000000000002'/>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='13'y='25.904296875'>s</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='22.33984375'y='25.904296875'>i</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='29.0078125'y='25.904296875'>n</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='41.0078125'y='25.904296875'>(</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;'x='59.65234375'y='25.904296875'>)</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='49'y='25.904296875'>x</text>`,
-            `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='34.99609375'y='58.904296875'>x</text>`,
-            `</svg><br>`
-        ];
         const expected = svg.join('');
         assert.strictEqual(actual.length, expected.length);
         assert.strictEqual(actual, expected);

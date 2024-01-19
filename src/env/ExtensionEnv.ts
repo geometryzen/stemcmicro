@@ -463,6 +463,7 @@ export const PHASE_FLAGS_EXPANDING_UNION_FACTORING = MODE_EXPANDING | MODE_FACTO
  * Every object in the system is an opaque handle.
  */
 export interface Operator<T extends U> {
+    readonly name?: string;
     /**
      * Determines which expressions this operator matches.
      */

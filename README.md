@@ -20,7 +20,7 @@ describe("example", function () {
             `(* (+ 10 5) 2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: ... });
         const { program, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const runner = new Stepper(program);

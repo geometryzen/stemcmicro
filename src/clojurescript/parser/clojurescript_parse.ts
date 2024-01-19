@@ -1,5 +1,5 @@
 import { create_sym_ns } from 'math-expression-atoms';
-import { CharStream, consume_num, NumHandler } from "../../algebrite/consume_num";
+import { CharStream, consume_signed_num, NumHandler } from "../../algebrite/consume_num";
 import { FltTokenParser } from "../../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../../operators/int/IntTokenParser";
 import { create_tensor } from "../../tensor/create_tensor";
@@ -186,7 +186,7 @@ class Parser {
             else {
                 const stream = new CharStreamOnString(t);
                 const builder = new NumBuilder(t);
-                if (consume_num(stream, builder)) {
+                if (consume_signed_num(stream, builder)) {
                     return builder.num;
                 }
             }

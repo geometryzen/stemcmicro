@@ -12,7 +12,17 @@ export interface NumHandler {
     int(): void;
 }
 
-export function consume_num(stream: CharStream, handler: NumHandler): boolean {
+export function consume_signed_num(stream: CharStream, handler: NumHandler): boolean {
+    if (stream.curr === '-') {
+        stream.consumeChars(1);
+        return consume_unsigned_num(stream, handler);
+    }
+    else {
+        return consume_unsigned_num(stream, handler);
+    }
+}
+
+export function consume_unsigned_num(stream: CharStream, handler: NumHandler): boolean {
     if (is_digit(stream.curr) || stream.curr === '.') {
         while (is_digit(stream.curr)) {
             stream.consumeChars(1);

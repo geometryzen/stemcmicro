@@ -1,17 +1,17 @@
 
 import { assert } from "chai";
-import { is_tensor } from "math-expression-atoms";
+import { is_rat, is_sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { is_dictionary } from "../src/clojurescript/atoms/Dictionary";
+import { SyntaxKind } from "../src/parser/parser";
 
 describe("sandbox", function () {
-    it("Maps", function () {
+    it("-1", function () {
         const lines: string[] = [
-            `{x a y b}`
+            `-1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -22,16 +22,16 @@ describe("sandbox", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `{x a y b}`);
-        assert.strictEqual(is_dictionary(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "-1");
+        assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
-    it("Maps", function () {
+    it("--1", function () {
         const lines: string[] = [
-            `{:x a :y b}`
+            `--1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -42,50 +42,8 @@ describe("sandbox", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `{x a y b}`);
-        assert.strictEqual(is_dictionary(values[0]), true);
-        engine.release();
-    });
-    it("Tensors in Eigenmath", function () {
-        const lines: string[] = [
-            `["Alice", "Bob", "Carol"]`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
-        const { trees, errors } = engine.parse(sourceText, {});
-        assert.strictEqual(errors.length, 0);
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.evaluate(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `["Alice","Bob","Carol"]`);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `["Alice" "Bob" "Carol"]`);
-        assert.strictEqual(is_tensor(values[0]), true);
-        engine.release();
-    });
-    it("Vectors in ClojureScript", function () {
-        const lines: string[] = [
-            `["Alice" "Bob" "Carol"]`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
-        const { trees, errors } = engine.parse(sourceText, {});
-        assert.strictEqual(errors.length, 0);
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.evaluate(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `["Alice","Bob","Carol"]`);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `["Alice" "Bob" "Carol"]`);
-        assert.strictEqual(is_tensor(values[0]), true);
+        // TODO: An error might be better here?
+        assert.strictEqual(is_sym(values[0]), true);
         engine.release();
     });
 });

@@ -139,115 +139,7 @@ function engine_kind_from_engine_options(options: Partial<EngineConfig>): Engine
     }
 }
 
-class ClojureScriptExprEngine implements ExprEngine {
-    readonly $: ExtensionEnv;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(options: Partial<EngineConfig>) {
-        this.$ = create_env({
-            dependencies: ALL_FEATURES
-        });
-        init_env(this.$, {});
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isConsSymbol(sym: Sym): boolean {
-        throw new Error('Method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isUserSymbol(sym: Sym): boolean {
-        throw new Error('Method not implemented.');
-    }
-    defineFunction(name: string, lambda: LambdaExpr): void {
-        const match = items_to_cons(create_sym(name));
-        this.$.defineFunction(match, lambda);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        return clojurescript_parse(sourceText, {
-            lexicon: {}
-        });
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
-        const { trees, errors } = clojurescript_parse(sourceText, {
-            lexicon: {}
-        });
-        const module = items_to_cons(create_sym('module'), ...trees);
-        return { module, errors };
-    }
-    getBinding(sym: Sym): U {
-        return this.$.getBinding(sym);
-    }
-    evaluate(expr: U): U {
-        const { value } = transform_tree(expr, {}, this.$);
-        return value;
-    }
-    renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
-        this.$.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
-        this.$.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
-        try {
-            switch (config.format) {
-                case 'Ascii': {
-                    return render_as_ascii(expr, this.$);
-                }
-                case 'Human': {
-                    return render_as_human(expr, this.$);
-                }
-                case 'Infix': {
-                    return render_as_infix(expr, this.$);
-                }
-                case 'LaTeX': {
-                    return render_as_latex(expr, this.$);
-                }
-                case 'SExpr': {
-                    return render_as_sexpr(expr, this.$);
-                }
-                case 'SVG': {
-                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.$);
-                }
-                default: {
-                    return render_as_infix(expr, this.$);
-                }
-            }
-        }
-        finally {
-            this.$.popDirective();
-            this.$.popDirective();
-        }
-    }
-    release(): void {
-        env_term(this.$);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        this.$.setBinding(sym.key(), binding);
-        this.$.setUsrFunc(sym.key(), usrfunc);
-    }
-    symbol(concept: Concept): Sym {
-        switch (concept) {
-            case Concept.Last: {
-                return RESERVED_KEYWORD_LAST;
-            }
-            case Concept.TTY: {
-                return RESERVED_KEYWORD_TTY;
-            }
-            default: {
-                throw new Error(`symbol(${concept}) not implemented.`);
-            }
-
-        }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    addListener(listener: ExprEngineListener): void {
-        // The native engine currently does not support listeners.
-        // throw new Error('addListener() Method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    removeListener(listener: ExprEngineListener): void {
-        // throw new Error('removeListener() Method not implemented.');
-    }
-}
-
-class AlgebriteVisitor implements Visitor {
+class ExtensionEnvVisitor implements Visitor {
     readonly #env: ExtensionEnv;
     constructor(env: ExtensionEnv) {
         this.#env = env;
@@ -298,8 +190,6 @@ class AlgebriteVisitor implements Visitor {
 class AlgebriteExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor(options: Partial<EngineConfig>) {
-        // console.lg();
-        // console.lg(`constructor AlgebriteExpEngine`);
         this.#env = create_env({
             dependencies: ALL_FEATURES
         });
@@ -323,8 +213,7 @@ class AlgebriteExprEngine implements ExprEngine {
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         const { trees, errors } = algebrite_parse(sourceText, algebrite_parse_config(options));
-        // We 
-        const visitor = new AlgebriteVisitor(this.#env);
+        const visitor = new ExtensionEnvVisitor(this.#env);
         for (const tree of trees) {
             visit(tree, visitor);
         }
@@ -399,11 +288,121 @@ class AlgebriteExprEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {
         // The native engine currently does not support listeners.
-        // throw new Error('addListener() Method not implemented.');
+        // throw new Error('addListener() method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
-        // throw new Error('removeListener() Method not implemented.');
+        // throw new Error('removeListener() method not implemented.');
+    }
+}
+class ClojureScriptExprEngine implements ExprEngine {
+    readonly #env: ExtensionEnv;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    constructor(options: Partial<EngineConfig>) {
+        this.#env = create_env({
+            dependencies: ALL_FEATURES
+        });
+        init_env(this.#env, {
+            prolog: options.prolog
+        });
+    }
+    isConsSymbol(sym: Sym): boolean {
+        return this.#env.isConsSymbol(sym);
+    }
+    isUserSymbol(sym: Sym): boolean {
+        return this.#env.isUserSymbol(sym);
+    }
+    defineFunction(name: string, lambda: LambdaExpr): void {
+        const match = items_to_cons(create_sym(name));
+        this.#env.defineFunction(match, lambda);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
+        const { trees, errors } = clojurescript_parse(sourceText, {
+            lexicon: {}
+        });
+        const visitor = new ExtensionEnvVisitor(this.#env);
+        for (const tree of trees) {
+            visit(tree, visitor);
+        }
+        return { trees, errors };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
+        const { trees, errors } = this.parse(sourceText, options);
+        const module = items_to_cons(create_sym('module'), ...trees);
+        return { module, errors };
+    }
+    getBinding(sym: Sym): U {
+        return this.#env.getBinding(sym);
+    }
+    evaluate(expr: U): U {
+        const { value } = transform_tree(expr, {}, this.#env);
+        return value;
+    }
+    renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
+        this.#env.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
+        this.#env.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
+        try {
+            switch (config.format) {
+                case 'Ascii': {
+                    return render_as_ascii(expr, this.#env);
+                }
+                case 'Human': {
+                    return render_as_human(expr, this.#env);
+                }
+                case 'Infix': {
+                    return render_as_infix(expr, this.#env);
+                }
+                case 'LaTeX': {
+                    return render_as_latex(expr, this.#env);
+                }
+                case 'SExpr': {
+                    return render_as_sexpr(expr, this.#env);
+                }
+                case 'SVG': {
+                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.#env);
+                }
+                default: {
+                    return render_as_infix(expr, this.#env);
+                }
+            }
+        }
+        finally {
+            this.#env.popDirective();
+            this.#env.popDirective();
+        }
+    }
+    release(): void {
+        env_term(this.#env);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setSymbol(sym: Sym, binding: U, usrfunc: U): void {
+        this.#env.setBinding(sym.key(), binding);
+        this.#env.setUsrFunc(sym.key(), usrfunc);
+    }
+    symbol(concept: Concept): Sym {
+        switch (concept) {
+            case Concept.Last: {
+                return RESERVED_KEYWORD_LAST;
+            }
+            case Concept.TTY: {
+                return RESERVED_KEYWORD_TTY;
+            }
+            default: {
+                throw new Error(`symbol(${concept}) not implemented.`);
+            }
+
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addListener(listener: ExprEngineListener): void {
+        // The native engine currently does not support listeners.
+        // throw new Error('addListener() method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeListener(listener: ExprEngineListener): void {
+        // throw new Error('removeListener() method not implemented.');
     }
 }
 
@@ -425,13 +424,13 @@ class EigenmathOutputListener implements ScriptOutputListener {
 }
 
 class EigenmathExprEngine implements ExprEngine {
-    private readonly $: ScriptVars = new ScriptVars();
+    readonly #env: ScriptVars = new ScriptVars();
     constructor(options: Partial<EngineConfig>) {
         // Determine whether options requested are compatible with Eigenmath.
-        this.$.init();
+        this.#env.init();
         if (options.prolog) {
             if (Array.isArray(options.prolog)) {
-                this.$.executeProlog(options.prolog);
+                this.#env.executeProlog(options.prolog);
             }
             else {
                 throw new Error("prolog must be string[]");
@@ -439,36 +438,36 @@ class EigenmathExprEngine implements ExprEngine {
         }
     }
     defineFunction(name: string, lambda: LambdaExpr): void {
-        this.$.defineFunction(name, lambda);
+        this.#env.defineFunction(name, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.$);
+        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#env);
         return { trees, errors: emErrorHandler.errors };
     }
     parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.$);
+        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#env);
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors: emErrorHandler.errors };
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(sym: Sym): U {
-        return get_binding(sym, this.$);
+        return get_binding(sym, this.#env);
     }
     isConsSymbol(sym: Sym): boolean {
-        const answer: boolean = this.$.isConsSymbol(sym);
+        const answer: boolean = this.#env.isConsSymbol(sym);
         // console.lg(`EigenmathExprEngine.isConsSymbol ${sym} => ${answer}`);
         return answer;
     }
     isUserSymbol(sym: Sym): boolean {
-        const answer: boolean = this.$.isUserSymbol(sym);
+        const answer: boolean = this.#env.isUserSymbol(sym);
         // console.lg(`EigenmathExprEngine.isUserSymbol ${sym} => ${answer}`);
         return answer;
 
     }
     evaluate(expr: U): U {
-        return evaluate_expression(expr, this.$);
+        return evaluate_expression(expr, this.#env);
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         switch (config.format) {
@@ -493,7 +492,7 @@ class EigenmathExprEngine implements ExprEngine {
                 return to_sexpr(expr);
             }
             case 'SVG': {
-                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.$);
+                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.#env);
             }
             default: {
                 return to_infix(expr, eigenmath_infix_config(config));
@@ -504,7 +503,7 @@ class EigenmathExprEngine implements ExprEngine {
         // Do nothing (yet).
     }
     setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        set_symbol(sym, binding, usrfunc, this.$);
+        set_symbol(sym, binding, usrfunc, this.#env);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -520,12 +519,12 @@ class EigenmathExprEngine implements ExprEngine {
         }
     }
     addListener(listener: ExprEngineListener): void {
-        this.$.addOutputListener(new EigenmathOutputListener(listener));
+        this.#env.addOutputListener(new EigenmathOutputListener(listener));
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
         // This doesn't work because we've lost the identity of the adapter.
-        this.$.removeOutputListener(new EigenmathOutputListener(listener));
+        this.#env.removeOutputListener(new EigenmathOutputListener(listener));
     }
 }
 
@@ -536,54 +535,54 @@ class PythonExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isConsSymbol(sym: Sym): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error('isConsSymbol method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isUserSymbol(sym: Sym): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error('isUserSymbol method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     defineFunction(name: string, lambda: LambdaExpr): void {
-        throw new Error('Method not implemented.');
+        throw new Error('defineFunction method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[]; errors: Error[]; } {
-        throw new Error('Method not implemented.');
+        throw new Error('parse method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons; errors: Error[]; } {
-        throw new Error('Method not implemented.');
+        throw new Error('parseModule method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     evaluate(expr: U): U {
-        throw new Error('Method not implemented.');
+        throw new Error('evaluate method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(sym: Sym): U {
-        throw new Error('Method not implemented.');
+        throw new Error('getBinding method not implemented.');
     }
     release(): void {
-        throw new Error('Method not implemented.');
+        throw new Error('release method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     renderAsString(expr: U, config?: Partial<RenderConfig>): string {
-        throw new Error('Method not implemented.');
+        throw new Error('renderAsString method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        throw new Error('Method not implemented.');
+        throw new Error('setSymbol method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     symbol(concept: Concept): Sym {
-        throw new Error('Method not implemented.');
+        throw new Error('symbol method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {
-        throw new Error('Method not implemented.');
+        throw new Error('addListener method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
-        throw new Error('Method not implemented.');
+        throw new Error('removeListener method not implemented.');
     }
 }
 

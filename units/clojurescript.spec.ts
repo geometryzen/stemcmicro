@@ -4,14 +4,15 @@ import { is_boo, is_flt, is_rat, is_str, is_sym, is_tensor } from "math-expressi
 import { is_cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { is_dictionary } from "../src/clojurescript/atoms/Dictionary";
+import { SyntaxKind } from "../src/parser/parser";
 
 describe("ClojureScript", function () {
-    it("Rat", function () {
+    it("1", function () {
         const lines: string[] = [
             `1`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -26,12 +27,54 @@ describe("ClojureScript", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
+    it("-1", function () {
+        const lines: string[] = [
+            `-1`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "-1");
+        assert.strictEqual(is_rat(values[0]), true);
+        engine.release();
+    });
+    it("--1", function () {
+        const lines: string[] = [
+            `--1`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "--1");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "--1");
+        assert.strictEqual(is_rat(values[0]), false);
+        assert.strictEqual(is_sym(values[0]), true);
+        engine.release();
+    });
     it("Flt", function () {
         const lines: string[] = [
             `1.0`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -51,7 +94,7 @@ describe("ClojureScript", function () {
             `"Quick! Brown foxes!"`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -73,7 +116,7 @@ describe("ClojureScript", function () {
             `false`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -96,7 +139,7 @@ describe("ClojureScript", function () {
             `foo-bar`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -120,7 +163,7 @@ describe("ClojureScript", function () {
             `:explicit-ns/keyword`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -148,7 +191,7 @@ describe("ClojureScript", function () {
             `(+ 1 2 3 4)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -168,7 +211,7 @@ describe("ClojureScript", function () {
             `["Alice" "Bob" "Carol"]`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -188,7 +231,7 @@ describe("ClojureScript", function () {
             `{:x a :y b}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -212,7 +255,7 @@ describe("ClojureScript", function () {
             `(* (+ 10 5) 2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -240,7 +283,7 @@ describe("ClojureScript", function () {
             `{x a y b}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -260,7 +303,7 @@ describe("ClojureScript", function () {
             `{:x a :y b}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -301,7 +344,7 @@ describe("ClojureScript", function () {
             `["Alice" "Bob" "Carol"]`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];

@@ -13,7 +13,7 @@ const eigenmathConfig: EngineConfig = {
 };
 */
 
-function stripWhitespace(s: string): string {
+function strip_whitespace(s: string): string {
     return s.replace(/\s/g, '');
 }
 
@@ -47,7 +47,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(x^2 + y^2 + z^2)^(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(x^2 + y^2 + z^2)^(1/2)"));
         engine.release();
     });
     xit("adj(x)", function () {
@@ -67,7 +67,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     it("and(a,b,...)", function () {
@@ -86,7 +86,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     it("arccos(x)", function () {
@@ -105,7 +105,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/3*pi"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/3*pi"));
         engine.release();
     });
     it("arccosh(x)", function () {
@@ -124,7 +124,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("arccosh(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("arccosh(1/2)"));
         engine.release();
     });
     it("arcsin(x)", function () {
@@ -143,7 +143,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/6*pi"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/6*pi"));
         engine.release();
     });
     it("arcsinh(x)", function () {
@@ -162,7 +162,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("arcsinh(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("arcsinh(1/2)"));
         engine.release();
     });
     xit("arctan(y,x)", function () {
@@ -181,7 +181,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2*pi"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2*pi"));
         engine.release();
     });
     it("arctanh(x)", function () {
@@ -200,7 +200,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("arctanh(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("arctanh(1/2)"));
         engine.release();
     });
     xit("arg(z)", function () {
@@ -220,7 +220,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-arctan(3,2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-arctan(3,2)"));
         engine.release();
     });
     it("besselj(x,n)", function () {
@@ -239,7 +239,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     xit("bessely(x,n)", function () {
@@ -258,7 +258,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     xit("binding(s)", function () {
@@ -278,7 +278,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(x + 1)^2"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(x + 1)^2"));
         engine.release();
     });
     it("ceiling(x)", function () {
@@ -297,7 +297,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     xit("check(x)", function () {
@@ -326,8 +326,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("-1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("-1"));
         // assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("1"));
         engine.release();
     });
@@ -352,7 +352,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2598960"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("2598960"));
         engine.release();
     });
     it("circexp(x)", function () {
@@ -377,7 +377,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("exp(i*x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("exp(i*x)"));
         engine.release();
     });
     xit("clear", function () {
@@ -448,7 +448,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("13^(1/2)(-1)^(-1arctan(3,2)/pi)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("13^(1/2)(-1)^(-1arctan(3,2)/pi)"));
         engine.release();
     });
     it("coeff(p,x,n)", function () {
@@ -475,10 +475,10 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 4);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("a"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("b"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("c"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("d"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("b"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[2], renderConfig)), strip_whitespace("c"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[3], renderConfig)), strip_whitespace("d"));
         engine.release();
     });
     it("cofactor(m,i,j)", function () {
@@ -503,7 +503,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     it("conj(z)", function () {
@@ -528,7 +528,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2 + 3 * i"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("2 + 3 * i"));
         engine.release();
     });
     it("contract(a,i,j)", function () {
@@ -553,7 +553,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("a+d"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a+d"));
         engine.release();
     });
     xit("cos(x)", function () {
@@ -577,7 +577,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2^(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2^(1/2)"));
         engine.release();
     });
     xit("cosh(x)", function () {
@@ -601,7 +601,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2*exp(-x)+1/2*exp(x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2*exp(-x)+1/2*exp(x)"));
         engine.release();
     });
     it("cross(u,v)", function () {
@@ -625,7 +625,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("cross(u,v)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("cross(u,v)"));
         engine.release();
     });
     it("curl(v)", function () {
@@ -649,7 +649,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("curl(v)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("curl(v)"));
         engine.release();
     });
     xit("d(f,x,...)", function () {
@@ -674,8 +674,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("cos(x)"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-sin(x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("cos(x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-sin(x)"));
         engine.release();
     });
     xit("defint(f,x,a,b)", function () {
@@ -700,8 +700,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("cos(x)"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-sin(x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("cos(x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-sin(x)"));
         engine.release();
     });
     xit("deg(p,x)", function () {
@@ -725,7 +725,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("b"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("b"));
         engine.release();
     });
     it("denominator(x)", function () {
@@ -749,7 +749,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("b"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("b"));
         engine.release();
     });
     it("det(m)", function () {
@@ -774,7 +774,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("a*d-b*c"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a*d-b*c"));
         engine.release();
     });
     it("dim(a,m)", function () {
@@ -799,7 +799,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("3"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("3"));
         engine.release();
     });
     it("div(v)", function () {
@@ -823,7 +823,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("div(v)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("div(v)"));
         engine.release();
     });
     it("do(a,b,...)", function () {
@@ -847,7 +847,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("3"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("3"));
         engine.release();
     });
     it("dot(a,b,...)", function () {
@@ -874,7 +874,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(-4,9/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(-4,9/2)"));
         engine.release();
     });
     it("draw(f,x)", function () {
@@ -922,7 +922,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("eigenvec(m)", function () {
@@ -950,7 +950,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     it("eval(f,x,a,y,b,...)", function () {
@@ -975,7 +975,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("5"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("5"));
         engine.release();
     });
     xit("erf(x)", function () {
@@ -999,7 +999,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("erfc(x)", function () {
@@ -1023,7 +1023,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     it("exp(x)", function () {
@@ -1049,7 +1049,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-1"));
         engine.release();
     });
     it("expand(r,x)", function () {
@@ -1073,7 +1073,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("r"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("r"));
         engine.release();
     });
     it("expcos(z)", function () {
@@ -1098,7 +1098,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2*exp(-i*z)+1/2*exp(i*z)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2*exp(-i*z)+1/2*exp(i*z)"));
         engine.release();
     });
     xit("expcosh(z)", function () {
@@ -1123,7 +1123,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2*exp(-z)+1/2*exp(z)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2*exp(-z)+1/2*exp(z)"));
         engine.release();
     });
     it("expsin(z)", function () {
@@ -1148,7 +1148,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2*i*exp(-i*z)-1/2*i*exp(i*z)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2*i*exp(-i*z)-1/2*i*exp(i*z)"));
         engine.release();
     });
     xit("expsinh(z)", function () {
@@ -1173,7 +1173,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2*exp(-z)+1/2*exp(z)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2*exp(-z)+1/2*exp(z)"));
         engine.release();
     });
     xit("exptan(z)", function () {
@@ -1198,7 +1198,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("exptanh(z)", function () {
@@ -1223,7 +1223,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     it("factor(n)", function () {
@@ -1247,7 +1247,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2^97*3^48*5^24*7^16*11^9*13^7*17^5*19^5*23^4*29^3*31^3*37^2*41^2*43^2*47^2*53*59*61*67*71*73*79*83*89*97"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("2^97*3^48*5^24*7^16*11^9*13^7*17^5*19^5*23^4*29^3*31^3*37^2*41^2*43^2*47^2*53*59*61*67*71*73*79*83*89*97"));
         engine.release();
     });
     it("factorial(n)", function () {
@@ -1271,7 +1271,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2432902008176640000"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("2432902008176640000"));
         engine.release();
     });
     it("float(x)", function () {
@@ -1295,7 +1295,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("3.5294711457602754e+39"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("3.5294711457602754e+39"));
         engine.release();
     });
     it("floor(x)", function () {
@@ -1319,7 +1319,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("0"));
         engine.release();
     });
     xit("for(i,j,k,a,b,...)", function () {
@@ -1343,7 +1343,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("0"));
         engine.release();
     });
     it("gcd(a,b,...)", function () {
@@ -1367,7 +1367,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("6"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("6"));
         engine.release();
     });
     xit("grad(f)", function () {
@@ -1391,7 +1391,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(d(f(),x),d(f(),y),d(f(),z))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(d(f(),x),d(f(),y),d(f(),z))"));
         engine.release();
     });
     xit("hadamard(a,b,...)", function () {
@@ -1417,7 +1417,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     it("hermite(x,n)", function () {
@@ -1442,8 +1442,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("2*x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("2*x"));
         engine.release();
     });
     xit("hilbert(n)", function () {
@@ -1468,8 +1468,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("2*x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("2*x"));
         engine.release();
     });
     it("i", function () {
@@ -1495,7 +1495,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-1"));
         engine.release();
     });
     xit("imag(z)", function () {
@@ -1520,7 +1520,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-3"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-3"));
         engine.release();
     });
     xit("infixform(x)", function () {
@@ -1545,7 +1545,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     it("inner(a,b,...)", function () {
@@ -1571,7 +1571,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(a*x+b*y,c*x+d*y)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(a*x+b*y,c*x+d*y)"));
         engine.release();
     });
     it("integral(f,x)", function () {
@@ -1595,7 +1595,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/3*x^3"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/3*x^3"));
         engine.release();
     });
     it("inv(m)", function () {
@@ -1620,7 +1620,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("((-2,1),(3/2,-1/2))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("((-2,1),(3/2,-1/2))"));
         engine.release();
     });
     it("isprime(n)", function () {
@@ -1649,12 +1649,12 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 6);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("0"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[4], renderConfig)), stripWhitespace("0"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[5], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("0"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("0"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[2], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[3], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[4], renderConfig)), strip_whitespace("0"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[5], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     it("j", function () {
@@ -1679,7 +1679,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-j"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-j"));
         engine.release();
     });
     xit("kronecker(a,b,...)", function () {
@@ -1705,7 +1705,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("((a,b,2a,2b),(c,d,2c,2d),(3a,3b,4a,4b),(3c,3d,4c,4d))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("((a,b,2a,2b),(c,d,2c,2d),(3a,3b,4a,4b),(3c,3d,4c,4d))"));
         engine.release();
     });
     it("laguerre(x,n,a)", function () {
@@ -1730,8 +1730,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("1-x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("1-x"));
         engine.release();
     });
     it("lcm(a,b,...)", function () {
@@ -1755,7 +1755,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("12"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("12"));
         engine.release();
     });
     xit("last", function () {
@@ -1780,7 +1780,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("212"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("212"));
         engine.release();
     });
     it("leading(p,x)", function () {
@@ -1804,7 +1804,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("5"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("5"));
         engine.release();
     });
     it("legendre(x,n,m)", function () {
@@ -1829,8 +1829,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("x"));
         engine.release();
     });
     it("log(x)", function () {
@@ -1854,7 +1854,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("y * log(x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("y * log(x)"));
         engine.release();
     });
     xit("lookup(x)", function () {
@@ -1879,7 +1879,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1 + 2"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1 + 2"));
         engine.release();
     });
     xit("mag(z)", function () {
@@ -1904,7 +1904,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(x^2 + y^2)^(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(x^2 + y^2)^(1/2)"));
         engine.release();
     });
     xit("minor(m,i,j)", function () {
@@ -1929,7 +1929,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-3"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-3"));
         engine.release();
     });
     xit("minormatrix(m,i,j)", function () {
@@ -1954,7 +1954,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("((5,6),(8,9))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("((5,6),(8,9))"));
         engine.release();
     });
     xit("mod(a,b)", function () {
@@ -1978,7 +1978,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/8"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/8"));
         engine.release();
     });
     xit("noexpand(x)", function () {
@@ -2002,7 +2002,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("x + 1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("x + 1"));
         engine.release();
     });
     it("not(x)", function () {
@@ -2026,7 +2026,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("0"));
         engine.release();
     });
     xit("nroots(p,x)", function () {
@@ -2051,7 +2051,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(1.000000...,-0.809017...+0.587785...*i,-0.809017...-0.587785...*i,0.309017...+0.951057...*i,0.309017...-0.951057...*i)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(1.000000...,-0.809017...+0.587785...*i,-0.809017...-0.587785...*i,0.309017...+0.951057...*i,0.309017...-0.951057...*i)"));
         engine.release();
     });
     it("numerator(x)", function () {
@@ -2075,7 +2075,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("a"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a"));
         engine.release();
     });
     it("or(a,b,...)", function () {
@@ -2099,7 +2099,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     it("outer(a,b,...)", function () {
@@ -2125,7 +2125,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("((a*x,a*y,a*z),(b*x,b*y,b*z),(c*x,c*y,c*z))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("((a*x,a*y,a*z),(b*x,b*y,b*z),(c*x,c*y,c*z))"));
         engine.release();
     });
     it("pi", function () {
@@ -2151,7 +2151,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-1"));
         engine.release();
     });
     xit("polar(z)", function () {
@@ -2176,7 +2176,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(x^2+y^2)^(1/2)*exp(i*arctan(-y,x))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(x^2+y^2)^(1/2)*exp(i*arctan(-y,x))"));
         engine.release();
     });
     xit("power", function () {
@@ -2200,7 +2200,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/x^(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/x^(1/2)"));
         engine.release();
     });
     it("prime(n)", function () {
@@ -2226,9 +2226,9 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 3);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("3"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("5"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("2"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("3"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[2], renderConfig)), strip_whitespace("5"));
         engine.release();
     });
     xit("print(a,b,...)", function () {
@@ -2252,7 +2252,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("print2dascii(a,b,...)", function () {
@@ -2276,7 +2276,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("printcomputer(a,b,...)", function () {
@@ -2300,7 +2300,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("printlatex(a,b,...)", function () {
@@ -2324,7 +2324,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("printlist(a,b,...)", function () {
@@ -2348,7 +2348,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("printhuman(a,b,...)", function () {
@@ -2372,7 +2372,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     xit("product(i,j,k,f)", function () {
@@ -2396,7 +2396,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("x^3+6*x^2+11*x+6"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("x^3+6*x^2+11*x+6"));
         engine.release();
     });
     xit("product(y)", function () {
@@ -2421,7 +2421,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("24"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("24"));
         engine.release();
     });
     it("quote(x)", function () {
@@ -2445,7 +2445,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(x + 1)^2"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(x + 1)^2"));
         engine.release();
     });
     it("quotient(p,q,x)", function () {
@@ -2469,7 +2469,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("-1+x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("-1+x"));
         engine.release();
     });
     it("rank(a)", function () {
@@ -2494,7 +2494,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("2"));
         engine.release();
     });
     it("rationalize(x)", function () {
@@ -2518,7 +2518,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(a*b+a*c+b*c)/(a*b*c)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(a*b+a*c+b*c)/(a*b*c)"));
         engine.release();
     });
     xit("real(z)", function () {
@@ -2543,7 +2543,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("2"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("2"));
         engine.release();
     });
     it("rect(z)", function () {
@@ -2568,7 +2568,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("cos(x) + i * sin(x)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("cos(x) + i * sin(x)"));
         engine.release();
     });
     it("roots(p,x)", function () {
@@ -2593,7 +2593,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(-1,2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(-1,2)"));
         engine.release();
     });
     xit("rotate(u,s,k,...)", function () {
@@ -2618,7 +2618,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("()"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("()"));
         engine.release();
     });
     xit("run(x)", function () {
@@ -2642,7 +2642,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("()"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("()"));
         engine.release();
     });
     it("shape(x)", function () {
@@ -2666,7 +2666,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("(3)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(3)"));
         engine.release();
     });
     it("simplify(x)", function () {
@@ -2690,7 +2690,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     xit("sin(x)", function () {
@@ -2714,7 +2714,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1/2^(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1/2^(1/2)"));
         engine.release();
     });
     xit("sinh(x)", function () {
@@ -2738,7 +2738,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(""));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(""));
         engine.release();
     });
     it("sqrt(x)", function () {
@@ -2762,7 +2762,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("720*7^(1/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("720*7^(1/2)"));
         engine.release();
     });
     xit("stop", function () {
@@ -2805,7 +2805,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("c"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("c"));
         engine.release();
     });
     xit("sum(i,j,k,f)", function () {
@@ -2829,7 +2829,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("x^5+x^4+x^3+x^2+x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("x^5+x^4+x^3+x^2+x"));
         engine.release();
     });
     it("tan(x)", function () {
@@ -2854,7 +2854,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         engine.release();
     });
     it("tanh(x)", function () {
@@ -2878,7 +2878,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("exp(2*x)/(1+exp(2*x))-1/(1+exp(2*x))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("exp(2*x)/(1+exp(2*x))-1/(1+exp(2*x))"));
         engine.release();
     });
     xit("taylor(f,x,n,a)", function () {
@@ -2902,7 +2902,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("x^5+x^4+x^3+x^2+x+1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("x^5+x^4+x^3+x^2+x+1"));
         engine.release();
     });
     it("test(a,b,c,d,...)", function () {
@@ -2928,7 +2928,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`"yes"`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`"yes"`));
         engine.release();
     });
     it("trace", function () {
@@ -2976,7 +2976,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`((a,c),(b,d))`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`((a,c),(b,d))`));
         engine.release();
     });
     it("tty", function () {
@@ -3001,7 +3001,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1+2*x+x^2`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`1+2*x+x^2`));
         engine.release();
     });
     it("unit(n)", function () {
@@ -3025,7 +3025,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`((1,0,0),(0,1,0),(0,0,1))`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`((1,0,0),(0,1,0),(0,0,1))`));
         engine.release();
     });
     xit("zero(i,j,...)", function () {
@@ -3051,7 +3051,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`((1,0,0),(0,1,0),(0,0,1))`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`((1,0,0),(0,1,0),(0,0,1))`));
         engine.release();
     });
 });

@@ -5,6 +5,7 @@ import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { State, Stepper } from '../src/clojurescript/runtime/Stepper';
 import { Stack } from "../src/env/Stack";
+import { SyntaxKind } from "../src/parser/parser";
 
 describe("runtime", function () {
     it("+", function () {
@@ -12,7 +13,7 @@ describe("runtime", function () {
             `(+ 1 2 3 4 5)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -37,7 +38,7 @@ describe("runtime", function () {
             `(* 1 2 3 4 5)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -62,7 +63,7 @@ describe("runtime", function () {
             `(+ 10 (* 5 2))`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -87,7 +88,7 @@ describe("runtime", function () {
             `(* (+ 10 5) 2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -114,7 +115,7 @@ describe("runtime", function () {
             `c`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useClojureScript: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const runner = new Stepper(module);

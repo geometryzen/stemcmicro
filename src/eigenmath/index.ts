@@ -5,6 +5,7 @@ import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_imu } from '../operators/imu/is_imu';
+import { is_num } from '../operators/num/is_num';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { assert_cons } from '../tree/cons/assert_cons';
@@ -242,13 +243,13 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     if (is_nil(rhs))
         return 1;
 
-    if (isnum(lhs) && isnum(rhs))
+    if (is_num(lhs) && is_num(rhs))
         return cmp_numbers(lhs, rhs);
 
-    if (isnum(lhs))
+    if (is_num(lhs))
         return -1;
 
-    if (isnum(rhs))
+    if (is_num(rhs))
         return 1;
 
     if (isstring(lhs) && isstring(rhs))
@@ -365,7 +366,7 @@ function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
 
 function cmp_numbers(p1: Num, p2: Num): 1 | 0 | -1 {
 
-    if (isrational(p1) && isrational(p2)) {
+    if (is_rat(p1) && is_rat(p2)) {
         return p1.compare(p2);
     }
 
@@ -489,7 +490,7 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
 
     // console.lg(`BASE1=${BASE1}, BASE2=${BASE2} are considered EQUAL`);
 
-    if (isdouble(BASE2))
+    if (is_flt(BASE2))
         BASE1 = BASE2; // if mixed rational and double, use double
 
     push(POWER, $);
@@ -512,7 +513,7 @@ function combine_numerical_factors(start: number, COEFF: Num, $: ScriptVars): Nu
 
         const p1 = $.stack[i];
 
-        if (isnum(p1)) {
+        if (is_num(p1)) {
             multiply_numbers(COEFF, p1, $);
             COEFF = pop($) as Num;
             $.stack.splice(i, 1); // remove factor
@@ -725,7 +726,7 @@ function count_denominators(p: U): number {
     return n;
 }
 
-function count_numerators(p: U): number {
+function count_numerators(p: Cons): number {
     let n = 0;
     p = cdr(p);
     while (iscons(p)) {
@@ -995,13 +996,13 @@ function emit_args(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadS
 }
 
 function emit_base(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
-    if (isnum(p) && isnegativenumber(p) || (isrational(p) && isfraction(p)) || isdouble(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER))
+    if (is_num(p) && isnegativenumber(p) || (is_rat(p) && isfraction(p)) || is_flt(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER))
         emit_subexpr(p, $, ec, scope);
     else
         emit_expr(p, $, ec, scope);
 }
 
-function emit_denominators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope) {
+function emit_denominators(p: Cons, $: StackContext, ec: EmitContext, scope: EigenmathReadScope) {
 
     const t = $.stack.length;
     const n = count_denominators(p);
@@ -1018,7 +1019,7 @@ function emit_denominators(p: U, $: StackContext, ec: EmitContext, scope: Eigenm
         if ($.stack.length > t)
             emit_medium_space($);
 
-        if (isrational(q)) {
+        if (is_rat(q)) {
             const s = bignum_itoa(q.b);
             emit_roman_string(s, $);
             continue;
@@ -1111,7 +1112,7 @@ function emit_double(p: Flt, $: StackContext): void {
 }
 
 function emit_exponent(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
-    if (isnum(p) && !isnegativenumber(p)) {
+    if (is_num(p) && !isnegativenumber(p)) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
     }
@@ -1150,12 +1151,12 @@ function emit_expr_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathR
 }
 
 function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope) {
-    if (isrational(p)) {
+    if (is_rat(p)) {
         emit_rational(p, $);
         return;
     }
 
-    if (isdouble(p)) {
+    if (is_flt(p)) {
         emit_double(p, $);
         return;
     }
@@ -1213,7 +1214,7 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathRea
     }
 }
 
-function emit_fraction(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
+function emit_fraction(p: Cons, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     emit_numerators(p, $, ec, scope);
     emit_denominators(p, $, ec, scope);
     emit_update_fraction($);
@@ -1232,7 +1233,7 @@ function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathR
 
     if (car(p).equals(FACTORIAL)) {
         p = cadr(p);
-        if (isrational(p) && isposint(p) || issymbol(p))
+        if (is_rat(p) && isposint(p) || issymbol(p))
             emit_expr(p, $, ec, scope);
         else
             emit_subexpr(p, $, ec, scope);
@@ -1405,7 +1406,7 @@ function emit_medium_space($: StackContext): void {
     list(4, $);
 }
 
-function emit_numerators(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
+function emit_numerators(p: Cons, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
 
     const t = $.stack.length;
     const n = count_numerators(p);
@@ -1422,7 +1423,7 @@ function emit_numerators(p: U, $: StackContext, ec: EmitContext, scope: Eigenmat
         if ($.stack.length > t)
             emit_medium_space($);
 
-        if (isrational(q)) {
+        if (is_rat(q)) {
             const s = bignum_itoa(q.a);
             emit_roman_string(s, $);
             continue;
@@ -1448,7 +1449,7 @@ function emit_numeric_exponent(p: Num, $: StackContext) {
 
     const t = $.stack.length;
 
-    if (isrational(p)) {
+    if (is_rat(p)) {
         let s = bignum_itoa(p.a);
         emit_roman_string(s, $);
         if (isfraction(p)) {
@@ -1487,7 +1488,7 @@ function emit_power(p: U, $: StackContext, ec: EmitContext, scope: EigenmathRead
     }
 
     const X = caddr(p);
-    if (isnum(X) && isnegativenumber(X)) {
+    if (is_num(X) && isnegativenumber(X)) {
         emit_reciprocal(p, $, ec, scope);
         return;
     }
@@ -1759,13 +1760,13 @@ function emit_uom(uom: Uom, $: StackContext): void {
 }
 
 function emit_term(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
-    if (car(p).equals(MULTIPLY))
+    if (is_cons(p) && p.opr.equals(MULTIPLY))
         emit_term_nib(p, $, ec, scope);
     else
         emit_factor(p, $, ec, scope);
 }
 
-function emit_term_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
+function emit_term_nib(p: Cons, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {
     if (find_denominator(p)) {
         emit_fraction(p, $, ec, scope);
         return;
@@ -1775,7 +1776,7 @@ function emit_term_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathR
 
     p = cdr(p);
 
-    if (isminusone(car(p)) && !isdouble(car(p)))
+    if (isminusone(car(p)) && !is_flt(car(p)))
         p = cdr(p); // sign already emitted
 
     emit_factor(car(p), $, ec, scope);
@@ -2645,7 +2646,7 @@ function absfunc($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (isnum(p1)) {
+    if (is_num(p1)) {
         push(p1, $);
         if (isnegativenumber(p1))
             negate($);
@@ -2679,7 +2680,7 @@ function absfunc($: ScriptVars): void {
     push(p2, $);
     floatfunc($);
     const p3 = pop($);
-    if (isdouble(p3)) {
+    if (is_flt(p3)) {
         push(p2, $);
         if (isnegativenumber(p3))
             negate($);
@@ -2875,13 +2876,13 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
         return 1;
     }
 
-    if (isnum(p1) && isnum(p2)) {
+    if (is_num(p1) && is_num(p2)) {
         add_numbers(p1, p2, $);
         $.stack[i] = pop($);
         return 1;
     }
 
-    if (isnum(p1) || isnum(p2))
+    if (is_num(p1) || is_num(p2))
         return 0; // cannot add number and something else
 
     let coeff1: U = one;
@@ -2892,7 +2893,7 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
     if (car(p1).equals(MULTIPLY)) {
         p1 = cdr(p1);
         denorm = 1;
-        if (isnum(car(p1))) {
+        if (is_num(car(p1))) {
             coeff1 = car(p1);
             p1 = cdr(p1);
             if (is_nil(cdr(p1))) {
@@ -2904,7 +2905,7 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
 
     if (car(p2).equals(MULTIPLY)) {
         p2 = cdr(p2);
-        if (isnum(car(p2))) {
+        if (is_num(car(p2))) {
             coeff2 = car(p2);
             p2 = cdr(p2);
             if (is_nil(cdr(p2)))
@@ -2924,7 +2925,7 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
         return 1;
     }
 
-    if (isplusone(coeff1) && !isdouble(coeff1)) {
+    if (isplusone(coeff1) && !is_flt(coeff1)) {
         if (denorm) {
             push(MULTIPLY, $);
             push(p1, $); // p1 is a list, not an atom
@@ -2975,13 +2976,13 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
 
     // 2nd level: numericals on the right
 
-    if (isnum(p1) && isnum(p2))
+    if (is_num(p1) && is_num(p2))
         return 0; // don't care about order, save time, don't compare
 
-    if (isnum(p1))
+    if (is_num(p1))
         return 1; // out of order
 
-    if (isnum(p2))
+    if (is_num(p2))
         return -1; // ok
 
     // 3rd level: sort by factors
@@ -2992,7 +2993,7 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
     if (car(p1).equals(MULTIPLY)) {
         p1 = cdr(p1);
         a = 1; // p1 is a list of factors
-        if (isnum(car(p1))) {
+        if (is_num(car(p1))) {
             // skip over coeff
             p1 = cdr(p1);
             if (is_nil(cdr(p1))) {
@@ -3005,7 +3006,7 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
     if (car(p2).equals(MULTIPLY)) {
         p2 = cdr(p2);
         b = 1; // p2 is a list of factors
-        if (isnum(car(p2))) {
+        if (is_num(car(p2))) {
             // skip over coeff
             p2 = cdr(p2);
             if (is_nil(cdr(p2))) {
@@ -3067,7 +3068,7 @@ function simplify_terms(h: number, $: ScriptVars): number {
 }
 
 function isradicalterm(p: U): boolean {
-    return car(p).equals(MULTIPLY) && isnum(cadr(p)) && isradical(caddr(p));
+    return car(p).equals(MULTIPLY) && is_num(cadr(p)) && isradical(caddr(p));
 }
 
 function isimaginaryterm(p: U): 0 | 1 {
@@ -3091,7 +3092,7 @@ function isimaginaryfactor(p: U): boolean | 0 {
 
 function add_numbers(p1: U, p2: U, $: ScriptVars): void {
 
-    if (isrational(p1) && isrational(p2)) {
+    if (is_rat(p1) && is_rat(p2)) {
         add_rationals(p1, p2, $);
         return;
     }
@@ -3402,7 +3403,7 @@ function arccos($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         if (-1.0 <= d && d <= 1.0) {
             d = Math.acos(d);
@@ -3413,7 +3414,7 @@ function arccos($: ScriptVars): void {
 
     // arccos(z) = -i log(z + i sqrt(1 - z^2))
 
-    if (isdouble(p1) || isdoublez(p1)) {
+    if (is_flt(p1) || isdoublez(p1)) {
         push_double(1.0, $);
         push(p1, $);
         push(p1, $);
@@ -3517,7 +3518,7 @@ function arccosh($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         if (d >= 1.0) {
             d = Math.acosh(d);
@@ -3528,7 +3529,7 @@ function arccosh($: ScriptVars): void {
 
     // arccosh(z) = log(sqrt(z^2 - 1) + z)
 
-    if (isdouble(p1) || isdoublez(p1)) {
+    if (is_flt(p1) || isdoublez(p1)) {
         push(p1, $);
         push(p1, $);
         multiply($);
@@ -3578,7 +3579,7 @@ function arcsin($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         if (-1.0 <= d && d <= 1.0) {
             d = Math.asin(d);
@@ -3589,7 +3590,7 @@ function arcsin($: ScriptVars): void {
 
     // arcsin(z) = -i log(i z + sqrt(1 - z^2))
 
-    if (isdouble(p1) || isdoublez(p1)) {
+    if (is_flt(p1) || isdoublez(p1)) {
         push(imaginaryunit, $);
         negate($);
         push(imaginaryunit, $);
@@ -3678,7 +3679,7 @@ function arcsinh($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.asinh(d);
         push_double(d, $);
@@ -3755,7 +3756,7 @@ function arctan($: ScriptVars): void {
         return;
     }
 
-    if (isnum(X) && isnum(Y)) {
+    if (is_num(X) && is_num(Y)) {
         arctan_numbers(X, Y, $);
         return;
     }
@@ -3814,7 +3815,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
         return;
     }
 
-    if (isnum(X) && isnum(Y) && (isdouble(X) || isdouble(Y))) {
+    if (is_num(X) && is_num(Y) && (is_flt(X) || is_flt(Y))) {
         const x = X.toNumber();
         const y = Y.toNumber();
         push_double(Math.atan2(y, x), $);
@@ -3930,7 +3931,7 @@ function arctanh($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         if (-1.0 < d && d < 1.0) {
             d = Math.atanh(d);
@@ -3941,7 +3942,7 @@ function arctanh($: ScriptVars): void {
 
     // arctanh(z) = 1/2 log(1 + z) - 1/2 log(1 - z)
 
-    if (isdouble(p1) || isdoublez(p1)) {
+    if (is_flt(p1) || isdoublez(p1)) {
         push_double(1.0, $);
         push(p1, $);
         add($);
@@ -4025,7 +4026,7 @@ function arg1($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (isrational(p1)) {
+    if (is_rat(p1)) {
         if (isnegativenumber(p1)) {
             push(Pi, $);
             negate($);
@@ -4035,7 +4036,7 @@ function arg1($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         if (isnegativenumber(p1))
             push_double(-Math.PI, $);
         else
@@ -4118,12 +4119,12 @@ function ceilingfunc($: ScriptVars): void {
         return;
     }
 
-    if (isrational(p1) && isinteger(p1)) {
+    if (is_rat(p1) && isinteger(p1)) {
         push(p1, $);
         return;
     }
 
-    if (isrational(p1)) {
+    if (is_rat(p1)) {
         const a = bignum_div(p1.a, p1.b);
         const b = bignum_int(1);
         if (isnegativenumber(p1))
@@ -4136,7 +4137,7 @@ function ceilingfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.ceil(d);
         push_double(d, $);
@@ -4508,7 +4509,7 @@ function cosfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.cos(d);
         push_double(d, $);
@@ -4586,14 +4587,14 @@ function cosfunc($: ScriptVars): void {
     divide($);
     let p2 = pop($);
 
-    if (!isnum(p2)) {
+    if (!is_num(p2)) {
         push(COS, $);
         push(p1, $);
         list(2, $);
         return;
     }
 
-    if (isdouble(p2)) {
+    if (is_flt(p2)) {
         let d = p2.toNumber();
         d = Math.cos(d * Math.PI);
         push_double(d, $);
@@ -4605,7 +4606,7 @@ function cosfunc($: ScriptVars): void {
     multiply($);
     p2 = pop($);
 
-    if (!(isrational(p2) && isinteger(p2))) {
+    if (!(is_rat(p2) && isinteger(p2))) {
         push(COS, $);
         push(p1, $);
         list(2, $);
@@ -4687,7 +4688,7 @@ function cosfunc_sum(p1: U, $: ScriptVars): void {
         push(Pi, $);
         divide($);
         let p3 = pop($);
-        if (isrational(p3) && isinteger(p3)) {
+        if (is_rat(p3) && isinteger(p3)) {
             push(p1, $);
             push(car(p2), $);
             subtract($);
@@ -4734,7 +4735,7 @@ function coshfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.cosh(d);
         push_double(d, $);
@@ -4837,7 +4838,7 @@ function denominator($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (isrational(p1)) {
+    if (is_rat(p1)) {
         push_bignum(1, p1.b, bignum_int(1), $);
         return;
     }
@@ -4891,7 +4892,7 @@ function eval_derivative(p1: U, $: ScriptVars): void {
             p1 = cdr(p1);
         }
 
-        if (isnum(X)) {
+        if (is_num(X)) {
             push(X, $);
             const n = pop_integer($);
             push(X_LOWER, $);
@@ -4910,7 +4911,7 @@ function eval_derivative(p1: U, $: ScriptVars): void {
             Y = pop($);
             p1 = cdr(p1);
 
-            if (isnum(Y)) {
+            if (is_num(Y)) {
                 push(Y, $);
                 const n = pop_integer($);
                 for (let i = 0; i < n; i++) {
@@ -5111,7 +5112,7 @@ function dproduct(p1: U, p2: U, $: ScriptVars): void {
 //	dx       u dx           dx
 
 function dpower(F: U, X: U, $: ScriptVars): void {
-    if (isnum(cadr(F)) && isnum(caddr(F))) {
+    if (is_num(cadr(F)) && is_num(caddr(F))) {
         push_integer(0, $); // irr or imag
         return;
     }
@@ -5683,7 +5684,7 @@ function eval_eigenvec(punk: U, $: ScriptVars): void {
 
     for (let i = 0; i < n; i++)
         for (let j = 0; j < n; j++)
-            if (!isdouble(T.elems[n * i + j]))
+            if (!is_flt(T.elems[n * i + j]))
                 stopf("eigenvec: numerical matrix expected");
 
     for (let i = 0; i < n - 1; i++) {
@@ -5833,7 +5834,7 @@ function erffunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = erf(d);
         push_double(d, $);
@@ -5881,7 +5882,7 @@ function erfcfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = erfc(d);
         push_double(d, $);
@@ -6082,7 +6083,7 @@ function factorial($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (isrational(p1) && isposint(p1)) {
+    if (is_rat(p1) && isposint(p1)) {
         push(p1, $);
         const n = pop_integer($);
         push_integer(1, $);
@@ -6093,7 +6094,7 @@ function factorial($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1) && p1.d >= 0 && Math.floor(p1.d) === p1.d) {
+    if (is_flt(p1) && p1.d >= 0 && Math.floor(p1.d) === p1.d) {
         push(p1, $);
         const n = pop_integer($);
         let m = 1.0;
@@ -6146,7 +6147,7 @@ function floatfunc_subst($: ScriptVars): void {
         return;
     }
 
-    if (isrational(p1)) {
+    if (is_rat(p1)) {
         push_double(p1.toNumber(), $);
         return;
     }
@@ -6214,12 +6215,12 @@ function floorfunc($: ScriptVars): void {
         return;
     }
 
-    if (isrational(p1) && isinteger(p1)) {
+    if (is_rat(p1) && isinteger(p1)) {
         push(p1, $);
         return;
     }
 
-    if (isrational(p1)) {
+    if (is_rat(p1)) {
         const a = bignum_div(p1.a, p1.b);
         const b = bignum_int(1);
         if (isnegativenumber(p1)) {
@@ -6232,7 +6233,7 @@ function floorfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.floor(d);
         push_double(d, $);
@@ -7557,7 +7558,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
             p1 = cdr(p1);
         }
 
-        if (isnum(X)) {
+        if (is_num(X)) {
             push(X, $);
             const n = pop_integer($);
             push(X_LOWER, $);
@@ -7579,7 +7580,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
             Y = pop($);
             p1 = cdr(p1);
 
-            if (isnum(Y)) {
+            if (is_num(Y)) {
                 push(Y, $);
                 const n = pop_integer($);
                 for (let i = 0; i < n; i++) {
@@ -7883,7 +7884,7 @@ function logfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         const d = p1.toNumber();
         if (d > 0.0) {
             push_double(Math.log(d), $);
@@ -7893,7 +7894,7 @@ function logfunc($: ScriptVars): void {
 
     // log(z) -> log(mag(z)) + i arg(z)
 
-    if (isdouble(p1) || isdoublez(p1)) {
+    if (is_flt(p1) || isdoublez(p1)) {
         push(p1, $);
         mag($);
         logfunc($);
@@ -7919,7 +7920,7 @@ function logfunc($: ScriptVars): void {
         return;
     }
 
-    if (isnum(p1) && isnegativenumber(p1)) {
+    if (is_num(p1) && isnegativenumber(p1)) {
         push(p1, $);
         negate($);
         logfunc($);
@@ -7932,7 +7933,7 @@ function logfunc($: ScriptVars): void {
 
     // log(10) -> log(2) + log(5)
 
-    if (isrational(p1)) {
+    if (is_rat(p1)) {
         const h = $.stack.length;
         push(p1, $);
         factor_factor($);
@@ -8033,7 +8034,7 @@ function mag_nib($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (isnum(p1)) {
+    if (is_num(p1)) {
         push(p1, $);
         absfunc($);
         return;
@@ -8236,7 +8237,7 @@ function modfunc($: ScriptVars): void {
         return;
     }
 
-    if (!isnum(p1) || !isnum(p2) || iszero(p2)) {
+    if (!is_num(p1) || !is_num(p2) || iszero(p2)) {
         push(MOD, $);
         push(p1, $);
         push(p2, $);
@@ -8244,7 +8245,7 @@ function modfunc($: ScriptVars): void {
         return;
     }
 
-    if (isrational(p1) && isrational(p2)) {
+    if (is_rat(p1) && is_rat(p2)) {
         mod_rationals(p1, p2, $);
         return;
     }
@@ -8399,7 +8400,7 @@ function nroots($: ScriptVars): void {
         floatfunc($);
         const IM = pop($);
 
-        if (!isdouble(RE) || !isdouble(IM))
+        if (!is_flt(RE) || !is_flt(IM))
             stopf("nroots: coeffs");
 
         cr[i] = RE.d;
@@ -8639,7 +8640,7 @@ function eval_number(p1: U, $: ScriptVars): void {
     evalf($);
     p1 = pop($);
 
-    if (isnum(p1))
+    if (is_num(p1))
         push_integer(1, $);
     else
         push_integer(0, $);
@@ -8654,7 +8655,7 @@ function eval_numerator(p1: U, $: ScriptVars): void {
 function numerator($: ScriptVars): void {
     let p1 = pop($);
 
-    if (isrational(p1)) {
+    if (is_rat(p1)) {
         push_bignum(p1.sign, p1.a, bignum_int(1), $);
         return;
     }
@@ -8760,7 +8761,7 @@ function polar($: ScriptVars): void {
     push(p1, $);
     arg($);
     const p2 = pop($);
-    if (isdouble(p2)) {
+    if (is_flt(p2)) {
         push_double(p2.d / Math.PI, $);
         push(Pi, $);
         multiply_factors(3, $);
@@ -8786,7 +8787,7 @@ function eval_power(expr: U, $: ScriptVars) {
         // if exponent is negative then evaluate base without expanding,
         // otherwise, evaluate the base normally.
         swap($);
-        if (isnum(expo) && isnegativenumber(expo)) {
+        if (is_num(expo) && isnegativenumber(expo)) {
             const t = $.expanding;
             $.expanding = 0;
             try {
@@ -8858,17 +8859,17 @@ function power($: ScriptVars): void {
         return;
     }
 
-    if (base.equals(DOLLAR_E) && isdouble(expo)) {
+    if (base.equals(DOLLAR_E) && is_flt(expo)) {
         push_double(Math.E, $);
         base = pop($);
     }
 
-    if (base.equals(Pi) && isdouble(expo)) {
+    if (base.equals(Pi) && is_flt(expo)) {
         push_double(Math.PI, $);
         base = pop($);
     }
 
-    if (isnum(base) && isnum(expo)) {
+    if (is_num(base) && is_num(expo)) {
         power_numbers(base, expo, $);
         return;
     }
@@ -8906,7 +8907,7 @@ function power($: ScriptVars): void {
 
     // BASE is an integer?
 
-    if (isrational(base) && isinteger(base)) {
+    if (is_rat(base) && isinteger(base)) {
         // raise each factor in BASE to power EXPO
         // EXPO is not numerical, that case was handled by power_numbers() above
         const h = $.stack.length;
@@ -8943,7 +8944,7 @@ function power($: ScriptVars): void {
 
     // BASE is a numerical fraction?
 
-    if (isrational(base) && isfraction(base)) {
+    if (is_rat(base) && isfraction(base)) {
         // power numerator, power denominator
         // EXPO is not numerical, that case was handled by power_numbers() above
         push(base, $);
@@ -9364,7 +9365,7 @@ function roots($: ScriptVars): void {
     // check coeffs
 
     for (let i = 0; i < n; i++)
-        if (!isrational($.stack[h + i]))
+        if (!is_rat($.stack[h + i]))
             stopf("roots: coeffs");
 
     // find roots
@@ -9435,7 +9436,7 @@ function findroot(h: number, n: number, $: ScriptVars): 1 | 0 {
 
     for (let i = 0; i < n; i++) {
         let C = $.stack[h + i];
-        if (isrational(C) && isinteger(C))
+        if (is_rat(C) && isinteger(C))
             continue;
         push(C, $);
         denominator($);
@@ -10178,7 +10179,7 @@ function sgn($: ScriptVars): void {
         return;
     }
 
-    if (!isnum(p1)) {
+    if (!is_num(p1)) {
         push(SGN, $);
         push(p1, $);
         list(2, $);
@@ -10403,7 +10404,7 @@ function sinfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.sin(d);
         push_double(d, $);
@@ -10484,14 +10485,14 @@ function sinfunc($: ScriptVars): void {
     divide($);
     let p2 = pop($);
 
-    if (!isnum(p2)) {
+    if (!is_num(p2)) {
         push(SIN, $);
         push(p1, $);
         list(2, $);
         return;
     }
 
-    if (isdouble(p2)) {
+    if (is_flt(p2)) {
         let d = p2.toNumber();
         d = Math.sin(d * Math.PI);
         push_double(d, $);
@@ -10503,7 +10504,7 @@ function sinfunc($: ScriptVars): void {
     multiply($);
     p2 = pop($);
 
-    if (!(isrational(p2) && isinteger(p2))) {
+    if (!(is_rat(p2) && isinteger(p2))) {
         push(SIN, $);
         push(p1, $);
         list(2, $);
@@ -10585,7 +10586,7 @@ function sinfunc_sum(p1: U, $: ScriptVars): void {
         push(Pi, $);
         divide($);
         let p3 = pop($);
-        if (isrational(p3) && isinteger(p3)) {
+        if (is_rat(p3) && isinteger(p3)) {
             push(p1, $);
             push(car(p2), $);
             subtract($);
@@ -10625,7 +10626,7 @@ function sinhfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.sinh(d);
         push_double(d, $);
@@ -10815,7 +10816,7 @@ function tanfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.tan(d);
         push_double(d, $);
@@ -10860,14 +10861,14 @@ function tanfunc($: ScriptVars): void {
     divide($);
     let p2 = pop($);
 
-    if (!isnum(p2)) {
+    if (!is_num(p2)) {
         push(TAN, $);
         push(p1, $);
         list(2, $);
         return;
     }
 
-    if (isdouble(p2)) {
+    if (is_flt(p2)) {
         let d = p2.toNumber();
         d = Math.tan(d * Math.PI);
         push_double(d, $);
@@ -10879,7 +10880,7 @@ function tanfunc($: ScriptVars): void {
     multiply($);
     p2 = pop($);
 
-    if (!(isrational(p2) && isinteger(p2))) {
+    if (!(is_rat(p2) && isinteger(p2))) {
         push(TAN, $);
         push(p1, $);
         list(2, $);
@@ -10950,7 +10951,7 @@ function tanfunc_sum(p1: U, $: ScriptVars): void {
         push(Pi, $);
         divide($);
         const p3 = pop($);
-        if (isrational(p3) && isinteger(p3)) {
+        if (is_rat(p3) && isinteger(p3)) {
             push(p1, $);
             push(car(p2), $);
             subtract($);
@@ -10979,7 +10980,7 @@ function tanhfunc($: ScriptVars): void {
         return;
     }
 
-    if (isdouble(p1)) {
+    if (is_flt(p1)) {
         let d = p1.toNumber();
         d = Math.tanh(d);
         push_double(d, $);
@@ -11216,7 +11217,7 @@ function cmp_args(p1: U, $: ScriptVars): 0 | 1 | -1 {
     p1 = pop($);
     if (iszero(p1))
         return 0;
-    if (!isnum(p1))
+    if (!is_num(p1))
         stopf("compare err");
     if (isnegativenumber(p1))
         return -1;
@@ -11651,7 +11652,7 @@ function factor_factor($: ScriptVars): void {
         const BASE = cadr(INPUT);
         const EXPO = caddr(INPUT);
 
-        if (!isrational(BASE) || !isrational(EXPO)) {
+        if (!is_rat(BASE) || !is_rat(EXPO)) {
             push(INPUT, $); // cannot factor
             return;
         }
@@ -11685,7 +11686,7 @@ function factor_factor($: ScriptVars): void {
         return;
     }
 
-    if (!isrational(INPUT) || iszero(INPUT) || isplusone(INPUT) || isminusone(INPUT)) {
+    if (!is_rat(INPUT) || iszero(INPUT) || isplusone(INPUT) || isminusone(INPUT)) {
         push(INPUT, $);
         return;
     }
@@ -12336,13 +12337,18 @@ function factor_int(n: number, $: ScriptVars): void {
     push_integer(1, $);
 }
 
-function find_denominator(p: U): 0 | 1 {
-    p = cdr(p);
+/**
+ * 
+ * @param p is a multiplicative expression.
+ * @returns 
+ */
+function find_denominator(p: Cons): 0 | 1 {
+    p = p.argList;
     while (iscons(p)) {
         const q = car(p);
-        if (car(q).equals(POWER)) {
-            const expo = caddr(q);
-            if (isrational(expo) && isnegativenumber(expo)) {
+        if (is_cons(q) && q.opr.equals(POWER)) {
+            const expo = q.expo;
+            if (is_rat(expo) && isnegativenumber(expo)) {
                 return 1;
             }
         }
@@ -12381,10 +12387,10 @@ function find_divisor_term(p: U, $: ScriptVars): 0 | 1 {
 }
 
 function find_divisor_factor(p: U, $: ScriptVars): 0 | 1 {
-    if (isrational(p) && isinteger(p))
+    if (is_rat(p) && isinteger(p))
         return 0;
 
-    if (isrational(p)) {
+    if (is_rat(p)) {
         push(p, $);
         denominator($);
         return 1;
@@ -12738,13 +12744,22 @@ function infixform_expr_nib(p: U, config: InfixConfig, outbuf: string[]): void {
 }
 
 function infixform_term(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (car(p).equals(MULTIPLY))
+    if (is_cons(p) && p.opr.equals(MULTIPLY)) {
         infixform_term_nib(p, config, outbuf);
-    else
+    }
+    else {
         infixform_factor(p, config, outbuf);
+    }
 }
 
-function infixform_term_nib(p: U, config: InfixConfig, outbuf: string[]): void {
+/**
+ * 
+ * @param p is a multiplicative expression
+ * @param config 
+ * @param outbuf 
+ * @returns 
+ */
+function infixform_term_nib(p: Cons, config: InfixConfig, outbuf: string[]): void {
     if (find_denominator(p)) {
         infixform_numerators(p, config, outbuf);
         infixform_write(" / ", config, outbuf);
@@ -12770,7 +12785,7 @@ function infixform_term_nib(p: U, config: InfixConfig, outbuf: string[]): void {
     }
 }
 
-function infixform_numerators(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_numerators(p: Cons, config: InfixConfig, outbuf: string[]): void {
 
     let k = 0;
 
@@ -12787,7 +12802,7 @@ function infixform_numerators(p: U, config: InfixConfig, outbuf: string[]): void
         if (++k > 1)
             infixform_write(" ", config, outbuf); // space in between factors
 
-        if (isrational(q)) {
+        if (is_rat(q)) {
             const s = bignum_itoa(q.a);
             infixform_write(s, config, outbuf);
             continue;
@@ -12800,7 +12815,7 @@ function infixform_numerators(p: U, config: InfixConfig, outbuf: string[]): void
         infixform_write("1", config, outbuf);
 }
 
-function infixform_denominators(p: U, config: InfixConfig, outbuf: string[]): void {
+function infixform_denominators(p: Cons, config: InfixConfig, outbuf: string[]): void {
 
     const n = count_denominators(p);
 
@@ -12822,7 +12837,7 @@ function infixform_denominators(p: U, config: InfixConfig, outbuf: string[]): vo
         if (++k > 1)
             infixform_write(" ", config, outbuf); // space in between factors
 
-        if (isrational(q)) {
+        if (is_rat(q)) {
             const s = bignum_itoa(q.b);
             infixform_write(s, config, outbuf);
             continue;
@@ -12850,13 +12865,13 @@ function infixform_denominators(p: U, config: InfixConfig, outbuf: string[]): vo
 
 function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
     // Rat
-    if (isrational(p)) {
+    if (is_rat(p)) {
         infixform_rational(p, config, outbuf);
         return;
     }
 
     // Flt
-    if (isdouble(p)) {
+    if (is_flt(p)) {
         infixform_double(p, config, outbuf);
         return;
     }
@@ -12999,7 +13014,7 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
     }
 
     const expo = caddr(p);
-    if (isnum(expo) && isnegativenumber(expo)) {
+    if (is_num(expo) && isnegativenumber(expo)) {
         infixform_reciprocal(p, config, outbuf);
         return;
     }
@@ -13015,7 +13030,7 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
 
     p = caddr(p); // p now points to exponent
 
-    if (isnum(p))
+    if (is_num(p))
         infixform_numeric_exponent(p, config, outbuf);
     else if (car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER) || car(p).equals(FACTORIAL))
         infixform_subexpr(p, config, outbuf);
@@ -13151,7 +13166,7 @@ function infixform_double(p: Flt, config: InfixConfig, outbuf: string[]): void {
 }
 
 function infixform_base(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (isnum(p))
+    if (is_num(p))
         infixform_numeric_base(p, config, outbuf);
     else if (car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER) || car(p).equals(FACTORIAL))
         infixform_subexpr(p, config, outbuf);
@@ -13160,7 +13175,7 @@ function infixform_base(p: U, config: InfixConfig, outbuf: string[]): void {
 }
 
 function infixform_numeric_base(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (isrational(p) && isposint(p))
+    if (is_rat(p) && isposint(p))
         infixform_rational(p, config, outbuf);
     else
         infixform_subexpr(p, config, outbuf);
@@ -13169,14 +13184,14 @@ function infixform_numeric_base(p: U, config: InfixConfig, outbuf: string[]): vo
 // sign is not emitted
 
 function infixform_numeric_exponent(p: Num, config: InfixConfig, outbuf: string[]): void {
-    if (isdouble(p)) {
+    if (is_flt(p)) {
         infixform_write("(", config, outbuf);
         infixform_double(p, config, outbuf);
         infixform_write(")", config, outbuf);
         return;
     }
 
-    if (isrational(p) && isinteger(p)) {
+    if (is_rat(p) && isinteger(p)) {
         infixform_rational(p, config, outbuf);
         return;
     }
@@ -13271,7 +13286,7 @@ function isalpha(s: string): boolean {
 }
 
 function iscomplexnumber(p: U): boolean {
-    return isimaginarynumber(p) || (lengthf(p) === 3 && car(p).equals(ADD) && isnum(cadr(p)) && isimaginarynumber(caddr(p)));
+    return isimaginarynumber(p) || (lengthf(p) === 3 && car(p).equals(ADD) && is_num(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
 /**
@@ -13284,12 +13299,12 @@ function iscons(expr: U): expr is Cons {
 function isdenominator(p: U) {
     if (car(p).equals(POWER)) {
         const expo = caddr(p);
-        if (isnum(expo) && isnegativenumber(expo)) {
+        if (is_num(expo) && isnegativenumber(expo)) {
             return 1;
         }
     }
 
-    if (isrational(p) && !bignum_equal(p.b, 1))
+    if (is_rat(p) && !bignum_equal(p.b, 1))
         return 1;
 
     return 0;
@@ -13316,12 +13331,12 @@ function isdenormalpolarterm(p: U, $: ScriptVars) {
     if (lengthf(p) === 3 && isimaginaryunit(cadr(p)) && caddr(p).equals(Pi))
         return 1; // exp(i Pi)
 
-    if (lengthf(p) !== 4 || !isnum(cadr(p)) || !isimaginaryunit(caddr(p)) || !cadddr(p).equals(Pi))
+    if (lengthf(p) !== 4 || !is_num(cadr(p)) || !isimaginaryunit(caddr(p)) || !cadddr(p).equals(Pi))
         return 0;
 
     p = cadr(p); // p = coeff of term
 
-    if (isnum(p) && isnegativenumber(p))
+    if (is_num(p) && isnegativenumber(p))
         return 1; // p < 0
 
     push(p, $);
@@ -13329,7 +13344,7 @@ function isdenormalpolarterm(p: U, $: ScriptVars) {
     add($);
     p = pop($);
 
-    if (!(isnum(p) && isnegativenumber(p)))
+    if (!(is_num(p) && isnegativenumber(p)))
         return 1; // p >= 1/2
 
     return 0;
@@ -13340,12 +13355,8 @@ function isdigit(s: string): boolean {
     return c >= 48 && c <= 57;
 }
 
-function isdouble(p: U): p is Flt {
-    return is_flt(p);
-}
-
 function isdoublesomewhere(p: U) {
-    if (isdouble(p))
+    if (is_flt(p))
         return 1;
 
     if (iscons(p)) {
@@ -13366,7 +13377,7 @@ function isdoublez(p: U): 0 | 1 {
         if (lengthf(p) !== 3)
             return 0;
 
-        if (!isdouble(cadr(p))) // x
+        if (!is_flt(cadr(p))) // x
             return 0;
 
         p = caddr(p);
@@ -13378,7 +13389,7 @@ function isdoublez(p: U): 0 | 1 {
     if (lengthf(p) !== 3)
         return 0;
 
-    if (!isdouble(cadr(p))) // y
+    if (!is_flt(cadr(p))) // y
         return 0;
 
     p = caddr(p);
@@ -13400,11 +13411,11 @@ function isequaln(p: U, n: number): boolean {
 }
 
 function isequalq(p: U, a: number, b: number): boolean {
-    if (isrational(p)) {
+    if (is_rat(p)) {
         return p.equalsRat(create_rat(a, b));
     }
 
-    if (isdouble(p)) {
+    if (is_flt(p)) {
         return p.d === a / b;
     }
 
@@ -13412,11 +13423,11 @@ function isequalq(p: U, a: number, b: number): boolean {
 }
 
 function isfraction(p: Rat): boolean {
-    return isrational(p) && !isinteger(p);
+    return is_rat(p) && !isinteger(p);
 }
 
 function isimaginarynumber(p: U): boolean {
-    return isimaginaryunit(p) || (lengthf(p) === 3 && car(p).equals(MULTIPLY) && isnum(cadr(p)) && isimaginaryunit(caddr(p)));
+    return isimaginaryunit(p) || (lengthf(p) === 3 && car(p).equals(MULTIPLY) && is_num(cadr(p)) && isimaginaryunit(caddr(p)));
 }
 
 function isimaginaryunit(p: U): boolean {
@@ -13424,7 +13435,7 @@ function isimaginaryunit(p: U): boolean {
 }
 
 function isinteger(p: Rat): boolean {
-    return isrational(p) && bignum_equal(p.b, 1);
+    return is_rat(p) && bignum_equal(p.b, 1);
 }
 
 function isinteger1(p: Rat) {
@@ -13434,7 +13445,7 @@ function isinteger1(p: Rat) {
 function isminusone(p: U): boolean {
     // Optimize by avoiding object creation...
     /*
-    if (isrational(p)) {
+    if (is_rat(p)) {
         return p.isMinusOne();
     }
     */
@@ -13451,31 +13462,27 @@ function isnegativenumber(p: Num): boolean {
 }
 
 function isnegativeterm(p: U): boolean {
-    if (isnum(p) && isnegativenumber(p)) {
+    if (is_num(p) && isnegativenumber(p)) {
         return true;
     }
     else if (car(p).equals(MULTIPLY)) {
         const leading = cadr(p);
-        return isnum(leading) && isnegativenumber(leading);
+        return is_num(leading) && isnegativenumber(leading);
     }
     else {
         return false;
     }
 }
 
-function isnum(p: U): p is Num {
-    return isrational(p) || isdouble(p);
-}
-
 function isnumerator(p: U) {
     if (car(p).equals(POWER)) {
         const expo = caddr(p);
-        if (isnum(expo) && isnegativenumber(expo)) {
+        if (is_num(expo) && isnegativenumber(expo)) {
             return 0;
         }
     }
 
-    if (isrational(p) && bignum_equal(p.a, 1))
+    if (is_rat(p) && bignum_equal(p.a, 1))
         return 0;
 
     return 1;
@@ -13497,23 +13504,19 @@ function isradical(p: U): boolean {
     if (car(p).equals(POWER)) {
         const base = cadr(p);
         const expo = caddr(p);
-        return isrational(base) && isposint(base) && isrational(expo) && isfraction(expo);
+        return is_rat(base) && isposint(base) && is_rat(expo) && isfraction(expo);
     }
     else {
         return false;
     }
 }
 
-function isrational(p: U): p is Rat {
-    return is_rat(p);
-}
-
 function issmallinteger(p: U): boolean {
-    if (isrational(p) && isinteger(p)) {
+    if (is_rat(p) && isinteger(p)) {
         return bignum_issmallnum(p.a);
     }
 
-    if (isdouble(p))
+    if (is_flt(p))
         return p.d === Math.floor(p.d) && Math.abs(p.d) <= 0x7fffffff;
 
     return false;
@@ -13553,10 +13556,10 @@ function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
 
 export function iszero(p: U): boolean {
 
-    if (isrational(p))
+    if (is_rat(p))
         return bignum_iszero(p.a);
 
-    if (isdouble(p))
+    if (is_flt(p))
         return p.d === 0;
 
     if (istensor(p)) {
@@ -13676,7 +13679,7 @@ function multiply_noexpand($: ScriptVars): void {
  */
 function multiply_numbers(p1: Num, p2: Num, $: ScriptVars): void {
 
-    if (isrational(p1) && isrational(p2)) {
+    if (is_rat(p1) && is_rat(p2)) {
         multiply_rationals(p1, p2, $);
         return;
     }
@@ -13729,7 +13732,7 @@ function multiply_scalar_factors(start: number, $: ScriptVars): void {
 
     COEFF = reduce_radical_factors(start, COEFF, $);
 
-    if (!isplusone(COEFF) || isdouble(COEFF))
+    if (!isplusone(COEFF) || is_flt(COEFF))
         push(COEFF, $);
 
     if ($.expanding)
@@ -13864,7 +13867,7 @@ function normalize_polar_term(EXPO: U, $: ScriptVars): void {
 
     const R = cadr(EXPO); // R = coeff of term
 
-    if (isrational(R))
+    if (is_rat(R))
         normalize_polar_term_rational(R, $);
     else
         normalize_polar_term_double(R as Flt, $);
@@ -13881,7 +13884,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
 
     // convert negative rotation to positive
 
-    if (isnum(R) && isnegativenumber(R)) {
+    if (is_num(R) && isnegativenumber(R)) {
         push(R, $);
         push_integer(2, $);
         add($);
@@ -14110,7 +14113,7 @@ function normalize_power_factors(h: number, $: ScriptVars): void {
  * @returns 
  */
 function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
-    if (isnum(p))
+    if (is_num(p))
         return 1;
 
     if (p.equals(DOLLAR_E))
@@ -14126,7 +14129,7 @@ function order_factor(p: U): 1 | 2 | 3 | 4 | 5 | 6 {
         if (isminusone(p))
             return 3;
 
-        if (isnum(p))
+        if (is_num(p))
             return 2;
 
         if (p.equals(DOLLAR_E))
@@ -14225,7 +14228,7 @@ function pop($: StackContext): U {
 }
 
 function assert_num_to_number(p: U): number | never {
-    if (isnum(p)) {
+    if (is_num(p)) {
         return p.toNumber();
     }
     else {
@@ -14237,7 +14240,7 @@ function pop_double($: ScriptVars): number {
 
     const p = pop($);
 
-    if (isnum(p)) {
+    if (is_num(p)) {
         return p.toNumber();
     }
     else {
@@ -14254,7 +14257,7 @@ function pop_integer($: ScriptVars): number {
 
     let n: number;
 
-    if (isrational(p)) {
+    if (is_rat(p)) {
         const n = bignum_smallnum(p.a);
         if (isnegativenumber(p)) {
             return -n;
@@ -14387,12 +14390,12 @@ function power_complex_number(BASE: U, EXPO: U, $: ScriptVars): void {
         Y = one;
     }
 
-    if (isdouble(X) || isdouble(Y) || isdouble(EXPO)) {
+    if (is_flt(X) || is_flt(Y) || is_flt(EXPO)) {
         power_complex_double(BASE, EXPO, X, Y, $);
         return;
     }
 
-    if (!(isrational(EXPO) && isinteger(EXPO))) {
+    if (!(is_rat(EXPO) && isinteger(EXPO))) {
         power_complex_rational(BASE, EXPO, X, Y, $);
         return;
     }
@@ -14494,7 +14497,7 @@ function power_minusone(EXPO: U, $: ScriptVars): void {
 
     // root is an odd number?
 
-    if (isrational(EXPO) && bignum_odd(EXPO.b)) {
+    if (is_rat(EXPO) && bignum_odd(EXPO.b)) {
         if (bignum_odd(EXPO.a))
             push_integer(-1, $);
         else
@@ -14502,12 +14505,12 @@ function power_minusone(EXPO: U, $: ScriptVars): void {
         return;
     }
 
-    if (isrational(EXPO)) {
+    if (is_rat(EXPO)) {
         normalize_clock_rational(EXPO, $);
         return;
     }
 
-    if (isdouble(EXPO)) {
+    if (is_flt(EXPO)) {
         normalize_clock_double(EXPO, $);
         rect($);
         return;
@@ -14530,7 +14533,7 @@ function normalize_clock_rational(EXPO: U, $: ScriptVars): void {
 
     // convert negative rotation to positive
 
-    if (isnum(R) && isnegativenumber(R)) {
+    if (is_num(R) && isnegativenumber(R)) {
         push(R, $);
         push_integer(2, $);
         add($);
@@ -14765,7 +14768,7 @@ function power_numbers(BASE: Num, EXPO: Num, $: ScriptVars): void {
         return;
     }
 
-    if (isdouble(BASE) || isdouble(EXPO)) {
+    if (is_flt(BASE) || is_flt(EXPO)) {
         power_double(BASE, EXPO, $);
         return;
     }
@@ -14827,7 +14830,7 @@ function power_numbers(BASE: Num, EXPO: Num, $: ScriptVars): void {
 
     for (let i = h; i < $.stack.length; i++) {
         const p2 = $.stack[i];
-        if (isnum(p2)) {
+        if (is_num(p2)) {
             push(p1, $);
             push(p2, $);
             multiply($);
@@ -14971,12 +14974,12 @@ function power_double(BASE: Num, EXPO: Num, $: ScriptVars) {
 
 function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
 
-    if (iscomplexnumber(BASE) && isnum(EXPO)) {
+    if (iscomplexnumber(BASE) && is_num(EXPO)) {
         power_complex_number(BASE, EXPO, $);
         return;
     }
 
-    if ($.expanding === 0 || !issmallinteger(EXPO) || (isnum(EXPO) && isnegativenumber(EXPO))) {
+    if ($.expanding === 0 || !issmallinteger(EXPO) || (is_num(EXPO) && isnegativenumber(EXPO))) {
         push(POWER, $);
         push(BASE, $);
         push(EXPO, $);
@@ -15035,14 +15038,14 @@ function prefixform(p: U, outbuf: string[]) {
         }
         outbuf.push(")");
     }
-    else if (isrational(p)) {
+    else if (is_rat(p)) {
         if (isnegativenumber(p))
             outbuf.push('-');
         outbuf.push(bignum_itoa(p.a));
         if (isfraction(p))
             outbuf.push("/" + bignum_itoa(p.b));
     }
-    else if (isdouble(p)) {
+    else if (is_flt(p)) {
         let s = p.d.toPrecision(6);
         if (s.indexOf("E") < 0 && s.indexOf("e") < 0 && s.indexOf(".") >= 0) {
             // remove trailing zeroes
@@ -15244,7 +15247,7 @@ function reduce_radical_factors(h: number, COEFF: Num, $: ScriptVars): Num {
     if (!any_radical_factors(h, $))
         return COEFF;
 
-    if (isrational(COEFF))
+    if (is_rat(COEFF))
         return reduce_radical_rational(h, COEFF, $);
     else
         return reduce_radical_double(h, COEFF, $);
@@ -15277,7 +15280,7 @@ function reduce_radical_rational(h: number, COEFF: Rat, $: ScriptVars): Rat {
             continue;
         const BASE = cadr(p1);
         const EXPO = caddr(p1);
-        if (isnum(EXPO) && isnegativenumber(EXPO)) {
+        if (is_num(EXPO) && isnegativenumber(EXPO)) {
             mod_integers(NUMER as Rat, BASE as Rat, $);
             const p2 = pop($);
             if (iszero(p2)) {
@@ -15525,7 +15528,7 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
         Y = p1;
     }
 
-    if (!isnum(X) || !isnum(Y))
+    if (!is_num(X) || !is_num(Y))
         return;
 
     let x = X.toNumber();
@@ -16146,7 +16149,7 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     const p2 = p1.elems[0];
     const p3 = p1.elems[1];
 
-    if (!isnum(p2) || !isnum(p3)) {
+    if (!is_num(p2) || !is_num(p3)) {
         return;
     }
 
@@ -16171,7 +16174,7 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     const p2 = p1.elems[0];
     const p3 = p1.elems[1];
 
-    if (!isnum(p2) || !isnum(p3))
+    if (!is_num(p2) || !is_num(p3))
         return;
 
     dc.xmin = p2.toNumber();
@@ -16195,7 +16198,7 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     const p2 = p1.elems[0];
     const p3 = p1.elems[1];
 
-    if (!isnum(p2) || !isnum(p3))
+    if (!is_num(p2) || !is_num(p3))
         return;
 
     dc.ymin = p2.toNumber();
@@ -16223,7 +16226,7 @@ function sort_factors_provisional(h: number, $: ScriptVars): void {
 function static_negate($: ScriptVars): void {
     const p1 = pop($);
 
-    if (isnum(p1)) {
+    if (is_num(p1)) {
         push(p1, $);
         negate($);
         return;
@@ -16231,7 +16234,7 @@ function static_negate($: ScriptVars): void {
 
     if (car(p1).equals(MULTIPLY)) {
         push(MULTIPLY, $);
-        if (isnum(cadr(p1))) {
+        if (is_num(cadr(p1))) {
             push(cadr(p1), $);
             negate($);
             push(cddr(p1), $);
@@ -16258,7 +16261,7 @@ function static_reciprocate($: ScriptVars): void {
     // save divide by zero error for runtime
 
     if (iszero(p2)) {
-        if (!(isrational(p1) && isinteger1(p1)))
+        if (!(is_rat(p1) && isinteger1(p1)))
             push(p1, $);
         push(POWER, $);
         push(p2, $);
@@ -16267,23 +16270,23 @@ function static_reciprocate($: ScriptVars): void {
         return;
     }
 
-    if (isnum(p1) && isnum(p2)) {
+    if (is_num(p1) && is_num(p2)) {
         push(p1, $);
         push(p2, $);
         divide($);
         return;
     }
 
-    if (isnum(p2)) {
-        if (!(isrational(p1) && isinteger1(p1)))
+    if (is_num(p2)) {
+        if (!(is_rat(p1) && isinteger1(p1)))
             push(p1, $);
         push(p2, $);
         reciprocate($);
         return;
     }
 
-    if (car(p2).equals(POWER) && isnum(caddr(p2))) {
-        if (!(isrational(p1) && isinteger1(p1)))
+    if (car(p2).equals(POWER) && is_num(caddr(p2))) {
+        if (!(is_rat(p1) && isinteger1(p1)))
             push(p1, $);
         push(POWER, $);
         push(cadr(p2), $);
@@ -16293,7 +16296,7 @@ function static_reciprocate($: ScriptVars): void {
         return;
     }
 
-    if (!(isrational(p1) && isinteger1(p1)))
+    if (!(is_rat(p1) && isinteger1(p1)))
         push(p1, $);
 
     push(POWER, $);

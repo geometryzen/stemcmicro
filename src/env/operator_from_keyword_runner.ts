@@ -43,7 +43,7 @@ class KeywordRunnerOperator extends AbstractKeywordOperator {
 }
 
 /**
- * @deprecated
+ *
  */
 export function operator_from_keyword_runner(sym: Sym, runner: KeywordRunner): OperatorBuilder<U> {
     return new Builder(sym, runner);

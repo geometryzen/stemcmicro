@@ -42,6 +42,18 @@ const ISPOSITIVE = native_sym(Native.ispositive);
 const ISREAL = native_sym(Native.isreal);
 const ISZERO = native_sym(Native.iszero);
 
+function make_user_symbol_runner(sym: Sym) {
+    return ($: ExtensionEnv) => {
+        const binding = $.getBinding(sym);
+        if (is_nil(binding) || sym.equals(binding)) {
+            return sym;
+        }
+        else {
+            return $.valueOf(binding);
+        }
+    };
+}
+
 class StableExprComparator implements ExprComparator {
     constructor(private readonly opr: Sym) {
         // 
@@ -306,6 +318,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
             $.defineOperator(operator_from_keyword_runner(sym, runner));
+        },
+        defineUserSymbol(sym: Sym): void {
+            $.defineKeyword(sym, make_user_symbol_runner(sym));
         },
         defineOperator(builder: OperatorBuilder<U>): void {
             builders.push(builder);

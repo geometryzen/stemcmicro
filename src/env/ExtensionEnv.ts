@@ -304,6 +304,7 @@ export interface ExtensionEnv extends ExprContext {
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
+    defineUserSymbol(sym: Sym): void;
     divide(lhs: U, rhs: U): U;
     /**
      *

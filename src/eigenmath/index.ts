@@ -10,9 +10,6 @@ import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { Imu } from '../tree/imu/Imu';
 
-/**
- * 
- */
 export interface EigenmathReadScope {
     isConsSymbol(sym: Sym): boolean;
     isUserSymbol(sym: Sym): boolean;
@@ -2374,7 +2371,7 @@ function draw_stroke(x1: number, y1: number, x2: number, y2: number, stroke_widt
     const y1eq = "y1='" + y1 + "'";
     const y2eq = "y2='" + y2 + "'";
 
-    const s = "<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + stroke_width + "'/>\n";
+    const s = "<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + stroke_width + "'/>";
 
     outbuf.push(s);
 }
@@ -13542,6 +13539,9 @@ function list(n: number, $: StackContext): void {
         cons($);
 }
 
+/**
+ * 
+ */
 function lookup(sym: Sym, scope: EigenmathScope): Sym {
     if (!scope.isConsSymbol(sym)) {
         scope.defineUserSymbol(sym);

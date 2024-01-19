@@ -1,13 +1,15 @@
-import { create_sym, Sym } from 'math-expression-atoms';
+import { Boo, create_sym, Flt, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
+import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
+import { Dictionary } from '../clojurescript/atoms/Dictionary';
 import { clojurescript_parse } from '../clojurescript/parser/clojurescript_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { delegate_parse_script, ParseOptions, SyntaxKind } from '../parser/parser';
+import { SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -16,6 +18,8 @@ import { render_as_sexpr } from '../print/render_as_sexpr';
 import { transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
+import { visit } from '../visitor/visit';
+import { Visitor } from '../visitor/Visitor';
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
@@ -23,11 +27,15 @@ export interface ParseConfig {
     useParenForTensors: boolean;
 }
 
-function native_parse_config(options: Partial<ParseConfig>): ParseOptions {
-    return {
+export function algebrite_parse_config(options: Partial<ParseConfig>): AlgebriteParseOptions {
+    const config: AlgebriteParseOptions = {
+        catchExceptions: false,
+        explicitAssocAdd: false,
+        explicitAssocMul: false,
         useCaretForExponentiation: !!options.useCaretForExponentiation,
         useParenForTensors: !!options.useParenForTensors
     };
+    return config;
 }
 
 export function eigenmath_parse_config(options: Partial<ParseConfig>): EigenmathParseConfig {
@@ -220,6 +228,54 @@ class ClojureScriptExprEngine implements ExprEngine {
     }
 }
 
+class AlgebriteVisitor implements Visitor {
+    readonly #env: ExtensionEnv;
+    constructor(env: ExtensionEnv) {
+        this.#env = env;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    beginCons(expr: Cons): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    endCons(expr: Cons): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    beginTensor(tensor: Tensor<U>): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    endTensor(tensor: Tensor<U>): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    beginMap(map: Dictionary): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    endMap(map: Dictionary): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    boo(boo: Boo): void {
+    }
+    sym(sym: Sym): void {
+        if (!this.#env.isConsSymbol(sym)) {
+            this.#env.defineUserSymbol(sym);
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    rat(rat: Rat): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    str(str: Str): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    flt(flt: Flt): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    atom(atom: U): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    nil(expr: U): void {
+    }
+}
+
 class AlgebriteExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor() {
@@ -247,12 +303,16 @@ class AlgebriteExprEngine implements ExprEngine {
         this.#env.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        // Don't go through the delegate.
-        return delegate_parse_script(sourceText, native_parse_config(options));
+        const { trees, errors } = algebrite_parse(sourceText, algebrite_parse_config(options));
+        // We 
+        const visitor = new AlgebriteVisitor(this.#env);
+        for (const tree of trees) {
+            visit(tree, visitor);
+        }
+        return { trees, errors };
     }
     parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
-        // Don't fo through delegate.
-        const { trees, errors } = delegate_parse_script(sourceText, native_parse_config(options));
+        const { trees, errors } = this.parse(sourceText, options);
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors };
     }

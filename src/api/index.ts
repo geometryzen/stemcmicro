@@ -1,6 +1,6 @@
 import { Boo, create_sym, Flt, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
-import { is_native_sym } from 'math-expression-native';
+import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
 import { Dictionary } from '../clojurescript/atoms/Dictionary';
@@ -319,7 +319,12 @@ class ClojureScriptExprEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         const { trees, errors } = clojurescript_parse(sourceText, {
-            lexicon: {}
+            lexicon: {
+                '^': native_sym(Native.outer),
+                '|': native_sym(Native.inner),
+                '<<': native_sym(Native.lco),
+                '>>': native_sym(Native.rco)
+            }
         });
         const visitor = new ExtensionEnvVisitor(this.#env);
         for (const tree of trees) {

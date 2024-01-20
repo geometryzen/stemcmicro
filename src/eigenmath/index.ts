@@ -197,7 +197,7 @@ function cancel_factor($: ScriptVars): void {
     if (car(p2).equals(ADD)) {
         const h = $.stack.length;
         p2 = cdr(p2);
-        while (iscons(p2)) {
+        while (is_cons(p2)) {
             push(p1, $);
             push(car(p2), $);
             multiply($);
@@ -281,7 +281,7 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     if (istensor(rhs))
         return 1;
 
-    while (iscons(lhs) && iscons(rhs)) {
+    while (is_cons(lhs) && is_cons(rhs)) {
         const t = cmp(car(lhs), car(rhs));
         if (t)
             return t;
@@ -289,10 +289,10 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
         rhs = cdr(rhs);
     }
 
-    if (iscons(rhs))
+    if (is_cons(rhs))
         return -1; // lengthf(p1) < lengthf(p2)
 
-    if (iscons(lhs))
+    if (is_cons(lhs))
         return 1; // lengthf(p1) > lengthf(p2)
 
     if (is_uom(lhs) && is_uom(rhs)) {
@@ -328,18 +328,18 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
     let expo1: U;
     let expo2: U;
 
-    if (car(p1).equals(POWER)) {
-        base1 = cadr(p1);
-        expo1 = caddr(p1);
+    if (is_cons(p1) && p1.opr.equals(POWER)) {
+        base1 = p1.base;
+        expo1 = p1.expo;
     }
     else {
         base1 = p1;
         expo1 = one;
     }
 
-    if (car(p2).equals(POWER)) {
-        base2 = cadr(p2);
-        expo2 = caddr(p2);
+    if (is_cons(p2) && p2.opr.equals(POWER)) {
+        base2 = p2.base;
+        expo2 = p2.expo;
     }
     else {
         base2 = p2;
@@ -355,11 +355,11 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
 }
 
 function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
-    if (car(p1).equals(POWER))
-        p1 = cadr(p1); // p1 = base
+    if (is_cons(p1) && p1.opr.equals(POWER))
+        p1 = p1.base;
 
-    if (car(p2).equals(POWER))
-        p2 = cadr(p2); // p2 = base
+    if (is_cons(p2) && p2.opr.equals(POWER))
+        p2 = p2.base;
 
     return cmp(p1, p2);
 }
@@ -465,9 +465,9 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
     const p1 = $.stack[i];
     const p2 = $.stack[j];
 
-    if (car(p1).equals(POWER)) {
-        BASE1 = cadr(p1);
-        EXPO1 = caddr(p1);
+    if (is_cons(p1) && p1.opr.equals(POWER)) {
+        BASE1 = p1.base;
+        EXPO1 = p1.expo;
     }
     else {
         BASE1 = p1;
@@ -505,7 +505,7 @@ function combine_factors_nib(i: number, j: number, $: ScriptVars): 0 | 1 {
     return 1;
 }
 
-function combine_numerical_factors(start: number, COEFF: Num, $: ScriptVars): Num {
+function combine_numerical_factors(start: number, coeff: Num, $: ScriptVars): Num {
 
     let end = $.stack.length;
 
@@ -514,15 +514,15 @@ function combine_numerical_factors(start: number, COEFF: Num, $: ScriptVars): Nu
         const p1 = $.stack[i];
 
         if (is_num(p1)) {
-            multiply_numbers(COEFF, p1, $);
-            COEFF = pop($) as Num;
+            multiply_numbers(coeff, p1, $);
+            coeff = pop($) as Num;
             $.stack.splice(i, 1); // remove factor
             i--;
             end--;
         }
     }
 
-    return COEFF;
+    return coeff;
 }
 
 function compatible_dimensions(p1: U, p2: U): 0 | 1 {
@@ -547,7 +547,7 @@ function compatible_dimensions(p1: U, p2: U): 0 | 1 {
 
 function complexity(p: U): number {
     let n = 1;
-    while (iscons(p)) {
+    while (is_cons(p)) {
         n += complexity(car(p));
         p = cdr(p);
     }
@@ -718,7 +718,7 @@ function copy_tensor(p1: Tensor) {
 function count_denominators(p: U): number {
     let n = 0;
     p = cdr(p);
-    while (iscons(p)) {
+    while (is_cons(p)) {
         if (isdenominator(car(p)))
             n++;
         p = cdr(p);
@@ -729,7 +729,7 @@ function count_denominators(p: U): number {
 function count_numerators(p: Cons): number {
     let n = 0;
     p = cdr(p);
-    while (iscons(p)) {
+    while (is_cons(p)) {
         if (isnumerator(car(p)))
             n++;
         p = cdr(p);
@@ -767,7 +767,7 @@ function decomp($: ScriptVars) {
     // naive decomp
 
     let p1 = cdr(F);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         push(X, $);
         decomp($);
@@ -785,7 +785,7 @@ function decomp_sum(F: U, X: U, $: ScriptVars): void {
 
     let p1: U = cdr(F);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         p2 = car(p1);
         if (findf(p2, X, $)) {
             if (car(p2).equals(MULTIPLY)) {
@@ -825,7 +825,7 @@ function decomp_sum(F: U, X: U, $: ScriptVars): void {
     list($.stack.length - h, $);
     p1 = pop($);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $); // const part
         push(cadr(p1), $); // var part
         push(X, $);
@@ -837,7 +837,7 @@ function decomp_sum(F: U, X: U, $: ScriptVars): void {
 
     h = $.stack.length;
     p1 = cdr(F);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         if (!findf(car(p1), X, $))
             push(car(p1), $);
         p1 = cdr(p1);
@@ -858,7 +858,7 @@ function decomp_product(F: U, X: U, $: ScriptVars): void {
     // decomp factors involving x
 
     let p1 = cdr(F);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         if (findf(car(p1), X, $)) {
             push(car(p1), $);
             push(X, $);
@@ -871,7 +871,7 @@ function decomp_product(F: U, X: U, $: ScriptVars): void {
 
     const h = $.stack.length;
     p1 = cdr(F);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         if (!findf(car(p1), X, $))
             push(car(p1), $);
         p1 = cdr(p1);
@@ -971,7 +971,7 @@ function emit_args(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadS
 
     p = cdr(p);
 
-    if (!iscons(p)) {
+    if (!is_cons(p)) {
         emit_roman_string("(", $);
         emit_roman_string(")", $);
         return;
@@ -983,7 +983,7 @@ function emit_args(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadS
 
     p = cdr(p);
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
         emit_roman_string(",", $);
         emit_thin_space($);
         emit_expr(car(p), $, ec, scope);
@@ -1008,7 +1008,7 @@ function emit_denominators(p: Cons, $: StackContext, ec: EmitContext, scope: Eig
     const n = count_denominators(p);
     p = cdr(p);
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
 
         let q = car(p);
         p = cdr(p);
@@ -1140,7 +1140,7 @@ function emit_expr_nib(p: U, $: StackContext, ec: EmitContext, scope: EigenmathR
     p = cdr(p);
     emit_term(car(p), $, ec, scope);
     p = cdr(p);
-    while (iscons(p)) {
+    while (is_cons(p)) {
         if (isnegativeterm(car(p)))
             emit_infix_operator(MINUS_SIGN, $);
         else
@@ -1191,7 +1191,7 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathRea
         return;
     }
 
-    if (iscons(p)) {
+    if (is_cons(p)) {
         if (car(p).equals(POWER)) {
             emit_power(p, $, ec, scope);
         }
@@ -1305,10 +1305,10 @@ function emit_indices(p: U, $: StackContext, ec: EmitContext, scope: EigenmathRe
 
     p = cdr(p);
 
-    if (iscons(p)) {
+    if (is_cons(p)) {
         emit_expr(car(p), $, ec, scope);
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             emit_roman_string(",", $);
             emit_thin_space($);
             emit_expr(car(p), $, ec, scope);
@@ -1412,7 +1412,7 @@ function emit_numerators(p: Cons, $: StackContext, ec: EmitContext, scope: Eigen
     const n = count_numerators(p);
     p = cdr(p);
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
 
         const q = car(p);
         p = cdr(p);
@@ -1783,7 +1783,7 @@ function emit_term_nib(p: Cons, $: StackContext, ec: EmitContext, scope: Eigenma
 
     p = cdr(p);
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
         emit_medium_space($);
         emit_factor(car(p), $, ec, scope);
         p = cdr(p);
@@ -2178,7 +2178,7 @@ function draw_formula(x: number, y: number, codes: U, outbuf: string[]): void {
 
         case EMIT_LIST: {
             let p = car(data);
-            while (iscons(p)) {
+            while (is_cons(p)) {
                 draw_formula(x, y, car(p), outbuf);
                 x += width(car(p));
                 p = cdr(p);
@@ -2702,7 +2702,7 @@ function absfunc($: ScriptVars): void {
     if (car(p1).equals(MULTIPLY)) {
         const h = $.stack.length;
         p1 = cdr(p1);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             absfunc($);
             p1 = cdr(p1);
@@ -2726,7 +2726,7 @@ function eval_add(p1: U, $: ScriptVars): void {
     const h = $.stack.length;
     $.expanding--; // undo expanding++ in evalf
     p1 = cdr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         p1 = cdr(p1);
@@ -2798,7 +2798,7 @@ function flatten_terms(h: number, $: ScriptVars): void {
         if (car(p1).equals(ADD)) {
             $.stack[i] = cadr(p1);
             p1 = cddr(p1);
-            while (iscons(p1)) {
+            while (is_cons(p1)) {
                 push(car(p1), $);
                 p1 = cdr(p1);
             }
@@ -3033,7 +3033,7 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
         return c;
     }
 
-    while (iscons(p1) && iscons(p2)) {
+    while (is_cons(p1) && is_cons(p2)) {
         const c = cmp_factors(car(p1), car(p2));
         if (c)
             return c;
@@ -3041,10 +3041,10 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
         p2 = cdr(p2);
     }
 
-    if (iscons(p1))
+    if (is_cons(p1))
         return 1; // lengthf(p1) > lengthf(p2)
 
-    if (iscons(p2))
+    if (is_cons(p2))
         return -1; // lengthf(p1) < lengthf(p2)
 
     return 0;
@@ -3076,7 +3076,7 @@ function isimaginaryterm(p: U): 0 | 1 {
         return 1;
     if (car(p).equals(MULTIPLY)) {
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             if (isimaginaryfactor(car(p)))
                 return 1;
             p = cdr(p);
@@ -3357,7 +3357,7 @@ function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $:
 
 function eval_and(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalp($);
         const p2 = pop($);
@@ -3729,7 +3729,7 @@ function arcsinh($: ScriptVars): void {
 function eval_arctan(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
-    if (iscons(cddr(p1))) {
+    if (is_cons(cddr(p1))) {
         push(caddr(p1), $);
         evalf($);
     }
@@ -4064,7 +4064,7 @@ function arg1($: ScriptVars): void {
     if (car(p1).equals(MULTIPLY)) {
         const h = $.stack.length;
         p1 = cdr(p1);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             arg($);
             p1 = cdr(p1);
@@ -4236,11 +4236,11 @@ function circexp_subst($: ScriptVars): void {
 
     // none of the above
 
-    if (iscons(p1)) {
+    if (is_cons(p1)) {
         const h = $.stack.length;
         push(car(p1), $);
         p1 = cdr(p1);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             circexp_subst($);
             p1 = cdr(p1);
@@ -4372,11 +4372,11 @@ function conjfunc_subst($: ScriptVars): void {
         return;
     }
 
-    if (iscons(p1)) {
+    if (is_cons(p1)) {
         const h = $.stack.length;
         push(car(p1), $);
         p1 = cdr(p1);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             conjfunc_subst($);
             p1 = cdr(p1);
@@ -4394,14 +4394,14 @@ function eval_contract(p1: U, $: ScriptVars): void {
 
     p1 = cddr(p1);
 
-    if (!iscons(p1)) {
+    if (!is_cons(p1)) {
         push_integer(1, $);
         push_integer(2, $);
         contract($);
         return;
     }
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         push(cadr(p1), $);
@@ -4681,7 +4681,7 @@ function cosfunc($: ScriptVars): void {
 
 function cosfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
-    while (iscons(p2)) {
+    while (is_cons(p2)) {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
@@ -4788,7 +4788,7 @@ function eval_defint(p1: U, $: ScriptVars): void {
 
     p1 = cddr(p1);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
 
         push(car(p1), $);
         evalf($);
@@ -4869,7 +4869,7 @@ function eval_derivative(p1: U, $: ScriptVars): void {
     evalf($);
     p1 = cddr(p1);
 
-    if (!iscons(p1)) {
+    if (!is_cons(p1)) {
         push(X_LOWER, $);
         derivative($);
         return;
@@ -4879,7 +4879,7 @@ function eval_derivative(p1: U, $: ScriptVars): void {
     let X: U;
     let Y: U = nil;
 
-    while (iscons(p1) || flag) {
+    while (is_cons(p1) || flag) {
 
         if (flag) {
             X = Y;
@@ -4904,7 +4904,7 @@ function eval_derivative(p1: U, $: ScriptVars): void {
             continue;
         }
 
-        if (iscons(p1)) {
+        if (is_cons(p1)) {
 
             push(car(p1), $);
             evalf($);
@@ -4961,7 +4961,7 @@ function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
 
     // d(a,x)?
 
-    if (!iscons(F)) {
+    if (!is_cons(F)) {
         push_integer(0, $);
         return;
     }
@@ -5072,7 +5072,7 @@ function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
 function dsum(p1: U, p2: U, $: ScriptVars): void {
     const h = $.stack.length;
     p1 = cdr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         push(p2, $);
         derivative($);
@@ -5594,7 +5594,7 @@ function eval_dim(p1: U, $: ScriptVars): void {
 function eval_do(p1: U, $: ScriptVars): void {
     push(nil, $);
     p1 = cdr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         pop($);
         push(car(p1), $);
         evalf($);
@@ -5903,7 +5903,7 @@ function eval_eval(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     p1 = cddr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         push(cadr(p1), $);
@@ -6177,11 +6177,11 @@ function floatfunc_subst($: ScriptVars): void {
         return;
     }
 
-    if (iscons(p1)) {
+    if (is_cons(p1)) {
         const h = $.stack.length;
         push(car(p1), $);
         p1 = cdr(p1);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             floatfunc_subst($);
             p1 = cdr(p1);
@@ -6268,7 +6268,7 @@ function eval_for(p1: U, $: ScriptVars): void {
         let p3 = pop($);
         set_symbol(p2, p3, nil, $);
         p3 = p1;
-        while (iscons(p3)) {
+        while (is_cons(p3)) {
             push(car(p3), $);
             evalf($);
             pop($);
@@ -6291,7 +6291,7 @@ function eval_hadamard(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     p1 = cddr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         hadamard($);
@@ -6380,7 +6380,7 @@ function eval_index(p1: U, $: ScriptVars): void {
 
     const h = $.stack.length;
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         p1 = cdr(p1);
@@ -6477,7 +6477,7 @@ function eval_inner(p1: U, $: ScriptVars): void {
 
     p1 = cdr(p1);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         p1 = cdr(p1);
     }
@@ -7535,7 +7535,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
 
     p1 = cddr(p1);
 
-    if (!iscons(p1)) {
+    if (!is_cons(p1)) {
         push(X_LOWER, $);
         integral($);
         return;
@@ -7545,7 +7545,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
     let X: U;
     let Y: U = nil;
 
-    while (iscons(p1) || flag) {
+    while (is_cons(p1) || flag) {
 
         if (flag) {
             X = Y;
@@ -7573,7 +7573,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
         if (!(issymbol(X) && $.isUserSymbol(X)))
             stopf("integral");
 
-        if (iscons(p1)) {
+        if (is_cons(p1)) {
 
             push(car(p1), $);
             evalf($);
@@ -7609,7 +7609,7 @@ function integral($: ScriptVars): void {
     if (car(F).equals(ADD)) {
         const h = $.stack.length;
         let p1 = cdr(F);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             push(X, $);
             integral($);
@@ -7625,7 +7625,7 @@ function integral($: ScriptVars): void {
         partition_term($);	// push const part then push var part
         F = pop($);		// pop var part
         integral_nib(F, X, $);
-        multiply($);		// multiply by const part
+        multiply_factors(2, $);		// multiply by const part
         return;
     }
 
@@ -7685,9 +7685,9 @@ function integral_lookup(h: number, F: U, $: ScriptVars): void {
 
 function integral_classify(p: U): number {
 
-    if (iscons(p)) {
+    if (is_cons(p)) {
         let t = 0;
-        while (iscons(p)) {
+        while (is_cons(p)) {
             t |= integral_classify(car(p));
             p = cdr(p);
         }
@@ -7805,7 +7805,7 @@ function eval_kronecker(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     p1 = cddr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         kronecker($);
@@ -7972,7 +7972,7 @@ function logfunc($: ScriptVars): void {
     if (car(p1).equals(MULTIPLY)) {
         const h = $.stack.length;
         p1 = cdr(p1);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             logfunc($);
             p1 = cdr(p1);
@@ -8061,7 +8061,7 @@ function mag_nib($: ScriptVars): void {
     if (car(p1).equals(MULTIPLY)) {
         p1 = cdr(p1);
         const h = $.stack.length;
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             mag($);
             p1 = cdr(p1);
@@ -8286,7 +8286,7 @@ function eval_multiply(p1: U, $: ScriptVars): void {
     $.expanding--; // undo expanding++ in evalf
     try {
         p1 = cdr(p1);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             evalf($);
             p1 = cdr(p1);
@@ -8361,7 +8361,7 @@ function eval_nroots(p1: U, $: ScriptVars): void {
 
     p1 = cddr(p1);
 
-    if (iscons(p1)) {
+    if (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
     }
@@ -8671,7 +8671,7 @@ function numerator($: ScriptVars): void {
 
 function eval_or(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalp($);
         const p2 = pop($);
@@ -8688,7 +8688,7 @@ function eval_outer(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     p1 = cddr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         outer($);
@@ -8979,7 +8979,7 @@ function power($: ScriptVars): void {
     if (car(base).equals(MULTIPLY)) {
         const h = $.stack.length;
         let argList = cdr(base);
-        while (iscons(argList)) {
+        while (is_cons(argList)) {
             push(car(argList), $);
             push(expo, $);
             power($);
@@ -9048,7 +9048,7 @@ function make_should_annotate(scope: EigenmathReadScope) {
 
 function eval_print(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         push(car(p1), $);
         evalf($);
@@ -9265,7 +9265,7 @@ function rect($: ScriptVars): void {
     if (car(p1).equals(ADD)) {
         p1 = cdr(p1);
         const h = $.stack.length;
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             rect($);
             p1 = cdr(p1);
@@ -9277,7 +9277,7 @@ function rect($: ScriptVars): void {
     if (car(p1).equals(MULTIPLY)) {
         p1 = cdr(p1);
         const h = $.stack.length;
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             rect($);
             p1 = cdr(p1);
@@ -9299,7 +9299,7 @@ function rect($: ScriptVars): void {
     if (car(EXPO).equals(ADD)) {
         p1 = cdr(EXPO);
         const h = $.stack.length;
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(POWER, $);
             push(BASE, $);
             push(car(p1), $);
@@ -9339,7 +9339,7 @@ function eval_roots(p1: U, $: ScriptVars): void {
 
     p1 = cddr(p1);
 
-    if (iscons(p1)) {
+    if (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
     }
@@ -9618,9 +9618,9 @@ function eval_rotate(p1: Cons, $: ScriptVars): void {
 
     p1 = cddr(p1);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
 
-        if (!iscons(cdr(p1)))
+        if (!is_cons(cdr(p1)))
             stopf("rotate error 2 unexpected end of argument list");
 
         const OPCODE = car(p1);
@@ -9645,7 +9645,7 @@ function eval_rotate(p1: Cons, $: ScriptVars): void {
         }
 
         if (OPCODE.equals(create_sym("P"))) {
-            if (!iscons(p1))
+            if (!is_cons(p1))
                 stopf("rotate error 2 unexpected end of argument list");
             push(car(p1), $);
             p1 = cdr(p1);
@@ -9673,7 +9673,7 @@ function eval_rotate(p1: Cons, $: ScriptVars): void {
 
         if (OPCODE.equals(create_sym("W"))) {
             const m = n;
-            if (!iscons(p1))
+            if (!is_cons(p1))
                 stopf("rotate error 2 unexpected end of argument list");
             push(car(p1), $);
             p1 = cdr(p1);
@@ -9930,7 +9930,7 @@ function eval_setq(x: Cons, $: ScriptVars): void {
         return;
     }
 
-    if (iscons(cadr(x))) {
+    if (is_cons(cadr(x))) {
         setq_usrfunc(x, $);
         return;
     }
@@ -9981,7 +9981,7 @@ function setq_indexed(p1: U, $: ScriptVars): void {
 
     p1 = cddadr(p1);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         p1 = cdr(p1);
@@ -10091,7 +10091,7 @@ function setq_usrfunc(p1: U, $: ScriptVars): void {
 }
 
 function convert_body(A: U, $: ScriptVars): void {
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10099,7 +10099,7 @@ function convert_body(A: U, $: ScriptVars): void {
     subst($);
 
     A = cdr(A);
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10107,7 +10107,7 @@ function convert_body(A: U, $: ScriptVars): void {
     subst($);
 
     A = cdr(A);
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10115,7 +10115,7 @@ function convert_body(A: U, $: ScriptVars): void {
     subst($);
 
     A = cdr(A);
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10123,7 +10123,7 @@ function convert_body(A: U, $: ScriptVars): void {
     subst($);
 
     A = cdr(A);
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10132,7 +10132,7 @@ function convert_body(A: U, $: ScriptVars): void {
 
     A = cdr(A);
 
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10140,7 +10140,7 @@ function convert_body(A: U, $: ScriptVars): void {
     subst($);
 
     A = cdr(A);
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10148,7 +10148,7 @@ function convert_body(A: U, $: ScriptVars): void {
     subst($);
 
     A = cdr(A);
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10156,7 +10156,7 @@ function convert_body(A: U, $: ScriptVars): void {
     subst($);
 
     A = cdr(A);
-    if (!iscons(A))
+    if (!is_cons(A))
         return;
 
     push(car(A), $);
@@ -10226,7 +10226,7 @@ function simplify_scalar(p1: U, $: ScriptVars): void {
 
     // already simple?
 
-    if (!iscons(p1)) {
+    if (!is_cons(p1)) {
         push(p1, $);
         return;
     }
@@ -10235,7 +10235,7 @@ function simplify_scalar(p1: U, $: ScriptVars): void {
     push(car(p1), $);
     p1 = cdr(p1);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         simplify($);
         p1 = cdr(p1);
@@ -10255,7 +10255,7 @@ function simplify_pass1($: ScriptVars): void {
 
     // already simple?
 
-    if (!iscons(p1)) {
+    if (!is_cons(p1)) {
         push(p1, $);
         return;
     }
@@ -10347,7 +10347,7 @@ function simplify_pass2($: ScriptVars): void {
 
     // already simple?
 
-    if (!iscons(p1)) {
+    if (!is_cons(p1)) {
         push(p1, $);
         return;
     }
@@ -10381,7 +10381,7 @@ function simplify_pass3($: ScriptVars): void {
     polar($);
     const p2 = pop($);
 
-    if (!iscons(p2)) {
+    if (!is_cons(p2)) {
         push(p2, $);
         return;
     }
@@ -10579,7 +10579,7 @@ function sinfunc($: ScriptVars): void {
 
 function sinfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
-    while (iscons(p2)) {
+    while (is_cons(p2)) {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
@@ -10731,9 +10731,9 @@ function subst($: ScriptVars): void {
         return;
     }
 
-    if (iscons(p1)) {
+    if (is_cons(p1)) {
         const h = $.stack.length;
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             push(car(p1), $);
             push(p2, $);
             push(p3, $);
@@ -10946,7 +10946,7 @@ function tanfunc($: ScriptVars): void {
 
 function tanfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
-    while (iscons(p2)) {
+    while (is_cons(p2)) {
         push(car(p2), $);
         push(Pi, $);
         divide($);
@@ -11073,7 +11073,7 @@ function eval_taylor(p1: U, $: ScriptVars): void {
 
     p1 = cddddr(p1);
 
-    if (iscons(p1)) {
+    if (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
     }
@@ -11145,8 +11145,8 @@ function eval_tensor(p1: Tensor, $: ScriptVars): void {
 
 function eval_test(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
-    while (iscons(p1)) {
-        if (!iscons(cdr(p1))) {
+    while (is_cons(p1)) {
+        if (!is_cons(cdr(p1))) {
             push(car(p1), $); // default case
             evalf($);
             return;
@@ -11237,12 +11237,12 @@ function eval_transpose(p1: U, $: ScriptVars): void {
 
     p1 = cddr(p1);
 
-    if (!iscons(p1)) {
+    if (!is_cons(p1)) {
         transpose(1, 2, $);
         return;
     }
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
 
         push(car(p1), $);
         evalf($);
@@ -11376,7 +11376,7 @@ function eval_user_function(p1: U, $: ScriptVars): void {
         }
         const h = $.stack.length;
         push(FUNC_NAME, $);
-        while (iscons(FUNC_ARGS)) {
+        while (is_cons(FUNC_ARGS)) {
             push(car(FUNC_ARGS), $);
             evalf($);
             FUNC_ARGS = cdr(FUNC_ARGS);
@@ -11446,7 +11446,7 @@ function eval_zero(p1: U, $: ScriptVars): void {
     const h = $.stack.length;
     let m = 1;
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         push(car(p1), $);
         evalf($);
         dupl($);
@@ -11496,7 +11496,7 @@ function evalf_nib($: ScriptVars): void {
     const p1 = pop($);
 
     const sym = car(p1);
-    if (iscons(p1) && issymbol(sym)) {
+    if (is_cons(p1) && issymbol(sym)) {
         if ($.isConsSymbol(sym)) {
             $.expanding++;
             try {
@@ -11583,7 +11583,7 @@ function expand_sum_factors(h: number, $: ScriptVars): void {
 
     p2 = cdr(p2); // p2 is the sum
 
-    while (iscons(p2)) {
+    while (is_cons(p2)) {
         push(p1, $);
         push(car(p2), $);
         multiply($);
@@ -12344,7 +12344,7 @@ function factor_int(n: number, $: ScriptVars): void {
  */
 function find_denominator(p: Cons): 0 | 1 {
     p = p.argList;
-    while (iscons(p)) {
+    while (is_cons(p)) {
         const q = car(p);
         if (is_cons(q) && q.opr.equals(POWER)) {
             const expo = q.expo;
@@ -12361,7 +12361,7 @@ function find_denominator(p: Cons): 0 | 1 {
 function find_divisor(p: U, $: ScriptVars): 0 | 1 {
     if (car(p).equals(ADD)) {
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             if (find_divisor_term(car(p), $))
                 return 1;
             p = cdr(p);
@@ -12375,7 +12375,7 @@ function find_divisor(p: U, $: ScriptVars): 0 | 1 {
 function find_divisor_term(p: U, $: ScriptVars): 0 | 1 {
     if (car(p).equals(MULTIPLY)) {
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             if (find_divisor_factor(car(p), $))
                 return 1;
             p = cdr(p);
@@ -12396,7 +12396,7 @@ function find_divisor_factor(p: U, $: ScriptVars): 0 | 1 {
         return 1;
     }
 
-    if (car(p).equals(POWER) && !isminusone(cadr(p)) && isnegativeterm(caddr(p))) {
+    if (is_cons(p) && p.opr.equals(POWER) && !isminusone(cadr(p)) && isnegativeterm(caddr(p))) {
         if (isminusone(caddr(p)))
             push(cadr(p), $);
         else {
@@ -12431,7 +12431,7 @@ function findf(p: U, q: U, $: ScriptVars): 0 | 1 {
         return 0;
     }
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
         if (findf(car(p), q, $))
             return 1;
         p = cdr(p);
@@ -12448,7 +12448,7 @@ function flatten_factors(start: number, $: ScriptVars): void {
             p1 = cdr(p1);
             $.stack[i] = car(p1);
             p1 = cdr(p1);
-            while (iscons(p1)) {
+            while (is_cons(p1)) {
                 push(car(p1), $);
                 p1 = cdr(p1);
             }
@@ -12733,7 +12733,7 @@ function infixform_expr(p: U, config: InfixConfig, outbuf: string[]): void {
 function infixform_expr_nib(p: U, config: InfixConfig, outbuf: string[]): void {
     infixform_term(cadr(p), config, outbuf);
     p = cddr(p);
-    while (iscons(p)) {
+    while (is_cons(p)) {
         if (isnegativeterm(car(p)))
             infixform_write(" - ", config, outbuf);
         else
@@ -12778,7 +12778,7 @@ function infixform_term_nib(p: Cons, config: InfixConfig, outbuf: string[]): voi
 
     p = cdr(p);
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
         infixform_write(" ", config, outbuf); // space in between factors
         infixform_factor(car(p), config, outbuf);
         p = cdr(p);
@@ -12791,7 +12791,7 @@ function infixform_numerators(p: Cons, config: InfixConfig, outbuf: string[]): v
 
     p = cdr(p);
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
 
         const q = car(p);
         p = cdr(p);
@@ -12826,7 +12826,7 @@ function infixform_denominators(p: Cons, config: InfixConfig, outbuf: string[]):
 
     p = cdr(p);
 
-    while (iscons(p)) {
+    while (is_cons(p)) {
 
         let q = car(p);
         p = cdr(p);
@@ -12904,12 +12904,12 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
         return;
     }
 
-    if (car(p).equals(ADD) || car(p).equals(MULTIPLY)) {
+    if (is_cons(p) && (p.opr.equals(ADD) || p.opr.equals(MULTIPLY))) {
         infixform_subexpr(p, config, outbuf);
         return;
     }
 
-    if (car(p).equals(POWER)) {
+    if (is_cons(p) && p.opr.equals(POWER)) {
         infixform_power(p, config, outbuf);
         return;
     }
@@ -12976,7 +12976,7 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
 
     // other function
 
-    if (iscons(p)) {
+    if (is_cons(p)) {
         infixform_base(car(p), config, outbuf);
         infixform_arglist(p, config, outbuf);
         return;
@@ -13030,12 +13030,15 @@ function infixform_power(p: U, config: InfixConfig, outbuf: string[]): void {
 
     p = caddr(p); // p now points to exponent
 
-    if (is_num(p))
+    if (is_num(p)) {
         infixform_numeric_exponent(p, config, outbuf);
-    else if (car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER) || car(p).equals(FACTORIAL))
+    }
+    else if (is_cons(p) && (p.opr.equals(ADD) || p.opr.equals(MULTIPLY) || p.opr.equals(POWER) || p.opr.equals(FACTORIAL))) {
         infixform_subexpr(p, config, outbuf);
-    else
+    }
+    else {
         infixform_expr(p, config, outbuf);
+    }
 }
 
 // p = y^x where x is a negative number
@@ -13067,10 +13070,10 @@ function infixform_index(p: U, config: InfixConfig, outbuf: string[]): void {
     infixform_base(cadr(p), config, outbuf);
     infixform_write("[", config, outbuf);
     p = cddr(p);
-    if (iscons(p)) {
+    if (is_cons(p)) {
         infixform_expr(car(p), config, outbuf);
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             infixform_write(",", config, outbuf);
             infixform_expr(car(p), config, outbuf);
             p = cdr(p);
@@ -13082,10 +13085,10 @@ function infixform_index(p: U, config: InfixConfig, outbuf: string[]): void {
 function infixform_arglist(p: U, config: InfixConfig, outbuf: string[]): void {
     infixform_write("(", config, outbuf);
     p = cdr(p);
-    if (iscons(p)) {
+    if (is_cons(p)) {
         infixform_expr(car(p), config, outbuf);
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             infixform_write(",", config, outbuf);
             infixform_expr(car(p), config, outbuf);
             p = cdr(p);
@@ -13166,12 +13169,15 @@ function infixform_double(p: Flt, config: InfixConfig, outbuf: string[]): void {
 }
 
 function infixform_base(p: U, config: InfixConfig, outbuf: string[]): void {
-    if (is_num(p))
+    if (is_num(p)) {
         infixform_numeric_base(p, config, outbuf);
-    else if (car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER) || car(p).equals(FACTORIAL))
+    }
+    else if (is_cons(p) && (p.opr.equals(ADD) || p.opr.equals(MULTIPLY) || p.opr.equals(POWER) || p.opr.equals(FACTORIAL))) {
         infixform_subexpr(p, config, outbuf);
-    else
+    }
+    else {
         infixform_expr(p, config, outbuf);
+    }
 }
 
 function infixform_numeric_base(p: U, config: InfixConfig, outbuf: string[]): void {
@@ -13289,13 +13295,6 @@ function iscomplexnumber(p: U): boolean {
     return isimaginarynumber(p) || (lengthf(p) === 3 && car(p).equals(ADD) && is_num(cadr(p)) && isimaginarynumber(caddr(p)));
 }
 
-/**
- * Returns true if expr is a Cons and not NIL.
- */
-function iscons(expr: U): expr is Cons {
-    return is_cons(expr);
-}
-
 function isdenominator(p: U) {
     if (car(p).equals(POWER)) {
         const expo = caddr(p);
@@ -13313,7 +13312,7 @@ function isdenominator(p: U) {
 function isdenormalpolar(p: U, $: ScriptVars) {
     if (car(p).equals(ADD)) {
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             if (isdenormalpolarterm(car(p), $))
                 return 1;
             p = cdr(p);
@@ -13359,9 +13358,9 @@ function isdoublesomewhere(p: U) {
     if (is_flt(p))
         return 1;
 
-    if (iscons(p)) {
+    if (is_cons(p)) {
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             if (isdoublesomewhere(car(p)))
                 return 1;
             p = cdr(p);
@@ -13462,30 +13461,31 @@ function isnegativenumber(p: Num): boolean {
 }
 
 function isnegativeterm(p: U): boolean {
-    if (is_num(p) && isnegativenumber(p)) {
+    if (is_num(p) && p.isNegative()) {
         return true;
     }
-    else if (car(p).equals(MULTIPLY)) {
+    else if (is_cons(p) && p.opr.equals(MULTIPLY)) {
         const leading = cadr(p);
-        return is_num(leading) && isnegativenumber(leading);
+        return is_num(leading) && leading.isNegative();
     }
     else {
         return false;
     }
 }
 
-function isnumerator(p: U) {
-    if (car(p).equals(POWER)) {
-        const expo = caddr(p);
-        if (is_num(expo) && isnegativenumber(expo)) {
-            return 0;
+function isnumerator(expr: U): boolean {
+    if (is_cons(expr) && expr.opr.equals(POWER)) {
+        const expo = expr.expo;
+        if (is_num(expo) && expo.isNegative()) {
+            return false;
         }
     }
 
-    if (is_rat(p) && bignum_equal(p.a, 1))
-        return 0;
+    if (is_rat(expr) && bignum_equal(expr.a, 1)) {
+        return false;
+    }
 
-    return 1;
+    return true;
 }
 
 function isoneoversqrttwo(p: U): boolean {
@@ -13542,9 +13542,9 @@ function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
     if (issymbol(p) && scope.isUserSymbol(p) && !p.equalsSym(Pi) && !p.equalsSym(DOLLAR_E))
         return 1;
 
-    if (iscons(p)) {
+    if (is_cons(p)) {
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             if (isusersymbolsomewhere(car(p), scope))
                 return 1;
             p = cdr(p);
@@ -13576,7 +13576,7 @@ export function iszero(p: U): boolean {
 
 function lengthf(p: U): number {
     let n = 0;
-    while (iscons(p)) {
+    while (is_cons(p)) {
         n++;
         p = cdr(p);
     }
@@ -13604,7 +13604,7 @@ function lookup(sym: Sym, scope: EigenmathScope): Sym {
 }
 
 /**
- * A convenience function for multiplying 2 factors on the stack.
+ * A convenience function for multiply_factors(2, $) factors on the stack.
  */
 function multiply($: ScriptVars): void {
     multiply_factors(2, $);
@@ -13838,7 +13838,7 @@ function normalize_polar(EXPO: U, $: ScriptVars): void {
     if (car(EXPO).equals(ADD)) {
         const h = $.stack.length;
         let p1 = cdr(EXPO);
-        while (iscons(p1)) {
+        while (is_cons(p1)) {
             EXPO = car(p1);
             if (isdenormalpolarterm(EXPO, $))
                 normalize_polar_term(EXPO, $);
@@ -14090,7 +14090,7 @@ function normalize_power_factors(h: number, $: ScriptVars): void {
                 p1 = cdr(p1);
                 $.stack[i] = car(p1);
                 p1 = cdr(p1);
-                while (iscons(p1)) {
+                while (is_cons(p1)) {
                     push(car(p1), $);
                     p1 = cdr(p1);
                 }
@@ -14151,7 +14151,7 @@ function partition_term($: ScriptVars): void {
 
     let h = $.stack.length;
     let p1 = cdr(F);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         if (!findf(car(p1), X, $))
             push(car(p1), $);
         p1 = cdr(p1);
@@ -14172,7 +14172,7 @@ function partition_term($: ScriptVars): void {
 
     h = $.stack.length;
     p1 = cdr(F);
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         if (findf(car(p1), X, $))
             push(car(p1), $);
         p1 = cdr(p1);
@@ -14487,46 +14487,46 @@ function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U, $: ScriptVars): v
     multiply($);
 }
 
-function power_minusone(EXPO: U, $: ScriptVars): void {
+function power_minusone(expo: U, $: ScriptVars): void {
     // optimization for i
 
-    if (isequalq(EXPO, 1, 2)) {
+    if (isequalq(expo, 1, 2)) {
         push(imaginaryunit, $);
         return;
     }
 
     // root is an odd number?
 
-    if (is_rat(EXPO) && bignum_odd(EXPO.b)) {
-        if (bignum_odd(EXPO.a))
+    if (is_rat(expo) && bignum_odd(expo.b)) {
+        if (bignum_odd(expo.a))
             push_integer(-1, $);
         else
             push_integer(1, $);
         return;
     }
 
-    if (is_rat(EXPO)) {
-        normalize_clock_rational(EXPO, $);
+    if (is_rat(expo)) {
+        normalize_clock_rational(expo, $);
         return;
     }
 
-    if (is_flt(EXPO)) {
-        normalize_clock_double(EXPO, $);
+    if (is_flt(expo)) {
+        normalize_clock_double(expo, $);
         rect($);
         return;
     }
 
     push(POWER, $);
     push_integer(-1, $);
-    push(EXPO, $);
+    push(expo, $);
     list(3, $);
 }
 
-function normalize_clock_rational(EXPO: U, $: ScriptVars): void {
+function normalize_clock_rational(expo: U, $: ScriptVars): void {
 
     // R = EXPO mod 2
 
-    push(EXPO, $);
+    push(expo, $);
     push_integer(2, $);
     modfunc($);
     let R = pop($);
@@ -14868,7 +14868,7 @@ function power_numbers_factor(BASE: Rat, EXPO: Rat, $: ScriptVars): void {
         let p0 = pop($);
         if (car(p0).equals(MULTIPLY)) {
             p0 = cdr(p0);
-            while (iscons(p0)) {
+            while (is_cons(p0)) {
                 push(car(p0), $);
                 p0 = cdr(p0);
             }
@@ -14996,9 +14996,9 @@ function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
 
     let p1 = cdr(BASE);
 
-    while (iscons(p1)) {
+    while (is_cons(p1)) {
         let p2 = cdr(BASE);
-        while (iscons(p2)) {
+        while (is_cons(p2)) {
             push(car(p1), $);
             push(car(p2), $);
             multiply($);
@@ -15027,11 +15027,11 @@ export function to_sexpr(expr: U): string {
  * prefixform means SExpr.
  */
 function prefixform(p: U, outbuf: string[]) {
-    if (iscons(p)) {
+    if (is_cons(p)) {
         outbuf.push("(");
         prefixform(car(p), outbuf);
         p = cdr(p);
-        while (iscons(p)) {
+        while (is_cons(p)) {
             outbuf.push(" ");
             prefixform(car(p), outbuf);
             p = cdr(p);

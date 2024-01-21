@@ -4,7 +4,7 @@ import { Boo, Flt, Rat, Str, Sym, Tensor } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
-import { Dictionary } from "../src/clojurescript/atoms/Dictionary";
+import { Map } from "../src/clojurescript/atoms/Map";
 import { EmitContext, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
 import { SyntaxKind } from "../src/parser/parser";
 import { visit } from "../src/visitor/visit";
@@ -131,11 +131,11 @@ class Voyeur implements Visitor {
         throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    beginMap(map: Dictionary): void {
+    beginMap(map: Map): void {
         throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    endMap(map: Dictionary): void {
+    endMap(map: Map): void {
         throw new Error("Method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

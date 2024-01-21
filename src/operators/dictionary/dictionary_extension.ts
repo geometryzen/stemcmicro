@@ -1,4 +1,4 @@
-import { Dictionary, is_dictionary } from "../../clojurescript/atoms/Dictionary";
+import { Map, is_map } from "../../clojurescript/atoms/Map";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { print_str } from "../../print/print";
@@ -6,8 +6,8 @@ import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
 import { cons, Cons, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
-function verify_map(x: Dictionary): Dictionary | never {
-    if (is_dictionary(x)) {
+function verify_map(x: Map): Map | never {
+    if (is_map(x)) {
         return x;
     }
     else {
@@ -15,9 +15,9 @@ function verify_map(x: Dictionary): Dictionary | never {
     }
 }
 
-class DictionaryExtension implements Extension<Dictionary> {
+class DictionaryExtension implements Extension<Map> {
     // Create an exemplar of the atom we control to discover it's name for hashing purposes.
-    readonly #atom: Dictionary = verify_map(new Dictionary([]));
+    readonly #atom: Map = verify_map(new Map([]));
     readonly #hash: string = hash_for_atom(verify_map(this.#atom));
     readonly dependencies: FEATURE[] = ['Map'];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,21 +36,21 @@ class DictionaryExtension implements Extension<Dictionary> {
     get name() {
         return 'DictionaryExtension';
     }
-    evaluate(dictionary: Dictionary, argList: Cons): [TFLAGS, U] {
+    evaluate(dictionary: Map, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(dictionary, argList));
     }
     transform(expr: U): [TFLAGS, U] {
         // We actually need to dig into the entries...
-        return [is_dictionary(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
+        return [is_map(expr) ? TFLAG_HALT : TFLAG_NONE, expr];
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    valueOf(dictionary: Dictionary, $: ExtensionEnv): U {
+    valueOf(dictionary: Map, $: ExtensionEnv): U {
         throw new Error("DictionaryExtension.valueOf() method not implemented.");
     }
-    isKind(x: U): x is Dictionary {
-        return is_dictionary(x);
+    isKind(x: U): x is Map {
+        return is_map(x);
     }
-    subst(expr: Dictionary, oldExpr: U, newExpr: U): U {
+    subst(expr: Map, oldExpr: U, newExpr: U): U {
         if (this.isKind(oldExpr)) {
             if (expr.equals(oldExpr)) {
                 return newExpr;
@@ -59,14 +59,14 @@ class DictionaryExtension implements Extension<Dictionary> {
         return expr;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toInfixString(dictionary: Dictionary, $: ExtensionEnv): string {
+    toInfixString(dictionary: Map, $: ExtensionEnv): string {
         throw new Error("DictionaryExtension.toInfixString() method not implemented.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toLatexString(dictionary: Dictionary, $: ExtensionEnv): string {
+    toLatexString(dictionary: Map, $: ExtensionEnv): string {
         return print_dictionary_latex(dictionary, $);
     }
-    toListString(dictionary: Dictionary, $: ExtensionEnv): string {
+    toListString(dictionary: Map, $: ExtensionEnv): string {
         // While the following implementation requires refactoring due to some technical weaknesses,
         // the basic idea is good. The function to print the dictionary should be owned by this extension.
         const printMode: PrintMode = defs.printMode;
@@ -90,7 +90,7 @@ export const map_extension = new ExtensionOperatorBuilder(function ($: Extension
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function print_dictionary(dictionary: Dictionary, $: ExtensionEnv): string {
+export function print_dictionary(dictionary: Map, $: ExtensionEnv): string {
     let str = '';
     str += print_str('{');
     try {
@@ -113,7 +113,7 @@ export function print_dictionary(dictionary: Dictionary, $: ExtensionEnv): strin
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function print_dictionary_latex(dictionary: Dictionary, $: ExtensionEnv): string {
+function print_dictionary_latex(dictionary: Map, $: ExtensionEnv): string {
     let str = '';
 
     str += '\\begin{lstlisting}[language=python]';

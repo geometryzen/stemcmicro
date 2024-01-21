@@ -2,6 +2,7 @@ import { is_blade } from 'math-expression-atoms';
 import { scan } from '../algebrite/scan';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
+import { is_keyword } from '../clojurescript/atoms/Keyword';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
 import { Native } from '../native/Native';
@@ -2155,6 +2156,15 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): stri
         }
         if (is_hyp(expr)) {
             return expr.printname;
+        }
+        if (is_keyword(expr)) {
+            if (defs.printMode === PRINTMODE_INFIX) {
+                return $.toInfixString(expr);
+            }
+            if (defs.printMode === PRINTMODE_LATEX) {
+                return $.toLatexString(expr);
+            }
+            return expr.key();
         }
         if (is_err(expr)) {
             return ENGLISH_UNDEFINED;

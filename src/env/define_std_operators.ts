@@ -224,6 +224,7 @@ import { make_predicate_sym_operator } from '../operators/isreal/is_real_sym';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat } from '../operators/iszero/iszero_rat';
 import { iszero_sym } from '../operators/iszero/iszero_sym';
+import { keyword_extension } from '../operators/keyword/KeywordExtension';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -1054,6 +1055,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(hyp_extension);
     $.defineOperator(err_extension);
     $.defineOperator(imu_extension);
+    $.defineOperator(keyword_extension);
     $.defineOperator(map_extension);
 
     $.defineOperator(unit_any);

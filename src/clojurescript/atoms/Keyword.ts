@@ -1,16 +1,20 @@
 import { Atom } from "math-expression-atoms";
 
 export class Keyword extends Atom {
-    constructor(readonly localName: string, readonly namespace: string) {
-        super("Keyword");
+    constructor(readonly localName: string, readonly namespace: string, pos?: number, end?: number) {
+        super("Keyword", pos, end);
     }
-    toString(): string {
+    key(): string {
         if (this.namespace.length > 0) {
             return `:${this.namespace}/${this.localName}`;
         }
         else {
             return `:${this.localName}`;
         }
+    }
+    toString(): string {
+        throw new Error();
+        // return `Keyword(${JSON.stringify(this.localName)},${JSON.stringify(this.namespace)})`;
     }
 }
 

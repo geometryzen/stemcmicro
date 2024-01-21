@@ -11,9 +11,9 @@ import { Str } from "../../tree/str/Str";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { cons, nil, U } from "../../tree/tree";
 import { CommentMarker } from "../atoms/CommentMarker";
-import { Dictionary } from "../atoms/Dictionary";
 import { EOS } from "../atoms/EOS";
 import { Keyword } from "../atoms/Keyword";
+import { Map } from "../atoms/Map";
 import { Char } from "./char";
 import { ClojureScriptParseOptions } from "./ClojureScriptParseOptions";
 import { Pair } from "./Pair";
@@ -61,6 +61,9 @@ class NumBuilder implements NumHandler {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+/**
+ * @deprecated
+ */
 export function clojurescript_parse(sourceText: string, options?: ClojureScriptParseOptions): { trees: U[], errors: Error[] } {
     const parser = new Parser(sourceText, options);
     const trees: U[] = [];
@@ -279,7 +282,7 @@ class Parser {
             }
             items[items.length] = this.#consumeObject();
         }
-        return new Dictionary(items);
+        return new Map(items);
     }
     #consumeObjectsInSexpComment(err_msg: string): void {
         while (this.#tokens[this.#tokenIdx] == '#;') {

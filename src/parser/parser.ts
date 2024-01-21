@@ -1,11 +1,20 @@
-import { EigenmathErrorHandler } from "../api";
+import { bigInt, BigInteger, Boo, Flt, is_str, Rat, Str, Sym } from "math-expression-atoms";
+import { nil, pos_end_items_to_cons } from "math-expression-tree";
 import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
-import { ClojureScriptParseOptions } from "../clojurescript/parser/ClojureScriptParseOptions";
-import { clojurescript_parse } from "../clojurescript/parser/clojurescript_parse";
+import { EigenmathErrorHandler } from "../api";
+import { Char } from "../clojurescript/atoms/Char";
+import { Keyword } from "../clojurescript/atoms/Keyword";
+import { Map } from "../clojurescript/atoms/Map";
+import { Set } from "../clojurescript/atoms/Set";
+import { Tag } from "../clojurescript/atoms/Tag";
+import { Timestamp } from "../clojurescript/atoms/Timestamp";
+import { Uuid } from "../clojurescript/atoms/Uuid";
+import { EDNListParser, ParseConfig } from "../edn";
 import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath";
-import { U } from "../tree/tree";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
+import { create_tensor } from "../tensor/create_tensor";
+import { U } from "../tree/tree";
 
 export enum SyntaxKind {
     /**
@@ -76,6 +85,89 @@ export function parse_expr(sourceText: string, options?: ParseOptions): U {
     }
 }
 
+interface ClojureScriptParseOptions {
+    lexicon?: { [key: string]: Sym };
+}
+
+/**
+ * ClojureScript parsing based upon the extensible data notation parser.
+ * 
+ * @see https://github.com/edn-format/edn?tab=readme-ov-file
+ * 
+ * @param sourceText 
+ * @param options 
+ * @returns 
+ */
+export function clojurescript_parse(sourceText: string, options: ClojureScriptParseOptions = {}): { trees: U[], errors: Error[] } {
+    // options.useCaretForExponentiation;
+    // options.useParenForTensors;
+    const parseConfig: ParseConfig<U> = {
+        bigIntAs: (value: string, pos: number, end: number) => {
+            return new Rat(new BigInteger(BigInt(value)), bigInt.one, pos, end);
+        },
+        booAs: (value: boolean, pos: number, end: number) => new Boo(value, pos, end),
+        charAs: (ch: string, pos: number, end: number) => new Char(ch, pos, end),
+        fltAs: (value: number, pos: number, end: number) => new Flt(value, pos, end),
+        intAs: (value: number, pos: number, end: number) => {
+            return new Rat(new BigInteger(BigInt(value)), bigInt.one, pos, end);
+        },
+        keywordAs: (localName: string, namespace: string, pos: number, end: number) => new Keyword(localName, namespace, pos, end),
+        listAs: (items: U[], pos: number, end: number) => pos_end_items_to_cons(pos, end, ...items),
+        mapAs: (entries: [key: U, value: U][], pos: number, end: number) => {
+            const elements: U[] = [];
+            for (const entry of entries) {
+                const key = entry[0];
+                const value = entry[1];
+                elements.push(key);
+                elements.push(value);
+            }
+
+            return new Map(elements, pos, end);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        nilAs: (pos: number, end: number) => {
+            return nil;
+        },
+        setAs: (members: U[], pos: number, end: number) => {
+            return new Set(members, pos, end);
+        },
+        strAs: (value: string, pos: number, end: number) => new Str(value, pos, end),
+        symAs: (value: string, pos: number, end: number) => {
+            if (options.lexicon) {
+                const meaning = options.lexicon[value];
+                if (meaning) {
+                    return meaning;
+                }
+            }
+            return new Sym(value, '', pos, end);
+        },
+        tagAs: (tag: string, value: U, pos: number, end: number) => new Tag(tag, value, pos, end),
+        vectorAs: (values: U[], pos: number, end: number) => create_tensor(values, pos, end),
+        tagHandlers: {
+            'inst': (value: U) => {
+                if (is_str(value)) {
+                    return new Timestamp(new Date(value.str), value.pos, value.end);
+                }
+                else {
+                    throw new Error("");
+                }
+            },
+            'uuid': (value: U) => {
+                if (is_str(value)) {
+                    return new Uuid(value.str, value.pos, value.end);
+                }
+                else {
+                    throw new Error("");
+                }
+            }
+        }
+    };
+    const parser: EDNListParser<U> = new EDNListParser(parseConfig);
+    const trees = parser.next(sourceText);
+    const errors: Error[] = [];
+    return { trees, errors };
+}
+
 export function delegate_parse_script(sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
     const syntaxKind = script_kind_from_options(options);
     switch (syntaxKind) {
@@ -118,8 +210,8 @@ function algebrite_parse_options(options?: ParseOptions): AlgebriteParseOptions 
 function clojurescript_parse_options(options?: ParseOptions): ClojureScriptParseOptions {
     if (options) {
         return {
-            explicitAssocAdd: options.explicitAssocAdd,
-            explicitAssocMul: options.explicitAssocMul,
+            // explicitAssocAdd: options.explicitAssocAdd,
+            // explicitAssocMul: options.explicitAssocMul,
             // useCaretForExponentiation: options.useCaretForExponentiation,
             // useParenForTensors: options.useParenForTensors,
             lexicon: {}

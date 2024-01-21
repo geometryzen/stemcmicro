@@ -1,0 +1,314 @@
+import { assert } from "chai";
+import { bigInt, BigInteger, Boo, create_rat, Flt, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, Rat, Str, Sym } from 'math-expression-atoms';
+import { is_cons, is_nil, nil, pos_end_items_to_cons, U } from "math-expression-tree";
+import { Char, is_char } from "../src/clojurescript/atoms/Char";
+import { is_keyword, Keyword } from "../src/clojurescript/atoms/Keyword";
+import { is_map, Map } from "../src/clojurescript/atoms/Map";
+import { is_set, Set } from "../src/clojurescript/atoms/Set";
+import { is_tag, Tag } from "../src/clojurescript/atoms/Tag";
+import { is_timestamp, Timestamp } from "../src/clojurescript/atoms/Timestamp";
+import { is_uuid, Uuid } from "../src/clojurescript/atoms/Uuid";
+import { EDNListParser, ParseConfig } from '../src/edn';
+import { create_tensor } from "../src/tensor/create_tensor";
+
+describe("edn", function () {
+    it("coverage", function () {
+        const parseConfig: ParseConfig<U> = {
+            bigIntAs: (value: string, pos: number, end: number) => {
+                return new Rat(new BigInteger(BigInt(value)), bigInt.one, pos, end);
+            },
+            booAs: (value: boolean, pos: number, end: number) => new Boo(value, pos, end),
+            charAs: (ch: string, pos: number, end: number) => new Char(ch, pos, end),
+            fltAs: (value: number, pos: number, end: number) => new Flt(value, pos, end),
+            intAs: (value: number, pos: number, end: number) => {
+                return new Rat(new BigInteger(BigInt(value)), bigInt.one, pos, end);
+            },
+            keywordAs: (localName: string, namespace: string, pos: number, end: number) => new Keyword(localName, namespace, pos, end),
+            listAs: (items: U[], pos: number, end: number) => pos_end_items_to_cons(pos, end, ...items),
+            mapAs: (entries: [key: U, value: U][], pos: number, end: number) => {
+                const elements: U[] = [];
+                for (const entry of entries) {
+                    const key = entry[0];
+                    const value = entry[1];
+                    elements.push(key);
+                    elements.push(value);
+                }
+
+                return new Map(elements, pos, end);
+            },
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            nilAs: (pos: number, end: number) => {
+                return nil;
+            },
+            setAs: (members: U[], pos: number, end: number) => {
+                return new Set(members, pos, end);
+            },
+            strAs: (value: string, pos: number, end: number) => new Str(value, pos, end),
+            symAs: (value: string, pos: number, end: number) => new Sym(value, '', pos, end),
+            tagAs: (tag: string, value: U, pos: number, end: number) => new Tag(tag, value, pos, end),
+            vectorAs: (values: U[], pos: number, end: number) => create_tensor(values, pos, end),
+            tagHandlers: {
+                'inst': (value: U) => {
+                    if (is_str(value)) {
+                        return new Timestamp(new Date(value.str), value.pos, value.end);
+                    }
+                    else {
+                        throw new Error("");
+                    }
+                },
+                'uuid': (value: U) => {
+                    if (is_str(value)) {
+                        return new Uuid(value.str, value.pos, value.end);
+                    }
+                    else {
+                        throw new Error("");
+                    }
+                }
+            }
+        };
+        const parser: EDNListParser<U> = new EDNListParser(parseConfig);
+        // The string to be parsed must be inside parenthesis.
+        // TODO: Move this inside the next function and keep track of the offset.
+        const lines: string[] = [
+            `123`,
+            `"Hello, World!"`,
+            `2.718`,
+            `true`,
+            `false`,
+            `(sin x)`,
+            `foo ; a friend of bar`,
+            `{:a 1 :b 2}`,
+            `[x y z]`,
+            `nil`,
+            `:ns/bar`,
+            `:foo`,
+            `456N`,
+            `#{a b}`,
+            `\\c`,
+            `\\newline`,
+            `\\return`,
+            `\\space`,
+            `\\tab`,
+            `#myapp/Person {:first "Fred" :last "Mertz"}`,
+            `#_baz`,
+            `\\\\`,
+            `#inst "1985-04-12T23:20:50.52Z"`,
+            `()`,
+            `#uuid "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"`
+        ];
+        const items: U[] = parser.next(lines.join('\n'));
+        assert.isTrue(parser.isDone());
+
+        assert.isArray(items);
+
+        assert.strictEqual(items.length, 24);
+
+        // Rat(123)
+        const I0 = items[0];
+        assert.isTrue(is_rat(I0));
+        if (is_rat(I0)) {
+            assert.isTrue(I0.equalsRat(create_rat(123, 1)));
+        }
+
+        // Str("Hello, World!")
+        const I1 = items[1];
+        assert.isTrue(is_str(I1));
+        if (is_str(I1)) {
+            assert.strictEqual(I1.str, "Hello, World!");
+        }
+
+        // Flt(2.718)
+        const I2 = items[2];
+        assert.isTrue(is_flt(I2));
+        if (is_flt(I2)) {
+            assert.strictEqual(I2.toNumber(), 2.718);
+        }
+
+        // Boo(true)
+        const I3 = items[3];
+        assert.isTrue(is_boo(I3));
+        if (is_boo(I3)) {
+            assert.isTrue(I3.isTrue());
+            assert.isFalse(I3.isFalse());
+        }
+
+        // Boo(false)
+        const I4 = items[4];
+        assert.isTrue(is_boo(I4));
+        if (is_boo(I4)) {
+            assert.isFalse(I4.isTrue());
+            assert.isTrue(I4.isFalse());
+        }
+
+        // (sin x)
+        const I5 = items[5];
+        assert.isTrue(is_cons(I5));
+        if (is_cons(I5)) {
+            const opr = I5.opr;
+            const arg = I5.arg;
+            assert.isTrue(is_sym(opr));
+            assert.isTrue(is_sym(arg));
+        }
+
+        // Sym("foo")
+        const I6 = items[6];
+        assert.strictEqual(is_sym(I6), true);
+        if (is_sym(I6)) {
+            assert.strictEqual(I6.localName, 'foo');
+            assert.strictEqual(I6.namespace, '');
+        }
+
+        // {:a A :b B}
+        const I7 = items[7];
+        assert.strictEqual(is_map(I7), true);
+        if (is_map(I7)) {
+            // TODO: Change Dictionary.elements
+            const elements = I7.elements;
+            assert.strictEqual(elements.length, 4);
+        }
+
+        // Tensor, [x y z]
+        const I8 = items[8];
+        assert.strictEqual(is_tensor(I8), true);
+        if (is_tensor(I8)) {
+            const elems = I8.elems;
+            assert.strictEqual(elems.length, 3);
+            const x = elems[0];
+            assert.isTrue(is_sym(x));
+            if (is_sym(x)) {
+                assert.strictEqual(x.localName, 'x');
+                assert.strictEqual(x.namespace, '');
+            }
+            const y = elems[1];
+            assert.isTrue(is_sym(y));
+            if (is_sym(y)) {
+                assert.strictEqual(y.localName, 'y');
+                assert.strictEqual(y.namespace, '');
+            }
+            const z = elems[2];
+            assert.isTrue(is_sym(z));
+            if (is_sym(z)) {
+                assert.strictEqual(z.localName, 'z');
+                assert.strictEqual(z.namespace, '');
+            }
+        }
+
+        // nil
+        const I9 = items[9];
+        assert.isTrue(is_nil(I9));
+
+        // :ns/bar
+        const I10 = items[10];
+        assert.isTrue(is_keyword(I10));
+        if (is_keyword(I10)) {
+            assert.strictEqual(I10.localName, 'bar');
+            assert.strictEqual(I10.namespace, 'ns');
+        }
+
+        // :foo
+        const I11 = items[11];
+        assert.isTrue(is_keyword(I11));
+        if (is_keyword(I11)) {
+            assert.strictEqual(I11.localName, 'foo');
+            assert.strictEqual(I11.namespace, '');
+        }
+
+        // Rat(456N)
+        const I12 = items[12];
+        assert.isTrue(is_rat(I12));
+        if (is_rat(I12)) {
+            assert.isTrue(I12.equalsRat(create_rat(456, 1)));
+        }
+
+        // #{a b}
+        const I13 = items[13];
+        assert.strictEqual(is_set(I13), true);
+        if (is_set(I13)) {
+            const members = I13.members;
+            assert.strictEqual(members.length, 2);
+        }
+
+        // /c
+        const I14 = items[14];
+        assert.strictEqual(is_char(I14), true);
+        if (is_char(I14)) {
+            const ch = I14.ch;
+            assert.strictEqual(ch, "c");
+        }
+
+        // /newline
+        const I15 = items[15];
+        assert.strictEqual(is_char(I15), true);
+        if (is_char(I15)) {
+            const ch = I15.ch;
+            assert.strictEqual(ch, "\n");
+        }
+
+        // /return
+        const I16 = items[16];
+        assert.strictEqual(is_char(I16), true);
+        if (is_char(I16)) {
+            const ch = I16.ch;
+            assert.strictEqual(ch, "\r");
+        }
+
+        // /space
+        const I17 = items[17];
+        assert.strictEqual(is_char(I17), true);
+        if (is_char(I17)) {
+            const ch = I17.ch;
+            assert.strictEqual(ch, " ");
+        }
+
+        // /tab
+        const I18 = items[18];
+        assert.strictEqual(is_char(I18), true);
+        if (is_char(I18)) {
+            const ch = I18.ch;
+            assert.strictEqual(ch, "\t");
+        }
+
+        // #myapp/Person {:first "Fred" :last "Mertz"}
+        const I19 = items[19];
+        assert.strictEqual(is_tag(I19), true);
+        if (is_tag(I19)) {
+            const tag = I19.tag;
+            assert.strictEqual(tag, "myapp/Person");
+            const value = I19.value;
+            assert.strictEqual(is_map(value), true);
+        }
+
+        // //
+        const I20 = items[20];
+        assert.strictEqual(is_char(I20), true);
+        if (is_char(I20)) {
+            const ch = I20.ch;
+            assert.strictEqual(JSON.stringify(ch), `${JSON.stringify('\\')}`);
+        }
+
+        // #inst "1985-04-12T23:20:50.52Z" (RFC-3339)
+        const I21 = items[21];
+        assert.strictEqual(is_timestamp(I21), true);
+        if (is_timestamp(I21)) {
+            assert.strictEqual(I21.year, 1985);
+            assert.strictEqual(I21.month, 4);
+            assert.strictEqual(I21.day, 12);
+            assert.strictEqual(I21.hour, 23);
+            assert.strictEqual(I21.minute, 20);
+            assert.strictEqual(I21.second, 50);
+            assert.strictEqual(I21.millis, 520);
+        }
+
+        // ()
+        const I22 = items[22];
+        assert.strictEqual(is_nil(I22), true);
+
+        // #uuid "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+        const I23 = items[23];
+        assert.strictEqual(is_uuid(I23), true);
+        if (is_uuid(I23)) {
+            assert.strictEqual(I23.str, "f81d4fae-7dec-11d0-a765-00a0c91e6bf6");
+        }
+    });
+});
+

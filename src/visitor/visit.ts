@@ -1,6 +1,7 @@
 import { is_boo, is_flt, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_atom, is_cons, is_nil, U } from "math-expression-tree";
-import { is_dictionary } from "../clojurescript/atoms/Dictionary";
+import { is_keyword } from "../clojurescript/atoms/Keyword";
+import { is_map } from "../clojurescript/atoms/Map";
 import { Visitor } from "./Visitor";
 
 export function visit(expr: U, visitor: Visitor): void {
@@ -41,7 +42,7 @@ export function visit(expr: U, visitor: Visitor): void {
             visitor.endTensor(expr);
         }
     }
-    else if (is_dictionary(expr)) {
+    else if (is_map(expr)) {
         visitor.beginMap(expr);
         try {
             for (const elem of expr.elements) {
@@ -51,6 +52,9 @@ export function visit(expr: U, visitor: Visitor): void {
         finally {
             visitor.endMap(expr);
         }
+    }
+    else if (is_keyword(expr)) {
+        visitor.keyword(expr);
     }
     else if (is_atom(expr)) {
         throw new Error(`${expr}`);

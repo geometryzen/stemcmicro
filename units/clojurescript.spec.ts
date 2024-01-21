@@ -3,7 +3,8 @@ import { assert } from "chai";
 import { is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { is_dictionary } from "../src/clojurescript/atoms/Dictionary";
+import { is_keyword } from "../src/clojurescript/atoms/Keyword";
+import { is_map } from "../src/clojurescript/atoms/Map";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("ClojureScript", function () {
@@ -174,16 +175,12 @@ describe("ClojureScript", function () {
             }
         }
         assert.strictEqual(values.length, 3);
-        // Because we represent keywords as symbols, we lose the leading ':'.
-        // Not clear whether we will continue with this approach.
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `a-keyword`);
-        assert.strictEqual(is_sym(values[0]), true);
-        assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), `:cljs.user/namespaced-keyword`);
-        assert.strictEqual(is_sym(values[1]), true);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `:a-keyword`);
+        assert.strictEqual(is_keyword(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), `::namespaced-keyword`);
+        assert.strictEqual(is_keyword(values[1]), true);
         assert.strictEqual(engine.renderAsString(values[2], { format: 'Infix' }), `:explicit-ns/keyword`);
-        assert.strictEqual(is_sym(values[2]), true);
-        // assert.strictEqual(engine.renderAsString(values[3], { format: 'SExpr' }), `:explicit-ns/keyword`);
-        // assert.strictEqual(is_keyword(values[3]), true);
+        assert.strictEqual(is_keyword(values[2]), true);
         engine.release();
     });
     it("Lists", function () {
@@ -242,8 +239,8 @@ describe("ClojureScript", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `{x a y b}`);
-        assert.strictEqual(is_dictionary(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `{:x a :y b}`);
+        assert.strictEqual(is_map(values[0]), true);
         engine.release();
     });
     it("Evaluation", function () {
@@ -295,7 +292,7 @@ describe("ClojureScript", function () {
         }
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `{x a y b}`);
-        assert.strictEqual(is_dictionary(values[0]), true);
+        assert.strictEqual(is_map(values[0]), true);
         engine.release();
     });
     it("Maps", function () {
@@ -314,8 +311,8 @@ describe("ClojureScript", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `{x a y b}`);
-        assert.strictEqual(is_dictionary(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `{:x a :y b}`);
+        assert.strictEqual(is_map(values[0]), true);
         engine.release();
     });
     it("Tensors in Eigenmath", function () {

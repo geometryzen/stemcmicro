@@ -3,13 +3,13 @@ import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
-import { Dictionary } from '../clojurescript/atoms/Dictionary';
-import { clojurescript_parse } from '../clojurescript/parser/clojurescript_parse';
+import { Keyword } from '../clojurescript/atoms/Keyword';
+import { Map } from '../clojurescript/atoms/Map';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { SyntaxKind } from '../parser/parser';
+import { clojurescript_parse, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -157,13 +157,16 @@ class ExtensionEnvVisitor implements Visitor {
     endTensor(tensor: Tensor<U>): void {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    beginMap(map: Dictionary): void {
+    beginMap(map: Map): void {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    endMap(map: Dictionary): void {
+    endMap(map: Map): void {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     boo(boo: Boo): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    keyword(keyword: Keyword): void {
     }
     sym(sym: Sym): void {
         if (!this.#env.isConsSymbol(sym)) {

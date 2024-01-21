@@ -1,5 +1,5 @@
 import { is_rat, is_str, is_sym } from "math-expression-atoms";
-import { Dictionary } from "../clojurescript/atoms/Dictionary";
+import { Map } from "../clojurescript/atoms/Map";
 import { is_keyword } from "../clojurescript/atoms/Keyword";
 import { Sym } from "../tree/sym/Sym";
 import { is_atom, is_cons, is_nil, U } from "../tree/tree";
@@ -33,7 +33,7 @@ export function hash_for_atom(atom: U): string | never {
 }
 export const HASH_BLADE = 'Blade';
 export const HASH_BOO = 'Boo';
-export const HASH_DICTIONARY = new Dictionary([]).name;
+export const HASH_DICTIONARY = new Map([]).name;
 export const HASH_ERR = 'Err';
 export const HASH_FLT = 'Flt';
 export const HASH_HYP = 'Hyp';

@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { bigInt, BigInteger, Boo, create_rat, Flt, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, Rat, Str, Sym } from 'math-expression-atoms';
-import { is_cons, is_nil, nil, pos_end_items_to_cons, U } from "math-expression-tree";
+import { is_cons, is_nil, pos_end_items_to_cons, U } from "math-expression-tree";
 import { Char, is_char } from "../src/clojurescript/atoms/Char";
 import { is_keyword, Keyword } from "../src/clojurescript/atoms/Keyword";
 import { is_map, Map } from "../src/clojurescript/atoms/Map";
@@ -36,9 +36,9 @@ describe("edn", function () {
 
                 return new Map(elements, pos, end);
             },
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             nilAs: (pos: number, end: number) => {
-                return nil;
+                return pos_end_items_to_cons(pos, end, ...[]);
+                // return new Cons(void 0, void 0, pos, end);
             },
             setAs: (members: U[], pos: number, end: number) => {
                 return new Set(members, pos, end);
@@ -108,6 +108,8 @@ describe("edn", function () {
         assert.isTrue(is_rat(I0));
         if (is_rat(I0)) {
             assert.isTrue(I0.equalsRat(create_rat(123, 1)));
+            assert.strictEqual(I0.pos, 0);
+            assert.strictEqual(I0.end, 3);
         }
 
         // Str("Hello, World!")
@@ -115,6 +117,8 @@ describe("edn", function () {
         assert.isTrue(is_str(I1));
         if (is_str(I1)) {
             assert.strictEqual(I1.str, "Hello, World!");
+            assert.strictEqual(I1.pos, 4);
+            assert.strictEqual(I1.end, 19);
         }
 
         // Flt(2.718)
@@ -122,6 +126,8 @@ describe("edn", function () {
         assert.isTrue(is_flt(I2));
         if (is_flt(I2)) {
             assert.strictEqual(I2.toNumber(), 2.718);
+            assert.strictEqual(I2.pos, 20);
+            assert.strictEqual(I2.end, 25);
         }
 
         // Boo(true)
@@ -130,6 +136,8 @@ describe("edn", function () {
         if (is_boo(I3)) {
             assert.isTrue(I3.isTrue());
             assert.isFalse(I3.isFalse());
+            assert.strictEqual(I3.pos, 26);
+            assert.strictEqual(I3.end, 30);
         }
 
         // Boo(false)
@@ -138,6 +146,8 @@ describe("edn", function () {
         if (is_boo(I4)) {
             assert.isFalse(I4.isTrue());
             assert.isTrue(I4.isFalse());
+            assert.strictEqual(I4.pos, 31);
+            assert.strictEqual(I4.end, 36);
         }
 
         // (sin x)
@@ -148,6 +158,8 @@ describe("edn", function () {
             const arg = I5.arg;
             assert.isTrue(is_sym(opr));
             assert.isTrue(is_sym(arg));
+            assert.strictEqual(I5.pos, 37);
+            assert.strictEqual(I5.end, 44);
         }
 
         // Sym("foo")
@@ -156,15 +168,20 @@ describe("edn", function () {
         if (is_sym(I6)) {
             assert.strictEqual(I6.localName, 'foo');
             assert.strictEqual(I6.namespace, '');
+            assert.strictEqual(I6.pos, 45);
+            assert.strictEqual(I6.end, 48);
         }
 
-        // {:a A :b B}
+        // Map, {:a 1 :b 2}
         const I7 = items[7];
         assert.strictEqual(is_map(I7), true);
         if (is_map(I7)) {
-            // TODO: Change Dictionary.elements
+            // TODO: Change Map.elements
             const elements = I7.elements;
             assert.strictEqual(elements.length, 4);
+            // Note extra for comment.
+            assert.strictEqual(I7.pos, 67);
+            assert.strictEqual(I7.end, 78);
         }
 
         // Tensor, [x y z]
@@ -173,29 +190,39 @@ describe("edn", function () {
         if (is_tensor(I8)) {
             const elems = I8.elems;
             assert.strictEqual(elems.length, 3);
+            assert.strictEqual(I8.pos, 79);
+            assert.strictEqual(I8.end, 86);
             const x = elems[0];
             assert.isTrue(is_sym(x));
             if (is_sym(x)) {
                 assert.strictEqual(x.localName, 'x');
                 assert.strictEqual(x.namespace, '');
+                assert.strictEqual(x.pos, 80);
+                assert.strictEqual(x.end, 81);
             }
             const y = elems[1];
             assert.isTrue(is_sym(y));
             if (is_sym(y)) {
                 assert.strictEqual(y.localName, 'y');
                 assert.strictEqual(y.namespace, '');
+                assert.strictEqual(y.pos, 82);
+                assert.strictEqual(y.end, 83);
             }
             const z = elems[2];
             assert.isTrue(is_sym(z));
             if (is_sym(z)) {
                 assert.strictEqual(z.localName, 'z');
                 assert.strictEqual(z.namespace, '');
+                assert.strictEqual(z.pos, 84);
+                assert.strictEqual(z.end, 85);
             }
         }
 
         // nil
         const I9 = items[9];
         assert.isTrue(is_nil(I9));
+        assert.strictEqual(I9.pos, 87);
+        assert.strictEqual(I9.end, 90);
 
         // :ns/bar
         const I10 = items[10];

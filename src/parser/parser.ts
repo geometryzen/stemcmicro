@@ -1,5 +1,5 @@
 import { bigInt, BigInteger, Boo, Flt, is_str, Rat, Str, Sym } from "math-expression-atoms";
-import { nil, pos_end_items_to_cons } from "math-expression-tree";
+import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
 import { EigenmathErrorHandler } from "../api";
 import { Char } from "../clojurescript/atoms/Char";
@@ -14,7 +14,6 @@ import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eig
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 import { create_tensor } from "../tensor/create_tensor";
-import { U } from "../tree/tree";
 
 export enum SyntaxKind {
     /**
@@ -124,9 +123,9 @@ export function clojurescript_parse(sourceText: string, options: ClojureScriptPa
 
             return new Map(elements, pos, end);
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         nilAs: (pos: number, end: number) => {
-            return nil;
+            return pos_end_items_to_cons(pos, end, ...[]);
+            // return new Cons(void 0, void 0, pos, end);
         },
         setAs: (members: U[], pos: number, end: number) => {
             return new Set(members, pos, end);

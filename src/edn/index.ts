@@ -55,6 +55,16 @@ enum StackMode {
     set = 7,
     tag = 8,
 }
+/*
+function decodeMode(mode: StackMode): string {
+    switch (mode) {
+        case StackMode.idle: return "idle";
+        default: return `unknown mode is ${mode}`;
+    }
+}
+*/
+
+
 const stringEscapeMap: { [char: string]: string } = {
     t: '\t',
     r: '\r',
@@ -151,11 +161,12 @@ function is_map_state<T>(state: State<T>): state is MapState<T> {
 }
 
 export class EDNListParser<T> {
-    #stack: Stack<[stackMode: StackMode, prevState: State<T>]> = new Stack();
+    #stack: Stack<[stackMode: StackMode, prevState: State<T>, pos: number]> = new Stack();
     #mode = StackMode.idle;
     #state: string = '';
     #result: T | undefined = void 0;
     #started = false;
+    #pos = 0;
     #done = false;
 
     #bigIntAs: ParseConfig<T>['bigIntAs'];
@@ -195,7 +206,7 @@ export class EDNListParser<T> {
         if (this.#stack.length === 0 || this.#result === void 0) {
             return;
         }
-        const [stackMode, prevState] = this.#stack.top;
+        const [stackMode, prevState, pos] = this.#stack.top;
         if (stackMode === StackMode.vector) {
             assert_vector_state(prevState).push(this.#result);
         }
@@ -218,6 +229,7 @@ export class EDNListParser<T> {
             }
         }
         else if (stackMode === StackMode.tag) {
+            // Why don't have to keep the return value because we already peeked at the top. 
             this.#stack.pop();
             if (prevState === '_') {
                 this.#result = void 0;
@@ -231,7 +243,7 @@ export class EDNListParser<T> {
                 else {
                     const tag = ps;
                     const value = this.#result;
-                    this.#result = this.#tagAs(tag, value, 0, 0);
+                    this.#result = this.#tagAs(tag, value, pos, 0);//this.#absolutize(i));
                 }
             }
             this.#updateStack();
@@ -240,37 +252,44 @@ export class EDNListParser<T> {
         // TODO: Else error
         this.#result = void 0;
     }
-    #match(): void {
+    /**
+     * 
+     * @param i The index over the '(' sourceText ')'.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    #match(i: number, reason: '"' | 'spaceChar' | '[' | ']' | '(' | ')' | '{' | '}' | '#{'): void {
+        // console.log("match", JSON.stringify(this.#state), reason);
+        const end = this.#absolutize(i);
         if (this.#state === 'nil') {
-            this.#result = this.#nilAs(0, 0);
+            this.#result = this.#nilAs(this.#pos, end);
         }
         else if (this.#state === 'true') {
-            this.#result = this.#booAs(true, 23, 23 + 4);
+            this.#result = this.#booAs(true, this.#pos, end);
         }
         else if (this.#state === 'false') {
-            this.#result = this.#booAs(false, 0, 0);
+            this.#result = this.#booAs(false, this.#pos, end);
         }
         else if (this.#state[0] === ':') {
             const qualifiedName = this.#state.substring(1);
             const slashIdx = qualifiedName.indexOf('/');
             const localName = slashIdx >= 0 ? qualifiedName.substring(slashIdx + 1) : qualifiedName;
             const namespace = slashIdx >= 0 ? qualifiedName.substring(0, slashIdx) : '';
-            this.#result = this.#keywordAs(localName, namespace, 0, 0);
+            this.#result = this.#keywordAs(localName, namespace, this.#pos, end);
         }
         else if (this.#state[0] === '#') {
             // Tag
-            this.#stack.push([StackMode.tag, this.#state.substring(1)]);
+            this.#stack.push([StackMode.tag, this.#state.substring(1), this.#absolutize(i)]);
             this.#result = void 0;
         }
         else if (intRegex.test(this.#state)) {
-            this.#result = this.#intAs(parseInt(this.#state, 10), 0, 0);
+            this.#result = this.#intAs(parseInt(this.#state, 10), this.#pos, end);
         }
         else if (floatRegex.test(this.#state)) {
-            this.#result = this.#fltAs(parseFloat(this.#state), 0, 0);
+            this.#result = this.#fltAs(parseFloat(this.#state), this.#pos, end);
         }
         else if (bigintRegex.test(this.#state)) {
             const text = this.#state.substring(0, this.#state.length - 1);
-            this.#result = this.#bigIntAs(text, 0, 0);
+            this.#result = this.#bigIntAs(text, this.#pos, end);
         }
         else if (this.#state[0] === '\\') {
             let c: string;
@@ -293,12 +312,18 @@ export class EDNListParser<T> {
                 c = this.#state.substring(1);
             }
 
-            this.#result = this.#charAs(c, 0, 0);
+            this.#result = this.#charAs(c, this.#pos, end);
         }
         else if (this.#state !== '') {
-            this.#result = this.#symAs(this.#state, 0, 0);
+            this.#result = this.#symAs(this.#state, this.#pos, end);
         }
         this.#state = '';
+        // this.#stack.top[2] = end + 1;
+        this.#pos = end + 1; // length of the reason character?
+    }
+    #absolutize(i: number): number {
+        // -1 becuase we prefix with '('.
+        return i - 1;
     }
     next(sourceText: string): T[] {
 
@@ -311,13 +336,19 @@ export class EDNListParser<T> {
                 this.#result = void 0;
             }
 
+            /**
+             * str[i]
+             */
             const char = str[i];
+
+            // console.log(i, JSON.stringify(char), "mode:", JSON.stringify(decodeMode(this.#mode)));
 
             if (this.#mode === StackMode.idle) {
                 if (char === '"') {
-                    this.#match();
+                    this.#match(i, '"');
                     this.#updateStack();
                     this.#mode = StackMode.string;
+                    // TODO: Redundant?
                     this.#state = '';
                     continue;
                 }
@@ -326,40 +357,42 @@ export class EDNListParser<T> {
                     continue;
                 }
                 if (spaceChars.includes(char)) {
-                    this.#match();
+                    this.#match(i, 'spaceChar');
                     this.#updateStack();
                     continue;
                 }
                 if (char === '}') {
-                    this.#match();
+                    this.#match(i, '}');
                     this.#updateStack();
                     if (this.#stack.length !== 0) {
-                        const [stackMode, prevState] = this.#stack.pop();
+                        const [stackMode, prevState, pos] = this.#stack.pop();
+                        const end = this.#absolutize(i) + 1;
                         if (stackMode === StackMode.map) {
                             const entries = assert_map_state(prevState).entries;
-                            this.#result = this.#mapAs(entries, 0, 0);
+                            this.#result = this.#mapAs(entries, pos, end);
                         }
                         else {
                             assert_stack_mode(stackMode, StackMode.set);
                             const members: T[] = assert_set_state(prevState);
-                            this.#result = this.#setAs(members, 0, 0);
+                            this.#result = this.#setAs(members, pos, end);
                         }
                     }
                     this.#updateStack();
                     continue;
                 }
                 if (char === ']') {
-                    this.#match();
+                    this.#match(i, ']');
                     this.#updateStack();
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const [stackMode, prevState] = this.#stack.pop();
+                    const [stackMode, prevState, pos] = this.#stack.pop();
                     const elements = assert_vector_state(prevState);
-                    this.#result = this.#vectorAs(elements, 0, 0);
+                    const end = this.#absolutize(i) + 1;
+                    this.#result = this.#vectorAs(elements, pos, end);
                     this.#updateStack();
                     continue;
                 }
                 if (char === ')') {
-                    this.#match();
+                    this.#match(i, ')');
                     this.#updateStack();
                     if (this.#stack.length === 0) {
                         if (this.#result !== void 0) {
@@ -369,47 +402,51 @@ export class EDNListParser<T> {
                         return values;
                     }
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const [stackMode, prevState] = this.#stack.pop();
+                    const [stackMode, prevState, pos] = this.#stack.pop();
+                    const end = this.#absolutize(i) + 1;
                     const items = assert_list_state(prevState);
-                    this.#result = this.#listAs(items, 0, 0);
+                    this.#result = this.#listAs(items, pos, end);
                     this.#updateStack();
                     continue;
                 }
                 if (char === '[') {
-                    this.#match();
+                    this.#match(i, '[');
                     this.#updateStack();
-                    this.#stack.push([StackMode.vector, []]);
+                    this.#stack.push([StackMode.vector, [], this.#absolutize(i)]);
                     continue;
                 }
                 else if (char === '(') {
-                    if (!this.#started) {
-                        this.#started = true;
-                        continue;
+                    if (this.#started) {
+                        this.#match(i, '(');
+                        this.#updateStack();
+                        this.#stack.push([StackMode.list, [], this.#absolutize(i)]);
                     }
-                    this.#match();
-                    this.#updateStack();
-                    this.#stack.push([StackMode.list, []]);
+                    else {
+                        // Ignoring the opening '(' in the idle state.
+                        this.#started = true;
+                    }
                     continue;
                 }
-                const statePlusChar = this.#state + char;
+                const statePlusChar = `${this.#state}${char}`;
                 if (statePlusChar === '#_') {
-                    this.#stack.push([StackMode.tag, char]);
+                    this.#stack.push([StackMode.tag, char, this.#absolutize(i)]);
                     this.#result = void 0;
                     this.#state = '';
                     continue;
                 }
                 if (statePlusChar.endsWith('#{')) {
                     this.#state = this.#state.slice(0, -1);
-                    this.#match();
+                    this.#match(i, '#{');
                     this.#updateStack();
-                    this.#stack.push([StackMode.set, []]);
+                    this.#stack.push([StackMode.set, [], this.#absolutize(i)]);
                     this.#state = '';
                     continue;
                 }
                 if (char === '{') {
-                    this.#match();
+                    this.#match(i, '{');
                     this.#updateStack();
-                    this.#stack.push([StackMode.map, { entries: [], buffer: new Stack() }]);
+                    const pos = this.#absolutize(i);
+                    this.#stack.push([StackMode.map, { entries: [], buffer: new Stack() }, pos]);
                     this.#state = '';
                     continue;
                 }
@@ -418,14 +455,15 @@ export class EDNListParser<T> {
             }
             else if (this.#mode === StackMode.string) {
                 if (char === '\\') {
-                    this.#stack.push([this.#mode, this.#state]);
+                    this.#stack.push([this.#mode, this.#state, this.#absolutize(i)]);
                     this.#mode = StackMode.escape;
                     this.#state = '';
                     continue;
                 }
                 if (char === '"') {
                     this.#mode = StackMode.idle;
-                    this.#result = this.#strAs(this.#state, 0, 0);
+                    // Adjusting pos and end to include delimiters. 
+                    this.#result = this.#strAs(this.#state, this.#pos - 1, this.#absolutize(i) + 1);
                     this.#updateStack();
                     this.#state = '';
                     continue;
@@ -434,7 +472,8 @@ export class EDNListParser<T> {
             }
             else if (this.#mode === StackMode.escape) {
                 const escapedChar = stringEscapeMap[char];
-                const [stackMode, prevState] = this.#stack.pop();
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const [stackMode, prevState, pos] = this.#stack.pop();
                 this.#mode = stackMode;
                 this.#state = prevState + escapedChar;
             }

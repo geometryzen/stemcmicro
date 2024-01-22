@@ -134,7 +134,6 @@ class TensorExtension implements Extension<Tensor> {
     }
     transform(expr: U): [TFLAGS, U] {
         const $ = this.$;
-        // console.lg(`TensorExtension.transform ${print_expr(expr, $)}`);
         if (this.isKind(expr)) {
             const new_elements = expr.mapElements(function (element) {
                 return $.valueOf(element);
@@ -151,7 +150,6 @@ class TensorExtension implements Extension<Tensor> {
         return [TFLAG_NONE, expr];
     }
     valueOf(expr: Tensor, $: ExtensionEnv): U {
-        // const old_elements = expr.copyElements();
         const new_elements = expr.mapElements(function (element) {
             return $.valueOf(element);
         });

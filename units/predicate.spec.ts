@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { create_sym } from "math-expression-atoms";
 import { Predicates } from "../src/env/ExtensionEnv";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -10,7 +11,7 @@ describe("predicate", function () {
                 assumes: {}
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -28,7 +29,7 @@ describe("predicate", function () {
                 }
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -49,7 +50,7 @@ describe("predicate", function () {
                 }
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -70,7 +71,7 @@ describe("predicate", function () {
                 }
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -91,7 +92,7 @@ describe("predicate", function () {
                 }
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -112,7 +113,7 @@ describe("predicate", function () {
                 }
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -133,7 +134,7 @@ describe("predicate", function () {
                 }
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -154,7 +155,7 @@ describe("predicate", function () {
                 }
             });
             const $ = context.$;
-            const predicates: Predicates = $.getSymbolPredicates('x');
+            const predicates: Predicates = $.getSymbolPredicates(create_sym('x'));
             assert.strictEqual(predicates.complex, true, "complex");
             assert.strictEqual(predicates.hypercomplex, true, "hypercomplex");
             assert.strictEqual(predicates.hyperreal, true, "hyperreal");
@@ -180,7 +181,7 @@ describe("predicate", function () {
                 }
             });
             const value = assert_one_value_execute(lines.join('\n'), context);
-            assert.strictEqual(context.renderAsSExpr(value), "#f");
+            assert.strictEqual(context.renderAsSExpr(value), "false");
             assert.strictEqual(context.renderAsInfix(value), 'false');
         });
         it("x==0 when x is zero", function () {
@@ -193,7 +194,7 @@ describe("predicate", function () {
                 }
             });
             const value = assert_one_value_execute(lines.join('\n'), context);
-            assert.strictEqual(context.renderAsSExpr(value), "#t");
+            assert.strictEqual(context.renderAsSExpr(value), "true");
             assert.strictEqual(context.renderAsInfix(value), 'true');
         });
         it("x>0", function () {
@@ -204,7 +205,7 @@ describe("predicate", function () {
                 dependencies: []
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
-            assert.strictEqual(engine.renderAsSExpr(value), "#t");
+            assert.strictEqual(engine.renderAsSExpr(value), "true");
             assert.strictEqual(engine.renderAsInfix(value), 'true');
         });
         it("x<0", function () {
@@ -216,7 +217,7 @@ describe("predicate", function () {
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             // TODO: Why the different capitalization?
-            assert.strictEqual(engine.renderAsSExpr(value), "#f");
+            assert.strictEqual(engine.renderAsSExpr(value), "false");
             assert.strictEqual(engine.renderAsInfix(value), 'false');
         });
         it("x * y < 0", function () {
@@ -228,7 +229,7 @@ describe("predicate", function () {
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             // TODO: Why the different capitalization?
-            assert.strictEqual(engine.renderAsSExpr(value), "#f");
+            assert.strictEqual(engine.renderAsSExpr(value), "false");
             assert.strictEqual(engine.renderAsInfix(value), 'false');
         });
         it("x * y > 0", function () {
@@ -240,7 +241,7 @@ describe("predicate", function () {
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             // TODO: Why the different capitalization?
-            assert.strictEqual(engine.renderAsSExpr(value), "#t");
+            assert.strictEqual(engine.renderAsSExpr(value), "true");
             assert.strictEqual(engine.renderAsInfix(value), 'true');
         });
     });

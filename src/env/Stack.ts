@@ -9,11 +9,11 @@ export class Stack<T> {
     get length(): number {
         return this.#elements.length;
     }
-    /**
-     * @returns elements[elements.length - 1]
-     */
     get top(): T {
         return this.#elements[this.#elements.length - 1];
+    }
+    peek(index: number): T {
+        return this.#elements[this.#elements.length - 1 - index];
     }
     push(element: T): void {
         this.tos++;

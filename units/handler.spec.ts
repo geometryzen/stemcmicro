@@ -9,7 +9,7 @@ import { EmitContext, iszero, print_result_and_input, ScriptOutputListener } fro
 import { Stack } from "../src/env/Stack";
 
 export function should_stepper_render_svg(stepper: Stepper): boolean {
-    const $: Scope = stepper.getStateStack().top.$;
+    const $: Scope = stepper.stack.top.$;
     const sym: Sym = create_sym("tty");
     const tty = $.getSymbolBinding(sym);
     if (is_nil(tty)) {
@@ -153,7 +153,7 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
             useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
         function should_annotate_symbol(x: Sym, value: U): boolean {
-            const state: Stack<State> = $.getStateStack();
+            const state: Stack<State> = $.stack;
             const top: State = state.top;
             const scope: Scope = top.$;
             if (scope.isUserSymbol(x)) {
@@ -179,7 +179,7 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
                 }
             }
         }
-        print_result_and_input(value, input, should_stepper_render_svg($), ec, [listener], should_annotate_symbol, $.getStateStack().top.$);
+        print_result_and_input(value, input, should_stepper_render_svg($), ec, [listener], should_annotate_symbol, $.stack.top.$);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

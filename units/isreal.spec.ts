@@ -18,7 +18,7 @@ describe("isreal", function () {
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#t");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "true");
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
         context.release();
     });
@@ -36,7 +36,7 @@ describe("isreal", function () {
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#f");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "false");
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
     });
@@ -54,7 +54,7 @@ describe("isreal", function () {
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#f");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "false");
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
     });
@@ -71,7 +71,7 @@ describe("isreal", function () {
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#f");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "false");
         assert.strictEqual(context.renderAsInfix(values[0]), "false");
         context.release();
     });
@@ -174,7 +174,7 @@ describe("isreal", function () {
             }
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#t");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "true");
         assert.strictEqual(engine.renderAsInfix(values[0]), "true");
         engine.release();
     });
@@ -188,7 +188,7 @@ describe("isreal", function () {
             }
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#f");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "false");
         assert.strictEqual(engine.renderAsInfix(values[0]), "false");
         engine.release();
     });
@@ -203,7 +203,7 @@ describe("isreal", function () {
             }
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#f");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "false");
         assert.strictEqual(engine.renderAsInfix(values[0]), "false");
         engine.release();
     });
@@ -218,7 +218,7 @@ describe("isreal", function () {
             }
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsSExpr(values[0]), "#f");
+        assert.strictEqual(engine.renderAsSExpr(values[0]), "false");
         assert.strictEqual(engine.renderAsInfix(values[0]), "false");
         engine.release();
     });

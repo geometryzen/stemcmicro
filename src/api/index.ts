@@ -680,7 +680,7 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
             // console.lg(`${state.node}`);
             // console.lg(`${state.done}`);
         }
-        const state = stepper.getStateStack().top;
+        const state = stepper.stack.top;
         const $: Scope = state.$;
 
         const inputs = state.inputs;

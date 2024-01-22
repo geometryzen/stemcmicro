@@ -1,4 +1,4 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor, Uom } from 'math-expression-atoms';
+import { Adapter, BasisBlade, BigInteger, Blade, Boo, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor, Uom } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -252,33 +252,33 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     if (is_num(rhs))
         return 1;
 
-    if (isstring(lhs) && isstring(rhs))
+    if (is_str(lhs) && isstring(rhs))
         return cmp_strings(lhs.str, rhs.str);
 
-    if (isstring(lhs))
+    if (is_str(lhs))
         return -1;
 
-    if (isstring(rhs))
+    if (is_str(rhs))
         return 1;
 
-    if (issymbol(lhs) && issymbol(rhs)) {
+    if (is_sym(lhs) && issymbol(rhs)) {
         // The comparison is by namespace then localName.
         return lhs.compare(rhs);
     }
 
-    if (issymbol(lhs))
+    if (is_sym(lhs))
         return -1;
 
-    if (issymbol(rhs))
+    if (is_sym(rhs))
         return 1;
 
-    if (istensor(lhs) && istensor(rhs))
+    if (is_tensor(lhs) && istensor(rhs))
         return cmp_tensors(lhs, rhs);
 
-    if (istensor(lhs))
+    if (is_tensor(lhs))
         return -1;
 
-    if (istensor(rhs))
+    if (is_tensor(rhs))
         return 1;
 
     while (is_cons(lhs) && is_cons(rhs)) {
@@ -1161,23 +1161,28 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathRea
         return;
     }
 
-    if (issymbol(p)) {
+    if (is_sym(p)) {
         emit_symbol(p, $, scope);
         return;
     }
 
-    if (isstring(p)) {
+    if (is_str(p)) {
         emit_string(p, $);
         return;
     }
 
-    if (istensor(p)) {
+    if (is_tensor(p)) {
         emit_tensor(p, $, ec, scope);
         return;
     }
 
     if (is_uom(p)) {
         emit_uom(p, $);
+        return;
+    }
+
+    if (is_boo(p)) {
+        emit_boo(p, $);
         return;
     }
 
@@ -1246,7 +1251,7 @@ function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathR
     if (car(p).equals(INDEX)) {
         p = cdr(p);
         const leading = car(p);
-        if (issymbol(leading))
+        if (is_sym(leading))
             emit_symbol(leading, $, scope);
         else
             emit_subexpr(leading, $, ec, scope);
@@ -1292,7 +1297,7 @@ function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathR
     // default
 
     const leading = car(p);
-    if (issymbol(leading))
+    if (is_sym(leading))
         emit_symbol(leading, $, scope);
     else
         emit_subexpr(leading, $, ec, scope);
@@ -1752,6 +1757,18 @@ function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext, scope: Eigenma
         emit_vector(p, $, ec, scope); // odd rank
     else
         emit_matrix(p, 0, 0, $, ec, scope); // even rank
+}
+
+function emit_boo(boo: Boo, $: StackContext): void {
+    if (boo.isTrue()) {
+        emit_roman_string('true', $);
+    }
+    else if (boo.isFalse()) {
+        emit_roman_string('false', $);
+    }
+    else {
+        emit_roman_string('fuzzy', $);
+    }
 }
 
 function emit_uom(uom: Uom, $: StackContext): void {
@@ -2653,7 +2670,7 @@ function absfunc($: ScriptVars): void {
         return;
     }
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         if (p1.ndim > 1) {
             push(ABS, $);
             push(p1, $);
@@ -2758,7 +2775,7 @@ function add_terms(n: number, $: ScriptVars): void {
     n = $.stack.length - h;
 
     if (n === 0) {
-        if (istensor(T))
+        if (is_tensor(T))
             push(T, $);
         else
             push_integer(0, $);
@@ -2810,8 +2827,8 @@ function combine_tensors(h: number, $: ScriptVars): Tensor {
     let T: U = nil;
     for (let i = h; i < $.stack.length; i++) {
         const p1 = $.stack[i];
-        if (istensor(p1)) {
-            if (istensor(T)) {
+        if (is_tensor(p1)) {
+            if (is_tensor(T)) {
                 push(T, $);
                 push(p1, $);
                 add_tensors($);
@@ -3391,7 +3408,7 @@ function arccos($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -3506,7 +3523,7 @@ function arccosh($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -3567,7 +3584,7 @@ function arcsin($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -3667,7 +3684,7 @@ function arcsinh($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -3743,7 +3760,7 @@ function arctan($: ScriptVars): void {
     const X = pop($);
     const Y = pop($);
 
-    if (istensor(Y)) {
+    if (is_tensor(Y)) {
         const T = copy_tensor(Y);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -3912,7 +3929,7 @@ function arctanh($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -3994,7 +4011,7 @@ function arg($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -4107,7 +4124,7 @@ function ceilingfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -4174,7 +4191,7 @@ function circexp_subst($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -4277,7 +4294,7 @@ function eval_clock(p1: U, $: ScriptVars): void {
 function clockfunc($: ScriptVars): void {
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -4349,7 +4366,7 @@ function conjfunc_subst($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -4504,7 +4521,7 @@ function cosfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, cosfunc, $), $);
         return;
     }
@@ -4723,7 +4740,7 @@ function coshfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -4934,14 +4951,14 @@ function derivative($: ScriptVars): void {
     const X = pop($);
     const F = pop($);
 
-    if (istensor(F)) {
-        if (istensor(X))
+    if (is_tensor(F)) {
+        if (is_tensor(X))
             d_tensor_tensor(F, X, $);
         else
             d_tensor_scalar(F, X, $);
     }
     else {
-        if (istensor(X))
+        if (is_tensor(X))
             d_scalar_tensor(F, X, $);
         else
             d_scalar_scalar(F, X, $);
@@ -4949,7 +4966,7 @@ function derivative($: ScriptVars): void {
 }
 
 function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
-    if (!(issymbol(X) && $.isUserSymbol(X)))
+    if (!(is_sym(X) && $.isUserSymbol(X)))
         stopf("derivative: symbol expected");
 
     // d(x,x)?
@@ -5618,7 +5635,7 @@ function eval_draw(expr: U, $: ScriptVars): void {
             const F = assert_cons(expr).item(1);
             let T = assert_cons(expr).item(2);
 
-            if (!(issymbol(T) && $.isUserSymbol(T))) {
+            if (!(is_sym(T) && $.isUserSymbol(T))) {
                 T = X_LOWER;
             }
 
@@ -5822,7 +5839,7 @@ function erffunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -5870,7 +5887,7 @@ function erfcfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -6125,7 +6142,7 @@ function floatfunc($: ScriptVars): void {
 function floatfunc_subst($: ScriptVars): void {
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -6203,7 +6220,7 @@ function floorfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -6248,7 +6265,7 @@ function floorfunc($: ScriptVars): void {
 function eval_for(p1: U, $: ScriptVars): void {
 
     const p2 = cadr(p1);
-    if (!(issymbol(p2) && $.isUserSymbol(p2)))
+    if (!(is_sym(p2) && $.isUserSymbol(p2)))
         stopf("for: symbol error");
 
     push(caddr(p1), $);
@@ -6348,7 +6365,7 @@ function eval_imag(p1: U, $: ScriptVars): void {
 function imag($: ScriptVars): void {
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -6388,10 +6405,10 @@ function eval_index(p1: U, $: ScriptVars): void {
 
     // try to optimize by indexing before eval
 
-    if (issymbol(T) && $.isUserSymbol(T)) {
+    if (is_sym(T) && $.isUserSymbol(T)) {
         p1 = get_binding(T, $);
         const n = $.stack.length - h;
-        if (istensor(p1) && n <= p1.ndim) {
+        if (is_tensor(p1) && n <= p1.ndim) {
             T = p1;
             indexfunc(T as Tensor, h, $);
             evalf($);
@@ -6508,7 +6525,7 @@ function inner($: ScriptVars): void {
         return;
     }
 
-    if (istensor(p1) && !istensor(p2)) {
+    if (is_tensor(p1) && !istensor(p2)) {
         p3 = p1;
         p1 = p2;
         p2 = p3;
@@ -6527,7 +6544,7 @@ function inner($: ScriptVars): void {
         return;
     }
 
-    if (istensor(p1) && istensor(p2)) {
+    if (is_tensor(p1) && istensor(p2)) {
         // Do nothing
     }
     else {
@@ -7570,7 +7587,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
             continue;
         }
 
-        if (!(issymbol(X) && $.isUserSymbol(X)))
+        if (!(is_sym(X) && $.isUserSymbol(X)))
             stopf("integral");
 
         if (is_cons(p1)) {
@@ -7603,7 +7620,7 @@ function integral($: ScriptVars): void {
     const X = pop($);
     let F = pop($);
 
-    if (!(issymbol(X) && $.isUserSymbol(X)))
+    if (!(is_sym(X) && $.isUserSymbol(X)))
         stopf("integral: symbol expected");
 
     if (car(F).equals(ADD)) {
@@ -7870,7 +7887,7 @@ function logfunc($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, logfunc, $), $);
         return;
     }
@@ -8012,7 +8029,7 @@ function mag($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, mag, $), $);
         return;
     }
@@ -8224,7 +8241,7 @@ function modfunc($: ScriptVars): void {
     const p2 = pop($);
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -8750,7 +8767,7 @@ function polar($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, polar, $), $);
         return;
     }
@@ -8825,7 +8842,7 @@ function power($: ScriptVars): void {
     const expo = pop($);
     let base = pop($);
 
-    if (istensor(base) && istensor(expo)) {
+    if (is_tensor(base) && istensor(expo)) {
         push(POWER, $);
         push(base, $);
         push(expo, $);
@@ -8833,7 +8850,7 @@ function power($: ScriptVars): void {
         return;
     }
 
-    if (istensor(expo)) {
+    if (is_tensor(expo)) {
         const T = copy_tensor(expo);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -8846,7 +8863,7 @@ function power($: ScriptVars): void {
         return;
     }
 
-    if (istensor(base)) {
+    if (is_tensor(base)) {
         const T = copy_tensor(base);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -9136,7 +9153,7 @@ function eval_product(p1: U, $: ScriptVars): void {
     }
 
     const p2 = cadr(p1);
-    if (!(issymbol(p2) && $.isUserSymbol(p2)))
+    if (!(is_sym(p2) && $.isUserSymbol(p2)))
         stopf("product: symbol error");
 
     push(caddr(p1), $);
@@ -9180,7 +9197,7 @@ function eval_rank(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
     evalf($);
     p1 = pop($);
-    if (istensor(p1))
+    if (is_tensor(p1))
         push_integer(p1.ndim, $);
     else
         push_integer(0, $);
@@ -9196,7 +9213,7 @@ function rationalize($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, rationalize, $), $);
         return;
     }
@@ -9231,7 +9248,7 @@ function real($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, real, $), $);
         return;
     }
@@ -9257,7 +9274,7 @@ function rect($: ScriptVars): void {
 
     let p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, rect, $), $);
         return;
     }
@@ -9936,7 +9953,7 @@ function eval_setq(x: Cons, $: ScriptVars): void {
     }
 
     const sym = x.lhs;
-    if (issymbol(sym) && $.isUserSymbol(sym)) {
+    if (is_sym(sym) && $.isUserSymbol(sym)) {
         push(x.rhs, $);
         evalf($);
         const rhs = pop($);
@@ -9964,7 +9981,7 @@ function setq_indexed(p1: U, $: ScriptVars): void {
 
     const S = cadadr(p1);
 
-    if (!(issymbol(S) && $.isUserSymbol(S))) {
+    if (!(is_sym(S) && $.isUserSymbol(S))) {
         stopf(`user symbol expected S=${S}`);
     }
 
@@ -10018,7 +10035,7 @@ function set_component(LVAL: U, RVAL: U, h: number, $: ScriptVars): void {
 
     $.stack.splice(h); // pop all indices
 
-    if (istensor(RVAL)) {
+    if (is_tensor(RVAL)) {
         let m = RVAL.ndim;
         if (n + m !== LVAL.ndim)
             stopf("index error");
@@ -10068,7 +10085,7 @@ function setq_usrfunc(p1: U, $: ScriptVars): void {
     const A = cdadr(p1); // function args
     const B = caddr(p1); // function body
 
-    if (issymbol(F) && $.isUserSymbol(F)) {
+    if (is_sym(F) && $.isUserSymbol(F)) {
         if (lengthf(A) > 9) {
             stopf("more than 9 arguments");
         }
@@ -10080,7 +10097,7 @@ function setq_usrfunc(p1: U, $: ScriptVars): void {
         set_symbol(F, B, C, $);
     }
     else {
-        if (issymbol(F)) {
+        if (is_sym(F)) {
             stopf(`user symbol expected F=${F}`);
         }
         else {
@@ -10174,7 +10191,7 @@ function sgn($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, sgn, $), $);
         return;
     }
@@ -10205,7 +10222,7 @@ function eval_simplify(p1: U, $: ScriptVars): void {
 
 function simplify($: ScriptVars): void {
     const p1 = pop($);
-    if (istensor(p1))
+    if (is_tensor(p1))
         simplify_tensor(p1, $);
     else
         simplify_scalar(p1, $);
@@ -10399,7 +10416,7 @@ function sinfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, sinfunc, $), $);
         return;
     }
@@ -10621,7 +10638,7 @@ function sinhfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, sinhfunc, $), $);
         return;
     }
@@ -10712,7 +10729,7 @@ function subst($: ScriptVars): void {
 
     let p1 = pop($); // expr
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         const T = copy_tensor(p1);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
@@ -10765,7 +10782,7 @@ function eval_sum(p1: U, $: ScriptVars): void {
     }
 
     const p2 = cadr(p1);
-    if (!(issymbol(p2) && $.isUserSymbol(p2)))
+    if (!(is_sym(p2) && $.isUserSymbol(p2)))
         stopf("sum: symbol error");
 
     push(caddr(p1), $);
@@ -10811,7 +10828,7 @@ function tanfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, tanfunc, $), $);
         return;
     }
@@ -10975,7 +10992,7 @@ function tanhfunc($: ScriptVars): void {
 
     const p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         push(elementwise(p1, tanhfunc, $), $);
         return;
     }
@@ -11514,7 +11531,7 @@ function evalf_nib($: ScriptVars): void {
         }
     }
 
-    if (issymbol(p1) && $.isConsSymbol(p1)) { // bare keyword
+    if (is_sym(p1) && $.isConsSymbol(p1)) { // bare keyword
         push(p1, $);
         push(LAST, $); // default arg
         list(2, $);
@@ -11522,12 +11539,12 @@ function evalf_nib($: ScriptVars): void {
         return;
     }
 
-    if (issymbol(p1) && $.isUserSymbol(p1)) {
+    if (is_sym(p1) && $.isUserSymbol(p1)) {
         eval_user_symbol(p1, $);
         return;
     }
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         eval_tensor(p1, $);
         return;
     }
@@ -12422,7 +12439,7 @@ function findf(p: U, q: U, $: ScriptVars): 0 | 1 {
     if (equal(p, q))
         return 1;
 
-    if (istensor(p)) {
+    if (is_tensor(p)) {
         const n = p.nelem;
         for (let i = 0; i < n; i++) {
             if (findf(p.elems[i], q, $))
@@ -12888,13 +12905,13 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
     }
 
     // Str
-    if (isstring(p)) {
+    if (is_str(p)) {
         infixform_write(p.str, config, outbuf);
         return;
     }
 
     // Tensor
-    if (istensor(p)) {
+    if (is_tensor(p)) {
         infixform_tensor(p, config, outbuf);
         return;
     }
@@ -13539,7 +13556,7 @@ function istensor(p: U): p is Tensor {
 }
 
 function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
-    if (issymbol(p) && scope.isUserSymbol(p) && !p.equalsSym(Pi) && !p.equalsSym(DOLLAR_E))
+    if (is_sym(p) && scope.isUserSymbol(p) && !p.equalsSym(Pi) && !p.equalsSym(DOLLAR_E))
         return 1;
 
     if (is_cons(p)) {
@@ -13562,7 +13579,7 @@ export function iszero(p: U): boolean {
     if (is_flt(p))
         return p.d === 0;
 
-    if (istensor(p)) {
+    if (is_tensor(p)) {
         const n = p.nelem;
         for (let i = 0; i < n; i++) {
             if (!iszero(p.elems[i]))
@@ -13657,7 +13674,7 @@ function multiply_factors(n: number, $: ScriptVars): void {
 
     // console.lg(`after multiply scalar factors: ${$.stack}`);
 
-    if (istensor(T)) {
+    if (is_tensor(T)) {
         push(T, $);
         inner($);
     }
@@ -13768,7 +13785,7 @@ function multiply_tensor_factors(start: number, $: ScriptVars): U {
         if (!istensor(p1)) {
             continue;
         }
-        if (istensor(T)) {
+        if (is_tensor(T)) {
             push(T, $);
             push(p1, $);
             hadamard($);
@@ -15064,9 +15081,9 @@ function prefixform(p: U, outbuf: string[]) {
             outbuf.push(p.key());
         }
     }
-    else if (isstring(p))
+    else if (is_str(p))
         outbuf.push("'" + p.str + "'");
-    else if (istensor(p)) {
+    else if (is_tensor(p)) {
         outbuf.push("[ ]");
     }
     else if (is_uom(p)) {
@@ -15518,7 +15535,7 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     floatfunc($);
     p1 = pop($);
 
-    if (istensor(p1)) {
+    if (is_tensor(p1)) {
         X = p1.elems[0];
         Y = p1.elems[1];
     }

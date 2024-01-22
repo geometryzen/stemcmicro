@@ -19,7 +19,7 @@ describe("runtime", function () {
         const values: U[] = [];
         const runner = new Stepper(module);
         runner.run();
-        const stack = runner.getStateStack();
+        const stack = runner.stack;
         assert.strictEqual(stack.length, 1);
         const value = stack.top.value;
         /*
@@ -44,7 +44,7 @@ describe("runtime", function () {
         const values: U[] = [];
         const runner = new Stepper(module);
         runner.run();
-        const stack = runner.getStateStack();
+        const stack = runner.stack;
         assert.strictEqual(stack.length, 1);
         const value = stack.top.value;
         /*
@@ -69,7 +69,7 @@ describe("runtime", function () {
         const values: U[] = [];
         const runner = new Stepper(module);
         runner.run();
-        const stack = runner.getStateStack();
+        const stack = runner.stack;
         assert.strictEqual(stack.length, 1);
         const value = stack.top.value;
         /*
@@ -94,7 +94,7 @@ describe("runtime", function () {
         const values: U[] = [];
         const runner = new Stepper(module);
         runner.run();
-        const stack = runner.getStateStack();
+        const stack = runner.stack;
         assert.strictEqual(stack.length, 1);
         const value = stack.top.value;
         /*
@@ -120,7 +120,7 @@ describe("runtime", function () {
         assert.strictEqual(errors.length, 0);
         const runner = new Stepper(module);
         runner.run();
-        const stack: Stack<State> = runner.getStateStack();
+        const stack: Stack<State> = runner.stack;
         assert.strictEqual(stack.length, 1);
         const values = stack.top.values;
         assert.strictEqual(values.length, 3);

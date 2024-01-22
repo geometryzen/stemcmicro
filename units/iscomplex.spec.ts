@@ -16,7 +16,7 @@ describe("iscomplex", function () {
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsSExpr(values[0]), "#t");
+        assert.strictEqual(context.renderAsSExpr(values[0]), "true");
         assert.strictEqual(context.renderAsInfix(values[0]), "true");
         context.release();
     });

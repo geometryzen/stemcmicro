@@ -2,7 +2,7 @@
 import { create_sym, Sym } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
-import { Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from "math-expression-tree";
+import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "math-expression-tree";
 import { ExprEngineListener } from "../../api";
 import { create_env, EnvOptions } from "../../env/env";
 import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";
@@ -37,9 +37,9 @@ function is_module(x: Cons): boolean {
     return is_cons_opr_eq_sym(x, MODULE);
 }
 
-function stepper_key(x: U): string {
+function stepper_opr_key(x: Cons): string {
     if (is_cons(x)) {
-        const candidate = x.car;
+        const candidate = x.opr;
         if (is_sym(candidate)) {
             return candidate.key();
         }
@@ -48,6 +48,7 @@ function stepper_key(x: U): string {
         }
     }
     else {
+        // Unlikely to be nil.
         throw new Error();
     }
 }
@@ -112,7 +113,7 @@ export class State {
     funcThis: unknown;
     func: unknown;
     arguments: unknown;
-    constructor(readonly node: U, readonly $: Scope) {
+    constructor(readonly input: U, readonly $: Scope) {
     }
 }
 
@@ -126,7 +127,31 @@ class Task {
     }
 }
 
-export type StepFunction = (node: Cons, stack: Stack<State>, state: State) => State | undefined;
+type StepFunction = (node: Cons, stack: Stack<State>, state: State) => State | undefined;
+
+export interface StepperHandler {
+    atom(after: U, before: U): void;
+}
+
+function atomFn(atom: U, stack: Stack<State>, state: State, handler: StepperHandler): void {
+    stack.pop();
+    const top: State = stack.top;
+    const scope: Scope = top.$;
+    const value = scope.valueOf(atom);
+    try {
+        handler.atom(value, atom);
+    }
+    finally {
+        top.value = value;
+    }
+}
+
+class BlackHole implements StepperHandler {
+    atom(after: U, before: U): void {
+    }
+}
+
+const BLACK_HOLE = new BlackHole();
 
 export interface StepperConfig {
 
@@ -158,7 +183,7 @@ export class Stepper {
      * @param options 
      * @param initFunc 
      */
-    constructor(readonly module: Cons, options?: Partial<StepperConfig>, initFunc?: (runner: Stepper, globalObject: Thing) => void) {
+    constructor(module: Cons, options?: Partial<StepperConfig>, initFunc?: (runner: Stepper, globalObject: Thing) => void) {
         this.#currStepper = this;
         this.#stepFunctions = Object.create(null);
         this.#initFunc = initFunc;
@@ -206,8 +231,8 @@ export class Stepper {
             this.#initFunc(this, globalObject);
         }
     }
-    run(): boolean {
-        while (!this.#paused && this.next()) {
+    run(handler: StepperHandler = BLACK_HOLE): boolean {
+        while (!this.#paused && this.next(handler)) {
             // 
         }
         return this.#paused;
@@ -216,18 +241,18 @@ export class Stepper {
      * Execute one step of the interpreter.
      * @returns true if there are more instructions to execute.
      */
-    next(): boolean {
+    next(handler: StepperHandler = BLACK_HOLE): boolean {
         const stack: Stack<State> = this.#stack;
         let endTime = Date.now() + this.POLYFILL_TIMEOUT;
-        let node: U;
+        let input: U;
         do {
             if (this.#paused) {
                 return true;
             }
             let state: State | null = stack.top;
-            node = state.node;
+            input = state.input;
             // console.lg(`node => ${node}`);
-            if (!state || (is_cons(node) && is_module(node) && state.done)) {
+            if (!state || (is_cons(input) && is_module(input) && state.done)) {
                 if (!this.#tasks.length) {
                     // Module complete and no queued tasks.  We're done!
                     return false;
@@ -241,13 +266,13 @@ export class Stepper {
             const prevStepper = this.#currStepper;
             this.#currStepper = this;
             try {
-                if (is_cons(node)) {
-                    const key = stepper_key(node);
+                if (is_cons(input)) {
+                    const key = stepper_opr_key(input);
 
-                    const stepper = this.#stepFunctions[key];
-                    if (stepper) {
+                    const stepFn = this.#stepFunctions[key];
+                    if (stepFn) {
                         // console.lg(`Calling StepFunction for key ${JSON.stringify(key)} with node ${node}`);
-                        const nextState = stepper(node, stack, state);
+                        const nextState = stepFn(input, stack, state);
                         if (nextState) {
                             stack.push(nextState);
                         }
@@ -255,23 +280,20 @@ export class Stepper {
                     else {
                         // Assume operators that are not recognized require all their arguments to be evaluated.
                         // This allows users to create DSL languages with externally defined functions.
-                        const nextState = Eval_v_args(node, stack, state);
+                        const nextState = Eval_v_args(input, stack, state);
                         if (nextState) {
                             stack.push(nextState);
                         }
                     }
                 }
-                else if (is_nil(node)) {
-                    stack.top.value = node;
+                else if (input.isNil()) {
+                    stack.top.value = input;
                 }
-                else if (is_atom(node)) {
-                    stack.pop();
-                    const top: State = stack.top;
-                    const scope: Scope = top.$;
-                    top.value = scope.valueOf(node);
+                else if (is_atom(input)) {
+                    atomFn(input, stack, state, handler);
                 }
                 else {
-                    throw Error(`${node} is not a cons, nil, or atom.`);
+                    throw Error(`${input} is not a cons, nil, or atom.`);
                 }
             }
             catch (e) {
@@ -296,14 +318,14 @@ export class Stepper {
                 this.#value = void 0;
                 throw Error('Setter not supported in this context');
             }
-            if (!endTime && !node.end) {
+            if (!endTime && !input.end) {
                 endTime = Date.now() + this.POLYFILL_TIMEOUT;
             }
         }
-        while (!node.end && endTime > Date.now());
+        while (!input.end && endTime > Date.now());
         return true;
     }
-    getStateStack(): Stack<State> {
+    get stack(): Stack<State> {
         return this.#stack;
     }
     addListener(listener: ExprEngineListener): void {

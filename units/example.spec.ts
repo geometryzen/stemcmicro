@@ -19,7 +19,7 @@ describe("example", function () {
         assert.strictEqual(errors.length, 0);
         const runner = new Stepper(module);
         runner.run();
-        const stack: Stack<State> = runner.getStateStack();
+        const stack: Stack<State> = runner.stack;
         assert.strictEqual(stack.length, 1);
         const values = stack.top.values;
         assert.strictEqual(values.length, 3);

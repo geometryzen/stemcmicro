@@ -52,7 +52,7 @@ export class BooExtension implements Extension<Boo> {
         return expr.equals(booT) ? 'true' : 'false';
     }
     toListString(expr: Boo): string {
-        return expr.equals(booT) ? '#t' : '#f';
+        return expr.equals(booT) ? 'true' : 'false';
     }
 }
 

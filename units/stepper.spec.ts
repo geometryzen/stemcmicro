@@ -106,8 +106,8 @@ const expect1: string = [
     `</svg><br>`,
 ].join('');
 
-describe("ClojureScript", function () {
-    it("Stepper", function () {
+describe("Stepper", function () {
+    it("101", function () {
         const lines: string[] = [
             `(= x true)`,
             `x`

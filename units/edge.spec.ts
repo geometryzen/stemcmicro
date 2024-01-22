@@ -43,7 +43,7 @@ function stepModule(module: Cons): U[] {
         steps++;
     }
     steps;
-    const stack = runner.getStateStack();
+    const stack = runner.stack;
     for (const value of stack.top.values) {
         if (!is_nil(value)) {
             values.push(value);

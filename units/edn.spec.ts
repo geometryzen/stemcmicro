@@ -1,8 +1,7 @@
 import { assert } from "chai";
-import { bigInt, BigInteger, Boo, Char, create_rat, Flt, is_boo, is_char, is_flt, is_keyword, is_map, is_rat, is_set, is_str, is_sym, is_tag, is_tensor, is_timestamp, is_uuid, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from 'math-expression-atoms';
+import { bigInt, BigInteger, Boo, Char, create_rat, create_tensor, Flt, is_boo, is_char, is_flt, is_keyword, is_map, is_rat, is_set, is_str, is_sym, is_tag, is_tensor, is_timestamp, is_uuid, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from 'math-expression-atoms';
 import { is_cons, is_nil, pos_end_items_to_cons, U } from "math-expression-tree";
 import { EDNListParser, ParseConfig } from '../src/edn';
-import { create_tensor } from "../src/tensor/create_tensor";
 
 describe("edn", function () {
     it("coverage", function () {

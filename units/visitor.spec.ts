@@ -1,7 +1,6 @@
 import { assert } from "chai";
-import { Boo, booF, booT, booU, create_flt, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from "math-expression-atoms";
+import { Boo, booF, booT, booU, create_flt, create_rat, create_sym, create_tensor, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
-import { create_tensor } from "../src/tensor/create_tensor";
 import { visit } from '../src/visitor/visit';
 import { Visitor } from '../src/visitor/Visitor';
 

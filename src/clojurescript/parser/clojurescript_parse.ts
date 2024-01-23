@@ -1,8 +1,8 @@
-import { Boo, create_flt, create_sym, create_sym_ns, Flt, Keyword, Map, Num, Str, Sym } from 'math-expression-atoms';
+import { Boo, create_flt, create_sym, create_sym_ns, create_tensor, Flt, Keyword, Map, Num, Str, Sym } from 'math-expression-atoms';
 import { CharStream, consume_signed_num, NumHandler } from "../../algebrite/consume_num";
+import { split_qualified_name } from '../../edn';
 import { FltTokenParser } from "../../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../../operators/int/IntTokenParser";
-import { create_tensor } from "../../tensor/create_tensor";
 import { create_int } from "../../tree/rat/Rat";
 import { cons, nil, U } from "../../tree/tree";
 import { CommentMarker } from "../atoms/CommentMarker";
@@ -193,19 +193,10 @@ class Parser {
                 return create_sym_ns(localName, "cljs.user");
             }
             else if (t.startsWith(":")) {
-                // TODO: Need to split the name
                 const qualifiedName = t.substring(1);
-                const slash = qualifiedName.indexOf('/');
-                if (slash >= 0) {
-                    const namespace = qualifiedName.substring(0, slash);
-                    const localName = qualifiedName.substring(slash + 1);
-                    // Using Sym rather than Keyword for now...
-                    return create_sym_ns(localName, namespace);
-                }
-                else {
-                    // Using Sym rather than Keyword for now...
-                    return create_sym(qualifiedName);
-                }
+                const [localName, namespace] = split_qualified_name(qualifiedName, '/');
+                // Using Sym rather than Keyword for now...
+                return create_sym_ns(localName, namespace);
             }
             else if (t === 'false') {
                 return Boo.valueOf(false);

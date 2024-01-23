@@ -271,9 +271,7 @@ export class EDNListParser<T> {
         }
         else if (this.#state[0] === ':') {
             const qualifiedName = this.#state.substring(1);
-            const slashIdx = qualifiedName.indexOf('/');
-            const localName = slashIdx >= 0 ? qualifiedName.substring(slashIdx + 1) : qualifiedName;
-            const namespace = slashIdx >= 0 ? qualifiedName.substring(0, slashIdx) : '';
+            const [localName, namespace] = split_qualified_name(qualifiedName, '/');
             this.#result = this.#keywordAs(localName, namespace, this.#pos, end);
         }
         else if (this.#state[0] === '#') {
@@ -488,5 +486,17 @@ export class EDNListParser<T> {
 
     isDone(): boolean {
         return this.#done;
+    }
+}
+
+export function split_qualified_name(qualifiedName: string, searchString: '/'): [localName: string, namespace: string] {
+    const searchIdx = qualifiedName.indexOf(searchString);
+    if (searchIdx > 0) {
+        const localName = qualifiedName.substring(searchIdx + 1);
+        const namespace = qualifiedName.substring(0, searchIdx);
+        return [localName, namespace];
+    }
+    else {
+        return [qualifiedName, ''];
     }
 }

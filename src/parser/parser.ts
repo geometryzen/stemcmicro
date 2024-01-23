@@ -1,12 +1,11 @@
-import { bigInt, BigInteger, Boo, Char, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
+import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
 import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
 import { EigenmathErrorHandler } from "../api";
-import { EDNListParser, ParseConfig } from "../edn";
+import { EDNListParser, ParseConfig, split_qualified_name } from "../edn";
 import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
-import { create_tensor } from "../tensor/create_tensor";
 
 export enum SyntaxKind {
     /**
@@ -123,7 +122,9 @@ export function clojurescript_parse(sourceText: string, options: ClojureScriptPa
                     return meaning;
                 }
             }
-            return new Sym(value, '', pos, end);
+            // TODO: change symAs
+            const [localName, namespace] = split_qualified_name(value, '/');
+            return create_sym_ns(localName, namespace, pos, end);
         },
         tagAs: (tag: string, value: U, pos: number, end: number) => new Tag(tag, value, pos, end),
         vectorAs: (values: U[], pos: number, end: number) => create_tensor(values, pos, end),

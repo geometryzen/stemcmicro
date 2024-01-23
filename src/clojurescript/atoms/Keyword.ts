@@ -13,8 +13,7 @@ export class Keyword extends Atom {
         }
     }
     toString(): string {
-        throw new Error();
-        // return `Keyword(${JSON.stringify(this.localName)},${JSON.stringify(this.namespace)})`;
+        return `Keyword(${JSON.stringify(this.localName)},${JSON.stringify(this.namespace)})`;
     }
 }
 

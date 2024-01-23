@@ -8,7 +8,7 @@ export class Char extends Atom {
         }
     }
     toString(): string {
-        throw new Error();
+        return `${this.name}(${JSON.stringify(this.ch)})`;
     }
 }
 

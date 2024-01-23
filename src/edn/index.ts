@@ -38,7 +38,7 @@ export interface ParseConfig<T> {
     nilAs: (pos: number, end: number) => T;
     setAs: (members: T[], pos: number, end: number) => T;
     strAs: (value: string, pos: number, end: number) => T;
-    symAs: (value: string, pos: number, end: number) => T;
+    symAs: (localName: string, namespace: string, pos: number, end: number) => T;
     tagAs: (tag: string, value: T, pos: number, end: number) => T;
     vectorAs: (values: T[], pos: number, end: number) => T;
     tagHandlers: { [tag: string]: (value: T) => T };
@@ -313,11 +313,11 @@ export class EDNListParser<T> {
             this.#result = this.#charAs(c, this.#pos, end);
         }
         else if (this.#state !== '') {
-            this.#result = this.#symAs(this.#state, this.#pos, end);
+            const [localName, namespace] = split_qualified_name(this.#state, '/');
+            this.#result = this.#symAs(localName, namespace, this.#pos, end);
         }
         this.#state = '';
-        // this.#stack.top[2] = end + 1;
-        this.#pos = end + 1; // length of the reason character?
+        this.#pos = end + 1;
     }
     #absolutize(i: number): number {
         // -1 becuase we prefix with '('.

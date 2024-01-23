@@ -2,7 +2,7 @@ import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_st
 import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
 import { EigenmathErrorHandler } from "../api";
-import { EDNListParser, ParseConfig, split_qualified_name } from "../edn";
+import { EDNListParser, ParseConfig } from "../edn";
 import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
@@ -115,16 +115,16 @@ export function clojurescript_parse(sourceText: string, options: ClojureScriptPa
             return new Set(members, pos, end);
         },
         strAs: (value: string, pos: number, end: number) => new Str(value, pos, end),
-        symAs: (value: string, pos: number, end: number) => {
+        symAs: (localName: string, namespace: string, pos: number, end: number) => {
+            const sym = create_sym_ns(localName, namespace, pos, end);
             if (options.lexicon) {
-                const meaning = options.lexicon[value];
+                const key = sym.key();
+                const meaning = options.lexicon[key];
                 if (meaning) {
                     return meaning;
                 }
             }
-            // TODO: change symAs
-            const [localName, namespace] = split_qualified_name(value, '/');
-            return create_sym_ns(localName, namespace, pos, end);
+            return sym;
         },
         tagAs: (tag: string, value: U, pos: number, end: number) => new Tag(tag, value, pos, end),
         vectorAs: (values: U[], pos: number, end: number) => create_tensor(values, pos, end),

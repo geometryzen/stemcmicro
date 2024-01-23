@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { bigInt, BigInteger, Boo, Char, create_rat, create_tensor, Flt, is_boo, is_char, is_flt, is_keyword, is_map, is_rat, is_set, is_str, is_sym, is_tag, is_tensor, is_timestamp, is_uuid, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from 'math-expression-atoms';
+import { bigInt, BigInteger, Boo, Char, create_rat, create_sym_ns, create_tensor, Flt, is_boo, is_char, is_flt, is_keyword, is_map, is_rat, is_set, is_str, is_sym, is_tag, is_tensor, is_timestamp, is_uuid, Keyword, Map, Rat, Set, Str, Tag, Timestamp, Uuid } from 'math-expression-atoms';
 import { is_cons, is_nil, pos_end_items_to_cons, U } from "math-expression-tree";
 import { EDNListParser, ParseConfig } from '../src/edn';
 
@@ -28,7 +28,7 @@ describe("edn", function () {
                 return new Set(members, pos, end);
             },
             strAs: (value: string, pos: number, end: number) => new Str(value, pos, end),
-            symAs: (value: string, pos: number, end: number) => new Sym(value, '', pos, end),
+            symAs: (localName: string, namespace: string, pos: number, end: number) => create_sym_ns(localName, namespace, pos, end),
             tagAs: (tag: string, value: U, pos: number, end: number) => new Tag(tag, value, pos, end),
             vectorAs: (values: U[], pos: number, end: number) => create_tensor(values, pos, end),
             tagHandlers: {

@@ -1,8 +1,5 @@
-import { is_rat, is_str, is_sym } from "math-expression-atoms";
-import { Map } from "../clojurescript/atoms/Map";
-import { is_keyword } from "../clojurescript/atoms/Keyword";
-import { Sym } from "../tree/sym/Sym";
-import { is_atom, is_cons, is_nil, U } from "../tree/tree";
+import { is_keyword, is_rat, is_str, is_sym, Map, Sym } from "math-expression-atoms";
+import { is_atom, is_cons, is_nil, U } from "math-expression-tree";
 
 const KIND_NIL = 0;
 const KIND_CONS = 1;

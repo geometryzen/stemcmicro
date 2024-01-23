@@ -1,7 +1,5 @@
-import { is_boo, is_flt, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
+import { is_boo, is_flt, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_atom, is_cons, is_nil, U } from "math-expression-tree";
-import { is_keyword } from "../clojurescript/atoms/Keyword";
-import { is_map } from "../clojurescript/atoms/Map";
 import { Visitor } from "./Visitor";
 
 export function visit(expr: U, visitor: Visitor): void {

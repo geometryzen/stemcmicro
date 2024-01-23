@@ -1,8 +1,9 @@
-import { Boo, Flt, Rat, Str, Sym, Tensor } from "math-expression-atoms";
+import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from "math-expression-atoms";
 import { Cons, U } from "math-expression-tree";
-import { Keyword } from "../clojurescript/atoms/Keyword";
-import { Map } from "../clojurescript/atoms/Map";
 
+/**
+ * TODO: This probably should recognize all atoms known to Extensibe Data Notation?
+ */
 export interface Visitor {
     beginCons(expr: Cons): void;
     endCons(expr: Cons): void;

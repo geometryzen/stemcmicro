@@ -1,5 +1,5 @@
+import { is_keyword, Keyword } from "math-expression-atoms";
 import { Cons, U } from "math-expression-tree";
-import { is_keyword, Keyword } from "../../clojurescript/atoms/Keyword";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";

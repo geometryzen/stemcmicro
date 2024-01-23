@@ -1,4 +1,4 @@
-import { is_map, Map } from "../../clojurescript/atoms/Map";
+import { is_map, Map } from "math-expression-atoms";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { print_str } from "../../print/print";

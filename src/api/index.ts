@@ -1,10 +1,8 @@
-import { Boo, create_sym, Flt, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
+import { Boo, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
-import { Keyword } from '../clojurescript/atoms/Keyword';
-import { Map } from '../clojurescript/atoms/Map';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';

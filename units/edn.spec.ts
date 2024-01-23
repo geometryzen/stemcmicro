@@ -1,13 +1,6 @@
 import { assert } from "chai";
-import { bigInt, BigInteger, Boo, create_rat, Flt, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor, Rat, Str, Sym } from 'math-expression-atoms';
+import { bigInt, BigInteger, Boo, Char, create_rat, Flt, is_boo, is_char, is_flt, is_keyword, is_map, is_rat, is_set, is_str, is_sym, is_tag, is_tensor, is_timestamp, is_uuid, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from 'math-expression-atoms';
 import { is_cons, is_nil, pos_end_items_to_cons, U } from "math-expression-tree";
-import { Char, is_char } from "../src/clojurescript/atoms/Char";
-import { is_keyword, Keyword } from "../src/clojurescript/atoms/Keyword";
-import { is_map, Map } from "../src/clojurescript/atoms/Map";
-import { is_set, Set } from "../src/clojurescript/atoms/Set";
-import { is_tag, Tag } from "../src/clojurescript/atoms/Tag";
-import { is_timestamp, Timestamp } from "../src/clojurescript/atoms/Timestamp";
-import { is_uuid, Uuid } from "../src/clojurescript/atoms/Uuid";
 import { EDNListParser, ParseConfig } from '../src/edn';
 import { create_tensor } from "../src/tensor/create_tensor";
 

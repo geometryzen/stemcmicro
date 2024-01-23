@@ -1,14 +1,7 @@
-import { bigInt, BigInteger, Boo, Flt, is_str, Rat, Str, Sym } from "math-expression-atoms";
+import { bigInt, BigInteger, Boo, Char, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
 import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
 import { EigenmathErrorHandler } from "../api";
-import { Char } from "../clojurescript/atoms/Char";
-import { Keyword } from "../clojurescript/atoms/Keyword";
-import { Map } from "../clojurescript/atoms/Map";
-import { Set } from "../clojurescript/atoms/Set";
-import { Tag } from "../clojurescript/atoms/Tag";
-import { Timestamp } from "../clojurescript/atoms/Timestamp";
-import { Uuid } from "../clojurescript/atoms/Uuid";
 import { EDNListParser, ParseConfig } from "../edn";
 import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";

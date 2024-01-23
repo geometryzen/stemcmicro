@@ -1,10 +1,8 @@
 
 import { assert } from "chai";
-import { is_blade, is_boo, is_flt, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
+import { is_blade, is_boo, is_flt, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { is_keyword } from "../src/clojurescript/atoms/Keyword";
-import { is_map } from "../src/clojurescript/atoms/Map";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("ClojureScript", function () {

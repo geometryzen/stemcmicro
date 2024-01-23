@@ -422,7 +422,7 @@ function coeffs(P: U, X: U, $: ScriptVars): void {
         push(X, $);
         push_integer(0, $);
         subst($);
-        evalf($);
+        value_of($);
         const C = pop($);
 
         push(C, $);
@@ -2655,7 +2655,7 @@ function equal(p1: U, p2: U): boolean {
 
 function eval_abs(expr: U, $: ScriptVars): void {
     push(cadr(expr), $);
-    evalf($);
+    value_of($);
     absfunc($);
 }
 
@@ -2745,7 +2745,7 @@ function eval_add(p1: U, $: ScriptVars): void {
     p1 = cdr(p1);
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         p1 = cdr(p1);
     }
     add_terms($.stack.length - h, $);
@@ -3073,7 +3073,7 @@ function simplify_terms(h: number, $: ScriptVars): number {
         const p1 = $.stack[i];
         if (isradicalterm(p1)) {
             push(p1, $);
-            evalf($);
+            value_of($);
             const p2 = pop($);
             if (!equal(p1, p2)) {
                 $.stack[i] = p2;
@@ -3128,7 +3128,7 @@ function add_rationals(p1: Rat, p2: Rat, $: ScriptVars): void {
 
 function eval_adj(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     adj($);
 }
 
@@ -3187,13 +3187,13 @@ function adj($: ScriptVars): void {
 
 function eval_algebra(expr: U, $: ScriptVars): void {
     push(assert_cons(expr).item(1), $);
-    evalf($);
+    value_of($);
     const metric = pop($);
     if (!is_tensor(metric)) {
         stopf('');
     }
     push(assert_cons(expr).item(2), $);
-    evalf($);
+    value_of($);
     const labels = pop($);
     if (!is_tensor(labels)) {
         stopf('');
@@ -3394,13 +3394,13 @@ function eval_and(p1: U, $: ScriptVars): void {
  */
 export function evaluate_expression(expression: U, $: ScriptVars): U {
     push(expression, $);
-    evalf($);
+    value_of($);
     return pop($);
 }
 
 function eval_arccos(p1: U, $: ScriptVars) {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     arccos($);
 }
 
@@ -3515,7 +3515,7 @@ function arccos($: ScriptVars): void {
 
 function eval_arccosh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     arccosh($);
 }
 
@@ -3576,7 +3576,7 @@ function arccosh($: ScriptVars): void {
 
 function eval_arcsin(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     arcsin($);
 }
 
@@ -3676,7 +3676,7 @@ function arcsin($: ScriptVars): void {
 
 function eval_arcsinh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     arcsinh($);
 }
 
@@ -3745,10 +3745,10 @@ function arcsinh($: ScriptVars): void {
 
 function eval_arctan(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     if (is_cons(cddr(p1))) {
         push(caddr(p1), $);
-        evalf($);
+        value_of($);
     }
     else
         push_integer(1, $);
@@ -3921,7 +3921,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
 
 function eval_arctanh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     arctanh($);
 }
 
@@ -4001,7 +4001,7 @@ function arctanh($: ScriptVars): void {
 
 function eval_arg(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     arg($);
 }
 
@@ -4116,7 +4116,7 @@ function eval_binding(p1: U, $: ScriptVars): void {
 
 function eval_ceiling(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     ceilingfunc($);
 }
 
@@ -4178,13 +4178,13 @@ function eval_check(p1: U, $: ScriptVars): void {
 
 function eval_circexp(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     circexp($);
 }
 
 function circexp($: ScriptVars): void {
     circexp_subst($);
-    evalf($);
+    value_of($);
 }
 
 function circexp_subst($: ScriptVars): void {
@@ -4287,7 +4287,7 @@ function eval_clear(expr: U, $: ScriptVars) {
 
 function eval_clock(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     clockfunc($);
 }
 
@@ -4324,15 +4324,15 @@ function clockfunc($: ScriptVars): void {
 function eval_cofactor(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     const p2 = pop($) as Tensor;
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     const i = pop_integer($);
 
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     const j = pop_integer($);
 
     if (!issquarematrix(p2))
@@ -4353,13 +4353,13 @@ function eval_cofactor(p1: U, $: ScriptVars): void {
 
 function eval_conj(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     conjfunc($);
 }
 
 function conjfunc($: ScriptVars): void {
     conjfunc_subst($);
-    evalf($);
+    value_of($);
 }
 
 function conjfunc_subst($: ScriptVars): void {
@@ -4407,7 +4407,7 @@ function conjfunc_subst($: ScriptVars): void {
 
 function eval_contract(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
 
     p1 = cddr(p1);
 
@@ -4420,9 +4420,9 @@ function eval_contract(p1: U, $: ScriptVars): void {
 
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         push(cadr(p1), $);
-        evalf($);
+        value_of($);
         contract($);
         p1 = cddr(p1);
     }
@@ -4513,7 +4513,7 @@ function contract($: ScriptVars): void {
 
 function eval_cos(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     cosfunc($);
 }
 
@@ -4732,7 +4732,7 @@ function cosfunc_sum(p1: U, $: ScriptVars): void {
 
 function eval_cosh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     coshfunc($);
 }
 
@@ -4800,7 +4800,7 @@ function coshfunc($: ScriptVars): void {
 function eval_defint(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     let F = pop($);
 
     p1 = cddr(p1);
@@ -4808,15 +4808,15 @@ function eval_defint(p1: U, $: ScriptVars): void {
     while (is_cons(p1)) {
 
         push(car(p1), $);
-        evalf($);
+        value_of($);
         const X = pop($);
 
         push(cadr(p1), $);
-        evalf($);
+        value_of($);
         const A = pop($);
 
         push(caddr(p1), $);
-        evalf($);
+        value_of($);
         const B = pop($);
 
         push(F, $);
@@ -4828,13 +4828,13 @@ function eval_defint(p1: U, $: ScriptVars): void {
         push(X, $);
         push(B, $);
         subst($);
-        evalf($);
+        value_of($);
 
         push(F, $);
         push(X, $);
         push(A, $);
         subst($);
-        evalf($);
+        value_of($);
 
         subtract($);
         F = pop($);
@@ -4847,7 +4847,7 @@ function eval_defint(p1: U, $: ScriptVars): void {
 
 function eval_denominator(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     denominator($);
 }
 
@@ -4883,7 +4883,7 @@ function denominator($: ScriptVars): void {
 function eval_derivative(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = cddr(p1);
 
     if (!is_cons(p1)) {
@@ -4904,7 +4904,7 @@ function eval_derivative(p1: U, $: ScriptVars): void {
         }
         else {
             push(car(p1), $);
-            evalf($);
+            value_of($);
             X = pop($);
             p1 = cdr(p1);
         }
@@ -4924,7 +4924,7 @@ function eval_derivative(p1: U, $: ScriptVars): void {
         if (is_cons(p1)) {
 
             push(car(p1), $);
-            evalf($);
+            value_of($);
             Y = pop($);
             p1 = cdr(p1);
 
@@ -5488,7 +5488,7 @@ function d_tensor_scalar(p1: Tensor, p2: U, $: ScriptVars): void {
 
 function eval_det(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     det($);
 }
 
@@ -5584,7 +5584,7 @@ function det($: ScriptVars): void {
 function eval_dim(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     const p2 = pop($);
 
     if (!istensor(p2)) {
@@ -5598,7 +5598,7 @@ function eval_dim(p1: U, $: ScriptVars): void {
         k = 1;
     else {
         push(caddr(p1), $);
-        evalf($);
+        value_of($);
         k = pop_integer($);
     }
 
@@ -5614,7 +5614,7 @@ function eval_do(p1: U, $: ScriptVars): void {
     while (is_cons(p1)) {
         pop($);
         push(car(p1), $);
-        evalf($);
+        value_of($);
         p1 = cdr(p1);
     }
 }
@@ -5690,7 +5690,7 @@ function eval_eigenvec(punk: U, $: ScriptVars): void {
     const Q: number[] = [];
 
     push(cadr(punk), $);
-    evalf($);
+    value_of($);
     floatfunc($);
     let T = pop($) as Tensor;
 
@@ -5831,7 +5831,7 @@ function eigenvec_step_nib(D: number[], Q: number[], n: number, p: number, q: nu
 
 function eval_erf(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     erffunc($);
 }
 
@@ -5879,7 +5879,7 @@ function erffunc($: ScriptVars): void {
 
 function eval_erfc(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     erfcfunc($);
 }
 
@@ -5918,17 +5918,17 @@ function erfcfunc($: ScriptVars): void {
 
 function eval_eval(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = cddr(p1);
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         push(cadr(p1), $);
-        evalf($);
+        value_of($);
         subst($);
         p1 = cddr(p1);
     }
-    evalf($);
+    value_of($);
 }
 
 function eval_exit(expr: U, $: ScriptVars): void {
@@ -5937,7 +5937,7 @@ function eval_exit(expr: U, $: ScriptVars): void {
 
 function eval_exp(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     expfunc($);
 }
 
@@ -5949,7 +5949,7 @@ function expfunc($: ScriptVars): void {
 
 function eval_expcos(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     expcos($);
 }
 
@@ -5976,7 +5976,7 @@ function expcos($: ScriptVars): void {
 
 function eval_expcosh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     expcosh($);
 }
 
@@ -5994,7 +5994,7 @@ function expcosh($: ScriptVars): void {
 
 function eval_expsin(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     expsin($);
 }
 
@@ -6025,7 +6025,7 @@ function expsin($: ScriptVars): void {
 
 function eval_expsinh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     expsinh($);
 }
 
@@ -6044,7 +6044,7 @@ function expsinh($: ScriptVars): void {
 
 function eval_exptan(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     exptan($);
 }
 
@@ -6072,7 +6072,7 @@ function exptan($: ScriptVars): void {
 
 function eval_exptanh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     exptanh($);
 }
 
@@ -6092,7 +6092,7 @@ function exptanh($: ScriptVars): void {
 
 function eval_factorial(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     factorial($);
 }
 
@@ -6128,15 +6128,15 @@ function factorial($: ScriptVars): void {
 
 function eval_float(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     floatfunc($);
 }
 
 function floatfunc($: ScriptVars): void {
     floatfunc_subst($);
-    evalf($);
+    value_of($);
     floatfunc_subst($); // in case Pi popped up
-    evalf($);
+    value_of($);
 }
 
 function floatfunc_subst($: ScriptVars): void {
@@ -6212,7 +6212,7 @@ function floatfunc_subst($: ScriptVars): void {
 
 function eval_floor(p1: U, $: ScriptVars) {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     floorfunc($);
 }
 
@@ -6269,11 +6269,11 @@ function eval_for(p1: U, $: ScriptVars): void {
         stopf("for: symbol error");
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     let j = pop_integer($);
 
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     const k = pop_integer($);
 
     p1 = cddddr(p1);
@@ -6287,7 +6287,7 @@ function eval_for(p1: U, $: ScriptVars): void {
         p3 = p1;
         while (is_cons(p3)) {
             push(car(p3), $);
-            evalf($);
+            value_of($);
             pop($);
             p3 = cdr(p3);
         }
@@ -6306,11 +6306,11 @@ function eval_for(p1: U, $: ScriptVars): void {
 
 function eval_hadamard(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = cddr(p1);
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         hadamard($);
         p1 = cdr(p1);
     }
@@ -6358,7 +6358,7 @@ function hadamard($: ScriptVars): void {
 
 function eval_imag(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     imag($);
 }
 
@@ -6399,7 +6399,7 @@ function eval_index(p1: U, $: ScriptVars): void {
 
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         p1 = cdr(p1);
     }
 
@@ -6411,13 +6411,13 @@ function eval_index(p1: U, $: ScriptVars): void {
         if (is_tensor(p1) && n <= p1.ndim) {
             T = p1;
             indexfunc(T as Tensor, h, $);
-            evalf($);
+            value_of($);
             return;
         }
     }
 
     push(T, $);
-    evalf($);
+    value_of($);
     T = pop($);
 
     if (!istensor(T)) {
@@ -6477,7 +6477,7 @@ function indexfunc(T: Tensor, h: number, $: ScriptVars): void {
 
 function eval_infixform(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = pop($);
 
     const outbuf: string[] = [];
@@ -6502,11 +6502,11 @@ function eval_inner(p1: U, $: ScriptVars): void {
     if (h === $.stack.length)
         stopf("inner: no args");
 
-    evalf($);
+    value_of($);
 
     while ($.stack.length - h > 1) {
         swap($);
-        evalf($);
+        value_of($);
         swap($);
         inner($);
     }
@@ -7548,7 +7548,7 @@ const integral_tab: string[] = [
 function eval_integral(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
 
     p1 = cddr(p1);
 
@@ -7570,7 +7570,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
         }
         else {
             push(car(p1), $);
-            evalf($);
+            value_of($);
             X = pop($);
             p1 = cdr(p1);
         }
@@ -7593,7 +7593,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
         if (is_cons(p1)) {
 
             push(car(p1), $);
-            evalf($);
+            value_of($);
             Y = pop($);
             p1 = cdr(p1);
 
@@ -7756,7 +7756,7 @@ function integral_search(h: number, F: U, table: string[], n: number, $: ScriptV
     $.stack.splice(h); // pop all
 
     scan_integrals(table[i + 1], $, config); // answer
-    evalf($);
+    value_of($);
 
     return 1;
 }
@@ -7772,14 +7772,14 @@ function integral_search_nib(h: number, F: U, I: U, C: U, $: ScriptVars): 0 | 1 
             set_symbol(DOLLAR_B, $.stack[j], nil, $);
 
             push(C, $);			// condition ok?
-            evalf($);
+            value_of($);
             let p1 = pop($);
             if (iszero(p1))
                 continue;		// no, go to next j
 
             push(F, $);			// F = I?
             push(I, $);
-            evalf($);
+            value_of($);
             subtract($);
             p1 = pop($);
             if (iszero(p1))
@@ -7792,7 +7792,7 @@ function integral_search_nib(h: number, F: U, I: U, C: U, $: ScriptVars): 0 | 1 
 
 function eval_inv(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     inv($);
 }
 
@@ -7820,11 +7820,11 @@ function inv($: ScriptVars): void {
 
 function eval_kronecker(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = cddr(p1);
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         kronecker($);
         p1 = cdr(p1);
     }
@@ -7879,7 +7879,7 @@ function kronecker($: ScriptVars): void {
 
 function eval_log(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     logfunc($);
 }
 
@@ -8005,7 +8005,7 @@ function logfunc($: ScriptVars): void {
 
 function eval_mag(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     mag($);
 }
 
@@ -8119,15 +8119,15 @@ function mag_nib($: ScriptVars): void {
 function eval_minor(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     const p2 = pop($);
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     const i = pop_integer($);
 
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     const j = pop_integer($);
 
     if (!istensor(p2) || p2.ndim !== 2 || p2.dims[0] !== p2.dims[1])
@@ -8146,15 +8146,15 @@ function eval_minor(p1: U, $: ScriptVars): void {
 function eval_minormatrix(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     const p2 = pop($);
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     const i = pop_integer($);
 
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     const j = pop_integer($);
 
     if (!istensor(p2) || p2.ndim !== 2)
@@ -8230,9 +8230,9 @@ function minormatrix(row: number, col: number, $: ScriptVars): void {
 
 function eval_mod(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     modfunc($);
 }
 
@@ -8305,7 +8305,7 @@ function eval_multiply(p1: U, $: ScriptVars): void {
         p1 = cdr(p1);
         while (is_cons(p1)) {
             push(car(p1), $);
-            evalf($);
+            value_of($);
             p1 = cdr(p1);
         }
         // console.lg(`stack: ${$.stack}`);
@@ -8321,7 +8321,7 @@ function eval_noexpand(p1: U, $: ScriptVars): void {
     $.expanding = 0;
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
 
     $.expanding = t;
 }
@@ -8346,7 +8346,7 @@ function eval_nonstop_nib($: ScriptVars): void {
     const save_expanding = $.expanding;
 
     try {
-        evalf($);
+        value_of($);
     }
     catch (errmsg) {
 
@@ -8374,13 +8374,13 @@ const EPSILON = 1e-9;
 
 function eval_nroots(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
 
     p1 = cddr(p1);
 
     if (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
     }
     else
         push(X_LOWER, $);
@@ -8654,7 +8654,7 @@ function urandom(): number {
 
 function eval_number(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = pop($);
 
     if (is_num(p1))
@@ -8665,7 +8665,7 @@ function eval_number(p1: U, $: ScriptVars): void {
 
 function eval_numerator(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     numerator($);
 }
 
@@ -8703,11 +8703,11 @@ function eval_or(p1: U, $: ScriptVars): void {
 
 function eval_outer(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = cddr(p1);
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         outer($);
         p1 = cdr(p1);
     }
@@ -8759,7 +8759,7 @@ function outer($: ScriptVars): void {
 
 function eval_polar(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     polar($);
 }
 
@@ -8797,7 +8797,7 @@ function eval_power(expr: U, $: ScriptVars) {
     try {
         push(powerExpr.base, $);
         push(powerExpr.expo, $);
-        evalf($);
+        value_of($);
         dupl($);
         const expo = pop($);
 
@@ -8808,14 +8808,14 @@ function eval_power(expr: U, $: ScriptVars) {
             const t = $.expanding;
             $.expanding = 0;
             try {
-                evalf($);
+                value_of($);
             }
             finally {
                 $.expanding = t;
             }
         }
         else {
-            evalf($);
+            value_of($);
         }
         swap($);
 
@@ -9027,7 +9027,7 @@ function power($: ScriptVars): void {
 
 function eval_prefixform(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = pop($);
     const outbuf: string[] = [];
     prefixform(p1, outbuf);
@@ -9068,7 +9068,7 @@ function eval_print(p1: U, $: ScriptVars): void {
     while (is_cons(p1)) {
         push(car(p1), $);
         push(car(p1), $);
-        evalf($);
+        value_of($);
         const result = pop($);
         const input = pop($);
         const ec: EmitContext = {
@@ -9139,7 +9139,7 @@ function eval_product(p1: U, $: ScriptVars): void {
 
     if (lengthf(p1) === 2) {
         push(cadr(p1), $);
-        evalf($);
+        value_of($);
         p1 = pop($);
         if (!istensor(p1)) {
             push(p1, $);
@@ -9157,11 +9157,11 @@ function eval_product(p1: U, $: ScriptVars): void {
         stopf("product: symbol error");
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     let j = pop_integer($);
 
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     const k = pop_integer($);
 
     p1 = caddddr(p1);
@@ -9175,7 +9175,7 @@ function eval_product(p1: U, $: ScriptVars): void {
         const p3 = pop($);
         set_symbol(p2, p3, nil, $);
         push(p1, $);
-        evalf($);
+        value_of($);
         if (j === k)
             break;
         if (j < k)
@@ -9195,7 +9195,7 @@ function eval_quote(p1: U, $: ScriptVars): void {
 
 function eval_rank(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     p1 = pop($);
     if (is_tensor(p1))
         push_integer(p1.ndim, $);
@@ -9205,7 +9205,7 @@ function eval_rank(p1: U, $: ScriptVars): void {
 
 function eval_rationalize(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     rationalize($);
 }
 
@@ -9240,7 +9240,7 @@ function rationalize($: ScriptVars): void {
 
 function eval_real(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     real($);
 }
 
@@ -9266,7 +9266,7 @@ function real($: ScriptVars): void {
 
 function eval_rect(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     rect($);
 }
 
@@ -9352,13 +9352,13 @@ function rect($: ScriptVars): void {
 
 function eval_roots(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
 
     p1 = cddr(p1);
 
     if (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
     }
     else
         push(X_LOWER, $);
@@ -9625,7 +9625,7 @@ function reduce(h: number, n: number, A: U, $: ScriptVars): void {
 function eval_rotate(p1: Cons, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     const PSI = pop($);
 
     if (!istensor(PSI) || PSI.ndim > 1 || PSI.nelem > 32768 || (PSI.nelem & (PSI.nelem - 1)) !== 0)
@@ -9642,7 +9642,7 @@ function eval_rotate(p1: Cons, $: ScriptVars): void {
 
         const OPCODE = car(p1);
         push(cadr(p1), $);
-        evalf($);
+        value_of($);
         let n = pop_integer($);
 
         if (n > 14 || (1 << n) >= PSI.nelem)
@@ -9666,7 +9666,7 @@ function eval_rotate(p1: Cons, $: ScriptVars): void {
                 stopf("rotate error 2 unexpected end of argument list");
             push(car(p1), $);
             p1 = cdr(p1);
-            evalf($);
+            value_of($);
             push(imaginaryunit, $);
             multiply($);
             expfunc($);
@@ -9694,7 +9694,7 @@ function eval_rotate(p1: Cons, $: ScriptVars): void {
                 stopf("rotate error 2 unexpected end of argument list");
             push(car(p1), $);
             p1 = cdr(p1);
-            evalf($);
+            value_of($);
             n = pop_integer($);
             if (n > 14 || (1 << n) >= PSI.nelem)
                 stopf("rotate error 3 qubit number format or range");
@@ -9843,7 +9843,7 @@ function rotate_q(PSI: Tensor, n: number, $: ScriptVars): void {
             power($);
             push(imaginaryunit, $);
             push(Pi, $);
-            evalf($);
+            value_of($);
             multiply_factors(3, $);
             expfunc($);
             const PHASE = pop($);
@@ -9866,7 +9866,7 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
             power($);
             push(imaginaryunit, $);
             push(Pi, $);
-            evalf($);
+            value_of($);
             multiply_factors(3, $);
             negate($);
             expfunc($);
@@ -9885,7 +9885,7 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
 function eval_run(expr: U, $: ScriptVars): void {
 
     push(cadr(expr), $);
-    evalf($);
+    value_of($);
     const url = pop($);
 
     if (!isstring(url))
@@ -9955,7 +9955,7 @@ function eval_setq(x: Cons, $: ScriptVars): void {
     const sym = x.lhs;
     if (is_sym(sym) && $.isUserSymbol(sym)) {
         push(x.rhs, $);
-        evalf($);
+        value_of($);
         const rhs = pop($);
 
         set_symbol(sym, rhs, nil, $);
@@ -9986,10 +9986,10 @@ function setq_indexed(p1: U, $: ScriptVars): void {
     }
 
     push(S, $);
-    evalf($);
+    value_of($);
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
 
     const RVAL = pop($);
     const LVAL = pop($);
@@ -10000,7 +10000,7 @@ function setq_indexed(p1: U, $: ScriptVars): void {
 
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         p1 = cdr(p1);
     }
 
@@ -10183,7 +10183,7 @@ function convert_body(A: U, $: ScriptVars): void {
 
 function eval_sgn(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     sgn($);
 }
 
@@ -10216,7 +10216,7 @@ function sgn($: ScriptVars): void {
 
 function eval_simplify(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     simplify($);
 }
 
@@ -10259,7 +10259,7 @@ function simplify_scalar(p1: U, $: ScriptVars): void {
     }
 
     list($.stack.length - h, $);
-    evalf($);
+    value_of($);
 
     simplify_pass1($);
     simplify_pass2($); // try exponential form
@@ -10297,7 +10297,7 @@ function simplify_pass1($: ScriptVars): void {
 
     push(T, $);
     denominator($);
-    evalf($); // to expand denominator
+    value_of($); // to expand denominator
     let DEN = pop($);
 
     // if DEN is a sum then rationalize it
@@ -10310,7 +10310,7 @@ function simplify_pass1($: ScriptVars): void {
             // update NUM
             push(T, $);
             denominator($);
-            evalf($); // to expand denominator
+            value_of($); // to expand denominator
             push(NUM, $);
             multiply($);
             NUM = pop($);
@@ -10372,7 +10372,7 @@ function simplify_pass2($: ScriptVars): void {
     push(p1, $);
     circexp($);
     rationalize($);
-    evalf($); // to normalize
+    value_of($); // to normalize
     const p2 = pop($);
 
     if (complexity(p2) < complexity(p1)) {
@@ -10408,7 +10408,7 @@ function simplify_pass3($: ScriptVars): void {
 
 function eval_sin(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     sinfunc($);
 }
 
@@ -10630,7 +10630,7 @@ function sinfunc_sum(p1: U, $: ScriptVars): void {
 
 function eval_sinh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     sinhfunc($);
 }
 
@@ -10691,7 +10691,7 @@ function sinhfunc($: ScriptVars): void {
 
 function eval_sqrt(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     sqrtfunc($);
 }
 
@@ -10710,13 +10710,13 @@ function eval_stop(): never {
 
 function eval_subst(p1: U, $: ScriptVars): void {
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     subst($);
-    evalf($); // normalize
+    value_of($); // normalize
 }
 
 function subst($: ScriptVars): void {
@@ -10768,7 +10768,7 @@ function eval_sum(p1: U, $: ScriptVars): void {
 
     if (lengthf(p1) === 2) {
         push(cadr(p1), $);
-        evalf($);
+        value_of($);
         p1 = pop($);
         if (!istensor(p1)) {
             push(p1, $);
@@ -10786,11 +10786,11 @@ function eval_sum(p1: U, $: ScriptVars): void {
         stopf("sum: symbol error");
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     let j = pop_integer($);
 
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     const k = pop_integer($);
 
     p1 = caddddr(p1);
@@ -10804,7 +10804,7 @@ function eval_sum(p1: U, $: ScriptVars): void {
         const p3 = pop($);
         set_symbol(p2, p3, nil, $);
         push(p1, $);
-        evalf($);
+        value_of($);
         if (j === k)
             break;
         if (j < k)
@@ -10820,7 +10820,7 @@ function eval_sum(p1: U, $: ScriptVars): void {
 
 function eval_tan(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     tanfunc($);
 }
 
@@ -10984,7 +10984,7 @@ function tanfunc_sum(p1: U, $: ScriptVars): void {
 
 function eval_tanh(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     tanhfunc($);
 }
 
@@ -11062,7 +11062,7 @@ function eval_tau(x: Cons, $: ScriptVars): void {
     const argList = x.argList;
     const arg = argList.item(0);
     push(arg, $);
-    evalf($);
+    value_of($);
     taufunc($);
 }
 
@@ -11077,22 +11077,22 @@ function taufunc($: ScriptVars): void {
 function eval_taylor(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     let F = pop($);
 
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     const X = pop($);
 
     push(cadddr(p1), $);
-    evalf($);
+    value_of($);
     const n = pop_integer($);
 
     p1 = cddddr(p1);
 
     if (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
     }
     else
         push_integer(0, $); // default expansion point
@@ -11105,7 +11105,7 @@ function eval_taylor(p1: U, $: ScriptVars): void {
     push(X, $);
     push(A, $);
     subst($);
-    evalf($);
+    value_of($);
 
     push_integer(1, $);
     let C = pop($);
@@ -11131,7 +11131,7 @@ function eval_taylor(p1: U, $: ScriptVars): void {
         push(X, $);
         push(A, $);
         subst($);
-        evalf($);
+        value_of($);
 
         push(C, $);
         multiply($);
@@ -11151,7 +11151,7 @@ function eval_tensor(p1: Tensor, $: ScriptVars): void {
 
     for (let i = 0; i < n; i++) {
         push(p1.elems[i], $);
-        evalf($);
+        value_of($);
         p1.elems[i] = pop($);
     }
 
@@ -11165,7 +11165,7 @@ function eval_test(p1: U, $: ScriptVars): void {
     while (is_cons(p1)) {
         if (!is_cons(cdr(p1))) {
             push(car(p1), $); // default case
-            evalf($);
+            value_of($);
             return;
         }
         push(car(p1), $);
@@ -11173,7 +11173,7 @@ function eval_test(p1: U, $: ScriptVars): void {
         const p2 = pop($);
         if (!iszero(p2)) {
             push(cadr(p1), $);
-            evalf($);
+            value_of($);
             return;
         }
         p1 = cddr(p1);
@@ -11183,9 +11183,9 @@ function eval_test(p1: U, $: ScriptVars): void {
 
 function eval_testeq(p1: U, $: ScriptVars): void {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     subtract($);
     simplify($);
     p1 = pop($);
@@ -11225,9 +11225,9 @@ function eval_testlt(p1: U, $: ScriptVars): void {
 
 function cmp_args(p1: U, $: ScriptVars): 0 | 1 | -1 {
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     push(caddr(p1), $);
-    evalf($);
+    value_of($);
     subtract($);
     simplify($);
     floatfunc($);
@@ -11245,7 +11245,7 @@ function cmp_args(p1: U, $: ScriptVars): 0 | 1 | -1 {
 function eval_transpose(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
     const p2 = pop($);
     push(p2, $);
 
@@ -11262,11 +11262,11 @@ function eval_transpose(p1: U, $: ScriptVars): void {
     while (is_cons(p1)) {
 
         push(car(p1), $);
-        evalf($);
+        value_of($);
         const n = pop_integer($);
 
         push(cadr(p1), $);
-        evalf($);
+        value_of($);
         const m = pop_integer($);
 
         transpose(n, m, $);
@@ -11329,7 +11329,7 @@ function transpose(n: number, m: number, $: ScriptVars): void {
 function eval_unit(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
 
     const n = pop_integer($);
 
@@ -11356,7 +11356,7 @@ function eval_unit(p1: U, $: ScriptVars): void {
 function eval_uom(p1: U, $: ScriptVars): void {
 
     push(cadr(p1), $);
-    evalf($);
+    value_of($);
 
     const strname = pop($);
     if (is_str(strname)) {
@@ -11395,7 +11395,7 @@ function eval_user_function(p1: U, $: ScriptVars): void {
         push(FUNC_NAME, $);
         while (is_cons(FUNC_ARGS)) {
             push(car(FUNC_ARGS), $);
-            evalf($);
+            value_of($);
             FUNC_ARGS = cdr(FUNC_ARGS);
         }
         list($.stack.length - h, $);
@@ -11408,7 +11408,7 @@ function eval_user_function(p1: U, $: ScriptVars): void {
 
     for (let i = 0; i < 9; i++) {
         push(car(FUNC_ARGS), $);
-        evalf($);
+        value_of($);
         FUNC_ARGS = cdr(FUNC_ARGS);
     }
 
@@ -11432,7 +11432,7 @@ function eval_user_function(p1: U, $: ScriptVars): void {
     set_symbol(ARG2, pop($), nil, $);
     set_symbol(ARG1, pop($), nil, $);
 
-    evalf($);
+    value_of($);
 
     restore_symbol($);
     restore_symbol($);
@@ -11453,7 +11453,7 @@ function eval_user_symbol(p1: U, $: ScriptVars): void {
     }
     else {
         push(p2, $); // evaluate symbol binding
-        evalf($);
+        value_of($);
     }
 }
 
@@ -11465,7 +11465,7 @@ function eval_zero(p1: U, $: ScriptVars): void {
 
     while (is_cons(p1)) {
         push(car(p1), $);
-        evalf($);
+        value_of($);
         dupl($);
         const n = pop_integer($);
         if (n < 2)
@@ -11494,7 +11494,7 @@ function eval_zero(p1: U, $: ScriptVars): void {
     push(T, $);
 }
 
-function evalf($: ScriptVars): void {
+function value_of($: ScriptVars): void {
     $.eval_level++;
     try {
         evalf_nib($);
@@ -11535,7 +11535,7 @@ function evalf_nib($: ScriptVars): void {
         push(p1, $);
         push(LAST, $); // default arg
         list(2, $);
-        evalf($);
+        value_of($);
         return;
     }
 
@@ -11558,7 +11558,7 @@ function evalp($: ScriptVars): void {
         eval_testeq(p1, $);
     else {
         push(p1, $);
-        evalf($);
+        value_of($);
     }
 }
 
@@ -16459,7 +16459,7 @@ export class ScriptVars implements ExprContext {
 
         for (let i = 0; i < n; i++) {
             scan(script[i], 0, this, config);
-            evalf(this);
+            value_of(this);
             pop(this);
         }
     }
@@ -16483,6 +16483,11 @@ export class ScriptVars implements ExprContext {
     }
     setUsrFunc(sym: Sym, usrfunc: U): void {
         this.usrfunc[sym.key()] = usrfunc;
+    }
+    valueOf(expr: U): U {
+        push(expr, this);
+        value_of(this);
+        return pop(this);
     }
     /**
      * 

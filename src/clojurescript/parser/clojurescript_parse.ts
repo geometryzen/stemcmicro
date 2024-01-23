@@ -282,7 +282,14 @@ class Parser {
             }
             items[items.length] = this.#consumeObject();
         }
-        return new Map(items);
+        const entries: [key: U, value: U][] = [];
+        // TODO: We should check that the number of items is even.
+        // https://www.educative.io/answers/how-to-check-if-a-number-is-odd-or-even-in-javascript
+        const pairs = items.length / 2;
+        for (let i = 0; i < pairs; i++) {
+            entries.push([items[i], items[i + 1]]);
+        }
+        return new Map(entries);
     }
     #consumeObjectsInSexpComment(err_msg: string): void {
         while (this.#tokens[this.#tokenIdx] == '#;') {

@@ -1,4 +1,4 @@
-import { Map, is_map } from "../../clojurescript/atoms/Map";
+import { is_map, Map } from "../../clojurescript/atoms/Map";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
 import { print_str } from "../../print/print";
@@ -94,17 +94,17 @@ export function print_dictionary(dictionary: Map, $: ExtensionEnv): string {
     let str = '';
     str += print_str('{');
     try {
-        const elements: U[] = dictionary.elements;
-        const n = elements.length / 2;
-        const entries: string[] = [];
+        const entries: [key: U, value: U][] = dictionary.entries;
+        const n = entries.length;
+        const pairs: string[] = [];
         for (let i = 0; i < n; i++) {
-            const key = elements[2 * i];
-            const value = elements[2 * i + 1];
+            const key = entries[i][0];
+            const value = entries[i][1];
             const keyStr = $.toSExprString(key);
             const valStr = $.toSExprString(value);
-            entries.push(`${keyStr} ${valStr}`);
+            pairs.push(`${keyStr} ${valStr}`);
         }
-        str += entries.join(' ');
+        str += pairs.join(' ');
     }
     finally {
         str += print_str('}');

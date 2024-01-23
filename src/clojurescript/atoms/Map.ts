@@ -4,16 +4,18 @@ import { U } from "math-expression-tree";
 export class Map extends Atom {
     /**
      * TODO: Change to entries: [key:U value:U][]
-     * @param elements
+     * @param entries
      * @param pos
      * @param end 
      */
-    constructor(readonly elements: U[], pos?: number, end?: number) {
+    constructor(readonly entries: [key: U, value: U][], pos?: number, end?: number) {
         super('Map', pos, end);
     }
     toString(): string {
-        // This is only for debugging.
-        return `{${this.elements.map((element) => element.toString()).join(' ')}}`;
+        function entryToString(entry: [key: U, value: U]): string {
+            return entry.map(part => part.toString()).join(' ');
+        }
+        return `{${this.entries.map(entry => entryToString(entry)).join(' ')}}`;
     }
 }
 

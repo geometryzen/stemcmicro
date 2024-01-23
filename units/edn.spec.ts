@@ -26,15 +26,7 @@ describe("edn", function () {
             keywordAs: (localName: string, namespace: string, pos: number, end: number) => new Keyword(localName, namespace, pos, end),
             listAs: (items: U[], pos: number, end: number) => pos_end_items_to_cons(pos, end, ...items),
             mapAs: (entries: [key: U, value: U][], pos: number, end: number) => {
-                const elements: U[] = [];
-                for (const entry of entries) {
-                    const key = entry[0];
-                    const value = entry[1];
-                    elements.push(key);
-                    elements.push(value);
-                }
-
-                return new Map(elements, pos, end);
+                return new Map(entries, pos, end);
             },
             nilAs: (pos: number, end: number) => {
                 return pos_end_items_to_cons(pos, end, ...[]);
@@ -176,9 +168,8 @@ describe("edn", function () {
         const I7 = items[7];
         assert.strictEqual(is_map(I7), true);
         if (is_map(I7)) {
-            // TODO: Change Map.elements
-            const elements = I7.elements;
-            assert.strictEqual(elements.length, 4);
+            const entries = I7.entries;
+            assert.strictEqual(entries.length, 2);
             // Note extra for comment.
             assert.strictEqual(I7.pos, 67);
             assert.strictEqual(I7.end, 78);

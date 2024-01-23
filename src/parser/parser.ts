@@ -113,15 +113,7 @@ export function clojurescript_parse(sourceText: string, options: ClojureScriptPa
         keywordAs: (localName: string, namespace: string, pos: number, end: number) => new Keyword(localName, namespace, pos, end),
         listAs: (items: U[], pos: number, end: number) => pos_end_items_to_cons(pos, end, ...items),
         mapAs: (entries: [key: U, value: U][], pos: number, end: number) => {
-            const elements: U[] = [];
-            for (const entry of entries) {
-                const key = entry[0];
-                const value = entry[1];
-                elements.push(key);
-                elements.push(value);
-            }
-
-            return new Map(elements, pos, end);
+            return new Map(entries, pos, end);
         },
         nilAs: (pos: number, end: number) => {
             return pos_end_items_to_cons(pos, end, ...[]);

@@ -1,6 +1,7 @@
 import { assert } from "chai";
 import { Boo, booF, booT, booU, create_flt, create_rat, create_sym, Flt, Rat, Str, Sym, Tensor } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
+import { Keyword } from "../src/clojurescript/atoms/Keyword";
 import { Map } from "../src/clojurescript/atoms/Map";
 import { create_tensor } from "../src/tensor/create_tensor";
 import { visit } from '../src/visitor/visit';
@@ -27,6 +28,9 @@ class TestVisitor implements Visitor {
     }
     boo(boo: Boo): void {
         this.items.push(boo);
+    }
+    keyword(keyword: Keyword): void {
+        this.items.push(keyword);
     }
     str(str: Str): void {
         this.items.push(str);
@@ -112,7 +116,7 @@ describe("visitor", function () {
         const visitor = new TestVisitor();
         const word = create_sym('word');
         const alice = new Str("Alice");
-        const atom = new Map([word, alice]);
+        const atom = new Map([[word, alice]]);
         visit(atom, visitor);
         const items = visitor.items;
         assert.strictEqual(items.length, 4);

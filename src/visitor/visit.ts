@@ -45,8 +45,9 @@ export function visit(expr: U, visitor: Visitor): void {
     else if (is_map(expr)) {
         visitor.beginMap(expr);
         try {
-            for (const elem of expr.elements) {
-                visit(elem, visitor);
+            for (const entry of expr.entries) {
+                visit(entry[0], visitor);
+                visit(entry[1], visitor);
             }
         }
         finally {

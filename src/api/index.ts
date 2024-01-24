@@ -384,8 +384,8 @@ class ClojureScriptExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setSymbol(sym: Sym, binding: U, usrfunc: U): void {
-        this.#env.setBinding(sym.key(), binding);
-        this.#env.setUsrFunc(sym.key(), usrfunc);
+        this.#env.setBinding(sym, binding);
+        this.#env.setUsrFunc(sym, usrfunc);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -629,7 +629,20 @@ class MyExprEngineListener<T> implements ExprEngineListener {
     }
 }
 
-export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandler<ExprEngine>): void {
+export class NoopScriptHandler implements ScriptHandler<ExprEngine> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    begin($: ExprEngine): void { }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    output(_value: U, _input: U, $: ExprEngine): void { }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    text(text: string): void { }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    end($: ExprEngine): void { }
+}
+
+const BLACK_HOLE = new NoopScriptHandler();
+
+export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandler<ExprEngine> = BLACK_HOLE): void {
     const listen = new MyExprEngineListener(handler);
     engine.addListener(listen);
     handler.begin(engine);

@@ -12683,28 +12683,33 @@ function get_operator_height(font_num: number): number {
     return get_cap_height(font_num) / 2;
 }
 
-export function get_binding(p1: Sym, $: ScriptVars): U {
-    if (!is_sym(p1)) {
-        stopf(`get_binding(${p1}) argument must be a Sym.`);
+export function get_binding(sym: Sym, $: ScriptVars): U {
+    if (!is_sym(sym)) {
+        stopf(`get_binding(${sym}) argument must be a Sym.`);
     }
-    if (!$.isUserSymbol(p1)) {
-        stopf(`get_binding(${p1}) symbol error`);
+    if (!$.isUserSymbol(sym)) {
+        stopf(`get_binding(${sym}) symbol error`);
     }
-    let p2 = $.getBinding(p1);
-    if (typeof (p2) === 'undefined' || is_nil(p2)) {
-        p2 = p1; // symbol binds to itself
+    const binding = $.getBinding(sym);
+    if (typeof binding === 'undefined' || is_nil(binding)) {
+        return sym; // symbol binds to itself
     }
-    return p2;
+    else {
+        return binding;
+    }
 }
 
-function get_usrfunc(p: Sym, $: ScriptVars): U {
-    if (!$.isUserSymbol(p))
+function get_usrfunc(sym: Sym, $: ScriptVars): U {
+    if (!$.isUserSymbol(sym)) {
         stopf("symbol error");
-    let f = $.getUsrFunc(p.key());
-    if (typeof (f) === 'undefined') {
-        f = nil;
     }
-    return f;
+    const f = $.getUsrFunc(sym);
+    if (typeof f === 'undefined') {
+        return nil;
+    }
+    else {
+        return f;
+    }
 }
 
 function infixform_subexpr(p: U, config: InfixConfig, outbuf: string[]): void {
@@ -16469,8 +16474,8 @@ export class ScriptVars implements ExprContext {
     getBinding(sym: Sym): U {
         return this.binding[sym.key()];
     }
-    getUsrFunc(key: string): U {
-        return this.usrfunc[key];
+    getUsrFunc(sym: Sym): U {
+        return this.usrfunc[sym.key()];
     }
     isConsSymbol(sym: Sym): boolean {
         return consFunctions.has(sym.key());

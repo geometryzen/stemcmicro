@@ -9,7 +9,7 @@ import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 
 export enum SyntaxKind {
     /**
-     * Algebrite Scripting Language.
+     * Algebrite Scripting Language by Davide Della Casa (with extensions).
      */
     Algebrite = 1,
     /**
@@ -17,7 +17,7 @@ export enum SyntaxKind {
      */
     ClojureScript = 2,
     /**
-     * Eigenmath Scripting Language.
+     * Eigenmath Scripting Language by George Weigt.
      */
     Eigenmath = 3,
     /**

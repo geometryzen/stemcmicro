@@ -1,10 +1,4 @@
-// import * as _ from "../deps/underscore-1.10.2-esm.js"
-// import { inspect } from "./_writer.js"
-// import Class from "./class.js"
-//import { Bug } from "./error.js"
-
 import { Str } from "math-expression-atoms";
-
 
 const Chars: Record<string, Str> = {};
 
@@ -12,9 +6,6 @@ export class Char {
     constructor(readonly value: string) {
     }
     static get(c: string): Str {
-        //if (typeof (c) != "string") {
-        //    throw new Bug("Char.get: " + inspect(c) + " is not a string");
-        // }
         if (Chars[c] === undefined)
             return new Str(c);
         else

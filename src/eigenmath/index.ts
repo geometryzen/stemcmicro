@@ -669,7 +669,7 @@ const ADD = native_sym(Native.add);
 const MULTIPLY = native_sym(Native.multiply);
 const POWER = native_sym(Native.pow);
 const INDEX = native_sym(Native.component);
-const SETQ = native_sym(Native.setq);
+const ASSIGN = native_sym(Native.assign);
 
 export const LAST = create_sym("last");
 /**
@@ -1259,7 +1259,7 @@ function emit_function(p: U, $: StackContext, ec: EmitContext, scope: EigenmathR
         return;
     }
 
-    if (car(p).equals(SETQ) || car(p).equals(TESTEQ)) {
+    if (is_cons(p) && (p.opr.equals(ASSIGN) || p.opr.equals(TESTEQ))) {
         emit_expr(cadr(p), $, ec, scope);
         emit_infix_operator(EQUALS_SIGN, $);
         emit_expr(caddr(p), $, ec, scope);
@@ -9075,7 +9075,7 @@ function eval_print(p1: U, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
+        print_value_and_input_as_svg_or_infix(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
         p1 = cdr(p1);
     }
     push(nil, $);
@@ -9094,6 +9094,20 @@ function should_render_svg($: ScriptVars): boolean {
 export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
 
 /**
+ * This function is used by...
+ * 
+ * PrintScriptHandler
+ * 
+ * PrintScriptContentHandler (DRY?)
+ * 
+ * eval_print       (Eigenmath)
+ * 
+ * eval_run         (Eigenmath)
+ * 
+ * handler.spec.ts
+ * 
+ * runscript.spec.ts
+ * 
  * FIXME: A possible problem with this function is that it has access to module level variables.
  * This makes it unsuitable as a pure function.
  * @param value 
@@ -9104,7 +9118,7 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
  * @returns 
  */
-export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction, scope: EigenmathReadScope): void {
+export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction, scope: EigenmathReadScope): void {
 
     if (is_nil(value)) {
         return;
@@ -9132,7 +9146,7 @@ export function print_result_and_input(value: U, x: U, svg: boolean, ec: EmitCon
 }
 
 function annotate(input: U, result: U): U {
-    return items_to_cons(SETQ, input, result);
+    return items_to_cons(ASSIGN, input, result);
 }
 
 function eval_product(p1: U, $: ScriptVars): void {
@@ -9925,7 +9939,7 @@ function eval_run(expr: U, $: ScriptVars): void {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_result_and_input(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
+        print_value_and_input_as_svg_or_infix(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
         if (!is_nil(result)) {
             set_symbol(LAST, result, nil, $);
         }
@@ -9938,7 +9952,7 @@ function eval_run(expr: U, $: ScriptVars): void {
     push(nil, $);
 }
 
-function eval_setq(x: Cons, $: ScriptVars): void {
+function eval_assign(x: Cons, $: ScriptVars): void {
 
     push(nil, $); // return value
 
@@ -11554,8 +11568,9 @@ function evalf_nib($: ScriptVars): void {
 
 function evalp($: ScriptVars): void {
     const p1 = pop($);
-    if (car(p1).equals(SETQ))
+    if (is_cons(p1) && p1.opr.equals(ASSIGN)) {
         eval_testeq(p1, $);
+    }
     else {
         push(p1, $);
         value_of($);
@@ -12954,10 +12969,12 @@ function infixform_factor(p: U, config: InfixConfig, outbuf: string[]): void {
         return;
     }
 
-    if (car(p).equals(SETQ)) {
-        infixform_expr(cadr(p), config, outbuf);
+    if (is_cons(p) && p.opr.equals(ASSIGN)) {
+        const lhs = p.lhs;
+        const rhs = p.rhs;
+        infixform_expr(lhs, config, outbuf);
         infixform_write(" = ", config, outbuf);
-        infixform_expr(caddr(p), config, outbuf);
+        infixform_expr(rhs, config, outbuf);
         return;
     }
 
@@ -15380,7 +15397,7 @@ class PrintScriptOutputListener implements ScriptOutputListener {
 
 }
 
-export class PrintScriptContentHandler implements ScriptContentHandler {
+class PrintScriptContentHandler implements ScriptContentHandler {
     private readonly listener: PrintScriptOutputListener;
     constructor(readonly stdout: HTMLElement) {
         this.listener = new PrintScriptOutputListener(this);
@@ -15420,7 +15437,7 @@ export class PrintScriptContentHandler implements ScriptContentHandler {
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [this.listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [this.listener], should_annotate_symbol, $);
     }
 }
 
@@ -15625,7 +15642,7 @@ function scan_stmt($: ScriptVars, config: EigenmathParseConfig) {
     scan_relational_expr($, config);
     if (token === "=") {
         get_token_skip_newlines($, config); // get token after =
-        push(SETQ, $);
+        push(ASSIGN, $);
         swap($);
         scan_relational_expr($, config);
         list(3, $);
@@ -16585,7 +16602,7 @@ defineConsFunction(MULTIPLY, eval_multiply);
 defineConsFunction(POWER, eval_power);
 defineConsFunction(ROTATE, eval_rotate);
 defineConsFunction(INDEX, eval_index);
-defineConsFunction(SETQ, eval_setq);
+defineConsFunction(ASSIGN, eval_assign);
 defineConsFunction(SIN, eval_sin);
 defineConsFunction(SINH, eval_sinh);
 defineConsFunction(SQRT, eval_sqrt);

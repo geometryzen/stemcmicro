@@ -4,7 +4,7 @@ import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_result_and_input, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
+import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_value_and_input_as_svg_or_infix, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
@@ -642,6 +642,9 @@ export class NoopScriptHandler implements ScriptHandler<ExprEngine> {
 
 const BLACK_HOLE = new NoopScriptHandler();
 
+/**
+ * @deprecated Use ExprEngine.evaluate and the PrintScriptHandler as a convenience. 
+ */
 export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandler<ExprEngine> = BLACK_HOLE): void {
     const listen = new MyExprEngineListener(handler);
     engine.addListener(listen);
@@ -715,33 +718,50 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
  * An adapter for the print_result_and_output(...) function.
  */
 class PrintScriptListener implements ScriptOutputListener {
-    // TODO: This class only really needs stdout.
-    // TODO: This class could be the correct location for HTML escaping.
-    constructor(private readonly outer: PrintScriptHandler) {
+    constructor(private readonly element: HTMLElement) {
     }
+    /**
+     * Appends the `output` to `this.element.innerHTML`.
+     */
     output(output: string): void {
-        this.outer.stdout.innerHTML += output;
+        this.element.innerHTML += output;
     }
 }
 
+/**
+ * A utility for rendering expressions to the DOM (Document Object Model).
+ * @deprecated Use ExprEngine.renderAsString(expr, { format: 'SVG'})
+ */
 export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
-    constructor(readonly stdout: HTMLElement) {
+    /**
+     * @param element The `HTMLElement` whose `innerHTML` property will be targeted.
+     */
+    constructor(readonly element: HTMLElement) {
     }
+    /**
+     * Sets the `innerHTML` property of `this.element` to the empty string.
+     */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ExprEngine): void {
-        this.stdout.innerHTML = "";
+        this.element.innerHTML = "";
     }
+    /**
+     * Does nothing.
+     */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     end($: ExprEngine): void {
-        // $.removeListener(this.listener);
+        // Nothing to see here.
     }
+    /**
+     * Appends `input` = `value` in SVG to `this.element.innerHTML`.
+     */
     output(value: U, input: U, $: ExprEngine): void {
         const ec: EmitContext = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
         // 
-        const listener = new PrintScriptListener(this);
+        const listener = new PrintScriptListener(this.element);
         function should_annotate_symbol(x: Sym, value: U): boolean {
             if ($.isUserSymbol(x)) {
                 if (x.equals(value) || is_nil(value)) {
@@ -766,10 +786,13 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
     }
+    /**
+     * Appends `text` to `this.element.innerHTML`.
+     */
     text(text: string): void {
-        this.stdout.innerHTML += text;
+        this.element.innerHTML += text;
     }
 }
 

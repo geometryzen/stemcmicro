@@ -5,7 +5,7 @@ import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
 import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
-import { EmitContext, iszero, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
+import { EmitContext, iszero, print_value_and_input_as_svg_or_infix, ScriptOutputListener } from "../src/eigenmath";
 import { Stack } from "../src/env/Stack";
 
 export function should_stepper_render_svg(stepper: Stepper): boolean {
@@ -116,7 +116,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -179,7 +179,7 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
                 }
             }
         }
-        print_result_and_input(value, input, should_stepper_render_svg($), ec, [listener], should_annotate_symbol, $.stack.top.$);
+        print_value_and_input_as_svg_or_infix(value, input, should_stepper_render_svg($), ec, [listener], should_annotate_symbol, $.stack.top.$);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

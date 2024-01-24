@@ -5,7 +5,7 @@ import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, ScriptHandler, should_render_svg } from "../src/api/index";
 import { State, Stepper, StepperHandler } from "../src/clojurescript/runtime/Stepper";
-import { EmitContext, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
+import { EmitContext, print_value_and_input_as_svg_or_infix, ScriptOutputListener } from "../src/eigenmath";
 import { Stack } from "../src/env/Stack";
 import { is_sym } from "../src/operators/sym/is_sym";
 import { SyntaxKind } from "../src/parser/parser";
@@ -64,7 +64,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine>, StepperHandler {
                 }
             }
         };
-        print_result_and_input(value, input, should_render_svg(this.#engine), ec, [listener], should_annotate_symbol, this.#engine);
+        print_value_and_input_as_svg_or_infix(value, input, should_render_svg(this.#engine), ec, [listener], should_annotate_symbol, this.#engine);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {

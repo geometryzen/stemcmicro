@@ -1,11 +1,10 @@
 
 import { assert } from "chai";
-import { Boo, Flt, Rat, Str, Sym, Tensor } from "math-expression-atoms";
+import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
-import { Map } from "../src/clojurescript/atoms/Map";
-import { EmitContext, print_result_and_input, ScriptOutputListener } from "../src/eigenmath";
+import { EmitContext, print_value_and_input_as_svg_or_infix, ScriptOutputListener } from "../src/eigenmath";
 import { SyntaxKind } from "../src/parser/parser";
 import { visit } from "../src/visitor/visit";
 import { Visitor } from "../src/visitor/Visitor";
@@ -95,7 +94,7 @@ class TestHandler implements ScriptHandler<ExprEngine>{
                 }
             }
         }
-        print_result_and_input(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {
@@ -114,6 +113,10 @@ function strip_whitespace(s: string): string {
 }
 
 class Voyeur implements Visitor {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    keyword(keyword: Keyword): void {
+        throw new Error("Voyeur.keyword method not implemented.");
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     beginCons(expr: Cons): void {
         // console.lg(`beginCons ${expr.opr}`);

@@ -16,7 +16,7 @@ import { scanner_negate } from './scanner_negate';
 import { TokenCode } from './Token';
 
 // TODO: Obtain ALL Sym constants from math-expression-native using native_sym(Native.xyz)
-const ASSIGN = native_sym(Native.setq);
+const ASSIGN = native_sym(Native.assign);
 const FACTORIAL = native_sym(Native.factorial);
 const MATH_INNER = native_sym(Native.inner);
 const MATH_LCO = native_sym(Native.lco);

@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { assert_keyword, assert_map, assert_rat, assert_sym } from "math-expression-atoms";
+import { assert_keyword, assert_map, assert_rat } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { SyntaxKind } from "../src/parser/parser";
 
@@ -60,13 +60,13 @@ describe("Algebrite", function () {
             assert.strictEqual(map.end, 12, "end");
 
             const one = map.entries[0];
-            const a = assert_sym(one[0]);
+            const a = assert_keyword(one[0]);
             assert.strictEqual(a.localName, "a");
             const r = assert_rat(one[1]);
             assert.strictEqual(r.isOne(), true);
 
             const two = map.entries[1];
-            const b = assert_sym(two[0]);
+            const b = assert_keyword(two[0]);
             assert.strictEqual(b.localName, "b");
             const s = assert_rat(two[1]);
             assert.strictEqual(s.isTwo(), true);

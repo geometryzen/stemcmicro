@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { assert_sym, create_boo, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from 'math-expression-atoms';
+import { assert_sym, create_boo, create_keyword_ns, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, nil, pos_end_items_to_cons, U } from 'math-expression-tree';
 import {
@@ -1103,10 +1103,10 @@ function scan_map(state: InputState, options: ScanOptions): Map {
 
     if (state.code != T_RCURLY) {
 
-        const k1 = scan_assignment_stmt(state, options);
+        const k1 = assert_sym(scan_symbol(state));
         pos = Math.min(assert_pos(k1.pos), pos);
         end = Math.max(assert_end(k1.end), end);
-        elements.push(k1);
+        elements.push(create_keyword_ns(k1.localName, k1.namespace, k1.pos, k1.end));
 
         state.expect(T_COLON);
         const colon = state.tokenToSym();
@@ -1127,10 +1127,10 @@ function scan_map(state: InputState, options: ScanOptions): Map {
             end = Math.max(assert_end(comma.end), end);
             state.get_token();
 
-            const k = scan_assignment_stmt(state, options);
+            const k = assert_sym(scan_symbol(state));
             pos = Math.min(assert_pos(k.pos), pos);
             end = Math.max(assert_end(k.end), end);
-            elements.push(k);
+            elements.push(create_keyword_ns(k.localName, k.namespace, k.pos, k.end));
 
             state.expect(T_COLON);
             const colon = state.tokenToSym();

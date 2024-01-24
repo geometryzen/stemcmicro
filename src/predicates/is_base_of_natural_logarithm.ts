@@ -6,7 +6,7 @@ import { native_sym } from "../native/native_sym";
 import { is_num } from "../operators/num/is_num";
 import { is_power } from "../runtime/helpers";
 
-const MATH_E = native_sym(Native.mathematical_constant_Eulers_number_Napiers_constant);
+const MATH_E = native_sym(Native.E);
 
 /**
  * @param expr The base found in e.g. (pow base exponent).

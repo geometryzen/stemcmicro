@@ -847,8 +847,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolPrintName(native_sym(Native.outer), '^');
     $.setSymbolPrintName(native_sym(Native.abs), 'abs');
 
-    $.setSymbolPrintName(native_sym(Native.mathematical_constant_Eulers_number_Napiers_constant), 'e');
-    $.setSymbolPrintName(native_sym(Native.mathematical_constant_Pi), 'pi');
+    $.setSymbolPrintName(native_sym(Native.E), 'e');
+    $.setSymbolPrintName(native_sym(Native.PI), 'pi');
     $.setSymbolPrintName(native_sym(Native.NIL), '()');
     $.setSymbolPrintName(native_sym(Native.IMU), 'i');
     $.setSymbolPrintName(native_sym(Native.exp), 'exp');

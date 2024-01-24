@@ -49,7 +49,7 @@ describe("Pi in Algebrite", function () {
 
         assert.strictEqual(is_sym(values[0]), true, `${values[0]}`);
         const actualPi = assert_sym(values[0]);
-        const Pi = native_sym(Native.mathematical_constant_Pi);
+        const Pi = native_sym(Native.PI);
         assert.strictEqual(actualPi.equals(Pi), true);
 
         assert.strictEqual(engine.renderAsString(Pi, { format: 'Ascii' }), `pi`);
@@ -93,7 +93,7 @@ describe("Pi in Eigenmath", function () {
 
         assert.strictEqual(is_sym(values[0]), true, `${values[0]}`);
         const actualPi = assert_sym(values[0]);
-        const Pi = native_sym(Native.mathematical_constant_Pi);
+        const Pi = native_sym(Native.PI);
         assert.strictEqual(actualPi.equals(Pi), true);
 
         assert.strictEqual(engine.renderAsString(Pi, { format: 'Ascii' }), `pi`);
@@ -139,7 +139,7 @@ describe("Pi in ClojureScript", function () {
 
         assert.strictEqual(is_sym(values[0]), true, `${values[0]}`);
         const actualPi = assert_sym(values[0]);
-        const Pi = native_sym(Native.mathematical_constant_Pi);
+        const Pi = native_sym(Native.PI);
         assert.strictEqual(actualPi.equals(Pi), true);
 
         assert.strictEqual(engine.renderAsString(Pi, { format: 'Ascii' }), `pi`);

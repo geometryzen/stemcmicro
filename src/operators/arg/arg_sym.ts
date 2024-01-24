@@ -10,8 +10,8 @@ import { UCons } from "../helpers/UCons";
 import { is_sym } from "../sym/is_sym";
 
 const ARG = native_sym(Native.arg);
-const MATH_E = native_sym(Native.mathematical_constant_Eulers_number_Napiers_constant);
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const MATH_E = native_sym(Native.E);
+const Pi = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

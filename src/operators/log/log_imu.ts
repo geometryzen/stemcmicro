@@ -11,7 +11,7 @@ import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
 
 const LOG = native_sym(Native.log);
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

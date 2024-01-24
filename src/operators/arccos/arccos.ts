@@ -21,7 +21,7 @@ import { is_flt } from '../flt/is_flt';
 import { is_rat } from '../rat/is_rat';
 
 export const COS = native_sym(Native.cos);
-export const Pi = native_sym(Native.mathematical_constant_Pi);
+export const Pi = native_sym(Native.PI);
 
 /* arccos =====================================================================
 

@@ -675,7 +675,7 @@ export const LAST = create_sym("last");
 /**
  * mathematical constant Pi
  */
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 const TRACE = create_sym("trace");
 
 const D_LOWER = create_sym("d");

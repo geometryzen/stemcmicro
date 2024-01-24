@@ -8,7 +8,7 @@ import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { UCons } from "../helpers/UCons";
 
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 const MATH_TAU = native_sym(Native.tau);
 
 class Builder implements OperatorBuilder<U> {

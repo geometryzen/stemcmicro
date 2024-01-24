@@ -11,7 +11,7 @@ import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/is_rat";
 
 const LOG = native_sym(Native.log);
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

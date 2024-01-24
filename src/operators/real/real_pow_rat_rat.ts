@@ -7,7 +7,7 @@ import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
 import { UCons } from "../helpers/UCons";
 
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 const RE = native_sym(Native.re);
 

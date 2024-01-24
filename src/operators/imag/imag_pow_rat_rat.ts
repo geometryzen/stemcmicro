@@ -6,7 +6,7 @@ import { native_sym } from "../../native/native_sym";
 import { CompositeOperator } from "../CompositeOperator";
 import { UCons } from "../helpers/UCons";
 
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 const IM = native_sym(Native.im);
 

@@ -11,7 +11,7 @@ import { UCons } from "../helpers/UCons";
 import { is_rat } from "../rat/is_rat";
 
 const ARG = native_sym(Native.arg);
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

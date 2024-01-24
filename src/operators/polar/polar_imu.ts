@@ -9,7 +9,7 @@ import { Function1 } from "../helpers/Function1";
 import { UCons } from "../helpers/UCons";
 import { is_imu } from "../imu/is_imu";
 
-const Pi = native_sym(Native.mathematical_constant_Pi);
+const Pi = native_sym(Native.PI);
 const POLAR = native_sym(Native.polar);
 
 class Builder implements OperatorBuilder<U> {

@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import { create_keyword_ns, Keyword } from "math-expression-atoms";
+import { split_qualified_name } from "../edn";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { FltTokenParser } from "../operators/flt/FltTokenParser";
@@ -9,7 +11,7 @@ import { METAA, METAB, METAX } from "../runtime/constants";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_KEYWORD, T_LCURLY, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RCURLY, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
 import { consume_unsigned_num } from "./consume_num";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
@@ -198,9 +200,17 @@ export class InputState {
             return scanConfig.lexicon[key].clone(this.#token.pos + this.offset, this.#token.end + this.offset);
         }
         else {
+            // TODO: Namespaces?
             const atom = create_sym(key, this.#token.pos + this.offset, this.#token.end + this.offset);
             return atom;
         }
+    }
+    tokenToKeyword(): Keyword {
+        // console.lg(`tokenToKeyword(txt=${this.#token.txt} pos=${this.#token.pos}, end=${this.#token.end})`);
+        const qualifiedName = this.#token.txt.substring(1);
+        const [localName, namespace] = split_qualified_name(qualifiedName, '/');
+        const atom = create_keyword_ns(localName, namespace, this.#token.pos + this.offset, this.#token.end + this.offset);
+        return atom;
     }
     /**
      * Sets the (private) token variable to the next token.
@@ -219,7 +229,7 @@ export class InputState {
      */
     private get_token_nib(): void {
         // eslint-disable-next-line no-console
-        // console.lg(`get_token(start = ${JSON.stringify(this.#token)})`);
+        // console.lg(`get_token_nib(start = ${JSON.stringify(this.#token)})`);
 
         // skip spaces
         while (is_space(this.curr)) {
@@ -332,10 +342,29 @@ export class InputState {
                         return;
                     }
                     default: {
-                        this.#token.code = T_COLON;
-                        this.#token.txt = ':';
-                        this.#token.end += 1;
-                        return;
+                        if (is_alphabetic(this.next)) {
+                            this.#token.code = T_KEYWORD;
+                            this.#token.end++;
+                            while (is_alphanumeric_or_underscore(this.curr)) {
+                                this.#token.code = T_KEYWORD;
+                                this.#token.end++;
+                            }
+                            // TODO: T_FUNCTION or T_KEYWORD
+                            if (this.curr as string === '(') {
+                                this.#token.code = T_FUNCTION;
+                            }
+                            else {
+                                this.#token.code = T_KEYWORD;
+                            }
+                            this.update_token_text(this.#token.pos, this.#token.end);
+                            return;
+                        }
+                        else {
+                            this.#token.code = T_COLON;
+                            this.#token.txt = ':';
+                            this.#token.end += 1;
+                            return;
+                        }
                     }
                 }
                 break;
@@ -462,6 +491,26 @@ export class InputState {
                     default: {
                         this.#token.code = T_RSQB;
                         this.#token.txt = ']';
+                        this.#token.end += 1;
+                        return;
+                    }
+                }
+            }
+            case '{': {
+                switch (this.next) {
+                    default: {
+                        this.#token.code = T_LCURLY;
+                        this.#token.txt = '{';
+                        this.#token.end += 1;
+                        return;
+                    }
+                }
+            }
+            case '}': {
+                switch (this.next) {
+                    default: {
+                        this.#token.code = T_RCURLY;
+                        this.#token.txt = '}';
                         this.#token.end += 1;
                         return;
                     }

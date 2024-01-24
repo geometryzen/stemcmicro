@@ -258,7 +258,7 @@ export class EDNListParser<T> {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     #match(i: number, reason: '"' | 'spaceChar' | '[' | ']' | '(' | ')' | '{' | '}' | '#{'): void {
-        // console.log("match", JSON.stringify(this.#state), reason);
+        // console.lg("match", JSON.stringify(this.#state), reason);
         const end = this.#absolutize(i);
         if (this.#state === 'nil') {
             this.#result = this.#nilAs(this.#pos, end);
@@ -339,7 +339,7 @@ export class EDNListParser<T> {
              */
             const char = str[i];
 
-            // console.log(i, JSON.stringify(char), "mode:", JSON.stringify(decodeMode(this.#mode)));
+            // console.lg(i, JSON.stringify(char), "mode:", JSON.stringify(decodeMode(this.#mode)));
 
             if (this.#mode === StackMode.idle) {
                 if (char === '"') {

@@ -81,7 +81,7 @@ function peek(stack: Stack<State>) {
         // We never get to see a state where the input is an atom!
         if (is_sym(state.input)) {
             // eslint-disable-next-line no-console
-            console.log(`${i}: input`, `${state.input}`, "value", `${state.value}`);
+            // console.lg(`${i}: input`, `${state.input}`, "value", `${state.value}`);
         }
     }
 }

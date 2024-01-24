@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { assert_sym, create_boo, create_tensor, is_num, is_rat, negOne, one, Tensor } from 'math-expression-atoms';
+import { assert_sym, create_boo, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, nil, pos_end_items_to_cons, U } from 'math-expression-tree';
 import {
@@ -9,7 +9,7 @@ import {
 } from '../runtime/constants';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
-import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
+import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_KEYWORD, T_LCURLY, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RCURLY, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
 import { InputState } from './InputState';
 import { one_divided_by } from './one_divided_by';
 import { scanner_negate } from './scanner_negate';
@@ -49,11 +49,13 @@ export const COMPONENT = native_sym(Native.component);
 
 export interface ScanOptions {
     /**
-     * Use '^' or '**' for exponentiation.
+     * Use '^' (caret) or '**' for exponentiation.
      */
     useCaretForExponentiation: boolean;
     /**
      * Use "(" and ")" otherwise "[" and "]".
+     * 
+     * This is used to emulate Eigenmath.
      */
     useParenForTensors: boolean;
     explicitAssocAdd: boolean;
@@ -835,6 +837,9 @@ function scan_atom(state: InputState, options: ScanOptions): [is_num: boolean, e
     else if (code === T_LSQB && !options.useParenForTensors) {
         return [false, scan_tensor(state, options)];
     }
+    else if (code === T_LCURLY) {
+        return [false, scan_map(state, options)];
+    }
     else if (code === T_INT) {
         return [true, scan_int(state)];
     }
@@ -843,6 +848,9 @@ function scan_atom(state: InputState, options: ScanOptions): [is_num: boolean, e
     }
     else if (code === T_STR) {
         return [false, scan_string(state)];
+    }
+    else if (code === T_KEYWORD) {
+        return [false, scan_keyword(state)];
     }
     else {
         // We were probably expecting something.
@@ -965,6 +973,23 @@ function scan_index(indexable: U, state: InputState, options: ScanOptions): U {
     return pos_end_items_to_cons(assert_pos(pos), assert_end(end), ...items);
 }
 
+function scan_keyword(state: InputState): U {
+    // console.lg(`scan_keyword(state.code.text=${state.code.text})`);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const hook = function (retval: U, description: string): U {
+        // console.lg(`scan_symbol => ${retval} @ ${description}`);
+        return retval;
+    };
+    state.expect(T_KEYWORD);
+    const keyword = state.tokenToKeyword();
+
+    // if we were looking at the right part of an assignment while we
+    // found the symbol, then add it to the "symbolsRightOfAssignment"
+    // set (we check for duplications)
+    state.get_token();
+    return hook(keyword, "A");
+}
+
 function scan_symbol(state: InputState): U {
     // console.lg(`scan_symbol(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -975,9 +1000,6 @@ function scan_symbol(state: InputState): U {
     state.expect(T_SYM);
     const sym = state.tokenToSym();
 
-    // if we were looking at the right part of an assignment while we
-    // found the symbol, then add it to the "symbolsRightOfAssignment"
-    // set (we check for duplications)
     state.get_token();
     return hook(sym, "A");
 }
@@ -1062,6 +1084,84 @@ function scan_grouping(state: InputState, options: ScanOptions): U {
     state.expect(T_RPAR);
     state.get_token();
     return result;
+}
+
+export const stuff = { a: 1, b: 2 };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function scan_map(state: InputState, options: ScanOptions): Map {
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
+    state.expect(T_LCURLY);
+    const lcurly = state.tokenToSym();
+    pos = Math.min(assert_pos(lcurly.pos), pos);
+    end = Math.max(assert_end(lcurly.end), end);
+    state.get_token();
+
+    const elements: U[] = [];
+
+    if (state.code != T_RCURLY) {
+
+        const k1 = scan_assignment_stmt(state, options);
+        pos = Math.min(assert_pos(k1.pos), pos);
+        end = Math.max(assert_end(k1.end), end);
+        elements.push(k1);
+
+        state.expect(T_COLON);
+        const colon = state.tokenToSym();
+        pos = Math.min(assert_pos(colon.pos), pos);
+        end = Math.max(assert_end(colon.end), end);
+        state.get_token();
+
+        const v1 = scan_assignment_stmt(state, options);
+        pos = Math.min(assert_pos(v1.pos), pos);
+        end = Math.max(assert_end(v1.end), end);
+        elements.push(v1);
+
+        while (state.code === T_COMMA) {
+
+            state.expect(T_COMMA);
+            const comma = state.tokenToSym();
+            pos = Math.min(assert_pos(comma.pos), pos);
+            end = Math.max(assert_end(comma.end), end);
+            state.get_token();
+
+            const k = scan_assignment_stmt(state, options);
+            pos = Math.min(assert_pos(k.pos), pos);
+            end = Math.max(assert_end(k.end), end);
+            elements.push(k);
+
+            state.expect(T_COLON);
+            const colon = state.tokenToSym();
+            pos = Math.min(assert_pos(colon.pos), pos);
+            end = Math.max(assert_end(colon.end), end);
+            state.get_token();
+
+            const v = scan_assignment_stmt(state, options);
+            pos = Math.min(assert_pos(v.pos), pos);
+            end = Math.max(assert_end(v.end), end);
+            elements.push(v);
+        }
+    }
+    else {
+        // The map is empty.
+    }
+
+    state.expect(T_RCURLY);
+    const rcurly = state.tokenToSym();
+    pos = Math.min(assert_pos(rcurly.pos), pos);
+    end = Math.max(assert_end(rcurly.end), end);
+    state.get_token();
+
+    const entries: [key: U, value: U][] = [];
+    const n = elements.length / 2;
+    for (let i = 0; i < n; i++) {
+        const key = elements[2 * i];
+        const value = elements[2 * i + 1];
+        entries.push([key, value]);
+    }
+    return new Map(entries, assert_pos(pos), assert_end(end));
 }
 
 function scan_tensor(state: InputState, options: ScanOptions): Tensor {

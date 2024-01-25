@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { assert_sym, create_boo, create_keyword_ns, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from 'math-expression-atoms';
+import { assert_sym, Boo, create_keyword_ns, create_tensor, is_num, is_rat, Map, negOne, one, Tensor } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, nil, pos_end_items_to_cons, U } from 'math-expression-tree';
 import {
@@ -9,7 +9,7 @@ import {
 } from '../runtime/constants';
 import { assert_token_code } from './assert_token_code';
 import { clone_symbol_using_info } from './clone_symbol_using_info';
-import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_KEYWORD, T_LCURLY, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RCURLY, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
+import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LCURLY, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NTEQ, T_PLUS, T_RCURLY, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from './codes';
 import { InputState } from './InputState';
 import { one_divided_by } from './one_divided_by';
 import { scanner_negate } from './scanner_negate';
@@ -27,21 +27,33 @@ const MATH_RCO = native_sym(Native.rco);
 
 function assert_pos(pos: number | undefined): number {
     if (typeof pos === 'number') {
-        return pos;
+        if (isNaN(pos)) {
+            throw new Error(`pos ${pos} is not a number.`);
+        }
+        else {
+            return pos;
+        }
     }
     else {
-        return pos as unknown as number;
-        // throw new Error();
+        // TODO: Some work to be done here for explicit association of addition or multiplication.
+        return Number.MAX_SAFE_INTEGER;
+        // throw new Error(`pos ${pos} is not a number.`);
     }
 }
 
-function assert_end(pos: number | undefined): number {
-    if (typeof pos === 'number') {
-        return pos;
+function assert_end(end: number | undefined): number {
+    if (typeof end === 'number') {
+        if (isNaN(end)) {
+            throw new Error(`end ${end} is not a number.`);
+        }
+        else {
+            return end;
+        }
     }
     else {
-        return pos as unknown as number;
-        // throw new Error();
+        // TODO: Some work to be done here for explicit association of addition or multiplication.
+        return Number.MIN_SAFE_INTEGER;
+        // throw new Error(`end ${end} is not a number.`);
     }
 }
 
@@ -804,6 +816,9 @@ function scan_grouping_expr(state: InputState, options: ScanOptions): U {
  *
  */
 function scan_atom(state: InputState, options: ScanOptions): [is_num: boolean, expr: U] {
+    // let pos: number = Number.MAX_SAFE_INTEGER;
+    // let end: number = Number.MIN_SAFE_INTEGER;
+
     // console.lg(`scan_atom(state.code.text=${state.code.text})`);
     const code = state.code;
     // TODO: Convert this to a switch.
@@ -818,12 +833,14 @@ function scan_atom(state: InputState, options: ScanOptions): [is_num: boolean, e
     else if (code === T_SYM) {
         // TODO: This code should probably be merged into scan_symbol.
         if (state.text === 'true') {
-            const value = create_boo(true);
+            state.pos;
+            state.end;
+            const value = new Boo(true, assert_pos(state.pos), assert_end(state.end));
             state.get_token();
             return [false, value];
         }
         else if (state.text === 'false') {
-            const value = create_boo(false);
+            const value = new Boo(false, assert_pos(state.pos), assert_end(state.end));
             state.get_token();
             return [false, value];
         }
@@ -848,9 +865,6 @@ function scan_atom(state: InputState, options: ScanOptions): [is_num: boolean, e
     }
     else if (code === T_STR) {
         return [false, scan_string(state)];
-    }
-    else if (code === T_KEYWORD) {
-        return [false, scan_keyword(state)];
     }
     else {
         // We were probably expecting something.
@@ -879,14 +893,14 @@ function scan_string(state: InputState): U {
 
 function scan_factor(state: InputState, options: ScanOptions): U {
 
-    let pos: number = Number.MAX_SAFE_INTEGER;
-    let end: number = Number.MIN_SAFE_INTEGER;
+    let pos: number = assert_pos(Number.MAX_SAFE_INTEGER);
+    let end: number = assert_end(Number.MIN_SAFE_INTEGER);
 
     const ff = scan_atom(state, options);
     const ff_is_num = ff[0];
     let result = ff[1];
-    pos = Math.min(assert_pos(result.pos), pos);
-    end = Math.max(assert_end(result.end), end);
+    pos = assert_pos(Math.min(assert_pos(result.pos), pos));
+    end = assert_end(Math.max(assert_end(result.end), end));
 
     // after the main initial part of the factor that
     // we just scanned above,
@@ -972,7 +986,7 @@ function scan_index(indexable: U, state: InputState, options: ScanOptions): U {
 
     return pos_end_items_to_cons(assert_pos(pos), assert_end(end), ...items);
 }
-
+/*
 function scan_keyword(state: InputState): U {
     // console.lg(`scan_keyword(state.code.text=${state.code.text})`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -989,6 +1003,7 @@ function scan_keyword(state: InputState): U {
     state.get_token();
     return hook(keyword, "A");
 }
+*/
 
 function scan_symbol(state: InputState): U {
     // console.lg(`scan_symbol(state.code.text=${state.code.text})`);
@@ -1052,26 +1067,49 @@ function scan_function_call(state: InputState, options: ScanOptions): U {
 }
 
 function scan_function_call_without_function_name(lhs: U, state: InputState, options: ScanOptions): U {
-    state.expect(T_LPAR);
+
+    let pos: number = Number.MAX_SAFE_INTEGER;
+    let end: number = Number.MIN_SAFE_INTEGER;
+
 
     // const func = makeList(EVAL, lhs); // original code added an EVAL. Don't know why.
     const func = lhs;
 
     const fcall: U[] = [func];
-    assert_token_code(state.code, T_LPAR);
-    state.get_token(); // left paren
+
+    state.expect(T_LPAR);
+    const lpar = state.tokenToSym();
+    pos = Math.min(assert_pos(lpar.pos), pos);
+    end = Math.max(assert_end(lpar.end), end);
+    state.get_token();
+
     if (state.code !== T_RPAR) {
-        fcall.push(scan_assignment_stmt(state, options));
+        const lhs = scan_assignment_stmt(state, options);
+        pos = Math.min(assert_pos(lhs.pos), pos);
+        end = Math.max(assert_end(lhs.end), end);
+        fcall.push(lhs);
         while (state.code === T_COMMA) {
+
+            state.expect(T_COMMA);
+            const comma = state.tokenToSym();
+            pos = Math.min(assert_pos(comma.pos), pos);
+            end = Math.max(assert_end(comma.end), end);
             state.get_token();
-            fcall.push(scan_assignment_stmt(state, options));
+
+            const rhs = scan_assignment_stmt(state, options);
+            pos = Math.min(assert_pos(rhs.pos), pos);
+            end = Math.max(assert_end(rhs.end), end);
+            fcall.push(rhs);
         }
     }
 
     state.expect(T_RPAR);
+    const rpar = state.tokenToSym();
+    pos = Math.min(assert_pos(rpar.pos), pos);
+    end = Math.max(assert_end(rpar.end), end);
     state.get_token();
 
-    return items_to_cons(...fcall);
+    return pos_end_items_to_cons(assert_pos(pos), assert_pos(end), ...fcall);
 }
 
 /**

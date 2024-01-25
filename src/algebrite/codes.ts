@@ -13,6 +13,9 @@ export const T_FLT = next_code('Flt');              // 1002
  * 1003
  */
 export const T_SYM = next_code('Sym');              // 1003
+/**
+ * 1004
+ */
 export const T_KEYWORD = next_code('Keyword');      // 1004
 export const T_FUNCTION = next_code('Function');    // 1005
 export const T_MINUS = next_code('-');              // 1006

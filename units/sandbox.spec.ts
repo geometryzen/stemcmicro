@@ -24,26 +24,6 @@ describe("Algebrite", function () {
             engine.release();
         }
     });
-    it("Keyword", function () {
-        const lines: string[] = [
-            `:a`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
-        try {
-            const { trees, errors } = engine.parse(sourceText, {});
-            assert.strictEqual(errors.length, 0);
-            assert.strictEqual(trees.length, 1);
-            const keyword = assert_keyword(trees[0]);
-            assert.strictEqual(keyword.localName, "a");
-            assert.strictEqual(keyword.namespace, "");
-            assert.strictEqual(keyword.pos, 0, "pos");
-            assert.strictEqual(keyword.end, 2, "end");
-        }
-        finally {
-            engine.release();
-        }
-    });
     it("Map", function () {
         const lines: string[] = [
             `{a: 1, b: 2}`

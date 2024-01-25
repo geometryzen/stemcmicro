@@ -11,7 +11,7 @@ import { METAA, METAB, METAX } from "../runtime/constants";
 import { LANG_COLON_EQ } from "../runtime/ns_lang";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { U } from "../tree/tree";
-import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_KEYWORD, T_LCURLY, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RCURLY, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
+import { T_ASTRX, T_ASTRX_ASTRX, T_BANG, T_CARET, T_COLON, T_COLON_EQ, T_COMMA, T_END, T_EQ, T_EQ_EQ, T_FLT, T_FUNCTION, T_FWDSLASH, T_GT, T_GTEQ, T_GTGT, T_INT, T_LCURLY, T_LPAR, T_LSQB, T_LT, T_LTEQ, T_LTLT, T_MIDDLE_DOT, T_MINUS, T_NEWLINE, T_NTEQ, T_PLUS, T_RCURLY, T_RPAR, T_RSQB, T_STR, T_SYM, T_VBAR } from "./codes";
 import { consume_unsigned_num } from "./consume_num";
 import { is_alphabetic } from "./is_alphabetic";
 import { is_alphanumeric_or_underscore } from "./is_alphabetic_or_underscore";
@@ -342,29 +342,10 @@ export class InputState {
                         return;
                     }
                     default: {
-                        if (is_alphabetic(this.next)) {
-                            this.#token.code = T_KEYWORD;
-                            this.#token.end++;
-                            while (is_alphanumeric_or_underscore(this.curr)) {
-                                this.#token.code = T_KEYWORD;
-                                this.#token.end++;
-                            }
-                            // TODO: T_FUNCTION or T_KEYWORD
-                            if (this.curr as string === '(') {
-                                this.#token.code = T_FUNCTION;
-                            }
-                            else {
-                                this.#token.code = T_KEYWORD;
-                            }
-                            this.update_token_text(this.#token.pos, this.#token.end);
-                            return;
-                        }
-                        else {
-                            this.#token.code = T_COLON;
-                            this.#token.txt = ':';
-                            this.#token.end += 1;
-                            return;
-                        }
+                        this.#token.code = T_COLON;
+                        this.#token.txt = ':';
+                        this.#token.end += 1;
+                        return;
                     }
                 }
                 break;

@@ -32,6 +32,7 @@
         "units": "mocha 'units/**/*.spec.ts' --sort",
         "test-polar": "mocha 'tests/polar.ts'",
         "unit-abs": "mocha 'units/abs.spec.ts'",
+        "unit-algebrite": "mocha 'units/algebrite.spec.ts'",
         "unit-api": "mocha 'units/api.spec.ts'",
         "unit-arccos": "mocha 'units/arccos.spec.ts'",
         "unit-arg": "mocha 'units/arg.spec.ts'",

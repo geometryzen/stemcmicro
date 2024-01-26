@@ -1,7 +1,14 @@
 import { U } from "math-expression-tree";
 
 export class EOS implements U {
+    addRef(): void {
+    }
+    release(): void {
+    }
     name = "EOS";
+    constructor() {
+
+    }
     contains(needle: U): boolean {
         return needle instanceof EOS;
     }

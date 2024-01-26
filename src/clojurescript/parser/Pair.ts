@@ -7,6 +7,10 @@ export class Pair implements U {
     constructor(public car: U, public cdr: U) {
 
     }
+    addRef(): void {
+    }
+    release(): void {
+    }
     name = "Pair";
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     contains(needle: U): boolean {

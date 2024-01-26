@@ -1,6 +1,10 @@
 import { U } from "math-expression-tree";
 
 export class CommentMarker implements U {
+    addRef(): void {
+    }
+    release(): void {
+    }
     name = "CommentMarker";
     contains(needle: U): boolean {
         return needle instanceof CommentMarker;

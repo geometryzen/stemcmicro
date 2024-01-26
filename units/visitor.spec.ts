@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { Boo, booF, booT, booU, create_flt, create_rat, create_sym, create_tensor, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from "math-expression-atoms";
+import { Boo, booF, booT, booU, create_flt, create_rat, create_sym, create_tensor, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { visit } from '../src/visitor/visit';
 import { Visitor } from '../src/visitor/Visitor';
@@ -23,26 +23,29 @@ class TestVisitor implements Visitor {
     }
     endCons(): void {
     }
+    atom(atom: U): void {
+        this.items.push(atom);
+    }
     boo(boo: Boo): void {
         this.items.push(boo);
-    }
-    keyword(keyword: Keyword): void {
-        this.items.push(keyword);
-    }
-    str(str: Str): void {
-        this.items.push(str);
-    }
-    rat(rat: Rat): void {
-        this.items.push(rat);
     }
     flt(flt: Flt): void {
         this.items.push(flt);
     }
+    keyword(keyword: Keyword): void {
+        this.items.push(keyword);
+    }
+    rat(rat: Rat): void {
+        this.items.push(rat);
+    }
+    str(str: Str): void {
+        this.items.push(str);
+    }
     sym(sym: Sym): void {
         this.items.push(sym);
     }
-    atom(atom: U): void {
-        this.items.push(atom);
+    tag(tag: Tag): void {
+        this.items.push(tag);
     }
     nil(expr: U): void {
         this.items.push(expr);

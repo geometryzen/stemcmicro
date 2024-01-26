@@ -1,4 +1,4 @@
-import { Boo, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from 'math-expression-atoms';
+import { Boo, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -176,6 +176,9 @@ class ExtensionEnvVisitor implements Visitor {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     str(str: Str): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    tag(tag: Tag): void {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     flt(flt: Flt): void {

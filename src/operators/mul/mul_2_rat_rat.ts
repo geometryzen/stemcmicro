@@ -5,8 +5,29 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
+import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/is_rat";
+
+type LHS = Rat;
+type RHS = Rat;
+type EXP = BCons<Sym, LHS, RHS>;
+
+function Eval_mul_2_rat_rat(expr: EXP): Rat {
+    const lhs: Rat = expr.lhs;
+    const rhs: Rat = expr.rhs;
+    try {
+        return mul_2_rat_rat(lhs, rhs);
+    }
+    finally {
+        lhs.release();
+        rhs.release();
+    }
+}
+
+function mul_2_rat_rat(lhs: Rat, rhs: Rat): Rat {
+    return lhs.mul(rhs);
+}
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -14,7 +35,7 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-class Op extends Function2<Rat, Rat> implements Operator<Cons> {
+class Op extends Function2<Rat, Rat> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_rat', MATH_MUL, is_rat, is_rat, $);
@@ -23,11 +44,15 @@ class Op extends Function2<Rat, Rat> implements Operator<Cons> {
     get hash(): string {
         return this.#hash;
     }
+    valueOf(expr: EXP): U {
+        return Eval_mul_2_rat_rat(expr);
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: Rat, rhs: Rat, orig: U): [TFLAGS, U] {
-        // console.lg(this.name, render_as_infix(lhs, this.$), render_as_infix(rhs, this.$), render_as_infix(orig, this.$));
-        return [TFLAG_DIFF, lhs.mul(rhs)];
+    transform2(opr: Sym, lhs: Rat, rhs: Rat, orig: EXP): [TFLAGS, U] {
+        const retval = mul_2_rat_rat(lhs, rhs);
+        // The result can't possible be the same as the original expression.
+        return [TFLAG_DIFF, retval];
     }
 }
 
-export const mul_2_rat_rat = new Builder();
+export const mul_2_rat_rat_builder = new Builder();

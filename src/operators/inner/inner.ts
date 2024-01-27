@@ -12,14 +12,66 @@ import { BCons } from "../helpers/BCons";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
-class Builder implements OperatorBuilder<U> {
-    create($: ExtensionEnv): Operator<U> {
-        return new Inner($);
-    }
-}
 type LHS = U;
 type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
+
+function Eval_inner_product(expr: EXP, $: ExtensionEnv) {
+    const lhs = expr.lhs;
+    const rhs = expr.rhs;
+    try {
+        const valueL = $.valueOf(lhs);
+        const valueR = $.valueOf(rhs);
+        try {
+            return inner_product(valueL, valueR, $);
+        }
+        finally {
+            valueL.release();
+            valueR.release();
+        }
+    }
+    finally {
+        lhs.release();
+        rhs.release();
+    }
+}
+
+/**
+ * Computes the inner product of lhs and rhs. The assumptions is that the lhs and rhs have already been evaluated.
+ */
+function inner_product(lhs: U, rhs: U, $: ExtensionEnv): U {
+    const hook = (where: string, retval: U): U => {
+        // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_infix(orig, this.$), "=>", render_as_infix(retval, $));
+        // console.lg("HOOK ....:", this.name, where, decodeMode($.getMode()), render_as_sexpr(expr, this.$), "=>", render_as_sexpr(retval, $));
+        return retval;
+    };
+    if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
+        // This will become infinite recursion if both sides are blades.
+        if (is_blade(lhs) && is_blade(rhs)) {
+            return hook('A', items_to_cons(MATH_INNER, lhs, rhs));
+        }
+        else {
+            const bladeL = extract_single_blade(lhs);
+            // console.lg("bladeL", render_as_infix(bladeL,$));
+            const residueL = remove_factors(lhs, is_blade);
+            // console.lg("residueL", render_as_infix(residueL,$));
+            const bladeR = extract_single_blade(rhs);
+            // console.lg("bladeR", render_as_infix(bladeR,$));
+            const residueR = remove_factors(rhs, is_blade);
+            // console.lg("residueR", render_as_infix(residueR,$));
+            const A = $.valueOf(items_to_cons(MATH_INNER, residueL, residueR));
+            // console.lg("A", render_as_infix(A,$));
+            const B = $.valueOf(items_to_cons(MATH_INNER, bladeL, bladeR));
+            const C = $.valueOf(items_to_cons(MATH_MUL, A, B));
+            return hook('B', C);
+        }
+    }
+    else {
+        const M = $.valueOf(items_to_cons(MATH_MUL, lhs, rhs));
+        return hook('C', M);
+    }
+
+}
 
 /**
  * The inner product is not associative (where you put the parens matters).
@@ -28,11 +80,14 @@ type EXP = BCons<Sym, LHS, RHS>;
 class Inner extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('inner_extension', MATH_INNER, is_any, is_any, $);
+        super('inner_product', MATH_INNER, is_any, is_any, $);
         this.#hash = hash_binop_atom_atom(MATH_INNER, HASH_ANY, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;
+    }
+    valueOf(expr: EXP): U {
+        return Eval_inner_product(expr, this.$);
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
@@ -70,4 +125,10 @@ class Inner extends Function2<LHS, RHS> implements Operator<EXP> {
     }
 }
 
-export const inner_extension = new Builder();
+class Builder implements OperatorBuilder<U> {
+    create($: ExtensionEnv): Operator<U> {
+        return new Inner($);
+    }
+}
+
+export const inner_product_builder = new Builder();

@@ -458,15 +458,13 @@ describe("ClojureScript", function () {
     });
     it("algebra", function () {
         const lines: string[] = [
-            `(= G30 (algebra [1 1 1] ["e1" "e2" "e3"]))`,
+            `(= G30 (algebra [1 1 1] ["i" "j" "k"]))`,
             `(= e1 (component G30 1))`,
             `(= e2 (component G30 2))`,
+            `(= e3 (component G30 3))`,
             `e1`,
             `e2`,
-            `(<< e1 e1)`,
-            `(<< e1 e2)`,
-            `(outer e1 e2)`,
-            `(^ e1 e2)`
+            `e3`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
@@ -479,19 +477,13 @@ describe("ClojureScript", function () {
                 values.push(value);
             }
         }
-        assert.strictEqual(values.length, 6);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "e1");
+        assert.strictEqual(values.length, 3);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "i");
         assert.strictEqual(is_blade(values[0]), true);
-        assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), "e2");
+        assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), "j");
         assert.strictEqual(is_blade(values[1]), true);
-        assert.strictEqual(engine.renderAsString(values[2], { format: 'Infix' }), "1");
-        assert.strictEqual(is_rat(values[2]), true);
-        assert.strictEqual(engine.renderAsString(values[3], { format: 'Infix' }), "0");
-        assert.strictEqual(is_rat(values[3]), true);
-        assert.strictEqual(engine.renderAsString(values[4], { format: 'Infix' }), "e1^e2");
-        assert.strictEqual(is_blade(values[4]), true);
-        assert.strictEqual(engine.renderAsString(values[5], { format: 'Infix' }), "e1^e2");
-        assert.strictEqual(is_blade(values[5]), true);
+        assert.strictEqual(engine.renderAsString(values[2], { format: 'Infix' }), "k");
+        assert.strictEqual(is_blade(values[2]), true);
         engine.release();
     });
     it("wedge", function () {

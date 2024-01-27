@@ -18,6 +18,9 @@ type LHS = Sym;
 type RHS = U;
 type EXP = BCons<Sym, LHS, RHS>;
 
+/**
+ * (= Sym U)
+ */
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
@@ -50,6 +53,25 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         // That's a bit unfortunate for chained assignments.
         // The kernel of the problem is the printing of expressions by default in the REPL.
         return [TFLAG_DIFF, nil];
+    }
+    valueOf(expr: EXP): U {
+        const $ = this.$;
+        const lhs: Sym = expr.lhs;
+        const rhs = expr.rhs;
+        try {
+            const binding = $.valueOf(rhs);
+            try {
+                $.setSymbolBinding(lhs, binding);
+                return nil;
+            }
+            finally {
+                binding.release();
+            }
+        }
+        finally {
+            lhs.release();
+            rhs.release();
+        }
     }
 }
 

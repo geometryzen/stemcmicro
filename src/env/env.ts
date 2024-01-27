@@ -416,6 +416,7 @@ export class DerivedEnv implements ExtensionEnv {
             try {
                 // A strategy here could be to evaluate the args in the current scope then delegate to the base?
                 // But we have to be consistent with the needs of the operation.
+                // We could also 
                 if (is_sym(opr)) {
                     if (opr.equals(ADD)) {
                         return this.#baseEnv.valueOf(expr);
@@ -445,7 +446,9 @@ export class DerivedEnv implements ExtensionEnv {
                         return this.#baseEnv.valueOf(expr);
                     }
                     else {
-                        throw new Error(`valueOf (${expr.opr} ...) method not implemented.`);
+                        // Any operator we don't know about we don't evaluate.
+                        return expr;
+                        // throw new Error(`valueOf (${expr.opr} ...) method not implemented.`);
                     }
                 }
             }
@@ -1243,7 +1246,95 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         valueOf(expr: U): U {
-            return $.transform(expr)[1];
+            // TOOD: We'd like to do this the newWay = !oldWay.
+            // This flag makes it easier to switch back and forth.
+            const oldWay = true;
+            if (oldWay) {
+                return $.transform(expr)[1];
+            }
+            // console.lg("transform", expr.toString(), "is_sym", is_sym(expr));
+            // We short-circuit some expressions in order to improve performance.
+            if (is_cons(expr)) {
+                // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
+                // to the left or right. This implies that I have distinct right and left evaluations.
+                const head = expr.head;
+                if (is_sym(head)) {
+                    // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
+                    const value = $.getSymbolBinding(head);
+                    if (is_lambda(value)) {
+                        return value.evaluate(expr.argList, $);
+                    }
+                }
+                else if (is_rat(head)) {
+                    // Why do we have a special case for rat?
+                    // We know that the key and hash are both 'Rat'
+                    // const hash = head.name;
+                    const ops: Operator<U>[] = currentOpsByHash()['Rat'];
+                    // TODO: The operator will be acting on the argList, not the entire expression.
+                    const op = unambiguous_operator(expr.argList, ops, $);
+                    if (op) {
+                        // console.lg(`We found the ${op.name} operator!`);
+                        return op.valueOf(head);
+                    }
+                    else {
+                        // eslint-disable-next-line no-console
+                        console.warn(`No unique operators found for Rat from ${ops.length} choice(s).`);
+                    }
+                }
+                // let changedExpr = false;
+                const hash_to_ops = currentOpsByHash();
+                // hashes are the buckets we should look in for operators from specific to generic.
+                const hashes: string[] = hash_info(expr);
+                // console.lg("keys", JSON.stringify(keys));
+                for (const hash of hashes) {
+                    const ops = hash_to_ops[hash];
+                    // console.lg(`Looking for key: ${JSON.stringify(key)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
+                    // Determine whether there are handlers in the bucket.
+                    if (Array.isArray(ops)) {
+                        const op = unambiguous_operator(expr, ops, $);
+                        if (op) {
+                            const composite = op.valueOf(expr);
+                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
+                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
+                            return composite;
+                        }
+                    }
+                    else {
+                        // If there were no handlers registered for the given key, look for a user-defined function.
+                        if (is_cons(expr)) {
+                            const opr = expr.opr;
+                            if (is_sym(opr)) {
+                                const binding = $.getSymbolBinding(opr);
+                                if (!is_nil(binding)) {
+                                    if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
+                                        const newExpr = Eval_function(expr, $);
+                                        // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                        return newExpr;
+                                    }
+                                    else {
+                                        // If it's not a (function body paramList) expression.
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // Once an expression has been transformed into a stable condition, it should not be transformed until a different phase.
+                return expr;
+            }
+            else if (is_nil(expr)) {
+                return expr;
+            }
+            else {
+                // If it's not a list or nil, then it's an atom.
+                const op = $.operatorFor(expr);
+                if (op) {
+                    return op.valueOf(expr);
+                }
+                else {
+                    return expr;
+                }
+            }
         }
     };
 
@@ -1283,6 +1374,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             $.pushDirective(directive, false);
         }
     }
+    // Here we could wrap in the DerivedEnv as a way to test nested scopes.
     return $;
 }
 

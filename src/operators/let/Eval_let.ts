@@ -27,6 +27,7 @@ export function Eval_let(expr: Cons, $: ExtensionEnv): U {
         }
     }
     catch (e) {
+        // TODO: Maybe we should start propagating exceptions?
         // eslint-disable-next-line no-console
         console.log("Error", `${e}`);
         return expr;

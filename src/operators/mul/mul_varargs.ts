@@ -26,6 +26,9 @@ class MulOperator extends FunctionVarArgs implements Operator<Cons> {
     get hash(): string {
         return this.#hash;
     }
+    valueOf(expr: Cons): U {
+        return Eval_multiply(expr, this.$);
+    }
     transform(expr: Cons): [number, U] {
         const $ = this.$;
         // console.lg(this.name, render_as_sexpr(expr, $));

@@ -48,7 +48,6 @@ import { is_sym } from '../sym/is_sym';
  * @returns nil
  */
 export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): Cons {
-    // console.log("define_function", $.toSExprString(assignExpr));
     /**
      * The function name.
      */

@@ -76,10 +76,10 @@ export abstract class Function2<L extends U, R extends U> extends FunctionVarArg
         return [TFLAG_NONE, expr];
     }
     /**
-     * 
+     * This abstract function is only called if there is no change in the lhs and rhs following evaluation.
      * @param opr The operator symbol typed according to the matches that have been made.
-     * @param lhs The left hand side typed according to the matches that have been made.
-     * @param rhs The right hand side typed according to the matches that have been made.
+     * @param lhs The unevaluated left hand side typed according to the matches that have been made.
+     * @param rhs The unevaluated right hand side typed according to the matches that have been made.
      * @param expr The original expression typed according to the matches that have been made.
      */
     abstract transform2(opr: Sym, lhs: L, rhs: R, expr: BCons<Sym, L, R>): [TFLAGS, U];

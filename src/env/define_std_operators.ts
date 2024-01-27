@@ -103,7 +103,7 @@ import { cos_sym } from '../operators/cos/cos_sym';
 import { cosh_sym } from '../operators/cosh/cosh_sym';
 import { cosh_varargs } from '../operators/cosh/cosh_varargs';
 import { cross_any_any } from '../operators/cross/cross_any_any';
-import { cross_blade_blade } from '../operators/cross/cross_blade_blade';
+import { cross_blade_blade_builder } from '../operators/cross/cross_blade_blade';
 import { MATH_VECTOR_CROSS_PRODUCT } from '../operators/cross/MATH_VECTOR_CROSS_PRODUCT';
 import { defint } from '../operators/defint/defint';
 import { degree_varargs } from '../operators/degree/degree_varargs';
@@ -173,7 +173,7 @@ import { imag_sym } from '../operators/imag/imag_sym';
 import { imu_extension } from '../operators/imu/Imu_extension';
 import { index_varargs } from '../operators/index/index_varargs';
 import { Eval_inner } from '../operators/inner/Eval_inner';
-import { inner_extension } from '../operators/inner/inner';
+import { inner_product_builder } from '../operators/inner/inner';
 import { inner_2_any_imu } from '../operators/inner/inner_2_any_imu';
 import { inner_2_any_rat } from '../operators/inner/inner_2_any_rat';
 import { inner_2_any_real } from '../operators/inner/inner_2_any_real';
@@ -182,7 +182,7 @@ import { inner_2_imu_any } from '../operators/inner/inner_2_imu_any';
 import { inner_2_imu_imu } from '../operators/inner/inner_2_imu_imu';
 import { inner_2_imu_rat } from '../operators/inner/inner_2_imu_rat';
 import { inner_2_num_num } from '../operators/inner/inner_2_num_num';
-import { inner_2_rat_any } from '../operators/inner/inner_2_rat_any';
+import { inner_2_rat_any_builder } from '../operators/inner/inner_2_rat_any';
 import { inner_2_rat_imu } from '../operators/inner/inner_2_rat_imu';
 import { inner_2_rat_sym } from '../operators/inner/inner_2_rat_sym';
 import { inner_2_real_any } from '../operators/inner/inner_2_real_any';
@@ -222,7 +222,7 @@ import { is_real_real } from '../operators/isreal/is_real_real';
 import { is_real_sin } from '../operators/isreal/is_real_sin';
 import { make_predicate_sym_operator } from '../operators/isreal/is_real_sym';
 import { iszero_any } from '../operators/iszero/iszero_any';
-import { iszero_rat } from '../operators/iszero/iszero_rat';
+import { iszero_rat_builder } from '../operators/iszero/iszero_rat';
 import { iszero_sym } from '../operators/iszero/iszero_sym';
 import { keyword_extension } from '../operators/keyword/KeywordExtension';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
@@ -266,9 +266,9 @@ import { mul_2_mul_2_sym_imu_sym } from '../operators/mul/mul_2_mul_2_sym_imu_sy
 import { mul_2_pow_2_xxx_any_pow_2_xxx_any } from '../operators/mul/mul_2_pow_2_xxx_any_pow_2_xxx_any';
 import { mul_2_pow_2_xxx_rat_xxx } from '../operators/mul/mul_2_pow_2_xxx_rat_xxx';
 import { mul_2_rat_any } from '../operators/mul/mul_2_rat_any';
-import { mul_2_rat_blade } from '../operators/mul/mul_2_rat_blade';
+import { mul_2_rat_blade_builder } from '../operators/mul/mul_2_rat_blade';
 import { mul_2_rat_flt } from '../operators/mul/mul_2_rat_flt';
-import { mul_2_rat_rat } from '../operators/mul/mul_2_rat_rat';
+import { mul_2_rat_rat_builder } from '../operators/mul/mul_2_rat_rat';
 import { mul_2_rat_sym } from '../operators/mul/mul_2_rat_sym';
 import { mul_2_rat_tensor } from '../operators/mul/mul_2_rat_tensor';
 import { mul_2_sym_blade } from '../operators/mul/mul_2_sym_blade';
@@ -539,9 +539,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(mul_2_imu_flt);
     $.defineOperator(mul_2_imu_imu);
 
-    $.defineOperator(mul_2_rat_blade);
+    $.defineOperator(mul_2_rat_blade_builder);
     $.defineOperator(mul_2_rat_flt);
-    $.defineOperator(mul_2_rat_rat);
+    $.defineOperator(mul_2_rat_rat_builder);
     $.defineOperator(mul_2_rat_sym);
     $.defineOperator(mul_2_rat_tensor);
     $.defineOperator(mul_2_rat_any);
@@ -640,7 +640,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inner_2_num_num);
     $.defineOperator(inner_2_rat_imu);
     $.defineOperator(inner_2_rat_sym);
-    $.defineOperator(inner_2_rat_any);
+    $.defineOperator(inner_2_rat_any_builder);
     $.defineOperator(inner_2_imu_rat);
     $.defineOperator(inner_2_imu_imu);
     $.defineOperator(inner_2_imu_any);
@@ -651,7 +651,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(inner_2_any_real);
     $.defineOperator(inner_2_any_rat);
     $.defineOperator(inner_2_any_imu);
-    $.defineOperator(inner_extension);
+    $.defineOperator(inner_product_builder);
 
     $.defineOperator(laguerre_varargs);
 
@@ -775,7 +775,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(cosh_sym);
     $.defineOperator(cosh_varargs);
 
-    $.defineOperator(cross_blade_blade);
+    $.defineOperator(cross_blade_blade_builder);
     $.defineOperator(make_lhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineOperator(cross_any_any);
@@ -896,7 +896,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(make_predicate_sym_operator(ISREAL));
     $.defineOperator(is_real_any);
 
-    $.defineOperator(iszero_rat);
+    $.defineOperator(iszero_rat_builder);
     $.defineOperator(iszero_sym);
     $.defineOperator(iszero_any);
 

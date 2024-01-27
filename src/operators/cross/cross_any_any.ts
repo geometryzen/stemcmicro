@@ -19,13 +19,47 @@ class Builder implements OperatorBuilder<U> {
 
 type LHS = U;
 type RHS = U;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXP = BCons<Sym, LHS, RHS>;
 
-class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
+class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
         super('cross_any_any', MATH_VECTOR_CROSS_PRODUCT, is_any, is_any, $);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXPR): [TFLAGS, U] {
+    valueOf(expr: EXP): U {
+        const $ = this.$;
+        const opr = expr.opr;
+        const argL = expr.lhs;
+        const argR = expr.rhs;
+        try {
+            const lhs = $.valueOf(argL);
+            const rhs = $.valueOf(argR);
+            if (contains_single_blade(lhs)) {
+                const bladeL = extract_single_blade(lhs);
+                if (!bladeL.equals(lhs)) {
+                    const residueL = remove_factors(lhs, is_blade);
+                    const A = $.valueOf(items_to_cons(opr, bladeL, rhs));
+                    const B = $.valueOf(items_to_cons(MATH_MUL, residueL, A));
+                    return B;
+                }
+            }
+            if (contains_single_blade(rhs)) {
+                const bladeR = extract_single_blade(rhs);
+                if (!bladeR.equals(rhs)) {
+                    const residueR = remove_factors(rhs, is_blade);
+                    const A = $.valueOf(items_to_cons(opr, lhs, bladeR));
+                    const B = $.valueOf(items_to_cons(MATH_MUL, A, residueR));
+                    return B;
+                }
+            }
+            return expr;
+        }
+        finally {
+            opr.release();
+            argL.release();
+            argR.release();
+        }
+    }
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
         if (contains_single_blade(lhs)) {
             const bladeL = extract_single_blade(lhs);

@@ -39,6 +39,10 @@ class Op extends Function2X<LHS, RHS> implements Operator<EXP> {
     get hash(): string {
         return this.#hash;
     }
+    valueOf(expr: EXP): U {
+        // TODO: Since expr is not evaluated, shouldn't we evaluate the lhs?
+        return expr;
+    }
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
         // TODO: Be aware that this may prevent the processing of Sym * Blade more generally.
         return [TFLAG_HALT, orig];

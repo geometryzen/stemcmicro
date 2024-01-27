@@ -1,32 +1,39 @@
 
 import { assert } from "chai";
+import { is_blade } from "math-expression-atoms";
+import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { SyntaxKind } from "../src/parser/parser";
-import { assert_cons } from "../src/tree/cons/assert_cons";
 
 describe("ClojureScript", function () {
-    it("let", function () {
+    it("algebra", function () {
         const lines: string[] = [
-            `(let [x 1 y x] y)`
+            `(= G30 (algebra [1 1 1] ["i" "j" "k"]))`,
+            `(= e1 (component G30 1))`,
+            `(= e2 (component G30 2))`,
+            `(= e3 (component G30 3))`,
+            `e1`,
+            `e2`,
+            `e3`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
-        try {
-            const { trees, errors } = engine.parse(sourceText, {});
-            assert.strictEqual(errors.length, 0);
-            assert.strictEqual(trees.length, 1);
-            const letExpr = assert_cons(trees[0]);
-            assert.strictEqual(engine.renderAsString(letExpr, { format: 'Ascii' }), "let((x,1,y,x),y)");
-            assert.strictEqual(engine.renderAsString(letExpr, { format: 'Human' }), "let([x,1,y,x],y)");
-            assert.strictEqual(engine.renderAsString(letExpr, { format: 'Infix' }), "let([x,1,y,x],y)");
-            assert.strictEqual(engine.renderAsString(letExpr, { format: 'LaTeX' }), "let(\\begin{bmatrix} x & 1 & y & x \\end{bmatrix},y)");
-            assert.strictEqual(engine.renderAsString(letExpr, { format: 'SExpr' }), "(let [x 1 y x] y)");
-            // assert.strictEqual(engine.renderAsString(letExpr, { format: 'SVG' }), "");
-            const value = engine.evaluate(letExpr);
-            assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "1");
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
         }
-        finally {
-            engine.release();
-        }
+        assert.strictEqual(values.length, 3);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "i");
+        assert.strictEqual(is_blade(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), "j");
+        assert.strictEqual(is_blade(values[1]), true);
+        assert.strictEqual(engine.renderAsString(values[2], { format: 'Infix' }), "k");
+        assert.strictEqual(is_blade(values[2]), true);
+        engine.release();
     });
 });

@@ -82,6 +82,6 @@ export abstract class AbstractOperator {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: U): U {
-        throw new Error(`AbstractOperator.valueOf ${expr} method not implemented.`);
+        throw new Error(`${this.name} AbstractOperator.valueOf ${expr} method not implemented.`);
     }
 }

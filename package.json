@@ -113,6 +113,7 @@
         "algebra",
         "blade",
         "cas",
+        "clojurescript",
         "computer",
         "eigenmath",
         "geometric",

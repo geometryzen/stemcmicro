@@ -42,5 +42,11 @@ export abstract class Function1<T extends U> extends FunctionVarArgs implements 
         }
         return [TFLAG_NONE, expr];
     }
+    /**
+     * This abstract function is only called if there is no change in the arg following evaluation.
+     * @param opr The operator symbol typed according to the matches that have been made.
+     * @param arg The unevaluated arg typed according to the matches that have been made.
+     * @param expr The original expression typed according to the matches that have been made.
+     */
     abstract transform1(opr: Sym, arg: T, expr: UCons<Sym, T>): [TFLAGS, U];
 }

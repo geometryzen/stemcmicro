@@ -1,13 +1,27 @@
+import { Boo, booF, booT, is_rat, Rat, Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { Native } from "../../native/Native";
-import { native_sym } from "../../native/native_sym";
-import { booF, booT } from "../../tree/boo/Boo";
-import { Rat } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { is_rat } from "../rat/is_rat";
+import { UCons } from "../helpers/UCons";
+
+type ARG = Rat;
+type EXP = UCons<Sym, ARG>;
+
+function Eval_iszero_rat(expr: EXP): U {
+    const arg = expr.arg;
+    try {
+        return iszero_rat(arg);
+    }
+    finally {
+        arg.release();
+    }
+}
+
+function iszero_rat(arg: Rat): Boo {
+    return arg.isZero() ? booT : booF;
+}
 
 class ExpRatBuilder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -17,7 +31,7 @@ class ExpRatBuilder implements OperatorBuilder<U> {
 
 const ISZERO = native_sym(Native.iszero);
 
-class Op extends Function1<Rat> implements Operator<U> {
+class Op extends Function1<Rat> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('iszero_rat', ISZERO, is_rat, $);
@@ -26,9 +40,12 @@ class Op extends Function1<Rat> implements Operator<U> {
     get hash(): string {
         return this.#hash;
     }
+    valueOf(expr: EXP): U {
+        return Eval_iszero_rat(expr);
+    }
     transform1(opr: Sym, arg: Rat): [TFLAGS, U] {
-        return [TFLAG_DIFF, arg.isZero() ? booT : booF];
+        return [TFLAG_DIFF, iszero_rat(arg)];
     }
 }
 
-export const iszero_rat = new ExpRatBuilder();
+export const iszero_rat_builder = new ExpRatBuilder();

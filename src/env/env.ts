@@ -284,10 +284,10 @@ export class DerivedEnv implements ExtensionEnv {
         throw new Error('isinfinitesimal method not implemented.');
     }
     isminusone(expr: U): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error('isminusone method not implemented.');
     }
     isnegative(expr: U): boolean {
-        throw new Error('Method not implemented.');
+        throw new Error('isnegative method not implemented.');
     }
     isone(expr: U): boolean {
         if (is_nil(expr)) {
@@ -320,31 +320,31 @@ export class DerivedEnv implements ExtensionEnv {
         throw new Error('multiply method not implemented.');
     }
     negate(expr: U): U {
-        throw new Error('Method not implemented.');
+        throw new Error('negate method not implemented.');
     }
     operatorFor(expr: U): Operator<U> | undefined {
-        throw new Error('Method not implemented.');
+        throw new Error('operatorFor method not implemented.');
     }
     outer(...args: U[]): U {
-        throw new Error('Method not implemented.');
+        throw new Error('outer method not implemented.');
     }
     polar(expr: U): U {
-        throw new Error('Method not implemented.');
+        throw new Error('polar method not implemented.');
     }
     power(base: U, expo: U): U {
-        throw new Error('Method not implemented.');
+        throw new Error('power method not implemented.');
     }
     re(expr: U): U {
-        throw new Error('Method not implemented.');
+        throw new Error('re method not implemented.');
     }
     rect(expr: U): U {
-        throw new Error('Method not implemented.');
+        throw new Error('rect method not implemented.');
     }
     remove(varName: Sym): void {
-        throw new Error('Method not implemented.');
+        throw new Error('remove method not implemented.');
     }
     setCustomDirective(directive: string, value: boolean): void {
-        throw new Error('Method not implemented.');
+        throw new Error('setCustomDirective method not implemented.');
     }
     pushDirective(directive: Directive, value: boolean): void {
         this.#baseEnv.pushDirective(directive, value);
@@ -356,10 +356,10 @@ export class DerivedEnv implements ExtensionEnv {
         this.#baseEnv.setSymbolOrder(sym, order);
     }
     setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void {
-        throw new Error('Method not implemented.');
+        throw new Error('setSymbolPredicates method not implemented.');
     }
     setSymbolPrintName(sym: Sym, printName: string): void {
-        throw new Error('Method not implemented.');
+        throw new Error('setSymbolPrintName method not implemented.');
     }
     setSymbolBinding(sym: Sym, binding: U): void {
         this.#bindings.set(sym.key(), binding);

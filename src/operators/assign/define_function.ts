@@ -48,7 +48,7 @@ import { is_sym } from '../sym/is_sym';
  * @returns nil
  */
 export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): Cons {
-    // console.lg("define_function", $.toSExprString(assignExpr));
+    // console.log("define_function", $.toSExprString(assignExpr));
     /**
      * The function name.
      */
@@ -70,7 +70,7 @@ export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionE
         halt('function name?');
     }
 
-    // evaluate function body (maybe)
+    // evaluate function body (maybe), only if it is surrounded by 
 
     if (car(body).equals(EVAL)) {
         body = $.valueOf(cadr(body));

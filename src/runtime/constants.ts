@@ -35,6 +35,7 @@ export const COFACTOR = create_sym('cofactor');
 export const COMPARE = create_sym('compare');
 export const COMPARE_FACTORS = create_sym('compare-factors');
 export const COMPARE_TERMS = create_sym('compare-terms');
+export const COMPONENT = native_sym(Native.component);
 export const CONDENSE = native_sym(Native.condense);
 export const CONTRACT = create_sym('contract');
 export const COS = MATH_COS;
@@ -58,6 +59,9 @@ export const EIGENVEC = create_sym('eigenvec');
 export const EQUAL = create_sym('equal');
 export const ERF = create_sym('erf');
 export const ERFC = create_sym('erfc');
+/**
+ * 'eval'
+ */
 export const EVAL = create_sym('eval');
 export const EXP = native_sym(Native.exp);
 export const EXPAND = native_sym(Native.expand);
@@ -69,7 +73,9 @@ export const FLOAT = native_sym(Native.float);
 export const FLOOR = create_sym('floor');
 export const FOR = create_sym('for');
 /**
- * (function body paramList)
+ * (Sym("function") body paramList)
+ * 
+ * Notice that the syntax is different from ClojureScript, which is (fn params body), and params is a Tensor of symbols.
  */
 export const FUNCTION = native_sym(Native.function);
 export const GAMMA = create_sym('gamma');
@@ -78,6 +84,7 @@ export const HERMITE = create_sym('hermite');
 export const HILBERT = create_sym('hilbert');
 export const IF = create_sym('if');
 export const IM = native_sym(Native.im);
+export const INNER = native_sym(Native.inner);
 export const INTEGRAL = native_sym(Native.integral);
 export const INV = MATH_INV;
 export const INVG = create_sym('invg');
@@ -86,7 +93,9 @@ export const ISPRIME = create_sym('isprime');
 export const LAGUERRE = create_sym('laguerre');
 export const LAPLACE = create_sym('laplace');
 export const LCM = create_sym('lcm');
+export const LCO = native_sym(Native.lco);
 export const LEGENDRE = create_sym('legendre');
+export const LET = create_sym('let');
 export const LOG = native_sym(Native.log);
 export const MULTIPLY = MATH_MUL;
 export const NOT = native_sym(Native.not);
@@ -95,6 +104,7 @@ export const NUMBER = create_sym('number');
 export const NUMERATOR = create_sym('numerator');
 export const OPERATOR = create_sym('operator');
 export const OR = create_sym('or');
+export const OUTER = native_sym(Native.outer);
 export const PATTERN = create_sym('pattern');
 export const PATTERNSINFO = create_sym('patternsinfo');
 export const POLAR = native_sym(Native.polar);

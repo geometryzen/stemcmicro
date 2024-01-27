@@ -1,11 +1,11 @@
 import { is_sym, Sym } from "math-expression-atoms";
 import { Cons, is_cons, nil, U } from "math-expression-tree";
 import { Stack } from "../../env/Stack";
-import { COMPONENT } from "../../operators/assign/assign_any_any";
 import { define_function } from "../../operators/assign/define_function";
 import { setq_indexed } from "../../operators/assign/setq_indexed";
 import { BCons } from "../../operators/helpers/BCons";
 import { is_binop } from "../../operators/helpers/is_binop";
+import { COMPONENT } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { State } from "./Stepper";
 
@@ -19,7 +19,7 @@ function is_sym_any_any(expr: Cons): expr is BCons<Sym, U, U> {
     }
 }
 
-function assert_sym_any_any(expr: Cons): BCons<Sym, U, U> {
+export function assert_sym_any_any(expr: Cons): BCons<Sym, U, U> {
     if (is_sym_any_any(expr)) {
         return expr;
     }

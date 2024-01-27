@@ -13,7 +13,7 @@ import { is_sym } from "../sym/is_sym";
 import { define_function } from "./define_function";
 import { setq_indexed } from "./setq_indexed";
 
-export const COMPONENT = native_sym(Native.component);
+const COMPONENT = native_sym(Native.component);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

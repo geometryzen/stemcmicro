@@ -6,7 +6,7 @@ import { U } from "math-expression-tree";
 import { CompareFn, ConsExpr, Directive, ExprComparator, KeywordRunner, OperatorBuilder, Predicates, PrintHandler } from "../../env/ExtensionEnv";
 import { Scope, Thing } from "./Stepper";
 
-export class DerivedEnv implements Scope {
+export class DerivedScope implements Scope {
     constructor(readonly parentEnv: Scope, readonly strict: boolean, readonly thing: Thing) {
 
     }

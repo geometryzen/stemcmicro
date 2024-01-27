@@ -230,6 +230,7 @@ import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
 import { lco_2_blade_blade } from '../operators/lco/lco_2_blade_blade';
 import { legendre_varargs } from '../operators/legendre/legendre_varargs';
+import { let_varargs } from '../operators/let/let_varargs';
 import { log_add } from '../operators/log/log_add';
 import { log_exp } from '../operators/log/log_exp';
 import { log_flt } from '../operators/log/log_flt';
@@ -664,6 +665,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(lco_2_any_any);
 
     $.defineOperator(legendre_varargs);
+    $.defineOperator(let_varargs);
 
     $.defineOperator(log_add);
     $.defineOperator(log_exp);

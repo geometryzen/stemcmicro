@@ -194,6 +194,7 @@ class ExtensionEnvVisitor implements Visitor {
 class AlgebriteExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor(options: Partial<EngineConfig>) {
+        // The base ExtensionEnv is appropriate for Algebrite.
         this.#env = create_env({
             dependencies: ALL_FEATURES
         });
@@ -303,12 +304,12 @@ class ClojureScriptExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(options: Partial<EngineConfig>) {
-        this.#env = create_env({
-            dependencies: ALL_FEATURES
-        });
-        init_env(this.#env, {
-            prolog: options.prolog
-        });
+        // We can wrap #env with a DerivedEnv to evolve to an architecture that supports nested scopes.
+        // Wrapping wil reveal where there are holes in the implementation.
+        const baseEnv = create_env({ dependencies: ALL_FEATURES });
+        // const baseEnv = new DerivedEnv(create_env({ dependencies: ALL_FEATURES }));
+        this.#env = baseEnv;
+        init_env(this.#env, { prolog: options.prolog });
     }
     isConsSymbol(sym: Sym): boolean {
         return this.#env.isConsSymbol(sym);

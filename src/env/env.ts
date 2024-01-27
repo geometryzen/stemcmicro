@@ -1,19 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { is_keyword, is_map, is_str, is_tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_atom, nil } from 'math-expression-tree';
+import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { algebra } from "../operators/algebra/algebra";
+import { setq } from '../operators/assign/assign_any_any';
 import { is_boo } from "../operators/boo/is_boo";
 import { is_flt } from "../operators/flt/is_flt";
 import { is_lambda } from "../operators/lambda/is_lambda";
+import { Eval_let } from '../operators/let/Eval_let';
 import { is_rat } from "../operators/rat/is_rat";
 import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
-import { FUNCTION } from "../runtime/constants";
+import { ALGEBRA, ASSIGN, COMPONENT, FUNCTION, INNER, LCO, LET, OUTER } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
@@ -106,6 +111,408 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             syntaxKind: SyntaxKind.Algebrite
         };
         return config;
+    }
+}
+
+/**
+ * The ExtensionEnv was originally implemented for a scripting language with a single global scope.
+ * By using this DerivedEnv over the create_env function we can incrementally migrate to an architecture
+ * that supports nested scopes.
+ */
+export class DerivedEnv implements ExtensionEnv {
+    readonly #baseEnv: ExtensionEnv;
+    readonly #bindings: Map<string, U> = new Map();
+    readonly #userfunc: Map<string, U> = new Map();
+    constructor(baseEnv: ExtensionEnv) {
+        this.#baseEnv = baseEnv;
+    }
+    getProlog(): readonly string[] {
+        throw new Error('getProlog method not implemented.');
+    }
+    getPrintHandler(): PrintHandler {
+        return this.#baseEnv.getPrintHandler();
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setPrintHandler(handler: PrintHandler): void {
+        this.#baseEnv.setPrintHandler(handler);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    abs(expr: U): U {
+        throw new Error('abs method not implemented.');
+    }
+    algebra(metric: Tensor<U>, labels: Tensor<U>): Tensor<U> {
+        throw new Error('algebra method not implemented.');
+    }
+    add(...args: U[]): U {
+        throw new Error('add method not implemented.');
+    }
+    arccos(expr: U): U {
+        throw new Error('arccos method not implemented.');
+    }
+    arcsin(expr: U): U {
+        throw new Error('arcsin method not implemented.');
+    }
+    arctan(expr: U): U {
+        throw new Error('arctan method not implemented.');
+    }
+    arg(expr: U): U {
+        throw new Error('arg method not implemented.');
+    }
+    clock(expr: U): U {
+        throw new Error('clock method not implemented.');
+    }
+    conj(expr: U): U {
+        throw new Error('conj method not implemented.');
+    }
+    cos(expr: U): U {
+        throw new Error('cos method not implemented.');
+    }
+    clearBindings(): void {
+        this.#bindings.clear();
+        this.#baseEnv.clearBindings();
+    }
+    clearOperators(): void {
+        this.#baseEnv.clearOperators();
+    }
+    compareFn(sym: Sym): CompareFn {
+        throw new Error('compareFn method not implemented.');
+    }
+    component(tensor: Tensor<U>, indices: U): U {
+        throw new Error('component method not implemented.');
+    }
+    defineConsTransformer(opr: Sym, consExpr: ConsExpr): void {
+        this.#baseEnv.defineConsTransformer(opr, consExpr);
+    }
+    defineFunction(match: U, lambda: LambdaExpr): void {
+        throw new Error('defineFunction method not implemented.');
+    }
+    defineKeyword(sym: Sym, runner: KeywordRunner): void {
+        this.#baseEnv.defineKeyword(sym, runner);
+    }
+    defineOperator(builder: OperatorBuilder<U>): void {
+        this.#baseEnv.defineOperator(builder);
+    }
+    defineAssociative(opr: Sym, id: Rat): void {
+        this.#baseEnv.defineAssociative(opr, id);
+    }
+    defineUserSymbol(sym: Sym): void {
+        this.#baseEnv.defineUserSymbol(sym);
+    }
+    derivedEnv(): ExtensionEnv {
+        return new DerivedEnv(this);
+    }
+    divide(lhs: U, rhs: U): U {
+        throw new Error('divide method not implemented.');
+    }
+    equals(lhs: U, rhs: U): boolean {
+        throw new Error('equals method not implemented.');
+    }
+    evaluate(opr: Native, ...args: U[]): U {
+        throw new Error('evaluate method not implemented.');
+    }
+    executeProlog(prolog: readonly string[]): void {
+        throw new Error('executeProlog method not implemented.');
+    }
+    exp(expr: U): U {
+        throw new Error('exp method not implemented.');
+    }
+    factor(expr: U): U {
+        throw new Error('factor method not implemented.');
+    }
+    factorize(poly: U, x: U): U {
+        throw new Error('factorize method not implemented.');
+    }
+    float(expr: U): U {
+        throw new Error('float method not implemented.');
+    }
+    getCustomDirective(directive: string): boolean {
+        throw new Error('getCustomDirective method not implemented.');
+    }
+    getDirective(directive: Directive): boolean {
+        return this.#baseEnv.getDirective(directive);
+    }
+    getSymbolPredicates(sym: Sym): Predicates {
+        throw new Error('getSymbolPredicates method not implemented.');
+    }
+    getSymbolPrintName(sym: Sym): string {
+        return this.#baseEnv.getSymbolPrintName(sym);
+    }
+    getSymbolBinding(sym: Sym): U {
+        const key = sym.key();
+        if (this.#bindings.has(key)) {
+            return this.#bindings.get(key)!;
+        }
+        else {
+            return this.#baseEnv.getSymbolBinding(sym);
+        }
+    }
+    getSymbolUsrFunc(sym: Sym): U {
+        throw new Error('getSymbolYsrFunc method not implemented.');
+    }
+    getSymbolsInfo(): { sym: Sym; value: U; }[] {
+        // TODO: Symbols in the bindings?
+        return this.#baseEnv.getSymbolsInfo();
+    }
+    buildOperators(): void {
+        this.#baseEnv.buildOperators();
+    }
+    im(expr: U): U {
+        throw new Error('im method not implemented.');
+    }
+    inner(lhs: U, rhs: U): U {
+        throw new Error('inner method not implemented.');
+    }
+    is(predicate: Sym, expr: U): boolean {
+        throw new Error('is method not implemented.');
+    }
+    iscomplex(expr: U): boolean {
+        throw new Error('iscomplex method not implemented.');
+    }
+    isExpanding(): boolean {
+        throw new Error('isExpanding method not implemented.');
+    }
+    isFactoring(): boolean {
+        throw new Error('isFactorin method not implemented.');
+    }
+    isimag(expr: U): boolean {
+        throw new Error('isimag method not implemented.');
+    }
+    isinfinite(expr: U): boolean {
+        throw new Error('isinfinite method not implemented.');
+    }
+    isinfinitesimal(expr: U): boolean {
+        throw new Error('isinfinitesimal method not implemented.');
+    }
+    isminusone(expr: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isnegative(expr: U): boolean {
+        throw new Error('Method not implemented.');
+    }
+    isone(expr: U): boolean {
+        if (is_nil(expr)) {
+            return false;
+        }
+        throw new Error(`isone ${expr} method not implemented.`);
+    }
+    ispositive(expr: U): boolean {
+        throw new Error('ispositive method not implemented.');
+    }
+    isreal(expr: U): boolean {
+        throw new Error('isreal method not implemented.');
+    }
+    isscalar(expr: U): boolean {
+        throw new Error('iscalar method not implemented.');
+    }
+    iszero(expr: U): boolean {
+        if (is_flt(expr)) {
+            return expr.isZero();
+        }
+        else if (is_nil(expr)) {
+            return false;
+        }
+        throw new Error(`iszero ${expr} method not implemented.`);
+    }
+    log(expr: U): U {
+        throw new Error('log method not implemented.');
+    }
+    multiply(...args: U[]): U {
+        throw new Error('multiply method not implemented.');
+    }
+    negate(expr: U): U {
+        throw new Error('Method not implemented.');
+    }
+    operatorFor(expr: U): Operator<U> | undefined {
+        throw new Error('Method not implemented.');
+    }
+    outer(...args: U[]): U {
+        throw new Error('Method not implemented.');
+    }
+    polar(expr: U): U {
+        throw new Error('Method not implemented.');
+    }
+    power(base: U, expo: U): U {
+        throw new Error('Method not implemented.');
+    }
+    re(expr: U): U {
+        throw new Error('Method not implemented.');
+    }
+    rect(expr: U): U {
+        throw new Error('Method not implemented.');
+    }
+    remove(varName: Sym): void {
+        throw new Error('Method not implemented.');
+    }
+    setCustomDirective(directive: string, value: boolean): void {
+        throw new Error('Method not implemented.');
+    }
+    pushDirective(directive: Directive, value: boolean): void {
+        this.#baseEnv.pushDirective(directive, value);
+    }
+    popDirective(): void {
+        this.#baseEnv.popDirective();
+    }
+    setSymbolOrder(sym: Sym, order: ExprComparator): void {
+        this.#baseEnv.setSymbolOrder(sym, order);
+    }
+    setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void {
+        throw new Error('Method not implemented.');
+    }
+    setSymbolPrintName(sym: Sym, printName: string): void {
+        throw new Error('Method not implemented.');
+    }
+    setSymbolBinding(sym: Sym, binding: U): void {
+        this.#bindings.set(sym.key(), binding);
+    }
+    setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
+        this.#userfunc.set(sym.key(), usrfunc);
+    }
+    simplify(expr: U): U {
+        throw new Error('simplify method not implemented.');
+    }
+    sin(expr: U): U {
+        throw new Error('sin method not implemented.');
+    }
+    sqrt(expr: U): U {
+        throw new Error('sqrt method not implemented.');
+    }
+    st(expr: U): U {
+        throw new Error('st method not implemented.');
+    }
+    subst(newExpr: U, oldExpr: U, expr: U): U {
+        throw new Error('subst method not implemented.');
+    }
+    subtract(lhs: U, rhs: U): U {
+        throw new Error('subtract method not implemented.');
+    }
+    toInfixString(expr: U): string {
+        return this.#baseEnv.toInfixString(expr);
+    }
+    toLatexString(expr: U): string {
+        return this.#baseEnv.toLatexString(expr);
+    }
+    toSExprString(expr: U): string {
+        return this.#baseEnv.toSExprString(expr);
+    }
+    transform(expr: U): [number, U] {
+        const value = this.valueOf(expr);
+        try {
+            if (value.equals(expr)) {
+                expr.addRef();
+                return [TFLAG_NONE, expr];
+            }
+            else {
+                value.addRef();
+                return [TFLAG_DIFF, value];
+            }
+        }
+        finally {
+            value.release();
+        }
+    }
+    valueOf(expr: U): U {
+        if (is_cons(expr)) {
+            const opr = expr.opr;
+            try {
+                // A strategy here could be to evaluate the args in the current scope then delegate to the base?
+                // But we have to be consistent with the needs of the operation.
+                if (is_sym(opr)) {
+                    if (opr.equals(ADD)) {
+                        return this.#baseEnv.valueOf(expr);
+                    }
+                    else if (opr.equals(ALGEBRA)) {
+                        return this.#baseEnv.valueOf(expr);
+                    }
+                    else if (opr.equals(ASSIGN)) {
+                        return setq(expr.lhs, expr.rhs, assert_sym_any_any(expr), this);
+                    }
+                    else if (opr.equals(COMPONENT)) {
+                        return this.#baseEnv.valueOf(expr);
+                    }
+                    else if (opr.equals(INNER)) {
+                        return this.#baseEnv.valueOf(expr);
+                    }
+                    else if (opr.equals(LCO)) {
+                        return this.#baseEnv.valueOf(expr);
+                    }
+                    else if (opr.equals(LET)) {
+                        return Eval_let(expr, this);
+                    }
+                    else if (opr.equals(MULTIPLY)) {
+                        return this.#baseEnv.valueOf(expr);
+                    }
+                    else if (opr.equals(OUTER)) {
+                        return this.#baseEnv.valueOf(expr);
+                    }
+                    else {
+                        throw new Error(`valueOf (${expr.opr} ...) method not implemented.`);
+                    }
+                }
+            }
+            finally {
+                opr.release();
+            }
+        }
+        else if (is_boo(expr)) {
+            return expr;
+        }
+        else if (is_flt(expr)) {
+            return expr;
+        }
+        else if (is_keyword(expr)) {
+            return expr;
+        }
+        else if (is_map(expr)) {
+            return this.#baseEnv.valueOf(expr);
+        }
+        else if (is_rat(expr)) {
+            return expr;
+        }
+        else if (is_str(expr)) {
+            return expr;
+        }
+        else if (is_sym(expr)) {
+            const key = expr.key();
+            if (this.#bindings.has(key)) {
+                return this.#bindings.get(key)!;
+            }
+            else {
+                return this.#baseEnv.valueOf(expr);
+            }
+        }
+        else if (is_tensor(expr)) {
+            return this.#baseEnv.valueOf(expr);
+        }
+        throw new Error(`valueOf ${expr} method not implemented.`);
+    }
+    getBinding(sym: Sym): U {
+        const key = sym.key();
+        if (this.#bindings.has(key)) {
+            return this.#bindings.get(key) as U;
+        }
+        else {
+            return this.#baseEnv.getBinding(sym);
+        }
+    }
+    getUsrFunc(sym: Sym): U {
+        throw new Error('getUsrFunc method not implemented.');
+    }
+    isConsSymbol(sym: Sym): boolean {
+        return this.#baseEnv.isConsSymbol(sym);
+    }
+    isUserSymbol(sym: Sym): boolean {
+        if (this.#userfunc.has(sym.key())) {
+            return true;
+        }
+        else {
+            return this.#baseEnv.isUserSymbol(sym);
+        }
+    }
+    setBinding(sym: Sym, binding: U): void {
+        this.#bindings.set(sym.key(), binding);
+    }
+    setUsrFunc(sym: Sym, usrfunc: U): void {
+        this.#userfunc.set(sym.key(), usrfunc);
     }
 }
 
@@ -373,6 +780,9 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         cos(expr: U): U {
             return $.evaluate(Native.cos, expr);
+        },
+        derivedEnv(): ExtensionEnv {
+            return new DerivedEnv(this);
         },
         evaluate(opr: Native, ...args: U[]): U {
             const argList = items_to_cons(...args);
@@ -922,4 +1332,3 @@ function unambiguous_operator(expr: Cons, ops: Operator<U>[], $: ExtensionEnv): 
         return void 0;
     }
 }
-

@@ -1742,19 +1742,40 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     //  }
 
 
-    if (car(expr).equals(FUNCTION)) {
-        let str = '';
-        const fbody = cadr(expr);
-
-        if (!defs.codeGen) {
-            const parameters = caddr(expr);
-            str += print_str('function ');
-            const returned = render_as_sexpr(parameters, $);
-            str += returned;
-            str += print_str(' -> ');
+    //
+    // (Sym("function") body paramList)
+    //
+    if (is_cons(expr)) {
+        // Demonstracting correct management of reference counting (as an experiment).
+        const opr = expr.opr;
+        try {
+            if (opr.equals(FUNCTION)) {
+                let str = '';
+                const body = expr.item(1);
+                try {
+                    if (!defs.codeGen) {
+                        const paramList = expr.item(2);
+                        try {
+                            str += print_str('function ');
+                            const returned = render_as_sexpr(paramList, $);
+                            str += returned;
+                            str += print_str(' -> ');
+                        }
+                        finally {
+                            paramList.release();
+                        }
+                    }
+                    str += render_using_non_sexpr_print_mode(body, $);
+                    return str;
+                }
+                finally {
+                    body.release();
+                }
+            }
         }
-        str += render_using_non_sexpr_print_mode(fbody, $);
-        return str;
+        finally {
+            opr.release();
+        }
     }
 
     if (car(expr).equals(PATTERN)) {

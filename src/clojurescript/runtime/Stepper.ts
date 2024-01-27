@@ -11,7 +11,7 @@ import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { init_env } from "../../runtime/script_engine";
 import { BaseEnv } from "./BaseEnv";
-import { DerivedEnv } from "./DerivedEnv";
+import { DerivedScope } from "./DerivedEnv";
 import { Eval_1_args } from "./Eval_1_args";
 import { Eval_2_args } from "./Eval_2_args";
 import { Eval_3_args } from "./Eval_3_args";
@@ -199,7 +199,7 @@ export class Stepper {
     createScope(node: unknown, parentScope: Scope): Scope {
         const strict = false;
         const thing = this.createObjectProto(null);
-        const scope = new DerivedEnv(parentScope, strict, thing);
+        const scope = new DerivedScope(parentScope, strict, thing);
         if (!parentScope) {
             this.initGlobal(scope.thing);
         }

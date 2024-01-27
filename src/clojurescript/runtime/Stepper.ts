@@ -3,7 +3,7 @@ import { create_sym, Sym } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "math-expression-tree";
-import { ExprEngineListener } from "../../api";
+import { ExprEngineListener, UndeclaredVars } from "../../api";
 import { create_env, EnvOptions } from "../../env/env";
 import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
@@ -72,7 +72,7 @@ export interface Scope {
     getSymbolUsrFunc(sym: Sym): U;
     isConsSymbol(sym: Sym): boolean;
     isUserSymbol(sym: Sym): boolean;
-    setSymbolBinding(sym: Sym, binding: U): void;
+    setBinding(sym: Sym, binding: U): void;
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void;
     valueOf(expr: U): U;
     /*
@@ -154,14 +154,25 @@ class BlackHole implements StepperHandler {
 const BLACK_HOLE = new BlackHole();
 
 export interface StepperConfig {
-
+    allowUndeclaredVars: boolean;
 }
 
 function env_options_from_stepper_options(options?: Partial<StepperConfig>): EnvOptions {
-    const config: EnvOptions = {
-        dependencies: ALL_FEATURES
-    };
-    return config;
+    if (options) {
+        const config: EnvOptions = {
+            allowUndeclaredVars: (typeof options.allowUndeclaredVars === 'number') ? options.allowUndeclaredVars : UndeclaredVars.Nil,
+            dependencies: ALL_FEATURES
+        };
+        return config;
+
+    }
+    else {
+        const config: EnvOptions = {
+            allowUndeclaredVars: UndeclaredVars.Nil,
+            dependencies: ALL_FEATURES
+        };
+        return config;
+    }
 }
 
 export class Stepper {

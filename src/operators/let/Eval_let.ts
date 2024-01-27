@@ -17,7 +17,7 @@ export function Eval_let(expr: Cons, $: ExtensionEnv): U {
             for (let i = 0; i < n; i++) {
                 const sym = assert_sym(bindings[2 * i]);
                 const binding = scope.valueOf(bindings[2 * i + 1]);
-                scope.setSymbolBinding(sym, binding);
+                scope.setBinding(sym, binding);
             }
             return scope.valueOf(exprList);
         }

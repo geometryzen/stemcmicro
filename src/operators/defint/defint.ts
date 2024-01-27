@@ -28,4 +28,4 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export const defint = new Builder();
+export const defint_builder = new Builder();

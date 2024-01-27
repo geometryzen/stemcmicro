@@ -49,13 +49,13 @@ export function Eval_for(p1: Cons, $: ExtensionEnv): U {
     const p4: U = $.getSymbolBinding(loopingVariable);
     try {
         for (let i = j; i <= k; i++) {
-            $.setSymbolBinding(loopingVariable, create_int(i));
+            $.setBinding(loopingVariable, create_int(i));
             $.valueOf(cadr(p1));
         }
     }
     finally {
         // put back the index variable to original content
-        $.setSymbolBinding(loopingVariable, p4);
+        $.setBinding(loopingVariable, p4);
     }
 
     // return value

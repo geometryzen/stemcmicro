@@ -410,7 +410,6 @@ export interface ExtensionEnv extends ExprContext {
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void;
     setSymbolPrintName(sym: Sym, printName: string): void;
-    setSymbolBinding(sym: Sym, binding: U): void;
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void;
     simplify(expr: U): U;
     sin(expr: U): U;

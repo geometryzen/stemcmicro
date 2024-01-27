@@ -38,13 +38,13 @@ export function Eval_product(expr: U, $: ExtensionEnv): U {
     let temp: U = one;
 
     for (let i = j; i <= k; i++) {
-        $.setSymbolBinding(indexVariable, create_int(i));
+        $.setBinding(indexVariable, create_int(i));
         const arg2 = $.valueOf(body);
         temp = $.multiply(temp, arg2);
     }
 
     // put back the index variable to original content
-    $.setSymbolBinding(indexVariable, oldIndexVariableValue);
+    $.setBinding(indexVariable, oldIndexVariableValue);
 
     return temp;
 }

@@ -36,7 +36,7 @@ import { cadadr, caddr, cdadr } from "../../tree/helpers";
  * @param $ 
  * @returns nil
  */
-export function setq_indexed(assignExpr: Cons, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): Cons {
+export function setq_indexed(assignExpr: Cons, $: Pick<ExtensionEnv, 'setBinding' | 'valueOf'>): Cons {
     // console.lg(`setq_indexed ${$.toInfixString(assignExpr)}`);
     const p4 = cadadr(assignExpr);
     // console.lg(`p4: ${toInfixString(p4)}`);
@@ -64,6 +64,6 @@ export function setq_indexed(assignExpr: Cons, $: Pick<ExtensionEnv, 'setSymbolB
     }
     set_component(defs.tos - h);
     const p3 = stack_pop();
-    $.setSymbolBinding(p4, p3);
+    $.setBinding(p4, p3);
     return nil;
 }

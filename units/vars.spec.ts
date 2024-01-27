@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { assert_str, is_rat, is_sym } from "math-expression-atoms";
+import { assert_str, is_sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/index";
 import { assert_err, is_err } from "../src/operators/err/is_err";
@@ -123,52 +123,6 @@ describe("ClojureScript", function () {
         assert.strictEqual(values.length, 1);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "a");
         assert.strictEqual(is_sym(values[0]), true);
-        engine.release();
-    });
-    xit("def [symbol init]", function () {
-        const lines: string[] = [
-            `(def a 1)`,
-            `a`,
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
-        const { trees, errors } = engine.parse(sourceText, {});
-        assert.strictEqual(errors.length, 0);
-        assert.strictEqual(trees.length, 2);
-
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.evaluate(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "1");
-        assert.strictEqual(is_rat(values[0]), true);
-        engine.release();
-    });
-    xit("def [symbol]", function () {
-        const lines: string[] = [
-            `(def a)`,
-            `a`,
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
-        const { trees, errors } = engine.parse(sourceText, {});
-        assert.strictEqual(errors.length, 0);
-        assert.strictEqual(trees.length, 2);
-
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.evaluate(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "1");
-        assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
 });

@@ -157,7 +157,7 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     });
     if (scanned === sourceText.length) {
         const str = assert_str(tree);
-        $.setSymbolBinding(sym, str);
+        $.setBinding(sym, str);
     }
     else {
         // TODO

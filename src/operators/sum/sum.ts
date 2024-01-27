@@ -39,12 +39,12 @@ function sum(body: U, index: U, lower: U, upper: U, expr: Cons, $: ExtensionEnv)
     try {
         let temp: U = zero;
         for (let i = lowerBound; i <= upperBound; i++) {
-            $.setSymbolBinding(index, create_int(i));
+            $.setBinding(index, create_int(i));
             temp = $.add(temp, $.valueOf(body));
         }
         return temp;
     }
     finally {
-        $.setSymbolBinding(index, original);
+        $.setBinding(index, original);
     }
 }

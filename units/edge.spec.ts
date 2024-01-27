@@ -1,10 +1,11 @@
 
 import { assert } from "chai";
 import { Cons, is_nil, U } from "math-expression-tree";
-import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
+import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig, UndeclaredVars } from "../src/api/index";
 import { Stepper } from "../src/clojurescript/runtime/Stepper";
 
 const engineOptions: Partial<EngineConfig> = {
+    allowUndeclaredVars: UndeclaredVars.Nil,
     useGeometricAlgebra: true,
     useClojureScript: false
 };

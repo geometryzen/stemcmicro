@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { Sym } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, ScriptHandler, should_render_svg } from "../src/api/index";
+import { create_engine, ExprEngine, ScriptHandler, should_render_svg, UndeclaredVars } from "../src/api/index";
 import { State, Stepper, StepperHandler } from "../src/clojurescript/runtime/Stepper";
 import { EmitContext, print_value_and_input_as_svg_or_infix, ScriptOutputListener } from "../src/eigenmath";
 import { Stack } from "../src/env/Stack";
@@ -113,7 +113,7 @@ describe("Stepper", function () {
             `x`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const engine: ExprEngine = create_engine({ allowUndeclaredVars: UndeclaredVars.Nil, syntaxKind: SyntaxKind.ClojureScript });
         try {
             const { module } = engine.parseModule(sourceText, {});
             const stepper = new Stepper(module);

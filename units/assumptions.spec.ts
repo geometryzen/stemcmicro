@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { create_sym } from 'math-expression-atoms';
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -9,10 +10,10 @@ describe("assumptions", function () {
         ];
         const context = create_script_context();
 
-        const aValue = context.getSymbolValue('a');
+        const aValue = context.getSymbolValue(create_sym('a'));
         assert.strictEqual(aValue.toString(), "()");
 
-        const aProps = context.getSymbolProps('a');
+        const aProps = context.getSymbolProps(create_sym('a'));
         assert.strictEqual(Object.keys(aProps).length, 28);
         assert.strictEqual(aProps.antihermitian, false);        // 1
         assert.strictEqual(aProps.algebraic, true);             // 2

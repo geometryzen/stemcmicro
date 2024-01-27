@@ -47,7 +47,7 @@ import { is_sym } from '../sym/is_sym';
  * @param assignExpr (= (f paramList) body)
  * @returns nil
  */
-export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'valueOf'>): Cons {
+export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setBinding' | 'valueOf'>): Cons {
     /**
      * The function name.
      */
@@ -89,7 +89,7 @@ export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionE
     // somehow
     const functionExpr = items_to_cons(FUNCTION, body, paramList);
 
-    $.setSymbolBinding(F, functionExpr);
+    $.setBinding(F, functionExpr);
 
     return nil;
 }

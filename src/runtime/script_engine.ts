@@ -1,7 +1,9 @@
 import { LambdaExpr } from "math-expression-context";
+import { UndeclaredVars } from "../api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
+import { assert_sym } from "../operators/sym/assert_sym";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
@@ -40,6 +42,10 @@ export interface ScriptExecuteOptions extends ExprTransformOptions {
 }
 
 export interface ScriptContextOptions extends ScriptExecuteOptions {
+    /**
+     * The default is ???.
+     */
+    allowUndeclaredVars?: UndeclaredVars;
     /**
      * The assumptions about unbound symbols.
      */
@@ -108,8 +114,8 @@ export interface ScriptContext {
     readonly $: ExtensionEnv;
     clearBindings(): void;
     defineFunction(pattern: U, impl: LambdaExpr): void;
-    getSymbolProps(sym: Sym | string): Predicates;
-    getSymbolValue(sym: Sym | string): U;
+    getSymbolProps(sym: Sym): Predicates;
+    getSymbolValue(sym: Sym): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
     evaluate(tree: U, options?: ExprTransformOptions): { value: U, prints: string[], errors: Error[] };
     executeProlog(prolog: string[]): void;
@@ -123,7 +129,7 @@ export interface ScriptContext {
     release(): void;
 }
 
-export function env_options_from_sm_context_options(options: ScriptContextOptions | undefined): EnvOptions {
+export function env_options_from_script_context_options(options: ScriptContextOptions | undefined): EnvOptions {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: EnvOptions, description: string): EnvOptions {
         // console.lg(`env_options_from_engine_options(${JSON.stringify(options)}) => ${JSON.stringify(retval)} @ ${description}`);
@@ -131,6 +137,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
     };
     if (options) {
         const config: EnvOptions = {
+            allowUndeclaredVars: (typeof options.allowUndeclaredVars === 'number') ? options.allowUndeclaredVars : UndeclaredVars.Nil,
             assumes: options.assumes,
             dependencies: ALL_FEATURES,
             enable: options.enable,
@@ -145,6 +152,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
     }
     else {
         const config: EnvOptions = {
+            allowUndeclaredVars: UndeclaredVars.Nil,
             assumes: {},
             dependencies: ALL_FEATURES,
             enable: [],
@@ -165,7 +173,7 @@ export function env_options_from_sm_context_options(options: ScriptContextOption
 export function create_script_context(contextOptions?: ScriptContextOptions): ScriptContext {
     // console.lg("create_script_context");
     let ref_count = 1;
-    const envOptions: EnvOptions = env_options_from_sm_context_options(contextOptions);
+    const envOptions: EnvOptions = env_options_from_script_context_options(contextOptions);
     const $ = create_env(envOptions);
     init_env($, contextOptions);
     const theEngine: ScriptContext = {
@@ -182,6 +190,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
             return $.getSymbolPredicates(sym);
         },
         getSymbolValue(sym: Sym): U {
+            assert_sym(sym);
             return $.getSymbolBinding(sym);
         },
         getSymbolsInfo(): { sym: Sym, value: U }[] {

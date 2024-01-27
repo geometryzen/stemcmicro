@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { is_keyword, is_map, is_str, is_tensor } from 'math-expression-atoms';
+import { is_keyword, is_map, is_str, is_tensor, Str } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_atom, nil } from 'math-expression-tree';
+import { UndeclaredVars } from '../api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info } from "../hashing/hash_info";
@@ -15,6 +16,7 @@ import { is_flt } from "../operators/flt/is_flt";
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { Eval_let } from '../operators/let/Eval_let';
 import { is_rat } from "../operators/rat/is_rat";
+import { assert_sym } from '../operators/sym/assert_sym';
 import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
@@ -22,6 +24,7 @@ import { ALGEBRA, ASSIGN, COMPONENT, FUNCTION, INNER, LCO, LET, OUTER } from "..
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
+import { Err } from '../tree/err/Err';
 import { Lambda } from "../tree/lambda/Lambda";
 import { negOne, Rat } from "../tree/rat/Rat";
 import { create_sym, Sym } from "../tree/sym/Sym";
@@ -72,6 +75,8 @@ class StableExprComparator implements ExprComparator {
 }
 
 export interface EnvOptions {
+    // TODO: Make this optional
+    allowUndeclaredVars: UndeclaredVars,
     assumes?: { [name: string]: Partial<Predicates> };
     dependencies?: FEATURE[];
     enable?: Directive[];
@@ -85,7 +90,10 @@ export interface EnvOptions {
 
 function config_from_options(options: EnvOptions | undefined): EnvConfig {
     if (options) {
+        // console.lg(`EnvOptions: ${options.allowUndeclaredVars} ${typeof options.allowUndeclaredVars}`);
         const config: EnvConfig = {
+            // Be careful here. enum(s) have the 'number' type.
+            allowUndeclaredVars: typeof options.allowUndeclaredVars === 'number' ? options.allowUndeclaredVars : UndeclaredVars.Nil,
             assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             enable: Array.isArray(options.enable) ? options.enable : [],
@@ -96,10 +104,12 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false,
             syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Algebrite,
         };
+        // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;
     }
     else {
         const config: EnvConfig = {
+            allowUndeclaredVars: UndeclaredVars.Nil,
             assumes: {},
             dependencies: [],
             enable: [],
@@ -110,6 +120,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useParenForTensors: false,
             syntaxKind: SyntaxKind.Algebrite
         };
+        // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;
     }
 }
@@ -238,6 +249,7 @@ export class DerivedEnv implements ExtensionEnv {
         return this.#baseEnv.getSymbolPrintName(sym);
     }
     getSymbolBinding(sym: Sym): U {
+        // DerivedEnv.getSymbolBinding
         const key = sym.key();
         if (this.#bindings.has(key)) {
             return this.#bindings.get(key)!;
@@ -360,9 +372,6 @@ export class DerivedEnv implements ExtensionEnv {
     }
     setSymbolPrintName(sym: Sym, printName: string): void {
         throw new Error('setSymbolPrintName method not implemented.');
-    }
-    setSymbolBinding(sym: Sym, binding: U): void {
-        this.#bindings.set(sym.key(), binding);
     }
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
         this.#userfunc.set(sym.key(), usrfunc);
@@ -670,7 +679,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return userSymbols.has(sym.key());
         },
         setBinding(sym: Sym, binding: U): void {
-            return $.setSymbolBinding(sym, binding);
+            symTab.setBinding(sym, binding);
         },
         setUsrFunc(sym: Sym, usrfunc: U): void {
             return $.setSymbolUsrFunc(sym, usrfunc);
@@ -728,7 +737,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // $.defineOperator(operator_from_modern_transformer(match, impl));
             const opr = opr_from_match(match);
             const hash = hash_from_match(match);
-            $.setSymbolBinding(opr, new Lambda(impl, hash));
+            $.setBinding(opr, new Lambda(impl, hash));
         },
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
             $.defineOperator(operator_from_keyword_runner(sym, runner));
@@ -808,7 +817,24 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return symTab.getProps(sym);
         },
         getSymbolBinding(sym: Sym): U {
-            return symTab.getBinding(sym);
+            assert_sym(sym);
+            if (symTab.hasBinding(sym)) {
+                return symTab.getBinding(sym);
+            }
+            else {
+                // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
+                switch (config.allowUndeclaredVars) {
+                    case UndeclaredVars.Err: {
+                        return new Err(new Str(`Use of undeclared Var ${sym.key()}.`));
+                    }
+                    case UndeclaredVars.Nil: {
+                        return nil;
+                    }
+                    default: {
+                        throw new Error(`Unexpected config.allowUndeclaredVars`);
+                    }
+                }
+            }
         },
         getSymbolUsrFunc(sym: Sym): U {
             return symTab.getUsrFunc(sym);
@@ -1098,14 +1124,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         setSymbolPrintName(sym: Sym, printname: string): void {
             sym_key_to_printname[sym.key()] = printname;
-        },
-        setSymbolBinding(sym: string | Sym, binding: U): void {
-            if (typeof sym === 'string') {
-                symTab.setBinding(create_sym(sym), binding);
-            }
-            else {
-                symTab.setBinding(sym, binding);
-            }
         },
         setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
             if (typeof sym === 'string') {

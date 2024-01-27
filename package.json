@@ -62,6 +62,7 @@
         "unit-factor": "mocha 'units/factor.spec.ts'",
         "unit-function": "mocha 'units/function.spec.ts'",
         "unit-G20": "mocha 'units/G20.spec.ts'",
+        "unit-gibbs": "mocha 'units/gibbs.spec.ts'",
         "unit-handler": "mocha 'units/handler.spec.ts'",
         "unit-inner": "mocha 'units/inner.spec.ts'",
         "unit-integral": "mocha 'units/integral.spec.ts'",

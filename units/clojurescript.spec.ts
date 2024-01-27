@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_blade, is_boo, is_flt, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api/index";
+import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/index";
 import { SyntaxKind } from "../src/parser/parser";
 import { assert_cons } from "../src/tree/cons/assert_cons";
 
@@ -66,7 +66,7 @@ describe("ClojureScript", function () {
             `    --1       `
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const engine: ExprEngine = create_engine({ allowUndeclaredVars: UndeclaredVars.Nil, syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -184,7 +184,7 @@ describe("ClojureScript", function () {
             `foo-bar`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const engine: ExprEngine = create_engine({ allowUndeclaredVars: UndeclaredVars.Nil, syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -351,7 +351,7 @@ describe("ClojureScript", function () {
             `(* (+ 10 5) 2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const engine: ExprEngine = create_engine({ allowUndeclaredVars: UndeclaredVars.Nil, syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
@@ -361,17 +361,15 @@ describe("ClojureScript", function () {
                 values.push(value);
             }
         }
-        assert.strictEqual(values.length, 5);
+        assert.strictEqual(values.length, 4);
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `(mk-sandwich "Bacon" "Lettuce" "Tomato")`);
         assert.strictEqual(is_cons(values[0]), true);
-        assert.strictEqual(engine.renderAsString(values[1], { format: 'SExpr' }), `(def x 5)`);
+        assert.strictEqual(engine.renderAsString(values[1], { format: 'SExpr' }), `(if (even? 10) "Even" "Odd")`);
         assert.strictEqual(is_cons(values[1]), true);
-        assert.strictEqual(engine.renderAsString(values[2], { format: 'SExpr' }), `(if (even? 10) "Even" "Odd")`);
-        assert.strictEqual(is_cons(values[2]), true);
-        assert.strictEqual(engine.renderAsString(values[3], { format: 'SExpr' }), `20`);
+        assert.strictEqual(engine.renderAsString(values[2], { format: 'SExpr' }), `20`);
+        assert.strictEqual(is_rat(values[2]), true);
+        assert.strictEqual(engine.renderAsString(values[3], { format: 'SExpr' }), `30`);
         assert.strictEqual(is_rat(values[3]), true);
-        assert.strictEqual(engine.renderAsString(values[4], { format: 'SExpr' }), `30`);
-        assert.strictEqual(is_rat(values[4]), true);
         engine.release();
     });
     it("Maps", function () {
@@ -559,5 +557,29 @@ describe("ClojureScript", function () {
             engine.release();
         }
     });
+    it("quote", function () {
+        const lines: string[] = [
+            `(quote (1 2 3 4 5))`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
 
+        assert.strictEqual(engine.renderAsString(trees[0], { format: 'SExpr' }), "(quote (1 2 3 4 5))");
+        assert.strictEqual(is_cons(trees[0]), true);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(1 2 3 4 5)");
+        assert.strictEqual(is_cons(values[0]), true);
+        engine.release();
+    });
 });

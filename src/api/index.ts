@@ -7,6 +7,7 @@ import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_value_and_input_as_svg_or_infix, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
+import { assert_U } from '../operators/helpers/is_any';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
@@ -92,7 +93,17 @@ enum EngineKind {
     PythonScript = 4
 }
 
+/**
+ * Determines the action upon attempts to access an undeclared variable.
+ */
+export enum UndeclaredVars {
+    Err = 1,    // ClojureScript
+    Nil = 2     // Algebrite and Eigenmath
+    // Sym = 3
+}
+
 export interface EngineConfig {
+    allowUndeclaredVars: UndeclaredVars;
     syntaxKind: SyntaxKind;
     prolog: string[];
     useGeometricAlgebra: boolean;
@@ -191,14 +202,25 @@ class ExtensionEnvVisitor implements Visitor {
     }
 }
 
+function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: UndeclaredVars): UndeclaredVars {
+    if (typeof options.allowUndeclaredVars === 'number') {
+        return options.allowUndeclaredVars;
+    }
+    else {
+        return allowDefault;
+    }
+}
+
 class AlgebriteExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor(options: Partial<EngineConfig>) {
         // The base ExtensionEnv is appropriate for Algebrite.
         this.#env = create_env({
+            allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
             dependencies: ALL_FEATURES
         });
         init_env(this.#env, {
+            allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
             prolog: options.prolog
         });
     }
@@ -306,10 +328,11 @@ class ClojureScriptExprEngine implements ExprEngine {
     constructor(options: Partial<EngineConfig>) {
         // We can wrap #env with a DerivedEnv to evolve to an architecture that supports nested scopes.
         // Wrapping wil reveal where there are holes in the implementation.
-        const baseEnv = create_env({ dependencies: ALL_FEATURES });
+        const allowUndeclaredVars = allow_undeclared_vars(options, UndeclaredVars.Err);
+        const baseEnv = create_env({ allowUndeclaredVars, dependencies: ALL_FEATURES });
         // const baseEnv = new DerivedEnv(create_env({ dependencies: ALL_FEATURES }));
         this.#env = baseEnv;
-        init_env(this.#env, { prolog: options.prolog });
+        init_env(this.#env, { allowUndeclaredVars, prolog: options.prolog });
     }
     isConsSymbol(sym: Sym): boolean {
         return this.#env.isConsSymbol(sym);
@@ -351,6 +374,7 @@ class ClojureScriptExprEngine implements ExprEngine {
         return value;
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
+        assert_U(expr, "ExprEngine.renderAsString(expr, config)", "expr");
         this.#env.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
         this.#env.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
         try {
@@ -437,6 +461,8 @@ class EigenmathExprEngine implements ExprEngine {
     readonly #env: ScriptVars = new ScriptVars();
     constructor(options: Partial<EngineConfig>) {
         // Determine whether options requested are compatible with Eigenmath.
+        // TODO: 
+        // const allowUndeclaredVars = allow_undeclared_vars(options, true);
         this.#env.init();
         if (options.prolog) {
             if (Array.isArray(options.prolog)) {
@@ -708,7 +734,7 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
             const value = values[i];
             handler.output(value, input, stepper);
             if (!is_nil(value)) {
-                $.setSymbolBinding(symbol_from_concept(Concept.Last), value);
+                $.setBinding(symbol_from_concept(Concept.Last), value);
             }
         }
     }

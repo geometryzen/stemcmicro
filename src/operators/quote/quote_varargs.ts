@@ -1,9 +1,9 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { QUOTE } from "../../runtime/constants";
-import { cadr } from "../../tree/helpers";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { assert_U } from "../helpers/is_any";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -11,8 +11,9 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 // quote definition
-export function Eval_quote(p1: Cons): U {
-    return cadr(p1);
+export function Eval_quote(expr: Cons): U {
+    assert_U(expr, "Eval_quote(expr)", "expr");
+    return expr.arg;
 }
 
 class Op extends FunctionVarArgs implements Operator<Cons> {
@@ -24,8 +25,11 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     get hash(): string {
         return this.#hash;
     }
+    valueOf(expr: Cons): U {
+        return Eval_quote(expr);
+    }
     transform(expr: Cons): [number, U] {
-        const retval = Eval_quote(expr);
+        const retval = this.valueOf(expr);
         return [TFLAG_HALT, retval];
     }
 }

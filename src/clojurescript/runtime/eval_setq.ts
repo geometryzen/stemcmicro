@@ -69,7 +69,7 @@ export function eval_setq(x: Cons, stack: Stack<State>, state: State): State | u
     }
     stack.pop();
     const scope = state.$;
-    scope.setSymbolBinding(lhs, state.value);
+    scope.setBinding(lhs, state.value);
     scope.setSymbolUsrFunc(lhs, nil);
     stack.top.value = nil;
     return void 0;

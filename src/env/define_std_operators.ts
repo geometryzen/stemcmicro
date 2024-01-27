@@ -105,7 +105,9 @@ import { cosh_varargs } from '../operators/cosh/cosh_varargs';
 import { cross_any_any } from '../operators/cross/cross_any_any';
 import { cross_blade_blade_builder } from '../operators/cross/cross_blade_blade';
 import { MATH_VECTOR_CROSS_PRODUCT } from '../operators/cross/MATH_VECTOR_CROSS_PRODUCT';
-import { defint } from '../operators/defint/defint';
+import { def_sym_builder } from '../operators/def/def_sym';
+import { def_sym_init_builder } from '../operators/def/def_sym_init';
+import { defint_builder } from '../operators/defint/defint';
 import { degree_varargs } from '../operators/degree/degree_varargs';
 import { denominator_fn } from '../operators/denominator/denominator_fn';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
@@ -620,7 +622,7 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineKeyword(FACTOR, function ($: ExtensionEnv) {
         const last = $.getSymbolBinding(RESERVED_KEYWORD_LAST);
         const factored = $.factor(last);
-        $.setSymbolBinding(RESERVED_KEYWORD_LAST, factored);
+        $.setBinding(RESERVED_KEYWORD_LAST, factored);
 
         const str = render_using_print_mode(factored, defs.printMode, $);
         const printHandler = $.getPrintHandler();
@@ -780,7 +782,9 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(make_rhs_distrib_expand_law(MATH_VECTOR_CROSS_PRODUCT, MATH_ADD));
     $.defineOperator(cross_any_any);
 
-    $.defineOperator(defint);
+    $.defineOperator(def_sym_builder);
+    $.defineOperator(def_sym_init_builder);
+    $.defineOperator(defint_builder);
     $.defineOperator(denominator_fn);
 
     $.defineOperator(d_to_derivative);

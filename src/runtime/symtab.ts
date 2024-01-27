@@ -83,9 +83,7 @@ export interface SymTab {
     clear(): void;
     getProps(sym: Sym | string): Props;
     setProps(sym: Sym, overrides: Partial<Props>): void;
-    /**
-     * Returns NIL if the symbol is not bound to anything.
-     */
+    hasBinding(sym: Sym): boolean;
     getBinding(sym: Sym | string): U;
     getUsrFunc(sym: Sym | string): U;
     isBinding(sym: Sym | string): boolean;
@@ -133,6 +131,10 @@ export function createSymTab(): SymTab {
             else {
                 props_from_key.delete(key);
             }
+        },
+        hasBinding(sym: Sym) {
+            assert_sym(sym);
+            return binding_from_key.has(sym.key());
         },
         getBinding(sym: Sym | string): U {
             if (typeof sym === 'string') {

@@ -312,7 +312,7 @@ function store_in_script_last(expr: U, $: ExtensionEnv): void {
     // This feels like a bit of a hack.
     if (!is_nil(expr)) {
         // console.lg(`store_in_script_last ${render_as_human(expr, $)}`);
-        $.setSymbolBinding(RESERVED_KEYWORD_LAST, expr);
+        $.setBinding(RESERVED_KEYWORD_LAST, expr);
     }
 }
 

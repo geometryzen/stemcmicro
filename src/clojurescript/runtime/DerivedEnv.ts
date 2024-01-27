@@ -217,8 +217,8 @@ export class DerivedScope implements Scope {
     setSymbolPrintName(sym: Sym, printName: string): void {
         throw new Error("Method not implemented.");
     }
-    setSymbolBinding(sym: Sym, binding: U): void {
-        this.parentEnv.setSymbolBinding(sym, binding);
+    setBinding(sym: Sym, binding: U): void {
+        this.parentEnv.setBinding(sym, binding);
     }
     setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
         this.parentEnv.setSymbolUsrFunc(sym, usrfunc);
@@ -257,9 +257,6 @@ export class DerivedScope implements Scope {
         return this.parentEnv.valueOf(expr);
     }
     getBinding(printname: string): U {
-        throw new Error("Method not implemented.");
-    }
-    setBinding(printname: string, binding: U): void {
         throw new Error("Method not implemented.");
     }
     getUsrFunc(printname: string): U {

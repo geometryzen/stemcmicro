@@ -1,9 +1,9 @@
 
 import { assert } from "chai";
-import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tensor } from "math-expression-atoms";
+import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { Cons, is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
+import { create_engine, ExprEngine, run_script, ScriptHandler, should_render_svg, UndeclaredVars } from "../src/api/index";
 import { EmitContext, print_value_and_input_as_svg_or_infix, ScriptOutputListener } from "../src/eigenmath";
 import { SyntaxKind } from "../src/parser/parser";
 import { visit } from "../src/visitor/visit";
@@ -114,6 +114,10 @@ function strip_whitespace(s: string): string {
 
 class Voyeur implements Visitor {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    tag(tag: Tag): void {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     keyword(keyword: Keyword): void {
         throw new Error("Voyeur.keyword method not implemented.");
     }
@@ -211,7 +215,7 @@ describe("runscript", function () {
     });
     it("ClojureScript", function () {
         const sourceText = clojurescript_source.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const engine: ExprEngine = create_engine({ allowUndeclaredVars: UndeclaredVars.Nil, syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
 
         assert_parse(trees, errors, engine);

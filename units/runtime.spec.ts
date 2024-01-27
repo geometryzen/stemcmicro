@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_rat, is_sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api/index";
+import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/index";
 import { State, Stepper } from '../src/clojurescript/runtime/Stepper';
 import { Stack } from "../src/env/Stack";
 import { SyntaxKind } from "../src/parser/parser";
@@ -115,7 +115,7 @@ describe("runtime", function () {
             `c`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const engine: ExprEngine = create_engine({ allowUndeclaredVars: UndeclaredVars.Nil, syntaxKind: SyntaxKind.ClojureScript });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const runner = new Stepper(module);

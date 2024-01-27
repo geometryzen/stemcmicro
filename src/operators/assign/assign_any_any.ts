@@ -61,7 +61,7 @@ function eval_setq(expr: EXP, $: ExtensionEnv): U {
  * @param expr The unevaluated original expression.
  * @returns nil
  */
-export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'setSymbolUsrFunc' | 'valueOf'>): U {
+export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setBinding' | 'setSymbolUsrFunc' | 'valueOf'>): U {
 
     // case of tensor
     if (caadr(expr).equals(COMPONENT)) {
@@ -89,8 +89,8 @@ export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEn
  * @param binding The evaluated RHS.
  * @returns nil
  */
-export function set_symbol(lhs: Sym, binding: U, usrfunc: U, $: Pick<ExtensionEnv, 'setSymbolBinding' | 'setSymbolUsrFunc'>): U {
-    $.setSymbolBinding(lhs, binding);
+export function set_symbol(lhs: Sym, binding: U, usrfunc: U, $: Pick<ExtensionEnv, 'setBinding' | 'setSymbolUsrFunc'>): U {
+    $.setBinding(lhs, binding);
     $.setSymbolUsrFunc(lhs, usrfunc);
     return nil;
 }

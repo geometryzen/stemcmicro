@@ -48,7 +48,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: Sym, rhs: U, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        $.setSymbolBinding(lhs, rhs);
+        $.setBinding(lhs, rhs);
         // Assignments return NIL to prevent them from being printed.
         // That's a bit unfortunate for chained assignments.
         // The kernel of the problem is the printing of expressions by default in the REPL.
@@ -61,7 +61,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         try {
             const binding = $.valueOf(rhs);
             try {
-                $.setSymbolBinding(lhs, binding);
+                $.setBinding(lhs, binding);
                 return nil;
             }
             finally {

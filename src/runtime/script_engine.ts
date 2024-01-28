@@ -191,7 +191,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         },
         getSymbolValue(sym: Sym): U {
             assert_sym(sym);
-            return $.getSymbolBinding(sym);
+            return $.getBinding(sym);
         },
         getSymbolsInfo(): { sym: Sym, value: U }[] {
             return $.getSymbolsInfo();

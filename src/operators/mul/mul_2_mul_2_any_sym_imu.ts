@@ -4,7 +4,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { is_mul_2_any_sym } from "./is_mul_2_any_sym";
@@ -17,9 +17,9 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LL = U;
 type LR = Sym;
-type LHS = BCons<Sym, LL, LR>;
+type LHS = Cons2<Sym, LL, LR>;
 type RHS = IMU_TYPE;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (X * a) * i => (X * i) * a or (X * a) * i, consistent with compare_factors

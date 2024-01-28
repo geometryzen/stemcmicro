@@ -107,8 +107,8 @@ export class BaseEnv implements Scope {
     getSymbolPrintName(sym: Sym): string {
         throw new Error("Method not implemented.");
     }
-    getSymbolBinding(sym: Sym): U {
-        return this.#baseEnv.getSymbolBinding(sym);
+    getBinding(sym: Sym): U {
+        return this.#baseEnv.getBinding(sym);
     }
     getSymbolUsrFunc(sym: Sym): U {
         return this.#baseEnv.getSymbolUsrFunc(sym);
@@ -260,9 +260,6 @@ export class BaseEnv implements Scope {
     }
     valueOf(expr: U): U {
         return this.#baseEnv.valueOf(expr);
-    }
-    getBinding(printname: string): U {
-        throw new Error("Method not implemented.");
     }
     getUsrFunc(printname: string): U {
         throw new Error("Method not implemented.");

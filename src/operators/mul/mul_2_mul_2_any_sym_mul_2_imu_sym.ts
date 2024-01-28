@@ -5,7 +5,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_any_sym } from "./is_mul_2_any_sym";
 import { is_mul_2_imu_any } from "./is_mul_2_imu_any";
@@ -19,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
 /**
  * (X * a) * (i * Y) => (X * i) * (a * Y) 
  */
-class Op extends Function2<BCons<Sym, U, Sym>, BCons<Sym, BCons<Sym, Rat, Rat>, U>> implements Operator<Cons> {
+class Op extends Function2<Cons2<Sym, U, Sym>, Cons2<Sym, Cons2<Sym, Rat, Rat>, U>> implements Operator<Cons> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_sym_mul_2_imu_sym', MATH_MUL, and(is_cons, is_mul_2_any_sym), and(is_cons, is_mul_2_imu_any), $);
@@ -28,7 +28,7 @@ class Op extends Function2<BCons<Sym, U, Sym>, BCons<Sym, BCons<Sym, Rat, Rat>, 
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: BCons<Sym, U, Sym>, rhs: BCons<Sym, BCons<Sym, Rat, Rat>, U>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Cons2<Sym, U, Sym>, rhs: Cons2<Sym, Cons2<Sym, Rat, Rat>, U>): [TFLAGS, U] {
         const $ = this.$;
         const X = lhs.lhs;
         const a = lhs.rhs;

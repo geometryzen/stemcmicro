@@ -7,7 +7,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { GUARD } from "../helpers/GUARD";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_uom } from "../uom/is_uom";
 import { wrap_as_transform } from "../wrap_as_transform";
 
@@ -38,7 +38,7 @@ class Op extends FunctionUom {
     constructor($: ExtensionEnv) {
         super(native_sym(Native.abs), $);
     }
-    transform1(opr: Sym, arg: Uom, expr: UCons<Sym, Uom>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Uom, expr: Cons1<Sym, Uom>): [TFLAGS, U] {
         return wrap_as_transform(arg, expr);
     }
 }

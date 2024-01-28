@@ -5,7 +5,7 @@ import { MATH_POW } from "../../runtime/ns_math";
 import { one, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_rat } from "../rat/rat_extension";
 import { is_sym } from "../sym/is_sym";
@@ -35,7 +35,7 @@ function is_pi_times_imu(expr: Cons) {
 
 type LHS = Sym;
 type RHS = Rat;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (pow e X) is equivalent to exp(X)

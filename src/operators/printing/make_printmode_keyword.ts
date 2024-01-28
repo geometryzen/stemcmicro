@@ -30,7 +30,7 @@ export class PrintKeyword extends AbstractKeywordOperator {
             const origPrintMode = defs.printMode;
             defs.setPrintMode(printMode);
             try {
-                const last = $.getSymbolBinding(RESERVED_KEYWORD_LAST);
+                const last = $.getBinding(RESERVED_KEYWORD_LAST);
                 const str = render_using_print_mode(last, printMode, $);
 
                 const printHandler = this.$.getPrintHandler();

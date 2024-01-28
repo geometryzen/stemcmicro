@@ -5,7 +5,7 @@ import { two, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1X } from "../helpers/Function1X";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_sym } from "../sym/is_sym";
 
 export const abs = native_sym(Native.abs);
@@ -28,11 +28,11 @@ function cross($: ExtensionEnv) {
 /**
  * abs(x) => (sqrt (pow x 2))
  */
-class Op extends Function1X<Sym> implements Operator<UCons<Sym, Sym>> {
+class Op extends Function1X<Sym> implements Operator<Cons1<Sym, Sym>> {
     constructor($: ExtensionEnv) {
         super('abs_sym', abs, is_sym, cross($), $);
     }
-    transform1(opr: Sym, x: Sym, origExpr: UCons<Sym, Sym>): [TFLAGS, U] {
+    transform1(opr: Sym, x: Sym, origExpr: Cons1<Sym, Sym>): [TFLAGS, U] {
         const $ = this.$;
         const props = $.getSymbolPredicates(x);
         if (props.positive) {

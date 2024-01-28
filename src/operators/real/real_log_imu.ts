@@ -4,7 +4,7 @@ import { native_sym } from "../../native/native_sym";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 import { CompositeOperator } from "../CompositeOperator";
 
@@ -21,7 +21,7 @@ class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(real, log, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const logExpr = expr.argList.head;
             const x = logExpr.argList.head;

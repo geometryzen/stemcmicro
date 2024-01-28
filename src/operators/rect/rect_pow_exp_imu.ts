@@ -5,7 +5,7 @@ import { native_sym } from "../../native/native_sym";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 import { CompositeOperator } from "../CompositeOperator";
 
@@ -25,7 +25,7 @@ class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(rect, pow, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const powExpr = expr.argList.head;
             // console.lg("powExpr", this.$.toSExprString(powExpr));
@@ -52,7 +52,7 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
+    transform1(opr: Sym, innerExpr: Cons, expr: Cons1<Sym, Cons>): [TFLAGS, U] {
         // console.lg(this.name);
         return [TFLAG_DIFF, expr];
     }

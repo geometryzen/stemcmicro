@@ -4,7 +4,7 @@ import { Cons, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 
 const LOG = native_sym(Native.log);
@@ -33,7 +33,7 @@ function cross(base: Sym, expo: U): boolean {
 
 type LHS = Sym;
 type RHS = Cons;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * exp(log(x)) => x

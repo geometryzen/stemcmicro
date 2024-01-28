@@ -8,12 +8,12 @@ import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { compare_blade_blade } from "../blade/blade_extension";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 
 type LHS = Blade;
 type RHS = Blade;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function compare_blade_blade_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {

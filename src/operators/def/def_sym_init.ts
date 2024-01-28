@@ -1,53 +1,20 @@
-import { assert_sym, create_sym, is_sym, Str, Sym } from "math-expression-atoms";
+import { create_sym, is_sym, Str, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Err } from "../../tree/err/Err";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
+import { extract_def_args } from "./extract_def_args";
 
 /**
  * TODO: We need this in the Native arsenal?
  */
 const DEF = create_sym("def");
 
-type LHS = U;
+type LHS = Sym;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
-
-/**
- * The top syntax doesn't tell you how the arguments get allocated.
- * (def symbol doc-string? init?)
- * The valid parameter lists are as follows
- * [symbol]
- * [symbol init]
- * [symbol doc-string init]
- */
-function extract_def_args(expr: EXP): [sym: Sym, doc: U, init: U] {
-    const argList = expr.argList;
-    try {
-        switch (argList.length) {
-            case 1: {
-                nil.addRef();
-                nil.addRef();
-                return [assert_sym(argList.item(0)), nil, nil];
-            }
-            case 2: {
-                nil.addRef();
-                return [assert_sym(argList.item(0)), nil, argList.item(1)];
-            }
-            case 3: {
-                return [assert_sym(argList.item(0)), argList.item(1), argList.item(2)];
-            }
-            default: {
-                throw new Error("Unexpected number of arguments for def Special Form.");
-            }
-        }
-    }
-    finally {
-        argList.release();
-    }
-}
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (def symbol doc-string? init?)
@@ -91,14 +58,22 @@ function def_sym_init(sym: Sym, init: U, $: ExtensionEnv): U {
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
-        super('def [symbol init]', DEF, is_any, is_any, $);
+        super('def [symbol init]', DEF, is_sym, is_any, $);
     }
     valueOf(expr: EXP): U {
         return Eval_def_sym_init(expr, this.$);
     }
-    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
-        const retval = Eval_def_sym_init(orig, this.$);
+    override transform(expr: EXP): [TFLAGS, U] {
+        // We override the transform method because (def ...) is a special form.
+        // If we don't we run into troble because we attempt to evaluate the symbol. 
+        const retval = Eval_def_sym_init(expr, this.$);
         return [TFLAG_DIFF, retval];
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
+        // This should not be called because of the override.
+        // TODO: This suggests that we need a different base abstraction.
+        throw new Error();
     }
 }
 

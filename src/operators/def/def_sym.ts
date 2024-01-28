@@ -1,51 +1,17 @@
-import { assert_sym, create_sym, Sym } from "math-expression-atoms";
+import { create_sym, is_sym, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Function1 } from "../helpers/Function1";
-import { is_any } from "../helpers/is_any";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
+import { extract_def_args } from "./extract_def_args";
 
 /**
  * TODO: We need this in the Native arsenal?
  */
 const DEF = create_sym("def");
 
-type ARG = U;
-type EXP = UCons<Sym, ARG>;
-
-/**
- * The top syntax doesn't tell you how the arguments get allocated.
- * (def symbol doc-string? init?)
- * The valid parameter lists are as follows
- * [symbol]
- * [symbol init]
- * [symbol doc-string init]
- */
-function extract_def_args(expr: EXP): [sym: Sym, doc: U, init: U] {
-    const argList = expr.argList;
-    try {
-        switch (argList.length) {
-            case 1: {
-                nil.addRef();
-                nil.addRef();
-                return [assert_sym(argList.item(0)), nil, nil];
-            }
-            case 2: {
-                nil.addRef();
-                return [assert_sym(argList.item(0)), nil, argList.item(1)];
-            }
-            case 3: {
-                return [assert_sym(argList.item(0)), argList.item(1), argList.item(2)];
-            }
-            default: {
-                throw new Error("Unexpected number of arguments for def Special Form.");
-            }
-        }
-    }
-    finally {
-        argList.release();
-    }
-}
+type ARG = Sym;
+type EXP = Cons1<Sym, ARG>;
 
 /**
  * (def symbol doc-string? init?)
@@ -81,7 +47,7 @@ function def_sym_init(sym: Sym, $: ExtensionEnv): U {
 
 class Op extends Function1<ARG> implements Operator<EXP> {
     constructor($: ExtensionEnv) {
-        super('def [symbol]', DEF, is_any, $);
+        super('def [symbol]', DEF, is_sym, $);
     }
     valueOf(expr: EXP): U {
         return Eval_def_sym(expr, this.$);

@@ -4,7 +4,7 @@ import { items_to_cons } from "../../makeList";
 import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { IMU_TYPE, is_imu } from "../imu/is_imu";
 import { is_sym } from "../sym/is_sym";
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Sym;
 type RHS = IMU_TYPE;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * Sym * Imu may be ordered consistently using compare_factors.

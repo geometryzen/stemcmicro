@@ -845,25 +845,3 @@ export function should_render_svg($: ExprEngine): boolean {
         return false;
     }
 }
-/*
-export function should_stepper_render_svg(stepper: Stepper): boolean {
-    const $: Scope = stepper.getStateStack().top.$;
-    const sym: Sym = $.symbol(Concept.TTY);
-    const tty = $.getSymbolBinding(sym);
-    if (is_nil(tty)) {
-        // Unbound in Native engine.
-        return true;
-    }
-    else if (tty.equals(sym)) {
-        // Unbound in Eigenmath engine.
-        return true;
-    }
-    else if (iszero(tty)) {
-        // Bound to zero.
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-*/

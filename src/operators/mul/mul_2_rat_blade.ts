@@ -4,7 +4,7 @@ import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Rat;
 type RHS = Blade;
-type EXP = BCons<Sym, LHS, RHS>
+type EXP = Cons2<Sym, LHS, RHS>
 
 function Eval_mul_2_rat_blade(expr: EXP): U {
     const lhs = expr.lhs;

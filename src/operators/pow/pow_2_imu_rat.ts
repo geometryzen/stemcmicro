@@ -6,7 +6,7 @@ import { Imu } from "../../tree/imu/Imu";
 import { negOne, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_imu } from "../imu/is_imu";
 import { is_rat } from "../rat/rat_extension";
@@ -19,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Imu;
 type RHS = Rat;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;

@@ -6,7 +6,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";
 import { is_mul_2_rat_any } from "./is_mul_2_rat_any";
@@ -20,8 +20,8 @@ class Builder implements OperatorBuilder<Cons> {
 export const mul_2_sym_mul_2_rat_any = new Builder();
 
 type LHS = Sym;
-type RHS = BCons<Sym, Rat, U>;
-type EXP = BCons<Sym, LHS, RHS>
+type RHS = Cons2<Sym, Rat, U>;
+type EXP = Cons2<Sym, LHS, RHS>
 
 /**
  * a * (n * X) => n * (a * X), where n is a number, a is a symbol, and X is anything.

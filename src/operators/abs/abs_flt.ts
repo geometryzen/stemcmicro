@@ -7,7 +7,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { wrap_as_transform } from "../wrap_as_transform";
 
 class Builder implements OperatorBuilder<U> {
@@ -25,7 +25,7 @@ class Op extends Function1<Flt> {
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: Flt, expr: UCons<Sym, Flt>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Flt, expr: Cons1<Sym, Flt>): [TFLAGS, U] {
         return wrap_as_transform(arg.abs(), expr);
     }
 }

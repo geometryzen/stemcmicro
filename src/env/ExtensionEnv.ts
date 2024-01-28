@@ -328,7 +328,6 @@ export interface ExtensionEnv extends ExprContext {
      * Used during rendering.
      */
     getSymbolPrintName(sym: Sym): string;
-    getSymbolBinding(sym: Sym): U;
     getSymbolUsrFunc(sym: Sym): U;
     getSymbolsInfo(): { sym: Sym, value: U }[];
     /**

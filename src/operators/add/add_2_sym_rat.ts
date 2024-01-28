@@ -5,7 +5,7 @@ import { MATH_ADD } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/is_rat";
 import { is_sym } from "../sym/is_sym";
@@ -19,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
 /**
  * Sym + Rat => Rat + Sym
  */
-class Op extends Function2<Sym, Rat> implements Operator<BCons<Sym, Sym, Rat>> {
+class Op extends Function2<Sym, Rat> implements Operator<Cons2<Sym, Sym, Rat>> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_sym_rat', MATH_ADD, is_sym, is_rat, $);

@@ -4,21 +4,21 @@ import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
-import { UCons } from "./UCons";
+import { Cons1 } from "./Cons1";
 
-export abstract class Function1<T extends U> extends FunctionVarArgs implements Operator<UCons<Sym, T>> {
+export abstract class Function1<T extends U> extends FunctionVarArgs implements Operator<Cons1<Sym, T>> {
     constructor(name: string, opr: Sym, private readonly guard: GUARD<U, T>, $: ExtensionEnv) {
         super(name, opr, $);
     }
-    isKind(expr: U): expr is UCons<Sym, T> {
+    isKind(expr: U): expr is Cons1<Sym, T> {
         return !!this.match(expr);
     }
-    match(expr: U): UCons<Sym, T> | undefined {
+    match(expr: U): Cons1<Sym, T> | undefined {
         if (is_cons(expr) && expr.length === 2) {
             const opr = expr.opr;
             const arg = expr.item(1);
             if (is_sym(opr) && this.opr.equalsSym(opr) && this.guard(arg)) {
-                return expr as UCons<Sym, T>;
+                return expr as Cons1<Sym, T>;
             }
             else {
                 return void 0;
@@ -48,5 +48,5 @@ export abstract class Function1<T extends U> extends FunctionVarArgs implements 
      * @param arg The unevaluated arg typed according to the matches that have been made.
      * @param expr The original expression typed according to the matches that have been made.
      */
-    abstract transform1(opr: Sym, arg: T, expr: UCons<Sym, T>): [TFLAGS, U];
+    abstract transform1(opr: Sym, arg: T, expr: Cons1<Sym, T>): [TFLAGS, U];
 }

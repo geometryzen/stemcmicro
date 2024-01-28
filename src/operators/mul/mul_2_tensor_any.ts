@@ -5,7 +5,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_tensor } from "../tensor/is_tensor";
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Tensor;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>
+type EXP = Cons2<Sym, LHS, RHS>
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function cross($: ExtensionEnv) {

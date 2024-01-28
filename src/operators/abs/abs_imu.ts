@@ -7,7 +7,7 @@ import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 import { wrap_as_transform } from "../wrap_as_transform";
 
@@ -26,7 +26,7 @@ class Op extends Function1<Imu> {
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: Imu, expr: UCons<Sym, Imu>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Imu, expr: Cons1<Sym, Imu>): [TFLAGS, U] {
         return wrap_as_transform(one, expr);
     }
 }

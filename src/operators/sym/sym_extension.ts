@@ -43,7 +43,7 @@ class SymExtension implements Extension<Sym> {
             return piAsFlt;
         }
 
-        const binding = $.getSymbolBinding(sym);
+        const binding = $.getBinding(sym);
 
         if (is_nil(binding) || binding.equals(sym)) {
             return sym;

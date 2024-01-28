@@ -5,7 +5,7 @@ import { halt } from '../../runtime/defs';
 import { caadr, caddr, cadr, cdadr } from '../../tree/helpers';
 import { Sym } from '../../tree/sym/Sym';
 import { car, nil, U } from '../../tree/tree';
-import { BCons } from '../helpers/BCons';
+import { Cons2 } from '../helpers/Cons2';
 import { is_sym } from '../sym/is_sym';
 
 // Store a function definition
@@ -47,7 +47,7 @@ import { is_sym } from '../sym/is_sym';
  * @param assignExpr (= (f paramList) body)
  * @returns nil
  */
-export function define_function(assignExpr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setBinding' | 'valueOf'>): Cons {
+export function define_function(assignExpr: Cons2<Sym, U, U>, $: Pick<ExtensionEnv, 'setBinding' | 'valueOf'>): Cons {
     /**
      * The function name.
      */

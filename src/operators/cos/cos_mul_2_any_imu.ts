@@ -5,10 +5,10 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function1 } from "../helpers/Function1";
 import { is_opr_2_any_rhs } from "../helpers/is_opr_2_any_rhs";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 import { MATH_COS } from "./MATH_COS";
 
@@ -20,8 +20,8 @@ class Builder implements OperatorBuilder<U> {
 
 type AL = U;
 type AR = U;
-type ARG = BCons<Sym, AL, AR>;
-type EXP = UCons<Sym, ARG>;
+type ARG = Cons2<Sym, AL, AR>;
+type EXP = Cons1<Sym, ARG>;
 
 /**
  * cos(X * i) => cosh(X) 

@@ -6,7 +6,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { binswap } from "../helpers/binswap";
 import { Function2X } from "../helpers/Function2X";
 import { is_mul_2_rat_sym } from "../mul/is_mul_2_rat_sym";
@@ -18,14 +18,14 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-function cross(lhs: BCons<Sym, Rat, Sym>, rhs: Sym): boolean {
+function cross(lhs: Cons2<Sym, Rat, Sym>, rhs: Sym): boolean {
     return compare_sym_sym(lhs.rhs, rhs) > 0;
 }
 
 //
 // (Rat * zzz) + aaa => aaa + (Rat * zzz)
 //
-class Op extends Function2X<BCons<Sym, Rat, Sym>, Sym> implements Operator<Cons> {
+class Op extends Function2X<Cons2<Sym, Rat, Sym>, Sym> implements Operator<Cons> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_rat_zzz_aaa', MATH_ADD, and(is_cons, is_mul_2_rat_sym), is_sym, cross, $);
@@ -34,7 +34,7 @@ class Op extends Function2X<BCons<Sym, Rat, Sym>, Sym> implements Operator<Cons>
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: BCons<Sym, Rat, Sym>, rhs: Sym, orig: BCons<Sym, BCons<Sym, Rat, Sym>, Sym>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Cons2<Sym, Rat, Sym>, rhs: Sym, orig: Cons2<Sym, Cons2<Sym, Rat, Sym>, Sym>): [TFLAGS, U] {
         return [TFLAG_DIFF, binswap(orig)];
     }
 }

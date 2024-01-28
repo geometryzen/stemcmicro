@@ -4,7 +4,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
 import { IMU_TYPE, is_imu } from "../imu/is_imu";
@@ -18,9 +18,9 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LL = Sym;
 type LR = IMU_TYPE;
-type LHS = BCons<Sym, LL, LR>;
+type LHS = Cons2<Sym, LL, LR>;
 type RHS = Sym;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (a * i) * b => (a * b) * i

@@ -8,7 +8,7 @@ import { MATH_LCO, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { is_blade } from "math-expression-atoms";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
@@ -20,7 +20,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = U;
 type RHS = U;
-type EXP = BCons<Sym, U, U>;
+type EXP = Cons2<Sym, U, U>;
 
 class Op extends Function2<LHS, RHS> {
     constructor($: ExtensionEnv) {

@@ -4,13 +4,13 @@ import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
 type LHS = Cons;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 function make_is_cons_and_opr_eq_sym(lower: Sym) {
     return function (expr: U): expr is Cons {

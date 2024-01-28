@@ -8,7 +8,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { compare_blade_blade } from "../blade/blade_extension";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_rat_blade } from "../mul/is_mul_2_rat_blade";
 
@@ -22,8 +22,8 @@ class Builder implements OperatorBuilder<Cons> {
 type LHS = Blade;
 type RL = Rat;
 type RR = Blade;
-type RHS = BCons<Sym, RL, RR>;
-type EXP = BCons<Sym, LHS, RHS>
+type RHS = Cons2<Sym, RL, RR>;
+type EXP = Cons2<Sym, LHS, RHS>
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;

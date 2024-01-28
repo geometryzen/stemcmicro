@@ -5,10 +5,10 @@ import { items_to_cons } from "../../makeList";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "./and";
-import { BCons } from "./BCons";
+import { Cons2 } from "./Cons2";
 import { Function2 } from "./Function2";
 import { is_opr_1_any } from "./is_opr_1_any";
-import { UCons } from "./UCons";
+import { Cons1 } from "./Cons1";
 
 /**
  * The ordering is based upon the names of the functions and then upon their arguments.
@@ -25,9 +25,9 @@ export class Opr2Lhs1Rhs1SwitchBuilder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = UCons<Sym, U>;
-type RHS = UCons<Sym, U>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type LHS = Cons1<Sym, U>;
+type RHS = Cons1<Sym, U>;
+type EXPR = Cons2<Sym, LHS, RHS>;
 
 /**
  * (opr (lhs) (rhs)) => (opr (rhs) (lhs))

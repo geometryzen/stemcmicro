@@ -5,7 +5,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_mul_2_rat_any } from "../mul/is_mul_2_rat_any";
 
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-function cross(lhs: BCons<Sym, Rat, U>, rhs: BCons<Sym, Rat, U>): boolean {
+function cross(lhs: Cons2<Sym, Rat, U>, rhs: Cons2<Sym, Rat, U>): boolean {
     const x1 = lhs.rhs;
     const x2 = rhs.rhs;
     if (x1.equals(x2)) {
@@ -27,7 +27,7 @@ function cross(lhs: BCons<Sym, Rat, U>, rhs: BCons<Sym, Rat, U>): boolean {
 /**
  * (p * X) + (q * X) => (p + q) * X
  */
-class Op extends Function2X<BCons<Sym, Rat, U>, BCons<Sym, Rat, U>> implements Operator<Cons> {
+class Op extends Function2X<Cons2<Sym, Rat, U>, Cons2<Sym, Rat, U>> implements Operator<Cons> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_mul_2_rat_X_mul_2_rat_X', MATH_ADD, and(is_cons, is_mul_2_rat_any), and(is_cons, is_mul_2_rat_any), cross, $);
@@ -36,7 +36,7 @@ class Op extends Function2X<BCons<Sym, Rat, U>, BCons<Sym, Rat, U>> implements O
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: BCons<Sym, Rat, U>, rhs: BCons<Sym, Rat, U>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Cons2<Sym, Rat, U>, rhs: Cons2<Sym, Rat, U>): [TFLAGS, U] {
         const $ = this.$;
         const p = lhs.lhs;
         const X = lhs.rhs;

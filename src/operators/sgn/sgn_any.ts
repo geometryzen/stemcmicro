@@ -7,7 +7,7 @@ import { U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 import { Function1 } from '../helpers/Function1';
 import { is_any } from '../helpers/is_any';
-import { UCons } from '../helpers/UCons';
+import { Cons1 } from '../helpers/Cons1';
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -25,7 +25,7 @@ class SgnFlt extends Function1<U> {
         return this.#hash;
     }
     // This may not be needed for uniqueness because of hash in other operators.
-    isKind(expr: U): expr is UCons<Sym, U> {
+    isKind(expr: U): expr is Cons1<Sym, U> {
         if (super.isKind(expr)) {
             if (is_flt(expr)) {
                 return false;

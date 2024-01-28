@@ -7,7 +7,7 @@ import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 
 const ARG = native_sym(Native.arg);
@@ -20,7 +20,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 type ARG = Imu;
-type EXP = UCons<Sym, ARG>;
+type EXP = Cons1<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly #hash: string;

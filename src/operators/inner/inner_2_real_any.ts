@@ -3,7 +3,7 @@ import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { one } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = U;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 function is_real($: ExtensionEnv) {
     return function (expr: LHS): expr is U {

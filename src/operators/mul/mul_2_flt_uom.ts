@@ -6,7 +6,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_uom } from "../uom/uom_extension";
 
@@ -29,7 +29,7 @@ class Op extends Function2<Flt, Uom> implements Operator<Cons> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Flt, rhs: Uom, expr: BCons<Sym, Flt, Uom>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Flt, rhs: Uom, expr: Cons2<Sym, Flt, Uom>): [TFLAGS, U] {
         if (lhs.isZero()) {
             return [TFLAG_DIFF, lhs];
         }

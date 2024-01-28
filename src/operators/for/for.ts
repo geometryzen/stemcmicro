@@ -46,7 +46,7 @@ export function Eval_for(p1: Cons, $: ExtensionEnv): U {
 
     // remember contents of the index
     // variable so we can put it back after the loop
-    const p4: U = $.getSymbolBinding(loopingVariable);
+    const p4: U = $.getBinding(loopingVariable);
     try {
         for (let i = j; i <= k; i++) {
             $.setBinding(loopingVariable, create_int(i));

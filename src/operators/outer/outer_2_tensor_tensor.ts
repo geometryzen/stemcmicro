@@ -8,7 +8,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { is_tensor } from "../tensor/is_tensor";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -38,7 +38,7 @@ export function outer_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U 
 
 type LHS = Tensor;
 type RHS = Tensor;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;

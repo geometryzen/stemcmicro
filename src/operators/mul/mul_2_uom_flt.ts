@@ -9,7 +9,7 @@ import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_uom } from "../uom/is_uom";
 
@@ -21,7 +21,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Uom;
 type RHS = Flt;
-type EXP = BCons<Sym, LHS, RHS>
+type EXP = Cons2<Sym, LHS, RHS>
 
 /**
  * (* Uom Flt) => (* Flt Uom)

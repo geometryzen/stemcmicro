@@ -5,7 +5,7 @@ import { Err } from "../../tree/err/Err";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { CompositeOperator } from "../CompositeOperator";
 import { is_rat } from "../rat/is_rat";
 
@@ -22,7 +22,7 @@ class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(imag, log, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const innerExpr = expr.argList.head;
             const x = innerExpr.argList.head;

@@ -7,7 +7,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -27,7 +27,7 @@ class Op extends Function1<U> implements Operator<Cons> {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: U, expr: Cons1<Sym, U>): [TFLAGS, U] {
         // In general the answer will be false, but we really should delegate to others and instead return expr.
         return [TFLAG_NONE, booF];
     }

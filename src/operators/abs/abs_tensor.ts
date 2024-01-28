@@ -8,7 +8,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { simplify } from "../simplify/simplify";
 import { is_tensor } from "../tensor/is_tensor";
 import { wrap_as_transform } from "../wrap_as_transform";
@@ -34,7 +34,7 @@ class Op extends FunctionTensor {
     constructor($: ExtensionEnv) {
         super(native_sym(Native.abs), $);
     }
-    transform1(opr: Sym, arg: Tensor, expr: UCons<Sym, Tensor>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Tensor, expr: Cons1<Sym, Tensor>): [TFLAGS, U] {
         return wrap_as_transform(abs_of_tensor(arg, this.$), expr);
     }
 }

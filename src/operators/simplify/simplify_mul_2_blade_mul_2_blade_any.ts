@@ -6,7 +6,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_blade_any } from "../mul/is_mul_2_blade_any";
 
@@ -17,8 +17,8 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 type LHS = Blade;
-type RHS = BCons<Sym, Blade, U>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type RHS = Cons2<Sym, Blade, U>;
+type EXPR = Cons2<Sym, LHS, RHS>;
 
 /**
  * Blade1 * (Blade2 * X) => (Blade1 * Blade2) * X

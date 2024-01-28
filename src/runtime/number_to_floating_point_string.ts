@@ -15,7 +15,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
         return `${d}`;
     }
 
-    if ($.iszero($.getSymbolBinding(FORCE_FIXED_PRINTOUT))) {
+    if ($.iszero($.getBinding(FORCE_FIXED_PRINTOUT))) {
         str = '' + d;
         // manipulate the string so that it can be parsed by
         // by ourselves (something like 1.23e-123 wouldn't cut it because
@@ -59,7 +59,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
     }
     else {
         // MAX_FIXED_PRINTOUT_DIGITS would be 6 if it were defined. If defined it would be a Rat or a Flt.
-        const txtMaxFixedPrintoutDigits = $.getSymbolBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS);
+        const txtMaxFixedPrintoutDigits = $.getBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS);
         const maxFixedPrintoutDigits = nativeInt(is_nil(txtMaxFixedPrintoutDigits) ? create_int(DEFAULT_MAX_FIXED_PRINTOUT_DIGITS) : txtMaxFixedPrintoutDigits);
 
         str = d.toFixed(maxFixedPrintoutDigits);
@@ -90,7 +90,7 @@ export function number_to_floating_point_string(d: number, $: ExtensionEnv): str
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function shouldForceFixed($: ExtensionEnv): boolean {
-    const forceFixedBinding = $.getSymbolBinding(FORCE_FIXED_PRINTOUT);
+    const forceFixedBinding = $.getBinding(FORCE_FIXED_PRINTOUT);
     return is_rat(forceFixedBinding) ? !$.iszero(forceFixedBinding) : false;
 }
 

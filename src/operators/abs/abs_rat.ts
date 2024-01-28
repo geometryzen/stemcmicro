@@ -6,7 +6,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 import { wrap_as_transform } from "../wrap_as_transform";
 
@@ -25,7 +25,7 @@ class Op extends Function1<Rat> {
     get hash(): string {
         return this.#hash;
     }
-    transform1(opr: Sym, arg: Rat, expr: UCons<Sym, Rat>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Rat, expr: Cons1<Sym, Rat>): [TFLAGS, U] {
         return wrap_as_transform(arg.abs(), expr);
     }
 }

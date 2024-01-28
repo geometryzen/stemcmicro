@@ -207,9 +207,9 @@ interface TransformState {
  */
 function saveMetaBindings($: ExtensionEnv): TransformState {
     return {
-        METAA: $.getSymbolBinding(METAA),
-        METAB: $.getSymbolBinding(METAB),
-        METAX: $.getSymbolBinding(METAX),
+        METAA: $.getBinding(METAA),
+        METAB: $.getBinding(METAB),
+        METAX: $.getBinding(METAX),
     };
 }
 

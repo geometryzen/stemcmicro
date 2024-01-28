@@ -5,7 +5,7 @@ import { Rat, zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_mul_2_rat_sym } from "../mul/is_mul_2_rat_sym";
 import { is_sym } from "../sym/is_sym";
@@ -17,8 +17,8 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 type LHS = Sym;
-type RHS = BCons<Sym, Rat, Sym>;
-type EXP = BCons<Sym, LHS, RHS>
+type RHS = Cons2<Sym, Rat, Sym>;
+type EXP = Cons2<Sym, LHS, RHS>
 
 function cross(lhs: LHS, rhs: RHS): boolean {
     return rhs.lhs.isMinusOne() && lhs.equalsSym(rhs.rhs);

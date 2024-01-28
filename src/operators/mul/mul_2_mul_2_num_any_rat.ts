@@ -9,7 +9,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_num_any } from "./is_mul_2_num_any";
 
@@ -21,9 +21,9 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LL = Num;
 type LR = U;
-type LHS = BCons<Sym, LL, LR>;
+type LHS = Cons2<Sym, LL, LR>;
 type RHS = Rat;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (Rat1 * X) * Rat2 => (Rat1 * Rat2) * X

@@ -4,7 +4,7 @@ import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { CompositeOperator } from "../CompositeOperator";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 
 const Pi = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
@@ -23,7 +23,7 @@ class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(IM, POW, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const innerExpr = expr.argList.head;
             const base = innerExpr.lhs;

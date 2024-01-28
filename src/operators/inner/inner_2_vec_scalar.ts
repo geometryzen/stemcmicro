@@ -5,7 +5,7 @@ import { MATH_INNER } from "../../runtime/ns_math";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_scalar } from "../helpers/is_scalar";
 
@@ -23,7 +23,7 @@ class Op extends Function2<Blade, U> implements Operator<Cons> {
         super('inner_2_vec_scalar', MATH_INNER, is_blade, is_scalar($), $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform2(opr: Sym, lhs: Blade, rhs: U, orig: BCons<Sym, Blade, U>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Blade, rhs: U, orig: Cons2<Sym, Blade, U>): [TFLAGS, U] {
         return [TFLAG_DIFF, zero];
     }
 }

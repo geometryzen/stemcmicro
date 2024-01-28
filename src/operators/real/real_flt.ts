@@ -7,7 +7,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { is_flt } from "../flt/is_flt";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 
 const RE = native_sym(Native.re);
 
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 type ARG = Flt;
-type EXP = UCons<Sym, ARG>;
+type EXP = Cons1<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly #hash: string;

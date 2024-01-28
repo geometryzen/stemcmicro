@@ -6,7 +6,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { is_add_2_any_any } from "../add/is_add_2_any_any";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_any_any } from "../mul/is_mul_2_any_any";
 
@@ -17,18 +17,18 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 type LL = U;
-type LRL = BCons<Sym, Sym, Sym>;
+type LRL = Cons2<Sym, Sym, Sym>;
 type LRR = Sym;
-type LR = BCons<Sym, LRL, LRR>
-type L = BCons<Sym, LL, LR>
+type LR = Cons2<Sym, LRL, LRR>
+type L = Cons2<Sym, LL, LR>
 type RLRR = Sym;
 type RLRL = Sym;
-type RLR = BCons<Sym, RLRL, RLRR>;
+type RLR = Cons2<Sym, RLRL, RLRR>;
 type RLL = Rat;
-type RL = BCons<Sym, RLL, RLR>;
+type RL = Cons2<Sym, RLL, RLR>;
 type RR = Sym;
-type R = BCons<Sym, RL, RR>
-type EXPR = BCons<Sym, L, R>;
+type R = Cons2<Sym, RL, RR>
+type EXPR = Cons2<Sym, L, R>;
 
 class Op extends Function2<L, R> implements Operator<EXPR> {
     constructor($: ExtensionEnv) {

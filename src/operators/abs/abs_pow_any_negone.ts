@@ -5,7 +5,7 @@ import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 
 const POW = native_sym(Native.pow);
@@ -24,7 +24,7 @@ class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(ABS, POW, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const pow = expr.argList.head;
             const expo = pow.expo;
@@ -35,7 +35,7 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(absOpr: Sym, powExpr: Cons, expr: UCons<Sym, Cons>): [TFLAGS, U] {
+    transform1(absOpr: Sym, powExpr: Cons, expr: Cons1<Sym, Cons>): [TFLAGS, U] {
         const $ = this.$;
         const z = powExpr.lhs;
         const abs_z = $.valueOf(items_to_cons(absOpr, z));

@@ -3,7 +3,7 @@ import { hash_binop_atom_atom, HASH_SYM } from "../../hashing/hash_info";
 import { MATH_INNER, MATH_MUL } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";
 
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Sym;
 type RHS = Sym;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * Sym | Sym

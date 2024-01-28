@@ -7,7 +7,7 @@ import { Num } from "../../tree/num/Num";
 import { zero } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";
 
@@ -20,7 +20,7 @@ class Builder implements OperatorBuilder<Cons> {
 /**
  * Sym * Num => Num * Sym
  */
-class Op extends Function2<Sym, Num> implements Operator<BCons<Sym, Sym, Num>> {
+class Op extends Function2<Sym, Num> implements Operator<Cons2<Sym, Sym, Num>> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_sym_num', MATH_MUL, is_sym, is_num, $);

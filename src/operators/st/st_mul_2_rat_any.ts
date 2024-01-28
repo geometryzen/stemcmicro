@@ -6,12 +6,12 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function1 } from "../helpers/Function1";
 import { GUARD } from "../helpers/GUARD";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { MATH_STANDARD_PART } from "./MATH_STANDARD_PART";
 
 class Builder implements OperatorBuilder<U> {
@@ -22,8 +22,8 @@ class Builder implements OperatorBuilder<U> {
 
 type AL = Rat;
 type AR = U;
-type ARG = BCons<Sym, AL, AR>;
-type EXP = UCons<Sym, ARG>;
+type ARG = Cons2<Sym, AL, AR>;
+type EXP = Cons1<Sym, ARG>;
 
 const guardA: GUARD<U, ARG> = and(is_cons, is_opr_2_lhs_rhs(MATH_MUL, is_rat, is_any));
 

@@ -5,7 +5,7 @@ import { compare_num_num } from "../../calculators/compare/compare_num_num";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_FLT, HASH_RAT } from "../../hashing/hash_info";
 import { predicate_return_value } from "../../helpers/predicate_return_value";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 
 export const MATH_LT = native_sym(Native.testlt);
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
 
 type LHS = Flt;
 type RHS = Rat;
-type EXPR = BCons<Sym, LHS, RHS>;
+type EXPR = Cons2<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly #hash: string;

@@ -4,7 +4,7 @@ import { MATH_POW } from "../../runtime/ns_math";
 import { one, Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_rat } from "../rat/is_rat";
@@ -20,7 +20,7 @@ class Op extends Function2<U, Rat> implements Operator<Cons> {
     constructor($: ExtensionEnv) {
         super('pow_2_any_rat', MATH_POW, is_any, is_rat, $);
     }
-    transform2(opr: Sym, base: U, expo: Rat, expr: BCons<Sym, U, Rat>): [TFLAGS, U] {
+    transform2(opr: Sym, base: U, expo: Rat, expr: Cons2<Sym, U, Rat>): [TFLAGS, U] {
         if (expo.isZero()) {
             return [TFLAG_DIFF, one];
         }

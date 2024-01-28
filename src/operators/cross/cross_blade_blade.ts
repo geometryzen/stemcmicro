@@ -5,7 +5,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { negOne } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_blade_rat } from "../mul/is_mul_2_blade_rat";
 import { is_mul_2_rat_blade } from "../mul/is_mul_2_rat_blade";
@@ -20,7 +20,7 @@ class Builder implements OperatorBuilder<U> {
 
 type LHS = Blade;
 type RHS = Blade;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 function Eval_cross_blade_blade(expr: EXP, $: ExtensionEnv): U {
     const bladeL = expr.lhs;

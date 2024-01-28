@@ -8,7 +8,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { GUARD } from "../helpers/GUARD";
 import { is_any } from "../helpers/is_any";
@@ -24,12 +24,12 @@ class Builder implements OperatorBuilder<Cons> {
 type LL = U;
 type LRL = Sym;
 type LRR = Rat;
-type LR = BCons<Sym, LRL, LRR>;
-type LHS = BCons<Sym, LL, LR>;
+type LR = Cons2<Sym, LRL, LRR>;
+type LHS = Cons2<Sym, LL, LR>;
 type RL = Sym;
 type RR = Rat;
-type RHS = BCons<Sym, RL, RR>;
-type EXP = BCons<Sym, LHS, RHS>;
+type RHS = Cons2<Sym, RL, RR>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 function cross(lhs: LHS, rhs: RHS): boolean {
     const x1: LRL = lhs.rhs.lhs;

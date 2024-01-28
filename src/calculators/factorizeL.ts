@@ -1,11 +1,11 @@
 import { is_rat, one, Rat, Sym } from "math-expression-atoms";
 import { Cons, is_cons, items_to_cons, U } from "math-expression-tree";
-import { BCons } from "../operators/helpers/BCons";
+import { Cons2 } from "../operators/helpers/Cons2";
 import { is_mul_2_any_any } from "../operators/mul/is_mul_2_any_any";
 import { is_pow_2_any_any } from "../operators/pow/is_pow_2_any_any";
 import { MATH_MUL, MATH_POW } from "../runtime/ns_math";
 
-function is_pow_2_any_positive_integer(expr: Cons): expr is BCons<Sym, U, Rat> {
+function is_pow_2_any_positive_integer(expr: Cons): expr is Cons2<Sym, U, Rat> {
     if (is_pow_2_any_any(expr)) {
         const expo = expr.rhs;
         return is_rat(expo) && expo.isPositiveInteger();

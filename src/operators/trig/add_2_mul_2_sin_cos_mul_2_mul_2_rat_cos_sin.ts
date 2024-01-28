@@ -7,11 +7,11 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { MATH_SIN } from "../sin/MATH_SIN";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -20,15 +20,15 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LL = UCons<Sym, U>;
-type LR = UCons<Sym, U>;
-type LHS = BCons<Sym, LL, LR>
+type LL = Cons1<Sym, U>;
+type LR = Cons1<Sym, U>;
+type LHS = Cons2<Sym, LL, LR>
 type RLL = Rat;
-type RLR = UCons<Sym, U>;
-type RL = BCons<Sym, RLL, RLR>;
-type RR = UCons<Sym, U>
-type RHS = BCons<Sym, RL, RR>
-type EXP = BCons<Sym, LHS, RHS>;
+type RLR = Cons1<Sym, U>;
+type RL = Cons2<Sym, RLL, RLR>;
+type RR = Cons1<Sym, U>
+type RHS = Cons2<Sym, RL, RR>
+type EXP = Cons2<Sym, LHS, RHS>;
 
 const guardLL = and(is_cons, is_opr_1_any(MATH_SIN));
 const guardLR = and(is_cons, is_opr_1_any(MATH_COS));

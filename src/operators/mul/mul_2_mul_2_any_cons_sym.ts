@@ -5,7 +5,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_DERIVATIVE } from "../derivative/MATH_DERIVATIVE";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_sym } from "../sym/is_sym";
 import { is_mul_2_any_cons } from "./is_mul_2_any_cons";
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
 }
 
 function crossGuard($: ExtensionEnv) {
-    return function (lhs: BCons<Sym, U, Cons>, rhs: Sym): boolean {
+    return function (lhs: Cons2<Sym, U, Cons>, rhs: Sym): boolean {
         // console.lg(`lhs: ${render_as_infix(lhs, $)}, rhs=${render_as_infix(rhs, $)}`);
         // console.lg(`lhs.RHS: ${render_as_infix(lhs.rhs, $)}, rhs=${render_as_infix(rhs, $)}`);
         const candidate = lhs.rhs.opr;
@@ -34,7 +34,7 @@ function crossGuard($: ExtensionEnv) {
 /**
  *
  */
-class Op extends Function2X<BCons<Sym, U, Cons>, Sym> implements Operator<BCons<Sym, BCons<Sym, U, Cons>, Sym>> {
+class Op extends Function2X<Cons2<Sym, U, Cons>, Sym> implements Operator<Cons2<Sym, Cons2<Sym, U, Cons>, Sym>> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_mul_2_any_cons_sym', MATH_MUL, and(is_cons, is_mul_2_any_cons), is_sym, crossGuard($), $);
@@ -43,7 +43,7 @@ class Op extends Function2X<BCons<Sym, U, Cons>, Sym> implements Operator<BCons<
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: BCons<Sym, U, Cons>, rhs: Sym/*, orig: BCons<Sym, BCons<Sym, U, Cons>, Sym>*/): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Cons2<Sym, U, Cons>, rhs: Sym/*, orig: BCons<Sym, BCons<Sym, U, Cons>, Sym>*/): [TFLAGS, U] {
         const $ = this.$;
         // console.lg(`lhs: ${render_as_infix(lhs, $)}, rhs=${render_as_infix(rhs, $)}`);
         const a = lhs.lhs;

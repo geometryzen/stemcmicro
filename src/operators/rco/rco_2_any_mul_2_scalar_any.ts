@@ -3,7 +3,7 @@ import { HASH_ANY, hash_binop_atom_cons } from "../../hashing/hash_info";
 import { MATH_MUL, MATH_RCO } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_mul_2_scalar_any } from "../mul/is_mul_2_scalar_any";
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
 /**
  * x >> (a * y) => a * (x >> y)
  */
-class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
+class Op extends Function2<U, Cons2<Sym, U, U>> implements Operator<Cons> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('rco_2_any_mul_2_scalar_any', MATH_RCO, is_any, is_mul_2_scalar_any($), $);
@@ -26,7 +26,7 @@ class Op extends Function2<U, BCons<Sym, U, U>> implements Operator<Cons> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: U, rhs: BCons<Sym, U, U>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: U, rhs: Cons2<Sym, U, U>): [TFLAGS, U] {
         const $ = this.$;
         const x = lhs;
         const a = rhs.lhs;

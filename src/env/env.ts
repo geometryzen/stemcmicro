@@ -248,16 +248,6 @@ export class DerivedEnv implements ExtensionEnv {
     getSymbolPrintName(sym: Sym): string {
         return this.#baseEnv.getSymbolPrintName(sym);
     }
-    getSymbolBinding(sym: Sym): U {
-        // DerivedEnv.getSymbolBinding
-        const key = sym.key();
-        if (this.#bindings.has(key)) {
-            return this.#bindings.get(key)!;
-        }
-        else {
-            return this.#baseEnv.getSymbolBinding(sym);
-        }
-    }
     getSymbolUsrFunc(sym: Sym): U {
         throw new Error('getSymbolYsrFunc method not implemented.');
     }
@@ -500,12 +490,13 @@ export class DerivedEnv implements ExtensionEnv {
     getBinding(sym: Sym): U {
         const key = sym.key();
         if (this.#bindings.has(key)) {
-            return this.#bindings.get(key) as U;
+            return this.#bindings.get(key)!;
         }
         else {
             return this.#baseEnv.getBinding(sym);
         }
     }
+
     getUsrFunc(sym: Sym): U {
         throw new Error('getUsrFunc method not implemented.');
     }
@@ -658,7 +649,24 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      */
     const $: ExtensionEnv = {
         getBinding(sym: Sym): U {
-            return $.getSymbolBinding(sym);
+            assert_sym(sym);
+            if (symTab.hasBinding(sym)) {
+                return symTab.getBinding(sym);
+            }
+            else {
+                // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
+                switch (config.allowUndeclaredVars) {
+                    case UndeclaredVars.Err: {
+                        return new Err(new Str(`Use of undeclared Var ${sym.key()}.`));
+                    }
+                    case UndeclaredVars.Nil: {
+                        return nil;
+                    }
+                    default: {
+                        throw new Error(`Unexpected config.allowUndeclaredVars`);
+                    }
+                }
+            }
         },
         getUsrFunc(sym: Sym): U {
             return $.getSymbolUsrFunc(sym);
@@ -815,26 +823,6 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         getSymbolPredicates(sym: Sym): Predicates {
             return symTab.getProps(sym);
-        },
-        getSymbolBinding(sym: Sym): U {
-            assert_sym(sym);
-            if (symTab.hasBinding(sym)) {
-                return symTab.getBinding(sym);
-            }
-            else {
-                // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
-                switch (config.allowUndeclaredVars) {
-                    case UndeclaredVars.Err: {
-                        return new Err(new Str(`Use of undeclared Var ${sym.key()}.`));
-                    }
-                    case UndeclaredVars.Nil: {
-                        return nil;
-                    }
-                    default: {
-                        throw new Error(`Unexpected config.allowUndeclaredVars`);
-                    }
-                }
-            }
         },
         getSymbolUsrFunc(sym: Sym): U {
             return symTab.getUsrFunc(sym);
@@ -1187,7 +1175,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const head = expr.head;
                 if (is_sym(head)) {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
-                    const value = $.getSymbolBinding(head);
+                    const value = $.getBinding(head);
                     if (is_lambda(value)) {
                         return wrap_as_transform(value.evaluate(expr.argList, $), expr);
                     }
@@ -1231,7 +1219,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (is_cons(expr)) {
                             const opr = expr.opr;
                             if (is_sym(opr)) {
-                                const binding = $.getSymbolBinding(opr);
+                                const binding = $.getBinding(opr);
                                 if (!is_nil(binding)) {
                                     if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
                                         const newExpr = Eval_function(expr, $);
@@ -1278,7 +1266,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const head = expr.head;
                 if (is_sym(head)) {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
-                    const value = $.getSymbolBinding(head);
+                    const value = $.getBinding(head);
                     if (is_lambda(value)) {
                         return value.evaluate(expr.argList, $);
                     }
@@ -1322,7 +1310,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (is_cons(expr)) {
                             const opr = expr.opr;
                             if (is_sym(opr)) {
-                                const binding = $.getSymbolBinding(opr);
+                                const binding = $.getBinding(opr);
                                 if (!is_nil(binding)) {
                                     if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
                                         const newExpr = Eval_function(expr, $);

@@ -3,10 +3,10 @@ import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "./and";
-import { BCons } from "./BCons";
+import { Cons2 } from "./Cons2";
 import { Function2 } from "./Function2";
 import { is_opr_1_any } from "./is_opr_1_any";
-import { UCons } from "./UCons";
+import { Cons1 } from "./Cons1";
 
 export class Opr2Lhs1Rhs1StableBuilder implements OperatorBuilder<Cons> {
     constructor(public readonly opr: Sym, public readonly lhs: Sym, public readonly rhs: Sym) {
@@ -17,9 +17,9 @@ export class Opr2Lhs1Rhs1StableBuilder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = UCons<Sym, U>;
-type RHS = UCons<Sym, U>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type LHS = Cons1<Sym, U>;
+type RHS = Cons1<Sym, U>;
+type EXPR = Cons2<Sym, LHS, RHS>;
 
 /**
  * (opr (lhs) (rhs)) is not changed

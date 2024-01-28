@@ -3,7 +3,7 @@ import { Cons, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../hashing/hash_info";
 import { Function1 } from "./helpers/Function1";
-import { UCons } from "./helpers/UCons";
+import { Cons1 } from "./helpers/Cons1";
 
 export abstract class CompositeOperator extends Function1<Cons> {
     readonly #hash: string;
@@ -14,7 +14,7 @@ export abstract class CompositeOperator extends Function1<Cons> {
     get hash(): string {
         return this.#hash;
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const innerExpr = expr.arg;
             if (is_cons(innerExpr)) {

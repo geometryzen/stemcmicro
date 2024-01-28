@@ -11,7 +11,7 @@ import { Stack } from "../src/env/Stack";
 export function should_stepper_render_svg(stepper: Stepper): boolean {
     const $: Scope = stepper.stack.top.$;
     const sym: Sym = create_sym("tty");
-    const tty = $.getSymbolBinding(sym);
+    const tty = $.getBinding(sym);
     if (is_nil(tty)) {
         // Unbound in Native engine.
         return true;

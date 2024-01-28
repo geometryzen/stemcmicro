@@ -6,10 +6,10 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { MATH_SIN } from "../sin/MATH_SIN";
 
 export class Builder implements OperatorBuilder<Cons> {
@@ -21,9 +21,9 @@ export class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = UCons<Sym, U>;
-type RHS = UCons<Sym, U>;
-type EXPR = BCons<Sym, LHS, RHS>;
+type LHS = Cons1<Sym, U>;
+type RHS = Cons1<Sym, U>;
+type EXPR = Cons2<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly #hash: string;

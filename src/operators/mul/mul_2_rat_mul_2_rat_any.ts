@@ -6,7 +6,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_rat } from "../rat/rat_extension";
 import { is_mul_2_rat_any } from "./is_mul_2_rat_any";
@@ -24,7 +24,7 @@ class Builder implements OperatorBuilder<Cons> {
  * 
  * Transform is redundant because it can be replaced by change of association and Rat + Rat.
  */
-class Op extends Function2<Rat, BCons<Sym, Rat, U>> implements Operator<Cons> {
+class Op extends Function2<Rat, Cons2<Sym, Rat, U>> implements Operator<Cons> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('mul_2_rat_mul_2_rat_any', MATH_MUL, is_rat, and(is_cons, is_mul_2_rat_any), $);
@@ -33,7 +33,7 @@ class Op extends Function2<Rat, BCons<Sym, Rat, U>> implements Operator<Cons> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Rat, rhs: BCons<Sym, Rat, U>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Rat, rhs: Cons2<Sym, Rat, U>): [TFLAGS, U] {
         const $ = this.$;
         const num1 = lhs;
         const num2 = rhs.lhs;

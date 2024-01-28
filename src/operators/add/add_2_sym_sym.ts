@@ -5,7 +5,7 @@ import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { two } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_sym } from "../sym/is_sym";
 
@@ -19,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
  * b + a => a + b
  * a + a => 2 * a
  */
-class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
+class Op extends Function2<Sym, Sym> implements Operator<Cons2<Sym, Sym, Sym>> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
         super('add_2_sym_sym', MATH_ADD, is_sym, is_sym, $);
@@ -28,7 +28,7 @@ class Op extends Function2<Sym, Sym> implements Operator<BCons<Sym, Sym, Sym>> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Sym, rhs: Sym, orig: BCons<Sym, Sym, Sym>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Sym, rhs: Sym, orig: Cons2<Sym, Sym, Sym>): [TFLAGS, U] {
         switch (compare_sym_sym(lhs, rhs)) {
             case SIGN_GT: {
                 return [TFLAG_DIFF, items_to_cons(opr, rhs, lhs)];

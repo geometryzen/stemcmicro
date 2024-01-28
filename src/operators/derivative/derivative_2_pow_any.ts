@@ -4,7 +4,7 @@ import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
@@ -17,9 +17,9 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = BCons<Sym, U, U>;
+type LHS = Cons2<Sym, U, U>;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (derivative (pow base expo) X)

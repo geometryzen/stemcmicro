@@ -4,7 +4,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/rat_extension";
 import { MATH_STANDARD_PART } from "./MATH_STANDARD_PART";
 
@@ -15,7 +15,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 type ARG = Rat;
-type EXP = UCons<Sym, ARG>;
+type EXP = Cons1<Sym, ARG>;
 
 class Op extends Function1<ARG> implements Operator<EXP> {
     readonly #hash: string;

@@ -4,7 +4,7 @@ import { MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { GUARD } from "../helpers/GUARD";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
@@ -18,11 +18,11 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LL = U;
 type LR = U;
-type LHS = BCons<Sym, LL, LR>;
+type LHS = Cons2<Sym, LL, LR>;
 type RL = U;
 type RR = U;
-type RHS = BCons<Sym, RL, RR>;
-type EXP = BCons<Sym, LHS, RHS>;
+type RHS = Cons2<Sym, RL, RR>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 const guardL: GUARD<U, LHS> = and(is_cons, is_opr_2_any_any(MATH_MUL));
 const guardR: GUARD<U, RHS> = and(is_cons, is_opr_2_any_any(MATH_POW));

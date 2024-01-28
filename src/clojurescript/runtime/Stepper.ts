@@ -68,7 +68,7 @@ export class Thing {
 export interface Scope {
     thing: Thing;
     evaluate(opr: Native, ...args: U[]): U;
-    getSymbolBinding(sym: string | Sym): U;
+    getBinding(sym: string | Sym): U;
     getSymbolUsrFunc(sym: Sym): U;
     isConsSymbol(sym: Sym): boolean;
     isUserSymbol(sym: Sym): boolean;

@@ -13,7 +13,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { MATH_EXP } from "../exp/MATH_EXP";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_lhs_any } from "../helpers/is_opr_2_lhs_any";
@@ -49,7 +49,7 @@ function is_pi_times_imu(expr: Cons) {
 
 type LHS = Sym;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * (math.pow e X) is equivalent to exp(X)

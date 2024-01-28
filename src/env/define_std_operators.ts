@@ -106,6 +106,7 @@ import { cross_any_any } from '../operators/cross/cross_any_any';
 import { cross_blade_blade_builder } from '../operators/cross/cross_blade_blade';
 import { MATH_VECTOR_CROSS_PRODUCT } from '../operators/cross/MATH_VECTOR_CROSS_PRODUCT';
 import { def_sym_builder } from '../operators/def/def_sym';
+import { def_sym_doc_init_builder } from '../operators/def/def_sym_doc_init';
 import { def_sym_init_builder } from '../operators/def/def_sym_init';
 import { defint_builder } from '../operators/defint/defint';
 import { degree_varargs } from '../operators/degree/degree_varargs';
@@ -620,7 +621,7 @@ export function define_std_operators($: ExtensionEnv) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // TODO: I don't think we should be using defineKeyword for (factor n) and factor(p, x)
     $.defineKeyword(FACTOR, function ($: ExtensionEnv) {
-        const last = $.getSymbolBinding(RESERVED_KEYWORD_LAST);
+        const last = $.getBinding(RESERVED_KEYWORD_LAST);
         const factored = $.factor(last);
         $.setBinding(RESERVED_KEYWORD_LAST, factored);
 
@@ -784,6 +785,7 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(def_sym_builder);
     $.defineOperator(def_sym_init_builder);
+    $.defineOperator(def_sym_doc_init_builder);
     $.defineOperator(defint_builder);
     $.defineOperator(denominator_fn);
 

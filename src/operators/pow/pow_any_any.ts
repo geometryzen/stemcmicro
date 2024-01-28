@@ -3,7 +3,7 @@ import { HASH_ANY, hash_binop_atom_atom } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { power_v1 } from "./power_v1";
@@ -16,7 +16,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = U;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;

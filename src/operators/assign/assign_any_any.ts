@@ -6,7 +6,7 @@ import { ASSIGN } from "../../runtime/constants";
 import { halt } from "../../runtime/defs";
 import { caadr } from "../../tree/helpers";
 import { Sym } from "../../tree/sym/Sym";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_sym } from "../sym/is_sym";
@@ -22,7 +22,7 @@ class Builder implements OperatorBuilder<U> {
 }
 type LHS = U;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 // Evaluates the right side and assigns the
 // result of the evaluation to the left side.
@@ -61,7 +61,7 @@ function eval_setq(expr: EXP, $: ExtensionEnv): U {
  * @param expr The unevaluated original expression.
  * @returns nil
  */
-export function setq(lhs: U, rhs: U, expr: BCons<Sym, U, U>, $: Pick<ExtensionEnv, 'setBinding' | 'setSymbolUsrFunc' | 'valueOf'>): U {
+export function setq(lhs: U, rhs: U, expr: Cons2<Sym, U, U>, $: Pick<ExtensionEnv, 'setBinding' | 'setSymbolUsrFunc' | 'valueOf'>): U {
 
     // case of tensor
     if (caadr(expr).equals(COMPONENT)) {

@@ -6,7 +6,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 
 const Pi = native_sym(Native.PI);
 const MATH_TAU = native_sym(Native.tau);
@@ -25,7 +25,7 @@ class Op extends Function1<U> implements Operator<U> {
         super('tau_any', MATH_TAU, is_any, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: U, expr: Cons1<Sym, U>): [TFLAGS, U] {
         return [TFLAG_DIFF, tau_(arg, this.$)];
     }
 }

@@ -6,7 +6,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { IMU_TYPE, is_imu } from "../imu/is_imu";
 
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = IMU_TYPE;
 type RHS = Flt;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * Imu * Flt

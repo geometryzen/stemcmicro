@@ -6,7 +6,7 @@ import { Flt } from "../../tree/flt/Flt";
 import { is_flt } from "../flt/is_flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, items_to_cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = IMU_TYPE;
 type RHS = Flt;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * Imu + Flt => Flt + Imu

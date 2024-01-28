@@ -7,7 +7,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_pow_2_any_rat } from "../pow/is_pow_2_any_rat";
 import { is_rat } from "../rat/rat_extension";
@@ -22,9 +22,9 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LL = U;
 type LR = Rat;
-type LHS = BCons<Sym, LL, LR>;
+type LHS = Cons2<Sym, LL, LR>;
 type RHS = Rat;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 const guardL = and(is_cons, is_pow_2_any_rat);
 const guardR = is_rat;

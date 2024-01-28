@@ -4,7 +4,7 @@ import { Rat } from "../../tree/rat/Rat";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 
 class Builder implements OperatorBuilder<U> {
@@ -23,7 +23,7 @@ class SuccRat extends Function1<Rat> implements Operator<U> {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: Rat, expr: UCons<Sym, Rat>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Rat, expr: Cons1<Sym, Rat>): [TFLAGS, U] {
         return [TFLAG_DIFF, arg.succ()];
     }
 }

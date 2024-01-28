@@ -7,11 +7,11 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { MATH_SIN } from "../sin/MATH_SIN";
 
 class Builder implements OperatorBuilder<Cons> {
@@ -20,15 +20,15 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LL = UCons<Sym, U>;        // cos(a)
-type LR = UCons<Sym, U>;        // sin(b)
-type LHS = BCons<Sym, LL, LR>   // cos(a) * sin(b)
+type LL = Cons1<Sym, U>;        // cos(a)
+type LR = Cons1<Sym, U>;        // sin(b)
+type LHS = Cons2<Sym, LL, LR>   // cos(a) * sin(b)
 type RLL = Rat;                 // -1
-type RLR = UCons<Sym, U>;       // sin(a)
-type RL = BCons<Sym, RLL, RLR>; // -1 * sin(a)
-type RR = UCons<Sym, U>         // cos(b)
-type RHS = BCons<Sym, RL, RR>   // -1 * sin(a) * cos(b)
-type EXP = BCons<Sym, LHS, RHS>;// cos(a) * sin(b) - sin(a) * cos(b)
+type RLR = Cons1<Sym, U>;       // sin(a)
+type RL = Cons2<Sym, RLL, RLR>; // -1 * sin(a)
+type RR = Cons1<Sym, U>         // cos(b)
+type RHS = Cons2<Sym, RL, RR>   // -1 * sin(a) * cos(b)
+type EXP = Cons2<Sym, LHS, RHS>;// cos(a) * sin(b) - sin(a) * cos(b)
 
 const guardLL = and(is_cons, is_opr_1_any(MATH_COS));
 const guardLR = and(is_cons, is_opr_1_any(MATH_SIN));

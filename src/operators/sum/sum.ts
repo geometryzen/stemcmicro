@@ -35,7 +35,7 @@ function sum(body: U, index: U, lower: U, upper: U, expr: Cons, $: ExtensionEnv)
 
     // remember contents of the index
     // variable so we can restore it back after the loop
-    const original = $.getSymbolBinding(index);
+    const original = $.getBinding(index);
     try {
         let temp: U = zero;
         for (let i = lowerBound; i <= upperBound; i++) {

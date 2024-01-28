@@ -6,7 +6,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { evaluate_as_float } from "../float/float";
 import { is_flt } from "../flt/is_flt";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { wrap_as_transform } from "../wrap_as_transform";
@@ -27,7 +27,7 @@ class Op extends Function2<Flt, U> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Flt, rhs: U, expr: BCons<Sym, Flt, U>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Flt, rhs: U, expr: Cons2<Sym, Flt, U>): [TFLAGS, U] {
         const $ = this.$;
         const rhs_as_flt = evaluate_as_float(rhs, $);
         if (lhs.isZero()) {

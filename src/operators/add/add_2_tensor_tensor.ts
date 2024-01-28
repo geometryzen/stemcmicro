@@ -5,7 +5,7 @@ import { MATH_ADD } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_tensor } from "../tensor/is_tensor";
 import { add_tensor_tensor } from "../tensor/tensor_extension";
@@ -17,7 +17,7 @@ class Builder implements OperatorBuilder<Cons> {
 }
 type LHS = Tensor;
 type RHS = Tensor;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 /**
  * Tensor + Tensor => Tensor

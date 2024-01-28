@@ -5,7 +5,7 @@ import { create_sym, Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { TYPE_NAME_BLADE } from "../blade/TYPE_NAME_BLADE";
 import { Function1 } from "../helpers/Function1";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -24,7 +24,7 @@ class Op extends Function1<Blade> implements Operator<Cons> {
         return this.#hash;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, arg: Blade, expr: UCons<Sym, Blade>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: Blade, expr: Cons1<Sym, Blade>): [TFLAGS, U] {
         return [TFLAG_DIFF, TYPE_NAME_BLADE];
     }
 }

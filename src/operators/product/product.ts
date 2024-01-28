@@ -33,7 +33,7 @@ export function Eval_product(expr: U, $: ExtensionEnv): U {
 
     // remember contents of the index
     // variable so we can put it back after the loop
-    const oldIndexVariableValue = $.getSymbolBinding(indexVariable);
+    const oldIndexVariableValue = $.getBinding(indexVariable);
 
     let temp: U = one;
 

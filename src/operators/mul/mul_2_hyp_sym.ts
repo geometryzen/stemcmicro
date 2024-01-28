@@ -6,7 +6,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Hyp } from "../../tree/hyp/Hyp";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_hyp } from "../hyp/is_hyp";
 import { is_sym } from "../sym/is_sym";
@@ -19,7 +19,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Hyp;
 type RHS = Sym;
-type EXPR = BCons<Sym, LHS, RHS>
+type EXPR = Cons2<Sym, LHS, RHS>
 
 /**
  * Hyp * Sym => Sym * Hyp

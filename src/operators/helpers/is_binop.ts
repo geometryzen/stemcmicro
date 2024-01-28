@@ -1,6 +1,6 @@
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "./BCons";
+import { Cons2 } from "./Cons2";
 
-export function is_binop(expr: Cons): expr is BCons<U, U, U> {
+export function is_binop(expr: Cons): expr is Cons2<U, U, U> {
     return expr.length === 3;
 }

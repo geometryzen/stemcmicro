@@ -6,7 +6,7 @@ import { booF, booT } from "../../tree/boo/Boo";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { assert_sym } from "../sym/assert_sym";
 import { is_sym } from "../sym/is_sym";
 
@@ -26,7 +26,7 @@ class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(IS_REAL, POW, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const innerExpr = expr.argList.head;
             const base = innerExpr.lhs;
@@ -38,7 +38,7 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, innerExpr: Cons, outerExpr: UCons<Sym, Cons>): [TFLAGS, U] {
+    transform1(opr: Sym, innerExpr: Cons, outerExpr: Cons1<Sym, Cons>): [TFLAGS, U] {
         const $ = this.$;
         const expo = assert_sym(innerExpr.rhs);
         if ($.isreal(expo)) {

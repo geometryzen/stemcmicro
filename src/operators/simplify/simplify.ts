@@ -25,7 +25,7 @@ import { denominator } from "../denominator/denominator";
 import { factor } from "../factor/factor";
 import { evaluate_as_float } from '../float/float';
 import { areunivarpolysfactoredorexpandedform, gcd } from "../gcd/gcd";
-import { BCons } from '../helpers/BCons';
+import { Cons2 } from '../helpers/Cons2';
 import { is_imu } from '../imu/is_imu';
 import { is_num } from '../num/is_num';
 import { numerator } from "../numerator/numerator";
@@ -479,7 +479,7 @@ function take_care_of_nested_radicals(p1: U, $: ExtensionEnv): [U, TFLAGS] {
     return [p1, TFLAG_NONE];
 }
 
-function _nestedPowerSymbol(p1: BCons<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] {
+function _nestedPowerSymbol(p1: Cons2<Sym, U, U>, $: ExtensionEnv): [U, TFLAGS] {
     // console.lg("ok it's a power ")
     const base = p1.lhs;
     const expo = p1.rhs;

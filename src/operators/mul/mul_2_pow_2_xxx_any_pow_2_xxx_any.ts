@@ -6,7 +6,7 @@ import { MATH_ADD, MATH_MUL, MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { GUARD } from "../helpers/GUARD";
 import { is_pow_2_sym_any } from "../pow/is_pow_2_sym_any";
@@ -17,9 +17,9 @@ class Builder implements OperatorBuilder<Cons> {
     }
 }
 
-type LHS = BCons<Sym, Sym, U>;
-type RHS = BCons<Sym, Sym, U>;
-type EXP = BCons<Sym, LHS, RHS>;
+type LHS = Cons2<Sym, Sym, U>;
+type RHS = Cons2<Sym, Sym, U>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 function cross(lhs: LHS, rhs: RHS): boolean {
     const s1 = lhs.lhs;

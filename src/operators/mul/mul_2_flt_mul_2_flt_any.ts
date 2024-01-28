@@ -7,7 +7,7 @@ import { Flt } from "../../tree/flt/Flt";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_mul_2_flt_any } from "./is_mul_2_flt_any";
 
@@ -20,7 +20,7 @@ class Builder implements OperatorBuilder<Cons> {
 /**
  * Flt1 * (Flt2 * X) => (Flt1 * Flt2) * X
  */
-class Op extends Function2<Flt, BCons<Sym, Flt, U>> implements Operator<Cons> {
+class Op extends Function2<Flt, Cons2<Sym, Flt, U>> implements Operator<Cons> {
     readonly #hash: string;
     readonly dependencies: FEATURE[] = ['Flt'];
     constructor($: ExtensionEnv) {
@@ -30,7 +30,7 @@ class Op extends Function2<Flt, BCons<Sym, Flt, U>> implements Operator<Cons> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, lhs: Flt, rhs: BCons<Sym, Flt, U>): [TFLAGS, U] {
+    transform2(opr: Sym, lhs: Flt, rhs: Cons2<Sym, Flt, U>): [TFLAGS, U] {
         const $ = this.$;
         const num1 = lhs;
         const num2 = rhs.lhs;

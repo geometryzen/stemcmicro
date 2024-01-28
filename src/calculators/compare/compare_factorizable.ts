@@ -1,7 +1,7 @@
 import { is_blade } from "math-expression-atoms";
 import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
-import { BCons } from "../../operators/helpers/BCons";
+import { Cons2 } from "../../operators/helpers/Cons2";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
@@ -10,7 +10,7 @@ import { compare } from "./compare";
 /**
  * Used for comparing expressions that are factorizable (either Multiply or Power).
  */
-export function compare_factorizable(lhs: BCons<Sym, U, U>, rhs: BCons<Sym, U, U>): Sign {
+export function compare_factorizable(lhs: Cons2<Sym, U, U>, rhs: Cons2<Sym, U, U>): Sign {
     if (is_blade(lhs.rhs) && is_blade(rhs.rhs)) {
         switch (compare_blade_blade(lhs.rhs, rhs.rhs)) {
             case SIGN_GT: {

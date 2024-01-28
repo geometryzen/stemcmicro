@@ -4,7 +4,7 @@ import { native_sym } from "../../native/native_sym";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
 import { CompositeOperator } from "../CompositeOperator";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 
 const rect = native_sym(Native.rect);
@@ -23,7 +23,7 @@ class Op extends CompositeOperator {
     constructor($: ExtensionEnv) {
         super(rect, pow, $);
     }
-    isKind(expr: U): expr is UCons<Sym, Cons> {
+    isKind(expr: U): expr is Cons1<Sym, Cons> {
         if (super.isKind(expr)) {
             const powExpr = expr.argList.head;
             const base = powExpr.base;
@@ -46,7 +46,7 @@ class Op extends CompositeOperator {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    transform1(opr: Sym, powExpr: Cons, rectExpr: UCons<Sym, Cons>): [TFLAGS, U] {
+    transform1(opr: Sym, powExpr: Cons, rectExpr: Cons1<Sym, Cons>): [TFLAGS, U] {
         const $ = this.$;
         const z = powExpr.base;
         const conj_z = $.conj(z);

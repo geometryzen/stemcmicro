@@ -10,10 +10,10 @@ import { Sym } from "../../tree/sym/Sym";
 import { create_tensor_elements_diagonal } from "../../tree/tensor/create_tensor_elements";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { U } from "../../tree/tree";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 
 // the passed parameter is the size
-export function Eval_unit(expr: UCons<Sym, U>, $: ExtensionEnv): U {
+export function Eval_unit(expr: Cons1<Sym, U>, $: ExtensionEnv): U {
     const n = evaluate_integer(cadr(expr), $);
 
     if (isNaN(n)) {
@@ -31,7 +31,7 @@ export function Eval_unit(expr: UCons<Sym, U>, $: ExtensionEnv): U {
     return I;
 }
 
-export function unit(arg: U, expr: UCons<Sym, U>, $: ExtensionEnv): [TFLAGS, U] {
+export function unit(arg: U, expr: Cons1<Sym, U>, $: ExtensionEnv): [TFLAGS, U] {
     const n = evaluate_integer(cadr(expr), $);
 
     if (isNaN(n)) {

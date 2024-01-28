@@ -5,7 +5,7 @@ import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { UCons } from "../helpers/UCons";
+import { Cons1 } from "../helpers/Cons1";
 
 const CONJ = native_sym(Native.conj);
 
@@ -19,7 +19,7 @@ class Op extends Function1<U> implements Operator<U> {
     constructor($: ExtensionEnv) {
         super('conj_any', CONJ, is_any, $);
     }
-    transform1(opr: Sym, arg: U, expr: UCons<Sym, U>): [TFLAGS, U] {
+    transform1(opr: Sym, arg: U, expr: Cons1<Sym, U>): [TFLAGS, U] {
         return [TFLAG_NONE, expr];
     }
 }

@@ -5,7 +5,7 @@ import { MATH_MUL } from "../../runtime/ns_math";
 import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, U } from "../../tree/tree";
-import { BCons } from "../helpers/BCons";
+import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_rat } from "../rat/is_rat";
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<Cons> {
 
 type LHS = Rat;
 type RHS = U;
-type EXP = BCons<Sym, LHS, RHS>;
+type EXP = Cons2<Sym, LHS, RHS>;
 
 //
 // TODO: We can choose whether to get reuse by extending classes or by containing functions, or both.

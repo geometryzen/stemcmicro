@@ -41,14 +41,14 @@ General description
 Returns the partial derivative of f with respect to x. x can be a vector e.g. [x,y].
 
 */
-export function Eval_function(functionCallExpr: Cons, $: ExtensionEnv): U {
+export function Eval_function(expr: Cons, $: ExtensionEnv): U {
     // console.lg("Eval_function");
 
 
     // Use "derivative" instead of "d" if there is no user function "d"
     // TODO: This needs to be checked because of the way getSymbolValue behaves.
-    if (car(functionCallExpr).equals(SYMBOL_D) && $.getBinding(SYMBOL_D).equals(SYMBOL_D)) {
-        const retval = Eval_derivative(functionCallExpr, $);
+    if (car(expr).equals(SYMBOL_D) && $.getBinding(SYMBOL_D).equals(SYMBOL_D)) {
+        const retval = Eval_derivative(expr, $);
         return retval;
     }
 
@@ -63,7 +63,7 @@ export function Eval_function(functionCallExpr: Cons, $: ExtensionEnv): U {
     // has not been defined yet, then the
     // function will just contain its own name, as
     // all undefined variables do.
-    const bodyAndFormalArguments = $.valueOf(car(functionCallExpr));
+    const bodyAndFormalArguments = $.valueOf(car(expr));
     // console.lg("bodyAndFormalArguments", $.toInfixString(bodyAndFormalArguments));
 
     if (is_num(bodyAndFormalArguments)) {
@@ -90,7 +90,7 @@ export function Eval_function(functionCallExpr: Cons, $: ExtensionEnv): U {
     /**
      * The argument list.
      */
-    const B = cdr(functionCallExpr);
+    const B = cdr(expr);
 
     // example:
     //  f(x) = x+2
@@ -103,7 +103,7 @@ export function Eval_function(functionCallExpr: Cons, $: ExtensionEnv): U {
     if (
         !car(bodyAndFormalArguments).equals(FUNCTION) ||
         // next check is whether evaluation did nothing, so the function is undefined
-        bodyAndFormalArguments.equals(car(functionCallExpr))
+        bodyAndFormalArguments.equals(car(expr))
     ) {
         // leave everything as it was and return
         const stack = new StackU();

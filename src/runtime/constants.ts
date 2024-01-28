@@ -71,6 +71,10 @@ export const FACTORIAL = MATH_FACTORIAL;
 export const FACTORPOLY = create_sym('factorpoly');
 export const FLOAT = native_sym(Native.float);
 export const FLOOR = create_sym('floor');
+/**
+ * (fn [params*] expr*)
+ */
+export const FN = native_sym(Native.fn);
 export const FOR = create_sym('for');
 /**
  * (Sym("function") body paramList)
@@ -175,6 +179,9 @@ export const VERSION = create_sym('version');
 export const SYMBOL_A = create_sym('a');
 export const SYMBOL_B = create_sym('b');
 export const SYMBOL_C = create_sym('c');
+/**
+ * 'd' is commonly used for the derivative.
+ */
 export const SYMBOL_D = create_sym('d');
 export const SYMBOL_I = create_sym('i');
 export const SYMBOL_J = create_sym('j');

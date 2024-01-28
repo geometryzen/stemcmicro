@@ -29,9 +29,13 @@ import {
     DO,
     FACTORIAL,
     FLOOR,
+    FN,
     FOR,
     FUNCTION,
-    LAST_ASCII_PRINT, LAST_HUMAN_PRINT, LAST_INFIX_PRINT, LAST_LATEX_PRINT,
+    LAST_ASCII_PRINT,
+    LAST_HUMAN_PRINT,
+    LAST_INFIX_PRINT,
+    LAST_LATEX_PRINT,
     LAST_SEXPR_PRINT,
     MULTIPLY,
     PATTERN, POWER,
@@ -1748,13 +1752,37 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     if (is_cons(expr)) {
         // Demonstracting correct management of reference counting (as an experiment).
         const opr = expr.opr;
+        const argList = expr.argList;
         try {
-            if (opr.equals(FUNCTION)) {
+            if (opr.equals(FN)) {
                 let str = '';
-                const body = expr.item(1);
+                const body = argList.item(1);
                 try {
                     if (!defs.codeGen) {
-                        const paramList = expr.item(2);
+                        const paramList = argList.item(0);
+                        try {
+                            str += print_str('fn ');
+                            const returned = render_as_sexpr(paramList, $);
+                            str += returned;
+                            str += print_str(' -> ');
+                        }
+                        finally {
+                            paramList.release();
+                        }
+                    }
+                    str += render_using_non_sexpr_print_mode(body, $);
+                    return str;
+                }
+                finally {
+                    body.release();
+                }
+            }
+            else if (opr.equals(FUNCTION)) {
+                let str = '';
+                const body = argList.item(0);
+                try {
+                    if (!defs.codeGen) {
+                        const paramList = argList.item(1);
                         try {
                             str += print_str('function ');
                             const returned = render_as_sexpr(paramList, $);
@@ -1775,6 +1803,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
         }
         finally {
             opr.release();
+            argList.release();
         }
     }
 

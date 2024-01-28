@@ -4,6 +4,7 @@ import { LambdaExpr } from 'math-expression-context';
 import { is_atom, nil } from 'math-expression-tree';
 import { UndeclaredVars } from '../api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
+import { Eval_function } from "../Eval_function";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
@@ -13,6 +14,7 @@ import { algebra } from "../operators/algebra/algebra";
 import { setq } from '../operators/assign/assign_any_any';
 import { is_boo } from "../operators/boo/is_boo";
 import { is_flt } from "../operators/flt/is_flt";
+import { Eval_fn } from '../operators/fn/Eval_fn';
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { Eval_let } from '../operators/let/Eval_let';
 import { is_rat } from "../operators/rat/is_rat";
@@ -20,7 +22,7 @@ import { assert_sym } from '../operators/sym/assert_sym';
 import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
-import { ALGEBRA, ASSIGN, COMPONENT, FUNCTION, INNER, LCO, LET, OUTER } from "../runtime/constants";
+import { ALGEBRA, ASSIGN, COMPONENT, FN, FUNCTION, INNER, LCO, LET, OUTER } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
@@ -30,7 +32,6 @@ import { negOne, Rat } from "../tree/rat/Rat";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { Tensor } from "../tree/tensor/Tensor";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
-import { Eval_function } from "../userfunc";
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
 import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
@@ -1221,10 +1222,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             if (is_sym(opr)) {
                                 const binding = $.getBinding(opr);
                                 if (!is_nil(binding)) {
-                                    if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
-                                        const newExpr = Eval_function(expr, $);
-                                        // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                        return [TFLAG_DIFF, newExpr];
+                                    if (is_cons(binding)) {
+                                        // TODO: Install as a normal Operator...
+                                        if (binding.opr.equals(FN)) {
+                                            const newExpr = Eval_fn(expr, $);
+                                            return [TFLAG_DIFF, newExpr];
+                                        }
+                                        else if (binding.opr.equals(FUNCTION)) {
+                                            const newExpr = Eval_function(expr, $);
+                                            return [TFLAG_DIFF, newExpr];
+                                        }
                                     }
                                     else {
                                         // If it's not a (function body paramList) expression.
@@ -1312,10 +1319,19 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             if (is_sym(opr)) {
                                 const binding = $.getBinding(opr);
                                 if (!is_nil(binding)) {
-                                    if (is_cons(binding) && FUNCTION.equals(binding.opr)) {
-                                        const newExpr = Eval_function(expr, $);
-                                        // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
-                                        return newExpr;
+                                    if (is_cons(binding)) {
+                                        // TOOD: Install as a normal Operator.
+                                        if (binding.opr.equals(FN)) {
+                                            throw new Error("TODO B");
+                                            // const newExpr = Eval_function(expr, $);
+                                            // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                            // return newExpr;
+                                        }
+                                        else if (binding.opr.equals(FUNCTION)) {
+                                            const newExpr = Eval_function(expr, $);
+                                            // console.lg(`USER FUNC oldExpr: ${render_as_infix(curExpr, $)} newExpr: ${render_as_infix(newExpr, $)}`);
+                                            return newExpr;
+                                        }
                                     }
                                     else {
                                         // If it's not a (function body paramList) expression.

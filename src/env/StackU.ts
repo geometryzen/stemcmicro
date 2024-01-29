@@ -18,7 +18,6 @@ export class StackU {
         return this.#stack.length;
     }
     list(n: number): void {
-        nil.addRef();
         this.#stack.push(nil);
         for (let i = 0; i < n; i++) {
             const arg2 = this.#stack.pop();

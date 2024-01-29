@@ -2,6 +2,7 @@ import { assert_tensor, is_num, is_str, is_sym, is_tensor, Tensor } from 'math-e
 import { car, cdr, Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { StackU } from '../../env/StackU';
+import { zip } from '../../functional/zip';
 import { Eval_derivative } from '../../operators/derivative/Eval_derivative';
 import { EVAL, FN, SYMBOL_D } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
@@ -48,42 +49,6 @@ function assert_cons(expr: U): Cons {
     }
 }
 
-function zip(a: Cons, b: Cons): Cons {
-    let p1 = a;
-    let p2 = b;
-    p1.addRef();
-    p2.addRef();
-    try {
-        const stack = new StackU();
-        const h = stack.tos;
-        while (is_cons(p1) && is_cons(p2)) {
-            const head1 = p1.head;
-            const head2 = p2.head;
-            try {
-                stack.push(head1);
-                stack.push(head2);
-
-                p1.release();
-                p1 = p1.cdr;
-
-                p2.release();
-                p2 = p2.cdr;
-            }
-            finally {
-                head1.release();
-                head2.release();
-            }
-        }
-
-        stack.list(stack.tos - h);
-        return assert_cons(stack.pop());
-    }
-    finally {
-        p1.release();
-        p2.release();
-    }
-}
-
 /**
  * e.g. (triple 7) => ((fn [x] (* 3 x)) 7) => 21
  */
@@ -120,13 +85,12 @@ export function Eval_lambda_in_fn_syntax(expr: Cons, $: ExtensionEnv): U {
             try {
                 const S = zip(paramList, argsList);
 
-                const stack = new StackU();
-                stack.push(F);
                 if (is_cons(S)) {
-                    stack.push(S);
-                    rewrite_args(stack, $);
+                    return rewrite_args(F, S, $);
                 }
-                return $.valueOf(stack.pop());
+                else {
+                    return $.valueOf(F);
+                }
             }
             finally {
                 paramTensor.release();
@@ -144,8 +108,21 @@ export function Eval_lambda_in_fn_syntax(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
+function rewrite_args(F: U, S: Cons, $: ExtensionEnv): U {
+    const stack = new StackU();
+    try {
+        stack.push(F);
+        stack.push(S);
+        rewrite_args_recursive(stack, $);
+        return $.valueOf(stack.pop());
+    }
+    finally {
+        stack.release();
+    }
+}
+
 // Rewrite by expanding symbols that contain args
-function rewrite_args(stack: StackU, $: ExtensionEnv) {
+function rewrite_args_recursive(stack: StackU, $: ExtensionEnv) {
     let n = 0;
 
     // subst. list which is a list
@@ -184,7 +161,7 @@ function rewrite_args(stack: StackU, $: ExtensionEnv) {
         while (is_cons(p1)) {
             stack.push(car(p1));
             stack.push(p2);
-            n += rewrite_args(stack, $);
+            n += rewrite_args_recursive(stack, $);
             p1 = cdr(p1);
         }
         stack.list(stack.tos - h);
@@ -224,7 +201,7 @@ function rewrite_args(stack: StackU, $: ExtensionEnv) {
     stack.push(p3);
     if (p1 !== p3) {
         stack.push(p2); // subst. list
-        n = rewrite_args(stack, $);
+        n = rewrite_args_recursive(stack, $);
         if (n === 0) {
             stack.pop();
             stack.push(p1); // restore if not rewritten with arg
@@ -234,12 +211,12 @@ function rewrite_args(stack: StackU, $: ExtensionEnv) {
     return n;
 }
 
-function rewrite_args_tensor(M: Tensor, other: U, stack: StackU, $: ExtensionEnv) {
+function rewrite_args_tensor(M: Tensor, other: U, stack: StackU, $: ExtensionEnv): number {
     let rewrite_args_counter = 0;
     const elems = M.mapElements((m) => {
         stack.push(m);
         stack.push(other);
-        rewrite_args_counter += rewrite_args(stack, $);
+        rewrite_args_counter += rewrite_args_recursive(stack, $);
         return stack.pop();
     });
 

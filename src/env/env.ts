@@ -22,6 +22,7 @@ import { assert_sym } from '../operators/sym/assert_sym';
 import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
+import { ProgrammingError } from '../programming/ProgrammingError';
 import { ALGEBRA, ASSIGN, COMPONENT, FN, FUNCTION, INNER, LCO, LET, OUTER } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
@@ -566,14 +567,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         if (native_directives.get(Directive.expanding)) {
             const ops = ops_by_mode[MODE_EXPANDING];
             if (typeof ops === 'undefined') {
-                throw new Error();
+                throw new ProgrammingError();
             }
             return ops;
         }
         if (native_directives.get(Directive.factoring)) {
             const ops = ops_by_mode[MODE_FACTORING];
             if (typeof ops === 'undefined') {
-                throw new Error();
+                throw new ProgrammingError();
             }
             return ops;
         }
@@ -587,7 +588,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return cons;
             }
             else {
-                throw new Error();
+                throw new ProgrammingError();
             }
         }
         if (native_directives.get(Directive.factoring)) {
@@ -596,7 +597,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return cons;
             }
             else {
-                throw new Error();
+                throw new ProgrammingError();
             }
         }
         return {};
@@ -1066,7 +1067,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             }
                         }
                     }
-                    return new UnknownConsOperator(expr, $);
+                    return new UnknownConsOperator($);
                     // We can end up here for user-defined functions.
                     // The consumer is trying to answer a question
                     // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
@@ -1086,7 +1087,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return selectNilOperator();
             }
             else {
-                throw new Error();
+                throw new ProgrammingError();
             }
         },
         outer(...args: U[]): U {
@@ -1197,7 +1198,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             return [TFLAG_DIFF, newExpr];
                         }
                         else {
-                            throw new Error();
+                            throw new ProgrammingError();
                         }
                     }
                     finally {

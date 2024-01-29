@@ -1,19 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { assert_sym, Sym } from "math-expression-atoms";
+import { Sym } from "math-expression-atoms";
 import { Cons, U } from "../tree/tree";
 import { ExtensionEnv, FEATURE, Operator } from "./ExtensionEnv";
 
-export class UnknownConsOperator implements Operator<U> {
+export class UnknownConsOperator implements Operator<Cons> {
     name: string;
-    readonly #operator: Sym;
-    /**
-     * 
-     * @param expr An expression, probably user-defined.
-     * @param $ The extension environment.
-     */
-    constructor(expr: Cons, private readonly $: ExtensionEnv) {
+    constructor(private readonly $: ExtensionEnv) {
         this.name = "unknown";
-        this.#operator = assert_sym(expr.opr);
     }
     key?: string | undefined;
     phases?: number | undefined;
@@ -22,12 +15,12 @@ export class UnknownConsOperator implements Operator<U> {
         return true;
     }
     operator(): Sym {
-        return this.#operator;
+        throw new Error();
     }
     get hash(): string {
         throw new Error("UnknownOperator.hash Method not implemented.");
     }
-    isKind(expr: U): expr is U {
+    isKind(expr: Cons): expr is Cons {
         throw new Error("UnknownOperator.isKind Method not implemented.");
     }
     subst(expr: U, oldExpr: U, newExpr: U): U {
@@ -39,8 +32,11 @@ export class UnknownConsOperator implements Operator<U> {
     toLatexString(expr: U): string {
         throw new Error(`${expr.toString()} is not defined.`);
     }
-    toListString(expr: U): string {
-        throw new Error(`${expr.toString()} is not defined.`);
+    toListString(expr: Cons): string {
+        const $ = this.$;
+        const items: U[] = [...expr];
+        const ss = items.map((item) => $.toSExprString(item));
+        return `(${ss.join(' ')})`;
     }
     evaluate(expr: U, argList: Cons): [number, U] {
         throw new Error("UnknownOperator. Method not implemented.");

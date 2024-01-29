@@ -14,12 +14,9 @@ export function extract_def_args(expr: Cons): [sym: Sym, doc: U, init: U] {
     try {
         switch (argList.length) {
             case 1: {
-                nil.addRef();
-                nil.addRef();
                 return [assert_sym(argList.item(0)), nil, nil];
             }
             case 2: {
-                nil.addRef();
                 return [assert_sym(argList.item(0)), nil, argList.item(1)];
             }
             case 3: {

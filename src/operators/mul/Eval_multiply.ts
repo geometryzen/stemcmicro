@@ -6,7 +6,6 @@ import { extract_single_uom } from "../../calculators/compare/extract_single_uom
 import { multiply_num_num } from "../../calculators/mul/multiply_num_num";
 import { remove_factors } from "../../calculators/remove_factors";
 import { ExtensionEnv, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { render_as_infix } from "../../print/render_as_infix";
 import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -223,7 +222,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
                     // So we definitely can't combine assuming base equality.
                     // This can happen for non-commuting elements. e.g. Blade(s), Tensor(s).
                     // Remove factors that don't commute earlier? Or do we handle them here?
-                    throw new Error(`baseL => ${render_as_infix(baseL, $)} expoL => ${render_as_infix(expoL, $)} baseR => ${render_as_infix(baseR, $)} expoR => ${render_as_infix(expoR, $)}`);
+                    throw new Error(`baseL => ${baseL} expoL => ${expoL} baseR => ${baseR} expoR => ${expoR}`);
                 }
             }
         }

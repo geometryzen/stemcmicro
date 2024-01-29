@@ -29,21 +29,14 @@ function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U
         const n = argList.length;
         switch (n) {
             case 3: {
-                nil.addRef();
-                nil.addRef();
-                nil.addRef();
                 return [name, nil, nil, assert_tensor(item1), nil, item2];
             }
             case 4: {
                 const item3 = argList.item(3);
                 if (is_str(item1)) {
-                    nil.addRef();
-                    nil.addRef();
                     return [name, item1, nil, assert_tensor(item2), nil, item3];
                 }
                 else if (is_map(item1)) {
-                    nil.addRef();
-                    nil.addRef();
                     return [name, nil, assert_map(item1), assert_tensor(item2), nil, item3];
                 }
                 else {
@@ -54,7 +47,6 @@ function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U
                 const item3 = argList.item(3);
                 const item4 = argList.item(4);
                 if (is_str(item1)) {
-                    nil.addRef();
                     if (is_tensor(item2)) {
                         // item3 should be a Map.
                         return [name, item1, nil, assert_tensor(item2), item3, item4];
@@ -64,7 +56,6 @@ function split_defn_args(expr: Cons): [name: Sym, doc: Str | U, attrMap: Map | U
                     }
                 }
                 else if (is_map(item1)) {
-                    nil.addRef();
                     return [name, nil, item1, assert_tensor(item2), item3, item4];
                 }
                 else {

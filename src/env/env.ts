@@ -14,7 +14,7 @@ import { algebra } from "../operators/algebra/algebra";
 import { setq } from '../operators/assign/assign_any_any';
 import { is_boo } from "../operators/boo/is_boo";
 import { is_flt } from "../operators/flt/is_flt";
-import { Eval_fn } from '../operators/fn/Eval_fn';
+import { Eval_lambda_in_fn_syntax } from '../operators/fn/Eval_fn';
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { Eval_let } from '../operators/let/Eval_let';
 import { is_rat } from "../operators/rat/is_rat";
@@ -1047,22 +1047,37 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         operatorFor(expr: U): Operator<U> | undefined {
             if (is_cons(expr)) {
-                const hashes = hash_info(expr);
-                for (const hash of hashes) {
-                    const ops = currentOpsByHash()[hash];
-                    if (Array.isArray(ops)) {
-                        for (const op of ops) {
-                            if (op.isKind(expr)) {
-                                // console.lg("op", render_as_infix(expr, $), op.name);
-                                return op;
+                const head = expr.head;
+                try {
+                    if (is_cons(head)) {
+                        throw new Error("!!!!!!!!!!!!!!!!!!!!!!!!");
+                    }
+                    // if (is_sym(head)) {
+                    //console.log("head", `${head}`);
+                    const hashes = hash_info(expr);
+                    for (const hash of hashes) {
+                        const ops = currentOpsByHash()[hash];
+                        if (Array.isArray(ops)) {
+                            for (const op of ops) {
+                                if (op.isKind(expr)) {
+                                    // console.lg("op", render_as_infix(expr, $), op.name);
+                                    return op;
+                                }
                             }
                         }
                     }
+                    return new UnknownConsOperator(expr, $);
+                    // We can end up here for user-defined functions.
+                    // The consumer is trying to answer a question
+                    // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
+                    //}
+                    //else {
+
+                    //}
                 }
-                return new UnknownConsOperator(expr, $);
-                // We can end up here for user-defined functions.
-                // The consumer is trying to answer a question
-                // throw new SystemError(`${expr}, current_phase = ${current_focus} keys = ${JSON.stringify(keys)}`);
+                finally {
+                    head.release();
+                }
             }
             else if (is_atom(expr)) {
                 return selectAtomOperator(expr);
@@ -1168,13 +1183,28 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         transform(expr: U): [TFLAGS, U] {
-            // console.lg("transform", expr.toString(), "is_sym", is_sym(expr));
+            // console.log("transform", `${$.toSExprString(expr)}`);
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
                 // to the left or right. This implies that I have distinct right and left evaluations.
                 const head = expr.head;
-                if (is_sym(head)) {
+                if (is_cons(head)) {
+                    const opr = head.opr;
+                    try {
+                        if (opr.equals(FN)) {
+                            const newExpr = Eval_lambda_in_fn_syntax(expr, $);
+                            return [TFLAG_DIFF, newExpr];
+                        }
+                        else {
+                            throw new Error();
+                        }
+                    }
+                    finally {
+                        opr.release();
+                    }
+                }
+                else if (is_sym(head)) {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
                     const value = $.getBinding(head);
                     if (is_lambda(value)) {
@@ -1225,7 +1255,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                                     if (is_cons(binding)) {
                                         // TODO: Install as a normal Operator...
                                         if (binding.opr.equals(FN)) {
-                                            const newExpr = Eval_fn(expr, $);
+                                            const newExpr = Eval_lambda_in_fn_syntax(expr, $);
                                             return [TFLAG_DIFF, newExpr];
                                         }
                                         else if (binding.opr.equals(FUNCTION)) {

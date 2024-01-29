@@ -87,7 +87,7 @@ function zip(a: Cons, b: Cons): Cons {
 /**
  * e.g. (triple 7) => ((fn [x] (* 3 x)) 7) => 21
  */
-export function Eval_fn(expr: Cons, $: ExtensionEnv): U {
+export function Eval_lambda_in_fn_syntax(expr: Cons, $: ExtensionEnv): U {
     const opr = expr.opr;
     try {
         // Use "derivative" instead of "d" if there is no user function "d"
@@ -97,10 +97,9 @@ export function Eval_fn(expr: Cons, $: ExtensionEnv): U {
             return Eval_derivative(expr, $);
         }
 
-        const binding = $.valueOf(opr);
+        const binding = is_fn_expr(opr) ? opr : $.valueOf(opr);
         try {
-            if (!is_fn_expr(binding) || binding.equals(opr)) {
-                // leave everything as it was and return
+            if (!is_fn_expr(binding)) {
                 const stack = new StackU();
                 const h = stack.tos;
                 stack.push(binding);

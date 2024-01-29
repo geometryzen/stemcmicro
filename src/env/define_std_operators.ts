@@ -110,6 +110,7 @@ import { def_sym_builder } from '../operators/def/def_sym';
 import { def_sym_doc_init_builder } from '../operators/def/def_sym_doc_init';
 import { def_sym_init_builder } from '../operators/def/def_sym_init';
 import { defint_builder } from '../operators/defint/defint';
+import { defn_builder } from '../operators/defn/Eval_defn';
 import { degree_varargs } from '../operators/degree/degree_varargs';
 import { denominator_fn } from '../operators/denominator/denominator_fn';
 import { deref_builder } from '../operators/deref/Eval_deref';
@@ -793,6 +794,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(def_sym_doc_init_builder);
     $.defineOperator(defint_builder);
     $.defineOperator(denominator_fn);
+
+    $.defineOperator(defn_builder);
 
     $.defineOperator(deref_builder);
 

@@ -1,6 +1,6 @@
+import { Sym } from "math-expression-atoms";
+import { cons, Cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { cons, Cons, U } from "../../tree/tree";
 import { AbstractOperator } from "./AbstractOperator";
 
 /**
@@ -29,7 +29,12 @@ export abstract class FunctionVarArgs extends AbstractOperator {
     }
     evaluate(argList: Cons): [number, U] {
         const expr = cons(this.opr, argList);
-        return this.transform(expr, this.$);
+        try {
+            return this.transform(expr, this.$);
+        }
+        finally {
+            expr.release();
+        }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform(expr: Cons, $: ExtensionEnv): [number, U] {

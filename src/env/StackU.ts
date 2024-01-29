@@ -4,13 +4,52 @@ import { Stack } from "./Stack";
 /**
  * A stack of expressions that can be used to support evaluation.
  */
-export class StackU extends Stack<U> {
-    list(n: number): void {
-        this.push(nil);
+export class StackU {
+    readonly #stack: Stack<U>;
+    #refCount = 1;
+    constructor(elements: U[] = []) {
+        const n = elements.length;
         for (let i = 0; i < n; i++) {
-            const arg2 = this.pop();
-            const arg1 = this.pop();
-            this.push(cons(arg1, arg2));
+            elements[i].addRef();
         }
+        this.#stack = new Stack(elements);
+    }
+    get length(): number {
+        return this.#stack.length;
+    }
+    list(n: number): void {
+        nil.addRef();
+        this.#stack.push(nil);
+        for (let i = 0; i < n; i++) {
+            const arg2 = this.#stack.pop();
+            const arg1 = this.#stack.pop();
+            this.#stack.push(cons(arg1, arg2));
+        }
+    }
+    push(element: U): void {
+        element.addRef();
+        this.#stack.push(element);
+    }
+    pop(): U {
+        return this.#stack.pop();
+    }
+    addRef(): void {
+        this.#refCount++;
+    }
+    release(): void {
+        this.#refCount--;
+        if (this.#refCount === 0) {
+            const n = this.#stack.length;
+            const elements = this.#stack.popItems(n);
+            for (let i = 0; i < n; i++) {
+                elements[i].release();
+            }
+        }
+    }
+    get refCount(): number {
+        return this.#refCount;
+    }
+    get tos(): number {
+        return this.#stack.tos;
     }
 }

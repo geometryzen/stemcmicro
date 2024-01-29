@@ -534,6 +534,56 @@ describe("ClojureScript", function () {
         assert.strictEqual(is_rat(values[1]), true);
         engine.release();
     });
+    it("atom", function () {
+        const lines: string[] = [
+            `(deref (atom 9))`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+        assert.strictEqual(engine.renderAsString(trees[0], { format: 'SExpr' }), `(deref (atom 9))`);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "9");
+        assert.strictEqual(is_rat(values[0]), true);
+        engine.release();
+    });
+    it("atom", function () {
+        const lines: string[] = [
+            `(def a (atom 3))`,
+            `(reset! a 9)`,
+            `(deref a)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.ClojureScript });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 3);
+        assert.strictEqual(engine.renderAsString(trees[0], { format: 'SExpr' }), `(def a (atom 3))`);
+        assert.strictEqual(engine.renderAsString(trees[1], { format: 'SExpr' }), `(reset! a 9)`);
+        assert.strictEqual(engine.renderAsString(trees[2], { format: 'SExpr' }), `(deref a)`);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.evaluate(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "9");
+        assert.strictEqual(is_rat(values[0]), true);
+        engine.release();
+    });
     it("def [symbol init]", function () {
         const lines: string[] = [
             `(def a 1)`,

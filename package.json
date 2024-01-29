@@ -79,6 +79,7 @@
         "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-product": "mocha 'units/product.spec.ts'",
         "unit-rect": "mocha 'units/rect.spec.ts'",
+        "unit-refcount": "mocha 'units/refcount.spec.ts'",
         "unit-rendersvg": "mocha 'units/rendersvg.spec.ts'",
         "unit-runscript": "mocha 'units/runscript.spec.ts'",
         "unit-runtime": "mocha 'units/runtime.spec.ts'",

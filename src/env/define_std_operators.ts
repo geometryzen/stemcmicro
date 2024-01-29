@@ -69,6 +69,7 @@ import { arg_rat } from '../operators/arg/arg_rat';
 import { arg_sym } from '../operators/arg/arg_sym';
 import { assign_any_any } from '../operators/assign/assign_any_any';
 import { assign_sym_any } from '../operators/assign/assign_sym_any';
+import { atom_builder } from '../operators/atom/Eval_atom';
 import { besselj_varargs } from '../operators/besselj/besselj_varargs';
 import { bessely_varargs } from '../operators/bessely/bessely_varargs';
 import { binomial_varargs } from '../operators/binomial/binomial_varargs';
@@ -111,6 +112,7 @@ import { def_sym_init_builder } from '../operators/def/def_sym_init';
 import { defint_builder } from '../operators/defint/defint';
 import { degree_varargs } from '../operators/degree/degree_varargs';
 import { denominator_fn } from '../operators/denominator/denominator_fn';
+import { deref_builder } from '../operators/deref/Eval_deref';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
 import { derivative_fn } from '../operators/derivative/derivative_fn';
@@ -354,6 +356,7 @@ import { rect_pow_rat_rat } from '../operators/rect/rect_pow_rat_rat';
 import { rect_rat } from '../operators/rect/rect_rat';
 import { rect_sin } from '../operators/rect/rect_sin';
 import { rect_sym } from '../operators/rect/rect_sym';
+import { reset_builder } from '../operators/reset/Eval_reset';
 import { roots_varargs } from '../operators/roots/roots_varargs';
 import { round_varargs } from '../operators/round/round_varargs';
 import { script_last_0 } from '../operators/script_last/script_last';
@@ -753,6 +756,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(assign_sym_any);
     $.defineOperator(assign_any_any);
 
+    $.defineOperator(atom_builder);
+
     $.defineOperator(besselj_varargs);
     $.defineOperator(bessely_varargs);
 
@@ -788,6 +793,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(def_sym_doc_init_builder);
     $.defineOperator(defint_builder);
     $.defineOperator(denominator_fn);
+
+    $.defineOperator(deref_builder);
 
     $.defineOperator(d_to_derivative);
     $.defineOperator(derivative_2_mul_any);
@@ -971,6 +978,8 @@ export function define_std_operators($: ExtensionEnv) {
     $.defineOperator(rect_sin);
     $.defineOperator(rect_sym);
     $.defineOperator(rect_any);
+
+    $.defineOperator(reset_builder);
 
     $.defineOperator(roots_varargs);
     $.defineOperator(round_varargs);

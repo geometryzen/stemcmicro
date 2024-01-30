@@ -30,6 +30,8 @@ export function Eval_dotdot(expr: Cons, $: ExtensionEnv): U {
                     const props = argList.tail();
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     let value = (obj as unknown as any);
+                    // eslint-disable-next-line no-console
+                    console.log("value =>", `${value}`);
                     for (let i = 0; i < props.length; i++) {
                         const prop = props[i];
                         if (is_sym(prop)) {
@@ -37,12 +39,19 @@ export function Eval_dotdot(expr: Cons, $: ExtensionEnv): U {
                             if (key.startsWith("-")) {
                                 const name = key.slice(1);
                                 value = value[name];
+                                // eslint-disable-next-line no-console
+                                console.log(`value[${name}]`, "value =>", `${value}`);
                             }
                             else {
                                 // eslint-disable-next-line no-console
-                                console.warn("prop", `${prop}`);
+                                console.warn("key", `${key}`);
                                 throw new ProgrammingError();
                             }
+                        }
+                        else {
+                            // eslint-disable-next-line no-console
+                            console.warn("prop", `${prop}`);
+                            throw new ProgrammingError();
                         }
                     }
                     if (typeof value === 'boolean') {

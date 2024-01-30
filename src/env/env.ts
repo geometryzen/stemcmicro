@@ -1250,6 +1250,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             return [TFLAG_DIFF, newExpr];
                         }
                         else {
+                            console.warn(`${head}`);
                             throw new ProgrammingError();
                         }
                     }

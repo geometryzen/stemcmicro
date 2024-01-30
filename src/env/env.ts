@@ -13,6 +13,7 @@ import { native_sym } from "../native/native_sym";
 import { algebra } from "../operators/algebra/algebra";
 import { setq } from '../operators/assign/assign_any_any';
 import { is_boo } from "../operators/boo/is_boo";
+import { Eval_dotdot } from '../operators/dotdot/Eval_dotdot';
 import { is_flt } from "../operators/flt/is_flt";
 import { Eval_lambda_in_fn_syntax } from '../operators/fn/Eval_fn';
 import { JsObjectExtension } from '../operators/jsobject/JsObjectExtension';
@@ -433,14 +434,16 @@ export class DerivedEnv implements ExtensionEnv {
         if (is_cons(expr)) {
             const opr = expr.opr;
             try {
+                const DOTDOT = create_sym("..");
                 if (is_sym(opr)) {
-                    // The startegy is to evaluate arguments in the current scope then delegate to the base environment to do the operator gruntwork.
-                    // This should work for most operators but how should we handle Special Forms?
                     if (opr.equals(ASSIGN)) {
                         return setq(expr.lhs, expr.rhs, assert_sym_any_any(expr), this);
                     }
                     else if (opr.equals(COMPONENT)) {
                         return this.#baseEnv.valueOf(expr);
+                    }
+                    else if (opr.equals(DOTDOT)) {
+                        return Eval_dotdot(expr, this);
                     }
                     else if (opr.equals(LET)) {
                         return Eval_let(expr, this);

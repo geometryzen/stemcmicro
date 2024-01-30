@@ -3,7 +3,6 @@ import { assert } from "chai";
 import { is_blade, is_boo, is_flt, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/index";
-import { is_err } from "../src/operators/err/is_err";
 import { SyntaxKind } from "../src/parser/parser";
 import { assert_cons } from "../src/tree/cons/assert_cons";
 
@@ -621,15 +620,14 @@ describe("ClojureScript", function () {
         const values: U[] = [];
         for (const tree of trees) {
             const value = engine.evaluate(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
+            values.push(value);
         }
+        // console.lg(`${values[0]}`);
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(def undefined)");
-        assert.strictEqual(is_cons(values[0]), true);
-        assert.strictEqual(engine.renderAsString(values[1], { format: 'SExpr' }), "undefined", `${values[1]}`);
-        assert.strictEqual(is_err(values[1]), true);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "()");
+        assert.strictEqual(is_nil(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[1], { format: 'SExpr' }), "()");
+        assert.strictEqual(is_nil(values[1]), true);
         engine.release();
     });
     it("defn", function () {

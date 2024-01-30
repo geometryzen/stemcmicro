@@ -36,6 +36,7 @@
         "unit-api": "mocha 'units/api.spec.ts'",
         "unit-arccos": "mocha 'units/arccos.spec.ts'",
         "unit-arg": "mocha 'units/arg.spec.ts'",
+        "unit-assumptions": "mocha 'units/assumptions.spec.ts'",
         "unit-atom": "mocha 'units/atom.spec.ts'",
         "unit-calculus": "mocha 'units/calculus.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
@@ -46,6 +47,7 @@
         "unit-constants": "mocha 'units/constants.spec.ts'",
         "unit-cos": "mocha 'units/cos.spec.ts'",
         "unit-coverage": "mocha 'units/coverage.spec.ts'",
+        "unit-d": "mocha 'units/d.spec.ts'",
         "unit-defint": "mocha 'units/defint.spec.ts'",
         "unit-derivative": "mocha 'units/derivative.spec.ts'",
         "unit-divide": "mocha 'units/divide.spec.ts'",
@@ -91,12 +93,14 @@
         "unit-sum": "mocha 'units/sum.spec.ts'",
         "unit-symbol": "mocha 'units/symbol.spec.ts'",
         "unit-tensor": "mocha 'units/tensor.spec.ts'",
+        "unit-test": "mocha 'units/test.spec.ts'",
         "unit-testle": "mocha 'units/testle.spec.ts'",
         "unit-testne": "mocha 'units/testne.spec.ts'",
         "unit-transpose": "mocha 'units/transpose.spec.ts'",
         "unit-iscomplex": "mocha 'units/iscomplex.spec.ts'",
         "unit-sandbox": "mocha 'units/sandbox.spec.ts'",
         "unit-uom": "mocha 'units/uom.spec.ts'",
+        "unit-vars": "mocha 'units/vars.spec.ts'",
         "unit-visitor": "mocha 'units/visitor.spec.ts'",
         "test-bake": "mocha 'tests/bake.ts'",
         "test-check": "mocha 'tests/check.ts'",
@@ -148,8 +152,8 @@
         "@types/mocha": "^10.0.6",
         "@types/node": "^20.11.10",
         "@types/rollup-plugin-peer-deps-external": "^2.2.4",
-        "@typescript-eslint/eslint-plugin": "^6.19.1",
-        "@typescript-eslint/parser": "^6.19.1",
+        "@typescript-eslint/eslint-plugin": "^6.20.0",
+        "@typescript-eslint/parser": "^6.20.0",
         "chai": "^4.3.10",
         "eslint": "^8.56.0",
         "gh-pages": "^6.1.1",
@@ -166,7 +170,7 @@
     "peerDependencies": {
         "math-expression-atoms": "^0.9.24",
         "math-expression-context": "^0.9.10",
-        "math-expression-native": "^0.9.13",
-        "math-expression-tree": "^0.9.17"
+        "math-expression-native": "^0.9.15",
+        "math-expression-tree": "^0.9.18"
     }
 }

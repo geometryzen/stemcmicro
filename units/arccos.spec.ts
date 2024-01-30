@@ -55,11 +55,12 @@ describe("arccos", function () {
         assert.strictEqual(engine.renderAsInfix(values[0]), "(1-x**2)**(1/2)");
         engine.release();
     });
-    it("d(arccos(x),x)", function () {
+    it("derivative(arccos(x),x)", function () {
         const lines: string[] = [
-            `d(arccos(x),x)`
+            `derivative(arccos(x),x)`
         ];
         const engine = create_script_context({
+            useDerivativeShorthandLowerD: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
         assert.strictEqual(engine.renderAsInfix(values[0]), "-1/((1-x**2)**(1/2))");

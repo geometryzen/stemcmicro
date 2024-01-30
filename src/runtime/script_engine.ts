@@ -1,3 +1,4 @@
+import { create_rat } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { UndeclaredVars } from "../api";
 import { define_std_operators } from "../env/define_std_operators";
@@ -15,7 +16,7 @@ import { U } from "../tree/tree";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { move_top_of_stack } from "./defs";
 import { execute_script, transform_tree } from "./execute";
-import { execute_definition, execute_definitions } from "./init";
+import { execute_definitions } from "./init";
 
 export interface ExprTransformOptions {
     autoExpand?: boolean;
@@ -57,6 +58,7 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
      * in applications using Geometric Algebra. The default value is false.
      */
     useCaretForExponentiation?: boolean;
+    useDerivativeShorthandLowerD?: boolean;
     /**
      * 
      */
@@ -73,8 +75,7 @@ export interface ScriptContextOptions extends ScriptExecuteOptions {
     useParenForTensors?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
+export function init_env($: ExtensionEnv, options: ScriptContextOptions = { useDerivativeShorthandLowerD: false }) {
 
     move_top_of_stack(0);
 
@@ -89,11 +90,13 @@ export function init_env($: ExtensionEnv, options?: ScriptContextOptions) {
         }
     }
 
-    define_std_operators($);
+    define_std_operators($, {
+        useDerivativeShorthandLowerD: !!options.useDerivativeShorthandLowerD
+    });
 
     $.buildOperators();
 
-    execute_definition(`${VARNAME_MAX_FIXED_PRINTOUT_DIGITS.key()}=${DEFAULT_MAX_FIXED_PRINTOUT_DIGITS}`, $);
+    $.setBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS, create_rat(DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, 1));
 
     if (options && options.prolog) {
         if (Array.isArray(options.prolog)) {
@@ -115,7 +118,7 @@ export interface ScriptContext {
     clearBindings(): void;
     defineFunction(pattern: U, impl: LambdaExpr): void;
     getSymbolProps(sym: Sym): Predicates;
-    getSymbolValue(sym: Sym): U;
+    getBinding(sym: Sym): U;
     getSymbolsInfo(): { sym: Sym, value: U }[]
     evaluate(tree: U, options?: ExprTransformOptions): { value: U, prints: string[], errors: Error[] };
     executeProlog(prolog: string[]): void;
@@ -144,6 +147,7 @@ export function env_options_from_script_context_options(options: ScriptContextOp
             disable: options.disable,
             noOptimize: false,
             useCaretForExponentiation: options.useCaretForExponentiation,
+            useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             useIntegersForPredicates: options.useIntegersForPredicates,
             useParenForTensors: options.useParenForTensors,
             syntaxKind: options.syntaxKind
@@ -159,6 +163,7 @@ export function env_options_from_script_context_options(options: ScriptContextOp
             disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
+            useDerivativeShorthandLowerD: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
             syntaxKind: SyntaxKind.Algebrite
@@ -189,7 +194,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         getSymbolProps(sym: Sym): Predicates {
             return $.getSymbolPredicates(sym);
         },
-        getSymbolValue(sym: Sym): U {
+        getBinding(sym: Sym): U {
             assert_sym(sym);
             return $.getBinding(sym);
         },

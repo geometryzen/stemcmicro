@@ -9,6 +9,7 @@ import { AbstractOperator } from "./AbstractOperator";
 export abstract class FunctionVarArgs extends AbstractOperator {
     readonly #hash: string;
     readonly #operator: Sym;
+    // FIXME: opr is avalable to derived classes, so why #operator?
     constructor(name: string, readonly opr: Sym, $: ExtensionEnv) {
         super(name, $);
         // TODO: Is there a more DRY way to do this?

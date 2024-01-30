@@ -81,13 +81,12 @@ const DEFAULT_PROPS: Props = Object.freeze({
  */
 export interface SymTab {
     clear(): void;
-    getProps(sym: Sym | string): Props;
+    getProps(sym: Sym): Props;
     setProps(sym: Sym, overrides: Partial<Props>): void;
     hasBinding(sym: Sym): boolean;
-    getBinding(sym: Sym | string): U;
-    getUsrFunc(sym: Sym | string): U;
-    isBinding(sym: Sym | string): boolean;
-    isUsrFunc(sym: Sym | string): boolean;
+    getBinding(sym: Sym): U;
+    getUsrFunc(sym: Sym): U;
+    isUsrFunc(sym: Sym): boolean;
     setBinding(sym: Sym, value: U): void;
     setUsrFunc(sym: Sym, value: U): void;
     entries(): { sym: Sym, value: U }[];
@@ -107,18 +106,13 @@ export function createSymTab(): SymTab {
             usrfunc_from_key.clear();
             sym_from_key.clear();
         },
-        getProps(sym: Sym | string): Props {
-            if (typeof sym === 'string') {
-                const props = props_from_key.get(sym);
-                if (props) {
-                    return props;
-                }
-                else {
-                    return DEFAULT_PROPS;
-                }
+        getProps(sym: Sym): Props {
+            const props = props_from_key.get(sym.key());
+            if (props) {
+                return props;
             }
             else {
-                return this.getProps(sym.key());
+                return DEFAULT_PROPS;
             }
         },
         setProps(sym: Sym, overrides: Partial<Props>): void {
@@ -134,62 +128,36 @@ export function createSymTab(): SymTab {
         },
         hasBinding(sym: Sym) {
             assert_sym(sym);
-            return binding_from_key.has(sym.key());
+            const exists = binding_from_key.has(sym.key());
+            // console.lg("SymTab.hasBinding", `${sym}`, " => ", exists);
+            return exists;
         },
-        getBinding(sym: Sym | string): U {
-            if (typeof sym === 'string') {
-                const value = binding_from_key.get(sym);
-                if (value) {
-                    return value;
-                }
-                else {
-                    return nil;
-                }
+        getBinding(sym: Sym): U {
+            const value = binding_from_key.get(sym.key());
+            if (value) {
+                return value;
             }
             else {
-                return this.getBinding(sym.key());
+                return nil;
             }
         },
-        getUsrFunc(sym: Sym | string): U {
-            if (typeof sym === 'string') {
-                const value = usrfunc_from_key.get(sym);
-                if (value) {
-                    return value;
-                }
-                else {
-                    return nil;
-                }
+        getUsrFunc(sym: Sym): U {
+            const value = usrfunc_from_key.get(sym.key());
+            if (value) {
+                return value;
             }
             else {
-                return this.getUsrFunc(sym.key());
+                return nil;
             }
         },
-        isBinding(sym: Sym | string): boolean {
-            if (typeof sym === 'string') {
-                return binding_from_key.has(sym);
-            }
-            else {
-                return this.isBinding(sym.key());
-            }
-        },
-        isUsrFunc(sym: Sym | string): boolean {
-            if (typeof sym === 'string') {
-                return usrfunc_from_key.has(sym);
-            }
-            else {
-                return this.isUsrFunc(sym.key());
-            }
+        isUsrFunc(sym: Sym): boolean {
+            return usrfunc_from_key.has(sym.key());
         },
         setBinding(sym: Sym, value: U): void {
             assert_sym(sym);
             const key = sym.key();
-            if (is_nil(value)) {
-                binding_from_key.delete(key);
-            }
-            else {
-                binding_from_key.set(key, value);
-                sym_from_key.set(key, sym);
-            }
+            binding_from_key.set(key, value);
+            sym_from_key.set(key, sym);
         },
         setUsrFunc(sym: Sym, value: U): void {
             assert_sym(sym);

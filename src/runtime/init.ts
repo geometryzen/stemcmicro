@@ -55,7 +55,7 @@ export function execute_definitions(definitions: readonly string[], $: Extension
 }
 
 export function execute_definition(sourceText: string, $: ExtensionEnv): void {
-    // console.lg(`execute_definition(${JSON.stringify(sourceText)})`);
+    // console.lg(`execute_definition ${JSON.stringify(sourceText)}`);
     const originalCodeGen = defs.codeGen;
     defs.codeGen = false;
     try {

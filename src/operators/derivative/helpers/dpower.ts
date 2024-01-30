@@ -1,5 +1,5 @@
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../../env/ExtensionEnv";
-import { Cons, U } from "../../../tree/tree";
 import { derivative } from "../derivative";
 //-----------------------------------------------------------------------------
 //

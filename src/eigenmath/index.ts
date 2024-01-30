@@ -678,7 +678,13 @@ export const LAST = create_sym("last");
 const Pi = native_sym(Native.PI);
 const TRACE = create_sym("trace");
 
+/**
+ * 'd'
+ */
 const D_LOWER = create_sym("d");
+/**
+ * 'i'
+ */
 const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const X_LOWER = create_sym("x");

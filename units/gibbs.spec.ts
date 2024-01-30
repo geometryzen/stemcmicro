@@ -405,17 +405,18 @@ describe("gibbs", function () {
                 `e1=G30[1]`,
                 `e2=G30[2]`,
                 `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+                `grad(s) = derivative(s,x) * e1 + derivative(s,y) * e2 + derivative(s,z) * e3`,
+                `div(v) = derivative(v|e1,x) + derivative(v|e2,y) + derivative(v|e3,z)`,
+                `curl(v) = (derivative(v|e3,y)-derivative(v|e2,z))*e1+(derivative(v|e1,z)-derivative(v|e3,x))*e2+(derivative(v|e2,x)-derivative(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*derivative(v,x)+(a|e2)*derivative(v,y)+(a|e3)*derivative(v,z)`,
                 `A = Ax * e1 + Ay * e2 + Az * e3`,
                 `B = Bx * e1 + By * e2 + Bz * e3`,
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `grad(f*g)-f*grad(g)-grad(f)*g`
             ];
             const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                useDerivativeShorthandLowerD: true
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -427,17 +428,18 @@ describe("gibbs", function () {
                 `e1=G30[1]`,
                 `e2=G30[2]`,
                 `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+                `grad(s) = derivative(s,x) * e1 + derivative(s,y) * e2 + derivative(s,z) * e3`,
+                `div(v) = derivative(v|e1,x) + derivative(v|e2,y) + derivative(v|e3,z)`,
+                `curl(v) = (derivative(v|e3,y)-derivative(v|e2,z))*e1+(derivative(v|e1,z)-derivative(v|e3,x))*e2+(derivative(v|e2,x)-derivative(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*derivative(v,x)+(a|e2)*derivative(v,y)+(a|e3)*derivative(v,z)`,
                 `A = Ax * e1 + Ay * e2 + Az * e3`,
                 `B = Bx * e1 + By * e2 + Bz * e3`,
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `div(f*A)-f*div(A)-A|grad(f)`
             ];
             const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                useDerivativeShorthandLowerD: true
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -449,17 +451,18 @@ describe("gibbs", function () {
                 `e1=G30[1]`,
                 `e2=G30[2]`,
                 `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+                `grad(s) = derivative(s,x) * e1 + derivative(s,y) * e2 + derivative(s,z) * e3`,
+                `div(v) = derivative(v|e1,x) + derivative(v|e2,y) + derivative(v|e3,z)`,
+                `curl(v) = (derivative(v|e3,y)-derivative(v|e2,z))*e1+(derivative(v|e1,z)-derivative(v|e3,x))*e2+(derivative(v|e2,x)-derivative(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*derivative(v,x)+(a|e2)*derivative(v,y)+(a|e3)*derivative(v,z)`,
                 `A = Ax * e1 + Ay * e2 + Az * e3`,
                 `B = Bx * e1 + By * e2 + Bz * e3`,
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
                 `div(cross(A,B))-B|curl(A)+A|curl(B)`
             ];
             const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                useDerivativeShorthandLowerD: true
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -471,10 +474,10 @@ describe("gibbs", function () {
                 `e1=G30[1]`,
                 `e2=G30[2]`,
                 `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+                `grad(s) = derivative(s,x) * e1 + derivative(s,y) * e2 + derivative(s,z) * e3`,
+                `div(v) = derivative(v|e1,x) + derivative(v|e2,y) + derivative(v|e3,z)`,
+                `curl(v) = (derivative(v|e3,y)-derivative(v|e2,z))*e1+(derivative(v|e1,z)-derivative(v|e3,x))*e2+(derivative(v|e2,x)-derivative(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*derivative(v,x)+(a|e2)*derivative(v,y)+(a|e3)*derivative(v,z)`,
                 `A = Ax * e1 + Ay * e2 + Az * e3`,
                 `B = Bx * e1 + By * e2 + Bz * e3`,
                 `LHS=curl(cross(A,B))`,
@@ -483,7 +486,8 @@ describe("gibbs", function () {
             ];
             const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-                disable: [Directive.factoring]
+                disable: [Directive.factoring],
+                useDerivativeShorthandLowerD: true
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -497,10 +501,10 @@ describe("gibbs", function () {
                 `e1=G30[1]`,
                 `e2=G30[2]`,
                 `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `ddrv(v,a) = (a|e1)*d(v,x)+(a|e2)*d(v,y)+(a|e3)*d(v,z)`,
+                `grad(s) = derivative(s,x) * e1 + derivative(s,y) * e2 + derivative(s,z) * e3`,
+                `div(v) = derivative(v|e1,x) + derivative(v|e2,y) + derivative(v|e3,z)`,
+                `curl(v) = (derivative(v|e3,y)-derivative(v|e2,z))*e1+(derivative(v|e1,z)-derivative(v|e3,x))*e2+(derivative(v|e2,x)-derivative(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*derivative(v,x)+(a|e2)*derivative(v,y)+(a|e3)*derivative(v,z)`,
                 `A = Ax * e1 + Ay * e2 + Az * e3`,
                 `B = Bx * e1 + By * e2 + Bz * e3`,
                 `C = Cx * e1 + Cy * e2 + Cz * e3`,
@@ -508,7 +512,8 @@ describe("gibbs", function () {
             ];
             const engine = create_script_context({
                 dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
-                disable: [Directive.factoring]
+                disable: [Directive.factoring],
+                useDerivativeShorthandLowerD: true
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -520,12 +525,15 @@ describe("gibbs", function () {
                 `e1=G30[1]`,
                 `e2=G30[2]`,
                 `e3=G30[3]`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
+                `grad(s) = derivative(s,x) * e1 + derivative(s,y) * e2 + derivative(s,z) * e3`,
+                `div(v) = derivative(v|e1,x) + derivative(v|e2,y) + derivative(v|e3,z)`,
+                `curl(v) = (derivative(v|e3,y)-derivative(v|e2,z))*e1+(derivative(v|e1,z)-derivative(v|e3,x))*e2+(derivative(v|e2,x)-derivative(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*derivative(v,x)+(a|e2)*derivative(v,y)+(a|e3)*derivative(v,z)`,
                 `curl(grad(f))`
             ];
             const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                useDerivativeShorthandLowerD: true
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");
@@ -538,16 +546,18 @@ describe("gibbs", function () {
                 `e2=G30[2]`,
                 `e3=G30[3]`,
                 `A = Ax * e1 + Ay * e2 + Az * e3`,
-                `grad(s) = d(s,x) * e1 + d(s,y) * e2 + d(s,z) * e3`,
-                `div(v) = d(v|e1,x) + d(v|e2,y) + d(v|e3,z)`,
-                `curl(v) = (d(v|e3,y)-d(v|e2,z))*e1+(d(v|e1,z)-d(v|e3,x))*e2+(d(v|e2,x)-d(v|e1,y))*e3`,
-                `laplacian(t) = d(d(t,x),x) + d(d(t,y),y) + d(d(t,z),z)`,
+                `grad(s) = derivative(s,x) * e1 + derivative(s,y) * e2 + derivative(s,z) * e3`,
+                `div(v) = derivative(v|e1,x) + derivative(v|e2,y) + derivative(v|e3,z)`,
+                `curl(v) = (derivative(v|e3,y)-derivative(v|e2,z))*e1+(derivative(v|e1,z)-derivative(v|e3,x))*e2+(derivative(v|e2,x)-derivative(v|e1,y))*e3`,
+                `ddrv(v,a) = (a|e1)*derivative(v,x)+(a|e2)*derivative(v,y)+(a|e3)*derivative(v,z)`,
+                `laplacian(t) = derivative(derivative(t,x),x) + derivative(derivative(t,y),y) + derivative(derivative(t,z),z)`,
                 `LHS=curl(curl(A))`,
                 `RHS=grad(div(A))-laplacian(A)`,
                 `LHS-RHS`
             ];
             const engine = create_script_context({
-                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom']
+                dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
+                useDerivativeShorthandLowerD: true
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(value), "0");

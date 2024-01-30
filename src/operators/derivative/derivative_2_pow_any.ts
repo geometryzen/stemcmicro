@@ -1,4 +1,5 @@
-import { TFLAG_DIFF, ExtensionEnv, TFLAG_NONE, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
+import { Native, native_sym } from "math-expression-native";
+import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Sym } from "../../tree/sym/Sym";
@@ -9,7 +10,6 @@ import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 import { dpower } from "./helpers/dpower";
-import { MATH_DERIVATIVE } from "./MATH_DERIVATIVE";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -27,8 +27,8 @@ type EXP = Cons2<Sym, LHS, RHS>;
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('derivative_2_pow_any', MATH_DERIVATIVE, and(is_cons, is_opr_2_any_any(MATH_POW)), is_any, $);
-        this.#hash = hash_binop_cons_atom(MATH_DERIVATIVE, MATH_POW, HASH_ANY);
+        super('derivative_2_pow_any', native_sym(Native.derivative), and(is_cons, is_opr_2_any_any(MATH_POW)), is_any, $);
+        this.#hash = hash_binop_cons_atom(this.opr, MATH_POW, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;

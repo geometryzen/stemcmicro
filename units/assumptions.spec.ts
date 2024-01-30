@@ -1,5 +1,6 @@
 import { assert } from "chai";
 import { create_sym } from 'math-expression-atoms';
+import { UndeclaredVars } from "../src/api";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -8,10 +9,12 @@ describe("assumptions", function () {
         const lines: string[] = [
             `sqrt(a)`
         ];
-        const context = create_script_context();
+        const context = create_script_context({
+            allowUndeclaredVars: UndeclaredVars.Nil
+        });
 
-        const aValue = context.getSymbolValue(create_sym('a'));
-        assert.strictEqual(aValue.toString(), "()");
+        const aValue = context.getBinding(create_sym('a'));
+        assert.strictEqual(aValue.toString(), `Sym("a")`);
 
         const aProps = context.getSymbolProps(create_sym('a'));
         assert.strictEqual(Object.keys(aProps).length, 28);

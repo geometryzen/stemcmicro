@@ -1,4 +1,5 @@
 import { is_blade, is_boo, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom } from 'math-expression-atoms';
+import { is_native } from 'math-expression-native';
 import { scan } from '../algebrite/scan';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
@@ -7,7 +8,6 @@ import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and
 import { Native } from '../native/Native';
 import { native_sym } from '../native/native_sym';
 import { denominator } from '../operators/denominator/denominator';
-import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
 import { is_err } from '../operators/err/is_err';
 import { is_hyp } from '../operators/hyp/is_hyp';
 import { is_imu } from '../operators/imu/is_imu';
@@ -2161,7 +2161,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): stri
         return str;
     }
 
-    if (MATH_DERIVATIVE.equals(expr)) {
+    if (is_sym(expr) && is_native(expr, Native.derivative)) {
         return print_char('d');
     }
     else if (is_base_of_natural_logarithm(expr)) {

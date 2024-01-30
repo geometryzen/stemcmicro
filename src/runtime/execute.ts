@@ -1,5 +1,5 @@
-import { bake } from "../bake";
 import { ScanOptions } from '../algebrite/scan';
+import { Eval_bake } from "../bake";
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { items_to_cons } from "../makeList";
@@ -196,19 +196,14 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
     }
 
     const transformed = box.pop();
-    // console.lg();
-    // console.lg(`tranned : ${transformed}`);
-    // console.lg(`tranned : ${print_list(transformed, $)}`);
-
     // TODO: Does it make sense to remove this condition?
     // We should not have to treat NIL as something special.
     if (nil !== transformed) {
-        // console.lg(`tranned   : ${print_expr(transformed, $)}`);
         // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
         box.push(transformed);
-        if ($.isone($.getBinding(BAKE))) {
+        if ($.isConsSymbol(BAKE) && $.isone($.getBinding(BAKE))) {
             // console.lg("Baking...");
-            let expr = bake(box.pop(), $);
+            let expr = Eval_bake(box.pop(), $);
             // Hopefully a temporary fix for bake creating a non-normalized expression.
             expr = transform(expr, $);
             // console.lg(`baked     : ${print_list(expr, $)}`);

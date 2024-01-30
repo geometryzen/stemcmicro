@@ -1,11 +1,11 @@
-import { create_sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { Eval_let } from "./Eval_let";
 
-const LET = create_sym("let");
+const LET = native_sym(Native.let);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

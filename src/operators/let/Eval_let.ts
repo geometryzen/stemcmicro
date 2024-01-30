@@ -6,30 +6,22 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
  * (let [binding*] expr*)
  */
 export function Eval_let(expr: Cons, $: ExtensionEnv): U {
+    const bindExpr = assert_tensor(expr.item(1));
+    const exprList = expr.item(2);
     try {
-        const bindExpr = assert_tensor(expr.item(1));
-        const exprList = expr.item(2);
-        try {
-            const scope = $.derivedEnv();
-            const bindings: U[] = bindExpr.elems;
-            // TODO: assert length is even
-            const n = bindings.length / 2;
-            for (let i = 0; i < n; i++) {
-                const sym = assert_sym(bindings[2 * i]);
-                const binding = scope.valueOf(bindings[2 * i + 1]);
-                scope.setBinding(sym, binding);
-            }
-            return scope.valueOf(exprList);
+        const scope = $.derivedEnv();
+        const bindings: U[] = bindExpr.elems;
+        // TODO: assert length is even
+        const n = bindings.length / 2;
+        for (let i = 0; i < n; i++) {
+            const sym = assert_sym(bindings[2 * i]);
+            const binding = scope.valueOf(bindings[2 * i + 1]);
+            scope.setBinding(sym, binding);
         }
-        finally {
-            bindExpr.release();
-            exprList.release();
-        }
+        return scope.valueOf(exprList);
     }
-    catch (e) {
-        // TODO: Maybe we should start propagating exceptions?
-        // eslint-disable-next-line no-console
-        console.log("Error", `${e}`);
-        return expr;
+    finally {
+        bindExpr.release();
+        exprList.release();
     }
 }

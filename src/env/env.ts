@@ -85,6 +85,7 @@ export interface EnvOptions {
     disable?: Directive[];
     noOptimize?: boolean;
     useCaretForExponentiation?: boolean;
+    useDerivativeShorthandLowerD?: boolean;
     useIntegersForPredicates?: boolean;
     useParenForTensors?: boolean;
     syntaxKind?: SyntaxKind;
@@ -102,6 +103,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             disable: Array.isArray(options.disable) ? options.disable : [],
             noOptimize: typeof options.noOptimize === 'boolean' ? options.noOptimize : false,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
+            useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : false,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
             useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false,
             syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Algebrite,
@@ -118,6 +120,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             disable: [],
             noOptimize: false,
             useCaretForExponentiation: false,
+            useDerivativeShorthandLowerD: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
             syntaxKind: SyntaxKind.Algebrite
@@ -514,6 +517,7 @@ export class DerivedEnv implements ExtensionEnv {
         }
     }
     setBinding(sym: Sym, binding: U): void {
+        // console.lg("DerivedEnv.setBinding", `${sym}`, `${binding}`);
         this.#bindings.set(sym.key(), binding);
     }
     setUsrFunc(sym: Sym, usrfunc: U): void {
@@ -659,10 +663,13 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 // console.lg(`config.allowUndeclaredVars => ${config.allowUndeclaredVars}`);
                 switch (config.allowUndeclaredVars) {
                     case UndeclaredVars.Err: {
+                        // console.lg("getBinding", `${sym}`);
+                        // throw new ProgrammingError();// TEMP
                         return new Err(new Str(`Use of undeclared Var ${sym.key()}.`));
                     }
                     case UndeclaredVars.Nil: {
-                        return nil;
+                        return sym;
+                        // return nil;
                     }
                     default: {
                         throw new Error(`Unexpected config.allowUndeclaredVars`);
@@ -682,13 +689,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             else {
                 // TODO: May need to adjust the ordering.
                 // Do we check the symTab first?
-                return symTab.isBinding(sym);
+                return symTab.hasBinding(sym);
             }
         },
         isUserSymbol(sym: Sym): boolean {
             return userSymbols.has(sym.key());
         },
         setBinding(sym: Sym, binding: U): void {
+            // console.lg("ExprContext.setBinding", `${sym}`, `${binding}`);
             symTab.setBinding(sym, binding);
         },
         setUsrFunc(sym: Sym, usrfunc: U): void {
@@ -1054,7 +1062,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         throw new Error("!!!!!!!!!!!!!!!!!!!!!!!!");
                     }
                     // if (is_sym(head)) {
-                    //console.log("head", `${head}`);
+                    // console.lg("head", `${head}`);
                     const hashes = hash_info(expr);
                     for (const hash of hashes) {
                         const ops = currentOpsByHash()[hash];
@@ -1184,7 +1192,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         transform(expr: U): [TFLAGS, U] {
-            // console.log("transform", `${$.toSExprString(expr)}`);
+            // console.lg("transform", `${expr}`);
             // We short-circuit some expressions in order to improve performance.
             if (is_cons(expr)) {
                 // TODO: As an evaluation technique, I should be able to pick any item in the list and operate
@@ -1207,9 +1215,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
                 else if (is_sym(head)) {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
-                    const value = $.getBinding(head);
-                    if (is_lambda(value)) {
-                        return wrap_as_transform(value.evaluate(expr.argList, $), expr);
+                    if (symTab.hasBinding(head)) {
+                        const value = $.getBinding(head);
+                        if (is_lambda(value)) {
+                            return wrap_as_transform(value.evaluate(expr.argList, $), expr);
+                        }
+                        else {
+                            // And if it is not we fall through to the operator stuff.
+                        }
                     }
                 }
                 else if (is_rat(head)) {
@@ -1251,21 +1264,23 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (is_cons(expr)) {
                             const opr = expr.opr;
                             if (is_sym(opr)) {
-                                const binding = $.getBinding(opr);
-                                if (!is_nil(binding)) {
-                                    if (is_cons(binding)) {
-                                        // TODO: Install as a normal Operator...
-                                        if (binding.opr.equals(FN)) {
-                                            const newExpr = Eval_lambda_in_fn_syntax(expr, $);
-                                            return [TFLAG_DIFF, newExpr];
+                                if (symTab.hasBinding(opr)) {
+                                    const binding = $.getBinding(opr);
+                                    if (!is_nil(binding)) {
+                                        if (is_cons(binding)) {
+                                            // TODO: Install as a normal Operator...
+                                            if (binding.opr.equals(FN)) {
+                                                const newExpr = Eval_lambda_in_fn_syntax(expr, $);
+                                                return [TFLAG_DIFF, newExpr];
+                                            }
+                                            else if (binding.opr.equals(FUNCTION)) {
+                                                const newExpr = Eval_function(expr, $);
+                                                return [TFLAG_DIFF, newExpr];
+                                            }
                                         }
-                                        else if (binding.opr.equals(FUNCTION)) {
-                                            const newExpr = Eval_function(expr, $);
-                                            return [TFLAG_DIFF, newExpr];
+                                        else {
+                                            // If it's not a (function body paramList) expression.
                                         }
-                                    }
-                                    else {
-                                        // If it's not a (function body paramList) expression.
                                     }
                                 }
                             }

@@ -1,8 +1,9 @@
 import { create_sym, Sym } from "math-expression-atoms";
-import { Directive, Extension, ExtensionEnv, TFLAGS, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Directive, Extension, ExtensionEnv, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_for_atom } from "../../hashing/hash_info";
+import { ProgrammingError } from "../../programming/ProgrammingError";
 import { piAsFlt } from "../../tree/flt/Flt";
-import { cons, Cons, is_nil, U } from "../../tree/tree";
+import { Cons, is_nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 import { is_pi } from "../pi/is_pi";
 import { get_binding } from "./get_binding";
@@ -81,18 +82,17 @@ class SymExtension implements Extension<Sym> {
             return sym.key();
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     evaluate(sym: Sym, argList: Cons): [TFLAGS, U] {
-        // console.lg("SymExtension.evaluate", this.$.toInfixString(sym));
-        return this.transform(cons(sym, argList));
+        // Dead code?
+        throw new ProgrammingError();
     }
-    transform(expr: U): [TFLAGS, U] {
-        // console.lg("SymExtension.transform", render_as_infix(expr, this.$));
-        if (is_sym(expr)) {
-            const binding = get_binding(expr, this.$);
-            // console.lg("binding", render_as_infix(binding[1], this.$));
-            return binding;
-        }
-        return [TFLAG_NONE, expr];
+    transform(sym: Sym): [TFLAGS, U] {
+        // console.lg("SymExtension.transform", `${sym}`);
+        // return [TFLAG_NONE, sym];
+        const response = get_binding(sym, this.$);
+        // console.lg("binding", render_as_infix(binding[1], this.$));
+        return response;
     }
 }
 

@@ -117,7 +117,7 @@ import { deref_builder } from '../operators/deref/Eval_deref';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
 import { derivative_fn } from '../operators/derivative/derivative_fn';
-import { d_to_derivative } from '../operators/derivative/d_to_derivative';
+import { d_to_derivative_builder } from '../operators/derivative/d_to_derivative';
 import { det_any } from '../operators/det/det_any';
 import { map_extension } from '../operators/dictionary/dictionary_extension';
 import { dim_varargs } from '../operators/dim/dim_varargs';
@@ -443,7 +443,14 @@ import { Eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle
 import { one, zero } from '../tree/rat/Rat';
 import { ExtensionEnv } from "./ExtensionEnv";
 
-export function define_std_operators($: ExtensionEnv) {
+export interface DefineStandardOperatorsConfig {
+    /**
+     * Scripting Engines will use 'd' as a shorthand for 'derivative'.
+     */
+    useDerivativeShorthandLowerD: boolean;
+}
+
+export function define_std_operators($: ExtensionEnv, config: DefineStandardOperatorsConfig) {
     // 
     const MATH_ADD = native_sym(Native.add);
     const COS = native_sym(Native.cos);
@@ -799,7 +806,14 @@ export function define_std_operators($: ExtensionEnv) {
 
     $.defineOperator(deref_builder);
 
-    $.defineOperator(d_to_derivative);
+    if (config.useDerivativeShorthandLowerD) {
+        // console.lg("Installing d_to_derivative");
+        $.defineOperator(d_to_derivative_builder);
+    }
+    else {
+        // console.lg("NOT installing d_to_derivative");
+    }
+
     $.defineOperator(derivative_2_mul_any);
     $.defineOperator(derivative_2_pow_any);
     $.defineOperator(derivative_fn);

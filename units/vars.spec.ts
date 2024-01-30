@@ -69,6 +69,7 @@ describe("ClojureScript", function () {
             }
         }
         assert.strictEqual(values.length, 1);
+        // console.lg(`${values[0]}`);
         const err = assert_err(values[0]);
         // Printing has troble with errors right now.
         // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "a");
@@ -95,6 +96,7 @@ describe("ClojureScript", function () {
             }
         }
         assert.strictEqual(values.length, 1);
+        // console.lg(`${values[0]}`);
         const err = assert_err(values[0]);
         // Printing has troble with errors right now.
         // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "a");

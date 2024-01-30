@@ -108,6 +108,7 @@ export interface EngineConfig {
     prolog: string[];
     useGeometricAlgebra: boolean;
     useClojureScript: boolean;
+    useDerivativeShorthandLowerD: boolean;
     usePythonScript: boolean;
 }
 
@@ -221,6 +222,7 @@ class AlgebriteExprEngine implements ExprEngine {
         });
         init_env(this.#env, {
             allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
+            useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             prolog: options.prolog
         });
     }
@@ -332,7 +334,11 @@ class ClojureScriptExprEngine implements ExprEngine {
         const baseEnv = create_env({ allowUndeclaredVars, dependencies: ALL_FEATURES });
         // const baseEnv = new DerivedEnv(create_env({ dependencies: ALL_FEATURES }));
         this.#env = baseEnv;
-        init_env(this.#env, { allowUndeclaredVars, prolog: options.prolog });
+        init_env(this.#env, {
+            allowUndeclaredVars,
+            useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
+            prolog: options.prolog
+        });
     }
     isConsSymbol(sym: Sym): boolean {
         return this.#env.isConsSymbol(sym);

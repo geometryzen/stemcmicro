@@ -1,3 +1,4 @@
+import { Native, native_sym } from "math-expression-native";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
@@ -10,7 +11,6 @@ import { Function2 } from "../helpers/Function2";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 import { is_sym } from "../sym/is_sym";
 import { dproduct } from "./helpers/dproduct";
-import { MATH_DERIVATIVE } from "./MATH_DERIVATIVE";
 
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv): Operator<Cons> {
@@ -30,8 +30,8 @@ type EXP = Cons2<Sym, LHS, RHS>;
 class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('derivative_2_mul_any', MATH_DERIVATIVE, and(is_cons, is_opr_2_any_any(MATH_MUL)), is_sym, $);
-        this.#hash = hash_binop_cons_atom(MATH_DERIVATIVE, MATH_MUL, HASH_ANY);
+        super('derivative_2_mul_any', native_sym(Native.derivative), and(is_cons, is_opr_2_any_any(MATH_MUL)), is_sym, $);
+        this.#hash = hash_binop_cons_atom(this.opr, MATH_MUL, HASH_ANY);
     }
     get hash(): string {
         return this.#hash;

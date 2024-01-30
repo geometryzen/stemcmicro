@@ -1,8 +1,8 @@
 import { is_blade } from "math-expression-atoms";
+import { is_native, Native } from "math-expression-native";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { imu } from "../../env/imu";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
-import { MATH_DERIVATIVE } from "../../operators/derivative/MATH_DERIVATIVE";
 import { is_unaop } from "../../operators/helpers/is_unaop";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
@@ -236,7 +236,7 @@ function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         // console.lg(`OPERATORS compare_terms ${render_as_infix(lhs.opr, $)} ${render_as_infix(rhs.opr, $)}`);
         const oprLHS = lhs.opr;
         const oprRHS = rhs.opr;
-        if (oprLHS.equals(oprRHS) && oprLHS.equals(MATH_DERIVATIVE)) {
+        if (oprLHS.equals(oprRHS) && is_sym(oprLHS) && is_native(oprLHS, Native.derivative)) {
             return compare_cons_cons(lhs, rhs, $);
         }
         if (is_mul_2_any_blade(lhs) && is_mul_2_any_blade(rhs)) {

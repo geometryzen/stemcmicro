@@ -1,9 +1,9 @@
+import { Native, native_sym } from "math-expression-native";
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { Eval_derivative } from "./Eval_derivative";
-import { MATH_DERIVATIVE } from "./MATH_DERIVATIVE";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -14,7 +14,7 @@ class Builder implements OperatorBuilder<U> {
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('derivative', MATH_DERIVATIVE, $);
+        super('derivative', native_sym(Native.derivative), $);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {

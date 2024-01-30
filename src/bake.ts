@@ -15,7 +15,7 @@ import { car, cons, is_cons, U } from './tree/tree';
  * @param $ 
  * @returns 
  */
-export function bake(expr: U, $: ExtensionEnv): U {
+export function Eval_bake(expr: U, $: ExtensionEnv): U {
     return doexpand_unary(bake_internal, expr, $);
 }
 
@@ -55,7 +55,7 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
     }
     else if (is_cons(expr) && !car(expr).equals(FOR)) {
         const bakeList = items_to_cons(car(expr), ...expr.tail().map(function (x) {
-            return bake(x, $);
+            return Eval_bake(x, $);
         }));
         return hook(bakeList, "F");
     }

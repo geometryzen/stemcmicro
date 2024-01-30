@@ -235,6 +235,7 @@ export interface TestOptions {
     assumes?: { [name: string]: Partial<Predicates> };
     dependencies?: DEPENDENCY[];
     useCaretForExponentiation?: boolean;
+    useDerivativeShorthandLowerD?: boolean;
     useIntegersForPredicates?: boolean;
     verbose?: boolean;
     name?: string;
@@ -244,6 +245,7 @@ interface TestConfig {
     assumes: { [name: string]: Partial<Predicates> };
     dependencies: DEPENDENCY[];
     useCaretForExponentiation: boolean;
+    useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
     verbose: boolean;
 }
@@ -255,6 +257,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             assumes: options.assumes ? options.assumes : {},
             dependencies: Array.isArray(options.dependencies) ? options.dependencies : [],
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
+            useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
@@ -265,6 +268,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             assumes: {},
             dependencies: [],
             useCaretForExponentiation: true,
+            useDerivativeShorthandLowerD: true,
             useIntegersForPredicates: true,
             verbose: false
         };
@@ -280,6 +284,7 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
         return {
             assumes: options.assumes,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
+            useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
             syntaxKind: SyntaxKind.Algebrite
         };
@@ -287,6 +292,7 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
     else {
         return {
             useCaretForExponentiation: true,
+            useDerivativeShorthandLowerD: true,
             useIntegersForPredicates: true,
             syntaxKind: SyntaxKind.Algebrite
         };

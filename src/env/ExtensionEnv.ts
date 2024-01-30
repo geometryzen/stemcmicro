@@ -525,6 +525,6 @@ export interface Extension<T extends U> {
     toLatexString(expr: T, $: ExtensionEnv): string;
     toListString(expr: T, $: ExtensionEnv): string;
     evaluate(expr: T, argList: Cons, $: ExtensionEnv): [TFLAGS, U];
-    transform(expr: U, $: ExtensionEnv): [TFLAGS, U];
+    transform(expr: T, $: ExtensionEnv): [TFLAGS, U];
     valueOf(expr: T, $: ExtensionEnv): U;
 }

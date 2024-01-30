@@ -1,10 +1,9 @@
 import { Blade, is_blade, is_uom, Uom } from 'math-expression-atoms';
+import { is_native } from 'math-expression-native';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
 import { Native } from '../native/Native';
-import { native_sym } from '../native/native_sym';
-import { MATH_DERIVATIVE } from '../operators/derivative/MATH_DERIVATIVE';
 import { is_flt } from '../operators/flt/is_flt';
 import { is_num } from '../operators/num/is_num';
 import { is_rat } from '../operators/rat/is_rat';
@@ -25,8 +24,6 @@ import { Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, U } from '../tree/tree';
 import { render_using_non_sexpr_print_mode } from './print';
-
-const COMPONENT = native_sym(Native.component);
 
 /*
 
@@ -725,36 +722,42 @@ function emit_denominator(p: U, n: number, $: ExtensionEnv) {
 }
 
 function emit_function(expr: Cons, $: ExtensionEnv) {
-    // console.lg("emit_function", $.toInfixString(expr));
-    if (expr.opr.equals(COMPONENT) && is_sym(cadr(expr))) {
-        emit_index_function(expr, $);
-        return;
-    }
+    const opr = expr.opr;
+    try {
+        // console.lg("emit_function", $.toInfixString(expr));
+        if (is_sym(opr) && is_native(opr, Native.component) && is_sym(cadr(expr))) {
+            emit_index_function(expr, $);
+            return;
+        }
 
-    if (is_factorial(expr)) {
-        emit_factorial_function(expr, $);
-        return;
-    }
+        if (is_sym(opr) && is_native(opr, Native.factorial)) {
+            emit_factorial_function(expr, $);
+            return;
+        }
 
-    if (car(expr).equals(MATH_DERIVATIVE)) {
-        __emit_char('d');
-    }
-    else {
-        emit_symbol(car(expr) as Sym, $);
-    }
-    __emit_char('(');
-    let argList: Cons = expr.cdr;
-    if (is_cons(argList)) {
-        emit_expr(argList.head, $);
-        argList = argList.cdr;
-        while (is_cons(argList)) {
-            __emit_char(',');
-            //__emit_char(' ')
+        if (is_sym(opr) && is_native(opr, Native.derivative)) {
+            __emit_char('d');
+        }
+        else {
+            emit_symbol(car(expr) as Sym, $);
+        }
+        __emit_char('(');
+        let argList: Cons = expr.cdr;
+        if (is_cons(argList)) {
             emit_expr(argList.head, $);
             argList = argList.cdr;
+            while (is_cons(argList)) {
+                __emit_char(',');
+                //__emit_char(' ')
+                emit_expr(argList.head, $);
+                argList = argList.cdr;
+            }
         }
+        __emit_char(')');
     }
-    __emit_char(')');
+    finally {
+        opr.release();
+    }
 }
 
 function emit_index_function(p: U, $: ExtensionEnv) {

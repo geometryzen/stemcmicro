@@ -1,15 +1,15 @@
+import { Native, native_sym } from 'math-expression-native';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { inv } from './inv';
 import { items_to_cons } from './makeList';
 import { nativeInt } from './nativeInt';
 import { derivative } from './operators/derivative/derivative';
-import { MATH_DERIVATIVE } from './operators/derivative/MATH_DERIVATIVE';
+import { is_tensor } from './operators/tensor/is_tensor';
 import { MAXDIM, POWER } from './runtime/constants';
 import { Err } from './tree/err/Err';
 import { one, zero } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { create_tensor_elements_diagonal } from './tree/tensor/create_tensor_elements';
-import { is_tensor } from './operators/tensor/is_tensor';
 import { Tensor } from './tree/tensor/Tensor';
 import { Cons, U } from './tree/tree';
 
@@ -74,7 +74,7 @@ export function assert_square_matrix_tensor(tensor: Tensor, $: ExtensionEnv): nu
 export function d_tensor_tensor(p1: Tensor, p2: Tensor, $: ExtensionEnv): U {
 
     if (p1.ndim + 1 >= MAXDIM) {
-        return items_to_cons(MATH_DERIVATIVE, p1, p2);
+        return items_to_cons(native_sym(Native.derivative), p1, p2);
     }
 
     const sizes = p1.copyDimensions();

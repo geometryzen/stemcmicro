@@ -68,7 +68,7 @@ class ExtensionOperator<T extends U> implements Operator<T> {
     evaluate(expr: T, argList: Cons): [TFLAGS, U] {
         return this.extension.evaluate(expr, argList, this.$);
     }
-    transform(expr: U): [TFLAGS, U] {
+    transform(expr: T): [TFLAGS, U] {
         return this.extension.transform(expr, this.$);
     }
 }

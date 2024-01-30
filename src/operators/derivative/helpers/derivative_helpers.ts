@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { is_native, Native, native_sym } from 'math-expression-native';
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
 import { dirac } from '../../../dirac';
@@ -14,21 +15,14 @@ import {
     ARCTANH,
     BESSELJ,
     BESSELY,
-    COS,
     COSH,
     ERF,
     ERFC,
-    EXP,
     HERMITE,
     INTEGRAL,
-    LOG,
-    MULTIPLY,
-    POWER,
     SECRETX,
     SGN,
-    SIN,
     SINH,
-    TAN,
     TANH
 } from '../../../runtime/constants';
 import { DynamicConstants } from '../../../runtime/defs';
@@ -48,7 +42,6 @@ import { sinh } from '../../sinh/sinh';
 import { subst } from '../../subst/subst';
 import { is_sym } from '../../sym/is_sym';
 import { derivative } from '../derivative';
-import { MATH_DERIVATIVE } from '../MATH_DERIVATIVE';
 import { dpower } from './dpower';
 import { dproduct } from './dproduct';
 
@@ -83,7 +76,7 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
             return zero;
         }
         // For all other symbolic constants that we don't know what they represent...
-        return items_to_cons(MATH_DERIVATIVE, F, X);
+        return items_to_cons(native_sym(Native.derivative), F, X);
     }
     */
 
@@ -103,28 +96,28 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
     // console.lg(`car(p1)=>${car(p1)}`);
     // Turning these into matching patterns...
     const opr = car(F);
-    if (opr.equals(MULTIPLY)) {
+    if (is_sym(opr) && is_native(opr, Native.multiply)) {
         return dproduct(F, X, $);
     }
-    if (opr.equals(POWER)) {
+    if (is_sym(opr) && is_native(opr, Native.pow)) {
         return dpower(F, X, $);
     }
-    if (opr.equals(MATH_DERIVATIVE)) {
+    if (is_sym(opr) && is_native(opr, Native.derivative)) {
         return dd(F, X, $);
     }
-    if (opr.equals(LOG)) {
+    if (is_sym(opr) && is_native(opr, Native.log)) {
         return dlog(F, X, $);
     }
-    if (opr.equals(SIN)) {
+    if (is_sym(opr) && is_native(opr, Native.sin)) {
         return dsin(F, X, $);
     }
-    if (opr.equals(COS)) {
+    if (is_sym(opr) && is_native(opr, Native.cos)) {
         return dcos(F, X, $);
     }
-    if (opr.equals(EXP)) {
+    if (is_sym(opr) && is_native(opr, Native.exp)) {
         return dexp(F, X, $);
     }
-    if (opr.equals(TAN)) {
+    if (is_sym(opr) && is_native(opr, Native.tan)) {
         return dtan(F, X, $);
     }
     if (opr.equals(ARCSIN)) {
@@ -173,7 +166,7 @@ function d_scalar_scalar_1(F: U, X: Sym, $: ExtensionEnv): U {
         return dbessely(F, X, $);
     }
 
-    if (car(F).equals(INTEGRAL) && caddr(F).equals(X)) {
+    if (F.opr.equals(INTEGRAL) && caddr(F).equals(X)) {
         return derivative_of_integral(F);
     }
 
@@ -205,17 +198,25 @@ function dd(p1: U, p2: Sym, $: ExtensionEnv): U {
     // d(f(x,y),x)
     const p3 = derivative(cadr(p1), p2, $);
 
-    if (car(p3).equals(MATH_DERIVATIVE)) {
-        // handle dx terms
-        const caddr_p3 = caddr(p3);
-        const caddr_p1 = caddr(p1);
-        const cadr_p3 = cadr(p3);
-        // Determine whether we should be comparing as terms or factors. I think it is as terms.
-        if ($.compareFn(MATH_ADD)(caddr_p3, caddr_p1) < 0) {
-            return items_to_cons(MATH_DERIVATIVE, items_to_cons(MATH_DERIVATIVE, cadr_p3, caddr_p3), caddr_p1);
+    if (is_cons(p3)) {
+        const opr = p3.opr;
+        try {
+            if (is_sym(opr) && is_native(opr, Native.derivative)) {
+                // handle dx terms
+                const caddr_p3 = caddr(p3);
+                const caddr_p1 = caddr(p1);
+                const cadr_p3 = cadr(p3);
+                // Determine whether we should be comparing as terms or factors. I think it is as terms.
+                if ($.compareFn(MATH_ADD)(caddr_p3, caddr_p1) < 0) {
+                    return items_to_cons(native_sym(Native.derivative), items_to_cons(native_sym(Native.derivative), cadr_p3, caddr_p3), caddr_p1);
+                }
+                else {
+                    return items_to_cons(native_sym(Native.derivative), items_to_cons(native_sym(Native.derivative), cadr_p3, caddr_p1), caddr_p3);
+                }
+            }
         }
-        else {
-            return items_to_cons(MATH_DERIVATIVE, items_to_cons(MATH_DERIVATIVE, cadr_p3, caddr_p1), caddr_p3);
+        finally {
+            opr.release();
         }
     }
 
@@ -229,11 +230,11 @@ function dfunction(F: Cons, X: Sym, $: ExtensionEnv): U {
     const argList = F.argList;
 
     if (argList.contains(X)) {
-        return items_to_cons(MATH_DERIVATIVE, F, X);
+        return items_to_cons(native_sym(Native.derivative), F, X);
     }
     else if (argList.isNil()) {
         // I don't really like the empty argument list being a wildcard, but here it is...
-        return items_to_cons(MATH_DERIVATIVE, F, X);
+        return items_to_cons(native_sym(Native.derivative), F, X);
     }
     else {
         return zero;

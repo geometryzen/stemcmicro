@@ -1,8 +1,8 @@
+import { car, cdr, U } from "math-expression-tree";
 import { add_terms } from "../../../calculators/add/add_terms";
 import { ExtensionEnv } from "../../../env/ExtensionEnv";
 import { length_of_cons_otherwise_zero } from "../../../length_of_cons_or_zero";
 import { multiply_items } from "../../../multiply";
-import { car, cdr, U } from "../../../tree/tree";
 import { derivative } from "../derivative";
 
 /**
@@ -32,7 +32,6 @@ export function dproduct(F: U, X: U, $: ExtensionEnv): U {
             }
             argList = cdr(argList);
         }
-        // We are assuming here
         terms.push(multiply_items(factors, $));
     }
     return add_terms(terms, $);

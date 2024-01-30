@@ -1250,6 +1250,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                             return [TFLAG_DIFF, newExpr];
                         }
                         else {
+                            // eslint-disable-next-line no-console
                             console.warn(`${head}`);
                             throw new ProgrammingError();
                         }

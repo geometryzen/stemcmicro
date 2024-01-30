@@ -1,4 +1,4 @@
-import { is_keyword, is_rat, is_str, is_sym, Map, Sym } from "math-expression-atoms";
+import { is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
 import { is_atom, is_cons, is_nil, U } from "math-expression-tree";
 
 const KIND_NIL = 0;
@@ -28,6 +28,7 @@ export function hash_for_atom(atom: U): string | never {
         throw new Error(`${atom} is not an atom`);
     }
 }
+
 export const HASH_BLADE = 'Blade';
 export const HASH_BOO = 'Boo';
 export const HASH_DICTIONARY = new Map([]).name;
@@ -36,7 +37,7 @@ export const HASH_FLT = 'Flt';
 export const HASH_HYP = 'Hyp';
 export const HASH_IMU = 'Imu';
 export const HASH_RAT = 'Rat';
-export const HASH_STR = 'Str';
+export const HASH_STR = hash_for_atom(new JsString(""));  // JsString is currently an alias for Str.
 export const HASH_SYM = 'Sym';
 export const HASH_TENSOR = 'Tensor';
 export const HASH_UOM = 'Uom';

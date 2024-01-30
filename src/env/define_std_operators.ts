@@ -230,6 +230,7 @@ import { make_predicate_sym_operator } from '../operators/isreal/is_real_sym';
 import { iszero_any } from '../operators/iszero/iszero_any';
 import { iszero_rat_builder } from '../operators/iszero/iszero_rat';
 import { iszero_sym } from '../operators/iszero/iszero_sym';
+import { jsobject_extension } from '../operators/jsobject/JsObjectExtension';
 import { keyword_extension } from '../operators/keyword/KeywordExtension';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
@@ -721,6 +722,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(rat_extension);
     $.defineOperator(flt_extension);
     $.defineOperator(str_extension);
+    $.defineOperator(jsobject_extension);
 
     $.defineOperator(abs_add_blades);
     $.defineOperator(abs_add);

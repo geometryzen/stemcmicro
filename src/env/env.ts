@@ -481,7 +481,7 @@ export class DerivedEnv implements ExtensionEnv {
         else if (is_tensor(expr)) {
             return this.#baseEnv.valueOf(expr);
         }
-        throw new Error(`valueOf ${expr} method not implemented.`);
+        throw new Error(`DerivedEnv.valueOf ${expr} method not implemented.`);
     }
     getBinding(sym: Sym): U {
         const key = sym.key();

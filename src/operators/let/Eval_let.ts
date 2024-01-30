@@ -3,11 +3,11 @@ import { Cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 
 /**
- * (let [binding*] expr*)
+ * (let [binding*] expr)
  */
 export function Eval_let(expr: Cons, $: ExtensionEnv): U {
     const bindExpr = assert_tensor(expr.item(1));
-    const exprList = expr.item(2);
+    const body = expr.item(2);
     try {
         const scope = $.derivedEnv();
         const bindings: U[] = bindExpr.elems;
@@ -18,10 +18,10 @@ export function Eval_let(expr: Cons, $: ExtensionEnv): U {
             const binding = scope.valueOf(bindings[2 * i + 1]);
             scope.setBinding(sym, binding);
         }
-        return scope.valueOf(exprList);
+        return scope.valueOf(body);
     }
     finally {
         bindExpr.release();
-        exprList.release();
+        body.release();
     }
 }

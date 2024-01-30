@@ -16,7 +16,7 @@ class Builder implements OperatorBuilder<U> {
 class Op extends FunctionVarArgs implements Operator<Cons> {
     readonly #hash: string;
     constructor($: ExtensionEnv) {
-        super('(let [binding*] expr*)', LET, $);
+        super('(let [binding*] body)', LET, $);
         this.#hash = hash_nonop_cons(this.opr);
     }
     get hash(): string {

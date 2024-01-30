@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { is_keyword, is_map, is_str, is_tensor, Str } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
+import { is_native } from 'math-expression-native';
 import { is_atom, nil } from 'math-expression-tree';
 import { UndeclaredVars } from '../api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
@@ -128,6 +129,17 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
         // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;
     }
+}
+
+/**
+ * Evaluates each item in the `argList` and returns (opr ...), 
+ */
+function evaluate_args(opr: Sym, argList: Cons, $: ExtensionEnv): Cons {
+    // We must evaluate all the operands in this scope before letting the base to the gruntwork of multiplication
+    // const values = argList.map(x=>$.valueOf(x));
+    // cons(opr, values);
+    const args = [...argList].map(x => $.valueOf(x));
+    return items_to_cons(opr, ...args);
 }
 
 /**
@@ -418,41 +430,20 @@ export class DerivedEnv implements ExtensionEnv {
         if (is_cons(expr)) {
             const opr = expr.opr;
             try {
-                // A strategy here could be to evaluate the args in the current scope then delegate to the base?
-                // But we have to be consistent with the needs of the operation.
-                // We could also 
                 if (is_sym(opr)) {
-                    if (opr.equals(ADD)) {
-                        return this.#baseEnv.valueOf(expr);
-                    }
-                    else if (opr.equals(ALGEBRA)) {
-                        return this.#baseEnv.valueOf(expr);
-                    }
-                    else if (opr.equals(ASSIGN)) {
+                    // The startegy is to evaluate arguments in the current scope then delegate to the base environment to do the operator gruntwork.
+                    // This should work for most operators but how should we handle Special Forms?
+                    if (opr.equals(ASSIGN)) {
                         return setq(expr.lhs, expr.rhs, assert_sym_any_any(expr), this);
                     }
                     else if (opr.equals(COMPONENT)) {
                         return this.#baseEnv.valueOf(expr);
                     }
-                    else if (opr.equals(INNER)) {
-                        return this.#baseEnv.valueOf(expr);
-                    }
-                    else if (opr.equals(LCO)) {
-                        return this.#baseEnv.valueOf(expr);
-                    }
                     else if (opr.equals(LET)) {
                         return Eval_let(expr, this);
                     }
-                    else if (opr.equals(MULTIPLY)) {
-                        return this.#baseEnv.valueOf(expr);
-                    }
-                    else if (opr.equals(OUTER)) {
-                        return this.#baseEnv.valueOf(expr);
-                    }
                     else {
-                        // Any operator we don't know about we don't evaluate.
-                        return expr;
-                        // throw new Error(`valueOf (${expr.opr} ...) method not implemented.`);
+                        return this.#baseEnv.valueOf(evaluate_args(opr, expr.argList, this));
                     }
                 }
             }

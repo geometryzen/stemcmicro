@@ -15,6 +15,7 @@ import { setq } from '../operators/assign/assign_any_any';
 import { is_boo } from "../operators/boo/is_boo";
 import { is_flt } from "../operators/flt/is_flt";
 import { Eval_lambda_in_fn_syntax } from '../operators/fn/Eval_fn';
+import { JsObjectExtension } from '../operators/jsobject/JsObjectExtension';
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { Eval_let } from '../operators/let/Eval_let';
 import { is_rat } from "../operators/rat/is_rat";
@@ -461,7 +462,9 @@ export class DerivedEnv implements ExtensionEnv {
                 return expr;
             }
             else if (is_jsobject(expr)) {
-                return expr;
+                // This is the idea until we can do a lookup of the extension.
+                const extension = new JsObjectExtension();
+                return extension.valueOf(expr, this);
             }
             else if (is_keyword(expr)) {
                 return expr;
@@ -502,7 +505,7 @@ export class DerivedEnv implements ExtensionEnv {
                     // This we be OK provided that the atom has no internal structure e.g. Map, Tensor
                     return expr;
                 }
-            }    
+            }
         }
         throw new Error(`DerivedEnv.valueOf ${expr} method not implemented.`);
     }

@@ -5,10 +5,9 @@ import { hash_for_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
 
-class JsObjectExtension implements Extension<JsObject> {
+export class JsObjectExtension implements Extension<JsObject> {
     #hash: string = hash_for_atom(new JsObject({}));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
     }
     iscons(): false {
@@ -23,7 +22,8 @@ class JsObjectExtension implements Extension<JsObject> {
     get name(): string {
         return 'JsObjectExtension';
     }
-    valueOf(obj: JsObject): JsObject {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    valueOf(obj: JsObject, $: ExtensionEnv): JsObject {
         assert_jsobject(obj);
         return obj;
     }
@@ -63,6 +63,6 @@ class JsObjectExtension implements Extension<JsObject> {
     }
 }
 
-export const jsobject_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new JsObjectExtension($);
+export const jsobject_extension = new ExtensionOperatorBuilder(function () {
+    return new JsObjectExtension();
 });

@@ -385,6 +385,7 @@ export interface ExtensionEnv extends ExprContext {
      *
      */
     negate(expr: U): U;
+    extensionFor(expr: U): Extension<U> | undefined;
     /**
      * Returns the operator for interacting with the expression.
      * Operator(s) are reference counted and so the operator MUST be released when no longer needed.

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { is_keyword, is_map, is_str, is_tensor, Str } from 'math-expression-atoms';
+import { is_jsobject, is_keyword, is_map, is_str, is_tensor, Str } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
-import { is_native } from 'math-expression-native';
 import { is_atom, nil } from 'math-expression-tree';
 import { UndeclaredVars } from '../api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
@@ -24,7 +23,7 @@ import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
 import { ProgrammingError } from '../programming/ProgrammingError';
-import { ALGEBRA, ASSIGN, COMPONENT, FN, FUNCTION, INNER, LCO, LET, OUTER } from "../runtime/constants";
+import { ASSIGN, COMPONENT, FN, FUNCTION, LET } from "../runtime/constants";
 import { execute_definitions } from '../runtime/init';
 import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
@@ -36,7 +35,7 @@ import { Tensor } from "../tree/tensor/Tensor";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, ConsExpr, Directive, ExprComparator, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, ConsExpr, Directive, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
@@ -341,6 +340,9 @@ export class DerivedEnv implements ExtensionEnv {
     negate(expr: U): U {
         throw new Error('negate method not implemented.');
     }
+    extensionFor(expr: U): Extension<U> | undefined {
+        throw new Error('extensionFor method not implemented.');
+    }
     operatorFor(expr: U): Operator<U> | undefined {
         throw new Error('operatorFor method not implemented.');
     }
@@ -451,35 +453,56 @@ export class DerivedEnv implements ExtensionEnv {
                 opr.release();
             }
         }
-        else if (is_boo(expr)) {
-            return expr;
-        }
-        else if (is_flt(expr)) {
-            return expr;
-        }
-        else if (is_keyword(expr)) {
-            return expr;
-        }
-        else if (is_map(expr)) {
-            return this.#baseEnv.valueOf(expr);
-        }
-        else if (is_rat(expr)) {
-            return expr;
-        }
-        else if (is_str(expr)) {
-            return expr;
-        }
-        else if (is_sym(expr)) {
-            const key = expr.key();
-            if (this.#bindings.has(key)) {
-                return this.#bindings.get(key)!;
+        else if (is_atom(expr)) {
+            if (is_boo(expr)) {
+                return expr;
             }
-            else {
+            else if (is_flt(expr)) {
+                return expr;
+            }
+            else if (is_jsobject(expr)) {
+                return expr;
+            }
+            else if (is_keyword(expr)) {
+                return expr;
+            }
+            else if (is_map(expr)) {
                 return this.#baseEnv.valueOf(expr);
             }
-        }
-        else if (is_tensor(expr)) {
-            return this.#baseEnv.valueOf(expr);
+            else if (is_rat(expr)) {
+                return expr;
+            }
+            else if (is_str(expr)) {
+                return expr;
+            }
+            else if (is_sym(expr)) {
+                const key = expr.key();
+                if (this.#bindings.has(key)) {
+                    return this.#bindings.get(key)!;
+                }
+                else {
+                    return this.#baseEnv.valueOf(expr);
+                }
+            }
+            else if (is_tensor(expr)) {
+                // We really need to be able to ask for the Extension because that abstraction
+                // does not bind early to the ExtensionEnv.
+                // const handler = this.#baseEnv.operatorFor(expr)!;
+                // handler..valueOf(expr)
+                // 
+                return this.#baseEnv.valueOf(expr);
+            }
+            else {
+                // In the general case we look for the Extension to correctly evaluate the atonm in the current scope.
+                const extension = this.#baseEnv.extensionFor(expr);
+                if (extension) {
+                    return extension.valueOf(expr, this);
+                }
+                else {
+                    // This we be OK provided that the atom has no internal structure e.g. Map, Tensor
+                    return expr;
+                }
+            }    
         }
         throw new Error(`DerivedEnv.valueOf ${expr} method not implemented.`);
     }
@@ -596,6 +619,25 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         }
         return {};
+    }
+
+    function selectAtomExtension(atom: U): Extension<U> | undefined {
+        throw new ProgrammingError();
+        /*
+        const hash = hash_for_atom(atom);
+        const ops = currentOpsByHash()[hash];
+        if (Array.isArray(ops) && ops.length > 0) {
+            for (const op of ops) {
+                if (op.isKind(atom)) {
+                    return op;
+                }
+            }
+            throw new SystemError(`No matching operator for hash ${hash}`);
+        }
+        else {
+            return void 0;
+        }
+        */
     }
 
     /**
@@ -1044,6 +1086,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
          */
         negate(x: U): U {
             return $.multiply(negOne, x);
+        },
+        extensionFor(expr: U): Extension<U> | undefined {
+            if (is_atom(expr)) {
+                return selectAtomExtension(expr);
+            }
+            else {
+                throw new ProgrammingError();
+            }
         },
         operatorFor(expr: U): Operator<U> | undefined {
             if (is_cons(expr)) {

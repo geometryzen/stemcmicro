@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { create_sym, Sym } from "math-expression-atoms";
 import { Cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
@@ -14,12 +13,13 @@ class ReactiveHost implements CellHost {
         to.pos;
         atom.id;
         // eslint-disable-next-line no-console
-        console.log("CellHost.reset", "from", `${from}`, "to", `${to}`, "id", `${JSON.stringify(atom.id)}`);
+        console.log("reset", `${from}`, "to", `${to}`, "id", `${JSON.stringify(atom.id)}`);
     }
     deref(value: U, atom: Cell): void {
         value.pos;
         atom.id;
-        console.log("CellHost.deref", "value", `${value}`, "id", `${JSON.stringify(atom.id)}`);
+        // eslint-disable-next-line no-console
+        console.log("deref", "value", `${value}`, "id", `${JSON.stringify(atom.id)}`);
     }
 }
 

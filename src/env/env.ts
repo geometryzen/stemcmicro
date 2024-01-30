@@ -1254,7 +1254,8 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         }
                         else {
                             // eslint-disable-next-line no-console
-                            console.warn(`${head}`);
+                            console.warn("head", `${head}`);
+                            console.warn("expr", `${expr}`);
                             throw new ProgrammingError();
                         }
                     }

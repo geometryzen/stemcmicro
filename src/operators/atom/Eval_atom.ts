@@ -14,12 +14,12 @@ class ReactiveHost implements CellHost {
         to.pos;
         atom.id;
         // eslint-disable-next-line no-console
-        // console.lg("CellHost.reset", "from", `${from}`, "to", `${to}`, "id", `${JSON.stringify(atom.id)}`);
+        console.log("CellHost.reset", "from", `${from}`, "to", `${to}`, "id", `${JSON.stringify(atom.id)}`);
     }
     deref(value: U, atom: Cell): void {
         value.pos;
         atom.id;
-        // console.lg("CellHost.deref", "value", `${value}`, "id", `${JSON.stringify(atom.id)}`);
+        console.log("CellHost.deref", "value", `${value}`, "id", `${JSON.stringify(atom.id)}`);
     }
 }
 

@@ -125,6 +125,7 @@ import { dirac_varargs } from '../operators/dirac/dirac_varargs';
 import { make_lhs_distrib_expand_law, make_rhs_distrib_expand_law } from '../operators/distrib/make_distrib_expand_law';
 import { divisors_varargs } from '../operators/divisors/divisors_varargs';
 import { do_varargs } from '../operators/do/do_varargs';
+import { dotdot_builder } from '../operators/dotdot/Eval_dotdot';
 import { draw_varargs } from '../operators/draw/draw_varargs';
 import { eigenval_varargs } from '../operators/eigen/eigenval_varargs';
 import { eigenvec_varargs } from '../operators/eigen/eigenvec_varargs';
@@ -821,6 +822,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(derivative_fn);
 
     $.defineOperator(det_any);
+
+    $.defineOperator(dotdot_builder);
 
     $.defineOperator(dim_varargs);
     $.defineOperator(dirac_varargs);

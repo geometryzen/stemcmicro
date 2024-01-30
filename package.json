@@ -52,6 +52,7 @@
         "unit-derivative": "mocha 'units/derivative.spec.ts'",
         "unit-divide": "mocha 'units/divide.spec.ts'",
         "unit-dot": "mocha 'units/dot.spec.ts'",
+        "unit-dotdot": "mocha 'units/dotdot.spec.ts'",
         "unit-dom": "mocha 'units/dom.spec.ts'",
         "unit-draw": "mocha 'units/draw.spec.ts'",
         "unit-edge": "mocha 'units/edge.spec.ts'",

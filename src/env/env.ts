@@ -3,7 +3,7 @@ import { Boo, Flt, is_jsobject, is_keyword, is_map, is_str, is_tensor, Keyword, 
 import { LambdaExpr } from 'math-expression-context';
 import { is_native } from 'math-expression-native';
 import { is_atom, nil } from 'math-expression-tree';
-import { UndeclaredVars } from '../api';
+import { AtomListener, UndeclaredVars } from '../api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { Eval_function } from "../Eval_function";
 import { yyfactorpoly } from "../factorpoly";
@@ -158,6 +158,12 @@ export class DerivedEnv implements ExtensionEnv {
     readonly #userfunc: Map<string, U> = new Map();
     constructor(baseEnv: ExtensionEnv) {
         this.#baseEnv = baseEnv;
+    }
+    addAtomListener(subscriber: AtomListener): void {
+        this.#baseEnv.addAtomListener(subscriber);
+    }
+    removeAtomListener(subscriber: AtomListener): void {
+        this.#baseEnv.removeAtomListener(subscriber);
     }
     getCellHost(): CellHost {
         return this.#baseEnv.getCellHost();
@@ -614,10 +620,20 @@ class ReactionVisitor implements Visitor {
 }
 
 class ReactiveHost implements CellHost {
-    #sourceIdToReactionsMap: Map<string, Reaction[]> = new Map();
+    #dependencies: Map<string, Reaction[]> = new Map();
     #scope: ExtensionEnv | undefined;
+    #subscribers: AtomListener[] = [];
     constructor() {
 
+    }
+    addAtomListener(subscriber: AtomListener): void {
+        this.#subscribers.push(subscriber);
+    }
+    removeAtomListener(subscriber: AtomListener): void {
+        const index = this.#subscribers.indexOf(subscriber);
+        if (index > -1) {
+            this.#subscribers.splice(index, 1);
+        }
     }
     setScope(scope: ExtensionEnv): void {
         this.#scope = scope;
@@ -629,24 +645,29 @@ class ReactiveHost implements CellHost {
         for (let i = 0; i < sources.length; i++) {
             const source = sources[i];
             const reaction = new Reaction(expr, this.#scope!, target);
-            if (this.#sourceIdToReactionsMap.has(source.id)) {
-                this.#sourceIdToReactionsMap.get(source.id)?.push(reaction);
+            if (this.#dependencies.has(source.id)) {
+                this.#dependencies.get(source.id)?.push(reaction);
             }
             else {
-                this.#sourceIdToReactionsMap.set(source.id, [reaction]);
+                this.#dependencies.set(source.id, [reaction]);
             }
         }
     }
     reset(from: U, to: U, source: Cell): void {
-        from.pos;
-        to.pos;
-        source.id;
-        // eslint-disable-next-line no-console
-        console.log("reset", `${from}`, "to", `${to}`, "id", `${JSON.stringify(source.id)}`);
+
+        for (let i = 0; i < this.#subscribers.length; i++) {
+            const subscriber: AtomListener = this.#subscribers[i];
+            try {
+                subscriber.reset(from, to, source);
+            }
+            catch (e) {
+                // Ignore
+            }
+        }
 
         const sourceId = source.id;
-        if (this.#sourceIdToReactionsMap.has(sourceId)) {
-            const reactions = this.#sourceIdToReactionsMap.get(sourceId)!;
+        if (this.#dependencies.has(sourceId)) {
+            const reactions = this.#dependencies.get(sourceId)!;
             for (let i = 0; i < reactions.length; i++) {
                 const reaction = reactions[i];
                 const expr = reaction.expr;
@@ -813,6 +834,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
+        addAtomListener(subscriber: AtomListener): void {
+            cellHost.addAtomListener(subscriber);
+        },
+        removeAtomListener(subscriber: AtomListener): void {
+            cellHost.removeAtomListener(subscriber);
+        },
         getCellHost(): CellHost {
             // We either do this or lazily create.
             cellHost.setScope($);

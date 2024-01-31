@@ -7,6 +7,7 @@ import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_value_and_input_as_svg_or_infix, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
+import { Cell } from '../operators/atom/Cell';
 import { assert_U } from '../operators/helpers/is_any';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
@@ -63,6 +64,10 @@ export enum Concept {
     TTY = 2
 }
 
+export interface AtomListener {
+    reset(from: U, to: U, source: Cell): void;
+}
+
 export interface ExprEngineListener {
     output(output: string): void;
 }
@@ -79,6 +84,8 @@ export interface ExprEngine {
     renderAsString(expr: U, config?: Partial<RenderConfig>): string;
     setSymbol(sym: Sym, binding: U, usrfunc: U): void;
     symbol(concept: Concept): Sym;
+    addAtomListener(listener: AtomListener): void;
+    removeAtomListener(listener: AtomListener): void;
     addListener(listener: ExprEngineListener): void;
     removeListener(listener: ExprEngineListener): void;
 }
@@ -314,16 +321,20 @@ class AlgebriteExprEngine implements ExprEngine {
             }
         }
     }
+    addAtomListener(listener: AtomListener): void {
+        this.#env.addAtomListener(listener);
+    }
+    removeAtomListener(listener: AtomListener): void {
+        this.#env.removeAtomListener(listener);
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {
-        // The native engine currently does not support listeners.
-        // throw new Error('addListener() method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
-        // throw new Error('removeListener() method not implemented.');
     }
 }
+
 class ClojureScriptExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -435,14 +446,17 @@ class ClojureScriptExprEngine implements ExprEngine {
 
         }
     }
+    addAtomListener(listener: AtomListener): void {
+        this.#env.addAtomListener(listener);
+    }
+    removeAtomListener(listener: AtomListener): void {
+        this.#env.removeAtomListener(listener);
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {
-        // The native engine currently does not support listeners.
-        // throw new Error('addListener() method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
-        // throw new Error('removeListener() method not implemented.');
     }
 }
 
@@ -560,6 +574,12 @@ class EigenmathExprEngine implements ExprEngine {
             }
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addAtomListener(listener: AtomListener): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeAtomListener(listener: AtomListener): void {
+    }
     addListener(listener: ExprEngineListener): void {
         this.#env.addOutputListener(new EigenmathOutputListener(listener));
     }
@@ -617,6 +637,12 @@ class PythonExprEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     symbol(concept: Concept): Sym {
         throw new Error('symbol method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    addAtomListener(listener: AtomListener): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    removeAtomListener(listener: AtomListener): void {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addListener(listener: ExprEngineListener): void {

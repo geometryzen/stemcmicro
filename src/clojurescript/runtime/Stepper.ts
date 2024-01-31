@@ -68,17 +68,13 @@ export class Thing {
 export interface Scope {
     thing: Thing;
     evaluate(opr: Native, ...args: U[]): U;
+    hasBinding(sym: Sym): boolean;
     getBinding(sym: string | Sym): U;
-    getSymbolUsrFunc(sym: Sym): U;
-    isConsSymbol(sym: Sym): boolean;
-    isUserSymbol(sym: Sym): boolean;
     setBinding(sym: Sym, binding: U): void;
-    setSymbolUsrFunc(sym: Sym, usrfunc: U): void;
+    hasUserFunction(sym: Sym): boolean;
+    getUserFunction(sym: Sym): U;
+    setUserFunction(sym: Sym, usrfunc: U): void;
     valueOf(expr: U): U;
-    /*
-    parentScope: Scope | null;
-    strict: boolean;
-    */
 }
 
 export class State {

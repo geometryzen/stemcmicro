@@ -69,8 +69,8 @@ class TestHandler implements ScriptHandler<ExprEngine>{
         // 
         const listener: ScriptOutputListener = new TestScriptOutputListener(this);
         function should_annotate_symbol(x: Sym, value: U): boolean {
-            if ($.isUserSymbol(x)) {
-                // console.lg(`isUserSymbol(${x})=>true`);
+            if ($.hasUserFunction(x)) {
+                // console.lg(`hasUserFunction(${x})=>true`);
                 if (x.equals(value) || is_nil(value)) {
                     return false;
                 }
@@ -85,7 +85,7 @@ class TestHandler implements ScriptHandler<ExprEngine>{
                 return true;
             }
             else {
-                // console.lg(`isUserSymbol(${x})=>false`);
+                // console.lg(`hasUserFunction(${x})=>false`);
                 if (is_native_sym(x)) {
                     return false;
                 }

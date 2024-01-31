@@ -41,7 +41,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine>, StepperHandler {
         };
         const listener = new TestScriptListener(this);
         const should_annotate_symbol = (x: Sym, value: U): boolean => {
-            if (this.#engine.isUserSymbol(x)) {
+            if (this.#engine.hasUserFunction(x)) {
                 if (x.equals(value) || is_nil(value)) {
                     return false;
                 }

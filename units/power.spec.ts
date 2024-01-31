@@ -315,7 +315,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -336,7 +336,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -357,7 +357,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -397,7 +397,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }

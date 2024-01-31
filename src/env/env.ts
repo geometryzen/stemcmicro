@@ -534,25 +534,25 @@ export class DerivedEnv implements ExtensionEnv {
         }
     }
 
-    getUsrFunc(sym: Sym): U {
-        throw new Error('getUsrFunc method not implemented.');
+    getUserFunction(sym: Sym): U {
+        throw new Error('getUserFunction method not implemented.');
     }
-    isConsSymbol(sym: Sym): boolean {
-        return this.#baseEnv.isConsSymbol(sym);
+    hasBinding(sym: Sym): boolean {
+        return this.#baseEnv.hasBinding(sym);
     }
-    isUserSymbol(sym: Sym): boolean {
+    hasUserFunction(sym: Sym): boolean {
         if (this.#userfunc.has(sym.key())) {
             return true;
         }
         else {
-            return this.#baseEnv.isUserSymbol(sym);
+            return this.#baseEnv.hasUserFunction(sym);
         }
     }
     setBinding(sym: Sym, binding: U): void {
         // console.lg("DerivedEnv.setBinding", `${sym}`, `${binding}`);
         this.#bindings.set(sym.key(), binding);
     }
-    setUsrFunc(sym: Sym, usrfunc: U): void {
+    setUserFunction(sym: Sym, usrfunc: U): void {
         this.#userfunc.set(sym.key(), usrfunc);
     }
 }
@@ -866,10 +866,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 }
             }
         },
-        getUsrFunc(sym: Sym): U {
+        getUserFunction(sym: Sym): U {
             return $.getSymbolUsrFunc(sym);
         },
-        isConsSymbol(sym: Sym): boolean {
+        hasBinding(sym: Sym): boolean {
             const currents: { [operator: string]: Operator<U>[] } = currentConsByOperator();
             const cons: Operator<U>[] = currents[sym.key()];
             if (Array.isArray(cons) && cons.length > 0) {
@@ -881,14 +881,14 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return symTab.hasBinding(sym);
             }
         },
-        isUserSymbol(sym: Sym): boolean {
+        hasUserFunction(sym: Sym): boolean {
             return userSymbols.has(sym.key());
         },
         setBinding(sym: Sym, binding: U): void {
             // console.lg("ExprContext.setBinding", `${sym}`, `${binding}`);
             symTab.setBinding(sym, binding);
         },
-        setUsrFunc(sym: Sym, usrfunc: U): void {
+        setUserFunction(sym: Sym, usrfunc: U): void {
             return $.setSymbolUsrFunc(sym, usrfunc);
         },
         getPrintHandler(): PrintHandler {
@@ -951,7 +951,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         defineUserSymbol(sym: Sym): void {
             // The most important thing to do is to keep track of which symbols are user symbols.
-            // This will allow us to report back correctly later in isUserSymbol(sym), which is used for SVG rendering.
+            // This will allow us to report back correctly later in hasUserFunction(sym), which is used for SVG rendering.
             userSymbols.set(sym.key(), sym);
 
             // Given that we already have an Operator for Sym installed,
@@ -1024,7 +1024,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return symTab.getProps(sym);
         },
         getSymbolUsrFunc(sym: Sym): U {
-            return symTab.getUsrFunc(sym);
+            return symTab.getUserFunction(sym);
         },
         getSymbolsInfo() {
             return symTab.entries();
@@ -1337,10 +1337,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         },
         setSymbolUsrFunc(sym: string | Sym, usrfunc: U): void {
             if (typeof sym === 'string') {
-                symTab.setUsrFunc(create_sym(sym), usrfunc);
+                symTab.setUserFunction(create_sym(sym), usrfunc);
             }
             else {
-                symTab.setUsrFunc(sym, usrfunc);
+                symTab.setUserFunction(sym, usrfunc);
             }
         },
         simplify(expr: U): U {

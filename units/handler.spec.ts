@@ -94,7 +94,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine> {
             useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
         function should_annotate_symbol(x: Sym, value: U): boolean {
-            if ($.isUserSymbol(x)) {
+            if ($.hasUserFunction(x)) {
                 if (x.equals(value) || is_nil(value)) {
                     return false;
                 }
@@ -157,7 +157,7 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
             const state: Stack<State> = $.stack;
             const top: State = state.top;
             const scope: Scope = top.$;
-            if (scope.isUserSymbol(x)) {
+            if (scope.hasUserFunction(x)) {
                 if (x.equals(value) || is_nil(value)) {
                     return false;
                 }

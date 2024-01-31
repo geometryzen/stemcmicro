@@ -28,12 +28,11 @@ describe("dotdot", function () {
 
         const event = new FauxEvent();
         const obj = new JsObject(event);
-        // FIXME: This is ugly...
-        engine.setSymbol(create_sym('e'), obj, nil);
+        engine.setBinding(create_sym('e'), obj);
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -55,12 +54,11 @@ describe("dotdot", function () {
 
         const event = new FauxEvent();
         const obj = new JsObject(event);
-        // FIXME: This is ugly...
-        engine.setSymbol(create_sym('e'), obj, nil);
+        engine.setBinding(create_sym('e'), obj);
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -82,12 +80,11 @@ describe("dotdot", function () {
 
         const event = new FauxEvent();
         const obj = new JsObject(event);
-        // FIXME: This is ugly...
-        engine.setSymbol(create_sym('e'), obj, nil);
+        engine.setBinding(create_sym('e'), obj);
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }

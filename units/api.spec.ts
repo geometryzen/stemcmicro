@@ -15,7 +15,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, configParse);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const configInfix: Partial<RenderConfig> = { useCaretForExponentiation: true, useParenForTensors: true };
             assert.strictEqual(engine.renderAsString(value, configInfix), "x^(1/2)");
         }
@@ -30,7 +30,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: false, useParenForTensors: true }), "x**(1/2)");
         }
         engine.release();
@@ -44,7 +44,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a^b");
         }
         engine.release();
@@ -59,7 +59,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: true }), "a^b");
         }
         engine.release();
@@ -73,7 +73,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: true }), "x^(1/2)");
         }
         engine.release();
@@ -87,7 +87,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: false, useParenForTensors: true }), "x**(1/2)");
         }
         engine.release();
@@ -101,7 +101,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: false, useParenForTensors: true }), "a**b");
         }
         engine.release();
@@ -133,7 +133,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "x^2");
         }
         engine.release();
@@ -147,7 +147,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "x^2");
         }
         engine.release();
@@ -161,7 +161,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "i");
         }
         engine.release();
@@ -175,7 +175,7 @@ describe("api", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             assert.strictEqual(engine.renderAsString(value, { useCaretForExponentiation: true, useParenForTensors: false }), "i");
         }
         engine.release();

@@ -27,7 +27,7 @@ describe("examples", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -57,7 +57,7 @@ describe("examples", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -89,7 +89,7 @@ describe("examples", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -121,7 +121,7 @@ describe("examples", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -153,7 +153,7 @@ describe("examples", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -188,7 +188,7 @@ describe("examples", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }

@@ -85,10 +85,10 @@ export interface SymTab {
     setProps(sym: Sym, overrides: Partial<Props>): void;
     hasBinding(sym: Sym): boolean;
     getBinding(sym: Sym): U;
-    getUsrFunc(sym: Sym): U;
-    isUsrFunc(sym: Sym): boolean;
-    setBinding(sym: Sym, value: U): void;
-    setUsrFunc(sym: Sym, value: U): void;
+    setBinding(sym: Sym, bindingvalue: U): void;
+    hasUserFunction(sym: Sym): boolean;
+    getUserFunction(sym: Sym): U;
+    setUserFunction(sym: Sym, usrfunc: U): void;
     entries(): { sym: Sym, value: U }[];
     delete(sym: Sym): void;
 }
@@ -141,7 +141,7 @@ export function createSymTab(): SymTab {
                 return nil;
             }
         },
-        getUsrFunc(sym: Sym): U {
+        getUserFunction(sym: Sym): U {
             const value = usrfunc_from_key.get(sym.key());
             if (value) {
                 return value;
@@ -150,7 +150,7 @@ export function createSymTab(): SymTab {
                 return nil;
             }
         },
-        isUsrFunc(sym: Sym): boolean {
+        hasUserFunction(sym: Sym): boolean {
             return usrfunc_from_key.has(sym.key());
         },
         setBinding(sym: Sym, value: U): void {
@@ -159,7 +159,7 @@ export function createSymTab(): SymTab {
             binding_from_key.set(key, value);
             sym_from_key.set(key, sym);
         },
-        setUsrFunc(sym: Sym, value: U): void {
+        setUserFunction(sym: Sym, value: U): void {
             assert_sym(sym);
             const key = sym.key();
             if (is_nil(value)) {

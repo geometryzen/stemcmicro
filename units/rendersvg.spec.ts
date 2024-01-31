@@ -15,7 +15,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
             assert.strictEqual(svg, `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>x</text></svg><br>`);
         }
@@ -30,7 +30,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
             assert.strictEqual(svg, `<svg height='41'width='75'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>s</text><text style='font-family:"Times New Roman";font-size:24px;'x='19.33984375'y='26'>i</text><text style='font-family:"Times New Roman";font-size:24px;'x='26.0078125'y='26'>n</text><text style='font-family:"Times New Roman";font-size:24px;'x='38.0078125'y='26'>(</text><text style='font-family:"Times New Roman";font-size:24px;'x='56.65234375'y='26'>)</text><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='46'y='26'>x</text></svg><br>`);
         }
@@ -45,7 +45,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
             const parts: string[] = [
                 `<svg height='41'width='79'>`,
@@ -70,7 +70,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
             const parts: string[] = [
                 `<svg height='41'width='76'>`,
@@ -95,7 +95,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
             const parts: string[] = [
                 `<svg height='36'width='32'>`,
@@ -115,7 +115,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
             const parts: string[] = [
                 `<svg height='41'width='44'>`,
@@ -137,7 +137,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (is_blade(value)) {
                 const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
                 const parts: string[] = [
@@ -160,7 +160,7 @@ describe("rendersvg", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
             const parts: string[] = [
                 `<svg height='36'width='27'>`,

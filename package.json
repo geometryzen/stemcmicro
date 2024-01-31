@@ -170,7 +170,7 @@
     },
     "peerDependencies": {
         "math-expression-atoms": "^0.9.26",
-        "math-expression-context": "^0.9.10",
+        "math-expression-context": "^0.9.11",
         "math-expression-native": "^0.9.16",
         "math-expression-tree": "^0.9.18"
     }

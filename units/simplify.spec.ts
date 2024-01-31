@@ -38,7 +38,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "1");
             }
@@ -54,7 +54,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S");
             }
@@ -70,7 +70,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-M+S");
             }
@@ -86,7 +86,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-M*cos(x)");
             }
@@ -102,7 +102,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-M*sin(x)");
             }
@@ -119,7 +119,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*M*cos(x)");
             }
@@ -136,7 +136,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*cos(x)");
             }
@@ -153,7 +153,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-9.81*M+S");
             }
@@ -170,7 +170,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-K*M*cos(x)");
             }
@@ -187,7 +187,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "-9.81 M cos(x) + S cos(x)**2 + S sin(x)**2");
             }
@@ -204,7 +204,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*L*M");
             }
@@ -220,7 +220,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S+M*cos(x)");
             }
@@ -236,7 +236,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S+3*M*cos(x)");
             }
@@ -253,7 +253,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S+3.0*M*cos(x)");
             }
@@ -270,7 +270,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*M*cos(x)*kg");
             }
@@ -289,7 +289,7 @@ describe("simplify", function () {
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "S-9.81*M*cos(x)*kg");
             }

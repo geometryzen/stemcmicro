@@ -41,7 +41,7 @@ describe("print", function () {
         assert.strictEqual(trees.length, 4);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -68,7 +68,7 @@ describe("print", function () {
         assert.strictEqual(trees.length, 4);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }

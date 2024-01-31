@@ -40,7 +40,7 @@ describe("Pi in Algebrite", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -84,7 +84,7 @@ describe("Pi in Eigenmath", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -130,7 +130,7 @@ describe("Pi in ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }

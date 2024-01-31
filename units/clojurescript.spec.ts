@@ -18,7 +18,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -45,7 +45,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -72,7 +72,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -101,7 +101,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -128,7 +128,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -157,7 +157,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -190,7 +190,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -226,7 +226,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -279,7 +279,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -299,7 +299,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -326,7 +326,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -357,7 +357,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -383,7 +383,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -403,7 +403,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -423,7 +423,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -444,7 +444,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -465,7 +465,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -492,7 +492,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -519,7 +519,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -543,7 +543,7 @@ describe("ClojureScript", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -568,7 +568,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -595,7 +595,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -618,7 +618,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -641,7 +641,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             values.push(value);
         }
         // console.lg(`${values[0]}`);
@@ -667,7 +667,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -692,7 +692,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -717,7 +717,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -742,7 +742,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -767,7 +767,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -792,7 +792,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -817,7 +817,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -843,7 +843,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -869,7 +869,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -891,7 +891,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -913,7 +913,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -935,7 +935,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -957,7 +957,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -984,7 +984,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -1015,7 +1015,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -1042,7 +1042,7 @@ describe("ClojureScript", function () {
             assert.strictEqual(engine.renderAsString(letExpr, { format: 'LaTeX' }), "let(\\begin{bmatrix} x & 1 & y & x \\end{bmatrix},y)");
             assert.strictEqual(engine.renderAsString(letExpr, { format: 'SExpr' }), "(let [x 1 y x] y)");
             // assert.strictEqual(engine.renderAsString(letExpr, { format: 'SVG' }), "");
-            const value = engine.evaluate(letExpr);
+            const value = engine.valueOf(letExpr);
             assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "1");
         }
         finally {
@@ -1061,7 +1061,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -1083,7 +1083,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -1105,7 +1105,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -1129,7 +1129,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -1154,7 +1154,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -1177,7 +1177,7 @@ describe("ClojureScript", function () {
 
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             values.push(value);
         }
         assert.strictEqual(values.length, 2);

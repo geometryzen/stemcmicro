@@ -110,7 +110,7 @@ export class BaseEnv implements Scope {
     getBinding(sym: Sym): U {
         return this.#baseEnv.getBinding(sym);
     }
-    getSymbolUsrFunc(sym: Sym): U {
+    getUserFunction(sym: Sym): U {
         return this.#baseEnv.getSymbolUsrFunc(sym);
     }
     getSymbolsInfo(): {
@@ -168,11 +168,11 @@ export class BaseEnv implements Scope {
     isscalar(expr: U): boolean {
         throw new Error("Method not implemented.");
     }
-    isConsSymbol(sym: Sym): boolean {
-        return this.#baseEnv.isConsSymbol(sym);
+    hasBinding(sym: Sym): boolean {
+        return this.#baseEnv.hasBinding(sym);
     }
-    isUserSymbol(sym: Sym): boolean {
-        return this.#baseEnv.isUserSymbol(sym);
+    hasUserFunction(sym: Sym): boolean {
+        return this.#baseEnv.hasUserFunction(sym);
     }
     iszero(expr: U): boolean {
         throw new Error("Method not implemented.");
@@ -225,7 +225,7 @@ export class BaseEnv implements Scope {
     setBinding(sym: Sym, binding: U): void {
         this.#baseEnv.setBinding(sym, binding);
     }
-    setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
+    setUserFunction(sym: Sym, usrfunc: U): void {
         this.#baseEnv.setSymbolUsrFunc(sym, usrfunc);
     }
     simplify(expr: U): U {
@@ -260,11 +260,5 @@ export class BaseEnv implements Scope {
     }
     valueOf(expr: U): U {
         return this.#baseEnv.valueOf(expr);
-    }
-    getUsrFunc(printname: string): U {
-        throw new Error("Method not implemented.");
-    }
-    setUsrFunc(printname: string, usrfunc: U): void {
-        throw new Error("Method not implemented.");
     }
 }

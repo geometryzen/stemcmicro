@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { Atom } from "math-expression-atoms";
+import { Atom, create_sym } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
@@ -26,11 +26,11 @@ describe("atom", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
-        engine.defineFunction("atom", create_atom);
+        engine.defineFunction(create_sym("atom"), create_atom);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "abs(TestAtom)");
             }
@@ -44,11 +44,11 @@ describe("atom", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
-        engine.defineFunction("atom", create_atom);
+        engine.defineFunction(create_sym("atom"), create_atom);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "abs(TestAtom)");
                 const lines: string[] = [

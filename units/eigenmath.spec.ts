@@ -1,4 +1,5 @@
 import { assert } from "chai";
+import { create_sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
 import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from "../src/eigenmath/index";
@@ -16,7 +17,7 @@ class TestContentHandler implements ScriptContentHandler {
     begin($: ScriptVars): void {
         this.values.length = 0;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        $.defineFunction("plot", plotLambda);
+        $.defineFunction(create_sym("plot"), plotLambda);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     output(value: U, input: U, $: ScriptVars): void {

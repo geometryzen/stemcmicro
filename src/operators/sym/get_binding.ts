@@ -12,7 +12,7 @@ import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/Extensio
  */
 export function get_binding(sym: Sym, $: ExtensionEnv): [changed: TFLAGS, retval: U] {
     // $.hasBinding
-    if ($.isConsSymbol(sym)) {
+    if ($.hasBinding(sym)) {
         // console.lg(`${sym}`, "IS bound");
         const binding = $.getBinding(sym);
         // console.lg("get_binding", render_as_infix(sym, $), "is", render_as_infix(binding, $));

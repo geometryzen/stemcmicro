@@ -27,7 +27,7 @@ describe("sqrt", function () {
         assert.strictEqual(trees.length, 1);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -51,7 +51,7 @@ describe("sqrt", function () {
         assert.strictEqual(trees.length, 1);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -75,7 +75,7 @@ describe("sqrt", function () {
         assert.strictEqual(trees.length, 1);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -102,7 +102,7 @@ describe("sqrt", function () {
         assert.strictEqual(trees.length, 1);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -130,7 +130,7 @@ describe("sqrt", function () {
         assert.strictEqual(trees.length, 1);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -154,7 +154,7 @@ describe("sqrt", function () {
         assert.strictEqual(trees.length, 1);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }

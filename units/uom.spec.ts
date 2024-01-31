@@ -22,7 +22,7 @@ describe("sandbox", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value), "-9.81*e2*m/s ** 2");
             }
@@ -41,7 +41,7 @@ describe("sandbox", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "kg·m/s");
                 assert.strictEqual(engine.renderAsString(value, { format: 'LaTeX' }), "kg·m/s");
@@ -89,7 +89,7 @@ describe("sandbox", function () {
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 assert.strictEqual(engine.renderAsString(value, { format: 'Infix' }), "M*g*sin(theta)*N");
             }
@@ -556,7 +556,7 @@ describe("uom", function () {
             assert.strictEqual(trees.length, 2);
             const values: U[] = [];
             for (const tree of trees) {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -581,7 +581,7 @@ describe("uom", function () {
             assert.strictEqual(trees.length, 2);
             const values: U[] = [];
             for (const tree of trees) {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -606,7 +606,7 @@ describe("uom", function () {
             assert.strictEqual(trees.length, 2);
             const values: U[] = [];
             for (const tree of trees) {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }

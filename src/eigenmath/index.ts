@@ -13,8 +13,8 @@ import { Imu } from '../tree/imu/Imu';
 import { two } from '../tree/rat/Rat';
 
 export interface EigenmathReadScope {
-    isConsSymbol(sym: Sym): boolean;
-    isUserSymbol(sym: Sym): boolean;
+    hasBinding(sym: Sym): boolean;
+    hasUserFunction(sym: Sym): boolean;
 }
 
 export interface EigenmathWriteScope {
@@ -1600,7 +1600,7 @@ function printname_from_symbol(sym: Sym): string {
     }
 }
 
-function emit_symbol(sym: Sym, $: StackContext, scope: Pick<EigenmathReadScope, 'isConsSymbol' | 'isUserSymbol'>): void {
+function emit_symbol(sym: Sym, $: StackContext, scope: Pick<EigenmathReadScope, 'hasBinding' | 'hasUserFunction'>): void {
 
     if (sym.equalsSym(DOLLAR_E)) {
         emit_roman_string("exp(1)", $);
@@ -1609,11 +1609,11 @@ function emit_symbol(sym: Sym, $: StackContext, scope: Pick<EigenmathReadScope, 
 
     const s = printname_from_symbol(sym);
 
-    if (scope.isUserSymbol(sym)) {
+    if (scope.hasUserFunction(sym)) {
         // Fall through
         // console.lg(`${sym} is user symbol`);
     }
-    else if ((scope.isConsSymbol(sym)) || sym.equals(LAST) || sym.equals(TRACE) || sym.equals(TTY)) {
+    else if ((scope.hasBinding(sym)) || sym.equals(LAST) || sym.equals(TRACE) || sym.equals(TTY)) {
         // Keywords are printed Roman without italics.
         // console.lg(`${sym} is keyword`);
         emit_roman_string(s, $);
@@ -4972,7 +4972,7 @@ function derivative($: ScriptVars): void {
 }
 
 function d_scalar_scalar(F: U, X: U, $: ScriptVars): void {
-    if (!(is_sym(X) && $.isUserSymbol(X)))
+    if (!(is_sym(X) && $.hasUserFunction(X)))
         stopf("derivative: symbol expected");
 
     // d(x,x)?
@@ -5641,7 +5641,7 @@ function eval_draw(expr: U, $: ScriptVars): void {
             const F = assert_cons(expr).item(1);
             let T = assert_cons(expr).item(2);
 
-            if (!(is_sym(T) && $.isUserSymbol(T))) {
+            if (!(is_sym(T) && $.hasUserFunction(T))) {
                 T = X_LOWER;
             }
 
@@ -6271,7 +6271,7 @@ function floorfunc($: ScriptVars): void {
 function eval_for(p1: U, $: ScriptVars): void {
 
     const p2 = cadr(p1);
-    if (!(is_sym(p2) && $.isUserSymbol(p2)))
+    if (!(is_sym(p2) && $.hasUserFunction(p2)))
         stopf("for: symbol error");
 
     push(caddr(p1), $);
@@ -6411,7 +6411,7 @@ function eval_index(p1: U, $: ScriptVars): void {
 
     // try to optimize by indexing before eval
 
-    if (is_sym(T) && $.isUserSymbol(T)) {
+    if (is_sym(T) && $.hasUserFunction(T)) {
         p1 = get_binding(T, $);
         const n = $.stack.length - h;
         if (is_tensor(p1) && n <= p1.ndim) {
@@ -7593,7 +7593,7 @@ function eval_integral(p1: U, $: ScriptVars): void {
             continue;
         }
 
-        if (!(is_sym(X) && $.isUserSymbol(X)))
+        if (!(is_sym(X) && $.hasUserFunction(X)))
             stopf("integral");
 
         if (is_cons(p1)) {
@@ -7626,7 +7626,7 @@ function integral($: ScriptVars): void {
     const X = pop($);
     let F = pop($);
 
-    if (!(is_sym(X) && $.isUserSymbol(X)))
+    if (!(is_sym(X) && $.hasUserFunction(X)))
         stopf("integral: symbol expected");
 
     if (car(F).equals(ADD)) {
@@ -9043,7 +9043,7 @@ function eval_prefixform(p1: U, $: ScriptVars): void {
 
 function make_should_annotate(scope: EigenmathReadScope) {
     return function should_annotate_symbol(x: Sym, value: U): boolean {
-        if (scope.isUserSymbol(x)) {
+        if (scope.hasUserFunction(x)) {
             if (x.equals(value) || is_nil(value)) {
                 return false;
             }
@@ -9173,7 +9173,7 @@ function eval_product(p1: U, $: ScriptVars): void {
     }
 
     const p2 = cadr(p1);
-    if (!(is_sym(p2) && $.isUserSymbol(p2)))
+    if (!(is_sym(p2) && $.hasUserFunction(p2)))
         stopf("product: symbol error");
 
     push(caddr(p1), $);
@@ -9973,7 +9973,7 @@ function eval_assign(x: Cons, $: ScriptVars): void {
     }
 
     const sym = x.lhs;
-    if (is_sym(sym) && $.isUserSymbol(sym)) {
+    if (is_sym(sym) && $.hasUserFunction(sym)) {
         push(x.rhs, $);
         value_of($);
         const rhs = pop($);
@@ -10001,7 +10001,7 @@ function setq_indexed(p1: U, $: ScriptVars): void {
 
     const S = cadadr(p1);
 
-    if (!(is_sym(S) && $.isUserSymbol(S))) {
+    if (!(is_sym(S) && $.hasUserFunction(S))) {
         stopf(`user symbol expected S=${S}`);
     }
 
@@ -10105,7 +10105,7 @@ function setq_usrfunc(p1: U, $: ScriptVars): void {
     const A = cdadr(p1); // function args
     const B = caddr(p1); // function body
 
-    if (is_sym(F) && $.isUserSymbol(F)) {
+    if (is_sym(F) && $.hasUserFunction(F)) {
         if (lengthf(A) > 9) {
             stopf("more than 9 arguments");
         }
@@ -10802,7 +10802,7 @@ function eval_sum(p1: U, $: ScriptVars): void {
     }
 
     const p2 = cadr(p1);
-    if (!(is_sym(p2) && $.isUserSymbol(p2)))
+    if (!(is_sym(p2) && $.hasUserFunction(p2)))
         stopf("sum: symbol error");
 
     push(caddr(p1), $);
@@ -11534,7 +11534,7 @@ function evalf_nib($: ScriptVars): void {
 
     const sym = car(p1);
     if (is_cons(p1) && issymbol(sym)) {
-        if ($.isConsSymbol(sym)) {
+        if ($.hasBinding(sym)) {
             $.expanding++;
             try {
                 const evalFunction = consFunctions.get(sym.key()) as ConsFunction;
@@ -11545,13 +11545,13 @@ function evalf_nib($: ScriptVars): void {
             }
             return;
         }
-        if ($.isUserSymbol(sym)) {
+        if ($.hasUserFunction(sym)) {
             eval_user_function(p1, $);
             return;
         }
     }
 
-    if (is_sym(p1) && $.isConsSymbol(p1)) { // bare keyword
+    if (is_sym(p1) && $.hasBinding(p1)) { // bare keyword
         push(p1, $);
         push(LAST, $); // default arg
         list(2, $);
@@ -11559,7 +11559,7 @@ function evalf_nib($: ScriptVars): void {
         return;
     }
 
-    if (is_sym(p1) && $.isUserSymbol(p1)) {
+    if (is_sym(p1) && $.hasUserFunction(p1)) {
         eval_user_symbol(p1, $);
         return;
     }
@@ -12708,7 +12708,7 @@ export function get_binding(sym: Sym, $: ScriptVars): U {
     if (!is_sym(sym)) {
         stopf(`get_binding(${sym}) argument must be a Sym.`);
     }
-    if (!$.isUserSymbol(sym)) {
+    if (!$.hasUserFunction(sym)) {
         stopf(`get_binding(${sym}) symbol error`);
     }
     const binding = $.getBinding(sym);
@@ -12721,10 +12721,10 @@ export function get_binding(sym: Sym, $: ScriptVars): U {
 }
 
 function get_usrfunc(sym: Sym, $: ScriptVars): U {
-    if (!$.isUserSymbol(sym)) {
+    if (!$.hasUserFunction(sym)) {
         stopf("symbol error");
     }
-    const f = $.getUsrFunc(sym);
+    const f = $.getUserFunction(sym);
     if (typeof f === 'undefined') {
         return nil;
     }
@@ -13584,7 +13584,7 @@ function istensor(p: U): p is Tensor {
 }
 
 function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
-    if (is_sym(p) && scope.isUserSymbol(p) && !p.equalsSym(Pi) && !p.equalsSym(DOLLAR_E))
+    if (is_sym(p) && scope.hasUserFunction(p) && !p.equalsSym(Pi) && !p.equalsSym(DOLLAR_E))
         return 1;
 
     if (is_cons(p)) {
@@ -13642,7 +13642,7 @@ function list(n: number, $: StackContext): void {
  * 
  */
 function lookup(sym: Sym, scope: EigenmathScope): Sym {
-    if (!scope.isConsSymbol(sym)) {
+    if (!scope.hasBinding(sym)) {
         scope.defineUserSymbol(sym);
     }
     return sym;
@@ -15420,7 +15420,7 @@ class PrintScriptContentHandler implements ScriptContentHandler {
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
         function should_annotate_symbol(x: Sym, value: U): boolean {
-            if ($.isUserSymbol(x)) {
+            if ($.hasUserFunction(x)) {
                 if (x.equals(value) || is_nil(value)) {
                     return false;
                 }
@@ -16153,12 +16153,25 @@ function scan_inbuf(k: number, $: ScriptVars, config: EigenmathParseConfig): num
     return k;
 }
 
-export function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): void {
-    if (!$.isUserSymbol(sym)) {
+function set_symbol(sym: Sym, binding: U, usrfunc: U, $: ScriptVars): void {
+    if (!$.hasUserFunction(sym)) {
         stopf("symbol error");
     }
     $.setBinding(sym, binding);
-    $.setUsrFunc(sym, usrfunc);
+    $.setUserFunction(sym, usrfunc);
+}
+
+export function set_binding(sym: Sym, binding: U, $: ScriptVars): void {
+    if (!$.hasUserFunction(sym)) {
+        stopf("symbol error");
+    }
+    $.setBinding(sym, binding);
+}
+export function set_user_function(sym: Sym, usrfunc: U, $: ScriptVars): void {
+    if (!$.hasUserFunction(sym)) {
+        stopf("symbol error");
+    }
+    $.setUserFunction(sym, usrfunc);
 }
 
 function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
@@ -16495,21 +16508,23 @@ export class ScriptVars implements ExprContext {
         this.#userFunctions.set(sym.key(), eval_user_symbol);
     }
     getBinding(sym: Sym): U {
+        assert_sym(sym);
         return this.binding[sym.key()];
     }
-    getUsrFunc(sym: Sym): U {
+    getUserFunction(sym: Sym): U {
+        assert_sym(sym);
         return this.usrfunc[sym.key()];
     }
-    isConsSymbol(sym: Sym): boolean {
+    hasBinding(sym: Sym): boolean {
         return consFunctions.has(sym.key());
     }
-    isUserSymbol(sym: Sym): boolean {
+    hasUserFunction(sym: Sym): boolean {
         return this.#userFunctions.has(sym.key());
     }
     setBinding(sym: Sym, binding: U): void {
         this.binding[sym.key()] = binding;
     }
-    setUsrFunc(sym: Sym, usrfunc: U): void {
+    setUserFunction(sym: Sym, usrfunc: U): void {
         this.usrfunc[sym.key()] = usrfunc;
     }
     valueOf(expr: U): U {
@@ -16520,12 +16535,13 @@ export class ScriptVars implements ExprContext {
     /**
      * 
      */
-    defineFunction(name: string, lambda: LambdaExpr): void {
+    defineFunction(name: Sym, lambda: LambdaExpr): void {
+        assert_sym(name);
         const handler: ConsFunction = (expr: Cons, $: ScriptVars) => {
             const retval = lambda(assert_cons(expr).argList, $);
             push(retval, $);
         };
-        consFunctions.set(name, handler);
+        consFunctions.set(name.key(), handler);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addOutputListener(listener: ScriptOutputListener): void {

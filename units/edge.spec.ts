@@ -381,7 +381,7 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -485,7 +485,7 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -550,7 +550,7 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -570,7 +570,7 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.evaluate(tree);
+            const value = engine.valueOf(tree);
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -608,7 +608,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -661,7 +661,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -697,7 +697,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -795,7 +795,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -846,7 +846,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -872,7 +872,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -897,7 +897,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1017,7 +1017,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1045,7 +1045,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1083,7 +1083,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1107,7 +1107,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1174,7 +1174,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1213,7 +1213,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1238,7 +1238,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1263,7 +1263,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1339,7 +1339,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1376,7 +1376,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1402,7 +1402,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1442,7 +1442,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1483,7 +1483,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1508,7 +1508,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1613,7 +1613,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1666,7 +1666,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1732,7 +1732,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1757,7 +1757,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1782,7 +1782,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1807,7 +1807,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1831,7 +1831,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1855,7 +1855,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1895,7 +1895,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -1982,7 +1982,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2036,7 +2036,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2060,7 +2060,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2084,7 +2084,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2108,7 +2108,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2132,7 +2132,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2156,7 +2156,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2180,7 +2180,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2205,7 +2205,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2229,7 +2229,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2294,7 +2294,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2347,7 +2347,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2371,7 +2371,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2460,7 +2460,7 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
             try {
-                engine.evaluate(tree);
+                engine.valueOf(tree);
                 assert.fail();
             }
             catch (e) {
@@ -2493,7 +2493,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }
@@ -2616,7 +2616,7 @@ describe("edge", function () {
         const values: U[] = [];
         for (const tree of trees) {
             try {
-                const value = engine.evaluate(tree);
+                const value = engine.valueOf(tree);
                 if (!is_nil(value)) {
                     values.push(value);
                 }

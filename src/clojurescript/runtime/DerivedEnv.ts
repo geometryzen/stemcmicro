@@ -10,11 +10,11 @@ export class DerivedScope implements Scope {
     constructor(readonly parentEnv: Scope, readonly strict: boolean, readonly thing: Thing) {
 
     }
-    isConsSymbol(sym: Sym): boolean {
-        return this.parentEnv.isConsSymbol(sym);
+    hasBinding(sym: Sym): boolean {
+        return this.parentEnv.hasBinding(sym);
     }
-    isUserSymbol(sym: Sym): boolean {
-        return this.parentEnv.isUserSymbol(sym);
+    hasUserFunction(sym: Sym): boolean {
+        return this.parentEnv.hasUserFunction(sym);
     }
     getPrintHandler(): PrintHandler {
         throw new Error("Method not implemented.");
@@ -115,7 +115,7 @@ export class DerivedScope implements Scope {
     getBinding(sym: string | Sym): U {
         return this.parentEnv.getBinding(sym);
     }
-    getSymbolUsrFunc(sym: string | Sym): U {
+    getUserFunction(sym: string | Sym): U {
         throw new Error("Method not implemented.");
     }
     getSymbolsInfo(): { sym: Sym; value: U; }[] {
@@ -220,8 +220,8 @@ export class DerivedScope implements Scope {
     setBinding(sym: Sym, binding: U): void {
         this.parentEnv.setBinding(sym, binding);
     }
-    setSymbolUsrFunc(sym: Sym, usrfunc: U): void {
-        this.parentEnv.setSymbolUsrFunc(sym, usrfunc);
+    setUserFunction(sym: Sym, usrfunc: U): void {
+        this.parentEnv.setUserFunction(sym, usrfunc);
     }
     simplify(expr: U): U {
         throw new Error("Method not implemented.");
@@ -255,11 +255,5 @@ export class DerivedScope implements Scope {
     }
     valueOf(expr: U): U {
         return this.parentEnv.valueOf(expr);
-    }
-    getUsrFunc(printname: string): U {
-        throw new Error("Method not implemented.");
-    }
-    setUsrFunc(printname: string, usrfunc: U): void {
-        throw new Error("Method not implemented.");
     }
 }

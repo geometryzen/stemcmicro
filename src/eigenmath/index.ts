@@ -969,7 +969,7 @@ export function render_svg(expr: U, ec: EmitContext, scope: EigenmathReadScope):
 
     draw_formula(x, y, codes, outbuf);
 
-    outbuf.push("</svg><br>");
+    outbuf.push("</svg>");
     return outbuf.join('');
 }
 
@@ -2598,7 +2598,7 @@ function emit_graph(draw_array: { t: number; x: number; y: number }[], $: Script
     emit_labels($, dc, ec, outbuf, scope);
     emit_points(draw_array, dc, outbuf);
 
-    outbuf.push("</svg><br>");
+    outbuf.push("</svg>");
 }
 
 function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathReadScope): void {
@@ -15144,9 +15144,6 @@ function html_escape_and_colorize(s: string, color: 1 | 2 | 3): string {
     s = s.replace(/>/g, "&gt;");
     s = s.replace(/\n/g, "<br>");
     s = s.replace(/\r/g, "");
-
-    if (!s.endsWith("<br>"))
-        s += "<br>";
 
     switch (color) {
 

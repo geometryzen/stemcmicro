@@ -31,7 +31,7 @@ describe("svg", function () {
         // TODO: ScriptContext does not provide information to support EigenmathScope.
         const scope = new TestScope();
         const actual = render_svg(value, ec, scope);
-        const expect = `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>x</text></svg><br>`;
+        const expect = `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>x</text></svg>`;
         assert.strictEqual(actual, expect);
         engine.release();
     });

@@ -17,7 +17,7 @@ describe("rendersvg", function () {
         for (const tree of trees) {
             const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
-            assert.strictEqual(svg, `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>x</text></svg><br>`);
+            assert.strictEqual(svg, `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>x</text></svg>`);
         }
         engine.release();
     });
@@ -32,7 +32,7 @@ describe("rendersvg", function () {
         for (const tree of trees) {
             const value = engine.valueOf(tree);
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false }, engine);
-            assert.strictEqual(svg, `<svg height='41'width='75'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>s</text><text style='font-family:"Times New Roman";font-size:24px;'x='19.33984375'y='26'>i</text><text style='font-family:"Times New Roman";font-size:24px;'x='26.0078125'y='26'>n</text><text style='font-family:"Times New Roman";font-size:24px;'x='38.0078125'y='26'>(</text><text style='font-family:"Times New Roman";font-size:24px;'x='56.65234375'y='26'>)</text><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='46'y='26'>x</text></svg><br>`);
+            assert.strictEqual(svg, `<svg height='41'width='75'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>s</text><text style='font-family:"Times New Roman";font-size:24px;'x='19.33984375'y='26'>i</text><text style='font-family:"Times New Roman";font-size:24px;'x='26.0078125'y='26'>n</text><text style='font-family:"Times New Roman";font-size:24px;'x='38.0078125'y='26'>(</text><text style='font-family:"Times New Roman";font-size:24px;'x='56.65234375'y='26'>)</text><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='46'y='26'>x</text></svg>`);
         }
         engine.release();
     });
@@ -55,7 +55,7 @@ describe("rendersvg", function () {
                 `<text style='font-family:"Times New Roman";font-size:24px;'x='41.9921875'y='26'>(</text>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;'x='60.63671875'y='26'>)</text>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='49.984375'y='26'>x</text>`,
-                `</svg><br>`,
+                `</svg>`,
             ];
             assert.strictEqual(svg, parts.join(''));
         }
@@ -80,7 +80,7 @@ describe("rendersvg", function () {
                 `<text style='font-family:"Times New Roman";font-size:24px;'x='39.3203125'y='26'>(</text>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;'x='57.96484375'y='26'>)</text>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='47.3125'y='26'>x</text>`,
-                `</svg><br>`,
+                `</svg>`,
             ];
             assert.strictEqual(svg, parts.join(''));
         }
@@ -100,7 +100,7 @@ describe("rendersvg", function () {
             const parts: string[] = [
                 `<svg height='36'width='32'>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>&pi;</text>`,
-                `</svg><br>`,
+                `</svg>`,
             ];
             assert.strictEqual(svg, parts.join(''));
         }
@@ -121,7 +121,7 @@ describe("rendersvg", function () {
                 `<svg height='41'width='44'>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>k</text>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;'x='22'y='26'>g</text>`,
-                `</svg><br>`
+                `</svg>`
             ];
             assert.strictEqual(svg, parts.join(''));
         }
@@ -144,7 +144,7 @@ describe("rendersvg", function () {
                     `<svg height='36'width='43'>`,
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>e</text>`,
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='20.65234375'y='26'>1</text>`,
-                    `</svg><br>`
+                    `</svg>`
                 ];
                 assert.strictEqual(svg, parts.join(''));
             }
@@ -165,7 +165,7 @@ describe("rendersvg", function () {
             const parts: string[] = [
                 `<svg height='36'width='27'>`,
                 `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>i</text>`,
-                `</svg><br>`
+                `</svg>`
             ];
             assert.strictEqual(svg, parts.join(''));
         }

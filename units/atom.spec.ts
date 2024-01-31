@@ -73,7 +73,7 @@ describe("atom", function () {
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='169.26953125'y='26'>c</text>`,
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='179.921875'y='26'>t</text>`,
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='186.58984375'y='26'>]</text>`,
-                    `</svg><br>`
+                    `</svg>`
                 ];
                 lines.join('');
                 // The default implementation of Atom.toString() may change.

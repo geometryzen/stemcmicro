@@ -10,7 +10,7 @@ import { SyntaxKind } from "../src/parser/parser";
 const pi_svg_sym = [
     `<svg height='36'width='32'>`,
     `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>&pi;</text>`,
-    `</svg><br>`
+    `</svg>`
 ].join('');
 
 const pi_svg_digits = [
@@ -22,7 +22,7 @@ const pi_svg_digits = [
     `<text style='font-family:"Times New Roman";font-size:24px;'x='52'y='26'>1</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;'x='64'y='26'>5</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;'x='76'y='26'>9</text>`,
-    `</svg><br>`
+    `</svg>`
 ].join('');
 
 describe("Pi in Algebrite", function () {

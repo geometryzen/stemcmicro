@@ -92,7 +92,7 @@ const expect0: string = [
     `<text style='font-family:"Times New Roman";font-size:24px;'x='16.66796875'y='26'>r</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;'x='24.66015625'y='26'>u</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;'x='36.66015625'y='26'>e</text>`,
-    `</svg><br>`,
+    `</svg>`,
 ].join('');
 
 const expect1: string = [
@@ -103,7 +103,7 @@ const expect1: string = [
     `<text style='font-family:"Times New Roman";font-size:24px;'x='64.85546875'y='26'>r</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;'x='72.84765625'y='26'>u</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;'x='84.84765625'y='26'>e</text>`,
-    `</svg><br>`,
+    `</svg>`,
 ].join('');
 
 describe("Stepper", function () {

@@ -53,7 +53,7 @@ describe("sandbox", function () {
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='44.65234375'y='26'>m</text>`,
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='63.3203125'y='26'>/</text>`,
                     `<text style='font-family:"Times New Roman";font-size:24px;'x='69.98828125'y='26'>s</text>`,
-                    `</svg><br>`
+                    `</svg>`
                 ];
                 assert.strictEqual(engine.renderAsString(value, { format: 'SVG' }), lines.join(''));
             }

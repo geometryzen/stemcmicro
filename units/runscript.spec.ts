@@ -42,7 +42,7 @@ const svg: string[] = [
     `<text style='font-family:"Times New Roman";font-size:24px;'x='106.85546875'y='25.904296875'>)</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='96.203125'y='25.904296875'>x</text>`,
     `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='82.19921875'y='58.904296875'>x</text>`,
-    `</svg><br>`
+    `</svg>`
 ];
 
 class TestScriptOutputListener implements ScriptOutputListener {

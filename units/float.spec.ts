@@ -163,7 +163,7 @@ describe("float", function () {
         assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), "-1.0");
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "-1.0");
         // The following looks wrong because it should be a float.
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SVG' }), `<svg height='36'width='49'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>&minus;</text><text style='font-family:"Times New Roman";font-size:24px;'x='26.53515625'y='26'>1</text></svg><br>`);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SVG' }), `<svg height='36'width='49'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>&minus;</text><text style='font-family:"Times New Roman";font-size:24px;'x='26.53515625'y='26'>1</text></svg>`);
         engine.release();
     });
     it("float(e2)", function () {

@@ -5,22 +5,14 @@ import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } fr
 import { SyntaxKind } from "../src/parser/parser";
 
 const engineConfig: Partial<EngineConfig> = {
-    syntaxKind: SyntaxKind.Algebrite,
-    useGeometricAlgebra: true,
-    useClojureScript: false
+    syntaxKind: SyntaxKind.Algebrite
 };
-/*
-const eigenmathConfig: EngineConfig = {
-    useGeometricAlgebra: false
-};
-*/
 
 function strip_whitespace(s: string): string {
     return s.replace(/\s/g, '');
 }
 
 const parseConfig: ParseConfig = {
-    useGeometricAlgebra: false,
     useCaretForExponentiation: true,
     useParenForTensors: true
 };

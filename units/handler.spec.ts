@@ -7,6 +7,7 @@ import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, 
 import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
 import { EmitContext, iszero, print_value_and_input_as_svg_or_infix, ScriptOutputListener } from "../src/eigenmath";
 import { Stack } from "../src/env/Stack";
+import { SyntaxKind } from "../src/parser/parser";
 
 export function should_stepper_render_svg(stepper: Stepper): boolean {
     const $: Scope = stepper.stack.top.$;
@@ -205,7 +206,7 @@ describe("handler", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_engine({ useGeometricAlgebra: true });
+        const engine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         assert.strictEqual(should_render_svg(engine), true);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
@@ -251,7 +252,7 @@ describe("handler", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_engine({ useGeometricAlgebra: false });
+        const engine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
         assert.strictEqual(should_render_svg(engine), true);
         const { module, errors } = engine.parseModule(sourceText);
         assert.strictEqual(errors.length, 0);

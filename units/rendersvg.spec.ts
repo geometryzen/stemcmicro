@@ -3,6 +3,7 @@ import { assert } from "chai";
 import { is_blade } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { render_svg } from "../src/eigenmath";
+import { SyntaxKind } from "../src/parser/parser";
 
 describe("rendersvg", function () {
     it("x", function () {
@@ -10,7 +11,7 @@ describe("rendersvg", function () {
             `x`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -25,7 +26,7 @@ describe("rendersvg", function () {
             `sin(x)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -40,7 +41,7 @@ describe("rendersvg", function () {
             `cos(x)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -65,7 +66,7 @@ describe("rendersvg", function () {
             `tan(x)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -90,7 +91,7 @@ describe("rendersvg", function () {
             `tau(1/2)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -110,7 +111,7 @@ describe("rendersvg", function () {
             `uom("kilogram")`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -132,7 +133,7 @@ describe("rendersvg", function () {
             `G30[1]`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -155,7 +156,7 @@ describe("rendersvg", function () {
             `sqrt(-1)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {

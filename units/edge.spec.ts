@@ -3,24 +3,18 @@ import { assert } from "chai";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig, UndeclaredVars } from "../src/api/index";
 import { Stepper } from "../src/clojurescript/runtime/Stepper";
+import { SyntaxKind } from "../src/parser/parser";
 
 const engineOptions: Partial<EngineConfig> = {
     allowUndeclaredVars: UndeclaredVars.Nil,
-    useGeometricAlgebra: true,
-    useClojureScript: false
+    syntaxKind: SyntaxKind.Algebrite
 };
-/*
-const eigenmathConfig: EngineConfig = {
-    useGeometricAlgebra: false
-};
-*/
 
 function stripWhitespace(s: string): string {
     return s.replace(/\s/g, '');
 }
 
 const parseConfig: ParseConfig = {
-    useGeometricAlgebra: true,
     useCaretForExponentiation: false,
     useParenForTensors: false
 };

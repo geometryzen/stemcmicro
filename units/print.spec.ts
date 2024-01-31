@@ -1,6 +1,7 @@
 import { assert } from "chai";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api";
+import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("print", function () {
@@ -34,7 +35,7 @@ describe("print", function () {
             -1.0*e2`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);
@@ -61,7 +62,7 @@ describe("print", function () {
             -2.0*e2`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);

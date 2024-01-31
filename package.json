@@ -151,7 +151,7 @@
         "@rollup/plugin-typescript": "^11.1.6",
         "@types/chai": "^4.3.11",
         "@types/mocha": "^10.0.6",
-        "@types/node": "^20.11.10",
+        "@types/node": "^20.11.13",
         "@types/rollup-plugin-peer-deps-external": "^2.2.4",
         "@typescript-eslint/eslint-plugin": "^6.20.0",
         "@typescript-eslint/parser": "^6.20.0",

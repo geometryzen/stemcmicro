@@ -2,6 +2,7 @@
 import { assert } from "chai";
 import { Cons, is_cons, U } from 'math-expression-tree';
 import { create_engine, ExprEngine } from "../src/api/index";
+import { SyntaxKind } from "../src/parser/parser";
 
 function assert_cons(x: U): Cons {
     if (is_cons(x)) {
@@ -18,7 +19,7 @@ describe("pos", function () {
             `xyz = 123`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module), "module(xyz=123)");
@@ -48,7 +49,7 @@ describe("pos", function () {
             `xyz = 1.3`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module), "module(xyz=1.3)");
@@ -78,7 +79,7 @@ describe("pos", function () {
             `xyz = "1"`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module), `module(xyz="1")`);
@@ -108,7 +109,7 @@ describe("pos", function () {
             `xyz==123`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         // assert.strictEqual(engine.renderAsString(module), `module(xyz==123)`);
@@ -138,7 +139,7 @@ describe("pos", function () {
             `a+b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (+ a b))`);
@@ -167,7 +168,7 @@ describe("pos", function () {
             `a+b+c`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (+ a b c))`);
@@ -201,18 +202,18 @@ describe("pos", function () {
             `a-b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (+ a (* b -1)))`);
         const addExpr = assert_cons(module.item(1));
         assert.strictEqual(engine.renderAsString(addExpr, { format: 'SExpr' }), `(+ a (* b -1))`);
-        
+
         const lhs = addExpr.lhs;
         assert.strictEqual(engine.renderAsString(lhs), "a");
         assert.strictEqual(lhs.pos, 0);
         assert.strictEqual(lhs.end, 1);
-        
+
         const opr = addExpr.opr;
         assert.strictEqual(engine.renderAsString(opr), "+");
         assert.strictEqual(opr.pos, void 0);
@@ -233,7 +234,7 @@ describe("pos", function () {
             `a-b-c`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (+ a (* b -1) (* c -1)))`);
@@ -267,7 +268,7 @@ describe("pos", function () {
             `a*b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (* a b))`);
@@ -296,7 +297,7 @@ describe("pos", function () {
             `a*b*c`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (* a b c))`);
@@ -331,7 +332,7 @@ describe("pos", function () {
             `a^b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (^ a b))`);
@@ -360,7 +361,7 @@ describe("pos", function () {
             `a^b^c`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (^ (^ a b) c))`);
@@ -391,7 +392,7 @@ describe("pos", function () {
             `a << b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (<< a b))`);
@@ -420,7 +421,7 @@ describe("pos", function () {
             `a >> b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (>> a b))`);
@@ -449,7 +450,7 @@ describe("pos", function () {
             `a ** b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (pow a b))`);
@@ -478,7 +479,7 @@ describe("pos", function () {
             `+a`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module a)`);
@@ -494,7 +495,7 @@ describe("pos", function () {
             `-a`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (* a -1))`);
@@ -520,7 +521,7 @@ describe("pos", function () {
             `[ [ a , b ],[ c , d ] ]`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module [[a b] [c d]])`);
@@ -536,7 +537,7 @@ describe("pos", function () {
             `foo(x)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (foo x))`);
@@ -552,11 +553,11 @@ describe("pos", function () {
             `A[1]`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module, { format: 'SExpr' }), `(module (component A 1))`);
-        
+
         const x = assert_cons(module.item(1));
         assert.strictEqual(engine.renderAsString(x, { format: 'SExpr' }), "(component A 1)");
         assert.strictEqual(x.pos, 0);
@@ -583,7 +584,7 @@ describe("pos", function () {
             `1.5`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { module, errors } = engine.parseModule(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(engine.renderAsString(module), `module(aaa,[b],"c",123,1.5)`);

@@ -4,6 +4,7 @@ import { Atom } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
+import { SyntaxKind } from "../src/parser/parser";
 
 class TestAtom extends Atom {
     constructor() {
@@ -24,7 +25,7 @@ describe("atom", function () {
             `abs(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: true });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         engine.defineFunction("atom", create_atom);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
@@ -42,7 +43,7 @@ describe("atom", function () {
             `abs(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ useGeometricAlgebra: false });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
         engine.defineFunction("atom", create_atom);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);

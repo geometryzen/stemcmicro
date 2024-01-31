@@ -22,7 +22,6 @@ import { Visitor } from '../visitor/Visitor';
 
 export interface ParseConfig {
     useCaretForExponentiation: boolean;
-    useGeometricAlgebra: boolean;
     useParenForTensors: boolean;
 }
 
@@ -110,12 +109,9 @@ export enum UndeclaredVars {
 
 export interface EngineConfig {
     allowUndeclaredVars: UndeclaredVars;
-    syntaxKind: SyntaxKind;
     prolog: string[];
-    useGeometricAlgebra: boolean;
-    useClojureScript: boolean;
+    syntaxKind: SyntaxKind;
     useDerivativeShorthandLowerD: boolean;
-    usePythonScript: boolean;
 }
 
 function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
@@ -134,24 +130,12 @@ function engine_kind_from_engine_options(options: Partial<EngineConfig>): Engine
                 return EngineKind.PythonScript;
             }
             default: {
-                // Fall through for backwards compatibility.
+                return EngineKind.Eigenmath;
             }
         }
     }
-    // Backwards Compatibility
-    if (options.useClojureScript) {
-        return EngineKind.ClojureScript;
-    }
-    else if (options.usePythonScript) {
-        return EngineKind.PythonScript;
-    }
     else {
-        if (options.useGeometricAlgebra) {
-            return EngineKind.Algebrite;
-        }
-        else {
-            return EngineKind.Eigenmath;
-        }
+        return EngineKind.Eigenmath;
     }
 }
 

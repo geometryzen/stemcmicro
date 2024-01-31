@@ -1,9 +1,8 @@
-import { create_sym, Sym } from "math-expression-atoms";
+import { Cell, create_sym, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
 import { ProgrammingError } from "../../programming/ProgrammingError";
-import { Cell } from "../atom/Cell";
 import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";

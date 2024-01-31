@@ -1,11 +1,10 @@
-import { create_sym, Sym } from "math-expression-atoms";
+import { Cell, create_sym, Sym } from "math-expression-atoms";
 import { Cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { Cell } from "./Cell";
 
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
@@ -22,7 +21,6 @@ class Builder implements OperatorBuilder<U> {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Eval_atom(expr: Cons, $: ExtensionEnv): U {
     const arg = expr.arg;
     try {

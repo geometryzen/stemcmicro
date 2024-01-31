@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Boo, Flt, is_jsobject, is_keyword, is_map, is_str, is_tensor, Keyword, Map as JsMap, Str, Tag } from 'math-expression-atoms';
+import { Boo, Cell, CellHost, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_tensor, Keyword, Map as JsMap, Str, Tag } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native } from 'math-expression-native';
 import { is_atom, nil } from 'math-expression-tree';
@@ -13,15 +13,11 @@ import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { algebra } from "../operators/algebra/algebra";
 import { setq } from '../operators/assign/assign_any_any';
-import { Cell, CellHost, is_cell } from '../operators/atom/Cell';
-import { is_boo } from "../operators/boo/is_boo";
 import { Eval_dotdot } from '../operators/dotdot/Eval_dotdot';
-import { is_flt } from "../operators/flt/is_flt";
 import { Eval_lambda_in_fn_syntax } from '../operators/fn/Eval_fn';
 import { JsObjectExtension } from '../operators/jsobject/JsObjectExtension';
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { Eval_let } from '../operators/let/Eval_let';
-import { is_rat } from "../operators/rat/is_rat";
 import { assert_sym } from '../operators/sym/assert_sym';
 import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
@@ -679,8 +675,7 @@ class ReactiveHost implements CellHost {
         }
     }
     deref(value: U, atom: Cell): void {
-        value.pos;
-        atom.id;
+        // Nothing to see here.
     }
 }
 

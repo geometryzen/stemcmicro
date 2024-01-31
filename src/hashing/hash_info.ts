@@ -1,6 +1,5 @@
-import { is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
+import { Cell, CellHost, is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
 import { is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
-import { Cell, CellHost } from "../operators/atom/Cell";
 
 const KIND_NIL = 0;
 const KIND_CONS = 1;

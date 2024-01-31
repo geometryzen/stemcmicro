@@ -1,4 +1,4 @@
-import { Boo, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { Boo, Cell, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
@@ -7,7 +7,6 @@ import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, EmitContext, evaluate_expression, get_binding, InfixOptions, iszero, LAST, parse_eigenmath_script, print_value_and_input_as_svg_or_infix, render_svg, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_symbol, to_infix, to_sexpr, TTY } from '../eigenmath';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
-import { Cell } from '../operators/atom/Cell';
 import { assert_U } from '../operators/helpers/is_any';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';

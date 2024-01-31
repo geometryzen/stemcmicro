@@ -1,9 +1,8 @@
-import { Rat, Sym, Tensor } from "math-expression-atoms";
+import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { AtomListener } from "../api";
 import { Native } from "../native/Native";
-import { CellHost } from "../operators/atom/Cell";
 import { EnvConfig } from "./EnvConfig";
 
 export type Sign = -1 | 0 | 1;

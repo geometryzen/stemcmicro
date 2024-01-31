@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { is_jsobject, is_keyword, is_map, is_str, is_tensor, Str } from 'math-expression-atoms';
+import { Boo, Flt, is_jsobject, is_keyword, is_map, is_str, is_tensor, Keyword, Map as JsMap, Str, Tag } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
+import { is_native } from 'math-expression-native';
 import { is_atom, nil } from 'math-expression-tree';
 import { UndeclaredVars } from '../api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
@@ -12,6 +13,7 @@ import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { algebra } from "../operators/algebra/algebra";
 import { setq } from '../operators/assign/assign_any_any';
+import { Cell, CellHost, is_cell } from '../operators/atom/Cell';
 import { is_boo } from "../operators/boo/is_boo";
 import { Eval_dotdot } from '../operators/dotdot/Eval_dotdot';
 import { is_flt } from "../operators/flt/is_flt";
@@ -35,6 +37,8 @@ import { negOne, Rat } from "../tree/rat/Rat";
 import { create_sym, Sym } from "../tree/sym/Sym";
 import { Tensor } from "../tree/tensor/Tensor";
 import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
+import { visit } from '../visitor/visit';
+import { Visitor } from '../visitor/Visitor';
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
 import { CompareFn, ConsExpr, Directive, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
@@ -154,6 +158,12 @@ export class DerivedEnv implements ExtensionEnv {
     readonly #userfunc: Map<string, U> = new Map();
     constructor(baseEnv: ExtensionEnv) {
         this.#baseEnv = baseEnv;
+    }
+    getCellHost(): CellHost {
+        return this.#baseEnv.getCellHost();
+    }
+    setCellHost(host: CellHost): void {
+        this.#baseEnv.setCellHost(host);
     }
     getProlog(): readonly string[] {
         throw new Error('getProlog method not implemented.');
@@ -545,6 +555,114 @@ export class DerivedEnv implements ExtensionEnv {
     }
 }
 
+class Reaction {
+    constructor(readonly expr: U, readonly scope: ExtensionEnv, readonly target: Cell) {
+
+    }
+}
+
+class ReactionVisitor implements Visitor {
+    #scope: ExtensionEnv;
+    readonly sources: Cell[] = [];
+    constructor(scope: ExtensionEnv) {
+        this.#scope = scope;
+    }
+    atom(atom: U): void {
+        throw new Error('atom method not implemented.');
+    }
+    beginCons(expr: Cons): void {
+        const opr = expr.opr;
+        try {
+            if (is_sym(opr) && is_native(opr, Native.deref)) {
+                const arg = expr.arg;
+                const source = this.#scope.valueOf(arg);
+                if (is_cell(source)) {
+                    this.sources.push(source);
+                }
+            }
+        }
+        finally {
+            opr.release();
+        }
+    }
+    endCons(expr: Cons): void {
+    }
+    beginTensor(tensor: Tensor<U>): void {
+    }
+    endTensor(tensor: Tensor<U>): void {
+    }
+    beginMap(map: JsMap): void {
+    }
+    endMap(map: JsMap): void {
+    }
+    boo(boo: Boo): void {
+    }
+    flt(flt: Flt): void {
+    }
+    keyword(keyword: Keyword): void {
+    }
+    rat(rat: Rat): void {
+    }
+    str(str: Str): void {
+    }
+    sym(sym: Sym): void {
+    }
+    tag(tag: Tag): void {
+    }
+    nil(expr: U): void {
+    }
+}
+
+class ReactiveHost implements CellHost {
+    #sourceIdToReactionsMap: Map<string, Reaction[]> = new Map();
+    #scope: ExtensionEnv | undefined;
+    constructor() {
+
+    }
+    setScope(scope: ExtensionEnv): void {
+        this.#scope = scope;
+    }
+    reaction(expr: U, target: Cell): void {
+        const visitor = new ReactionVisitor(this.#scope!);
+        visit(expr, visitor);
+        const sources = visitor.sources;
+        for (let i = 0; i < sources.length; i++) {
+            const source = sources[i];
+            const reaction = new Reaction(expr, this.#scope!, target);
+            if (this.#sourceIdToReactionsMap.has(source.id)) {
+                this.#sourceIdToReactionsMap.get(source.id)?.push(reaction);
+            }
+            else {
+                this.#sourceIdToReactionsMap.set(source.id, [reaction]);
+            }
+        }
+    }
+    reset(from: U, to: U, source: Cell): void {
+        from.pos;
+        to.pos;
+        source.id;
+        // eslint-disable-next-line no-console
+        console.log("reset", `${from}`, "to", `${to}`, "id", `${JSON.stringify(source.id)}`);
+
+        const sourceId = source.id;
+        if (this.#sourceIdToReactionsMap.has(sourceId)) {
+            const reactions = this.#sourceIdToReactionsMap.get(sourceId)!;
+            for (let i = 0; i < reactions.length; i++) {
+                const reaction = reactions[i];
+                const expr = reaction.expr;
+                const scope = reaction.scope;
+                const target = reaction.target;
+                const data = scope.valueOf(expr);
+                target.reset(data);
+            }
+        }
+    }
+    deref(value: U, atom: Cell): void {
+        value.pos;
+        atom.id;
+    }
+}
+
 export function create_env(options?: EnvOptions): ExtensionEnv {
 
     const config: EnvConfig = config_from_options(options);
@@ -689,10 +807,20 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         }
     }
 
+    const cellHost = new ReactiveHost();
+
     /**
      * The environment return value and environment for callbacks.
      */
     const $: ExtensionEnv = {
+        getCellHost(): CellHost {
+            // We either do this or lazily create.
+            cellHost.setScope($);
+            return cellHost;
+        },
+        setCellHost(host: CellHost): void {
+            throw new ProgrammingError();
+        },
         getBinding(sym: Sym): U {
             assert_sym(sym);
             if (symTab.hasBinding(sym)) {
@@ -1255,6 +1383,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         else {
                             // eslint-disable-next-line no-console
                             console.warn("head", `${head}`);
+                            // eslint-disable-next-line no-console
                             console.warn("expr", `${expr}`);
                             throw new ProgrammingError();
                         }

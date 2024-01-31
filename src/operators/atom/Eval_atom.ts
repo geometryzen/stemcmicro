@@ -5,25 +5,7 @@ import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Cons1 } from "../helpers/Cons1";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
-import { Cell, CellHost } from "./Cell";
-
-class ReactiveHost implements CellHost {
-    reset(from: U, to: U, atom: Cell): void {
-        from.pos;
-        to.pos;
-        atom.id;
-        // eslint-disable-next-line no-console
-        console.log("reset", `${from}`, "to", `${to}`, "id", `${JSON.stringify(atom.id)}`);
-    }
-    deref(value: U, atom: Cell): void {
-        value.pos;
-        atom.id;
-        // eslint-disable-next-line no-console
-        console.log("deref", "value", `${value}`, "id", `${JSON.stringify(atom.id)}`);
-    }
-}
-
-const cellHost = new ReactiveHost();
+import { Cell } from "./Cell";
 
 type ARG = U;
 type EXP = Cons1<Sym, ARG>;
@@ -46,7 +28,7 @@ function Eval_atom(expr: Cons, $: ExtensionEnv): U {
     try {
         const value = $.valueOf(arg);
         try {
-            return new Cell(value, cellHost);
+            return new Cell(value, $.getCellHost());
         }
         finally {
             value.release();

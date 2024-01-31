@@ -1,5 +1,6 @@
 import { is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
-import { is_atom, is_cons, is_nil, U } from "math-expression-tree";
+import { is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { Cell, CellHost } from "../operators/atom/Cell";
 
 const KIND_NIL = 0;
 const KIND_CONS = 1;
@@ -29,8 +30,23 @@ export function hash_for_atom(atom: U): string | never {
     }
 }
 
+class QuietCellHost implements CellHost {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    reaction(expression: U, target: Cell): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    reset(from: U, to: U, atom: Cell): void {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deref(value: U, atom: Cell): void {
+    }
+}
+const noopHost = new QuietCellHost();
+const darkCell = new Cell(nil, noopHost);
+
 export const HASH_BLADE = 'Blade';
 export const HASH_BOO = 'Boo';
+export const HASH_CELL = hash_for_atom(darkCell);
 export const HASH_DICTIONARY = new Map([]).name;
 export const HASH_ERR = 'Err';
 export const HASH_FLT = 'Flt';

@@ -2,6 +2,7 @@ import { Atom } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 
 export interface CellHost {
+    reaction(expression: U, target: Cell): void;
     reset(from: U, to: U, atom: Cell): void
     deref(value: U, atom: Cell): void
 }
@@ -38,12 +39,12 @@ export class Cell extends Atom {
     }
 }
 
-export function is_atom(x: U): x is Cell {
+export function is_cell(x: U): x is Cell {
     return x instanceof Cell;
 }
 
-export function assert_atom(x: U): Cell {
-    if (is_atom(x)) {
+export function assert_cell(x: U): Cell {
+    if (is_cell(x)) {
         return x;
     }
     else {

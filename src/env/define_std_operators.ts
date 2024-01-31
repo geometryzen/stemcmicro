@@ -328,6 +328,7 @@ import { rco_2_any_any } from '../operators/rco/rco_2_any_any';
 import { rco_2_any_mul_2_scalar_any } from '../operators/rco/rco_2_any_mul_2_scalar_any';
 import { rco_2_blade_blade } from '../operators/rco/rco_2_blade_blade';
 import { rco_2_mul_2_scalar_any_any } from '../operators/rco/rco_2_mul_2_scalar_any_any';
+import { reaction_builder } from '../operators/reaction/Eval_reaction';
 import { real_add } from '../operators/real/real_add';
 import { real_any } from '../operators/real/real_any';
 import { real_arctan_rat } from '../operators/real/real_arctan_rat';
@@ -768,6 +769,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(assign_any_any);
 
     $.defineOperator(atom_builder);
+    $.defineOperator(reaction_builder);
 
     $.defineOperator(besselj_varargs);
     $.defineOperator(bessely_varargs);

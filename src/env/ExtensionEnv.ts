@@ -2,6 +2,7 @@ import { Rat, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
 import { Native } from "../native/Native";
+import { CellHost } from "../operators/atom/Cell";
 import { EnvConfig } from "./EnvConfig";
 
 export type Sign = -1 | 0 | 1;
@@ -274,6 +275,8 @@ export interface Predicates {
  *
  */
 export interface ExtensionEnv extends ExprContext {
+    getCellHost(): CellHost;
+    setCellHost(host: CellHost): void;
     getProlog(): readonly string[];
     getPrintHandler(): PrintHandler;
     setPrintHandler(handler: PrintHandler): void;

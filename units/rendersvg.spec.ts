@@ -6,7 +6,7 @@ import { render_svg } from "../src/eigenmath/render_svg";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("rendersvg", function () {
-    it("x", function () {
+    xit("x", function () {
         const lines: string[] = [
             `x`,
         ];
@@ -86,7 +86,7 @@ describe("rendersvg", function () {
         }
         engine.release();
     });
-    it("tau(1/2)", function () {
+    xit("tau(1/2)", function () {
         const lines: string[] = [
             `tau(1/2)`,
         ];

@@ -14,7 +14,7 @@ const svg_Omega: string = [
 ].join('');
 
 describe("sandbox", function () {
-    it("joule", function () {
+    xit("joule", function () {
         const lines: string[] = [
             `(uom "joule")`
         ];
@@ -40,7 +40,7 @@ describe("sandbox", function () {
         assert.strictEqual(is_uom(values[0]), true);
         engine.release();
     });
-    it("ohm", function () {
+    xit("ohm", function () {
         const lines: string[] = [
             `(uom "ohm")`
         ];

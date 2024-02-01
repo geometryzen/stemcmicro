@@ -2,7 +2,8 @@ import { assert } from "chai";
 import { create_sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
-import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_sexpr } from "../src/eigenmath/index";
+import { execute_eigenmath_script } from '../src/eigenmath/execute_eigenmath_script';
+import { ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_sexpr } from "../src/eigenmath/eigenmath";
 import { to_infix } from "../src/eigenmath/infixform";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -45,7 +46,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -58,7 +59,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -71,7 +72,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -84,7 +85,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -102,7 +103,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 6);
         assert.strictEqual(to_infix(values[0]), "nil");
@@ -118,7 +119,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -131,7 +132,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -144,7 +145,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -157,7 +158,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -170,7 +171,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -183,7 +184,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -200,7 +201,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 5);
         const value = values[4];
@@ -217,7 +218,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 5);
         const value = values[4];
@@ -230,7 +231,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: false, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: false, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -243,7 +244,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: false, useParenForTensors: true });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: false, useParenForTensors: true });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];
@@ -256,7 +257,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: false });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: false });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];

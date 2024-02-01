@@ -11,7 +11,9 @@ import { assert_cons } from '../tree/cons/assert_cons';
 import { two } from '../tree/rat/Rat';
 import { bignum_equal } from './bignum_equal';
 import { bignum_itoa } from './bignum_itoa';
-import { infixform_expr, infix_config_from_options } from './infixform';
+import { EigenmathReadScope } from './EigenmathReadScope';
+import { EigenmathScope } from './EigenmathScope';
+import { BLUE, html_escape_and_colorize, RED } from './html_escape_and_colorize';
 import { isdigit } from './isdigit';
 import { isequaln } from './isequaln';
 import { isequalq } from './isequalq';
@@ -22,8 +24,10 @@ import { isminusone } from './isminusone';
 import { isnegativenumber } from './isnegativenumber';
 import { isnegativeterm } from './isnegativeterm';
 import { isposint } from './isposint';
-import { BLUE, html_escape_and_colorize, RED } from './render_as_html_infix';
-import { EigenmathReadScope, EigenmathScope, EmitContext, eval_draw, eval_print, make_should_annotate, print_value_and_input_as_svg_or_infix, should_render_svg, StackContext } from './render_svg';
+
+export interface StackContext {
+    stack: U[];
+}
 
 function alloc_tensor(): Tensor {
     return new Tensor([], []);
@@ -579,7 +583,6 @@ const DET = create_sym("det");
 const DIM = create_sym("dim");
 const DO = create_sym("do");
 const DOT = create_sym("dot");
-const DRAW = create_sym("draw");
 const EIGENVEC = create_sym("eigenvec");
 const ERF = create_sym("erf");
 const ERFC = create_sym("erfc");
@@ -598,7 +601,6 @@ const FLOOR = create_sym("floor");
 const FOR = create_sym("for");
 const HADAMARD = create_sym("hadamard");
 const IMAG = create_sym("imag");
-const INFIXFORM = create_sym("infixform");
 const INNER = create_sym("inner");
 const INTEGRAL = create_sym("integral");
 const INV = create_sym("inv");
@@ -617,7 +619,6 @@ const OR = create_sym("or");
 const OUTER = create_sym("outer");
 const POLAR = create_sym("polar");
 const PREFIXFORM = create_sym("prefixform");
-const PRINT = create_sym("print");
 const PRODUCT = create_sym("product");
 const QUOTE = create_sym("quote");
 const RANK = create_sym("rank");
@@ -626,7 +627,6 @@ const REAL = create_sym("real");
 const RECT = create_sym("rect");
 const ROOTS = create_sym("roots");
 const ROTATE = create_sym("rotate");
-const RUN = create_sym("run");
 const SGN = create_sym("sgn");
 const SIMPLIFY = create_sym("simplify");
 const SIN = native_sym(Native.sin);
@@ -2295,7 +2295,7 @@ function arg1($: ScriptVars): void {
 
     // e ^ expr
 
-    if (car(p1).equals(POWER) && cadr(p1).equals(DOLLAR_E)) {
+    if (is_cons(p1) && p1.opr.equals(POWER) && cadr(p1).equals(DOLLAR_E)) {
         push(caddr(p1), $);
         imag($);
         return;
@@ -5860,14 +5860,17 @@ function integral_classify(p: U): number {
         return t;
     }
 
-    if (p.equals(DOLLAR_E))
+    if (p.equals(DOLLAR_E)) {
         return 1;
+    }
 
-    if (p.equals(LOG))
+    if (p.equals(LOG)) {
         return 2;
+    }
 
-    if (p.equals(SIN) || p.equals(COS) || p.equals(TAN))
+    if (p.equals(SIN) || p.equals(COS) || p.equals(TAN)) {
         return 4;
+    }
 
     return 0;
 }
@@ -7924,67 +7927,6 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
         }
         rotate_h(PSI, 0, i, $);
     }
-}
-
-/**
- * run("https://...")
- * @param expr 
- * @param $ 
- */
-function eval_run(expr: U, $: ScriptVars): void {
-
-    push(cadr(expr), $);
-    value_of($);
-    const url = pop($);
-
-    if (!isstring(url))
-        stopf("run: string expected");
-
-    const f = new XMLHttpRequest();
-    f.open("GET", url.str, false);
-    f.onerror = function () {
-        stopf("run: network error");
-    };
-    f.send();
-
-    if (f.status === 404 || f.responseText.length === 0)
-        stopf("run: file not found");
-
-    const save_inbuf = $.inbuf;
-    const save_trace1 = $.trace1;
-    const save_trace2 = $.trace2;
-
-    $.inbuf = f.responseText;
-
-    let k = 0;
-
-    for (; ;) {
-
-        // This would have to come from an argument to run...
-        const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
-
-        k = scan_inbuf(k, $, config);
-
-        if (k === 0)
-            break; // end of input
-
-        const input = pop($);
-        const result = evaluate_expression(input, $);
-        const ec: EmitContext = {
-            useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
-            useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
-        };
-        print_value_and_input_as_svg_or_infix(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
-        if (!is_nil(result)) {
-            set_symbol(LAST, result, nil, $);
-        }
-    }
-
-    $.inbuf = save_inbuf;
-    $.trace1 = save_trace1;
-    $.trace2 = save_trace2;
-
-    push(nil, $);
 }
 
 function eval_assign(x: Cons, $: ScriptVars): void {
@@ -12332,7 +12274,7 @@ function push_rational(a: number, b: number, $: ScriptVars): void {
     push(create_rat(a, b), $);
 }
 
-function push_string(s: string, $: ScriptVars) {
+export function push_string(s: string, $: ScriptVars) {
     push(new Str(s), $);
 }
 
@@ -12529,55 +12471,6 @@ export function parse_eigenmath_script(sourceText: string, config: EigenmathPars
         // term?
     }
     return exprs;
-}
-
-function parse_config_from_options(options: Partial<EigenmathParseConfig>): EigenmathParseConfig {
-    const config: EigenmathParseConfig = {
-        useCaretForExponentiation: options.useCaretForExponentiation ? true : false,
-        useParenForTensors: options.useParenForTensors ? true : false
-    };
-    return config;
-}
-
-export function executeScript(sourceText: string, contentHandler: ScriptContentHandler, errorHandler: ScriptErrorHandler, options: Partial<EigenmathParseConfig> = {}): void {
-    const config = parse_config_from_options(options);
-    const $ = new ScriptVars();
-    $.init();
-    contentHandler.begin($);
-    try {
-        $.inbuf = sourceText;
-
-        $.executeProlog(eigenmath_prolog);
-
-        let k = 0;
-
-        for (; ;) {
-
-            k = scan_inbuf(k, $, config);
-
-            if (k === 0) {
-                break; // end of input
-            }
-
-            const input = pop($);
-            const result = evaluate_expression(input, $);
-            contentHandler.output(result, input, $);
-            if (!is_nil(result)) {
-                set_symbol(LAST, result, nil, $);
-            }
-        }
-    }
-    catch (errmsg) {
-        if ((errmsg as string).length > 0) {
-            if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] === '\n') {
-                $.trace2--;
-            }
-            errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
-        }
-    }
-    finally {
-        contentHandler.end($);
-    }
 }
 
 export function save_symbol(p: Sym, $: ScriptVars): void {
@@ -13135,7 +13028,7 @@ function inchar(): string {
     return instring.charAt(scan_index); // returns empty string if index out of range
 }
 
-function scan_inbuf(k: number, $: ScriptVars, config: EigenmathParseConfig): number {
+export function scan_inbuf(k: number, $: ScriptVars, config: EigenmathParseConfig): number {
     $.trace1 = k;
     k = scan($.inbuf, k, $, config);
     if (k) {
@@ -13266,7 +13159,7 @@ function static_reciprocate($: ScriptVars): void {
     list(3, $);
 }
 
-function stopf(errmsg: string): never {
+export function stopf(errmsg: string): never {
     throw new Error(errmsg);
 }
 
@@ -13442,9 +13335,12 @@ interface UserFunction {
     (x: Sym, $: ScriptVars): void
 }
 
+/**
+ * TODO: Move inside ScriptVars
+ */
 const consFunctions: Map<string, ConsFunction> = new Map();
 
-function defineConsFunction(sym: Sym, func: ConsFunction): void {
+export function defineConsFunction(sym: Sym, func: ConsFunction): void {
     consFunctions.set(sym.key(), func);
 }
 
@@ -13478,7 +13374,6 @@ defineConsFunction(DERIVATIVE, eval_derivative);
 defineConsFunction(DIM, eval_dim);
 defineConsFunction(DO, eval_do);
 defineConsFunction(DOT, eval_dot);
-defineConsFunction(DRAW, eval_draw);
 defineConsFunction(EIGENVEC, eval_eigenvec);
 defineConsFunction(ERF, eval_erf);
 defineConsFunction(ERFC, eval_erfc);
@@ -13516,7 +13411,6 @@ defineConsFunction(TESTLT, eval_testlt);
 defineConsFunction(FOR, eval_for);
 defineConsFunction(HADAMARD, eval_hadamard);
 defineConsFunction(IMAG, eval_imag);
-defineConsFunction(INFIXFORM, eval_infixform);
 defineConsFunction(INNER, eval_inner);
 defineConsFunction(INV, eval_inv);
 defineConsFunction(KRONECKER, eval_kronecker);
@@ -13533,7 +13427,6 @@ defineConsFunction(OR, eval_or);
 defineConsFunction(OUTER, eval_outer);
 defineConsFunction(POLAR, eval_polar);
 defineConsFunction(PREFIXFORM, eval_prefixform);
-defineConsFunction(PRINT, eval_print);
 defineConsFunction(PRODUCT, eval_product);
 defineConsFunction(QUOTE, eval_quote);
 defineConsFunction(RANK, eval_rank);
@@ -13541,7 +13434,6 @@ defineConsFunction(RATIONALIZE, eval_rationalize);
 defineConsFunction(REAL, eval_real);
 defineConsFunction(RECT, eval_rect);
 defineConsFunction(ROOTS, eval_roots);
-defineConsFunction(RUN, eval_run);
 defineConsFunction(SGN, eval_sgn);
 defineConsFunction(SIMPLIFY, eval_simplify);
 defineConsFunction(STATUS, eval_status);
@@ -13560,16 +13452,3 @@ function vector(h: number, $: ScriptVars): void {
     const v = new Tensor([n], $.stack.splice(h, n));
     push(v, $);
 }
-
-export function eval_infixform(p1: U, $: ScriptVars): void {
-    push(cadr(p1), $);
-    value_of($);
-    p1 = pop($);
-
-    const outbuf: string[] = [];
-    const config = infix_config_from_options({});
-    infixform_expr(p1, config, outbuf);
-    const s = outbuf.join('');
-    push_string(s, $);
-}
-

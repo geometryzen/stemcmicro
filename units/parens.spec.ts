@@ -1,6 +1,7 @@
 import { assert } from "chai";
 import { U } from "math-expression-tree";
-import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars } from "../src/eigenmath/index";
+import { execute_eigenmath_script } from "../src/eigenmath/execute_eigenmath_script";
+import { ScriptContentHandler, ScriptErrorHandler, ScriptVars } from "../src/eigenmath/eigenmath";
 import { to_infix } from "../src/eigenmath/infixform";
 
 class TestContentHandler implements ScriptContentHandler {
@@ -35,7 +36,7 @@ describe("eigenmath", function () {
         const scriptText = lines.join('\n');
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
-        executeScript(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: false });
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: false });
         const values = contentHandler.values;
         assert.strictEqual(values.length, 1);
         const value = values[0];

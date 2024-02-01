@@ -4,9 +4,11 @@ import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, is_nil, items_to_cons, U } from 'math-expression-tree';
 import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { EigenmathParseConfig, evaluate_expression, get_binding, iszero, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath';
+import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { InfixOptions, to_infix } from '../eigenmath/infixform';
-import { EmitContext, print_value_and_input_as_svg_or_infix, render_svg } from '../eigenmath/render_svg';
+import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
+import { EmitContext, render_svg } from '../eigenmath/render_svg';
+import { should_engine_render_svg } from '../eigenmath/should_engine_render_svg';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { assert_U } from '../operators/helpers/is_any';
@@ -907,32 +909,12 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol, $);
     }
     /**
      * Appends `text` to `this.element.innerHTML`.
      */
     text(text: string): void {
         this.element.innerHTML += text;
-    }
-}
-
-export function should_render_svg($: ExprEngine): boolean {
-    const sym = $.symbol(Concept.TTY);
-    const tty = $.getBinding(sym);
-    if (is_nil(tty)) {
-        // Unbound in Native engine.
-        return true;
-    }
-    else if (tty.equals(sym)) {
-        // Unbound in Eigenmath engine.
-        return true;
-    }
-    else if (iszero(tty)) {
-        // Bound to zero.
-        return true;
-    }
-    else {
-        return false;
     }
 }

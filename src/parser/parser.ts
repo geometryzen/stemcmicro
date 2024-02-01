@@ -3,7 +3,7 @@ import { pos_end_items_to_cons, U } from "math-expression-tree";
 import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
 import { EigenmathErrorHandler } from "../api";
 import { EDNListParser, ParseConfig } from "../edn";
-import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath";
+import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath/eigenmath";
 import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
 import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 

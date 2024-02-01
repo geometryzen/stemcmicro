@@ -14,7 +14,7 @@ import { isnegativenumber } from "./isnegativenumber";
 import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
 import { isposint } from "./isposint";
-import { printname_from_symbol } from "./render_svg";
+import { printname_from_symbol } from "./printname_from_symbol";
 
 const ADD = native_sym(Native.add);
 const ASSIGN = native_sym(Native.assign);

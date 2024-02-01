@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { Sym } from "math-expression-atoms";
-import { EigenmathReadScope, EmitContext, render_svg } from "../src/eigenmath";
+import { EigenmathReadScope, EmitContext, render_svg } from "../src/eigenmath/eigenmath";
 import { create_script_context, ScriptContext } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 

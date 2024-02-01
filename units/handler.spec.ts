@@ -3,10 +3,12 @@ import { assert } from "chai";
 import { create_sym, Sym } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
+import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler } from "../src/api/index";
 import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
-import { iszero, ScriptOutputListener } from "../src/eigenmath";
-import { EmitContext, print_value_and_input_as_svg_or_infix } from "../src/eigenmath/render_svg";
+import { iszero, ScriptOutputListener } from "../src/eigenmath/eigenmath";
+import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
+import { EmitContext } from "../src/eigenmath/render_svg";
+import { should_engine_render_svg } from "../src/eigenmath/should_engine_render_svg";
 import { Stack } from "../src/env/Stack";
 import { SyntaxKind } from "../src/parser/parser";
 
@@ -118,7 +120,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol, $);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -208,7 +210,7 @@ describe("handler", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
-        assert.strictEqual(should_render_svg(engine), true);
+        assert.strictEqual(should_engine_render_svg(engine), true);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 6);
@@ -230,7 +232,7 @@ describe("handler", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
-        assert.strictEqual(should_render_svg(engine), true);
+        assert.strictEqual(should_engine_render_svg(engine), true);
         const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 6);
@@ -254,7 +256,7 @@ describe("handler", function () {
         ];
         const sourceText = lines.join('\n');
         const engine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
-        assert.strictEqual(should_render_svg(engine), true);
+        assert.strictEqual(should_engine_render_svg(engine), true);
         const { module, errors } = engine.parseModule(sourceText, { useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         // assert.strictEqual(is_nil(trees[5]), true);

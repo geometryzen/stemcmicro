@@ -3,9 +3,11 @@ import { assert } from "chai";
 import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { Cons, is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, run_script, ScriptHandler, should_render_svg, UndeclaredVars } from "../src/api/index";
-import { ScriptOutputListener } from "../src/eigenmath";
-import { EmitContext, print_value_and_input_as_svg_or_infix } from "../src/eigenmath/render_svg";
+import { create_engine, ExprEngine, run_script, ScriptHandler, UndeclaredVars } from "../src/api/index";
+import { ScriptOutputListener } from "../src/eigenmath/eigenmath";
+import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
+import { EmitContext } from "../src/eigenmath/render_svg";
+import { should_engine_render_svg } from "../src/eigenmath/should_engine_render_svg";
 import { SyntaxKind } from "../src/parser/parser";
 import { visit } from "../src/visitor/visit";
 import { Visitor } from "../src/visitor/Visitor";
@@ -95,7 +97,7 @@ class TestHandler implements ScriptHandler<ExprEngine>{
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol, $);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {

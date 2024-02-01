@@ -1,6 +1,7 @@
 import { assert } from "chai";
 import { U } from "math-expression-tree";
-import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix } from "../src/eigenmath/index";
+import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars } from "../src/eigenmath/index";
+import { to_infix } from "../src/eigenmath/infixform";
 import { create_script_context } from "../src/runtime/script_engine";
 
 class TestContentHandler implements ScriptContentHandler {

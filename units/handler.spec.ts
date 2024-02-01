@@ -5,7 +5,8 @@ import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler, should_render_svg } from "../src/api/index";
 import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
-import { EmitContext, iszero, print_value_and_input_as_svg_or_infix, ScriptOutputListener } from "../src/eigenmath";
+import { iszero, ScriptOutputListener } from "../src/eigenmath";
+import { EmitContext, print_value_and_input_as_svg_or_infix } from "../src/eigenmath/render_svg";
 import { Stack } from "../src/env/Stack";
 import { SyntaxKind } from "../src/parser/parser";
 

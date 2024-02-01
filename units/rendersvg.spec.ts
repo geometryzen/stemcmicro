@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_blade } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { render_svg } from "../src/eigenmath";
+import { render_svg } from "../src/eigenmath/render_svg";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("rendersvg", function () {

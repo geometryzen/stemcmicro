@@ -2,7 +2,8 @@ import { assert } from "chai";
 import { create_sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
-import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_infix, to_sexpr } from "../src/eigenmath/index";
+import { executeScript, ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_sexpr } from "../src/eigenmath/index";
+import { to_infix } from "../src/eigenmath/infixform";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const plotLambda = function (argList: Cons, $: ExprContext): U {

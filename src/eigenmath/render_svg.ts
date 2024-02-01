@@ -979,14 +979,15 @@ function emit_subexpr(p: U, $: StackContext, ec: EmitContext): void {
     emit_update_subexpr($);
 }
 
-export function emit_symbol(sym: Sym, $: StackContext): void {
-    return emit_symbol_as_fragments(sym, $);
+function emit_symbol(sym: Sym, $: StackContext): void {
+    return emit_symbol_roman(sym, $);
 }
 
 /**
  * Used to render symbols as Roman fonts.
+ * This is the standard for most mathematics. 
  */
-export function emit_symbol_roman(sym: Sym, $: StackContext): void {
+function emit_symbol_roman(sym: Sym, $: StackContext): void {
 
     if (sym.equalsSym(DOLLAR_E)) {
         emit_roman_string("exp(1)", $);
@@ -1000,6 +1001,7 @@ export function emit_symbol_roman(sym: Sym, $: StackContext): void {
 
 /**
  * Used to render symbols as a leading character then a suffix.
+ * We use this when there is some cue that the symbol.
  */
 export function emit_symbol_as_fragments(sym: Sym, $: StackContext): void {
 

@@ -1,12 +1,12 @@
 import { U } from "math-expression-tree";
 import { cadr } from "../tree/helpers";
-import { pop, push, push_string, ScriptVars, value_of } from "./eigenmath";
+import { push_string, ScriptVars, value_of } from "./eigenmath";
 import { infixform_expr, infix_config_from_options } from "./infixform";
 
 export function eval_infixform(p1: U, $: ScriptVars): void {
-    push(cadr(p1), $);
+    $.stack.push(cadr(p1));
     value_of($);
-    p1 = pop($);
+    p1 = $.stack.pop()!;
 
     const outbuf: string[] = [];
     const config = infix_config_from_options({});

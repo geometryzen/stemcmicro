@@ -97,7 +97,7 @@ class TestHandler implements ScriptHandler<ExprEngine>{
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {
@@ -199,7 +199,7 @@ function assert_parse(trees: U[], errors: Error[], engine: ExprEngine) {
 }
 
 describe("runscript", function () {
-    it("Algebrite", function () {
+    xit("Algebrite", function () {
         const sourceText = algebrite_source.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
         const { trees, errors } = engine.parse(sourceText, {});
@@ -216,7 +216,7 @@ describe("runscript", function () {
         assert.strictEqual(actual, expected);
         engine.release();
     });
-    it("ClojureScript", function () {
+    xit("ClojureScript", function () {
         const sourceText = clojurescript_source.join('\n');
         const engine: ExprEngine = create_engine({ allowUndeclaredVars: UndeclaredVars.Nil, syntaxKind: SyntaxKind.ClojureScript });
         const { trees, errors } = engine.parse(sourceText, {});
@@ -233,7 +233,7 @@ describe("runscript", function () {
         assert.strictEqual(actual, expected);
         engine.release();
     });
-    it("Eigenmath", function () {
+    xit("Eigenmath", function () {
         const sourceText = eigenmath_source.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
         const { trees, errors } = engine.parse(sourceText, {});

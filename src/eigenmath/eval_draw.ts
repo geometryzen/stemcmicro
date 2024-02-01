@@ -1,8 +1,7 @@
-import { assert_sym, create_sym, Flt, is_num, is_sym, is_tensor, Sym } from "math-expression-atoms";
+import { assert_sym, create_flt, create_sym, Flt, is_num, is_sym, is_tensor, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { assert_cons } from "../tree/cons/assert_cons";
-import { broadcast, eval_nonstop, floatfunc, get_binding, lookup, pop, push, push_double, restore_symbol, save_symbol, ScriptVars, set_symbol } from "./eigenmath";
-import { EigenmathReadScope } from "./EigenmathReadScope";
+import { broadcast, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, ScriptVars, set_symbol } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
 import { DrawContext, draw_formula, EmitContext, emit_list, height, set_emit_small_font, width } from "./render_svg";
 
@@ -63,7 +62,7 @@ export function eval_draw(expr: U, $: ScriptVars): void {
                     useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
                     useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
                 };
-                emit_graph(draw_array, $, dc, ec, outbuf, $);
+                emit_graph(draw_array, $, dc, ec, outbuf);
 
                 const output = outbuf.join('');
 
@@ -78,7 +77,7 @@ export function eval_draw(expr: U, $: ScriptVars): void {
         }
     }
 
-    push(nil, $); // return value
+    $.stack.push(nil); // return value
 }
 
 function setup_trange($: ScriptVars, dc: DrawContext): void {
@@ -87,10 +86,10 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmax = Math.PI;
 
     let p1: U = lookup(create_sym("trange"), $);
-    push(p1, $);
+    $.stack.push(p1);
     eval_nonstop($);
     floatfunc($);
-    p1 = pop($);
+    p1 = $.stack.pop()!;
 
     if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2)
         return;
@@ -112,10 +111,10 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmax = 10;
 
     let p1: U = lookup(create_sym("xrange"), $);
-    push(p1, $);
+    $.stack.push(p1);
     eval_nonstop($);
     floatfunc($);
-    p1 = pop($);
+    p1 = $.stack.pop()!;
 
     if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2)
         return;
@@ -136,10 +135,10 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymax = 10;
 
     let p1: U = lookup(create_sym("yrange"), $);
-    push(p1, $);
+    $.stack.push(p1);
     eval_nonstop($);
     floatfunc($);
-    p1 = pop($);
+    p1 = $.stack.pop()!;
 
     if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2)
         return;
@@ -198,13 +197,13 @@ function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[
 
 function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
 
-    push_double(dc.tmin, $);
-    let p1 = pop($);
+    $.stack.push(create_flt(dc.tmin));
+    let p1 = $.stack.pop()!;
     set_symbol(T, p1, nil, $);
 
-    push(F, $);
+    $.stack.push(F);
     eval_nonstop($);
-    p1 = pop($);
+    p1 = $.stack.pop()!;
 
     if (!is_tensor(p1)) {
         dc.tmin = dc.xmin;
@@ -216,22 +215,22 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     let X: U;
     let Y: U;
 
-    push_double(t, $);
-    let p1 = pop($);
+    $.stack.push(create_flt(t));
+    let p1 = $.stack.pop()!;
     set_symbol(assert_sym(T), p1, nil, $);
 
-    push(F, $);
+    $.stack.push(F);
     eval_nonstop($);
     floatfunc($);
-    p1 = pop($);
+    p1 = $.stack.pop()!;
 
     if (is_tensor(p1)) {
         X = p1.elems[0];
         Y = p1.elems[1];
     }
     else {
-        push_double(t, $);
-        X = pop($);
+        $.stack.push(create_flt(t));
+        X = $.stack.pop()!;
         Y = p1;
     }
 
@@ -250,7 +249,7 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     draw_array.push({ t: t, x: x, y: y });
 }
 
-function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathReadScope): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -262,7 +261,7 @@ function emit_graph(draw_array: { t: number; x: number; y: number }[], $: Script
 
     emit_axes(dc, outbuf);
     emit_box(dc, outbuf);
-    emit_labels($, dc, ec, outbuf, scope);
+    emit_labels($, dc, ec, outbuf);
     emit_points(draw_array, dc, outbuf);
 
     outbuf.push("</svg>");
@@ -297,31 +296,31 @@ function emit_box(dc: DrawContext, outbuf: string[]): void {
     draw_line(x2, y1, x2, y2, 0.5, outbuf); // right line
 }
 
-function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[], scope: EigenmathReadScope): void {
+function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
     set_emit_small_font();
-    emit_list(new Flt(dc.ymax), $, ec, scope);
-    const YMAX = pop($);
+    emit_list(new Flt(dc.ymax), $, ec);
+    const YMAX = $.stack.pop()!;
     let x = DRAW_LEFT_PAD - width(YMAX) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(YMAX);
     draw_formula(x, y, YMAX, outbuf);
 
     set_emit_small_font();
-    emit_list(new Flt(dc.ymin), $, ec, scope);
-    const YMIN = pop($);
+    emit_list(new Flt(dc.ymin), $, ec);
+    const YMIN = $.stack.pop()!;
     x = DRAW_LEFT_PAD - width(YMIN) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
     draw_formula(x, y, YMIN, outbuf);
 
     set_emit_small_font();
-    emit_list(new Flt(dc.xmin), $, ec, scope);
-    const XMIN = pop($);
+    emit_list(new Flt(dc.xmin), $, ec);
+    const XMIN = $.stack.pop()!;
     x = DRAW_LEFT_PAD - width(XMIN) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, XMIN, outbuf);
 
     set_emit_small_font();
-    emit_list(new Flt(dc.xmax), $, ec, scope);
-    const XMAX = pop($);
+    emit_list(new Flt(dc.xmax), $, ec);
+    const XMAX = $.stack.pop()!;
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(XMAX) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, XMAX, outbuf);

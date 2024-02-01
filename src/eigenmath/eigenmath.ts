@@ -25,10 +25,6 @@ import { isnegativenumber } from './isnegativenumber';
 import { isnegativeterm } from './isnegativeterm';
 import { isposint } from './isposint';
 
-export interface StackContext {
-    stack: U[];
-}
-
 function alloc_tensor(): Tensor {
     return new Tensor([], []);
 }
@@ -548,7 +544,7 @@ function complexity(p: U): number {
 /**
  * ( pop1 pop2 => Cons(pop2, pop1) )
  */
-function cons($: StackContext): void {
+function cons($: ScriptVars): void {
     const pop1 = pop($);
     const pop2 = pop($);
     push(create_cons(pop2, pop1), $);
@@ -10698,7 +10694,7 @@ function lessp(p1: U, p2: U): boolean {
     return cmp(p1, p2) < 0;
 }
 
-export function list(n: number, $: StackContext): void {
+function list(n: number, $: ScriptVars): void {
     push(nil, $);
     for (let i = 0; i < n; i++)
         cons($);
@@ -11331,7 +11327,7 @@ function erfc(x: number): number {
     return 1.0 - erf(x);
 }
 
-export function pop($: StackContext): U {
+function pop($: ScriptVars): U {
     if ($.stack.length === 0) {
         stopf("stack error");
     }
@@ -12251,11 +12247,11 @@ function promote_tensor($: ScriptVars): void {
     push(p3, $);
 }
 
-export function push(expr: U, $: StackContext): void {
+export function push(expr: U, $: ScriptVars): void {
     $.stack.push(expr);
 }
 
-export function push_double(d: number, $: StackContext): void {
+function push_double(d: number, $: ScriptVars): void {
     push(new Flt(d), $);
 }
 /**

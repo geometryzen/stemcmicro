@@ -62,7 +62,7 @@ class PrintScriptContentHandler implements ScriptContentHandler {
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [this.listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_render_svg($), ec, [this.listener], should_annotate_symbol);
     }
 }
 

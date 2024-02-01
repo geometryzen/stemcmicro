@@ -67,7 +67,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine>, StepperHandler {
                 }
             }
         };
-        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg(this.#engine), ec, [listener], should_annotate_symbol, this.#engine);
+        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg(this.#engine), ec, [listener], should_annotate_symbol);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     text(text: string): void {

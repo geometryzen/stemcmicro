@@ -1,10 +1,11 @@
 import { create_sym, is_str } from "math-expression-atoms";
 import { is_nil, nil, U } from "math-expression-tree";
 import { cadr } from "../tree/helpers";
-import { EigenmathParseConfig, evaluate_expression, get_binding, pop, push, scan_inbuf, ScriptVars, set_symbol, stopf, value_of } from "./eigenmath";
+import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, ScriptVars, set_symbol, stopf, value_of } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
+import { make_should_annotate } from "./make_should_annotate";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
-import { EmitContext, make_should_annotate } from "./render_svg";
+import { EmitContext } from "./render_svg";
 import { should_render_svg } from "./should_eigenmath_render_svg";
 /**
  * 'i'
@@ -20,9 +21,9 @@ const LAST = create_sym("last");
  */
 export function eval_run(expr: U, $: ScriptVars): void {
 
-    push(cadr(expr), $);
+    $.stack.push(cadr(expr));
     value_of($);
-    const url = pop($);
+    const url = $.stack.pop()!;
 
     if (!is_str(url))
         stopf("run: string expected");
@@ -55,13 +56,13 @@ export function eval_run(expr: U, $: ScriptVars): void {
         if (k === 0)
             break; // end of input
 
-        const input = pop($);
+        const input = $.stack.pop()!;
         const result = evaluate_expression(input, $);
         const ec: EmitContext = {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };
-        print_value_and_input_as_svg_or_infix(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($), $);
+        print_value_and_input_as_svg_or_infix(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($));
         if (!is_nil(result)) {
             set_symbol(LAST, result, nil, $);
         }
@@ -71,5 +72,5 @@ export function eval_run(expr: U, $: ScriptVars): void {
     $.trace1 = save_trace1;
     $.trace2 = save_trace2;
 
-    push(nil, $);
+    $.stack.push(nil);
 }

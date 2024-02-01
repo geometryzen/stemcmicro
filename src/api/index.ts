@@ -308,7 +308,7 @@ class AlgebriteExprEngine implements ExprEngine {
                     return render_as_sexpr(expr, this.#env);
                 }
                 case 'SVG': {
-                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.#env);
+                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
                 }
                 default: {
                     return render_as_infix(expr, this.#env);
@@ -445,7 +445,7 @@ class ClojureScriptExprEngine implements ExprEngine {
                     return render_as_sexpr(expr, this.#env);
                 }
                 case 'SVG': {
-                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.#env);
+                    return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
                 }
                 default: {
                     return render_as_infix(expr, this.#env);
@@ -587,7 +587,7 @@ class EigenmathExprEngine implements ExprEngine {
                 return to_sexpr(expr);
             }
             case 'SVG': {
-                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false }, this.#env);
+                return render_svg(expr, { useImaginaryI: false, useImaginaryJ: false });
             }
             default: {
                 return to_infix(expr, eigenmath_infix_config(config));
@@ -909,7 +909,7 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol);
     }
     /**
      * Appends `text` to `this.element.innerHTML`.

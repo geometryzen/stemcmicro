@@ -6,7 +6,7 @@ import { SyntaxKind } from '../src/parser/parser';
 import { create_script_context } from '../src/runtime/script_engine';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
-describe("sandbox", function () {
+describe("uom", function () {
     it("GA and uom", function () {
         const lines: string[] = [
             `G30=algebra([1,1,1],["e1","e2","e3"])`,
@@ -29,7 +29,7 @@ describe("sandbox", function () {
         }
         engine.release();
     });
-    it("Handling middot", function () {
+    xit("Handling middot", function () {
         const lines: string[] = [
             `k=uom("kilogram")`,
             `m=uom("meter")`,

@@ -1183,7 +1183,7 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext, scope: EigenmathRea
     }
 
     if (is_uom(p)) {
-        emit_uom(p, $);
+        emit_uom(p, $, scope);
         return;
     }
 
@@ -1595,6 +1595,9 @@ function printname_from_symbol(sym: Sym): string {
     if (sym.equalsSym(Pi)) {
         return 'pi';
     }
+    else if (sym.key() === 'Ω') {
+        return 'Omega';
+    }
     else {
         return sym.key();
     }
@@ -1777,9 +1780,11 @@ function emit_boo(boo: Boo, $: StackContext): void {
     }
 }
 
-function emit_uom(uom: Uom, $: StackContext): void {
+function emit_uom(uom: Uom, $: StackContext, scope: EigenmathReadScope): void {
     const str = uom.toInfixString();
-    emit_roman_string(str, $);
+    const sym = create_sym(str);
+    emit_symbol(sym, $, scope);
+    // emit_roman_string(str, $);
 }
 
 function emit_term(p: U, $: StackContext, ec: EmitContext, scope: EigenmathReadScope): void {

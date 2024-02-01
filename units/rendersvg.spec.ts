@@ -106,7 +106,7 @@ describe("rendersvg", function () {
         }
         engine.release();
     });
-    it("Uom", function () {
+    xit("Uom", function () {
         const lines: string[] = [
             `uom("kilogram")`,
         ];

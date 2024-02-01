@@ -17,19 +17,22 @@ import { isposint } from "./isposint";
 import { printname_from_symbol } from "./render_svg";
 
 const ADD = native_sym(Native.add);
+const ASSIGN = native_sym(Native.assign);
 const MULTIPLY = native_sym(Native.multiply);
-const DERIVATIVE = create_sym("derivative");
-const FACTORIAL = create_sym("factorial");
-const TESTEQ = create_sym("testeq");
-const TESTGE = create_sym("testge");
-const TESTGT = create_sym("testgt");
-const TESTLE = create_sym("testle");
-const TESTLT = create_sym("testlt");
+const DERIVATIVE = native_sym(Native.derivative);
+const FACTORIAL = native_sym(Native.factorial);
+const INDEX = native_sym(Native.component);
+const POWER = native_sym(Native.pow);
+const TESTEQ = native_sym(Native.testeq);
+const TESTGE = native_sym(Native.testge);
+const TESTGT = native_sym(Native.testgt);
+const TESTLE = native_sym(Native.testle);
+const TESTLT = native_sym(Native.testlt);
+/**
+ * Migrate from $e to the Native.E?
+ */
 const DOLLAR_E = create_sym("$e");
 
-const POWER = native_sym(Native.pow);
-const INDEX = native_sym(Native.component);
-const ASSIGN = native_sym(Native.assign);
 
 function infixform_subexpr(p: U, config: InfixConfig, outbuf: string[]): void {
     infixform_write("(", config, outbuf);

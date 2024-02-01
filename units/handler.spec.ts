@@ -228,9 +228,9 @@ describe("handler", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_engine();
+        const engine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
         assert.strictEqual(should_render_svg(engine), true);
-        const { trees, errors } = engine.parse(sourceText);
+        const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 6);
         // assert.strictEqual(is_nil(trees[5]), true);
@@ -254,7 +254,7 @@ describe("handler", function () {
         const sourceText = lines.join('\n');
         const engine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
         assert.strictEqual(should_render_svg(engine), true);
-        const { module, errors } = engine.parseModule(sourceText);
+        const { module, errors } = engine.parseModule(sourceText, { useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         // assert.strictEqual(is_nil(trees[5]), true);
         const handler = new TestStepperHandler();

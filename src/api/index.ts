@@ -15,6 +15,7 @@ import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
 import { render_as_latex } from '../print/render_as_latex';
 import { render_as_sexpr } from '../print/render_as_sexpr';
+import { ProgrammingError } from '../programming/ProgrammingError';
 import { transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
@@ -26,21 +27,33 @@ export interface ParseConfig {
     useParenForTensors: boolean;
 }
 
+/**
+ * If the option is specified (defined correctly) then use it, otherwise use the default value.
+ */
+function reify_boolean(optionValue: boolean | undefined, defaultValue: boolean = false): boolean {
+    if (typeof optionValue === 'boolean') {
+        return optionValue;
+    }
+    else {
+        return defaultValue;
+    }
+}
+
 export function algebrite_parse_config(options: Partial<ParseConfig>): AlgebriteParseOptions {
     const config: AlgebriteParseOptions = {
         catchExceptions: false,
         explicitAssocAdd: false,
         explicitAssocMul: false,
-        useCaretForExponentiation: !!options.useCaretForExponentiation,
-        useParenForTensors: !!options.useParenForTensors
+        useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation),
+        useParenForTensors: reify_boolean(options.useParenForTensors)
     };
     return config;
 }
 
 export function eigenmath_parse_config(options: Partial<ParseConfig>): EigenmathParseConfig {
     return {
-        useCaretForExponentiation: !!options.useCaretForExponentiation,
-        useParenForTensors: !!options.useParenForTensors
+        useCaretForExponentiation: reify_boolean(options.useCaretForExponentiation, true),
+        useParenForTensors: reify_boolean(options.useParenForTensors, true)
     };
 }
 
@@ -142,12 +155,12 @@ function engine_kind_from_engine_options(options: Partial<EngineConfig>): Engine
                 return EngineKind.PythonScript;
             }
             default: {
-                return EngineKind.Eigenmath;
+                throw new ProgrammingError();
             }
         }
     }
     else {
-        return EngineKind.Eigenmath;
+        return EngineKind.Algebrite;
     }
 }
 
@@ -372,9 +385,11 @@ class ClojureScriptExprEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
+        const useCaretForExponentiation = reify_boolean(options.useCaretForExponentiation);
+        const caretDecode = useCaretForExponentiation ? native_sym(Native.pow) : native_sym(Native.outer);
         const { trees, errors } = clojurescript_parse(sourceText, {
             lexicon: {
-                '^': native_sym(Native.outer),
+                '^': caretDecode,
                 '|': native_sym(Native.inner),
                 '<<': native_sym(Native.lco),
                 '>>': native_sym(Native.rco)
@@ -703,6 +718,9 @@ export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
     }
 }
 
+/**
+ * @deprecated
+ */
 export interface ScriptHandler<T> {
     begin($: T): void;
     output(value: U, input: U, $: T): void;
@@ -710,6 +728,9 @@ export interface ScriptHandler<T> {
     end($: T): void;
 }
 
+/**
+ * @deprecated
+ */
 class MyExprEngineListener<T> implements ExprEngineListener {
     constructor(private readonly handler: ScriptHandler<T>) {
 
@@ -719,6 +740,9 @@ class MyExprEngineListener<T> implements ExprEngineListener {
     }
 }
 
+/**
+ * @deprecated
+ */
 export class NoopScriptHandler implements ScriptHandler<ExprEngine> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     begin($: ExprEngine): void { }
@@ -730,6 +754,9 @@ export class NoopScriptHandler implements ScriptHandler<ExprEngine> {
     end($: ExprEngine): void { }
 }
 
+/**
+ * @deprecated
+ */
 const BLACK_HOLE = new NoopScriptHandler();
 
 /**
@@ -770,6 +797,7 @@ function symbol_from_concept(concept: Concept): Sym {
 
 /**
  * This is a proof of concept. Do not expose.
+ * @deprecated
  */
 export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void {
     const stepper = new Stepper(module);
@@ -806,6 +834,7 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
 
 /**
  * An adapter for the print_result_and_output(...) function.
+ * @deprecated
  */
 class PrintScriptListener implements ScriptOutputListener {
     constructor(private readonly element: HTMLElement) {

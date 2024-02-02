@@ -2,7 +2,7 @@ import { Boo, Cell, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } 
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
-import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
+import { STEMCParseOptions, stemc_parse } from '../algebrite/algebrite_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { eval_draw } from '../eigenmath/eval_draw';
@@ -17,6 +17,7 @@ import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { assert_U } from '../operators/helpers/is_any';
 import { assert_sym } from '../operators/sym/assert_sym';
+import { create_uom, UOM_NAMES } from '../operators/uom/uom';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
@@ -47,8 +48,8 @@ function reify_boolean(optionValue: boolean | undefined, defaultValue: boolean =
     }
 }
 
-export function algebrite_parse_config(options: Partial<ParseConfig>): AlgebriteParseOptions {
-    const config: AlgebriteParseOptions = {
+export function algebrite_parse_config(options: Partial<ParseConfig>): STEMCParseOptions {
+    const config: STEMCParseOptions = {
         catchExceptions: false,
         explicitAssocAdd: false,
         explicitAssocMul: false,
@@ -125,7 +126,7 @@ export interface ExprEngine {
  * This is an implementation detail. 
  */
 enum EngineKind {
-    Algebrite = 1,
+    STEMCscript = 1,
     Eigenmath = 2,
     ClojureScript = 3,
     PythonScript = 4
@@ -136,7 +137,7 @@ enum EngineKind {
  */
 export enum UndeclaredVars {
     Err = 1,    // ClojureScript
-    Nil = 2     // Algebrite and Eigenmath
+    Nil = 2     // STEMCscript and Eigenmath
     // Sym = 3
 }
 
@@ -150,8 +151,8 @@ export interface EngineConfig {
 function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
     if (options.syntaxKind) {
         switch (options.syntaxKind) {
-            case SyntaxKind.Algebrite: {
-                return EngineKind.Algebrite;
+            case SyntaxKind.STEMCscript: {
+                return EngineKind.STEMCscript;
             }
             case SyntaxKind.ClojureScript: {
                 return EngineKind.ClojureScript;
@@ -159,16 +160,18 @@ function engine_kind_from_engine_options(options: Partial<EngineConfig>): Engine
             case SyntaxKind.Eigenmath: {
                 return EngineKind.Eigenmath;
             }
+            /*
             case SyntaxKind.PythonScript: {
                 return EngineKind.PythonScript;
             }
+            */
             default: {
                 throw new ProgrammingError();
             }
         }
     }
     else {
-        return EngineKind.Algebrite;
+        return EngineKind.STEMCscript;
     }
 }
 
@@ -235,10 +238,9 @@ function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: Und
     }
 }
 
-class AlgebriteExprEngine implements ExprEngine {
+class STEMCExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor(options: Partial<EngineConfig>) {
-        // The base ExtensionEnv is appropriate for Algebrite.
         this.#env = create_env({
             allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
             dependencies: ALL_FEATURES
@@ -248,6 +250,9 @@ class AlgebriteExprEngine implements ExprEngine {
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             prolog: options.prolog
         });
+        for (let i = 0; i < UOM_NAMES.length; i++) {
+            this.#env.setBinding(create_sym(UOM_NAMES[i]), create_uom(UOM_NAMES[i]));
+        }
     }
     hasBinding(sym: Sym): boolean {
         assert_sym(sym);
@@ -275,7 +280,7 @@ class AlgebriteExprEngine implements ExprEngine {
         this.#env.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        const { trees, errors } = algebrite_parse(sourceText, algebrite_parse_config(options));
+        const { trees, errors } = stemc_parse(sourceText, algebrite_parse_config(options));
         const visitor = new ExtensionEnvVisitor(this.#env);
         for (const tree of trees) {
             visit(tree, visitor);
@@ -712,8 +717,8 @@ class PythonExprEngine implements ExprEngine {
 export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_engine_options(options);
     switch (engineKind) {
-        case EngineKind.Algebrite: {
-            return new AlgebriteExprEngine(options);
+        case EngineKind.STEMCscript: {
+            return new STEMCExprEngine(options);
         }
         case EngineKind.ClojureScript: {
             return new ClojureScriptExprEngine(options);

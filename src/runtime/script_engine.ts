@@ -5,6 +5,7 @@ import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
 import { assert_sym } from "../operators/sym/assert_sym";
+import { create_uom, UOM_NAMES } from "../operators/uom/uom";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
@@ -166,21 +167,30 @@ export function env_options_from_script_context_options(options: ScriptContextOp
             useDerivativeShorthandLowerD: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         };
         return hook(config, "B");
     }
 }
 
 /**
+ * TODO: The REP should migrate toward the ExprEngine API.
  * @deprecated Used only by development REPL.
  */
-export function create_script_context(contextOptions?: ScriptContextOptions): ScriptContext {
+export function create_script_context(contextOptions: ScriptContextOptions = {}): ScriptContext {
     // console.lg("create_script_context");
     let ref_count = 1;
     const envOptions: EnvOptions = env_options_from_script_context_options(contextOptions);
     const $ = create_env(envOptions);
     init_env($, contextOptions);
+    switch (contextOptions.syntaxKind) {
+        case SyntaxKind.STEMCscript: {
+            for (let i = 0; i < UOM_NAMES.length; i++) {
+                $.setBinding(create_sym(UOM_NAMES[i]), create_uom(UOM_NAMES[i]));
+            }
+            break;
+        }
+    }
     const theEngine: ScriptContext = {
         get $(): ExtensionEnv {
             return $;
@@ -211,7 +221,7 @@ export function create_script_context(contextOptions?: ScriptContextOptions): Sc
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
             // console.lg("executeScript", sourceText);
-            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> = { syntaxKind: SyntaxKind.Algebrite };
+            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> = { syntaxKind: SyntaxKind.STEMCscript };
             if (contextOptions) {
                 if (typeof contextOptions.catchExceptions === 'boolean') {
                     picks.catchExceptions = contextOptions.catchExceptions;
@@ -309,7 +319,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
     else {
         return {
             catchExceptions: false,
-            syntaxKind: SyntaxKind.Algebrite,
+            syntaxKind: SyntaxKind.STEMCscript,
             useCaretForExponentiation: false,
             useParenForTensors: false,
             explicitAssocAdd: false,

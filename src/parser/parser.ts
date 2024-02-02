@@ -1,17 +1,15 @@
 import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
 import { pos_end_items_to_cons, U } from "math-expression-tree";
-import { AlgebriteParseOptions, algebrite_parse } from "../algebrite/algebrite_parse";
+import { STEMCParseOptions, stemc_parse } from "../algebrite/algebrite_parse";
 import { EigenmathErrorHandler } from "../api";
 import { EDNListParser, ParseConfig } from "../edn";
 import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath/eigenmath";
-import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
-import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 
 export enum SyntaxKind {
     /**
-     * Algebrite Scripting Language by Davide Della Casa (with extensions).
+     * STEMC Scripting Language.
      */
-    Algebrite = 1,
+    STEMCscript = 1,
     /**
      * ClojureScript Programming Language.
      */
@@ -20,19 +18,16 @@ export enum SyntaxKind {
      * Eigenmath Scripting Language by George Weigt.
      */
     Eigenmath = 3,
-    /**
-     * Python Programming Language.
-     */
-    PythonScript = 4,
+    // PythonScript = 4,
 }
 
 export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
     if (syntaxKind) {
         switch (syntaxKind) {
-            case SyntaxKind.Algebrite: return "Algebrite";
+            case SyntaxKind.STEMCscript: return "STEMCscript";
             case SyntaxKind.ClojureScript: return "ClojureScript";
             case SyntaxKind.Eigenmath: return "Eigenmath";
-            case SyntaxKind.PythonScript: return "PythonScript";
+            // case SyntaxKind.PythonScript: return "PythonScript";
         }
     }
     else {
@@ -40,7 +35,7 @@ export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
     }
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.Algebrite, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.STEMCscript, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath/*, SyntaxKind.PythonScript*/];
 
 export interface ParseOptions {
     catchExceptions?: boolean,
@@ -156,8 +151,8 @@ export function clojurescript_parse(sourceText: string, options: ClojureScriptPa
 export function delegate_parse_script(sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
     const syntaxKind = script_kind_from_options(options);
     switch (syntaxKind) {
-        case SyntaxKind.Algebrite: {
-            return algebrite_parse(sourceText, algebrite_parse_options(options));
+        case SyntaxKind.STEMCscript: {
+            return stemc_parse(sourceText, stemc_parse_options(options));
         }
         case SyntaxKind.ClojureScript: {
             return clojurescript_parse(sourceText, clojurescript_parse_options(options));
@@ -169,16 +164,18 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
             const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_options(options), emErrorHandler, scriptVars);
             return { trees, errors: emErrorHandler.errors };
         }
+        /*
         case SyntaxKind.PythonScript: {
             return pythonscript_parse(sourceText, python_parse_options(options));
         }
+        */
         default: {
             throw new Error(`options.syntaxKind ${syntaxKind} must be one of ${JSON.stringify(syntaxKinds.map(human_readable_syntax_kind).sort())}.`);
         }
     }
 }
 
-function algebrite_parse_options(options?: ParseOptions): AlgebriteParseOptions {
+function stemc_parse_options(options?: ParseOptions): STEMCParseOptions {
     if (options) {
         return {
             explicitAssocAdd: options.explicitAssocAdd,
@@ -223,7 +220,7 @@ function eigenmath_parse_options(options?: ParseOptions): EigenmathParseConfig {
         };
     }
 }
-
+/*
 function python_parse_options(options?: ParseOptions): PythonScriptParseOptions {
     if (options) {
         if (options.useCaretForExponentiation) {
@@ -241,17 +238,17 @@ function python_parse_options(options?: ParseOptions): PythonScriptParseOptions 
         return {};
     }
 }
-
+*/
 function script_kind_from_options(options?: ParseOptions): SyntaxKind {
     if (options) {
         if (options.syntaxKind) {
             return options.syntaxKind;
         }
         else {
-            return SyntaxKind.Algebrite;
+            return SyntaxKind.STEMCscript;
         }
     }
     else {
-        return SyntaxKind.Algebrite;
+        return SyntaxKind.STEMCscript;
     }
 }

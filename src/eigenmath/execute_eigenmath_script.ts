@@ -1,5 +1,5 @@
 import { create_sym } from 'math-expression-atoms';
-import { is_nil, nil } from 'math-expression-tree';
+import { nil } from 'math-expression-tree';
 import { define_cons_function, EigenmathParseConfig, eigenmath_prolog, evaluate_expression, scan_inbuf, ScriptContentHandler, ScriptErrorHandler, ScriptVars, set_symbol } from './eigenmath';
 import { eval_draw } from './eval_draw';
 import { eval_infixform } from './eval_infixform';
@@ -43,7 +43,7 @@ export function execute_eigenmath_script(sourceText: string, contentHandler: Scr
             const input = $.stack.pop()!;
             const result = evaluate_expression(input, $);
             contentHandler.output(result, input, $);
-            if (!is_nil(result)) {
+            if (!result.isnil) {
                 set_symbol(LAST, result, nil, $);
             }
         }

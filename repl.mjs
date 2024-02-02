@@ -31,7 +31,7 @@ function prompt(syntaxKind) {
 }
 
 const contextOptions = {
-    syntaxKind: SyntaxKind.ClojureScript,
+    syntaxKind: SyntaxKind.STEMCscript,
     useCaretForExponentiation: false
 };
 

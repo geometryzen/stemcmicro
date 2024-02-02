@@ -8,7 +8,7 @@ import { strcmp } from "../../operators/str/str_extension";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_tensor } from "../../operators/tensor/is_tensor";
 import { is_uom } from "../../operators/uom/is_uom";
-import { car, cdr, is_cons, is_nil, U } from "../../tree/tree";
+import { car, cdr, is_cons, U } from "../../tree/tree";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
@@ -24,15 +24,15 @@ export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         return SIGN_EQ;
     }
 
-    if (is_nil(lhs) && is_nil(rhs)) {
+    if (lhs.isnil && rhs.isnil) {
         return SIGN_EQ;
     }
 
-    if (is_nil(lhs)) {
+    if (lhs.isnil) {
         return SIGN_LT;
     }
 
-    if (is_nil(rhs)) {
+    if (rhs.isnil) {
         return SIGN_GT;
     }
 

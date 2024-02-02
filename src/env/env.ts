@@ -108,7 +108,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : false,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
             useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false,
-            syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.Algebrite,
+            syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.STEMCscript,
         };
         // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;
@@ -125,7 +125,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useDerivativeShorthandLowerD: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         };
         // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;

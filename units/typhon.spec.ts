@@ -2,7 +2,7 @@ import { assert } from "chai";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 
-describe("typhon", function () {
+xdescribe("typhon", function () {
     it("137", function () {
         const lines: string[] = [
             `137`

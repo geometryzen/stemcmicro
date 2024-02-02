@@ -1,7 +1,7 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
-import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from 'math-expression-tree';
+import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_num } from '../operators/num/is_num';
@@ -13,7 +13,7 @@ import { bignum_equal } from './bignum_equal';
 import { bignum_itoa } from './bignum_itoa';
 import { EigenmathReadScope } from './EigenmathReadScope';
 import { EigenmathScope } from './EigenmathScope';
-import { BLUE, html_escape_and_colorize, RED } from './html_escape_and_colorize';
+import { ColorCode, html_escape_and_colorize } from './html_escape_and_colorize';
 import { isdigit } from './isdigit';
 import { isequaln } from './isequaln';
 import { isequalq } from './isequalq';
@@ -224,10 +224,10 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     if (lhs === rhs)
         return 0;
 
-    if (is_nil(lhs))
+    if (lhs.isnil)
         return -1;
 
-    if (is_nil(rhs))
+    if (rhs.isnil)
         return 1;
 
     if (is_num(lhs) && is_num(rhs))
@@ -1132,7 +1132,7 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
         if (is_num(car(p1))) {
             coeff1 = car(p1);
             p1 = cdr(p1);
-            if (is_nil(cdr(p1))) {
+            if (cdr(p1).isnil) {
                 p1 = car(p1);
                 denorm = 0;
             }
@@ -1144,7 +1144,7 @@ function combine_terms_nib(i: number, j: number, $: ScriptVars): 1 | 0 {
         if (is_num(car(p2))) {
             coeff2 = car(p2);
             p2 = cdr(p2);
-            if (is_nil(cdr(p2)))
+            if (cdr(p2).isnil)
                 p2 = car(p2);
         }
     }
@@ -1232,7 +1232,7 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
         if (is_num(car(p1))) {
             // skip over coeff
             p1 = cdr(p1);
-            if (is_nil(cdr(p1))) {
+            if (cdr(p1).isnil) {
                 p1 = car(p1);
                 a = 0;
             }
@@ -1245,7 +1245,7 @@ function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
         if (is_num(car(p2))) {
             // skip over coeff
             p2 = cdr(p2);
-            if (is_nil(cdr(p2))) {
+            if (cdr(p2).isnil) {
                 p2 = car(p2);
                 b = 0;
             }
@@ -3443,7 +3443,7 @@ function dfunction(p1: U, p2: U, $: ScriptVars): void {
 
     const p3 = cdr(p1); // p3 is the argument list for the function
 
-    if (is_nil(p3) || findf(p3, p2, $)) {
+    if (p3.isnil || findf(p3, p2, $)) {
         push(DERIVATIVE, $);
         push(p1, $);
         push(p2, $);
@@ -8711,7 +8711,7 @@ function subst($: ScriptVars): void {
     const p3 = pop($); // new expr
     const p2 = pop($); // old expr
 
-    if (is_nil(p2) || is_nil(p3))
+    if (p2.isnil || p3.isnil)
         return;
 
     let p1 = pop($); // expr
@@ -9371,7 +9371,7 @@ function eval_user_function(p1: U, $: ScriptVars): void {
 
     // undefined function?
 
-    if (is_nil(FUNC_DEFN)) {
+    if (FUNC_DEFN.isnil) {
         if (FUNC_NAME.equals(D_LOWER)) {
             $.expanding++;
             eval_derivative(p1, $);
@@ -10449,7 +10449,14 @@ export function get_binding(sym: Sym, $: ScriptVars): U {
         stopf(`get_binding(${sym}) symbol error`);
     }
     const binding = $.getBinding(sym);
-    if (typeof binding === 'undefined' || is_nil(binding)) {
+    // TODO: We shouldn't need these first two checks.
+    if (typeof binding === 'undefined') {
+        return sym;
+    }
+    else if (binding === null) {
+        return sym;
+    }
+    else if (binding.isnil) {
         return sym; // symbol binds to itself
     }
     else {
@@ -12136,30 +12143,38 @@ export function to_sexpr(expr: U): string {
 function prefixform(p: U, outbuf: string[]) {
     if (is_cons(p)) {
         outbuf.push("(");
-        prefixform(car(p), outbuf);
-        p = cdr(p);
-        while (is_cons(p)) {
-            outbuf.push(" ");
+        try {
             prefixform(car(p), outbuf);
             p = cdr(p);
+            while (is_cons(p)) {
+                outbuf.push(" ");
+                prefixform(car(p), outbuf);
+                p = cdr(p);
+            }
         }
-        outbuf.push(")");
+        finally {
+            outbuf.push(")");
+        }
     }
     else if (is_rat(p)) {
-        if (isnegativenumber(p))
+        if (isnegativenumber(p)) {
             outbuf.push('-');
+        }
         outbuf.push(bignum_itoa(p.a));
-        if (isfraction(p))
+        if (isfraction(p)) {
             outbuf.push("/" + bignum_itoa(p.b));
+        }
     }
     else if (is_flt(p)) {
         let s = p.d.toPrecision(6);
         if (s.indexOf("E") < 0 && s.indexOf("e") < 0 && s.indexOf(".") >= 0) {
             // remove trailing zeroes
-            while (s.charAt(s.length - 1) === "0")
+            while (s.charAt(s.length - 1) === "0") {
                 s = s.substring(0, s.length - 1);
-            if (s.charAt(s.length - 1) === '.')
+            }
+            if (s.charAt(s.length - 1) === '.') {
                 s += "0";
+            }
         }
         outbuf.push(s);
     }
@@ -12171,9 +12186,11 @@ function prefixform(p: U, outbuf: string[]) {
             outbuf.push(p.key());
         }
     }
-    else if (is_str(p))
-        outbuf.push("'" + p.str + "'");
+    else if (is_str(p)) {
+        outbuf.push(JSON.stringify(p.str));
+    }
     else if (is_tensor(p)) {
+        // FIXME
         outbuf.push("[ ]");
     }
     else if (is_uom(p)) {
@@ -12182,7 +12199,7 @@ function prefixform(p: U, outbuf: string[]) {
     else if (is_atom(p)) {
         outbuf.push(`${p}`);
     }
-    else if (is_nil(p)) {
+    else if (p.isnil) {
         outbuf.push(`()`);
     }
     else {
@@ -12417,7 +12434,7 @@ export interface ScriptErrorHandler {
 
 export class PrintScriptErrorHandler implements ScriptErrorHandler {
     error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
-        const s = html_escape_and_colorize(inbuf.substring(start, end) + "\nStop: " + err, RED);
+        const s = html_escape_and_colorize(inbuf.substring(start, end) + "\nStop: " + err, ColorCode.RED);
         broadcast(s, $);
     }
 }
@@ -13013,7 +13030,7 @@ function scan_error(s: string, $: ScriptVars): never {
         t += instring.substring(token_index, scan_index);
     }
 
-    const escaped = html_escape_and_colorize(t, RED);
+    const escaped = html_escape_and_colorize(t, ColorCode.RED);
 
     broadcast(escaped, $);
 
@@ -13177,11 +13194,14 @@ function swap($: ScriptVars): void {
 function trace_source_text($: ScriptVars): void {
     const p1 = get_binding(TRACE, $);
     if (!p1.equals(TRACE) && !iszero(p1)) {
-        const escaped = html_escape_and_colorize(instring.substring($.trace1, $.trace2), BLUE);
+        const escaped = html_escape_and_colorize(instring.substring($.trace1, $.trace2), ColorCode.BLUE);
         broadcast(escaped, $);
     }
 }
 
+/**
+ * Sends the `text` to all output listeners.
+ */
 export function broadcast(text: string, $: ScriptVars): void {
     for (const listener of $.listeners) {
         listener.output(text);
@@ -13204,6 +13224,7 @@ export class ScriptVars implements ExprContext {
     trace2: number = -1;
     stack: U[] = [];
     frame: U[] = [];
+    // TODO: Change this to a Map
     binding: { [key: string]: U } = {};
     usrfunc: { [key: string]: U } = {};
     eval_level: number = -1;

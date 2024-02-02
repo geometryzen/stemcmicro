@@ -20,7 +20,7 @@ describe("Python parse", function () {
         assert.strictEqual(context.renderAsSExpr(tree), "(define f (lambda (x) (* a x)))");
         context.release();
     });
-    it("def f(x): return x", function () {
+    xit("def f(x): return x", function () {
         const lines: string[] = [
             `def f(x): return a*x`,
             `f(1)`

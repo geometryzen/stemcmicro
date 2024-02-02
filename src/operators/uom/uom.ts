@@ -36,6 +36,8 @@ export type TYPE_UOM_NAME =
     'watt' |
     'weber';
 
+export const UOM_NAMES: TYPE_UOM_NAME[] = ['ampere', 'candela', 'coulomb', 'farad', 'henry', 'hertz', 'joule', 'kelvin', 'kilogram', 'meter', 'metre', 'mole', 'newton', 'ohm', 'pascal', 'second', 'siemens', 'tesla', 'volt', 'watt', 'weber'];
+
 const units: Map<TYPE_UOM_NAME, Uom> = new Map();
 
 units.set('ampere', Uom.AMPERE);

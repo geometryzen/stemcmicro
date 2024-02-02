@@ -286,7 +286,7 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         };
     }
     else {
@@ -294,7 +294,7 @@ function harness_options_to_script_context_options(options: TestOptions | undefi
             useCaretForExponentiation: true,
             useDerivativeShorthandLowerD: true,
             useIntegersForPredicates: true,
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         };
     }
 }

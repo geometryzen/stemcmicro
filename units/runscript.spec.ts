@@ -12,7 +12,7 @@ import { SyntaxKind } from "../src/parser/parser";
 import { visit } from "../src/visitor/visit";
 import { Visitor } from "../src/visitor/Visitor";
 
-const algebrite_source: string[] = [
+const stemcscript_source: string[] = [
     `trace=1`,
     `tty=0`,
     `f=sin(x)/x`,
@@ -199,9 +199,9 @@ function assert_parse(trees: U[], errors: Error[], engine: ExprEngine) {
 }
 
 describe("runscript", function () {
-    xit("Algebrite", function () {
-        const sourceText = algebrite_source.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+    xit("STEMCscript", function () {
+        const sourceText = stemcscript_source.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
 
         assert_parse(trees, errors, engine);

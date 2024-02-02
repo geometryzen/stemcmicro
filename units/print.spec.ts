@@ -35,7 +35,7 @@ describe("print", function () {
             -1.0*e2`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);
@@ -62,7 +62,7 @@ describe("print", function () {
             -2.0*e2`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);

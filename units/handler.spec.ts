@@ -199,7 +199,7 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
 }
 
 describe("handler", function () {
-    it("Algebrite", function () {
+    it("STEMCscript", function () {
         const lines: string[] = [
             `trace=1`,
             `f=sin(x)/x+0.5`,
@@ -209,7 +209,7 @@ describe("handler", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         assert.strictEqual(should_engine_render_svg(engine), true);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);

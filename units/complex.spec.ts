@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { algebrite_prolog } from "../src/runtime/init";
+import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -9,7 +9,7 @@ describe("complex", function () {
             `y*i+x`,
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog
+            prolog: stemc_prolog
         });
         engine.executeScript("i=sqrt(-1)");
         const value = assert_one_value_execute(lines.join('\n'), engine);
@@ -42,7 +42,7 @@ describe("complex", function () {
             `i*y+x`,
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog
+            prolog: stemc_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
@@ -52,7 +52,7 @@ describe("complex", function () {
         const lines: string[] = [
             `y*i+x`,
         ];
-        const engine = create_script_context({ prolog: algebrite_prolog });
+        const engine = create_script_context({ prolog: stemc_prolog });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x+i*y");
         engine.release();
@@ -62,7 +62,7 @@ describe("complex", function () {
             `i*i`,
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog
+            prolog: stemc_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "-1");
@@ -73,7 +73,7 @@ describe("complex", function () {
             `(-i)*i`,
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog
+            prolog: stemc_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1");
@@ -122,7 +122,7 @@ describe("complex", function () {
             `y*i+x`,
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog
+            prolog: stemc_prolog
         });
         engine.executeScript("i=sqrt(-1)");
         const value = assert_one_value_execute(lines.join('\n'), engine);

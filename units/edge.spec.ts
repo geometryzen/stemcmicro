@@ -7,7 +7,7 @@ import { SyntaxKind } from "../src/parser/parser";
 
 const engineOptions: Partial<EngineConfig> = {
     allowUndeclaredVars: UndeclaredVars.Nil,
-    syntaxKind: SyntaxKind.Algebrite
+    syntaxKind: SyntaxKind.STEMCscript
 };
 
 function stripWhitespace(s: string): string {

@@ -18,7 +18,7 @@ export function soft_reset($: ExtensionEnv): void {
 /**
  * These should only be used in tests as a convenience.
  */
-export const algebrite_prolog = [
+export const stemc_prolog = [
     'e=exp(1)',
     'i=sqrt(-1)',
     'pi=tau(1)/2',

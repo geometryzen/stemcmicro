@@ -6,12 +6,12 @@ import { create_engine, EngineConfig, ExprEngine, ParseConfig } from "../src/api
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("examples", function () {
-    it("Algebrite", function () {
+    it("STEMCscript", function () {
         const lines: string[] = [
             `1 + 2 + 3 + 4`
         ];
         const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         };
         const engine: ExprEngine = create_engine(engineOptions);
 
@@ -99,6 +99,7 @@ describe("examples", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
+    /*
     xit("PythonScript", function () {
         const lines: string[] = [
             `1 + 2 + 3 + 4`
@@ -131,12 +132,13 @@ describe("examples", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
-    it("Algebrite", function () {
+    */
+    it("STEMCscript", function () {
         const lines: string[] = [
             `joule / coulomb`
         ];
         const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.Algebrite,
+            syntaxKind: SyntaxKind.STEMCscript,
             prolog: []
         };
         const engine: ExprEngine = create_engine(engineOptions);
@@ -159,16 +161,16 @@ describe("examples", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `joule/coulomb`);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `(* (pow coulomb -1) joule)`);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), `V`);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), `V`);
         engine.release();
     });
-    it("Algebrite", function () {
+    it("STEMCscript", function () {
         const lines: string[] = [
             `joule / coulomb`
         ];
         const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.Algebrite,
+            syntaxKind: SyntaxKind.STEMCscript,
             prolog: [
                 `joule=uom("joule")`,
                 `coulomb=uom("coulomb")`

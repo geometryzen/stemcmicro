@@ -34,7 +34,7 @@ describe("simplify", function () {
             `simplify(cos(x)**2+sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -50,7 +50,7 @@ describe("simplify", function () {
             `simplify(S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -66,7 +66,7 @@ describe("simplify", function () {
             `simplify(-M+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -82,7 +82,7 @@ describe("simplify", function () {
             `simplify(-M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -98,7 +98,7 @@ describe("simplify", function () {
             `simplify(-M*sin(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -115,7 +115,7 @@ describe("simplify", function () {
             `simplify(-9.81*M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -132,7 +132,7 @@ describe("simplify", function () {
             `simplify(-9.81*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -149,7 +149,7 @@ describe("simplify", function () {
             `simplify(-9.81*M+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -166,7 +166,7 @@ describe("simplify", function () {
             `simplify(-K*M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -200,7 +200,7 @@ describe("simplify", function () {
             `simplify(-9.81*M*L+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -216,7 +216,7 @@ describe("simplify", function () {
             `simplify(M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -232,7 +232,7 @@ describe("simplify", function () {
             `simplify(3*M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -249,7 +249,7 @@ describe("simplify", function () {
             `simplify(3.0*M*cos(x)+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -266,7 +266,7 @@ describe("simplify", function () {
             `simplify(-9.81*M*cos(x)*kg+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -285,7 +285,7 @@ describe("simplify", function () {
             `simplify(-9.81*M*cos(x)*e1*kg+S*cos(x)**2+S*sin(x)**2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {

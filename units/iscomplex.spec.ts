@@ -11,7 +11,7 @@ describe("iscomplex", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);

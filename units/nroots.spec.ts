@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { algebrite_prolog } from "../src/runtime/init";
+import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 
 describe("nroots", function () {
@@ -44,7 +44,7 @@ describe("nroots", function () {
             `nroots((1+i)*x^2+1)`
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog,
+            prolog: stemc_prolog,
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
@@ -56,7 +56,7 @@ describe("nroots", function () {
             `nroots(sqrt(2)*exp(i*pi/4)*x^2+1)`
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog,
+            prolog: stemc_prolog,
             useCaretForExponentiation: true
         });
         const { values } = engine.executeScript(lines.join('\n'));

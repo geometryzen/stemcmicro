@@ -4,13 +4,13 @@ import { assert_boo, assert_keyword, assert_map, assert_rat } from "math-express
 import { create_engine, ExprEngine } from "../src/api/index";
 import { SyntaxKind } from "../src/parser/parser";
 
-describe("Algebrite", function () {
+describe("STEMCscript", function () {
     it("empty Map", function () {
         const lines: string[] = [
             `{}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -29,7 +29,7 @@ describe("Algebrite", function () {
             `{a: 1, b: 2}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -60,7 +60,7 @@ describe("Algebrite", function () {
             `{visible: true}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -90,7 +90,7 @@ describe("Algebrite", function () {
             `{visible: false}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -120,7 +120,7 @@ describe("Algebrite", function () {
             `{visible:true}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -150,7 +150,7 @@ describe("Algebrite", function () {
             `{visible:false}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);

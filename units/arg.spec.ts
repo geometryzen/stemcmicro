@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { SyntaxKind } from "../src/parser/parser";
-import { algebrite_prolog } from "../src/runtime/init";
+import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -17,7 +17,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "undefined");
@@ -31,7 +31,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "undefined");
@@ -46,7 +46,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "0");
@@ -61,7 +61,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/2 pi)");
@@ -76,7 +76,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "3.041924...");
@@ -91,7 +91,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/2 pi)");
@@ -106,7 +106,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/4 pi)");
@@ -121,7 +121,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 3/4 pi)");
@@ -136,7 +136,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/4 pi)");
@@ -151,7 +151,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.Algebrite });
+        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -3/4 pi)");
@@ -212,7 +212,7 @@ describe("arg", function () {
             `arg(exp(i*pi/3))`,
         ];
         const engine = create_script_context({
-            prolog: algebrite_prolog
+            prolog: stemc_prolog
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1/3*pi");
@@ -226,7 +226,7 @@ describe("arg", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            
+
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1/3*pi");
@@ -240,7 +240,7 @@ describe("arg", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            
+
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1.047198...");
@@ -254,7 +254,7 @@ describe("arg", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            
+
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1.047198...");
@@ -268,7 +268,7 @@ describe("arg", function () {
         ];
         const engine = create_script_context({
             dependencies: ['Imu'],
-            
+
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1/6*pi");
@@ -286,7 +286,7 @@ describe("arg", function () {
                 'b': { real: true }
             },
             dependencies: ['Imu'],
-            
+
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1/5*pi");
@@ -304,7 +304,7 @@ describe("arg", function () {
                 'b': { real: true }
             },
             dependencies: ['Imu'],
-            
+
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1/5*pi");

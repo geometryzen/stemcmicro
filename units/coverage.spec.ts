@@ -5,7 +5,7 @@ import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } fr
 import { SyntaxKind } from "../src/parser/parser";
 
 const engineConfig: Partial<EngineConfig> = {
-    syntaxKind: SyntaxKind.Algebrite
+    syntaxKind: SyntaxKind.STEMCscript
 };
 
 function strip_whitespace(s: string): string {

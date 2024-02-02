@@ -4,7 +4,7 @@ import process from 'process';
 import { Predicates } from './src/env/ExtensionEnv';
 import { SyntaxKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
-import { algebrite_prolog } from './src/runtime/init';
+import { stemc_prolog } from './src/runtime/init';
 import { create_script_context, ScriptContext, ScriptContextOptions } from './src/runtime/script_engine';
 import { U } from './src/tree/tree';
 
@@ -194,7 +194,7 @@ function setup_test(f: () => void, engine: ScriptContext, options: ScriptContext
     // We need to redo these...
     engine.clearBindings();
 
-    engine.executeProlog(algebrite_prolog);
+    engine.executeProlog(stemc_prolog);
 
     // TODO: Remove these comments when everything is working.
     // Not going to do this anymore.

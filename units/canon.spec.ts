@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { algebrite_prolog } from "../src/runtime/init";
+import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -11,7 +11,7 @@ describe("canon", function () {
             ];
             const engine = create_script_context({
                 dependencies: ['Imu'],
-                prolog: algebrite_prolog
+                prolog: stemc_prolog
             });
             const expr = assert_one_value_execute(lines.join('\n'), engine);
             assert.strictEqual(engine.renderAsInfix(expr), '2*i*pi*x');
@@ -25,7 +25,7 @@ describe("canon", function () {
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             useCaretForExponentiation: true,
-            prolog: algebrite_prolog,
+            prolog: stemc_prolog,
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1+x+1/x^2+1/x+x^2+x^3");
@@ -38,7 +38,7 @@ describe("canon", function () {
         const engine = create_script_context({
             dependencies: ['Blade', 'Vector', 'Flt', 'Imu', 'Uom'],
             useCaretForExponentiation: true,
-            prolog: algebrite_prolog,
+            prolog: stemc_prolog,
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "1+a+a^2");

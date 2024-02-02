@@ -309,7 +309,7 @@ xdescribe("typhon", function () {
         ];
         const sourceText = lines.join('\n');
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         });
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);

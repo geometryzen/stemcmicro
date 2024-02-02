@@ -413,12 +413,12 @@ describe("ClojureScript", function () {
         assert.strictEqual(is_map(values[0]), true);
         engine.release();
     });
-    it("Tensors in Algebrite", function () {
+    it("Tensors in STEMCscript", function () {
         const lines: string[] = [
             `["Alice", "Bob", "Carol"]`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];

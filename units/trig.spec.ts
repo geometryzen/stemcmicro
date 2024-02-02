@@ -99,7 +99,7 @@ describe("trig", function () {
                 assumes: {},
                 dependencies: [],
                 disable: [],
-                syntaxKind: SyntaxKind.Algebrite,
+                syntaxKind: SyntaxKind.STEMCscript,
                 useCaretForExponentiation: false
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

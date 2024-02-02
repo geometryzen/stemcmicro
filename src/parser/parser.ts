@@ -4,6 +4,8 @@ import { STEMCParseOptions, stemc_parse } from "../algebrite/stemc_parse";
 import { EigenmathErrorHandler } from "../api";
 import { EDNListParser, ParseConfig } from "../edn";
 import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath/eigenmath";
+import { PythonScriptParseOptions } from "../pythonscript/PythonScriptParseOptions";
+import { pythonscript_parse } from "../pythonscript/pythonscript_parse";
 
 export enum SyntaxKind {
     /**
@@ -18,7 +20,7 @@ export enum SyntaxKind {
      * Eigenmath Scripting Language by George Weigt.
      */
     Eigenmath = 3,
-    // PythonScript = 4,
+    PythonScript = 4,
 }
 
 export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
@@ -27,7 +29,7 @@ export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
             case SyntaxKind.STEMCscript: return "STEMCscript";
             case SyntaxKind.ClojureScript: return "ClojureScript";
             case SyntaxKind.Eigenmath: return "Eigenmath";
-            // case SyntaxKind.PythonScript: return "PythonScript";
+            case SyntaxKind.PythonScript: return "PythonScript";
         }
     }
     else {
@@ -35,7 +37,7 @@ export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
     }
 }
 
-export const syntaxKinds: SyntaxKind[] = [SyntaxKind.STEMCscript, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath/*, SyntaxKind.PythonScript*/];
+export const syntaxKinds: SyntaxKind[] = [SyntaxKind.STEMCscript, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript];
 
 export interface ParseOptions {
     catchExceptions?: boolean,
@@ -164,11 +166,9 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
             const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_options(options), emErrorHandler, scriptVars);
             return { trees, errors: emErrorHandler.errors };
         }
-        /*
         case SyntaxKind.PythonScript: {
             return pythonscript_parse(sourceText, python_parse_options(options));
         }
-        */
         default: {
             throw new Error(`options.syntaxKind ${syntaxKind} must be one of ${JSON.stringify(syntaxKinds.map(human_readable_syntax_kind).sort())}.`);
         }
@@ -220,7 +220,7 @@ function eigenmath_parse_options(options?: ParseOptions): EigenmathParseConfig {
         };
     }
 }
-/*
+
 function python_parse_options(options?: ParseOptions): PythonScriptParseOptions {
     if (options) {
         if (options.useCaretForExponentiation) {
@@ -238,7 +238,7 @@ function python_parse_options(options?: ParseOptions): PythonScriptParseOptions 
         return {};
     }
 }
-*/
+
 function script_kind_from_options(options?: ParseOptions): SyntaxKind {
     if (options) {
         if (options.syntaxKind) {
@@ -252,3 +252,4 @@ function script_kind_from_options(options?: ParseOptions): SyntaxKind {
         return SyntaxKind.STEMCscript;
     }
 }
+

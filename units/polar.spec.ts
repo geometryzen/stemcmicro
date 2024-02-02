@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { algebrite_prolog } from "../src/runtime/init";
+import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -61,7 +61,7 @@ describe("polar", function () {
         ];
         const engine = create_script_context(
             {
-                prolog: algebrite_prolog,
+                prolog: stemc_prolog,
                 useCaretForExponentiation: true
             }
         );
@@ -75,7 +75,7 @@ describe("polar", function () {
         ];
         const engine = create_script_context(
             {
-                prolog: algebrite_prolog,
+                prolog: stemc_prolog,
                 useCaretForExponentiation: true
             }
         );

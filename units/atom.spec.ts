@@ -25,7 +25,7 @@ describe("atom", function () {
             `abs(A)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Algebrite });
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
         engine.defineFunction(create_sym("atom"), create_atom);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);

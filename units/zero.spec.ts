@@ -8,7 +8,7 @@ describe("zero", function () {
             `zero(1,1)`
         ];
         const context = create_script_context({
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         });
         const { values } = context.executeScript(lines.join('\n'));
         assert.strictEqual(context.renderAsSExpr(values[0]), "[[0]]");

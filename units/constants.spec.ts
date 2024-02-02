@@ -25,7 +25,7 @@ const pi_svg_digits = [
     `</svg>`
 ].join('');
 
-describe("Pi in Algebrite", function () {
+describe("Pi in STEMCscript", function () {
     it("is recognized as being the mathematical symbol", function () {
         const lines: string[] = [
             `Pi=tau(1/2)`,
@@ -34,7 +34,7 @@ describe("Pi in Algebrite", function () {
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({
-            syntaxKind: SyntaxKind.Algebrite
+            syntaxKind: SyntaxKind.STEMCscript
         });
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);

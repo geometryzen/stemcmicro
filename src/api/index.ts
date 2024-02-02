@@ -4,7 +4,11 @@ import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
+import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
+import { eval_draw } from '../eigenmath/eval_draw';
+import { eval_infixform } from '../eigenmath/eval_infixform';
+import { eval_print } from '../eigenmath/eval_print';
+import { eval_run } from '../eigenmath/eval_run';
 import { InfixOptions, to_infix } from '../eigenmath/infixform';
 import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
 import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
@@ -510,15 +514,19 @@ class EigenmathOutputListener implements ScriptOutputListener {
 }
 
 class EigenmathExprEngine implements ExprEngine {
-    readonly #env: ScriptVars = new ScriptVars();
+    readonly #scriptVars: ScriptVars = new ScriptVars();
     constructor(options: Partial<EngineConfig>) {
         // Determine whether options requested are compatible with Eigenmath.
         // TODO: 
         // const allowUndeclaredVars = allow_undeclared_vars(options, true);
-        this.#env.init();
+        this.#scriptVars.init();
+        define_cons_function(create_sym("draw"), eval_draw);
+        define_cons_function(create_sym("infixform"), eval_infixform);
+        define_cons_function(create_sym("print"), eval_print);
+        define_cons_function(create_sym("run"), eval_run);
         if (options.prolog) {
             if (Array.isArray(options.prolog)) {
-                this.#env.executeProlog(options.prolog);
+                this.#scriptVars.executeProlog(options.prolog);
             }
             else {
                 throw new Error("prolog must be string[]");
@@ -527,42 +535,42 @@ class EigenmathExprEngine implements ExprEngine {
     }
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
-        this.#env.defineFunction(name, lambda);
+        this.#scriptVars.defineFunction(name, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#env);
+        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#scriptVars);
         return { trees, errors: emErrorHandler.errors };
     }
     parseModule(sourceText: string, options: Partial<ParseConfig> = {}): { module: Cons; errors: Error[]; } {
         const emErrorHandler = new EigenmathErrorHandler();
-        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#env);
+        const trees: U[] = parse_eigenmath_script(sourceText, eigenmath_parse_config(options), emErrorHandler, this.#scriptVars);
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors: emErrorHandler.errors };
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(sym: Sym): U {
         assert_sym(sym);
-        return get_binding(sym, this.#env);
+        return get_binding(sym, this.#scriptVars);
     }
     hasBinding(sym: Sym): boolean {
         assert_sym(sym);
-        const answer: boolean = this.#env.hasBinding(sym);
+        const answer: boolean = this.#scriptVars.hasBinding(sym);
         return answer;
     }
     setBinding(sym: Sym, binding: U): void {
-        set_binding(sym, binding, this.#env);
+        set_binding(sym, binding, this.#scriptVars);
     }
     hasUserFunction(sym: Sym): boolean {
         assert_sym(sym);
-        return this.#env.hasUserFunction(sym);
+        return this.#scriptVars.hasUserFunction(sym);
     }
     getUserFunction(sym: Sym): U {
         assert_sym(sym);
-        return this.#env.getUserFunction(sym);
+        return this.#scriptVars.getUserFunction(sym);
     }
     valueOf(expr: U): U {
-        return evaluate_expression(expr, this.#env);
+        return evaluate_expression(expr, this.#scriptVars);
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         switch (config.format) {
@@ -598,7 +606,7 @@ class EigenmathExprEngine implements ExprEngine {
         // Do nothing (yet).
     }
     setUserFunction(sym: Sym, usrfunc: U): void {
-        set_user_function(sym, usrfunc, this.#env);
+        set_user_function(sym, usrfunc, this.#scriptVars);
     }
     symbol(concept: Concept): Sym {
         switch (concept) {
@@ -620,12 +628,12 @@ class EigenmathExprEngine implements ExprEngine {
     removeAtomListener(listener: AtomListener): void {
     }
     addListener(listener: ExprEngineListener): void {
-        this.#env.addOutputListener(new EigenmathOutputListener(listener));
+        this.#scriptVars.addOutputListener(new EigenmathOutputListener(listener));
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     removeListener(listener: ExprEngineListener): void {
         // This doesn't work because we've lost the identity of the adapter.
-        this.#env.removeOutputListener(new EigenmathOutputListener(listener));
+        this.#scriptVars.removeOutputListener(new EigenmathOutputListener(listener));
     }
 }
 

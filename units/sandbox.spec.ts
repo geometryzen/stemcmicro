@@ -6,7 +6,9 @@ import { create_engine, ExprEngine } from "../src/api/index";
 import { SyntaxKind } from "../src/parser/parser";
 
 const svg_J: string = [
-    `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>J</text></svg>`
+    `<svg height='36'width='29'>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>J</text>`,
+    `</svg>`
 ].join('');
 
 const svg_Omega: string = [
@@ -14,7 +16,7 @@ const svg_Omega: string = [
 ].join('');
 
 describe("sandbox", function () {
-    xit("joule", function () {
+    it("joule", function () {
         const lines: string[] = [
             `(uom "joule")`
         ];
@@ -40,7 +42,7 @@ describe("sandbox", function () {
         assert.strictEqual(is_uom(values[0]), true);
         engine.release();
     });
-    xit("ohm", function () {
+    it("ohm", function () {
         const lines: string[] = [
             `(uom "ohm")`
         ];

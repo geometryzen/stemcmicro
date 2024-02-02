@@ -1,5 +1,5 @@
 import { Blade, Boo, create_flt, create_sym, Flt, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
-import { Native, native_sym } from "math-expression-native";
+import { is_native, Native, native_sym } from "math-expression-native";
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { is_imu } from "../operators/imu/is_imu";
 import { cadddr, caddr, cadr, cddddr, cddr } from "../tree/helpers";
@@ -980,7 +980,15 @@ function emit_subexpr(p: U, $: StackContext, ec: EmitContext): void {
 }
 
 function emit_symbol(sym: Sym, $: StackContext): void {
-    return emit_symbol_roman(sym, $);
+    if (is_native(sym, Native.PI)) {
+        emit_symbol_as_fragments('pi', $);
+    }
+    else if (sym.key() === 'Ω') {
+        emit_symbol_as_fragments('Omega', $);
+    }
+    else {
+        return emit_symbol_roman(sym, $);
+    }
 }
 
 /**
@@ -1003,19 +1011,13 @@ function emit_symbol_roman(sym: Sym, $: StackContext): void {
  * Used to render symbols as a leading character then a suffix.
  * We use this when there is some cue that the symbol.
  */
-export function emit_symbol_as_fragments(sym: Sym, $: StackContext): void {
-
-    if (sym.equalsSym(DOLLAR_E)) {
-        emit_roman_string("exp(1)", $);
-        return;
-    }
-
-    const s = printname_from_symbol(sym);
+export function emit_symbol_as_fragments(s: string, $: StackContext): void {
 
     let k = emit_symbol_fragment(s, 0, $);
 
-    if (k === s.length)
+    if (k === s.length) {
         return;
+    }
 
     // emit subscript
 
@@ -1023,8 +1025,9 @@ export function emit_symbol_as_fragments(sym: Sym, $: StackContext): void {
 
     const t = $.stack.length;
 
-    while (k < s.length)
+    while (k < s.length) {
         k = emit_symbol_fragment(s, k, $);
+    }
 
     emit_update_list(t, $);
 

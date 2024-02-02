@@ -1,4 +1,4 @@
-import { Boo, Cell, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { Boo, Cell, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
@@ -15,6 +15,7 @@ import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
 import { should_engine_render_svg } from '../eigenmath/should_engine_render_svg';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
+import { create_algebra_as_blades } from '../operators/algebra/create_algebra_as_tensor';
 import { assert_U } from '../operators/helpers/is_any';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, UOM_NAMES } from '../operators/uom/uom';
@@ -238,6 +239,20 @@ function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: Und
     }
 }
 
+export function define_spacetime_algebra($: ExtensionEnv): void {
+    const blades = create_algebra_as_blades([create_rat(-1, 1), create_rat(1, 1), create_rat(1, 1), create_rat(1, 1)], ["e0", "e1", "e2", "e3"], $);
+    $.setBinding(create_sym("e0"), blades[0]);
+    $.setBinding(create_sym("e1"), blades[1]);
+    $.setBinding(create_sym("e2"), blades[2]);
+    $.setBinding(create_sym("e3"), blades[3]);
+}
+
+export function define_si_units($: ExtensionEnv): void {
+    for (let i = 0; i < UOM_NAMES.length; i++) {
+        $.setBinding(create_sym(UOM_NAMES[i]), create_uom(UOM_NAMES[i]));
+    }
+}
+
 class STEMCExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     constructor(options: Partial<EngineConfig>) {
@@ -250,9 +265,8 @@ class STEMCExprEngine implements ExprEngine {
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             prolog: options.prolog
         });
-        for (let i = 0; i < UOM_NAMES.length; i++) {
-            this.#env.setBinding(create_sym(UOM_NAMES[i]), create_uom(UOM_NAMES[i]));
-        }
+        define_spacetime_algebra(this.#env);
+        define_si_units(this.#env);
     }
     hasBinding(sym: Sym): boolean {
         assert_sym(sym);

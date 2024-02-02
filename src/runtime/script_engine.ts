@@ -1,11 +1,10 @@
 import { create_rat } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
-import { UndeclaredVars } from "../api";
+import { define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
 import { assert_sym } from "../operators/sym/assert_sym";
-import { create_uom, UOM_NAMES } from "../operators/uom/uom";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
 import { render_as_human } from "../print/render_as_human";
@@ -185,9 +184,8 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
     init_env($, contextOptions);
     switch (contextOptions.syntaxKind) {
         case SyntaxKind.STEMCscript: {
-            for (let i = 0; i < UOM_NAMES.length; i++) {
-                $.setBinding(create_sym(UOM_NAMES[i]), create_uom(UOM_NAMES[i]));
-            }
+            define_spacetime_algebra($);
+            define_si_units($);
             break;
         }
     }

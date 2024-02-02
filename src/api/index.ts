@@ -1,13 +1,13 @@
 import { Boo, Cell, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
-import { Cons, is_nil, items_to_cons, U } from 'math-expression-tree';
+import { Cons, items_to_cons, U } from 'math-expression-tree';
 import { AlgebriteParseOptions, algebrite_parse } from '../algebrite/algebrite_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { InfixOptions, to_infix } from '../eigenmath/infixform';
 import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
-import { EmitContext, render_svg } from '../eigenmath/render_svg';
+import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
 import { should_engine_render_svg } from '../eigenmath/should_engine_render_svg';
 import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
@@ -774,7 +774,7 @@ export function run_script(engine: ExprEngine, inputs: U[], handler: ScriptHandl
         for (const input of inputs) {
             const result = engine.valueOf(input);
             handler.output(result, input, engine);
-            if (!is_nil(result)) {
+            if (!result.isnil) {
                 engine.setBinding(engine.symbol(Concept.Last), result);
             }
         }
@@ -825,7 +825,7 @@ export function run_module(module: Cons, handler: ScriptHandler<Stepper>): void 
             const input = inputs[i];
             const value = values[i];
             handler.output(value, input, stepper);
-            if (!is_nil(value)) {
+            if (!value.isnil) {
                 $.setBinding(symbol_from_concept(Concept.Last), value);
             }
         }
@@ -879,7 +879,7 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
      * Appends `input` = `value` in SVG to `this.element.innerHTML`.
      */
     output(value: U, input: U, $: ExprEngine): void {
-        const ec: EmitContext = {
+        const ec: SvgRenderConfig = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
@@ -887,7 +887,7 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
         const listener = new PrintScriptListener(this.element);
         function should_annotate_symbol(x: Sym, value: U): boolean {
             if ($.hasUserFunction(x)) {
-                if (x.equals(value) || is_nil(value)) {
+                if (x.equals(value) || value.isnil) {
                     return false;
                 }
                 /*

@@ -18,7 +18,7 @@ import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
 import { create_int, one, zero } from './tree/rat/Rat';
 import { Tensor } from './tree/tensor/Tensor';
-import { Cons, is_nil, U } from './tree/tree';
+import { Cons, U } from './tree/tree';
 
 // Partial fraction expansion
 //
@@ -35,7 +35,7 @@ export function Eval_expand(expr: Cons, $: ExtensionEnv): U {
     const arg1 = $.valueOf(argList.head);
     const arg2 = $.valueOf(argList.argList.head);
     const F = arg1;
-    const X = is_nil(arg2) ? guess(F) : arg2;
+    const X = arg2.isnil ? guess(F) : arg2;
     return expand(F, X, $);
 }
 

@@ -13,7 +13,7 @@ import { stack_pop, stack_push } from './runtime/stack';
 import { create_flt } from './tree/flt/Flt';
 import { caddr, cadr } from './tree/helpers';
 import { Tensor } from './tree/tensor/Tensor';
-import { Cons, is_nil, U } from './tree/tree';
+import { Cons, U } from './tree/tree';
 
 // find the roots of a polynomial numerically
 const NROOTS_YMAX = 101;
@@ -67,7 +67,7 @@ export function Eval_nroots(expr: Cons, $: ExtensionEnv): U {
     // console.lg("P", render_as_infix(P, $));
     // console.lg("X", render_as_infix(X, $));
 
-    X = is_nil(X) ? guess(P) : X;
+    X = X.isnil ? guess(P) : X;
 
     // console.lg("P", render_as_infix(X, $));
 

@@ -169,9 +169,9 @@
         "typescript": "^5.3.3"
     },
     "peerDependencies": {
-        "math-expression-atoms": "^0.9.26",
+        "math-expression-atoms": "^0.9.28",
         "math-expression-context": "^0.9.11",
         "math-expression-native": "^0.9.16",
-        "math-expression-tree": "^0.9.18"
+        "math-expression-tree": "^0.9.20"
     }
 }

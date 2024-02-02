@@ -10,7 +10,7 @@ import { is_num_and_integer } from "../is";
 import { is_rat } from "../operators/rat/is_rat";
 import { is_tensor } from "../operators/tensor/is_tensor";
 import { Tensor } from "../tree/tensor/Tensor";
-import { Cons, is_cons, is_nil, U } from "../tree/tree";
+import { Cons, is_cons, U } from "../tree/tree";
 import { cadnr } from "./cadnr";
 import { cdnr } from "./cdnr";
 import { index_function } from "./index_function";
@@ -33,7 +33,7 @@ export function Eval_index(expr: Cons, $: ExtensionEnv): U {
 export function get_component(M: Tensor, indices: U, $: ExtensionEnv): U {
     // console.lg(`get_component ${M} , ${indices}`);
 
-    if (is_nil(indices)) {
+    if (indices.isnil) {
         return M;
     }
     if (is_cons(indices)) {

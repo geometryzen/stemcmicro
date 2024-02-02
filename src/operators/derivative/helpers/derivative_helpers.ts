@@ -232,7 +232,7 @@ function dfunction(F: Cons, X: Sym, $: ExtensionEnv): U {
     if (argList.contains(X)) {
         return items_to_cons(native_sym(Native.derivative), F, X);
     }
-    else if (argList.isNil()) {
+    else if (argList.isnil) {
         // I don't really like the empty argument list being a wildcard, but here it is...
         return items_to_cons(native_sym(Native.derivative), F, X);
     }

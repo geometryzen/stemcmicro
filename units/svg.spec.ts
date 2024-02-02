@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { is_uom } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
-import { EmitContext, render_svg } from "../src/eigenmath/render_svg";
+import { SvgRenderConfig, render_svg } from "../src/eigenmath/render_svg";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context, ScriptContext } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -81,11 +81,11 @@ describe("svg", function () {
         const engine: ScriptContext = create_script_context({});
         const value = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(value), "x");
-        const ec: EmitContext = {
+        const options: SvgRenderConfig = {
             useImaginaryI: true,
             useImaginaryJ: false
         };
-        const actual = render_svg(value, ec);
+        const actual = render_svg(value, options);
         const expect = `<svg height='36'width='31'><text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>x</text></svg>`;
         assert.strictEqual(actual, expect);
         engine.release();

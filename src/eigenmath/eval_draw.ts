@@ -3,7 +3,34 @@ import { nil, U } from "math-expression-tree";
 import { assert_cons } from "../tree/cons/assert_cons";
 import { broadcast, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, ScriptVars, set_symbol } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
-import { DrawContext, draw_formula, EmitContext, emit_list, height, set_emit_small_font, width } from "./render_svg";
+import { draw_formula, SvgRenderConfig, emit_list, height, set_emit_small_font, width } from "./render_svg";
+
+interface DrawContext {
+    /**
+     * -Math.PI
+     */
+    tmin: number;
+    /**
+     * +Math.PI
+     */
+    tmax: number;
+    /**
+     * -10
+     */
+    xmin: number;
+    /**
+     * +10
+     */
+    xmax: number;
+    /**
+     * -10
+     */
+    ymin: number;
+    /**
+     * +10
+     */
+    ymax: number;
+}
 
 const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
@@ -58,7 +85,7 @@ export function eval_draw(expr: U, $: ScriptVars): void {
 
                 const outbuf: string[] = [];
 
-                const ec: EmitContext = {
+                const ec: SvgRenderConfig = {
                     useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
                     useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
                 };
@@ -249,7 +276,7 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     draw_array.push({ t: t, x: x, y: y });
 }
 
-function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -296,7 +323,7 @@ function emit_box(dc: DrawContext, outbuf: string[]): void {
     draw_line(x2, y1, x2, y2, 0.5, outbuf); // right line
 }
 
-function emit_labels($: ScriptVars, dc: DrawContext, ec: EmitContext, outbuf: string[]): void {
+function emit_labels($: ScriptVars, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
     set_emit_small_font();
     emit_list(new Flt(dc.ymax), $, ec);
     const YMAX = $.stack.pop()!;

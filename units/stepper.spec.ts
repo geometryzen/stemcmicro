@@ -7,7 +7,7 @@ import { create_engine, ExprEngine, ScriptHandler, UndeclaredVars } from "../src
 import { State, Stepper, StepperHandler } from "../src/clojurescript/runtime/Stepper";
 import { ScriptOutputListener } from "../src/eigenmath/eigenmath";
 import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
-import { EmitContext } from "../src/eigenmath/render_svg";
+import { SvgRenderConfig } from "../src/eigenmath/render_svg";
 import { should_engine_render_svg } from "../src/eigenmath/should_engine_render_svg";
 import { Stack } from "../src/env/Stack";
 import { is_sym } from "../src/operators/sym/is_sym";
@@ -38,7 +38,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine>, StepperHandler {
         throw new Error("outpu method not implemented.");
     }
     atom(value: U, input: U): void {
-        const ec: EmitContext = {
+        const ec: SvgRenderConfig = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false,//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };

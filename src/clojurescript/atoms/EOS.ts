@@ -15,10 +15,10 @@ export class EOS implements U {
     equals(other: U): boolean {
         return other instanceof EOS;
     }
-    isCons(): boolean {
+    get iscons(): boolean {
         return false;
     }
-    isNil(): boolean {
+    get isnil(): boolean {
         return false;
     }
     pos?: number | undefined;

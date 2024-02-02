@@ -7,7 +7,7 @@ import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, 
 import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
 import { iszero, ScriptOutputListener } from "../src/eigenmath/eigenmath";
 import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
-import { EmitContext } from "../src/eigenmath/render_svg";
+import { SvgRenderConfig } from "../src/eigenmath/render_svg";
 import { should_engine_render_svg } from "../src/eigenmath/should_engine_render_svg";
 import { Stack } from "../src/env/Stack";
 import { SyntaxKind } from "../src/parser/parser";
@@ -92,7 +92,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine> {
         // const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
         // console.lg(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
         const listener = new TestScriptOutputListener(this.listener);
-        const ec: EmitContext = {
+        const ec: SvgRenderConfig = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
@@ -120,7 +120,7 @@ class TestScriptHandler implements ScriptHandler<ExprEngine> {
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol, $);
+        print_value_and_input_as_svg_or_infix(value, input, should_engine_render_svg($), ec, [listener], should_annotate_symbol);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -152,7 +152,7 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
         // const config: RenderConfig = { useCaretForExponentiation: false, useParenForTensors: false };
         // console.lg(`output value => ${$.renderAsString(value, config)} input => ${$.renderAsString(input, config)}`);
         const listener = new TestStepperOutputListener(this.listener);
-        const ec: EmitContext = {
+        const ec: SvgRenderConfig = {
             useImaginaryI: true,//isimaginaryunit(get_binding(symbol(I_LOWER), $)),
             useImaginaryJ: false//isimaginaryunit(get_binding(symbol(J_LOWER), $))
         };
@@ -183,7 +183,7 @@ class TestStepperHandler implements ScriptHandler<Stepper> {
                 }
             }
         }
-        print_value_and_input_as_svg_or_infix(value, input, should_stepper_render_svg($), ec, [listener], should_annotate_symbol, $.stack.top.$);
+        print_value_and_input_as_svg_or_infix(value, input, should_stepper_render_svg($), ec, [listener], should_annotate_symbol);
 
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

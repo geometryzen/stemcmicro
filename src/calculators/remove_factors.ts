@@ -1,6 +1,6 @@
 import { is_cons_opr_eq_mul } from "../operators/mul/is_cons_opr_eq_mul";
 import { one } from "../tree/rat/Rat";
-import { cons, Cons, is_cons, is_nil, U } from "../tree/tree";
+import { cons, Cons, is_cons, U } from "../tree/tree";
 import { canonicalize_mul } from "./canonicalize/canonicalize_mul";
 
 /**
@@ -26,7 +26,7 @@ export function remove_factors(expr: U, predicate: (factor: U) => boolean): U {
     }
 }
 function remove_factors_recursive(argList: Cons, predicate: (factor: U) => boolean): Cons {
-    if (is_nil(argList)) {
+    if (argList.isnil) {
         return argList;
     }
     else {

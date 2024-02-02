@@ -11,7 +11,7 @@ export class UnknownConsOperator implements Operator<Cons> {
     key?: string | undefined;
     phases?: number | undefined;
     dependencies?: FEATURE[] | undefined;
-    iscons(): boolean {
+    iscons(): true {
         return true;
     }
     operator(): Sym {

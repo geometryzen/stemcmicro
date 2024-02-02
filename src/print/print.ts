@@ -1323,7 +1323,7 @@ function should_tweak_exponent_syntax(base: U, $: ExtensionEnv): boolean {
         if (base.equals(create_sym('x'))) {
             const sym = PRINT_LEAVE_X_ALONE;
             const binding = $.getBinding(sym);
-            if (binding.equals(sym) || binding.isNil()) {
+            if (binding.equals(sym) || binding.isnil) {
                 // There is no override, therefore tweak!
                 return true;
             }

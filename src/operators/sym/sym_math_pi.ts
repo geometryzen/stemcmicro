@@ -19,7 +19,7 @@ class SymMathPi implements Operator<Sym> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(private readonly $: ExtensionEnv) {
     }
-    iscons(): boolean {
+    iscons(): false {
         return false;
     }
     operator(): Sym {

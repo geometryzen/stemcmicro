@@ -283,38 +283,6 @@ function get_operator_height(font_num: number): number {
     return get_cap_height(font_num) / 2;
 }
 
-export interface EmitContext {
-    useImaginaryI: boolean;
-    useImaginaryJ: boolean;
-}
-
-export interface DrawContext {
-    /**
-     * -Math.PI
-     */
-    tmin: number;
-    /**
-     * +Math.PI
-     */
-    tmax: number;
-    /**
-     * -10
-     */
-    xmin: number;
-    /**
-     * +10
-     */
-    xmax: number;
-    /**
-     * -10
-     */
-    ymin: number;
-    /**
-     * +10
-     */
-    ymax: number;
-}
-
 let emit_level: number;
 
 export function set_emit_small_font(): void {
@@ -329,12 +297,17 @@ class SvgStackContext implements StackContext {
     readonly stack: U[] = [];
 }
 
-export function render_svg(expr: U, ec: EmitContext): string {
+export interface SvgRenderConfig {
+    useImaginaryI: boolean;
+    useImaginaryJ: boolean;
+}
+
+export function render_svg(expr: U, options: SvgRenderConfig): string {
     const $ = new SvgStackContext();
 
     emit_level = 0;
 
-    emit_list(expr, $, ec);
+    emit_list(expr, $, options);
 
     const codes = $.stack.pop()!;
 
@@ -364,13 +337,13 @@ export function render_svg(expr: U, ec: EmitContext): string {
 /**
  * Converts an expression into an encoded form with opcode, height, depth, width, and data (depends on opcode).
  */
-export function emit_list(expr: U, $: StackContext, ec: EmitContext): void {
+export function emit_list(expr: U, $: StackContext, ec: SvgRenderConfig): void {
     const t = $.stack.length;
     emit_expr(expr, $, ec);
     emit_update_list(t, $);
 }
 
-function emit_expr(p: U, $: StackContext, ec: EmitContext): void {
+function emit_expr(p: U, $: StackContext, ec: SvgRenderConfig): void {
     if (isnegativeterm(p) || (car(p).equals(ADD) && isnegativeterm(cadr(p)))) {
         emit_roman_char(MINUS_SIGN, $);
         emit_thin_space($);
@@ -382,7 +355,7 @@ function emit_expr(p: U, $: StackContext, ec: EmitContext): void {
         emit_term(p, $, ec);
 }
 
-function emit_expr_nib(p: U, $: StackContext, ec: EmitContext): void {
+function emit_expr_nib(p: U, $: StackContext, ec: SvgRenderConfig): void {
     p = cdr(p);
     emit_term(car(p), $, ec);
     p = cdr(p);
@@ -396,7 +369,7 @@ function emit_expr_nib(p: U, $: StackContext, ec: EmitContext): void {
     }
 }
 
-function emit_args(p: U, $: StackContext, ec: EmitContext): void {
+function emit_args(p: U, $: StackContext, ec: SvgRenderConfig): void {
 
     p = cdr(p);
 
@@ -424,14 +397,14 @@ function emit_args(p: U, $: StackContext, ec: EmitContext): void {
     emit_update_subexpr($);
 }
 
-function emit_base(p: U, $: StackContext, ec: EmitContext): void {
+function emit_base(p: U, $: StackContext, ec: SvgRenderConfig): void {
     if (is_num(p) && isnegativenumber(p) || (is_rat(p) && isfraction(p)) || is_flt(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER))
         emit_subexpr(p, $, ec);
     else
         emit_expr(p, $, ec);
 }
 
-function emit_denominators(p: Cons, $: StackContext, ec: EmitContext) {
+function emit_denominators(p: Cons, $: StackContext, ec: SvgRenderConfig) {
 
     const t = $.stack.length;
     const n = count_denominators(p);
@@ -540,7 +513,7 @@ function emit_double(p: Flt, $: StackContext): void {
     emit_update_superscript($);
 }
 
-function emit_exponent(p: U, $: StackContext, ec: EmitContext): void {
+function emit_exponent(p: U, $: StackContext, ec: SvgRenderConfig): void {
     if (is_num(p) && !isnegativenumber(p)) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
@@ -553,7 +526,7 @@ function emit_exponent(p: U, $: StackContext, ec: EmitContext): void {
     emit_update_superscript($);
 }
 
-function emit_factor(p: U, $: StackContext, ec: EmitContext) {
+function emit_factor(p: U, $: StackContext, ec: SvgRenderConfig) {
     if (is_rat(p)) {
         emit_rational(p, $);
         return;
@@ -622,13 +595,13 @@ function emit_factor(p: U, $: StackContext, ec: EmitContext) {
     }
 }
 
-function emit_fraction(p: Cons, $: StackContext, ec: EmitContext): void {
+function emit_fraction(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
     emit_numerators(p, $, ec);
     emit_denominators(p, $, ec);
     emit_update_fraction($);
 }
 
-function emit_function(p: U, $: StackContext, ec: EmitContext): void {
+function emit_function(p: U, $: StackContext, ec: SvgRenderConfig): void {
     // d(f(x),x)
 
     if (car(p).equals(DERIVATIVE)) {
@@ -708,7 +681,7 @@ function emit_function(p: U, $: StackContext, ec: EmitContext): void {
     emit_args(p, $, ec);
 }
 
-function emit_indices(p: U, $: StackContext, ec: EmitContext): void {
+function emit_indices(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_roman_string("[", $);
 
     p = cdr(p);
@@ -763,7 +736,7 @@ function emit_italic_string(s: 'i' | 'j', $: StackContext): void {
         emit_italic_char(s.charCodeAt(i), $);
 }
 
-function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: EmitContext): void {
+function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: SvgRenderConfig): void {
 
     if (d === p.ndim) {
         emit_list(p.elems[k], $, ec);
@@ -805,7 +778,7 @@ function emit_medium_space($: StackContext): void {
     list(4, $);
 }
 
-function emit_numerators(p: Cons, $: StackContext, ec: EmitContext): void {
+function emit_numerators(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
 
     const t = $.stack.length;
     const n = count_numerators(p);
@@ -868,7 +841,7 @@ function emit_numeric_exponent(p: Num, $: StackContext) {
     emit_update_superscript($);
 }
 
-function emit_power(p: U, $: StackContext, ec: EmitContext): void {
+function emit_power(p: U, $: StackContext, ec: SvgRenderConfig): void {
     if (cadr(p).equals(DOLLAR_E)) {
         emit_roman_string("exp", $);
         emit_args(cdr(p), $, ec);
@@ -923,7 +896,7 @@ function emit_rational(p: Rat, $: StackContext): void {
 
 // p = y^x where x is a negative number
 
-function emit_reciprocal(p: U, $: StackContext, ec: EmitContext): void {
+function emit_reciprocal(p: U, $: StackContext, ec: SvgRenderConfig): void {
 
     emit_roman_string("1", $); // numerator
 
@@ -974,7 +947,7 @@ function emit_string(p: Str, $: StackContext): void {
     emit_roman_string(p.str, $);
 }
 
-function emit_subexpr(p: U, $: StackContext, ec: EmitContext): void {
+function emit_subexpr(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_list(p, $, ec);
     emit_update_subexpr($);
 }
@@ -1141,7 +1114,7 @@ function emit_atom(atom: U, $: StackContext): void {
     emit_roman_string(str, $);
 }
 
-function emit_imaginary_unit(imu: Imu, $: StackContext, ec: EmitContext): void {
+function emit_imaginary_unit(imu: Imu, $: StackContext, ec: SvgRenderConfig): void {
     if (ec.useImaginaryI) {
         emit_italic_string("i", $);
     }
@@ -1153,7 +1126,7 @@ function emit_imaginary_unit(imu: Imu, $: StackContext, ec: EmitContext): void {
     }
 }
 
-function emit_tensor(p: Tensor, $: StackContext, ec: EmitContext): void {
+function emit_tensor(p: Tensor, $: StackContext, ec: SvgRenderConfig): void {
     if (p.ndim % 2 === 1)
         emit_vector(p, $, ec); // odd rank
     else
@@ -1179,14 +1152,14 @@ function emit_uom(uom: Uom, $: StackContext): void {
     // emit_roman_string(str, $);
 }
 
-function emit_term(p: U, $: StackContext, ec: EmitContext): void {
+function emit_term(p: U, $: StackContext, ec: SvgRenderConfig): void {
     if (is_cons(p) && p.opr.equals(MULTIPLY))
         emit_term_nib(p, $, ec);
     else
         emit_factor(p, $, ec);
 }
 
-function emit_term_nib(p: Cons, $: StackContext, ec: EmitContext): void {
+function emit_term_nib(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
     if (find_denominator(p)) {
         emit_fraction(p, $, ec);
         return;
@@ -1520,7 +1493,7 @@ function emit_update_table(n: number, m: number, $: StackContext): void {
     list(10, $);
 }
 
-function emit_vector(p: Tensor, $: StackContext, ec: EmitContext): void {
+function emit_vector(p: Tensor, $: StackContext, ec: SvgRenderConfig): void {
     // compute element span
 
     let span = 1;

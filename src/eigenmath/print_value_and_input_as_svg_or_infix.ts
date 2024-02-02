@@ -4,7 +4,7 @@ import { is_nil, items_to_cons, U } from "math-expression-tree";
 import { ScriptOutputListener } from "./eigenmath";
 import { infix_config_from_options } from "./infixform";
 import { render_as_html_infix } from "./render_as_html_infix";
-import { EmitContext, render_svg } from "./render_svg";
+import { render_svg, SvgRenderConfig } from "./render_svg";
 
 const ASSIGN = native_sym(Native.assign);
 
@@ -30,12 +30,12 @@ export type ShouldAnnotateFunction = (sym: Sym, value: U) => boolean;
  * @param value 
  * @param x 
  * @param svg 
- * @param ec 
+ * @param options 
  * @param listeners The destination for the rendering.
  * @param should_annotate_symbol A callback function that determines whether a symbol should be annotated.
  * @returns 
  */
-export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, ec: EmitContext, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
+export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boolean, options: SvgRenderConfig, listeners: ScriptOutputListener[], should_annotate_symbol: ShouldAnnotateFunction): void {
 
     if (is_nil(value)) {
         return;
@@ -51,7 +51,7 @@ export function print_value_and_input_as_svg_or_infix(value: U, x: U, svg: boole
 
     if (svg) {
         for (const listener of listeners) {
-            listener.output(render_svg(value, ec));
+            listener.output(render_svg(value, options));
         }
     }
     else {

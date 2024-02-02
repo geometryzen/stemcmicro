@@ -20,10 +20,10 @@ export class Pair implements U {
     equals(other: U): boolean {
         throw new Error("Method not implemented.");
     }
-    isCons(): boolean {
+    get iscons(): boolean {
         throw new Error("Method not implemented.");
     }
-    isNil(): boolean {
+    get isnil(): boolean {
         throw new Error("Method not implemented.");
     }
     toString(): string {

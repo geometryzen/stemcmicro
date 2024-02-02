@@ -33,7 +33,7 @@ class ImuExtension implements Operator<Imu> {
         return imu.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isNil(expr: Cons): boolean {
+    isnil(expr: Cons): boolean {
         return false;
     }
     subst(expr: Imu, oldExpr: U, newExpr: U): U {

@@ -1,17 +1,17 @@
-import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { divide } from './helpers/divide';
 import { coeff } from './operators/coeff/coeff';
 import { SYMBOL_X } from './runtime/constants';
 import { cadddr, caddr, cadr } from './tree/helpers';
 import { create_int, zero } from './tree/rat/Rat';
-import { is_nil, U } from './tree/tree';
+import { U } from './tree/tree';
 
 // Divide polynomials
 export function Eval_quotient(p1: U, $: ExtensionEnv): U {
     const DIVIDEND = $.valueOf(cadr(p1)); // 1st arg, p(x)
     const DIVISOR = $.valueOf(caddr(p1)); // 2nd arg, q(x)
     const X = $.valueOf(cadddr(p1)); // 3rd arg, x, default x
-    if (!is_nil(X)) {
+    if (!X.isnil) {
         return divpoly(DIVIDEND, DIVISOR, X, $);
     }
     else {

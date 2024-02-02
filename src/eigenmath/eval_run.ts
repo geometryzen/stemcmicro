@@ -5,7 +5,7 @@ import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, Scr
 import { isimaginaryunit } from "./isimaginaryunit";
 import { make_should_annotate } from "./make_should_annotate";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
-import { EmitContext } from "./render_svg";
+import { SvgRenderConfig } from "./render_svg";
 import { should_render_svg } from "./should_eigenmath_render_svg";
 /**
  * 'i'
@@ -58,7 +58,7 @@ export function eval_run(expr: U, $: ScriptVars): void {
 
         const input = $.stack.pop()!;
         const result = evaluate_expression(input, $);
-        const ec: EmitContext = {
+        const ec: SvgRenderConfig = {
             useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
             useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
         };

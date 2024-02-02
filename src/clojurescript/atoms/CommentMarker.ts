@@ -12,10 +12,10 @@ export class CommentMarker implements U {
     equals(other: U): boolean {
         return other instanceof CommentMarker;
     }
-    isCons(): boolean {
+    get iscons(): boolean {
         return false;
     }
-    isNil(): boolean {
+    get isnil(): boolean {
         return false;
     }
     pos?: number | undefined;

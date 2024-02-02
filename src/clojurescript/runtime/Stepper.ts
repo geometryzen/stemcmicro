@@ -7,6 +7,7 @@ import { ExprEngineListener, UndeclaredVars } from "../../api";
 import { create_env, EnvOptions } from "../../env/env";
 import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";
+import { assert_sym } from "../../operators/sym/assert_sym";
 import { is_sym } from "../../operators/sym/is_sym";
 import { is_cons_opr_eq_sym } from "../../predicates/is_cons_opr_eq_sym";
 import { init_env } from "../../runtime/script_engine";
@@ -229,8 +230,9 @@ export class Stepper {
         */
         return obj;
     }
-    defineFunction(name: string, lambda: LambdaExpr): void {
-        const match = items_to_cons(create_sym(name));
+    defineFunction(name: Sym, lambda: LambdaExpr): void {
+        assert_sym(name);
+        const match = items_to_cons(name);
         this.#coreEnv.defineFunction(match, lambda);
     }
     initGlobal(globalObject: Thing) {
@@ -293,7 +295,7 @@ export class Stepper {
                         }
                     }
                 }
-                else if (input.isNil()) {
+                else if (input.isnil) {
                     stack.top.value = input;
                 }
                 else if (is_atom(input)) {

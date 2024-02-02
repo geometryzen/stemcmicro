@@ -30,7 +30,7 @@ class NilExtension implements Operator<Cons> {
         return nil.equals(expr);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isNil(expr: Cons): boolean {
+    isnil(expr: Cons): boolean {
         throw new Error();
     }
     subst(expr: Cons, oldExpr: U, newExpr: U): U {

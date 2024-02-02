@@ -1022,9 +1022,9 @@ describe("coverage", function () {
     });
     it("exp(x)", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
+            `pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i * Pi)`
+            `exp(i * pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -1468,9 +1468,9 @@ describe("coverage", function () {
     });
     it("i", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
+            `pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i* Pi)`
+            `exp(i* pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -2124,9 +2124,9 @@ describe("coverage", function () {
     });
     it("pi", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
+            `pi=tau(1/2)`,
             `i=sqrt(-1)`,
-            `exp(i * Pi)`
+            `exp(i * pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -2828,8 +2828,8 @@ describe("coverage", function () {
     });
     it("tan(x)", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
-            `tan(Pi/4)`
+            `pi=tau(1/2)`,
+            `tan(pi/4)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);

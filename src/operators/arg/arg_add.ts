@@ -28,7 +28,7 @@ function arg_of_sum(z: Cons, $: ExtensionEnv): U {
         }
         else {
             const k = is_negative(y) ? half.neg() : half;
-            const pi = DynamicConstants.Pi($);
+            const pi = DynamicConstants.PI($);
             return $.multiply(k, pi);
         }
         /*
@@ -42,7 +42,7 @@ function arg_of_sum(z: Cons, $: ExtensionEnv): U {
     }
     else {
         if (is_negative(x)) {
-            const pi = DynamicConstants.Pi($);
+            const pi = DynamicConstants.PI($);
             if (is_negative(y)) {
                 return $.subtract($.arctan($.divide(y, x)), pi);
             }

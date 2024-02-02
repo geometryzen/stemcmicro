@@ -6,7 +6,7 @@ import { native_sym } from "../../native/native_sym";
 import { CompositeOperator } from "../CompositeOperator";
 import { Cons1 } from "../helpers/Cons1";
 
-const Pi = native_sym(Native.PI);
+const PI = native_sym(Native.PI);
 const POW = native_sym(Native.pow);
 const IM = native_sym(Native.im);
 
@@ -45,7 +45,7 @@ class Op extends CompositeOperator {
             // log(x+iy) = s*log(-1) = s*i*pi
             // x+iy = exp(i*s*pi) = cos(s*pi)+i*sin(s*pi) 
             const s = assert_rat(innerExpr.rhs);
-            return [TFLAG_DIFF, $.sin($.multiply(s, Pi))];
+            return [TFLAG_DIFF, $.sin($.multiply(s, PI))];
         }
         else if (base.isPositive()) {
             return [TFLAG_DIFF, zero];

@@ -1,4 +1,4 @@
-import { create_rat, Uom } from "math-expression-atoms";
+import { create_int, Uom } from "math-expression-atoms";
 import { cons, Cons, U } from "math-expression-tree";
 import { Extension, ExtensionEnv, FEATURE, TFLAGS, TFLAG_DIFF, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_UOM } from "../../hashing/hash_info";
@@ -62,7 +62,7 @@ class UomExtension implements Extension<Uom> {
         // console.lg(`UomExtension.transform()`);
         if (is_uom(expr)) {
             if (expr.isOne()) {
-                return [TFLAG_DIFF, create_rat(1, 1)];
+                return [TFLAG_DIFF, create_int(1)];
             }
             else {
                 return [TFLAG_HALT, expr];

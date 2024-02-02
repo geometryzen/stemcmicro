@@ -25,12 +25,12 @@ const pi_svg_digits = [
     `</svg>`
 ].join('');
 
-describe("Pi in STEMCscript", function () {
+describe("pi in STEMCscript", function () {
     it("is recognized as being the mathematical symbol", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
-            `Pi`,
-            `float(Pi)`
+            `pi=tau(1/2)`,
+            `pi`,
+            `float(pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({
@@ -49,15 +49,15 @@ describe("Pi in STEMCscript", function () {
 
         assert.strictEqual(is_sym(values[0]), true, `${values[0]}`);
         const actualPi = assert_sym(values[0]);
-        const Pi = native_sym(Native.PI);
-        assert.strictEqual(actualPi.equals(Pi), true);
+        const PI = native_sym(Native.PI);
+        assert.strictEqual(actualPi.equals(PI), true);
 
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Ascii' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Human' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Infix' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'LaTeX' }), `\\pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'SExpr' }), `pi`);
-        // assert.strictEqual(engine.renderAsString(Pi, { format: 'SVG' }), pi_svg_sym);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Ascii' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Human' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Infix' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'LaTeX' }), `\\pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'SExpr' }), `pi`);
+        // assert.strictEqual(engine.renderAsString(PI, { format: 'SVG' }), pi_svg_sym);
 
         assert.strictEqual(engine.renderAsString(values[1], { format: 'Ascii' }), `3.141593...`);
         assert.strictEqual(engine.renderAsString(values[1], { format: 'Human' }), `3.141593...`);
@@ -69,12 +69,12 @@ describe("Pi in STEMCscript", function () {
         engine.release();
     });
 });
-describe("Pi in Eigenmath", function () {
+describe("pi in Eigenmath", function () {
     it("is recognized as being the mathematical symbol", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
-            `Pi`,
-            `float(Pi)`
+            `pi=tau(1/2)`,
+            `pi`,
+            `float(pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({
@@ -93,16 +93,16 @@ describe("Pi in Eigenmath", function () {
 
         assert.strictEqual(is_sym(values[0]), true, `${values[0]}`);
         const actualPi = assert_sym(values[0]);
-        const Pi = native_sym(Native.PI);
-        assert.strictEqual(actualPi.equals(Pi), true);
+        const PI = native_sym(Native.PI);
+        assert.strictEqual(actualPi.equals(PI), true);
 
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Ascii' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Human' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Infix' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Ascii' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Human' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Infix' }), `pi`);
         // TODO: Eigenmath can't do LaTeX
-        // assert.strictEqual(engine.renderAsString(Pi, { format: 'LaTeX' }), `\\pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'SExpr' }), `pi`);
-        // assert.strictEqual(engine.renderAsString(Pi, { format: 'SVG' }), pi_svg_sym);
+        // assert.strictEqual(engine.renderAsString(PI, { format: 'LaTeX' }), `\\pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'SExpr' }), `pi`);
+        // assert.strictEqual(engine.renderAsString(PI, { format: 'SVG' }), pi_svg_sym);
 
         assert.strictEqual(engine.renderAsString(values[1], { format: 'Ascii' }), `3.14159`);
         assert.strictEqual(engine.renderAsString(values[1], { format: 'Human' }), `3.14159`);
@@ -115,12 +115,12 @@ describe("Pi in Eigenmath", function () {
         engine.release();
     });
 });
-describe("Pi in ClojureScript", function () {
+describe("pi in ClojureScript", function () {
     xit("is recognized as being the mathematical symbol", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
-            `Pi`,
-            `float(Pi)`
+            `pi=tau(1/2)`,
+            `pi`,
+            `float(pi)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({
@@ -139,15 +139,15 @@ describe("Pi in ClojureScript", function () {
 
         assert.strictEqual(is_sym(values[0]), true, `${values[0]}`);
         const actualPi = assert_sym(values[0]);
-        const Pi = native_sym(Native.PI);
-        assert.strictEqual(actualPi.equals(Pi), true);
+        const PI = native_sym(Native.PI);
+        assert.strictEqual(actualPi.equals(PI), true);
 
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Ascii' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Human' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'Infix' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'LaTeX' }), `\\pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'SExpr' }), `pi`);
-        assert.strictEqual(engine.renderAsString(Pi, { format: 'SVG' }), pi_svg_sym);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Ascii' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Human' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'Infix' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'LaTeX' }), `\\pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'SExpr' }), `pi`);
+        assert.strictEqual(engine.renderAsString(PI, { format: 'SVG' }), pi_svg_sym);
 
         assert.strictEqual(engine.renderAsString(values[1], { format: 'Ascii' }), `3.141593...`);
         assert.strictEqual(engine.renderAsString(values[1], { format: 'Human' }), `3.141593...`);

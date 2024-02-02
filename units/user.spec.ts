@@ -43,13 +43,13 @@ describe("user", function () {
     });
     it("f(180,0)", function () {
         const lines: string[] = [
-            `f(a,x)=1+tan(float(a/360*2*Pi))-float(x)+tan(a/360*2*Pi)-x`,
+            `f(a,x)=1+tan(float(a/360*2*pi))-float(x)+tan(a/360*2*pi)-x`,
             `f(180,0)`
         ];
         const engine = create_script_context({
             dependencies: ['Flt'],
             prolog: [
-                `Pi=tau(1)/2`
+                `pi=tau(1)/2`
             ]
         });
         const value = assert_one_value_execute(lines.join('\n'), engine);

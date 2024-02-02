@@ -9,7 +9,7 @@ import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
 import { is_imu } from "../imu/is_imu";
 
-const Pi = native_sym(Native.PI);
+const PI = native_sym(Native.PI);
 const POLAR = native_sym(Native.polar);
 
 class Builder implements OperatorBuilder<U> {
@@ -33,7 +33,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform1(opr: Sym, arg: ARG, expr: EXP): [TFLAGS, U] {
         const $ = this.$;
-        return [TFLAG_DIFF, $.exp($.multiply(half, Pi))];
+        return [TFLAG_DIFF, $.exp($.multiply(half, PI))];
     }
 }
 

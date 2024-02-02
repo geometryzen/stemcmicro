@@ -1,6 +1,6 @@
-import { create_rat } from "math-expression-atoms";
+import { create_int } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
-import { define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api";
+import { define_math_constant_pi, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
@@ -96,7 +96,7 @@ export function init_env($: ExtensionEnv, options: ScriptContextOptions = { useD
 
     $.buildOperators();
 
-    $.setBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS, create_rat(DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, 1));
+    $.setBinding(VARNAME_MAX_FIXED_PRINTOUT_DIGITS, create_int(DEFAULT_MAX_FIXED_PRINTOUT_DIGITS));
 
     if (options && options.prolog) {
         if (Array.isArray(options.prolog)) {
@@ -184,6 +184,7 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
     init_env($, contextOptions);
     switch (contextOptions.syntaxKind) {
         case SyntaxKind.STEMCscript: {
+            define_math_constant_pi($);
             define_spacetime_algebra($);
             define_si_units($);
             break;

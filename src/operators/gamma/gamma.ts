@@ -19,11 +19,11 @@ function gamma(p1: U, $: ExtensionEnv): U {
 
 function gammaf(p1: U, $: ExtensionEnv): U {
     if (is_rat(p1) && MEQUAL(p1.a, 1) && MEQUAL(p1.b, 2)) {
-        return $.power(DynamicConstants.Pi($), half);
+        return $.power(DynamicConstants.PI($), half);
     }
 
     if (is_rat(p1) && MEQUAL(p1.a, 3) && MEQUAL(p1.b, 2)) {
-        return $.multiply($.power(DynamicConstants.Pi($), half), half);
+        return $.multiply($.power(DynamicConstants.PI($), half), half);
     }
 
     //  if (p1->k == DOUBLE) {
@@ -34,9 +34,9 @@ function gammaf(p1: U, $: ExtensionEnv): U {
 
     if (is_negative(p1)) {
         return divide(
-            $.multiply(DynamicConstants.Pi($), negOne),
+            $.multiply(DynamicConstants.PI($), negOne),
             $.multiply(
-                $.multiply($.sin($.multiply(DynamicConstants.Pi($), p1)), p1),
+                $.multiply($.sin($.multiply(DynamicConstants.PI($), p1)), p1),
                 gamma($.negate(p1), $)
             )
             , $);

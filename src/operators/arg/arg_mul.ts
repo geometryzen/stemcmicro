@@ -11,7 +11,7 @@ import { is_rat } from "../rat/is_rat";
 
 const ARG = native_sym(Native.arg);
 const MUL = native_sym(Native.multiply);
-const Pi = native_sym(Native.PI);
+const PI = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -26,13 +26,13 @@ class Builder implements OperatorBuilder<U> {
  * @returns 
  */
 function principal_value_radians(arg: U, $: ExtensionEnv): U {
-    const pis = $.divide(arg, Pi);
+    const pis = $.divide(arg, PI);
     // console.lg("pis", $.toInfixString(pis));
     if (is_rat(pis)) {
-        return $.multiply(principal_value_rats(pis, $), Pi);
+        return $.multiply(principal_value_rats(pis, $), PI);
     }
     else if (is_flt(pis)) {
-        return $.multiply(principal_value_flts(pis, $), Pi);
+        return $.multiply(principal_value_flts(pis, $), PI);
     }
     return arg;
 }

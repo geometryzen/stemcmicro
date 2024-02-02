@@ -1,4 +1,4 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
@@ -656,9 +656,9 @@ const ASSIGN = native_sym(Native.assign);
 
 export const LAST = create_sym("last");
 /**
- * mathematical constant Pi
+ * mathematical constant pi
  */
-const Pi = native_sym(Native.PI);
+const PI = native_sym(Native.PI);
 const TRACE = create_sym("trace");
 
 /**
@@ -1668,38 +1668,38 @@ function arccos($: ScriptVars): void {
         return;
     }
 
-    // arccos(1 / sqrt(2)) = 1/4 Pi
+    // arccos(1 / sqrt(2)) = 1/4 pi
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
 
-    // arccos(-1 / sqrt(2)) = 3/4 Pi
+    // arccos(-1 / sqrt(2)) = 3/4 pi
 
     if (isminusoneoversqrttwo(p1)) {
         push_rational(3, 4, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
 
-    // arccos(0) = 1/2 Pi
+    // arccos(0) = 1/2 pi
 
     if (iszero(p1)) {
         push_rational(1, 2, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
 
-    // arccos(1/2) = 1/3 Pi
+    // arccos(1/2) = 1/3 pi
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 3, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -1711,19 +1711,19 @@ function arccos($: ScriptVars): void {
         return;
     }
 
-    // arccos(-1/2) = 2/3 Pi
+    // arccos(-1/2) = 2/3 pi
 
     if (isequalq(p1, -1, 2)) {
         push_rational(2, 3, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
 
-    // arccos(-1) = Pi
+    // arccos(-1) = pi
 
     if (isminusone(p1)) {
-        push(Pi, $);
+        push(PI, $);
         return;
     }
 
@@ -1854,11 +1854,11 @@ function arcsin($: ScriptVars): void {
         return;
     }
 
-    // arcsin(1 / sqrt(2)) = 1/4 Pi
+    // arcsin(1 / sqrt(2)) = 1/4 pi
 
     if (isoneoversqrttwo(p1)) {
         push_rational(1, 4, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -1870,20 +1870,20 @@ function arcsin($: ScriptVars): void {
         return;
     }
 
-    // arcsin(1/2) = 1/6 Pi
+    // arcsin(1/2) = 1/6 pi
 
     if (isequalq(p1, 1, 2)) {
         push_rational(1, 6, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
 
-    // arcsin(1) = 1/2 Pi
+    // arcsin(1) = 1/2 pi
 
     if (isplusone(p1)) {
         push_rational(1, 2, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -2062,7 +2062,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
 
     if (iszero(Y)) {
         if (isnegativenumber(X))
-            push(Pi, $);
+            push(PI, $);
         else
             push_integer(0, $);
         return;
@@ -2073,7 +2073,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
             push_rational(-1, 2, $);
         else
             push_rational(1, 2, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         return;
     }
@@ -2134,7 +2134,7 @@ function arctan_numbers(X: Num, Y: Num, $: ScriptVars): void {
             push_rational(1, 4, $);
     }
 
-    push(Pi, $);
+    push(PI, $);
     multiply($);
 }
 
@@ -2264,7 +2264,7 @@ function arg1($: ScriptVars): void {
 
     if (is_rat(p1)) {
         if (isnegativenumber(p1)) {
-            push(Pi, $);
+            push(PI, $);
             negate($);
         }
         else
@@ -2283,7 +2283,7 @@ function arg1($: ScriptVars): void {
     // (-1) ^ expr
 
     if (car(p1).equals(POWER) && isminusone(cadr(p1))) {
-        push(Pi, $);
+        push(PI, $);
         push(caddr(p1), $);
         multiply($);
         return;
@@ -2532,7 +2532,7 @@ function clockfunc($: ScriptVars): void {
 
     push(p1, $);
     arg($);
-    push(Pi, $);
+    push(PI, $);
     divide($);
 
     power($);
@@ -2816,10 +2816,10 @@ function cosfunc($: ScriptVars): void {
         return;
     }
 
-    // n Pi ?
+    // n pi ?
 
     push(p1, $);
-    push(Pi, $);
+    push(PI, $);
     divide($);
     let p2 = pop($);
 
@@ -2913,7 +2913,7 @@ function cosfunc($: ScriptVars): void {
     }
 }
 
-// cos(x + n/2 Pi) = cos(x) cos(n/2 Pi) - sin(x) sin(n/2 Pi)
+// cos(x + n/2 pi) = cos(x) cos(n/2 pi) - sin(x) sin(n/2 pi)
 
 function cosfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
@@ -2921,7 +2921,7 @@ function cosfunc_sum(p1: U, $: ScriptVars): void {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
-        push(Pi, $);
+        push(PI, $);
         divide($);
         let p3 = pop($);
         if (is_rat(p3) && isinteger(p3)) {
@@ -3602,7 +3602,7 @@ function derf(p1: U, p2: U, $: ScriptVars): void {
     push_integer(-1, $);
     multiply($);
     expfunc($);
-    push(Pi, $);
+    push(PI, $);
     push_rational(-1, 2, $);
     power($);
     multiply($);
@@ -3622,7 +3622,7 @@ function derfc(p1: U, p2: U, $: ScriptVars): void {
     push_integer(-1, $);
     multiply($);
     expfunc($);
-    push(Pi, $);
+    push(PI, $);
     push_rational(-1, 2, $);
     power($);
     multiply($);
@@ -4292,7 +4292,7 @@ function eval_float(p1: U, $: ScriptVars): void {
 export function floatfunc($: ScriptVars): void {
     floatfunc_subst($);
     value_of($);
-    floatfunc_subst($); // in case Pi popped up
+    floatfunc_subst($); // in case pi popped up
     value_of($);
 }
 
@@ -4311,7 +4311,7 @@ function floatfunc_subst($: ScriptVars): void {
         return;
     }
 
-    if (p1.equals(Pi)) {
+    if (p1.equals(PI)) {
         push_double(Math.PI, $);
         return;
     }
@@ -6090,7 +6090,7 @@ function logfunc($: ScriptVars): void {
         negate($);
         logfunc($);
         push(imaginaryunit, $);
-        push(Pi, $);
+        push(PI, $);
         multiply($);
         add($);
         return;
@@ -6928,7 +6928,7 @@ function polar($: ScriptVars): void {
     const p2 = pop($);
     if (is_flt(p2)) {
         push_double(p2.d / Math.PI, $);
-        push(Pi, $);
+        push(PI, $);
         multiply_factors(3, $);
     }
     else {
@@ -7029,7 +7029,7 @@ function power($: ScriptVars): void {
         base = pop($);
     }
 
-    if (base.equals(Pi) && is_flt(expo)) {
+    if (base.equals(PI) && is_flt(expo)) {
         push_double(Math.PI, $);
         base = pop($);
     }
@@ -7890,7 +7890,7 @@ function rotate_q(PSI: Tensor, n: number, $: ScriptVars): void {
             push_integer(i - j, $);
             power($);
             push(imaginaryunit, $);
-            push(Pi, $);
+            push(PI, $);
             value_of($);
             multiply_factors(3, $);
             expfunc($);
@@ -7913,7 +7913,7 @@ function rotate_v(PSI: Tensor, n: number, $: ScriptVars): void {
             push_integer(i - j, $);
             power($);
             push(imaginaryunit, $);
-            push(Pi, $);
+            push(PI, $);
             value_of($);
             multiply_factors(3, $);
             negate($);
@@ -8482,10 +8482,10 @@ function sinfunc($: ScriptVars): void {
         return;
     }
 
-    // n Pi ?
+    // n pi ?
 
     push(p1, $);
-    push(Pi, $);
+    push(PI, $);
     divide($);
     let p2 = pop($);
 
@@ -8579,7 +8579,7 @@ function sinfunc($: ScriptVars): void {
     }
 }
 
-// sin(x + n/2 Pi) = sin(x) cos(n/2 Pi) + cos(x) sin(n/2 Pi)
+// sin(x + n/2 pi) = sin(x) cos(n/2 pi) + cos(x) sin(n/2 pi)
 
 function sinfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
@@ -8587,7 +8587,7 @@ function sinfunc_sum(p1: U, $: ScriptVars): void {
         push_integer(2, $);
         push(car(p2), $);
         multiply($);
-        push(Pi, $);
+        push(PI, $);
         divide($);
         let p3 = pop($);
         if (is_rat(p3) && isinteger(p3)) {
@@ -8858,10 +8858,10 @@ function tanfunc($: ScriptVars): void {
         return;
     }
 
-    // n Pi ?
+    // n pi ?
 
     push(p1, $);
-    push(Pi, $);
+    push(PI, $);
     divide($);
     let p2 = pop($);
 
@@ -8946,13 +8946,13 @@ function tanfunc($: ScriptVars): void {
     }
 }
 
-// tan(x + n Pi) = tan(x)
+// tan(x + n pi) = tan(x)
 
 function tanfunc_sum(p1: U, $: ScriptVars): void {
     let p2 = cdr(p1);
     while (is_cons(p2)) {
         push(car(p2), $);
-        push(Pi, $);
+        push(PI, $);
         divide($);
         const p3 = pop($);
         if (is_rat(p3) && isinteger(p3)) {
@@ -9056,7 +9056,7 @@ function eval_tau(x: Cons, $: ScriptVars): void {
 function taufunc($: ScriptVars): void {
     const n = pop($);
     push(two, $);
-    push(Pi, $);
+    push(PI, $);
     push(n, $);
     multiply_factors(3, $);
 }
@@ -10521,10 +10521,10 @@ function isdenormalpolarterm(p: U, $: ScriptVars) {
     if (!car(p).equals(MULTIPLY))
         return 0;
 
-    if (lengthf(p) === 3 && isimaginaryunit(cadr(p)) && caddr(p).equals(Pi))
-        return 1; // exp(i Pi)
+    if (lengthf(p) === 3 && isimaginaryunit(cadr(p)) && caddr(p).equals(PI))
+        return 1; // exp(i pi)
 
-    if (lengthf(p) !== 4 || !is_num(cadr(p)) || !isimaginaryunit(caddr(p)) || !cadddr(p).equals(Pi))
+    if (lengthf(p) !== 4 || !is_num(cadr(p)) || !isimaginaryunit(caddr(p)) || !cadddr(p).equals(PI))
         return 0;
 
     p = cadr(p); // p = coeff of term
@@ -10653,7 +10653,7 @@ function istensor(p: U): p is Tensor {
 }
 
 function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
-    if (is_sym(p) && scope.hasUserFunction(p) && !p.equalsSym(Pi) && !p.equalsSym(DOLLAR_E))
+    if (is_sym(p) && scope.hasUserFunction(p) && !p.equalsSym(PI) && !p.equalsSym(DOLLAR_E))
         return 1;
 
     if (is_cons(p)) {
@@ -10830,7 +10830,7 @@ function multiply_scalar_factors(start: number, $: ScriptVars): void {
     combine_factors(start, $);
     normalize_power_factors(start, $);
 
-    // do again in case exp(1/2 i Pi) changed to i
+    // do again in case exp(1/2 i pi) changed to i
 
     combine_factors(start, $);
     // console.lg(`after combine factors: ${$.stack}`);
@@ -10972,7 +10972,7 @@ function normalize_polar(EXPO: U, $: ScriptVars): void {
 
 function normalize_polar_term(EXPO: U, $: ScriptVars): void {
 
-    // exp(i Pi) = -1
+    // exp(i pi) = -1
 
     if (lengthf(EXPO) === 3) {
         push_integer(-1, $);
@@ -11029,7 +11029,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
             }
@@ -11046,7 +11046,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -11064,7 +11064,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -11087,7 +11087,7 @@ function normalize_polar_term_rational(R: U, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push(R, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -11124,7 +11124,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
             }
@@ -11141,7 +11141,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -11159,7 +11159,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(3, $);
@@ -11182,7 +11182,7 @@ function normalize_polar_term_double(R: Flt, $: ScriptVars): void {
                 push(MULTIPLY, $);
                 push_double(r, $);
                 push(imaginaryunit, $);
-                push(Pi, $);
+                push(PI, $);
                 list(4, $);
                 list(3, $);
                 list(4, $);
@@ -11584,19 +11584,19 @@ function power_complex_rational(_BASE: U, EXPO: U, X: U, Y: U, $: ScriptVars): v
     multiply($);
     power($);
 
-    // calculate (-1) ^ (EXPO * arctan(Y, X) / Pi)
+    // calculate (-1) ^ (EXPO * arctan(Y, X) / pi)
 
     push(Y, $);
     push(X, $);
     arctan($);
-    push(Pi, $);
+    push(PI, $);
     divide($);
     push(EXPO, $);
     multiply($);
     EXPO = pop($);
     power_minusone(EXPO, $);
 
-    // result = sqrt(X^2 + Y^2) ^ (1/2 * EXPO) * (-1) ^ (EXPO * arctan(Y, X) / Pi)
+    // result = sqrt(X^2 + Y^2) ^ (1/2 * EXPO) * (-1) ^ (EXPO * arctan(Y, X) / pi)
 
     multiply($);
 }
@@ -12179,7 +12179,7 @@ function prefixform(p: U, outbuf: string[]) {
         outbuf.push(s);
     }
     else if (is_sym(p)) {
-        if (Pi.equalsSym(p)) {
+        if (PI.equalsSym(p)) {
             outbuf.push('pi');
         }
         else {
@@ -13235,7 +13235,7 @@ export class ScriptVars implements ExprContext {
     readonly #prolog: string[] = [];
     readonly #userFunctions: Map<string, UserFunction> = new Map();
     constructor() {
-        this.defineUserSymbol(Pi);
+        this.defineUserSymbol(PI);
         this.defineUserSymbol(DOLLAR_E);
 
         this.defineUserSymbol(LAST);
@@ -13339,9 +13339,9 @@ export class ScriptVars implements ExprContext {
     }
 }
 
-const zero: Rat = create_rat(0, 1);
-const one: Rat = create_rat(1, 1);
-const minusone: Rat = create_rat(-1, 1);
+const zero: Rat = create_int(0);
+const one: Rat = create_int(1);
+const minusone: Rat = create_int(-1);
 let imaginaryunit: U;
 
 interface ConsFunction {

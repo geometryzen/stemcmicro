@@ -41,7 +41,7 @@ export function clock(z: U, $: ExtensionEnv): U {
         // section in power)
         const arg_z = $.arg(z);
         // console.lg(`arg_z=${print_expr(arg_z, $)}`);
-        const pi = DynamicConstants.Pi($);
+        const pi = DynamicConstants.PI($);
         // console.lg(`pi=${print_expr(pi, $)}`);
         const direction = $.power(negOne, $.divide(arg_z, pi));
         // console.lg(`direction=${print_expr(direction, $)}`);

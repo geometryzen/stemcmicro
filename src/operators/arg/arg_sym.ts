@@ -11,7 +11,7 @@ import { is_sym } from "../sym/is_sym";
 
 const ARG = native_sym(Native.arg);
 const MATH_E = native_sym(Native.E);
-const Pi = native_sym(Native.PI);
+const PI = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -36,7 +36,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
         if (arg.equalsSym(MATH_E)) {
             return [TFLAG_DIFF, zero];
         }
-        else if (arg.equalsSym(Pi)) {
+        else if (arg.equalsSym(PI)) {
             return [TFLAG_DIFF, zero];
         }
         else if ($.isreal(arg)) {

@@ -61,7 +61,7 @@ function arg(z: U, $: ExtensionEnv): U {
         }
         else {
             const k = is_negative(y) ? half.neg() : half;
-            const pi = DynamicConstants.Pi($);
+            const pi = DynamicConstants.PI($);
             return $.multiply(k, pi);
         }
         /*
@@ -75,7 +75,7 @@ function arg(z: U, $: ExtensionEnv): U {
     }
     else {
         if (is_negative(x)) {
-            const pi = DynamicConstants.Pi($);
+            const pi = DynamicConstants.PI($);
             if (is_negative(y)) {
                 return $.subtract($.arctan($.divide(y, x)), pi);
             }
@@ -149,7 +149,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
 
     // Implementation in which the imaginary unit is it's own object.
     if (is_imu(expr)) {
-        return $.multiply(DynamicConstants.Pi($), half);
+        return $.multiply(DynamicConstants.PI($), half);
     }
 
     if (is_power(expr)) {
@@ -157,7 +157,7 @@ function yyarg(expr: U, $: ExtensionEnv): U {
         // Implementation in which imaginary unit is (pow -1 1/2).
         if (equaln(base, -1)) {
             // -1 to a power
-            return $.multiply(DynamicConstants.Pi($), expr.expo);
+            return $.multiply(DynamicConstants.PI($), expr.expo);
         }
 
         // (pow e X) => im(X)
@@ -214,20 +214,20 @@ function arg_of_sum_old(expr: Cons, $: ExtensionEnv): U {
     // console.lg(`y => ${$.toListString(y)}`);
     if ($.iszero(x)) {
         if (is_negative(y)) {
-            return $.negate(DynamicConstants.Pi($));
+            return $.negate(DynamicConstants.PI($));
         }
         else {
-            return DynamicConstants.Pi($);
+            return DynamicConstants.PI($);
         }
     }
     else {
         const arg1 = $.arctan($.divide(y, x));
         if (is_negative(x)) {
             if (is_negative(y)) {
-                return subtract(arg1, DynamicConstants.Pi($), $); // quadrant 1 -> 3
+                return subtract(arg1, DynamicConstants.PI($), $); // quadrant 1 -> 3
             }
             else {
-                return $.add(arg1, DynamicConstants.Pi($)); // quadrant 4 -> 2
+                return $.add(arg1, DynamicConstants.PI($)); // quadrant 4 -> 2
             }
         }
         return arg1;

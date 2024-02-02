@@ -366,7 +366,7 @@ export function derf(p1: U, p2: Sym, $: ExtensionEnv): U {
         $.multiply(
             $.multiply(
                 $.exp($.multiply($.power(cadr(p1), two), negOne)),
-                $.power(DynamicConstants.Pi($), rational(-1, 2))
+                $.power(DynamicConstants.PI($), rational(-1, 2))
             ),
             two
         ),
@@ -380,7 +380,7 @@ export function derfc(p1: U, p2: Sym, $: ExtensionEnv): U {
         $.multiply(
             $.multiply(
                 $.exp($.multiply($.power(cadr(p1), two), negOne)),
-                $.power(DynamicConstants.Pi($), rational(-1, 2))
+                $.power(DynamicConstants.PI($), rational(-1, 2))
             ),
             create_int(-2)
         ),

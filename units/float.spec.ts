@@ -75,8 +75,8 @@ describe("float", function () {
     });
     it("G", function () {
         const lines: string[] = [
-            `Pi=tau(1/2)`,
-            `float(Pi)`
+            `pi=tau(1/2)`,
+            `float(pi)`
         ];
         const engine = create_script_context({
             dependencies: ['Flt']

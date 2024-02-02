@@ -161,7 +161,7 @@ export class DynamicConstants {
     public static NegOne($: ExtensionEnv): Flt | Rat {
         return $.getDirective(Directive.evaluatingAsFloat) ? negOneAsFlt : negOne;
     }
-    public static Pi($: ExtensionEnv): Sym | Flt {
+    public static PI($: ExtensionEnv): Sym | Flt {
         return $.getDirective(Directive.evaluatingAsFloat) ? piAsFlt : MATH_PI;
     }
 }

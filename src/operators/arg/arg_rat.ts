@@ -11,7 +11,7 @@ import { Cons1 } from "../helpers/Cons1";
 import { is_rat } from "../rat/is_rat";
 
 const ARG = native_sym(Native.arg);
-const Pi = native_sym(Native.PI);
+const PI = native_sym(Native.PI);
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -37,7 +37,7 @@ class Op extends Function1<ARG> implements Operator<EXP> {
             return [TFLAG_DIFF, new Err(expr)];
         }
         else if (arg.isNegative()) {
-            return [TFLAG_DIFF, Pi];
+            return [TFLAG_DIFF, PI];
         }
         else {
             return [TFLAG_DIFF, zero];

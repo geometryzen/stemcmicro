@@ -54,8 +54,8 @@ export function cosine_of_angle(x: U, oldExpr: U, $: ExtensionEnv): [TFLAGS, U] 
     // denominator.
 
     const x_times_180 = $.multiply(x, create_int(180));
-    const Pi = DynamicConstants.Pi($);
-    const n = nativeInt(divide(x_times_180, Pi, $));
+    const PI = DynamicConstants.PI($);
+    const n = nativeInt(divide(x_times_180, PI, $));
 
     // most "good" (i.e. compact) trigonometric results
     // happen for a round number of degrees. There are some exceptions

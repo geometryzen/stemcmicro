@@ -1,4 +1,4 @@
-import { Boo, Cell, create_rat, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { Boo, Cell, create_int, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
@@ -239,8 +239,12 @@ function allow_undeclared_vars(options: Partial<EngineConfig>, allowDefault: Und
     }
 }
 
+export function define_math_constant_pi($: ExtensionEnv): void {
+    $.setBinding(create_sym("pi"), native_sym(Native.PI));
+}
+
 export function define_spacetime_algebra($: ExtensionEnv): void {
-    const blades = create_algebra_as_blades([create_rat(-1, 1), create_rat(1, 1), create_rat(1, 1), create_rat(1, 1)], ["e0", "e1", "e2", "e3"], $);
+    const blades = create_algebra_as_blades([create_int(-1), create_int(1), create_int(1), create_int(1)], ["e0", "e1", "e2", "e3"], $);
     $.setBinding(create_sym("e0"), blades[0]);
     $.setBinding(create_sym("e1"), blades[1]);
     $.setBinding(create_sym("e2"), blades[2]);
@@ -265,6 +269,7 @@ class STEMCExprEngine implements ExprEngine {
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             prolog: options.prolog
         });
+        define_math_constant_pi(this.#env);
         define_spacetime_algebra(this.#env);
         define_si_units(this.#env);
     }

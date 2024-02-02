@@ -8,7 +8,7 @@ import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 import { Cons1 } from "../helpers/Cons1";
 
-const Pi = native_sym(Native.PI);
+const PI = native_sym(Native.PI);
 const MATH_TAU = native_sym(Native.tau);
 
 class Builder implements OperatorBuilder<U> {
@@ -18,7 +18,7 @@ class Builder implements OperatorBuilder<U> {
 }
 
 /**
- * (tau x) => (* 2 :Math/Pi x)
+ * (tau x) => (* 2 pi x)
  */
 class Op extends Function1<U> implements Operator<U> {
     constructor($: ExtensionEnv) {
@@ -31,7 +31,7 @@ class Op extends Function1<U> implements Operator<U> {
 }
 
 function tau_(x: U, $: Pick<ExtensionEnv, 'multiply'>): U {
-    const two_pi = $.multiply(two, Pi);
+    const two_pi = $.multiply(two, PI);
     return $.multiply(two_pi, x);
 }
 

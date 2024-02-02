@@ -78,12 +78,12 @@ function arctan(x: U, $: ExtensionEnv): U {
 
     // arctan(1) -> pi/4
     if (equaln(x, 1)) {
-        return $.multiply(rational(1, 4), DynamicConstants.Pi($));
+        return $.multiply(rational(1, 4), DynamicConstants.PI($));
     }
 
     // arctan(sqrt(3)) -> pi/3
     if (is_power(x) && equaln(cadr(x), 3) && is_num_and_equalq(caddr(x), 1, 2)) {
-        return $.multiply(third, DynamicConstants.Pi($));
+        return $.multiply(third, DynamicConstants.PI($));
     }
 
     return items_to_cons(ARCTAN, x);

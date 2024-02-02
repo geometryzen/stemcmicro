@@ -2,7 +2,7 @@ import { Boo, Cell, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } 
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, U } from 'math-expression-tree';
-import { STEMCParseOptions, stemc_parse } from '../algebrite/algebrite_parse';
+import { STEMCParseOptions, stemc_parse } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { eval_draw } from '../eigenmath/eval_draw';
@@ -48,7 +48,7 @@ function reify_boolean(optionValue: boolean | undefined, defaultValue: boolean =
     }
 }
 
-export function algebrite_parse_config(options: Partial<ParseConfig>): STEMCParseOptions {
+export function stemc_parse_config(options: Partial<ParseConfig>): STEMCParseOptions {
     const config: STEMCParseOptions = {
         catchExceptions: false,
         explicitAssocAdd: false,
@@ -280,7 +280,7 @@ class STEMCExprEngine implements ExprEngine {
         this.#env.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        const { trees, errors } = stemc_parse(sourceText, algebrite_parse_config(options));
+        const { trees, errors } = stemc_parse(sourceText, stemc_parse_config(options));
         const visitor = new ExtensionEnvVisitor(this.#env);
         for (const tree of trees) {
             visit(tree, visitor);

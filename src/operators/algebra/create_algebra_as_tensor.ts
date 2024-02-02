@@ -223,18 +223,22 @@ class AlgebraFieldAdapter implements Adapter<U, U> {
  * @returns 
  */
 export function create_algebra_as_tensor<T extends U>(metric: T[], labels: string[], $: ExtensionEnv): Tensor<U> {
+    const blades: Blade[] = create_algebra_as_blades(metric, labels, $);
+    return new Tensor([metric.length], blades);
+}
+
+export function create_algebra_as_blades<T extends U>(metric: T[], labels: string[], $: ExtensionEnv): Blade[] {
     const uFieldAdaptor = new AlgebraFieldAdapter(metric.length, $);
     const GA = create_algebra(metric, uFieldAdaptor, labels);
     /**
      * Number of basis vectors in algebra is dimensionality.
      */
     const dimensions = metric.length;
-    const dims = [metric.length];
-    const elems = new Array<Blade>(dimensions);
+    const blades: Blade[] = new Array<Blade>(dimensions);
     for (let index = 0; index < dimensions; index++) {
-        elems[index] = GA.unit(index);
+        blades[index] = GA.unit(index);
     }
-    return new Tensor(dims, elems);
+    return blades;
 }
 
 export function convertMetricToNative(tensor: U): U[] {

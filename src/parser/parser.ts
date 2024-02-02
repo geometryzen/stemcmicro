@@ -1,6 +1,6 @@
 import { bigInt, BigInteger, Boo, Char, create_sym_ns, create_tensor, Flt, is_str, Keyword, Map, Rat, Set, Str, Sym, Tag, Timestamp, Uuid } from "math-expression-atoms";
 import { pos_end_items_to_cons, U } from "math-expression-tree";
-import { STEMCParseOptions, stemc_parse } from "../algebrite/algebrite_parse";
+import { STEMCParseOptions, stemc_parse } from "../algebrite/stemc_parse";
 import { EigenmathErrorHandler } from "../api";
 import { EDNListParser, ParseConfig } from "../edn";
 import { EigenmathParseConfig, parse_eigenmath_script, ScriptVars } from "../eigenmath/eigenmath";

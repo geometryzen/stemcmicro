@@ -1,6 +1,6 @@
 {
     "name": "stemcscript",
-    "version": "0.0.163",
+    "version": "0.0.164",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
         ".": {

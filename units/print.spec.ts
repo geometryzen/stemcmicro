@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 

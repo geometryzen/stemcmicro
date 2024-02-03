@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { assert_sym } from "math-expression-atoms";
-import { create_engine, ExprEngine } from "../src/api/index";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 import { assert_cons } from "../src/tree/cons/assert_cons";
 

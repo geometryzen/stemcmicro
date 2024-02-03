@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { is_sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api/index";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { assert_sym } from "../src/operators/sym/assert_sym";
 import { SyntaxKind } from "../src/parser/parser";
 

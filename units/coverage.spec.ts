@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
+import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 const engineConfig: Partial<EngineConfig> = {

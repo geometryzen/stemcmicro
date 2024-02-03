@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_rat, is_sym } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/index";
+import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/api";
 import { State, Stepper } from '../src/clojurescript/runtime/Stepper';
 import { Stack } from "../src/env/Stack";
 import { SyntaxKind } from "../src/parser/parser";

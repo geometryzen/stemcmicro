@@ -8,7 +8,7 @@ export {
     ParseConfig,
     RenderConfig,
     UndeclaredVars
-} from "./src/api/index";
+} from "./src/api/api";
 export {
     Scope,
     State,

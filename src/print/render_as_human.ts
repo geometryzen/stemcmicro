@@ -1,9 +1,8 @@
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { U } from "math-expression-tree";
 import { defs, PRINTMODE_HUMAN } from "../runtime/defs";
-import { U } from "../tree/tree";
-import { render_using_non_sexpr_print_mode } from "./print";
+import { PrintConfig, render_using_non_sexpr_print_mode } from "./print";
 
-export function render_as_human(expr: U, $: ExtensionEnv): string {
+export function render_as_human(expr: U, $: PrintConfig): string {
     const codeGen = defs.codeGen;
     const printMode = defs.printMode;
 

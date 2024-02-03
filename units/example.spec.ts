@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { is_rat } from "math-expression-atoms";
-import { create_engine, ExprEngine } from "../src/api/index";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { State, Stepper } from '../src/clojurescript/runtime/Stepper';
 import { Stack } from "../src/env/Stack";
 import { SyntaxKind } from "../src/parser/parser";

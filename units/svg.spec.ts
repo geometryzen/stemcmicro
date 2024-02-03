@@ -2,8 +2,8 @@
 import { assert } from "chai";
 import { is_uom } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api/index";
-import { SvgRenderConfig, render_svg } from "../src/eigenmath/render_svg";
+import { create_engine, ExprEngine } from "../src/api/api";
+import { render_svg, SvgRenderConfig } from "../src/eigenmath/render_svg";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context, ScriptContext } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";

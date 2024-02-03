@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { Boo, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { Cons, is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, run_script, ScriptHandler, UndeclaredVars } from "../src/api/index";
+import { create_engine, ExprEngine, run_script, ScriptHandler, UndeclaredVars } from "../src/api/api";
 import { ScriptOutputListener } from "../src/eigenmath/eigenmath";
 import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
 import { SvgRenderConfig } from "../src/eigenmath/render_svg";

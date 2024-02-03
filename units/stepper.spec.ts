@@ -1,16 +1,15 @@
 
 import { assert } from "chai";
-import { Sym } from "math-expression-atoms";
+import { is_sym, Sym } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, ScriptHandler, UndeclaredVars } from "../src/api/index";
+import { create_engine, ExprEngine, ScriptHandler, UndeclaredVars } from "../src/api/api";
 import { State, Stepper, StepperHandler } from "../src/clojurescript/runtime/Stepper";
 import { ScriptOutputListener } from "../src/eigenmath/eigenmath";
 import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";
 import { SvgRenderConfig } from "../src/eigenmath/render_svg";
 import { should_engine_render_svg } from "../src/eigenmath/should_engine_render_svg";
 import { Stack } from "../src/env/Stack";
-import { is_sym } from "../src/operators/sym/is_sym";
 import { SyntaxKind } from "../src/parser/parser";
 
 class TestScriptListener implements ScriptOutputListener {

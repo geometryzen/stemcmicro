@@ -1,5 +1,6 @@
-import { booT, is_blade, is_boo, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, zero } from 'math-expression-atoms';
+import { booT, create_sym, is_blade, is_boo, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, Sym, Tensor, zero } from 'math-expression-atoms';
 import { is_native, Native, native_sym } from 'math-expression-native';
+import { car, cdr, Cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive } from '../env/ExtensionEnv';
@@ -55,9 +56,6 @@ import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRI
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_lco, is_multiply, is_opr_eq_inv, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
-import { create_sym, Sym } from '../tree/sym/Sym';
-import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, Cons, is_atom, is_cons, nil, U } from '../tree/tree';
 import { print_number } from './print_number';
 import { render_as_sexpr } from './render_as_sexpr';
 
@@ -69,6 +67,9 @@ const MATH_PI = native_sym(Native.PI);
 const TESTEQ = native_sym(Native.testeq);
 const COMPONENT = native_sym(Native.component);
 
+/**
+ * 
+ */
 export interface PrintConfig {
     add(...args: U[]): U;
     factorize(poly: U, x: U): U;

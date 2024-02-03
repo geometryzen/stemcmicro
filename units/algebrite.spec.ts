@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { assert_boo, assert_keyword, assert_map, assert_rat } from "math-expression-atoms";
-import { create_engine, ExprEngine } from "../src/api/index";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("STEMCscript", function () {

@@ -3,7 +3,7 @@ import { create_sym, Sym } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_atom, is_cons, items_to_cons, nil, U } from "math-expression-tree";
-import { ExprEngineListener, UndeclaredVars } from "../../api";
+import { ExprEngineListener, UndeclaredVars } from "../../api/api";
 import { create_env, EnvOptions } from "../../env/env";
 import { ALL_FEATURES, ExtensionEnv } from "../../env/ExtensionEnv";
 import { Stack } from "../../env/Stack";

@@ -1,8 +1,8 @@
 
 import { assert } from "chai";
+import { is_rat } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api/index";
-import { is_rat } from "../src/operators/rat/is_rat";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 

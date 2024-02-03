@@ -1,6 +1,6 @@
 import { create_int } from "math-expression-atoms";
 import { LambdaExpr } from "math-expression-context";
-import { define_math_constant_pi, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api";
+import { define_math_constant_pi, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";

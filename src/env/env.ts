@@ -3,7 +3,7 @@ import { Boo, Cell, CellHost, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyw
 import { LambdaExpr } from 'math-expression-context';
 import { is_native } from 'math-expression-native';
 import { is_atom, nil } from 'math-expression-tree';
-import { AtomListener, UndeclaredVars } from '../api';
+import { AtomListener, UndeclaredVars } from '../api/api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { Eval_function } from "../Eval_function";
 import { yyfactorpoly } from "../factorpoly";
@@ -1143,7 +1143,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.is(ISNEGATIVE, expr);
         },
         isone(expr: U): boolean {
-            if (is_nil(expr)) {
+            if (expr.isnil) {
                 return false;
             }
             else if (is_rat(expr)) {

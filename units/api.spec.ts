@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/index";
+import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("api", function () {

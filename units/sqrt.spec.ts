@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine } from "../src/api";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -88,12 +88,12 @@ describe("sqrt", function () {
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(* 7 m)");
         engine.release();
     });
-    xit("sqrt(x**y) using Eigenmath", function () {
+    it("sqrt(x**y) using Eigenmath", function () {
         // Eigenmath simply assumes that all symbols are nonnegative real numbers.
         // Under such conditions (b**r)**s = b**(r*s).
         // Hence sqrt(x**y) = (x**y)**(1/2) = x**(y * 1/2) = x**(1/2 * y).
         const lines: string[] = [
-            `sqrt(x**y)`
+            `sqrt(x^y)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
@@ -103,7 +103,7 @@ describe("sqrt", function () {
         const values: U[] = [];
         for (const tree of trees) {
             const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
+            if (!value.isnil) {
                 values.push(value);
             }
         }
@@ -111,8 +111,7 @@ describe("sqrt", function () {
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), "x**(1/2 y)");
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), "x**(1/2 y)");
         assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "x**(1/2 y)");
-        // Eigenmath is not doing LaTeX right.
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), "x**(1/2 y)");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'LaTeX' }), "x^{\\frac{y}{2}}");
         assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(pow x (* 1/2 y))");
         engine.release();
     });

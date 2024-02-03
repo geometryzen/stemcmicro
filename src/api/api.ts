@@ -1,7 +1,7 @@
-import { Boo, Cell, create_int, create_sym, Flt, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { Boo, Cell, create_int, create_sym, Flt, is_flt, is_rat, is_sym, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
-import { Cons, items_to_cons, U } from 'math-expression-tree';
+import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { STEMCParseOptions, stemc_parse } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
@@ -20,6 +20,7 @@ import { assert_U } from '../operators/helpers/is_any';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, UOM_NAMES } from '../operators/uom/uom';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
+import { PrintConfig } from '../print/print';
 import { render_as_ascii } from '../print/render_as_ascii';
 import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
@@ -537,6 +538,109 @@ class EigenmathOutputListener implements ScriptOutputListener {
     }
 }
 
+class ScriptVarsPrintConfig implements PrintConfig {
+    readonly #scriptVars: ScriptVars;
+    constructor(scriptVars: ScriptVars) {
+        this.#scriptVars = scriptVars;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    add(...args: U[]): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    factorize(poly: U, x: U): U {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    pushDirective(directive: Directive, value: boolean): void {
+        throw new Error('Method not implemented.');
+    }
+    popDirective(): void {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getBinding(sym: Sym): U {
+        const key = sym.key();
+        switch (key) {
+            case 'printLeaveEAlone': {
+                return nil;
+            }
+            case 'printLeaveXAlone': {
+                return nil;
+            }
+            default: {
+                throw new Error(`getBinding ${sym}`);
+            }
+
+        }
+        // const binding = this.#scriptVars.getBinding(sym);
+        // console.log("getBinding", `${sym}`);
+        // return binding;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getDirective(directive: Directive): boolean {
+        throw new Error('getDirective method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getSymbolPrintName(sym: Sym): string {
+        throw new Error('getSymbolPrintName method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isone(expr: U): boolean {
+        if (expr.isnil) {
+            return false;
+        }
+        else if (is_rat(expr)) {
+            return expr.isOne();
+        }
+        else if (is_flt(expr)) {
+            return expr.isOne();
+        }
+        else {
+            return false;
+        }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    iszero(expr: U): boolean {
+        throw new Error('iszero method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    multiply(...args: U[]): U {
+        throw new Error('multiply method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    negate(expr: U): U {
+        throw new Error('negate method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    power(base: U, expo: U): U {
+        throw new Error('power method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    subtract(lhs: U, rhs: U): U {
+        throw new Error('subtract method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toInfixString(expr: Sym | Keyword): string {
+        throw new Error('toInfixString method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toLatexString(expr: Sym | Keyword): string {
+        if (is_sym(expr)) {
+            return expr.key();
+        }
+        throw new Error(`toLatexString ${expr} method not implemented.`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    toSExprString(expr: U): string {
+        throw new Error('toSExprString method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    valueOf(expr: U): U {
+        throw new Error('valueOf method not implemented.');
+    }
+}
+
 class EigenmathExprEngine implements ExprEngine {
     readonly #scriptVars: ScriptVars = new ScriptVars();
     constructor(options: Partial<EngineConfig>) {
@@ -610,10 +714,7 @@ class EigenmathExprEngine implements ExprEngine {
                 return to_infix(expr, eigenmath_infix_config(config));
             }
             case 'LaTeX': {
-                // TODO: Eigenmath can't do LaTeX.
-                throw new Error("Eigenmath can't do LaTeX.");
-                // TODO: Make render_as_latex more reusable.
-                // return render_as_latex(expr, this.$);
+                return render_as_latex(expr, new ScriptVarsPrintConfig(this.#scriptVars));
             }
             case 'SExpr': {
                 return to_sexpr(expr);

@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { create_sym, Sym } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler } from "../src/api/index";
+import { create_engine, ExprEngine, ExprEngineListener, run_module, run_script, ScriptHandler } from "../src/api/api";
 import { Scope, State, Stepper } from "../src/clojurescript/runtime/Stepper";
 import { iszero, ScriptOutputListener } from "../src/eigenmath/eigenmath";
 import { print_value_and_input_as_svg_or_infix } from "../src/eigenmath/print_value_and_input_as_svg_or_infix";

@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_blade, is_boo, is_flt, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor } from "math-expression-atoms";
 import { is_cons, is_nil, U } from "math-expression-tree";
-import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/index";
+import { create_engine, ExprEngine, UndeclaredVars } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_cons } from "../src/tree/cons/assert_cons";

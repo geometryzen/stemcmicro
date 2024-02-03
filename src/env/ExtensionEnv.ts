@@ -1,7 +1,7 @@
 import { CellHost, Rat, Sym, Tensor } from "math-expression-atoms";
 import { ExprContext, LambdaExpr } from "math-expression-context";
 import { Cons, U } from "math-expression-tree";
-import { AtomListener } from "../api";
+import { AtomListener } from "../api/api";
 import { Native } from "../native/Native";
 import { EnvConfig } from "./EnvConfig";
 
@@ -367,6 +367,9 @@ export interface ExtensionEnv extends ExprContext {
     isinfinitesimal(expr: U): boolean;
     isminusone(expr: U): boolean;
     isnegative(expr: U): boolean;
+    /**
+     * @deprecated The implementation doesn't need a full context.
+     */
     isone(expr: U): boolean;
     ispositive(expr: U): boolean;
     isreal(expr: U): boolean;

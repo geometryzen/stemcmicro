@@ -1,4 +1,4 @@
-import { UndeclaredVars } from "../api";
+import { UndeclaredVars } from "../api/api";
 import { SyntaxKind } from "../parser/parser";
 import { Directive, FEATURE, Predicates } from "./ExtensionEnv";
 

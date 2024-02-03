@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { Cons, is_cons, U } from 'math-expression-tree';
-import { create_engine, ExprEngine } from "../src/api/index";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 function assert_cons(x: U): Cons {

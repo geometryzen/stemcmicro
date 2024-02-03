@@ -1,9 +1,8 @@
 import { U } from "math-expression-tree";
-import { ExtensionEnv } from "../env/ExtensionEnv";
 import { defs, PRINTMODE_LATEX } from "../runtime/defs";
-import { render_using_non_sexpr_print_mode } from "./print";
+import { PrintConfig, render_using_non_sexpr_print_mode } from "./print";
 
-export function render_as_latex(expr: U, $: ExtensionEnv): string {
+export function render_as_latex(expr: U, $: PrintConfig): string {
     const codeGen = defs.codeGen;
     const printMode = defs.printMode;
 

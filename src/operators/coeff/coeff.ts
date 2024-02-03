@@ -1,11 +1,11 @@
+import { one, zero } from 'math-expression-atoms';
+import { Cons, is_cons, nil, U } from 'math-expression-tree';
 import { subtract } from '../../calculators/sub/subtract';
-import { divide, divide_expand } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { filter } from '../../filter';
+import { divide, divide_expand } from '../../helpers/divide';
 import { SYMBOL_X } from '../../runtime/constants';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
-import { one, zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, nil, U } from '../../tree/tree';
 import { is_mul_2_any_any } from '../mul/is_mul_2_any_any';
 import { subst } from '../subst/subst';
 
@@ -64,7 +64,7 @@ export function Eval_coeff(p1: U, $: ExtensionEnv): U {
  * @param $ 
  * @returns 
  */
-export function coeff(expr: U, x: U, $: ExtensionEnv): U[] {
+export function coeff(expr: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'operatorFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U[], description: string): U[] {
         return retval;

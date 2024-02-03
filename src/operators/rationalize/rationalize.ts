@@ -20,7 +20,7 @@ export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
     return rationalize_factoring(value, $);
 }
 
-export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
+export function rationalize_factoring(argList: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     $.pushDirective(Directive.factoring, true);
     try {
         return yyrationalize(argList, $);
@@ -30,7 +30,7 @@ export function rationalize_factoring(argList: U, $: ExtensionEnv): U {
     }
 }
 
-function yyrationalize(arg: U, $: ExtensionEnv): U {
+function yyrationalize(arg: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg(`yyrationalize ${render_as_infix(arg, $)}`);
     if (is_tensor(arg)) {
         return __rationalize_tensor(arg, $);
@@ -67,7 +67,7 @@ function yyrationalize(arg: U, $: ExtensionEnv): U {
     return rationalized;
 }
 
-function multiply_denominators(p: U, $: ExtensionEnv): U {
+function multiply_denominators(p: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
     if (is_add(p)) {
         return p
             .tail()
@@ -79,7 +79,7 @@ function multiply_denominators(p: U, $: ExtensionEnv): U {
     return multiply_denominators_term(p, one, $);
 }
 
-function multiply_denominators_term(p: U, p2: U, $: ExtensionEnv): U {
+function multiply_denominators_term(p: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
     if (is_multiply(p)) {
         return p
             .tail()
@@ -89,7 +89,7 @@ function multiply_denominators_term(p: U, p2: U, $: ExtensionEnv): U {
     return multiply_denominators_factor(p, p2, $);
 }
 
-function multiply_denominators_factor(p: U, p2: U, $: ExtensionEnv): U {
+function multiply_denominators_factor(p: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
     if (!is_power(p)) {
         return p2;
     }
@@ -112,7 +112,7 @@ function multiply_denominators_factor(p: U, p2: U, $: ExtensionEnv): U {
     return p2;
 }
 
-function __rationalize_tensor(p1: U, $: ExtensionEnv): U {
+function __rationalize_tensor(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
 
     if (!is_tensor(p1)) {
         // might be zero
@@ -126,6 +126,6 @@ function __rationalize_tensor(p1: U, $: ExtensionEnv): U {
     return p1.withElements(elems);
 }
 
-function __lcm(p1: U, p2: U, $: ExtensionEnv): U {
+function __lcm(p1: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
     return divide($.multiply(p1, p2), gcd(p1, p2, $), $);
 }

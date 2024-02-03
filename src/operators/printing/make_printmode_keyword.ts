@@ -1,7 +1,8 @@
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_SYM } from "../../hashing/hash_info";
-import { get_last_print_mode_symbol, store_text_in_binding } from "../../print/print";
+import { get_last_print_mode_symbol } from "../../print/print";
 import { render_using_print_mode } from "../../print/render_using_print_mode";
+import { store_text_in_binding } from "../../print/store_text_in_binding";
 import { defs, PrintMode } from "../../runtime/defs";
 import { RESERVED_KEYWORD_LAST } from "../../runtime/ns_script";
 import { create_sym, Sym } from "../../tree/sym/Sym";

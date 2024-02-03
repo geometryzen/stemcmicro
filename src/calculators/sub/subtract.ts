@@ -1,7 +1,7 @@
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { U } from "../../tree/tree";
 
-export function subtract(lhs: U, rhs: U, $: ExtensionEnv): U {
+export function subtract(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'add' | 'negate'>): U {
     const hook = function (retval: U): U {
         return retval;
     };

@@ -1,7 +1,7 @@
 import { Blade, is_blade, is_uom, Uom } from 'math-expression-atoms';
 import { is_native } from 'math-expression-native';
 import { mp_denominator, mp_numerator } from '../bignum';
-import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
+import { Directive } from '../env/ExtensionEnv';
 import { is_num_and_eq_minus_one, is_rat_and_fraction } from '../is';
 import { Native } from '../native/Native';
 import { is_flt } from '../operators/flt/is_flt';
@@ -23,7 +23,7 @@ import { Str } from '../tree/str/Str';
 import { Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
 import { car, cdr, Cons, is_cons, U } from '../tree/tree';
-import { render_using_non_sexpr_print_mode } from './print';
+import { PrintConfig, render_using_non_sexpr_print_mode } from './print';
 
 /*
 
@@ -96,7 +96,7 @@ function printchar(character: string) {
     return printchar_nowrap(character);
 }
 
-export function render_as_ascii(p: U, $: ExtensionEnv): string {
+export function render_as_ascii(p: U, $: PrintConfig): string {
     // console.lg(`render_as_ascii: ${p}`);
     yindex = 0;
     level = 0;
@@ -117,7 +117,7 @@ export function render_as_ascii(p: U, $: ExtensionEnv): string {
     return beenPrinted;
 }
 
-function emit_top_expr(p: U, $: ExtensionEnv): void {
+function emit_top_expr(p: U, $: PrintConfig): void {
     // console.lg(`emit_top_expr:   ${p}`);
     if (car(p).equals(ASSIGN)) {
         emit_expr(cadr(p), $);
@@ -134,7 +134,7 @@ function emit_top_expr(p: U, $: ExtensionEnv): void {
     }
 }
 
-function will_be_displayed_as_fraction(p: U, $: ExtensionEnv): boolean {
+function will_be_displayed_as_fraction(p: U, $: PrintConfig): boolean {
     if (level > 0) {
         return false;
     }
@@ -156,7 +156,7 @@ function will_be_displayed_as_fraction(p: U, $: ExtensionEnv): boolean {
     return false;
 }
 
-function emit_expr(p: U, $: ExtensionEnv): void {
+function emit_expr(p: U, $: PrintConfig): void {
     // console.lg(`emit_expr:       ${p}`);
     //  if (level > 0) {
     //    printexpr(p)
@@ -199,7 +199,7 @@ function emit_expr(p: U, $: ExtensionEnv): void {
     }
 }
 
-function emit_unsigned_expr(p: U, $: ExtensionEnv) {
+function emit_unsigned_expr(p: U, $: PrintConfig) {
     if (is_add(p)) {
         p = cdr(p);
         //    if (__is_negative(car(p)))
@@ -239,7 +239,7 @@ function __is_negative(p: U): boolean {
     return false;
 }
 
-function emit_term(p: U, $: ExtensionEnv) {
+function emit_term(p: U, $: PrintConfig) {
     // console.lg(`emit_term:       ${p}`);
     if (is_multiply(p)) {
         const n = count_denominators(p, $);
@@ -256,12 +256,12 @@ function emit_term(p: U, $: ExtensionEnv) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function isdenominator(p: U, $: ExtensionEnv): boolean {
+function isdenominator(p: U, $: PrintConfig): boolean {
     const base = cadr(p);
     return is_power(p) && is_base_of_natural_logarithm(base) && __is_negative(caddr(p));
 }
 
-function count_denominators(p: U, $: ExtensionEnv) {
+function count_denominators(p: U, $: PrintConfig) {
     let count = 0;
     p = cdr(p);
     //  if (isfraction(car(p))) {
@@ -279,7 +279,7 @@ function count_denominators(p: U, $: ExtensionEnv) {
 }
 
 // n is the number of denominators, not counting a fraction like 1/2
-function emit_multiply(p: Cons, n: number, $: ExtensionEnv) {
+function emit_multiply(p: Cons, n: number, $: PrintConfig) {
     // console.lg(`emit_multiply:   ${p} n=${n}`);
     if (n === 0) {
         p = cdr(p);
@@ -311,7 +311,7 @@ function emit_multiply(p: Cons, n: number, $: ExtensionEnv) {
 }
 
 // sign of term has already been emitted
-function emit_fraction(p: U, d: number, $: ExtensionEnv) {
+function emit_fraction(p: U, d: number, $: PrintConfig) {
     // console.lg(`emit_fraction:    ${p}`);
     let p1: U, p2: U;
     let count = 0;
@@ -320,17 +320,18 @@ function emit_fraction(p: U, d: number, $: ExtensionEnv) {
     let n = 0;
     let x = 0;
 
-    let A: U = one;
-    let B: U = one;
+    let A: Num = one;
+    let B: Num = one;
 
     // handle numerical coefficient
-    if (is_rat(cadr(p))) {
-        A = $.abs(mp_numerator(cadr(p)));
-        B = mp_denominator(cadr(p));
+    const coeff = cadr(p);
+    if (is_rat(coeff)) {
+        A = mp_numerator(coeff).abs();
+        B = mp_denominator(coeff);
     }
 
-    if (is_flt(cadr(p))) {
-        A = $.abs(cadr(p));
+    if (is_flt(coeff)) {
+        A = coeff.abs();
     }
 
     // count numerators
@@ -423,17 +424,18 @@ function emit_fraction(p: U, d: number, $: ExtensionEnv) {
 }
 
 // p points to a multiply
-function emit_numerators(p: U, $: ExtensionEnv) {
+function emit_numerators(p: Cons, $: PrintConfig) {
     let p1: U = one;
 
     p = cdr(p);
 
-    if (is_rat(car(p))) {
-        p1 = $.abs(mp_numerator(car(p)));
+    const head = p.head;
+    if (is_rat(head)) {
+        p1 = mp_numerator(head).abs();
         p = cdr(p);
     }
-    else if (is_flt(car(p))) {
-        p1 = $.abs(car(p));
+    else if (is_flt(head)) {
+        p1 = head.abs();
         p = cdr(p);
     }
 
@@ -461,7 +463,7 @@ function emit_numerators(p: U, $: ExtensionEnv) {
 }
 
 // p points to a multiply
-function emit_denominators(p: U, $: ExtensionEnv) {
+function emit_denominators(p: U, $: PrintConfig) {
     let n = 0;
 
     p = cdr(p);
@@ -485,7 +487,7 @@ function emit_denominators(p: U, $: ExtensionEnv) {
     }
 }
 
-function emit_factor(p: U, $: ExtensionEnv) {
+function emit_factor(p: U, $: PrintConfig) {
     // console.lg(`emit_factor:     ${p}`);
     if (is_tensor(p)) {
         if (level === 0) {
@@ -549,7 +551,7 @@ function emit_factor(p: U, $: ExtensionEnv) {
     }
 }
 
-function emit_numerical_fraction(num: Num, $: ExtensionEnv): void {
+function emit_numerical_fraction(num: Num, $: PrintConfig): void {
     if (is_rat(num)) {
         emit_numerical_fraction_rat(num, $);
     }
@@ -558,7 +560,7 @@ function emit_numerical_fraction(num: Num, $: ExtensionEnv): void {
     }
 }
 
-function emit_numerical_fraction_rat(num: Rat, $: ExtensionEnv) {
+function emit_numerical_fraction_rat(num: Rat, $: PrintConfig) {
     const A = num.numer().abs();
     const B = num.denom();
     if (B.isOne()) {
@@ -580,7 +582,7 @@ function emit_numerical_fraction_rat(num: Rat, $: ExtensionEnv) {
 
 }
 
-function emit_numerical_fraction_flt(num: Flt, $: ExtensionEnv) {
+function emit_numerical_fraction_flt(num: Flt, $: PrintConfig) {
     const A = num.abs();
     emit_number(A, 0, $);
 }
@@ -605,7 +607,7 @@ function isfactor(p: U): boolean {
     return false;
 }
 
-function emit_power(p: U, $: ExtensionEnv) {
+function emit_power(p: U, $: PrintConfig) {
     let k1 = 0;
     let k2 = 0;
     let x = 0;
@@ -683,7 +685,7 @@ function emit_power(p: U, $: ExtensionEnv) {
 
 // if n == 1 then emit as expr (no parens)
 // p is a power
-function emit_denominator(p: U, n: number, $: ExtensionEnv) {
+function emit_denominator(p: U, n: number, $: PrintConfig) {
     let k1 = 0;
     let k2 = 0;
 
@@ -721,7 +723,7 @@ function emit_denominator(p: U, n: number, $: ExtensionEnv) {
     fixup_power(k1, k2);
 }
 
-function emit_function(expr: Cons, $: ExtensionEnv) {
+function emit_function(expr: Cons, $: PrintConfig) {
     const opr = expr.opr;
     try {
         // console.lg("emit_function", $.toInfixString(expr));
@@ -760,7 +762,7 @@ function emit_function(expr: Cons, $: ExtensionEnv) {
     }
 }
 
-function emit_index_function(p: U, $: ExtensionEnv) {
+function emit_index_function(p: U, $: PrintConfig) {
     p = cdr(p);
     // TODO: Probably need INNER, OUTER, LCO, RCO
     if (caar(p).equals(ADD) || caar(p).equals(MULTIPLY) || caar(p).equals(POWER) || caar(p).equals(FACTORIAL)) {
@@ -783,7 +785,7 @@ function emit_index_function(p: U, $: ExtensionEnv) {
     __emit_char(']');
 }
 
-function emit_factorial_function(p: U, $: ExtensionEnv) {
+function emit_factorial_function(p: U, $: PrintConfig) {
     p = cadr(p);
     if (
         is_rat_and_fraction(p) ||
@@ -800,7 +802,7 @@ function emit_factorial_function(p: U, $: ExtensionEnv) {
     __emit_char('!');
 }
 
-function emit_grouped_expr(p: U, $: ExtensionEnv) {
+function emit_grouped_expr(p: U, $: PrintConfig) {
     __emit_char('(');
     emit_expr(p, $);
     __emit_char(')');
@@ -820,7 +822,7 @@ function emit_uom(uom: Uom): void {
     }
 }
 
-function emit_symbol(sym: Sym, $: ExtensionEnv): void {
+function emit_symbol(sym: Sym, $: PrintConfig): void {
     // console.lg("emit_symbol", $.toInfixString(sym), $.getSymbolPrintName(sym));
     if (is_base_of_natural_logarithm(sym)) {
         __emit_str('exp(1)');
@@ -974,7 +976,7 @@ function __emit_str(s: string) {
  * 3. Avoid re-assignable variables.
  * 4. Assert that the argument is indeed a Num.
  */
-function emit_number(p: U, emit_sign: number, $: ExtensionEnv): void {
+function emit_number(p: U, emit_sign: number, $: PrintConfig): void {
     if (is_rat(p)) {
         let tmpString = p.a.toString();
         if (tmpString[0] === '-' && emit_sign === 0) {
@@ -1080,7 +1082,7 @@ for (let elelmIndex = 0; elelmIndex < 10000; elelmIndex++) {
 const SPACE_BETWEEN_COLUMNS = 3;
 const SPACE_BETWEEN_ROWS = 1;
 
-function emit_tensor(p: Tensor<U>, $: ExtensionEnv) {
+function emit_tensor(p: Tensor<U>, $: PrintConfig) {
     let ncol = 0;
     let dx = 0;
     let dy = 0;
@@ -1216,11 +1218,11 @@ function emit_tensor(p: Tensor<U>, $: ExtensionEnv) {
     */
 }
 
-function emit_flat_tensor(p: Tensor<U>, $: ExtensionEnv) {
+function emit_flat_tensor(p: Tensor<U>, $: PrintConfig) {
     emit_tensor_inner(p, 0, 0, $);
 }
 
-function emit_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv) {
+function emit_tensor_inner(p: Tensor<U>, j: number, k: number, $: PrintConfig) {
     __emit_char('(');
     for (let i = 0; i < p.dim(j); i++) {
         if (j + 1 === p.ndim) {

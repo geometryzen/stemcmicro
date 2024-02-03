@@ -114,7 +114,7 @@ export function move_top_of_stack(stackPos: number) {
     }
 }
 
-export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
+export function noexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
     $.pushDirective(Directive.expanding, false);
     try {
         return func(arg, $);
@@ -124,7 +124,7 @@ export function noexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: 
     }
 }
 
-export function noexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
+export function noexpand_binary<T extends keyof ExtensionEnv>(func: (lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
     $.pushDirective(Directive.expanding, false);
     try {
         return func(lhs, rhs, $);
@@ -134,7 +134,7 @@ export function noexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lh
     }
 }
 
-export function doexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: ExtensionEnv): U {
+export function doexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
     $.pushDirective(Directive.expanding, true);
     try {
         return func(arg, $);
@@ -144,7 +144,7 @@ export function doexpand_unary(func: (arg: U, $: ExtensionEnv) => U, arg: U, $: 
     }
 }
 
-export function doexpand_binary(func: (lhs: U, rhs: U, $: ExtensionEnv) => U, lhs: U, rhs: U, $: ExtensionEnv): U {
+export function doexpand_binary<T extends keyof ExtensionEnv>(func: (lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
     $.pushDirective(Directive.expanding, true);
     try {
         return func(lhs, rhs, $);

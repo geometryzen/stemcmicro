@@ -1,12 +1,13 @@
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
 import { nativeInt } from "../nativeInt";
 import { is_rat } from "../operators/rat/is_rat";
+import { PrintConfig } from "../print/print";
 import { create_int } from "../tree/rat/Rat";
 import { is_nil } from "../tree/tree";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, FORCE_FIXED_PRINTOUT, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs, PRINTMODE_LATEX } from "./defs";
 
-export function number_to_floating_point_string(d: number, $: ExtensionEnv): string {
+export function number_to_floating_point_string(d: number, $: PrintConfig): string {
     // console.lg(`number_to_floating_point_string d=${d}`);
     // when generating code, print out
     // the standard JS Number printout

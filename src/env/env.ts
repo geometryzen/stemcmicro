@@ -1192,7 +1192,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 return p;
             }
 
-            if (!is_poly_expanded_form(p, x, $)) {
+            if (!is_poly_expanded_form(p, x)) {
                 // console.lg(`Giving up b/c the polynomial is not in expanded form.`);
                 return p;
             }

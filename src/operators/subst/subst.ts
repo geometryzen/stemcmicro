@@ -9,7 +9,7 @@ import { cons, is_cons, U } from '../../tree/tree';
  * @param $ 
  * @returns 
  */
-export function subst(expr: U, oldExpr: U, newExpr: U, $: ExtensionEnv): U {
+export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'operatorFor'>): U {
     if (expr.equals(oldExpr)) {
         return newExpr;
     }

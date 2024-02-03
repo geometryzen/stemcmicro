@@ -13,7 +13,7 @@ import { items_to_cons, U } from "../tree/tree";
  * @param $ 
  * @returns 
  */
-export function inverse(expr: U, $: ExtensionEnv): U {
+export function inverse(expr: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
     const value = $.valueOf(expr);
     if (is_num(value)) {
         return invert_number(value);

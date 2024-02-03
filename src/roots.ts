@@ -57,7 +57,7 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
 
     const p = poly;
 
-    if (is_poly_expanded_form(p, x, $)) {
+    if (is_poly_expanded_form(p, x)) {
         return roots(poly, x, $);
     }
     else {
@@ -223,7 +223,7 @@ function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
     // console.lg(`roots3 ${render_as_infix(poly, $)} in variable ${render_as_infix(X, $)}`);
     if (is_power(poly)) {
         const base = poly.base;
-        if (is_poly_expanded_form(base, X, $)) {
+        if (is_poly_expanded_form(base, X)) {
             const expo = poly.expo;
             if (is_rat(expo) && expo.isPositiveInteger()) {
                 const n = normalized_coeff(base, X, $);
@@ -231,7 +231,7 @@ function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
             }
         }
     }
-    if (is_poly_expanded_form(poly, X, $)) {
+    if (is_poly_expanded_form(poly, X)) {
         const n = normalized_coeff(poly, X, $);
         return mini_solve(n, $);
     }
@@ -289,7 +289,7 @@ function mini_solve(coefficients: U[], $: ExtensionEnv): U[] {
     return [];
 }
 
-function _solveDegree1(A: U, B: U, $: ExtensionEnv): U[] {
+function _solveDegree1(A: U, B: U, $: Pick<ExtensionEnv, 'multiply' | 'negate' | 'valueOf'>): U[] {
     return [$.negate(divide(B, A, $))];
 }
 

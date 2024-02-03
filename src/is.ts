@@ -82,12 +82,12 @@ export function is_num_and_integer(p: U): p is Num & { __ts_integer: true } {
 
 // --------------------------------------
 
-export function isunivarpolyfactoredorexpandedform(p: U, x: U | null, $: ExtensionEnv): U {
+export function isunivarpolyfactoredorexpandedform(p: U, x: U | null): U {
     if (x == null) {
         x = guess(p);
     }
 
-    if (ispolyfactoredorexpandedform(p, x, $) && countTrue(p.contains(SYMBOL_X), p.contains(SYMBOL_Y), p.contains(SYMBOL_Z)) === 1) {
+    if (ispolyfactoredorexpandedform(p, x) && countTrue(p.contains(SYMBOL_X), p.contains(SYMBOL_Y), p.contains(SYMBOL_Z)) === 1) {
         return x;
     }
     else {
@@ -105,30 +105,30 @@ function countTrue(...a: boolean[]): number {
 // hands, however it's in factored form and we don't
 // want to expand it.
 
-function ispolyfactoredorexpandedform(p: U, x: U, $: ExtensionEnv): boolean {
-    return ispolyfactoredorexpandedform_factor(p, x, $);
+function ispolyfactoredorexpandedform(p: U, x: U): boolean {
+    return ispolyfactoredorexpandedform_factor(p, x);
 }
 
-function ispolyfactoredorexpandedform_factor(p: U, x: U, $: ExtensionEnv): boolean {
+function ispolyfactoredorexpandedform_factor(p: U, x: U): boolean {
     if (is_multiply(p)) {
         return p.tail().every((el) => {
-            const bool = ispolyfactoredorexpandedform_power(el, x, $);
+            const bool = ispolyfactoredorexpandedform_power(el, x);
             return bool;
         });
     }
     else {
-        return ispolyfactoredorexpandedform_power(p, x, $);
+        return ispolyfactoredorexpandedform_power(p, x);
     }
 }
 
-function ispolyfactoredorexpandedform_power(p: U, x: U, $: ExtensionEnv): boolean {
+function ispolyfactoredorexpandedform_power(p: U, x: U): boolean {
     if (is_power(p)) {
         const base = p.base;
         const expo = p.expo;
-        return is_rat(expo) && expo.isPositiveInteger() && is_poly_expanded_form_expr(base, x, $);
+        return is_rat(expo) && expo.isPositiveInteger() && is_poly_expanded_form_expr(base, x);
     }
     else {
-        return is_poly_expanded_form_expr(p, x, $);
+        return is_poly_expanded_form_expr(p, x);
     }
 }
 
@@ -141,10 +141,10 @@ function ispolyfactoredorexpandedform_power(p: U, x: U, $: ExtensionEnv): boolea
  * @param x 
  * @returns 
  */
-export function is_poly_expanded_form(p: U, x: U, $: ExtensionEnv): boolean {
+export function is_poly_expanded_form(p: U, x: U): boolean {
     // console.lg(`is_poly_expanded_form ${print_expr(p, $)} ${x}`);
     if (p.contains(x)) {
-        return is_poly_expanded_form_expr(p, x, $);
+        return is_poly_expanded_form_expr(p, x);
     }
     else {
         // If the expression does not contain the variable then it's a non-starter.
@@ -152,28 +152,28 @@ export function is_poly_expanded_form(p: U, x: U, $: ExtensionEnv): boolean {
     }
 }
 
-function is_poly_expanded_form_expr(p: U, x: U, $: ExtensionEnv): boolean {
+function is_poly_expanded_form_expr(p: U, x: U): boolean {
     // console.lg(`is_poly_expanded_form_expr ${print_expr(p, $)} ${x}`);
     if (is_add(p)) {
-        return p.tail().every((term) => is_poly_expanded_form_term(term, x, $));
+        return p.tail().every((term) => is_poly_expanded_form_term(term, x));
     }
     else {
-        return is_poly_expanded_form_term(p, x, $);
+        return is_poly_expanded_form_term(p, x);
     }
 }
 
-function is_poly_expanded_form_term(p: U, x: U, $: ExtensionEnv): boolean {
+function is_poly_expanded_form_term(p: U, x: U): boolean {
     // console.lg(`is_poly_expanded_form_term ${print_expr(p, $)} ${x}`);
     if (is_multiply(p)) {
-        return p.tail().every((factor) => is_poly_expanded_form_factor(factor, x, $));
+        return p.tail().every((factor) => is_poly_expanded_form_factor(factor, x));
     }
     else {
-        return is_poly_expanded_form_factor(p, x, $);
+        return is_poly_expanded_form_factor(p, x);
     }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function is_poly_expanded_form_factor(p: U, x: U, $: ExtensionEnv): boolean {
+function is_poly_expanded_form_factor(p: U, x: U): boolean {
     // console.lg(`is_poly_expanded_form_factor ${print_expr(p, $)} ${x}`);
     if (p.equals(x)) {
         return true;

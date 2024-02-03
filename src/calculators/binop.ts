@@ -10,7 +10,7 @@ import { items_to_cons, U } from "../tree/tree";
  * @param lhs The expression in the first element of the list.
  * @param rhs The expression in the second element of the list.
  */
-export function binop(opr: U, lhs: U, rhs: U, $: ExtensionEnv): U {
+export function binop(opr: U, lhs: U, rhs: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
     const C = items_to_cons(opr, lhs, rhs);
     const D = $.valueOf(C);
     return D;
@@ -24,6 +24,6 @@ export function binop(opr: U, lhs: U, rhs: U, $: ExtensionEnv): U {
  * @param lhs The expression in the first element of the list.
  * @param rhs The expression in the second element of the list.
  */
-export function native_binop(opr: Native, lhs: U, rhs: U, $: ExtensionEnv): U {
+export function native_binop(opr: Native, lhs: U, rhs: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
     return binop(native_sym(opr), lhs, rhs, $);
 }

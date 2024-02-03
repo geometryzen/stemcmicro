@@ -1,13 +1,12 @@
-import { coeff } from './operators/coeff/coeff';
+import { create_int } from 'math-expression-atoms';
+import { car, cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, is_poly_expanded_form } from './is';
-import { items_to_cons } from './makeList';
+import { coeff } from './operators/coeff/coeff';
 import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply } from './runtime/helpers';
 import { SystemError } from './runtime/SystemError';
-import { create_int } from './tree/rat/Rat';
-import { car, cons, is_cons, U } from './tree/tree';
 
 /**
  * This is called by the top level execution (and by itself recursively to evaluate the operands of Cons expressions).
@@ -26,11 +25,11 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
         return retval;
     };
     // Determine which variable the polynomial contains.
-    const s = is_poly_expanded_form(expr, SYMBOL_S, $);
-    const t = is_poly_expanded_form(expr, SYMBOL_T, $);
-    const x = is_poly_expanded_form(expr, SYMBOL_X, $);
-    const y = is_poly_expanded_form(expr, SYMBOL_Y, $);
-    const z = is_poly_expanded_form(expr, SYMBOL_Z, $);
+    const s = is_poly_expanded_form(expr, SYMBOL_S);
+    const t = is_poly_expanded_form(expr, SYMBOL_T);
+    const x = is_poly_expanded_form(expr, SYMBOL_X);
+    const y = is_poly_expanded_form(expr, SYMBOL_Y);
+    const z = is_poly_expanded_form(expr, SYMBOL_Z);
 
     if (s && !t && !x && !y && !z) {
         return hook(bake_poly(expr, SYMBOL_S, $), "S");
@@ -65,7 +64,7 @@ export function bake_internal(expr: U, $: ExtensionEnv): U {
 }
 
 export function polyform(p1: U, p2: U, $: ExtensionEnv): U {
-    if (is_poly_expanded_form(p1, p2, $)) {
+    if (is_poly_expanded_form(p1, p2)) {
         return bake_poly(p1, p2, $);
     }
     if (is_cons(p1)) {
@@ -116,7 +115,7 @@ function bake_poly(p: U, x: U, $: ExtensionEnv): U {
 // p1 points to coefficient of p2 ^ k
 
 // k is an int
-function bake_poly_term(k: number, coefficient: U, term: U, $: ExtensionEnv): U[] {
+function bake_poly_term(k: number, coefficient: U, term: U, $: Pick<ExtensionEnv, 'iszero'>): U[] {
     if ($.iszero(coefficient)) {
         return [];
     }

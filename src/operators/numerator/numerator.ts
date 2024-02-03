@@ -13,7 +13,7 @@ export function Eval_numerator(p1: Cons, $: ExtensionEnv): U {
     return numerator($.valueOf(cadr(p1)), $);
 }
 
-export function numerator(p1: U, $: ExtensionEnv): U {
+export function numerator(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg(`numerator ${$.toInfixString(p1)}`);
     if (is_add(p1)) {
         //console.trace "rationalising "

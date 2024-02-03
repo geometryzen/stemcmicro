@@ -1,9 +1,9 @@
+import { create_sym, Sym } from "math-expression-atoms";
+import { Cons, is_cons, items_to_cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_unaop_atom } from "../../hashing/hash_info";
-import { print_in_mode } from "../../print/print";
+import { print_in_mode } from "../../print/print_in_mode";
 import { PrintMode } from "../../runtime/defs";
-import { create_sym, Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, nil, U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_any } from "../helpers/is_any";
 

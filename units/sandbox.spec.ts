@@ -1,7 +1,7 @@
 
 import { assert } from "chai";
 import { is_uom } from "math-expression-atoms";
-import { is_nil, U } from "math-expression-tree";
+import { U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/index";
 import { SyntaxKind } from "../src/parser/parser";
 
@@ -29,7 +29,7 @@ describe("sandbox", function () {
         const values: U[] = [];
         for (const tree of trees) {
             const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
+            if (!value.isnil) {
                 values.push(value);
             }
         }
@@ -55,7 +55,7 @@ describe("sandbox", function () {
         const values: U[] = [];
         for (const tree of trees) {
             const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
+            if (!value.isnil) {
                 values.push(value);
             }
         }

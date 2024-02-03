@@ -1,12 +1,12 @@
-import { car, cdr, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
-import { ExtensionEnv } from "../env/ExtensionEnv";
+import { car, cdr, is_atom, is_cons, nil, U } from "math-expression-tree";
+import { PrintConfig } from "./print";
 
 /**
  * The standard way of serializing to s-expr format.
  * @param expr The expression to be rendered.
  * @param $ The extension environment.
  */
-export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
+export function render_as_sexpr(expr: U, $: PrintConfig): string {
     if (is_cons(expr)) {
         let str = '';
         str += '(';
@@ -27,7 +27,7 @@ export function render_as_sexpr(expr: U, $: ExtensionEnv): string {
     else if (is_atom(expr)) {
         return $.toSExprString(expr);
     }
-    else if (is_nil(expr)) {
+    else if (expr.isnil) {
         return $.toSExprString(expr);
     }
     else {

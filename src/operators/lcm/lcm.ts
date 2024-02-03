@@ -19,7 +19,7 @@ export function lcm(p1: U, p2: U, $: ExtensionEnv): U {
     return doexpand_binary(yylcm, p1, p2, $);
 }
 
-function yylcm(p1: U, p2: U, $: ExtensionEnv): U {
+function yylcm(p1: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'popDirective' | 'pushDirective'>): U {
     const A = gcd(p1, p2, $);
     const B = divide(A, p1, $);
     const C = divide(B, p2, $);

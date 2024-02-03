@@ -1,5 +1,6 @@
-import { divide } from './helpers/divide';
 import { ExtensionEnv } from './env/ExtensionEnv';
+import { divide } from './helpers/divide';
+import { inverse } from './helpers/inverse';
 import { multiply_noexpand } from './multiply';
 import { gcd } from './operators/gcd/gcd';
 import { noexpand_unary } from './runtime/defs';
@@ -8,7 +9,6 @@ import { doexpand_value_of } from './scripting/doexpand_eval';
 import { cadr } from './tree/helpers';
 import { zero } from './tree/rat/Rat';
 import { U } from './tree/tree';
-import { inverse } from './helpers/inverse';
 
 // Condense an expression by factoring common terms.
 
@@ -17,7 +17,7 @@ export function Eval_condense(p1: U, $: ExtensionEnv): U {
     return result;
 }
 
-export function condense(p1: U, $: ExtensionEnv): U {
+export function condense(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'popDirective' | 'pushDirective' | 'subtract' | 'valueOf'>): U {
     return noexpand_unary(yycondense, p1, $);
 }
 
@@ -27,7 +27,7 @@ export function condense(p1: U, $: ExtensionEnv): U {
  * @param $ 
  * @returns 
  */
-export function yycondense(P: U, $: ExtensionEnv): U {
+export function yycondense(P: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'popDirective' | 'pushDirective' | 'subtract' | 'valueOf'>): U {
     // console.lg("yycondense", render_as_sexpr(P, $));
     // console.lg("yycondense", render_as_infix(P, $));
 
@@ -43,7 +43,7 @@ export function yycondense(P: U, $: ExtensionEnv): U {
     // console.lg("terms_gcd", render_as_infix(terms_gcd, $));
 
     // divide each term by gcd, which is to say, multiply each by the inverse.
-    const one_divided_by_gcd = inverse(terms_gcd,$);
+    const one_divided_by_gcd = inverse(terms_gcd, $);
     const P_divided_by_gcd = P
         .tail()
         .reduce((a: U, b: U) => $.add(a, multiply_noexpand(one_divided_by_gcd, b, $)), zero);

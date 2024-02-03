@@ -29,7 +29,7 @@ export function Eval_denominator(expr: Cons, $: ExtensionEnv): U {
     return denominator($.valueOf(cadr(expr)), $);
 }
 
-export function denominator(expr: U, $: ExtensionEnv): U {
+export function denominator(expr: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
     // console.lg(`ENTERING denominator of ${$.toInfixString(expr)} ${$.toListString(expr)}`);
     const hook = function (retval: U): U {
         // console.lg(`LEAVING denominator of ${$.toInfixString(expr)} ${$.toListString(expr)} => ${$.toInfixString(retval)}`);
@@ -68,13 +68,13 @@ export function denominator(expr: U, $: ExtensionEnv): U {
     return hook(one);
 }
 
-function denominators(xs: U[], $: ExtensionEnv): U[] {
+function denominators(xs: U[], $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U[] {
     const denom_mapper = make_denom_mapper($);
     const denoms = xs.map(denom_mapper);
     return denoms;
 }
 
-function make_denom_mapper($: ExtensionEnv): (x: U) => U {
+function make_denom_mapper($: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): (x: U) => U {
     return function (x: U) {
         return denominator(x, $);
     };

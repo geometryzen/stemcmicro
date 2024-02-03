@@ -1,12 +1,9 @@
-import { is_blade, is_boo, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom } from 'math-expression-atoms';
-import { is_native } from 'math-expression-native';
-import { scan } from '../algebrite/scan';
+import { booT, is_blade, is_boo, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, zero } from 'math-expression-atoms';
+import { is_native, Native, native_sym } from 'math-expression-native';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
-import { Directive, ExtensionEnv } from '../env/ExtensionEnv';
+import { Directive } from '../env/ExtensionEnv';
 import { equaln, isNumberOneOverSomething, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_eq_two, is_rat_and_fraction } from '../is';
-import { Native } from '../native/Native';
-import { native_sym } from '../native/native_sym';
 import { denominator } from '../operators/denominator/denominator';
 import { is_err } from '../operators/err/is_err';
 import { is_hyp } from '../operators/hyp/is_hyp';
@@ -57,15 +54,11 @@ import {
 import { defs, PrintMode, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { is_abs, is_add, is_factorial, is_inner_or_dot, is_lco, is_multiply, is_opr_eq_inv, is_outer, is_power, is_rco, is_transpose } from '../runtime/helpers';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
-import { booT } from '../tree/boo/Boo';
 import { caadr, caar, caddddr, cadddr, caddr, cadr, cddr } from '../tree/helpers';
-import { negOne, one, Rat, zero } from '../tree/rat/Rat';
-import { assert_str } from '../tree/str/assert_str';
 import { create_sym, Sym } from '../tree/sym/Sym';
 import { Tensor } from '../tree/tensor/Tensor';
-import { car, cdr, Cons, is_atom, is_cons, is_nil, nil, U } from '../tree/tree';
+import { car, cdr, Cons, is_atom, is_cons, nil, U } from '../tree/tree';
 import { print_number } from './print_number';
-import { render_as_ascii } from './render_as_ascii';
 import { render_as_sexpr } from './render_as_sexpr';
 
 const ENGLISH_UNDEFINED = 'undefined';
@@ -76,7 +69,27 @@ const MATH_PI = native_sym(Native.PI);
 const TESTEQ = native_sym(Native.testeq);
 const COMPONENT = native_sym(Native.component);
 
-export function get_script_last($: ExtensionEnv): U {
+export interface PrintConfig {
+    add(...args: U[]): U;
+    factorize(poly: U, x: U): U;
+    pushDirective(directive: Directive, value: boolean): void;
+    popDirective(): void;
+    getBinding(sym: Sym): U;
+    getDirective(directive: Directive): boolean;
+    getSymbolPrintName(sym: Sym): string;
+    isone(expr: U): boolean;
+    iszero(expr: U): boolean;
+    multiply(...args: U[]): U;
+    negate(expr: U): U;
+    power(base: U, expo: U): U;
+    subtract(lhs: U, rhs: U): U;
+    toInfixString(expr: Keyword | Sym): string;
+    toLatexString(expr: Keyword | Sym): string;
+    toSExprString(expr: U): string;
+    valueOf(expr: U): U;
+}
+
+export function get_script_last($: PrintConfig): U {
     return $.valueOf(RESERVED_KEYWORD_LAST);
 }
 
@@ -91,84 +104,6 @@ export function get_last_print_mode_symbol(printMode: PrintMode): Sym {
     }
 }
 
-/**
- * 
- * @param argList 
- * @param printMode
- */
-export function print_in_mode(argList: Cons, printMode: PrintMode, $: ExtensionEnv): string[] {
-    const texts: string[] = [];
-
-    let subList: U = argList;
-    while (is_cons(subList)) {
-        const value = $.valueOf(subList.car);
-
-        const origPrintMode = printMode;
-        defs.setPrintMode(printMode);
-        try {
-            if (printMode === PRINTMODE_INFIX) {
-                const str = render_using_non_sexpr_print_mode(value, $);
-                texts.push(str);
-                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
-            }
-            else if (printMode === PRINTMODE_HUMAN) {
-                const str = render_using_non_sexpr_print_mode(value, $);
-                texts.push(str);
-                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
-            }
-            else if (printMode === PRINTMODE_ASCII) {
-                const str = render_as_ascii(value, $);
-                texts.push(str);
-                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
-            }
-            else if (printMode === PRINTMODE_LATEX) {
-                const str = render_using_non_sexpr_print_mode(value, $);
-                texts.push(str);
-                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
-            }
-            else if (printMode === PRINTMODE_SEXPR) {
-                const str = render_as_sexpr(value, $);
-                texts.push(str);
-                store_text_in_binding(str, get_last_print_mode_symbol(printMode), $);
-            }
-        }
-        finally {
-            defs.setPrintMode(origPrintMode);
-        }
-
-        subList = subList.argList;
-    }
-
-    return texts;
-}
-
-/**
- * 
- * @param text The text that will be the binding value.
- * @param sym The symbol that will be used as a key to store the text.
- */
-export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): void {
-    // TODO: Not clear why we go to the trouble to scan the string when we'll just get a string.
-    // It does not seem that reliable anyway given the simplistic escaping of the text.
-    // Fails when the text is aleady contains double quotes.
-    const sourceText = '"' + text + '"';
-    // TOOD: Need a better routing to initialize the ScanOptions.
-    const [scanned, tree] = scan(sourceText, 0, {
-        useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
-        useParenForTensors: $.getDirective(Directive.useParenForTensors),
-        explicitAssocAdd: false,
-        explicitAssocMul: false
-    });
-    if (scanned === sourceText.length) {
-        const str = assert_str(tree);
-        $.setBinding(sym, str);
-    }
-    else {
-        // TODO
-        // throw new SystemError(`${JSON.stringify(text)}`);
-    }
-}
-
 export function print_str(s: string): string {
     return s;
 }
@@ -178,7 +113,7 @@ function print_char(c: string): string {
 }
 
 
-function print_base_of_denom(base: U, $: ExtensionEnv): string {
+function print_base_of_denom(base: U, $: PrintConfig): string {
     if (should_group_base_of_denom(base)) {
         return `(${render_using_non_sexpr_print_mode(base, $)})`;
     }
@@ -206,7 +141,7 @@ function should_group_base_of_denom(expr: U): boolean {
     return false;
 }
 
-function print_expo_of_denom(expo: U, $: ExtensionEnv): string {
+function print_expo_of_denom(expo: U, $: PrintConfig): string {
     if (is_rat(expo) && expo.isFraction()) {
         return `(${render_using_non_sexpr_print_mode(expo, $)})`;
     }
@@ -221,7 +156,7 @@ function print_expo_of_denom(expo: U, $: ExtensionEnv): string {
 // prints stuff after the divide symbol "/"
 
 // d is the number of denominators
-function print_denom(p: U, d: number, $: ExtensionEnv): string {
+function print_denom(p: U, d: number, $: PrintConfig): string {
     let str = '';
 
     const BASE = cadr(p);
@@ -251,7 +186,7 @@ function print_denom(p: U, d: number, $: ExtensionEnv): string {
     return str;
 }
 
-function print_a_over_b(p: Cons, $: ExtensionEnv): string {
+function print_a_over_b(p: Cons, $: PrintConfig): string {
     // console.lg(`print_a_over_b p => ${$.toListString(p)}`);
     let A: U, B: U;
     let str = '';
@@ -265,7 +200,7 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
     let p2 = car(p1);
 
     if (is_rat(p2)) {
-        A = $.abs(mp_numerator(p2));
+        A = mp_numerator(p2).abs();
         B = mp_denominator(p2);
         if (!$.isone(A)) {
             n++;
@@ -378,12 +313,12 @@ function print_a_over_b(p: Cons, $: ExtensionEnv): string {
  * @param $ 
  * @returns 
  */
-export function render_using_non_sexpr_print_mode(expr: U, $: ExtensionEnv): string {
+export function render_using_non_sexpr_print_mode(expr: U, $: PrintConfig): string {
     // console.lg(`render_using_non_sexpr_print_mode: ${expr}`);
     return print_additive_expr(expr, $);
 }
 
-export function print_additive_expr(p: U, $: ExtensionEnv): string {
+export function print_additive_expr(p: U, $: PrintConfig): string {
     // console.lg(`print_additive_expr ${p}`);
     let str = '';
     if (is_add(p)) {
@@ -455,7 +390,7 @@ export function sign_of_term(term: U): '+' | '-' {
  * In other words, it skips over the first argument when it is Rat(-1) or Flt(-1).
  * This means that 
  */
-function print_multiply_when_no_denominators(expr: Cons, $: ExtensionEnv) {
+function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig) {
     // console.lg(`print_multiply_when_no_denominators: ${expr}`);
     let denom = '';
     let origAccumulator = '';
@@ -549,7 +484,7 @@ function print_multiply_when_no_denominators(expr: Cons, $: ExtensionEnv) {
     return str;
 }
 
-export function print_multiplicative_expr(expr: U, $: ExtensionEnv): string {
+export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
     // console.lg(`print_multiplicative_expr ${expr}`);
     if (is_cons(expr) && is_multiply(expr)) {
         if (any_denominators(expr, $)) {
@@ -564,7 +499,7 @@ export function print_multiplicative_expr(expr: U, $: ExtensionEnv): string {
     }
 }
 
-export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: ExtensionEnv): string {
+export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: PrintConfig): string {
     // console.lg(`print_outer_expr ${expr}`);
     if (is_cons(expr) && is_outer(expr)) {
         let argList = expr.argList;
@@ -601,7 +536,7 @@ function print_outer_operator(): string {
     }
 }
 
-export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: ExtensionEnv): string {
+export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: PrintConfig): string {
     // console.lg(`print_inner_expr ${expr}`);
     if (is_cons(expr) && is_inner_or_dot(expr)) {
         let argList = expr.argList;
@@ -695,7 +630,7 @@ function print_rco_operator(): string {
     }
 }
 
-function print_grouping_expr(expr: U, $: ExtensionEnv): string {
+function print_grouping_expr(expr: U, $: PrintConfig): string {
     // console.lg(`print_grouping_expr ${expr}`);
     let str = '';
     str += print_char('(');
@@ -704,7 +639,7 @@ function print_grouping_expr(expr: U, $: ExtensionEnv): string {
     return str;
 }
 
-function print_factorial_function(p: U, $: ExtensionEnv): string {
+function print_factorial_function(p: U, $: PrintConfig): string {
     let accumulator = '';
     p = cadr(p);
     if (
@@ -723,7 +658,7 @@ function print_factorial_function(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_abs_latex(expr: Cons, $: ExtensionEnv): string {
+function print_abs_latex(expr: Cons, $: PrintConfig): string {
     const arg = expr.argList.head;
     let s = '';
     s += print_str('\\left |');
@@ -732,7 +667,7 @@ function print_abs_latex(expr: Cons, $: ExtensionEnv): string {
     return s;
 }
 
-function print_abs_infix(expr: Cons, $: ExtensionEnv): string {
+function print_abs_infix(expr: Cons, $: PrintConfig): string {
     const arg = expr.argList.head;
     let s = '';
     s += print_str('abs(');
@@ -741,7 +676,7 @@ function print_abs_infix(expr: Cons, $: ExtensionEnv): string {
     return s;
 }
 
-function print_BINOMIAL_latex(p: U, $: ExtensionEnv): string {
+function print_BINOMIAL_latex(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += print_str('\\binom{');
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
@@ -751,7 +686,7 @@ function print_BINOMIAL_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_DOT_latex(p: U, $: ExtensionEnv): string {
+function print_DOT_latex(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += print_str(' \\cdot ');
@@ -759,7 +694,7 @@ function print_DOT_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_DOT_codegen(p: U, $: ExtensionEnv): string {
+function print_DOT_codegen(p: U, $: PrintConfig): string {
     let accumulator = 'dot(';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ', ';
@@ -768,49 +703,49 @@ function print_DOT_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_SIN_codegen(p: U, $: ExtensionEnv): string {
+function print_SIN_codegen(p: U, $: PrintConfig): string {
     let accumulator = 'Math.sin(';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
-function print_COS_codegen(p: U, $: ExtensionEnv): string {
+function print_COS_codegen(p: U, $: PrintConfig): string {
     let accumulator = 'Math.cos(';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
-function print_TAN_codegen(p: U, $: ExtensionEnv): string {
+function print_TAN_codegen(p: U, $: PrintConfig): string {
     let accumulator = 'Math.tan(';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
-function print_ARCSIN_codegen(p: U, $: ExtensionEnv): string {
+function print_ARCSIN_codegen(p: U, $: PrintConfig): string {
     let accumulator = 'Math.asin(';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
-function print_ARCCOS_codegen(p: U, $: ExtensionEnv): string {
+function print_ARCCOS_codegen(p: U, $: PrintConfig): string {
     let accumulator = 'Math.acos(';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
-function print_ARCTAN_codegen(p: U, $: ExtensionEnv): string {
+function print_ARCTAN_codegen(p: U, $: PrintConfig): string {
     let accumulator = 'Math.atan(';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ')';
     return accumulator;
 }
 
-function print_SQRT_latex(p: U, $: ExtensionEnv): string {
+function print_SQRT_latex(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += print_str('\\sqrt{');
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
@@ -818,7 +753,7 @@ function print_SQRT_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
+function print_TRANSPOSE_latex(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += print_str('{');
     if (is_cons(cadr(p))) {
@@ -833,7 +768,7 @@ function print_TRANSPOSE_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
+function print_TRANSPOSE_codegen(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += print_str('transpose(');
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
@@ -841,7 +776,7 @@ function print_TRANSPOSE_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_UNIT_codegen(p: U, $: ExtensionEnv): string {
+function print_UNIT_codegen(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += print_str('identity(');
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
@@ -849,7 +784,7 @@ function print_UNIT_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_INV_latex(p: Cons, $: ExtensionEnv): string {
+function print_INV_latex(p: Cons, $: PrintConfig): string {
     let str = '';
     str += print_str('{');
     if (is_cons(cadr(p))) {
@@ -864,7 +799,7 @@ function print_INV_latex(p: Cons, $: ExtensionEnv): string {
     return str;
 }
 
-function print_INV_codegen(p: U, $: ExtensionEnv): string {
+function print_INV_codegen(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += print_str('inv(');
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
@@ -872,7 +807,7 @@ function print_INV_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
+function print_DEFINT_latex(p: U, $: PrintConfig): string {
     let accumulator = '';
     const functionBody = car(cdr(p));
 
@@ -909,7 +844,7 @@ function print_DEFINT_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-export function print_tensor(p: Tensor<U>, $: ExtensionEnv): string {
+export function print_tensor(p: Tensor<U>, $: PrintConfig): string {
     return print_tensor_inner(p, 0, 0, $)[1];
 }
 
@@ -921,7 +856,7 @@ export function print_tensor(p: Tensor<U>, $: ExtensionEnv): string {
  * @param $ 
  * @returns 
  */
-function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv): [number, string] {
+function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: PrintConfig): [number, string] {
     let accumulator = '';
 
     const useParenForTensors = $.getDirective(Directive.useParenForTensors);
@@ -988,7 +923,7 @@ function print_tensor_inner(p: Tensor<U>, j: number, k: number, $: ExtensionEnv)
     return [k, accumulator];
 }
 
-function print_tensor_latex(p: Tensor<U>, $: ExtensionEnv): string {
+function print_tensor_latex(p: Tensor<U>, $: PrintConfig): string {
     let accumulator = '';
     if (p.ndim <= 2) {
         accumulator += print_tensor_inner_latex(true, p, 0, 0, $)[1];
@@ -1005,7 +940,7 @@ function print_tensor_latex(p: Tensor<U>, $: ExtensionEnv): string {
 // j scans the dimensions
 // k is an increment for all the printed elements
 //   since they are all together in sequence in one array
-function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, k: number, $: ExtensionEnv): [number, string] {
+function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, k: number, $: PrintConfig): [number, string] {
     let accumulator = '';
 
     // open the outer latex wrap
@@ -1054,7 +989,7 @@ function print_tensor_inner_latex(firstLevel: boolean, p: Tensor<U>, j: number, 
     return [k, accumulator];
 }
 
-function print_SUM_latex(p: U, $: ExtensionEnv): string {
+function print_SUM_latex(p: U, $: PrintConfig): string {
     let accumulator = '\\sum_{';
     accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += '=';
@@ -1067,7 +1002,7 @@ function print_SUM_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_SUM_codegen(p: U, $: ExtensionEnv): string {
+function print_SUM_codegen(p: U, $: PrintConfig): string {
     const body = cadr(p);
     const variable = caddr(p);
     const lowerlimit = cadddr(p);
@@ -1102,7 +1037,7 @@ function print_SUM_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_TEST_latex(p: U, $: ExtensionEnv): string {
+function print_TEST_latex(p: U, $: PrintConfig): string {
     let accumulator = '\\left\\{ \\begin{array}{ll}';
 
     p = cdr(p);
@@ -1132,7 +1067,7 @@ function print_TEST_latex(p: U, $: ExtensionEnv): string {
     return (accumulator += '\\end{array} \\right.');
 }
 
-function print_TEST_codegen(p: U, $: ExtensionEnv): string {
+function print_TEST_codegen(p: U, $: PrintConfig): string {
     let accumulator = '(function(){';
 
     p = cdr(p);
@@ -1167,7 +1102,7 @@ function print_TEST_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_TESTLT_latex(p: U, $: ExtensionEnv): string {
+function print_TESTLT_latex(p: U, $: PrintConfig): string {
     let accumulator = '{';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
@@ -1177,7 +1112,7 @@ function print_TESTLT_latex(p: U, $: ExtensionEnv): string {
     return (accumulator += '}');
 }
 
-function print_TESTLE_latex(p: U, $: ExtensionEnv): string {
+function print_TESTLE_latex(p: U, $: PrintConfig): string {
     let accumulator = '{';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
@@ -1187,7 +1122,7 @@ function print_TESTLE_latex(p: U, $: ExtensionEnv): string {
     return (accumulator += '}');
 }
 
-function print_TESTGT_latex(p: U, $: ExtensionEnv): string {
+function print_TESTGT_latex(p: U, $: PrintConfig): string {
     let accumulator = '{';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
@@ -1197,7 +1132,7 @@ function print_TESTGT_latex(p: U, $: ExtensionEnv): string {
     return (accumulator += '}');
 }
 
-function print_TESTGE_latex(p: U, $: ExtensionEnv): string {
+function print_TESTGE_latex(p: U, $: PrintConfig): string {
     let accumulator = '{';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += '}';
@@ -1207,7 +1142,7 @@ function print_TESTGE_latex(p: U, $: ExtensionEnv): string {
     return (accumulator += '}');
 }
 
-function print_testeq_latex(expr: Cons, $: ExtensionEnv): string {
+function print_testeq_latex(expr: Cons, $: PrintConfig): string {
     let s = '{';
     s += render_using_non_sexpr_print_mode(expr.lhs, $);
     s += '}';
@@ -1217,7 +1152,7 @@ function print_testeq_latex(expr: Cons, $: ExtensionEnv): string {
     return (s += '}');
 }
 
-function print_FOR_codegen(p: U, $: ExtensionEnv): string {
+function print_FOR_codegen(p: U, $: PrintConfig): string {
     const body = cadr(p);
     const variable = caddr(p);
     const lowerlimit = cadddr(p);
@@ -1249,7 +1184,7 @@ function print_FOR_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_DO_codegen(p: U, $: ExtensionEnv): string {
+function print_DO_codegen(p: U, $: PrintConfig): string {
     let accumulator = '';
 
     p = cdr(p);
@@ -1261,7 +1196,7 @@ function print_DO_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_SETQ_codegen(p: U, $: ExtensionEnv): string {
+function print_SETQ_codegen(p: U, $: PrintConfig): string {
     let accumulator = '';
     accumulator += render_using_non_sexpr_print_mode(cadr(p), $);
     accumulator += ' = ';
@@ -1270,7 +1205,7 @@ function print_SETQ_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_PRODUCT_latex(p: U, $: ExtensionEnv): string {
+function print_PRODUCT_latex(p: U, $: PrintConfig): string {
     let accumulator = '\\prod_{';
     accumulator += render_using_non_sexpr_print_mode(caddr(p), $);
     accumulator += '=';
@@ -1283,7 +1218,7 @@ function print_PRODUCT_latex(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function print_PRODUCT_codegen(p: U, $: ExtensionEnv): string {
+function print_PRODUCT_codegen(p: U, $: PrintConfig): string {
     const body = cadr(p);
     const variable = caddr(p);
     const lowerlimit = cadddr(p);
@@ -1318,7 +1253,7 @@ function print_PRODUCT_codegen(p: U, $: ExtensionEnv): string {
     return accumulator;
 }
 
-function should_tweak_exponent_syntax(base: U, $: ExtensionEnv): boolean {
+function should_tweak_exponent_syntax(base: U, $: PrintConfig): boolean {
     if (is_sym(base)) {
         if (base.equals(create_sym('x'))) {
             const sym = PRINT_LEAVE_X_ALONE;
@@ -1342,7 +1277,7 @@ function should_tweak_exponent_syntax(base: U, $: ExtensionEnv): boolean {
     }
 }
 
-function print_power(base: U, expo: U, $: ExtensionEnv) {
+function print_power(base: U, expo: U, $: PrintConfig) {
     // console.lg(`print_power base = ${base} expo = ${expo}`);
 
     let str = '';
@@ -1448,7 +1383,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
                     str += print_str('1/');
                 }
 
-                const newExponent = $.multiply(expo, negOne);
+                const newExponent = $.negate(expo);
 
                 if (is_cons(base) && defs.printMode !== PRINTMODE_LATEX) {
                     str += print_str('(');
@@ -1604,7 +1539,7 @@ function print_power(base: U, expo: U, $: ExtensionEnv) {
     return str;
 }
 
-function print_index_function(p: U, $: ExtensionEnv): string {
+function print_index_function(p: U, $: PrintConfig): string {
     let str = '';
     p = cdr(p);
     // TODO: Porobably need INNER, OUTER, RCO, LCO...
@@ -1629,7 +1564,7 @@ function print_index_function(p: U, $: ExtensionEnv): string {
     return str;
 }
 
-function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: ExtensionEnv): string {
+function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: PrintConfig): string {
     const omtPrns = omitParens;
     // console.lg(`print_factor ${expr} omitParens => ${omitParens} pastFirstFactor => ${false}`);
     if (is_num(expr)) {
@@ -2121,7 +2056,7 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: E
     return print_factor_fallback(expr, omtPrns, $);
 }
 
-function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): string {
+function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): string {
     if (is_cons(expr)) {
         let str = '';
         str += print_factor(expr.car, false, false, $);
@@ -2231,7 +2166,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: ExtensionEnv): stri
                 }
             }
         }
-        if (is_nil(expr)) {
+        if (expr.isnil) {
             return print_str($.getSymbolPrintName(native_sym(Native.NIL)));
         }
         throw new Error(`${expr} ???`);
@@ -2252,7 +2187,7 @@ function print_multiply_sign(): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function is_denominator(expr: U, $: ExtensionEnv): boolean {
+function is_denominator(expr: U, $: PrintConfig): boolean {
     if (is_cons(expr)) {
         if (is_power(expr)) {
             const argList = expr.cdr;
@@ -2273,7 +2208,7 @@ function is_denominator(expr: U, $: ExtensionEnv): boolean {
 
 // don't consider the leading fraction
 // we want 2/3*a*b*c instead of 2*a*b*c/3
-function any_denominators(expr: Cons, $: ExtensionEnv): boolean {
+function any_denominators(expr: Cons, $: PrintConfig): boolean {
     let p = expr.cdr;
     while (is_cons(p)) {
         const q = p.car;

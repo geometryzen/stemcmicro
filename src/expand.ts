@@ -70,7 +70,7 @@ function expand(F: U, X: U, $: ExtensionEnv): U {
     // also bail out if the denominator is not one but
     // it's not anything recognizable as a polynomial.
     if (is_plus_or_minus_one(B, $) || is_plus_or_minus_one(A, $)) {
-        if (!is_poly_expanded_form(A, X, $) || is_plus_or_minus_one(A, $)) {
+        if (!is_poly_expanded_form(A, X) || is_plus_or_minus_one(A, $)) {
             return F;
         }
     }
@@ -330,7 +330,7 @@ function expand_get_CF(p2: U, p5: U, p9: U, $: ExtensionEnv): U[] {
 }
 
 // Returns T = A/F where F is a factor of A.
-function trivial_divide(p2: U, p5: U, $: ExtensionEnv): U {
+function trivial_divide(p2: U, p5: U, $: Pick<ExtensionEnv, 'multiply' | 'valueOf'>): U {
     let result: U = one;
     if (is_multiply(p2)) {
         const arr: U[] = [];

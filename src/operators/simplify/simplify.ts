@@ -330,7 +330,7 @@ function simplify_rational_expressions(p1: U, $: ExtensionEnv): U {
         return p1;
     }
     let polyVar: U | undefined;
-    if (!(polyVar = areunivarpolysfactoredorexpandedform(num, denom, $))) {
+    if (!(polyVar = areunivarpolysfactoredorexpandedform(num, denom))) {
         return p1;
     }
 

@@ -71,7 +71,7 @@ export function Eval_nroots(expr: Cons, $: ExtensionEnv): U {
 
     // console.lg("P", render_as_infix(X, $));
 
-    if (!is_poly_expanded_form(P, X, $)) {
+    if (!is_poly_expanded_form(P, X)) {
         halt(`nroots: Polynomial ${$.toInfixString(P)} in variable ${$.toInfixString(X)} must be in expanded form.`);
     }
 

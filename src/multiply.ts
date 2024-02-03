@@ -5,7 +5,7 @@ import { MATH_MUL } from './runtime/ns_math';
 import { one } from './tree/rat/Rat';
 import { U } from './tree/tree';
 
-export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
+export function multiply(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
         return retval;
@@ -18,7 +18,7 @@ export function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
 // e.g. if you factored x^2 + 3x + 2 into (x+1)(x+2)
 // and you want to divide by (x+1) , i.e. you multiply by (x-1)^-1,
 // then there is no need to expand.
-export function multiply_noexpand(arg1: U, arg2: U, $: ExtensionEnv): U {
+export function multiply_noexpand(arg1: U, arg2: U, $: Pick<ExtensionEnv, 'valueOf' | 'pushDirective' | 'popDirective'>): U {
     return noexpand_binary(multiply, arg1, arg2, $);
 }
 
@@ -28,7 +28,7 @@ export function multiply_noexpand(arg1: U, arg2: U, $: ExtensionEnv): U {
  * [a b c d ...] => (multiply (multiply a b) c)
  * @param items is an integer
  */
-export function multiply_items(items: U[], $: ExtensionEnv): U {
+export function multiply_items(items: U[], $: Pick<ExtensionEnv, 'multiply'>): U {
     // console.lg(`multiply_items items => ${items_to_infix(items, $)} ${items_to_sexpr(items, $)}`);
     if (items.length > 1) {
         let temp = items[0];

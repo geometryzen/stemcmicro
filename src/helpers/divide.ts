@@ -8,7 +8,7 @@ import { inverse } from "./inverse";
 /**
  * Convenience function for dividing lhs by rhs.
  */
-export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
+export function divide(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'multiply' | 'valueOf'>): U {
     if (is_num(lhs) && is_num(rhs)) {
         return divide_numbers(lhs, rhs);
     }
@@ -18,7 +18,7 @@ export function divide(lhs: U, rhs: U, $: ExtensionEnv): U {
     }
 }
 
-export function divide_expand(lhs: U, rhs: U, $: ExtensionEnv): U {
+export function divide_expand(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'multiply' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
     $.pushDirective(Directive.expanding, true);
     try {
         return divide(lhs, rhs, $);

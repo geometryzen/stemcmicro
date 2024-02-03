@@ -6,6 +6,7 @@ const WATT = JOULE.div(Uom.SECOND);
 const VOLT = JOULE.div(Uom.COULOMB);
 const TESLA = NEWTON.div(Uom.COULOMB).div(Uom.METER.div(Uom.SECOND));
 const OHM = VOLT.div(Uom.AMPERE);
+const ONE = Uom.ONE;
 const FARAD = Uom.COULOMB.div(VOLT);
 const HENRY = OHM.mul(Uom.SECOND);
 const WEBER = HENRY.mul(Uom.AMPERE);
@@ -28,6 +29,7 @@ export type TYPE_UOM_NAME =
     'mole' |
     'newton' |
     'ohm' |
+    'one' |
     'pascal' |
     'second' |
     'siemens' |
@@ -36,7 +38,7 @@ export type TYPE_UOM_NAME =
     'watt' |
     'weber';
 
-export const UOM_NAMES: TYPE_UOM_NAME[] = ['ampere', 'candela', 'coulomb', 'farad', 'henry', 'hertz', 'joule', 'kelvin', 'kilogram', 'meter', 'metre', 'mole', 'newton', 'ohm', 'pascal', 'second', 'siemens', 'tesla', 'volt', 'watt', 'weber'];
+export const UOM_NAMES: TYPE_UOM_NAME[] = ['ampere', 'candela', 'coulomb', 'farad', 'henry', 'hertz', 'joule', 'kelvin', 'kilogram', 'meter', 'metre', 'mole', 'newton', 'ohm', 'one', 'pascal', 'second', 'siemens', 'tesla', 'volt', 'watt', 'weber'];
 
 const units: Map<TYPE_UOM_NAME, Uom> = new Map();
 
@@ -54,6 +56,7 @@ units.set('metre', Uom.METER);
 units.set('mole', Uom.MOLE);
 units.set('newton', NEWTON);
 units.set('ohm', OHM);
+units.set('one', ONE);
 units.set('pascal', PASCAL);
 units.set('second', Uom.SECOND);
 units.set('siemens', SIEMENS);

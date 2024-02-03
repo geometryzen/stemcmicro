@@ -1,5 +1,6 @@
-import { Cell, CellHost, is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
+import { Cell, CellHost, create_flt, create_int, create_sym, create_tensor, is_keyword, is_rat, is_str, is_sym, JsString, Map, Sym } from "math-expression-atoms";
 import { is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { create_uom } from "../operators/uom/uom";
 
 const KIND_NIL = 0;
 const KIND_CONS = 1;
@@ -48,14 +49,14 @@ export const HASH_BOO = 'Boo';
 export const HASH_CELL = hash_for_atom(darkCell);
 export const HASH_DICTIONARY = new Map([]).name;
 export const HASH_ERR = 'Err';
-export const HASH_FLT = 'Flt';
+export const HASH_FLT = hash_for_atom(create_flt(1));
 export const HASH_HYP = 'Hyp';
 export const HASH_IMU = 'Imu';
-export const HASH_RAT = 'Rat';
+export const HASH_RAT = hash_for_atom(create_int(1));
 export const HASH_STR = hash_for_atom(new JsString(""));  // JsString is currently an alias for Str.
-export const HASH_SYM = 'Sym';
-export const HASH_TENSOR = 'Tensor';
-export const HASH_UOM = 'Uom';
+export const HASH_SYM = hash_for_atom(create_sym('x'));
+export const HASH_TENSOR = hash_for_atom(create_tensor([]));
+export const HASH_UOM = hash_for_atom(create_uom('second'));
 /**
  * A special wildcard hash that matches any item.
  */

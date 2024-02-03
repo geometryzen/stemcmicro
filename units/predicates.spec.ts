@@ -9,7 +9,7 @@ describe("predicates", function () {
         const engine = create_script_context({
             useIntegersForPredicates: true
         });
-        const { values } = engine.executeScript(lines.join('\n'));
+        const { values } = engine.executeScript(lines.join('\n'), { useIntegersForPredicates: true });
         assert.strictEqual(engine.renderAsInfix(values[0]), "0");
         engine.release();
     });

@@ -229,8 +229,10 @@ import { is_real_real } from '../operators/isreal/is_real_real';
 import { is_real_sin } from '../operators/isreal/is_real_sin';
 import { make_predicate_sym_operator } from '../operators/isreal/is_real_sym';
 import { iszero_any } from '../operators/iszero/iszero_any';
+import { iszero_flt_builder } from '../operators/iszero/iszero_flt';
 import { iszero_rat_builder } from '../operators/iszero/iszero_rat';
-import { iszero_sym } from '../operators/iszero/iszero_sym';
+import { iszero_sym_builder } from '../operators/iszero/iszero_sym';
+import { iszero_tensor_builder } from '../operators/iszero/iszero_tensor';
 import { jsobject_extension } from '../operators/jsobject/JsObjectExtension';
 import { keyword_extension } from '../operators/keyword/KeywordExtension';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
@@ -934,8 +936,10 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(make_predicate_sym_operator(ISREAL));
     $.defineOperator(is_real_any);
 
+    $.defineOperator(iszero_flt_builder);
     $.defineOperator(iszero_rat_builder);
-    $.defineOperator(iszero_sym);
+    $.defineOperator(iszero_sym_builder);
+    $.defineOperator(iszero_tensor_builder);
     $.defineOperator(iszero_any);
 
     $.defineOperator(not_fn);

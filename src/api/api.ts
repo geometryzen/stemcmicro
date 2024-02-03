@@ -27,7 +27,7 @@ import { render_as_infix } from '../print/render_as_infix';
 import { render_as_latex } from '../print/render_as_latex';
 import { render_as_sexpr } from '../print/render_as_sexpr';
 import { ProgrammingError } from '../programming/ProgrammingError';
-import { transform_tree } from '../runtime/execute';
+import { execute_script, transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
 import { visit } from '../visitor/visit';
@@ -96,6 +96,10 @@ export interface ExprEngineListener {
 }
 
 export interface ExprEngine {
+    clearBindings(): void;
+    executeProlog(prolog: string[]): void;
+    executeScript(sourceText: string): { values: U[], prints: string[], errors: Error[] };
+
     defineFunction(name: Sym, lambda: LambdaExpr): void;
 
     parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[], errors: Error[] };
@@ -147,7 +151,9 @@ export interface EngineConfig {
     allowUndeclaredVars: UndeclaredVars;
     prolog: string[];
     syntaxKind: SyntaxKind;
+    useCaretForExponentiation: boolean;
     useDerivativeShorthandLowerD: boolean;
+    useIntegersForPredicates: boolean;
 }
 
 function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
@@ -260,7 +266,10 @@ export function define_si_units($: ExtensionEnv): void {
 
 class STEMCExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
+    readonly #options: Partial<EngineConfig>;
     constructor(options: Partial<EngineConfig>) {
+        // console.lg(`options`, JSON.stringify(options));
+        this.#options = options;
         this.#env = create_env({
             allowUndeclaredVars: allow_undeclared_vars(options, UndeclaredVars.Nil),
             dependencies: ALL_FEATURES
@@ -273,6 +282,15 @@ class STEMCExprEngine implements ExprEngine {
         define_math_constant_pi(this.#env);
         define_spacetime_algebra(this.#env);
         define_si_units(this.#env);
+    }
+    clearBindings(): void {
+        this.#env.clearBindings();
+    }
+    executeProlog(prolog: string[]): void {
+        this.#env.executeProlog(prolog);
+    }
+    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
+        return execute_script(sourceText, this.#options, this.#env);
     }
     hasBinding(sym: Sym): boolean {
         assert_sym(sym);
@@ -398,6 +416,15 @@ class ClojureScriptExprEngine implements ExprEngine {
             useDerivativeShorthandLowerD: options.useDerivativeShorthandLowerD,
             prolog: options.prolog
         });
+    }
+    clearBindings(): void {
+        this.#env.clearBindings();
+    }
+    executeProlog(prolog: string[]): void {
+        this.#env.executeProlog(prolog);
+    }
+    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
+        return execute_script(sourceText, {}, this.#env);
     }
     hasBinding(sym: Sym): boolean {
         assert_sym(sym);
@@ -574,7 +601,7 @@ class ScriptVarsPrintConfig implements PrintConfig {
 
         }
         // const binding = this.#scriptVars.getBinding(sym);
-        // console.log("getBinding", `${sym}`);
+        // console.lg("getBinding", `${sym}`);
         // return binding;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -660,6 +687,16 @@ class EigenmathExprEngine implements ExprEngine {
                 throw new Error("prolog must be string[]");
             }
         }
+    }
+    clearBindings(): void {
+        this.#scriptVars.clearBindings();
+    }
+    executeProlog(prolog: string[]): void {
+        this.#scriptVars.executeProlog(prolog);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
+        throw new Error('executeScript method not implemented.');
     }
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
@@ -766,6 +803,17 @@ class PythonExprEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(options: Partial<EngineConfig>) {
 
+    }
+    clearBindings(): void {
+        throw new Error('clearBindings method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    executeProlog(prolog: string[]): void {
+        throw new Error('executeProlog method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
+        throw new Error('executeScript method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     hasBinding(sym: Sym): boolean {

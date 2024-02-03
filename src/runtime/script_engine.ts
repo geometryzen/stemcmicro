@@ -29,6 +29,7 @@ export interface ExprTransformOptions {
      * Directives that become disabled by setting to false.
      */
     disable?: Directive[];
+    useIntegersForPredicates?: boolean;
 }
 
 export interface ScriptExecuteOptions extends ExprTransformOptions {
@@ -220,13 +221,16 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
             // console.lg("executeScript", sourceText);
-            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> = { syntaxKind: SyntaxKind.STEMCscript };
+            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind' | 'useIntegersForPredicates'> = { syntaxKind: SyntaxKind.STEMCscript };
             if (contextOptions) {
                 if (typeof contextOptions.catchExceptions === 'boolean') {
                     picks.catchExceptions = contextOptions.catchExceptions;
                 }
                 if (contextOptions.syntaxKind) {
                     picks.syntaxKind = contextOptions.syntaxKind;
+                }
+                if (typeof contextOptions.useIntegersForPredicates === 'boolean') {
+                    picks.useIntegersForPredicates = contextOptions.useIntegersForPredicates;
                 }
                 contextOptions.disable;
             }
@@ -236,6 +240,9 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
                 }
                 if (options.syntaxKind) {
                     picks.syntaxKind = options.syntaxKind;
+                }
+                if (typeof options.useIntegersForPredicates === 'boolean') {
+                    picks.useIntegersForPredicates = options.useIntegersForPredicates;
                 }
             }
             return execute_script(sourceText, parse_options_from_script_context_options(picks, $), $);
@@ -304,12 +311,13 @@ function merge_options(options: ExprTransformOptions | undefined, contextOptions
 /**
  * Makes use of the extension environment because this is called prior to each script execution.
  */
-function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind'> | undefined, $: ExtensionEnv): ParseOptions {
+function parse_options_from_script_context_options(options: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind' | 'useIntegersForPredicates'> | undefined, $: ExtensionEnv): ParseOptions {
     if (options) {
         return {
             catchExceptions: options.catchExceptions,
             syntaxKind: options.syntaxKind,
             useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
+            useIntegersForPredicates: !!options.useIntegersForPredicates,
             useParenForTensors: $.getDirective(Directive.useParenForTensors),
             explicitAssocAdd: false,
             explicitAssocMul: false,
@@ -320,6 +328,7 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
             catchExceptions: false,
             syntaxKind: SyntaxKind.STEMCscript,
             useCaretForExponentiation: false,
+            useIntegersForPredicates: false,
             useParenForTensors: false,
             explicitAssocAdd: false,
             explicitAssocMul: false

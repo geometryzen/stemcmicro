@@ -20,6 +20,7 @@ import { float_eval_abs_eval } from "./float_eval_abs_eval";
  * FIXME: It would be better for the evaluation to be externalized.
  */
 export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: ExtensionEnv): boolean | null {
+    // console.lg("isZeroLikeOrNonZeroLikeOrUndetermined", $.toInfixString(valueOrPredicate));
     // just like Eval but turns assignments into equality checks
     const value = $.valueOf(replace_assign_with_testeq(valueOrPredicate));
 
@@ -28,7 +29,11 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // OK first check if we already have
     // a simple zero (or simple zero tensor)
     if ($.iszero(value)) {
+        // console.lg("iszero", "true so returning false?");
         return false;
+    }
+    else {
+        // console.lg("iszero", "false, continuing...");
     }
 
     // also check if we have a simple numeric value, or a tensor
@@ -37,6 +42,7 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
     // just excluded they are zero, then we take it as
     // a "true"
     if (is_num_or_tensor_or_identity_matrix(value)) {
+        // console.lg("is_num_or_tensor_or_identity_matrix", "true so returning true");
         return true;
     }
 

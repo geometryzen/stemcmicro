@@ -337,6 +337,7 @@ export class DerivedEnv implements ExtensionEnv {
         throw new Error('iscalar method not implemented.');
     }
     iszero(expr: U): boolean {
+        // console.lg("DerivedEnv.iszero", `${expr}`);
         if (is_flt(expr)) {
             return expr.isZero();
         }
@@ -1088,8 +1089,12 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             // In the new way we don't require every operator to provide the answer.
             const question = items_to_cons(predicate, expr);
             const response = $.valueOf(question);
+            // Predicates can return Boo or Rat according to Directive.useIntegersForPredicates.
             if (is_boo(response)) {
                 return response.isTrue();
+            }
+            else if (is_rat(response)) {
+                return response.isOne();
             }
             else {
                 return false;
@@ -1180,6 +1185,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             }
         },
         iszero(expr: U): boolean {
+            // console.lg("ExtensionEnv.iszero", `${expr}`);
             return $.is(ISZERO, expr);
         },
         equals(lhs: U, rhs: U): boolean {

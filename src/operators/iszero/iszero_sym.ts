@@ -8,7 +8,7 @@ import { U } from "../../tree/tree";
 import { Function1 } from "../helpers/Function1";
 import { is_sym } from "../sym/is_sym";
 
-class ExpRatBuilder implements OperatorBuilder<U> {
+class OpBuilder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
         return new Op($);
     }
@@ -33,4 +33,4 @@ class Op extends Function1<Sym> implements Operator<U> {
     }
 }
 
-export const iszero_sym = new ExpRatBuilder();
+export const iszero_sym_builder = new OpBuilder();

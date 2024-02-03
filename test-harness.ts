@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 import fs from 'fs';
 import process from 'process';
+import { create_engine, EngineConfig, ExprEngine } from './src/api/api';
 import { Predicates } from './src/env/ExtensionEnv';
 import { SyntaxKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
 import { stemc_prolog } from './src/runtime/init';
-import { create_script_context, ScriptContext, ScriptContextOptions } from './src/runtime/script_engine';
 import { U } from './src/tree/tree';
 
 const shardCount = Number(process.env['TEST_TOTAL_SHARDS']) || 1;
@@ -184,7 +184,7 @@ test.failing = function failing<T extends unknown[]>(name: string, f: (t: Assert
 export { test };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function setup_test(f: () => void, engine: ScriptContext, options: ScriptContextOptions) {
+function setup_test(f: () => void, engine: ExprEngine, options: Partial<EngineConfig>) {
     // TODO: Some global issues to be addressed...
     // Inlining 'clearall' is illuminating.
     // Reveals some objects that are still global.
@@ -213,13 +213,13 @@ function setup_test(f: () => void, engine: ScriptContext, options: ScriptContext
  * @param prefix 
  */
 export function run_shardable_test(s: string[], prefix = '') {
-    const options: ScriptContextOptions = {};
-    const engine = create_script_context(options);
+    const options: Partial<EngineConfig> = {};
+    const engine = create_engine(options);
     try {
         setup_test(() => {
             for (let i = 0; i < s.length; i += 2) {
                 test((prefix || `${testIndex}: `) + s[i], t => {
-                    t.is(s[i + 1], engine.renderAsInfix(engine.executeScript(s[i]).values[0]));
+                    t.is(s[i + 1], engine.renderAsString(engine.executeScript(s[i]).values[0]));
                 });
             }
         }, engine, options);
@@ -279,10 +279,9 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
 /**
  * For the test harness we use the caret symbol for exponentiation.
  */
-function harness_options_to_script_context_options(options: TestOptions | undefined): ScriptContextOptions {
+function harness_options_to_engine_options(options: TestOptions | undefined): Partial<EngineConfig> {
     if (options) {
         return {
-            assumes: options.assumes,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
@@ -318,14 +317,15 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
  */
 export function run_test(s: string[], options?: TestOptions): void {
     // const config = test_config_from_options(options);
-    const engcfg: ScriptContextOptions = harness_options_to_script_context_options(options);
+    const engcfg: Partial<EngineConfig> = harness_options_to_engine_options(options);
     // Unfortunately, setup_test clears bindings and patterns that were established in the script context.
-    const engine = create_script_context(engcfg);
+    const engine = create_engine(engcfg);
     try {
         setup_test(() => {
             test(name_from_harness_options(options) || `${testIndex}`, t => {
                 for (let i = 0; i < s.length; i += 2) {
                     const sourceText = s[i];
+                    const expected = s[i + 1];
                     // eslint-disable-next-line no-constant-condition
                     if (true/*config.verbose*/) {
                         console.log('=========================================');
@@ -339,27 +339,26 @@ export function run_test(s: string[], options?: TestOptions): void {
                         if (A.errors.length > 0) {
                             const B = A.errors[0];
                             const C = B.message;
-                            t.is(s[i + 1], C, `${i}: ${sourceText}`);
+                            t.is(expected, C, `${i}: ${sourceText}`);
                         }
                         else {
                             if (A.prints.length > 0) {
                                 const B = A.prints[0];
-                                t.is(s[i + 1], B, `${i}: ${sourceText}`);
+                                t.is(expected, B, `${i}: ${sourceText}`);
                             }
                             else {
                                 if (A.values.length > 0) {
                                     const B = A.values[0];
-                                    const C = engine.renderAsInfix(B);
-                                    t.is(s[i + 1], C, `${i}: ${sourceText}`);
+                                    const C = engine.renderAsString(B, { format: 'Infix' });
+                                    t.is(expected, C, `${i}: ${sourceText}`);
                                 }
                             }
                         }
                     }
                     catch (e) {
                         if (e instanceof Error) {
-                            console.log('Source:   ', sourceText);
-                            // console.lg(e.stack);
-                            throw e;
+                            const message = e.message;
+                            t.is(expected, message, `${i}: ${sourceText}`);
                         }
                     }
                 }

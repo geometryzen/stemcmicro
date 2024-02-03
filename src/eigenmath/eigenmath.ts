@@ -13279,6 +13279,10 @@ export class ScriptVars implements ExprContext {
         list(3, this);
         imaginaryunit = pop(this);
     }
+    clearBindings(): void {
+        this.binding = {};
+        this.usrfunc = {};
+    }
     executeProlog(script: string[]): void {
         // The configuration should match the syntax in the initialization script.
         const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };

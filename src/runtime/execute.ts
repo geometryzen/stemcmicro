@@ -44,7 +44,7 @@ function scan_options($: ExtensionEnv): ScanOptions {
  * @returns The return values, print outputs, and errors.
  */
 export function execute_script(sourceText: string, options: ScriptExecuteOptions, $: ExtensionEnv): { values: U[], prints: string[], errors: Error[] } {
-    // console.lg(sourceText);
+    // console.lg("execute_script", JSON.stringify(sourceText), JSON.stringify(options));
     const { trees, errors } = delegate_parse_script(sourceText, options);
     if (errors.length > 0) {
         return { values: [], prints: [], errors };
@@ -73,6 +73,7 @@ export function execute_script(sourceText: string, options: ScriptExecuteOptions
 }
 
 function transform_trees(trees: U[], values: U[], prints: string[], errors: Error[], options: ExprTransformOptions, $: ExtensionEnv) {
+    // console.lg("transform_trees", JSON.stringify(options));
     for (const tree of trees) {
         // console.lg("tree", render_as_sexpr(tree, $));
         // console.lg("tree", $.toInfixString(tree));
@@ -117,6 +118,7 @@ export function transform_script(fileName: string, sourceText: string, transform
  * @returns The return values (zero or one), print outputs, and errors.
  */
 export function transform_tree(tree: U, options: ExprTransformOptions, $: ExtensionEnv): { value: U, prints: string[], errors: Error[] } {
+    // console.lg("transform_tree", JSON.stringify(options));
     /**
      * The outputs from print satements for each pass of the scanner.
      */
@@ -160,63 +162,67 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
  * This should not be needed when we can define our own transformer pipelines.
  */
 export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: ExtensionEnv,): U {
-    // console.lg("tree", $.toSExprString(tree));
-    // console.lg("tree", $.toInfixString(tree));
+    // console.lg("multi_pass_transform", JSON.stringify(options));
+    $.pushDirective(Directive.useIntegersForPredicates, !!options.useIntegersForPredicates);
+    try {
+        const wrappers: Sym[] = detect_wrappers(tree);
+        wrappers.reverse();
 
-    const wrappers: Sym[] = detect_wrappers(tree);
-    wrappers.reverse();
+        tree = remove_wrappers(tree);
 
-    tree = remove_wrappers(tree);
+        move_top_of_stack(0);
 
-    move_top_of_stack(0);
+        const box = new Box(tree);
 
-    const box = new Box(tree);
-
-    if (options.autoExpand) {
-        $.pushDirective(Directive.expanding, true);
-        try {
+        if (options.autoExpand) {
+            $.pushDirective(Directive.expanding, true);
+            try {
+                box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+            }
+            finally {
+                $.popDirective();
+            }
+        }
+        else {
             box.push(transform(apply_wrappers(box.pop(), wrappers), $));
         }
-        finally {
-            $.popDirective();
-        }
-    }
-    else {
-        box.push(transform(apply_wrappers(box.pop(), wrappers), $));
-    }
 
-    if (options.autoFactor) {
-        $.pushDirective(Directive.factoring, true);
-        try {
-            box.push(transform(apply_wrappers(box.pop(), wrappers), $));
-        }
-        finally {
-            $.popDirective();
-        }
-    }
-
-    const transformed = box.pop();
-    // TODO: Does it make sense to remove this condition?
-    // We should not have to treat NIL as something special.
-    if (nil !== transformed) {
-        // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
-        box.push(transformed);
-        if ($.hasBinding(BAKE) && $.isone($.getBinding(BAKE))) {
-            // console.lg("Baking...");
-            let expr = Eval_bake(box.pop(), $);
-            // Hopefully a temporary fix for bake creating a non-normalized expression.
-            expr = transform(expr, $);
-            // console.lg(`baked     : ${print_list(expr, $)}`);
-            box.push(expr);
+        if (options.autoFactor) {
+            $.pushDirective(Directive.factoring, true);
+            try {
+                box.push(transform(apply_wrappers(box.pop(), wrappers), $));
+            }
+            finally {
+                $.popDirective();
+            }
         }
 
-        post_processing_complex_numbers(tree, box.peek(), box, $);
+        const transformed = box.pop();
+        // TODO: Does it make sense to remove this condition?
+        // We should not have to treat NIL as something special.
+        if (nil !== transformed) {
+            // It's curious that we bind SCRIPT_LAST to the transform output and not the baked output. Why?
+            box.push(transformed);
+            if ($.hasBinding(BAKE) && $.isone($.getBinding(BAKE))) {
+                // console.lg("Baking...");
+                let expr = Eval_bake(box.pop(), $);
+                // Hopefully a temporary fix for bake creating a non-normalized expression.
+                expr = transform(expr, $);
+                // console.lg(`baked     : ${print_list(expr, $)}`);
+                box.push(expr);
+            }
+
+            post_processing_complex_numbers(tree, box.peek(), box, $);
+        }
+        else {
+            box.push(nil);
+        }
+        store_in_script_last(box.peek(), $);
+        return box.pop();
     }
-    else {
-        box.push(nil);
+    finally {
+        $.popDirective();
     }
-    store_in_script_last(box.peek(), $);
-    return box.pop();
 }
 
 /**

@@ -47,6 +47,7 @@ export interface ParseOptions {
      * The alternative is to use '**', which frees the caret symbol to denote the outer product.
      */
     useCaretForExponentiation?: boolean;
+    useIntegersForPredicates?: boolean;
     useParenForTensors?: boolean;
     /**
      * Determines whether the parser makes associativity explicit or implicit in additive expressions.

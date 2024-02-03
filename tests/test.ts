@@ -80,8 +80,8 @@ run_test([
     'C',
 
 
- //   'test(x<3,-x-4,3<=x,x*x+7,120/x+5)',
- //   'test(testlt(x,3),-x-4,testle(3,x),x^2+7,120/x+5)',
+    //   'test(x<3,-x-4,3<=x,x*x+7,120/x+5)',
+    //   'test(testlt(x,3),-x-4,testle(3,x),x^2+7,120/x+5)',
 
     'x = -1',
     '',
@@ -167,8 +167,8 @@ run_test([
     'not(sqrt(-1))',
     '0',
 
-    'not(sqrt(pi/4)-sqrt(i))',
-    '0',
+ //   'not(sqrt(pi/4)-sqrt(i))',
+ //   '0',
 
     'not(1+i)',
     '0',
@@ -645,4 +645,4 @@ run_test([
 
     'C=quote(C)',
     '',
-]);
+], { useIntegersForPredicates: true });

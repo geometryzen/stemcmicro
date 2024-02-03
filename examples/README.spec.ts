@@ -2,7 +2,7 @@
 import { assert } from "chai";
 import { is_rat, is_uom } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
-import { create_engine, EngineConfig, ExprEngine, ParseConfig } from "../src/api/index";
+import { create_engine, EngineConfig, ExprEngine, ParseConfig } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
 describe("examples", function () {
@@ -67,7 +67,7 @@ describe("examples", function () {
         assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
-    it("Eignemath", function () {
+    it("Eigenmath", function () {
         const lines: string[] = [
             `1 + 2 + 3 + 4`
         ];

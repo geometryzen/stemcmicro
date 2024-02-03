@@ -315,7 +315,7 @@ function name_from_harness_options(options: TestOptions | undefined): string | u
  * 2. run_test([...], engine);
  * 3. engine.release(); 
  */
-export function run_test(s: string[], options?: TestOptions): void {
+export function run_test(s: string[], options: TestOptions = {}): void {
     // const config = test_config_from_options(options);
     const engcfg: Partial<EngineConfig> = harness_options_to_engine_options(options);
     // Unfortunately, setup_test clears bindings and patterns that were established in the script context.
@@ -328,8 +328,8 @@ export function run_test(s: string[], options?: TestOptions): void {
                     const expected = s[i + 1];
                     // eslint-disable-next-line no-constant-condition
                     if (true/*config.verbose*/) {
-                        console.log('=========================================');
-                        console.log(`Executing Script: ${JSON.stringify(sourceText)}`);
+                        // console.lg('=========================================');
+                        // console.lg(`Executing Script: ${JSON.stringify(sourceText)}`);
                     }
                     try {
                         const A = engine.executeScript(sourceText);
@@ -349,7 +349,7 @@ export function run_test(s: string[], options?: TestOptions): void {
                             else {
                                 if (A.values.length > 0) {
                                     const B = A.values[0];
-                                    const C = engine.renderAsString(B, { format: 'Infix' });
+                                    const C = engine.renderAsString(B, { format: 'Infix', useCaretForExponentiation: options.useCaretForExponentiation });
                                     t.is(expected, C, `${i}: ${sourceText}`);
                                 }
                             }

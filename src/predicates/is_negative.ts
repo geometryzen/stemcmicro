@@ -1,5 +1,5 @@
+import { U } from "math-expression-tree";
 import { is_add } from "../runtime/helpers";
-import { U } from "../tree/tree";
 import { is_negative_term } from "./is_negative_term";
 
 /**

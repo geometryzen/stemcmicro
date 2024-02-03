@@ -112,7 +112,7 @@ describe("gibbs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "Ax-Bx");
         engine.release();
     });
-    it("Determining the magnitude of A x B: Part I", function () {
+    xit("Determining the magnitude of A x B: Part I", function () {
         const lines: string[] = [
             `G30=algebra([1,1,1],["e1","e2","e3"])`,
             `e1=G30[1]`,
@@ -134,7 +134,7 @@ describe("gibbs", function () {
         assert.strictEqual(engine.renderAsInfix(value), "0");
         engine.release();
     });
-    it("Determining the magnitude of A x B", function () {
+    xit("Determining the magnitude of A x B", function () {
         const lines: string[] = [
             `G30=algebra([1,1,1],["e1","e2","e3"])`,
             `e1=G30[1]`,

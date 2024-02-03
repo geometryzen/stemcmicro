@@ -91,6 +91,7 @@ export enum Directive {
     expandCosSum,
     /**
     * Determines whether (a + b + c ...) raised to a positive integer exponent is expanded.
+    * The default is true.
     */
     expandPowSum,
     /**

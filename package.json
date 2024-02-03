@@ -95,6 +95,7 @@
         "unit-svg": "mocha 'units/svg.spec.ts'",
         "unit-sum": "mocha 'units/sum.spec.ts'",
         "unit-symbol": "mocha 'units/symbol.spec.ts'",
+        "unit-taylor": "mocha 'units/taylor.spec.ts'",
         "unit-tensor": "mocha 'units/tensor.spec.ts'",
         "unit-test": "mocha 'units/test.spec.ts'",
         "unit-testle": "mocha 'units/testle.spec.ts'",
@@ -105,6 +106,7 @@
         "unit-uom": "mocha 'units/uom.spec.ts'",
         "unit-vars": "mocha 'units/vars.spec.ts'",
         "unit-visitor": "mocha 'units/visitor.spec.ts'",
+        "test-abs": "mocha 'tests/abs.ts'",
         "test-bake": "mocha 'tests/bake.ts'",
         "test-check": "mocha 'tests/check.ts'",
         "test-cos": "mocha 'tests/cos.ts'",
@@ -173,7 +175,7 @@
         "typescript": "^5.3.3"
     },
     "peerDependencies": {
-        "math-expression-atoms": "^0.9.28",
+        "math-expression-atoms": "^0.9.29",
         "math-expression-context": "^0.9.11",
         "math-expression-native": "^0.9.16",
         "math-expression-tree": "^0.9.20"

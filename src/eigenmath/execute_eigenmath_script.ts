@@ -48,12 +48,15 @@ export function execute_eigenmath_script(sourceText: string, contentHandler: Scr
             }
         }
     }
-    catch (errmsg) {
-        if ((errmsg as string).length > 0) {
+    catch (e) {
+        if (e instanceof Error) {
+            errorHandler.error(e.message, 0, e.message.length, e, $);
+        }
+        if ((e as string).length > 0) {
             if ($.trace1 < $.trace2 && $.inbuf[$.trace2 - 1] === '\n') {
                 $.trace2--;
             }
-            errorHandler.error($.inbuf, $.trace1, $.trace2, errmsg, $);
+            errorHandler.error($.inbuf, $.trace1, $.trace2, e, $);
         }
     }
     finally {

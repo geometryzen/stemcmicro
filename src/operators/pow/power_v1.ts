@@ -1,4 +1,6 @@
-import { is_blade, QQ } from "math-expression-atoms";
+import { is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, QQ } from "math-expression-atoms";
+import { is_native, Native, native_sym } from "math-expression-native";
+import { car, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
@@ -12,18 +14,13 @@ import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, POWER, SIN } from "../../runtime/constants";
-import { is_abs, is_add, is_multiply, is_power } from "../../runtime/helpers";
+import { is_abs, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
 import { power_tensor } from "../../tensor";
 import { create_flt, oneAsFlt } from "../../tree/flt/Flt";
 import { cadr } from "../../tree/helpers";
 import { half, negOne, one, two } from "../../tree/rat/Rat";
-import { car, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
-import { is_num } from "../num/is_num";
-import { is_rat } from "../rat/is_rat";
-import { is_tensor } from "../tensor/is_tensor";
-import { is_uom } from "../uom/uom_extension";
+import { is_sym } from "../sym/is_sym";
 import { dpow } from "./dpow";
 
 /**
@@ -34,6 +31,7 @@ import { dpow } from "./dpow";
  * @returns 
  */
 export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
+    // console.lg("power_v1", `${base}`, `${expo}`);
     if (typeof base === 'undefined') {
         throw new Error("base must be defined.");
     }
@@ -256,8 +254,11 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // (a + b + ...) ^ n  ->  (a + b + ...) * (a + b + ...) ...
     // The exponent must be an integer and convertable to a JavaScript number.
     // We don't always want to do this. It can make otherwise simple expressions explode and can throw off symbolic integration.
-    if ($.getDirective(Directive.expanding) && $.getDirective(Directive.expandPowSum)) {
-        if (is_add(base) && is_num(expo) && is_integer_and_in_safe_number_range(expo)) {
+    // console.lg("expanding =>", $.getDirective(Directive.expanding));
+    // console.lg("expandPowSum =>", $.getDirective(Directive.expandPowSum));
+    // console.lg("expandPowSum", $.getDirective(Directive.expandPowSum));
+    if ($.getDirective(Directive.expandPowSum)) {
+        if (is_cons(base) && is_sym(base.opr) && is_native(base.opr, Native.add) && is_num(expo) && is_integer_and_in_safe_number_range(expo)) {
             if (expo.isOne()) {
                 // Do nothing.
             }
@@ -265,7 +266,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                 // Do nothing.
             }
             else if (expo.isZero()) {
-                // Do nothing, but the result is one.
+                // Do nothing, but the result is one?
             }
             else if (expo.isPositive()) {
                 const terms = args_to_items(base);
@@ -273,6 +274,24 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                     const n = nativeInt(expo);
                     const result = power_sum(n, base, $);
                     return hook(result, "T");
+                }
+                else {
+                    // We've already handled the cases of the exponent being zero and one.
+                    // We now handle some low values.
+                    if (is_rat(expo) && expo.isTwo()) {
+                        // This blows up the stack. It must be being converted back into a power.
+                        const n = terms.length;
+                        const parts: U[] = [];
+                        for (let i = 0; i < n; i++) {
+                            for (let j = 0; j < n; j++) {
+                                const part = $.multiply(terms[i], terms[j]);
+                                parts.push(part);
+                            }
+                        }
+                        const result = $.valueOf(items_to_cons(native_sym(Native.add), ...parts));
+                        return hook(result, "T");
+                    }
+                    // console.lg(`Ignoring expansion of power sum because some terms are not real.`, `${base}`, `${expo}`);
                 }
             }
             else if (expo.isNegative()) {
@@ -284,6 +303,9 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                 }
             }
         }
+    }
+    else {
+        // Ignoring 
     }
 
     //  sin(x) ^ 2n -> (1 - cos(x) ^ 2) ^ n
@@ -353,10 +375,13 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         return hook(polarResult, "Y");
     }
 
-    // Normalize so that a manifestly negative base is always made positive
+    // Normalize so that a manifestly negative base is always made positive.
+    // This seems to cause infinite looping...
     if (is_one_over_something_negative(base, expo)) {
         return hook($.negate($.power($.negate(base), expo)), 'ZZ');
     }
+
+    // None of the above. Don't evaluate, that would cause an infinite loop.
     return hook(items_to_cons(POWER, base, expo), "Z");
 }
 

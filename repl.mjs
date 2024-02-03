@@ -55,15 +55,30 @@ function run(cmd, unusedContext, filename, callback) {
     }
     callback(null, result);
     */
-    const { values, errors } = ctxt.executeScript(cmd, executeOptions);
-    for (const error of errors) {
-        return `${error}`;
-    }
-    for (const value of values) {
-        switch (executeOptions.syntaxKind) {
-            default: {
-                return ctxt.renderAsInfix(value);
+    try {
+        const { values, errors } = ctxt.executeScript(cmd, executeOptions);
+        for (const error of errors) {
+            if (error instanceof Error) {
+                return `${error.message}`;
             }
+            else {
+                return `${error}`;
+            }
+        }
+        for (const value of values) {
+            switch (executeOptions.syntaxKind) {
+                default: {
+                    return ctxt.renderAsInfix(value);
+                }
+            }
+        }
+    }
+    catch (e) {
+        if (e instanceof Error) {
+            return e.message;
+        }
+        else {
+            return `${e}`;
         }
     }
 }

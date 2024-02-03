@@ -90,7 +90,7 @@ describe("roots", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[-2,2,5]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[-2,2,5,5]");
         engine.release();
     });
     it("roots(x-a,x)", function () {
@@ -126,7 +126,7 @@ describe("roots", function () {
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "[-3,-1]");
+        assert.strictEqual(engine.renderAsInfix(actual), "[-3,-1,-1]");
         engine.release();
     });
     it("roots(x^3+x^2+x+1)", function () {

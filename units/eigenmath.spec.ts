@@ -2,8 +2,8 @@ import { assert } from "chai";
 import { create_sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
 import { Cons, nil, U } from "math-expression-tree";
-import { execute_eigenmath_script } from '../src/eigenmath/execute_eigenmath_script';
 import { ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_sexpr } from "../src/eigenmath/eigenmath";
+import { execute_eigenmath_script } from '../src/eigenmath/execute_eigenmath_script';
 import { to_infix } from "../src/eigenmath/infixform";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -262,5 +262,19 @@ describe("eigenmath", function () {
         assert.strictEqual(values.length, 1);
         const value = values[0];
         assert.strictEqual(to_infix(value, { useParenForTensors: false }), "[-1,1]");
+    });
+    it("Q", function () {
+        const lines: string[] = [
+            `(a+b)^2`,
+        ];
+        const scriptText = lines.join('\n');
+        const contentHandler = new TestContentHandler();
+        const errorHandler = new TestErrorHandler();
+        execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: false });
+        // const values = contentHandler..values;
+        const values = contentHandler.values;
+        assert.strictEqual(values.length, 1);
+        const value = values[0];
+        assert.strictEqual(to_infix(value, { useParenForTensors: false }), "a**2 + 2 a b + b**2");
     });
 });

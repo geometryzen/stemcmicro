@@ -127,7 +127,7 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
         // console.lg("k", render_as_infix(k, $));
     });
 
-    const results = [];
+    const results: U[] = [];
     if (is_simple_root(ks, $)) {
         const kn = ks.length;
         const lastCoeff = ks[0];
@@ -172,7 +172,7 @@ function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEn
     n = n - 1;
 
     const commonPart = divide($.power(lastCoeff, rational(1, n)), $.power(leadingCoeff, rational(1, n)), $);
-    const results = [];
+    const results: U[] = [];
 
     if (n % 2 === 0) {
         for (let i = 1; i <= n; i += 2) {

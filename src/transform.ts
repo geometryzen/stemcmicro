@@ -1,5 +1,5 @@
-import { polyform } from './bake';
 import { scan_meta } from './algebrite/scan';
+import { polyform } from './bake';
 import { decomp } from './decomp';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { items_to_cons } from './makeList';
@@ -263,13 +263,17 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
             // console.lg("arg2", $.toInfixString(arg2));
 
             $.pushDirective(Directive.expandPowSum, true);
-            const diff = $.subtract(F, arg2);
-            $.popDirective();
+            try {
+                const diff = $.subtract(F, arg2);
 
-            // console.lg("diff", $.toInfixString(diff));
+                // console.lg("diff", $.toInfixString(diff));
 
-            if ($.iszero(diff)) {
-                return true;
+                if ($.iszero(diff)) {
+                    return true;
+                }
+            }
+            finally {
+                $.popDirective();
             }
         }
     }

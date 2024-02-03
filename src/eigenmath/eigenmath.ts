@@ -6952,7 +6952,7 @@ function eval_power(expr: U, $: ScriptVars) {
         // if exponent is negative then evaluate base without expanding,
         // otherwise, evaluate the base normally.
         swap($);
-        if (is_num(expo) && isnegativenumber(expo)) {
+        if (is_num(expo) && expo.isNegative()) {
             const t = $.expanding;
             $.expanding = 0;
             try {
@@ -12086,32 +12086,33 @@ function power_double(BASE: Num, EXPO: Num, $: ScriptVars) {
 }
 // BASE is a sum of terms
 
-function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
+function power_sum(base: U, expo: U, $: ScriptVars): void {
+    // console.lg("power_sum", `${base}`, `${expo}`, "expanding => ", $.expanding);
 
-    if (iscomplexnumber(BASE) && is_num(EXPO)) {
-        power_complex_number(BASE, EXPO, $);
+    if (iscomplexnumber(base) && is_num(expo)) {
+        power_complex_number(base, expo, $);
         return;
     }
 
-    if ($.expanding === 0 || !issmallinteger(EXPO) || (is_num(EXPO) && isnegativenumber(EXPO))) {
+    if ($.expanding === 0 || !issmallinteger(expo) || (is_num(expo) && isnegativenumber(expo))) {
         push(POWER, $);
-        push(BASE, $);
-        push(EXPO, $);
+        push(base, $);
+        push(expo, $);
         list(3, $);
         return;
     }
 
-    push(EXPO, $);
+    push(expo, $);
     const n = pop_integer($);
 
     // square the sum first (prevents infinite loop through multiply)
 
     const h = $.stack.length;
 
-    let p1 = cdr(BASE);
+    let p1 = cdr(base);
 
     while (is_cons(p1)) {
-        let p2 = cdr(BASE);
+        let p2 = cdr(base);
         while (is_cons(p2)) {
             push(car(p1), $);
             push(car(p2), $);
@@ -12126,7 +12127,7 @@ function power_sum(BASE: U, EXPO: U, $: ScriptVars): void {
     // continue up to power n
 
     for (let i = 2; i < n; i++) {
-        push(BASE, $);
+        push(base, $);
         multiply($);
     }
 }
@@ -12817,11 +12818,23 @@ function scan_function_call($: ScriptVars, config: EigenmathParseConfig): void {
     list($.stack.length - h, $);
 }
 
+function get_matching_token(lhs: string | number): string {
+    if (lhs === '(') {
+        return ')';
+    }
+    else if (lhs === '[') {
+        return ']';
+    }
+    throw new Error(`get_matching_token ${lhs}`);
+}
+
 function scan_subexpr($: ScriptVars, config: EigenmathParseConfig): void {
     const h = $.stack.length;
 
     scan_level++;
 
+    const lhs = token;
+    const rhs = get_matching_token(lhs);
     get_token($, config); // get token after "(" or "["
 
     scan_stmt($, config);
@@ -12832,12 +12845,18 @@ function scan_subexpr($: ScriptVars, config: EigenmathParseConfig): void {
     }
 
     if (config.useParenForTensors) {
-        if (token !== ")") {
+        if (token === rhs) {
+            // Fall through.
+        }
+        else if (token !== ")") {
             scan_error("expected )", $);
         }
     }
     else {
-        if (token !== "]") {
+        if (token === rhs) {
+            // Fall through.
+        }
+        else if (token !== "]") {
             scan_error("expected ]", $);
         }
     }
@@ -13034,7 +13053,7 @@ function scan_error(s: string, $: ScriptVars): never {
 
     broadcast(escaped, $);
 
-    stopf("");
+    stopf(`scan_error ${s}`);
 }
 
 function inchar(): string {

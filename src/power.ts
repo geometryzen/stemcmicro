@@ -9,37 +9,21 @@ import { create_int, negOne, one, zero } from './tree/rat/Rat';
 import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
-//
-//  Compute the power of a sum
-//
-//  Input:    p1  sum
-//
-//      n  exponent
-//
-//  Output:    Result on stack
-//
-//  Note:
-//
 //  Uses the multinomial series (see Math World)
 //
-//                          n              n!          n1   n2       nk
+//                      n              n!          n1   n2       nk
 //  (a1 + a2 + ... + ak)  = sum (--------------- a1   a2   ... ak  )
 //                               n1! n2! ... nk!
 //
 //  The sum is over all n1 ... nk such that n1 + n2 + ... + nk = n.
-//
 //-----------------------------------------------------------------------------
-
-// first index is the term number 0..k-1, second index is the exponent 0..n
-//define A(i, j) frame[(i) * (n + 1) + (j)]
 /**
  * Computes the power of a sum. This is only valid if the terms of the sum commute.
  * @param n 
  * @param sum 
  * @param $ 
- * @returns 
  */
-export function power_sum(n: number, sum: Cons, $: ExtensionEnv): U {
+export function power_sum(n: number, sum: Cons, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'power' | 'valueOf'>): U {
     // console.lg(`power_sum(n=${n}, sum=${render_as_infix(sum, $)})`);
     // number of terms in the sum
     // Notice the decrement by 1; we are not going to include the operator.
@@ -65,32 +49,18 @@ export function power_sum(n: number, sum: Cons, $: ExtensionEnv): U {
     return multinomial_sum(k, n, a, 0, n, powers, factorial(create_int(n)), zero, $);
 }
 
-//-----------------------------------------------------------------------------
-//
-//  Compute multinomial sum
-//
-//  Input:    k  number of factors
-//
-//      n  overall exponent
-//
-//      a  partition array
-//
-//      i  partition array index
-//
-//      m  partition remainder
-//
-//      p1  n!
-//
-//      A  factor array
-//
-//  Output:    Result on stack
-//
-//  Note:
-//
-//  Uses recursive descent to fill the partition array.
-//
-//-----------------------------------------------------------------------------
-function multinomial_sum(k: number, n: number, a: number[], i: number, m: number, A: U[], p1: U, p2: U, $: ExtensionEnv): U {
+/**
+ * 
+ * @param k number of factors
+ * @param n overall exponent
+ * @param a partition array
+ * @param i partition array index
+ * @param m partition remainder
+ * @param A factor array
+ * @param p1 n!
+ * @param p2
+ */
+function multinomial_sum(k: number, n: number, a: number[], i: number, m: number, A: U[], p1: U, p2: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'valueOf'>): U {
     if (i < k - 1) {
         for (let j = 0; j <= m; j++) {
             a[i] = j;

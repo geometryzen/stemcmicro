@@ -23,6 +23,7 @@ function value_of_base(baseArg: U, expo: U, $: ExtensionEnv): U {
  * 
  */
 export function Eval_power(expr: Cons, $: ExtensionEnv): U {
+    // console.lg("Eval_power", `${expr}`);
     // Ideally, we'd decrement.
     $.pushDirective(Directive.expanding, false);
     try {

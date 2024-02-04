@@ -200,7 +200,7 @@ describe("derivative", function () {
             useDerivativeShorthandLowerD: true
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "4*sin(x)/(25+40*cos(x)+16*cos(x)**2)");
+        assert.strictEqual(engine.renderAsInfix(actual), "4*sin(x)/(41+40*cos(x)-16*sin(x)**2)");
         engine.release();
     });
     it("gradient of f", function () {

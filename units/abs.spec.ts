@@ -308,7 +308,7 @@ describe("abs", function () {
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsInfix(values[0]), "(cos(b)**2*exp(a)**2+exp(a)**2*sin(b)**2)**(1/2)");
+        assert.strictEqual(context.renderAsInfix(values[0]), "exp(a)");
         context.release();
     });
     it("abs(1^a)", function () {

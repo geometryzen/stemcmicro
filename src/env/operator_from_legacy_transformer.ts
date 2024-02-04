@@ -17,6 +17,7 @@ class PluggableOperator extends FunctionVarArgs implements Operator<Cons> {
     readonly #hash: string;
     constructor(opr: Sym, hash: string, private readonly evaluator: ConsExpr, $: ExtensionEnv) {
         super(opr.key(), opr, $);
+        // console.lg("constructor PluggableOperator", "opr", `${opr}`, "hash", `${hash}`);
         this.#hash = hash;
     }
     get hash(): string {

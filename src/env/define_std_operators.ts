@@ -311,6 +311,7 @@ import { polar_imu } from '../operators/polar/polar_imu';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pow_2_pow_2_any_rat_rat } from '../operators/pow/pow_2_pow_2_any_rat_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
+import { cos_squared_expanding } from '../operators/pow/pow_cos_squared';
 import { pow_e_any } from '../operators/pow/pow_e_any';
 import { pow_e_log } from '../operators/pow/pow_e_log';
 import { pow_e_rat } from '../operators/pow/pow_e_rat';
@@ -526,6 +527,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineAssociative(MATH_ADD, zero);
     $.defineAssociative(MATH_MUL, one);
 
+    $.defineOperator(cos_squared_expanding);
     // TODO: See what these do.
     $.defineOperator(pow_2_pow_2_e_any_rat);
     $.defineOperator(pow_2_pow_2_any_rat_rat);

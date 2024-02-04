@@ -1,15 +1,11 @@
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
+import { is_num, is_sym, is_tensor, Num, Sym, Tensor } from "math-expression-atoms";
+import { is_native, Native, native_sym } from "math-expression-native";
+import { Cons, is_cons, U } from "math-expression-tree";
 import { is_cons_opr_eq_add } from "../operators/add/is_cons_opr_eq_add";
-import { is_num } from "../operators/num/is_num";
-import { is_tensor } from "../operators/tensor/is_tensor";
+import { Cons2 } from "../operators/helpers/Cons2";
 import { is_cons_opr_eq_sym } from "../predicates/is_cons_opr_eq_sym";
-import { Num } from "../tree/num/Num";
-import { Sym } from "../tree/sym/Sym";
-import { Tensor } from "../tree/tensor/Tensor";
-import { Cons, is_cons, U } from "../tree/tree";
 import { DOT, INV, SYMBOL_IDENTITY_MATRIX, TRANSPOSE } from "./constants";
-import { MATH_FACTORIAL, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SIN } from "./ns_math";
+import { MATH_FACTORIAL, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO, MATH_SIN } from "./ns_math";
 
 export const ABS = native_sym(Native.abs);
 
@@ -28,8 +24,8 @@ export function is_multiply(expr: U): expr is Cons & { __ts_sym: 'MATH_MUL' } {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_MUL);
 }
 
-export function is_power(expr: U): expr is Cons & { __ts_sym: 'MATH_POW' } {
-    return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_POW);
+export function is_power(expr: U): expr is Cons2<Sym, U, U> & { __ts_sym: 'MATH_POW' } {
+    return is_cons(expr) && is_sym(expr.opr) && is_native(expr.opr, Native.pow);
 }
 
 export function is_factorial(expr: U): expr is Cons & { __ts_sym: 'MATH_FACTORIAL' } {

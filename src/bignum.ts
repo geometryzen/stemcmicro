@@ -92,7 +92,10 @@ export function bignum_truncate(p1: Rat): Rat {
     return new Rat(a, bigInt.one);
 }
 
-export function mp_numerator(p1: U): Rat {
+/**
+ * @deprecated If p1 is a Rat, call p1.numer()
+ */
+ export function mp_numerator(p1: U): Rat {
     if (is_rat(p1)) {
         return p1.numer();
     }
@@ -101,6 +104,9 @@ export function mp_numerator(p1: U): Rat {
     }
 }
 
+/**
+ * @deprecated If p1 is a Rat, call p1.denom()
+ */
 export function mp_denominator(p1: U): Rat {
     if (is_rat(p1)) {
         return p1.denom();

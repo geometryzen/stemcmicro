@@ -8,12 +8,14 @@ import { imu } from "../../env/imu";
 import { divide } from "../../helpers/divide";
 import { iscomplexnumberdouble, is_complex_number, is_num_and_equal_minus_half, is_num_and_equal_one_half, is_num_and_eq_minus_one, is_num_and_gt_zero, is_plus_or_minus_one, is_rat_and_even_integer } from "../../is";
 import { is_rat_and_integer } from "../../is_rat_and_integer";
+import { multiply } from "../../multiply";
 import { is_integer_and_in_safe_number_range, nativeInt } from "../../nativeInt";
 import { args_to_items, power_sum, simplify_polar } from "../../power";
 import { power_rat_base_rat_expo } from "../../power_rat_base_rat_expo";
 import { is_base_of_natural_logarithm } from "../../predicates/is_base_of_natural_logarithm";
 import { is_negative } from "../../predicates/is_negative";
 import { ARCTAN, avoidCalculatingPowersIntoArctans, COS, LOG, MULTIPLY, POWER, SIN } from "../../runtime/constants";
+import { doexpand_binary } from "../../runtime/defs";
 import { is_abs, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_PI } from "../../runtime/ns_math";
 import { power_tensor } from "../../tensor";
@@ -22,6 +24,7 @@ import { cadr } from "../../tree/helpers";
 import { half, negOne, one, two } from "../../tree/rat/Rat";
 import { is_sym } from "../sym/is_sym";
 import { dpow } from "./dpow";
+import { pow } from "./pow";
 
 /**
  * 
@@ -244,8 +247,23 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
         // console.lg(`x => ${$.toInfixString(x)} a => ${$.toInfixString(a)} b => ${$.toInfixString(b)}`);
         // console.lg(`ispositive(${$.toInfixString(x)}) => ${$.ispositive(x)}`);
         if ($.ispositive(x)) {
-            const result = $.power(x, $.multiply(a, b));
+            const ab = doexpand_binary(multiply, a, b, $);
+            const result = $.valueOf(pow(x, ab));
             return hook(result, "R");
+        }
+        else {
+            if (is_rat(a) && a.isNegative() && a.isInteger()) {
+                if (is_rat(b) && b.isNegative() && b.isInteger()) {
+                    const ab = a.mul(b);
+                    const result = $.valueOf(pow(x, ab));
+                    return hook(result, "R");
+                }
+            }
+            // Exponentiation with a base that is not a positive real number is generally viewed as a multivalued function.
+            // What are we missing?
+            // console.lg("x", `${x}`);
+            // console.lg("a", `${a}`);
+            // console.lg("b", `${b}`);
         }
     }
 

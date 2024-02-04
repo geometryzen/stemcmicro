@@ -1,9 +1,9 @@
-import { Eval_denominator } from "./denominator";
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { DENOMINATOR } from "../../runtime/constants";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { Eval_denominator } from "./Eval_denominator";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {
@@ -28,4 +28,4 @@ class Op extends FunctionVarArgs implements Operator<Cons> {
     }
 }
 
-export const denominator_fn = new Builder();
+export const denominator_builder = new Builder();

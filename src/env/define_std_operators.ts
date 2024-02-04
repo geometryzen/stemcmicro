@@ -112,7 +112,7 @@ import { def_sym_init_builder } from '../operators/def/def_sym_init';
 import { defint_builder } from '../operators/defint/defint';
 import { defn_builder } from '../operators/defn/Eval_defn';
 import { degree_varargs } from '../operators/degree/degree_varargs';
-import { denominator_fn } from '../operators/denominator/denominator_fn';
+import { denominator_builder } from '../operators/denominator/denominator_builder';
 import { deref_builder } from '../operators/deref/Eval_deref';
 import { derivative_2_mul_any } from '../operators/derivative/derivative_2_mul_any';
 import { derivative_2_pow_any } from '../operators/derivative/derivative_2_pow_any';
@@ -443,7 +443,7 @@ import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
 import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
-import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO } from '../runtime/ns_math';
+import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
 import { Eval_power } from '../scripting/eval_power';
 import { Eval_and, Eval_test, Eval_testeq, Eval_testge, Eval_testgt, Eval_testle, Eval_testlt, Eval_testne } from '../test';
@@ -545,7 +545,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     // $.defineOperator(pow_2_any_rat);
     // $.defineOperator(pow_2_any_any);
     // $.defineOperator(pow);
-    $.defineConsTransformer(MATH_POW, Eval_power);
+    $.defineConsTransformer(native_sym(Native.pow), Eval_power);
 
     $.defineOperator(mul_2_sym_blade);
     // $.defineOperator(mul_cons_sym);
@@ -810,7 +810,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(def_sym_init_builder);
     $.defineOperator(def_sym_doc_init_builder);
     $.defineOperator(defint_builder);
-    $.defineOperator(denominator_fn);
+    $.defineOperator(denominator_builder);
 
     $.defineOperator(defn_builder);
 

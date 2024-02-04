@@ -1,9 +1,9 @@
-import { Eval_arctan } from "./arctan";
+import { Cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { ARCTAN } from "../../runtime/constants";
-import { Cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
+import { Eval_arctan } from "./arctan";
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

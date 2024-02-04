@@ -1,49 +1,31 @@
-import { mp_denominator } from '../../bignum';
+import { is_rat, one } from 'math-expression-atoms';
+import { car, is_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inverse } from '../../helpers/inverse';
 import { multiply_items } from '../../multiply';
 import { is_negative } from '../../predicates/is_negative';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
-import { caddr, cadr } from '../../tree/helpers';
-import { one } from '../../tree/rat/Rat';
-import { car, Cons, is_cons, U } from '../../tree/tree';
-import { is_rat } from '../rat/is_rat';
 import { rationalize_factoring } from '../rationalize/rationalize';
 
-/* denominator =====================================================================
-
-Tags
-----
-scripting, JS, internal, treenode, general concept
-
-Parameters
-----------
-x
-
-General description
--------------------
-Returns the denominator of expression x.
-
-*/
-export function Eval_denominator(expr: Cons, $: ExtensionEnv): U {
-    return denominator($.valueOf(cadr(expr)), $);
-}
-
 export function denominator(expr: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
-    // console.lg(`ENTERING denominator of ${$.toInfixString(expr)} ${$.toListString(expr)}`);
+    // console.lg("denominator", `${expr}`);
     const hook = function (retval: U): U {
         // console.lg(`LEAVING denominator of ${$.toInfixString(expr)} ${$.toListString(expr)} => ${$.toInfixString(retval)}`);
         return retval;
     };
-    //console.trace "denominator of: " + p1
-    if (is_add(expr)) {
+
+    if (is_rat(expr)) {
+        return hook(expr.denom());
+    }
+
+    if (is_cons(expr) && is_add(expr)) {
         expr = rationalize_factoring(expr, $);
     }
 
-    // (denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)
-    // "denominator of products = product of denominators"
     if (is_cons(expr)) {
         const argList = expr.cdr;
+        // (denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)
+        // "denominator of products = product of denominators"
         // TODO: Why do I care about whether a1 is one?
         if (is_multiply(expr) && !$.isone(car(argList))) {
             // console.lg("(denom (* x1 x2 x3 ...)) = denom(x1) * denom(x2) * denom(x3)");
@@ -55,14 +37,9 @@ export function denominator(expr: U, $: Pick<ExtensionEnv, 'add' | 'factorize' |
             // console.lg(`product_of_denoms => ${$.toInfixString(product_of_denoms)}`)
             return hook(product_of_denoms);
         }
-    }
-
-    if (is_rat(expr)) {
-        return hook(mp_denominator(expr));
-    }
-
-    if (is_power(expr) && is_negative(caddr(expr))) {
-        return hook(inverse(expr, $));
+        else if (is_power(expr) && is_negative(expr.expo)) {
+            return hook(inverse(expr, $));
+        }
     }
 
     return hook(one);

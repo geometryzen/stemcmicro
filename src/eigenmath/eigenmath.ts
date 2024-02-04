@@ -7,6 +7,7 @@ import { convertMetricToNative } from '../operators/algebra/create_algebra_as_te
 import { is_num } from '../operators/num/is_num';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
+import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { two } from '../tree/rat/Rat';
 import { bignum_equal } from './bignum_equal';
@@ -3072,13 +3073,14 @@ function eval_denominator(p1: U, $: ScriptVars): void {
 
 function denominator($: ScriptVars): void {
 
-    let p1 = pop($);
+    const arg = pop($);
 
-    if (is_rat(p1)) {
-        push_bignum(1, p1.b, bignum_int(1), $);
+    if (is_rat(arg)) {
+        push_bignum(1, arg.b, bignum_int(1), $);
         return;
     }
 
+    let p1 = arg;
     let p2: U = one; // denominator
 
     while (find_divisor(p1, $)) {
@@ -7154,12 +7156,15 @@ function power($: ScriptVars): void {
         return;
     }
 
-    // (a ^ b) ^ c  -->  a ^ (b * c)
+    // (x ^ a) ^ b  -->  x ^ (a * c)
 
-    if (car(base).equals(POWER)) {
-        push(cadr(base), $);
-        push(caddr(base), $);
-        push(expo, $);
+    if (is_power(base)) {
+        const x = base.base;
+        const a = base.expo;
+        const b = expo;
+        push(x, $);
+        push(a, $);
+        push(b, $);
         multiply_expand($); // always expand products of exponents
         power($);
         return;

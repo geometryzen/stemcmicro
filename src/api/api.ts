@@ -26,7 +26,6 @@ import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
 import { render_as_latex } from '../print/render_as_latex';
 import { render_as_sexpr } from '../print/render_as_sexpr';
-import { ProgrammingError } from '../programming/ProgrammingError';
 import { execute_script, transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
@@ -168,19 +167,10 @@ function engine_kind_from_engine_options(options: Partial<EngineConfig>): Engine
             case SyntaxKind.Eigenmath: {
                 return EngineKind.Eigenmath;
             }
-            /*
-            case SyntaxKind.PythonScript: {
-                return EngineKind.PythonScript;
-            }
-            */
-            default: {
-                throw new ProgrammingError();
-            }
         }
     }
-    else {
-        return EngineKind.STEMCscript;
-    }
+    // The default will be an infix syntax.
+    return EngineKind.STEMCscript;
 }
 
 class ExtensionEnvVisitor implements Visitor {

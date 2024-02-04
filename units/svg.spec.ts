@@ -20,7 +20,7 @@ describe("svg", function () {
         `<svg height='36'width='38'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>&Omega;</text></svg>`
     ].join('');
 
-    describe("sandbox", function () {
+    describe("uom", function () {
         it("joule", function () {
             const lines: string[] = [
                 `(uom "joule")`

@@ -1,7 +1,9 @@
+import { is_flt, is_sym, Sym } from 'math-expression-atoms';
+import { is_native, Native } from 'math-expression-native';
+import { car, cdr, Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { rational } from '../../bignum';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { equaln, is_num_and_equalq } from '../../is';
-import { items_to_cons } from '../../makeList';
 import { is_negative } from '../../predicates/is_negative';
 import { ARCTAN, COS, POWER, SIN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
@@ -10,26 +12,18 @@ import { MATH_PI } from '../../runtime/ns_math';
 import { create_flt, piAsFlt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
 import { third, zero } from '../../tree/rat/Rat';
-import { car, cdr, Cons, U } from '../../tree/tree';
 import { denominator } from '../denominator/denominator';
-import { is_flt } from '../flt/is_flt';
+import { Cons1 } from '../helpers/Cons1';
 import { numerator } from '../numerator/numerator';
 
-/* arctan =====================================================================
+export function is_sin(expr: U): expr is Cons1<Sym, U> {
+    return is_cons(expr) && is_sym(expr.opr) && is_native(expr.opr, Native.sin);
+}
 
-Tags
-----
-scripting, JS, internal, treenode, general concept
+export function is_cos(expr: U): expr is Cons1<Sym, U> {
+    return is_cons(expr) && is_sym(expr.opr) && is_native(expr.opr, Native.cos);
+}
 
-Parameters
-----------
-x
-
-General description
--------------------
-Returns the inverse tangent of x.
-
-*/
 export function Eval_arctan(expr: Cons, $: ExtensionEnv): U {
     const x = $.valueOf(expr.argList.head);
     // console.lg("Eval_arctan", $.toInfixString(x));
@@ -54,12 +48,15 @@ function arctan(x: U, $: ExtensionEnv): U {
         return $.negate($.arctan($.negate(x)));
     }
 
-    // arctan(sin(a) / cos(a)) ?
+    // arctan(sin(x)/cos(x)) --> x
     if (x.contains(SIN) && x.contains(COS)) {
-        const p2 = numerator(x, $);
-        const p3 = denominator(x, $);
-        if (car(p2).equals(SIN) && car(p3).equals(COS) && $.equals(cadr(p2), cadr(p3))) {
-            return cadr(p2);
+        const numer = numerator(x, $);
+        const denom = denominator(x, $);
+        if (is_sin(numer) && is_cos(denom)) {
+            const x = numer.arg;
+            if (x.equals(denom.arg)) {
+                return x;
+            }
         }
     }
 
@@ -86,5 +83,6 @@ function arctan(x: U, $: ExtensionEnv): U {
         return $.multiply(third, DynamicConstants.PI($));
     }
 
+    // Construct but don't evaluate.
     return items_to_cons(ARCTAN, x);
 }

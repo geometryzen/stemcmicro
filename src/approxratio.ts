@@ -1,3 +1,4 @@
+import { assert_cons_or_nil } from 'math-expression-tree';
 import { rational } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { zzfloat } from './operators/float/float';
@@ -5,7 +6,7 @@ import { is_flt } from './operators/flt/is_flt';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { APPROXRATIO } from './runtime/constants';
 import { Flt } from './tree/flt/Flt';
-import { create_int } from './tree/rat/Rat';
+import { create_int, Rat } from './tree/rat/Rat';
 import { Cons, cons, is_cons, items_to_cons, U } from './tree/tree';
 
 /*
@@ -18,7 +19,7 @@ export function Eval_approxratio(expr: Cons, $: ExtensionEnv): U {
     return approxratio(arg, $);
 }
 
-function approxratio(expr: U, $: ExtensionEnv): U {
+function approxratio(expr: U, $: ExtensionEnv): Rat | Cons | U {
     // Notice that this function is recursive.
     // TODO: This can be made extensible using specialized operators.
     // But the recursion will need to allow for extensions.
@@ -33,12 +34,12 @@ function approxratio(expr: U, $: ExtensionEnv): U {
     if (is_cons(expr)) {
         const head = expr.head;
         const rest = expr.argList;
-        return cons(approxratio(head, $), approxratio(rest, $));
+        return cons(approxratio(head, $), assert_cons_or_nil(approxratio(rest, $)));
     }
     return expr;
 }
 
-function approxratio_flt(value: Flt, $: ExtensionEnv): U {
+function approxratio_flt(value: Flt, $: ExtensionEnv): Rat | Cons {
     // TypeScript establishes that the argument actually is a float, so we could simplify here.
     const supposedlyTheFloat = zzfloat(value, $);
     if (is_flt(supposedlyTheFloat)) {

@@ -1,3 +1,4 @@
+import { assert_cons_or_nil, car, cdr, cons, is_cons, nil, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { items_to_cons } from "../../makeList";
 import { is_num } from "../../operators/num/is_num";
@@ -6,7 +7,6 @@ import { is_multiply } from "../../runtime/helpers";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
 import { Num } from "../../tree/num/Num";
 import { one, zero } from "../../tree/rat/Rat";
-import { car, cdr, cons, is_cons, nil, U } from "../../tree/tree";
 import { sort_terms } from "../compare/sort_terms";
 import { multiply_num_num } from "../mul/multiply_num_num";
 import { add_num_num } from "./add_num_num";
@@ -109,7 +109,7 @@ function to_list_add(terms: U[], $: ExtensionEnv): U {
          * sum(a, b) = k * s, where s could be a single node or a list of nodes
          */
         const ambiguous_s = rhs_a;
-        const s = is_list_s ? cons(MATH_MUL, ambiguous_s) : ambiguous_s;
+        const s = is_list_s ? cons(MATH_MUL, assert_cons_or_nil(ambiguous_s)) : ambiguous_s;
         const sum_a_b = $.multiply(k, s);
         // console.lg(`E. splice(${sum12xArg2})`);
         terms.splice(i, 2, sum_a_b);

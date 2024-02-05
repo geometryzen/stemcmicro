@@ -1,10 +1,8 @@
+import { is_sym, Sym } from "math-expression-atoms";
+import { Cons, Cons1, is_cons, items_to_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
-import { is_sym } from "../sym/is_sym";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
-import { Cons1 } from "./Cons1";
 
 export abstract class Function1<T extends U> extends FunctionVarArgs implements Operator<Cons1<Sym, T>> {
     constructor(name: string, opr: Sym, private readonly guard: GUARD<U, T>, $: ExtensionEnv) {

@@ -1,3 +1,4 @@
+import { Cons2 } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
@@ -6,10 +7,9 @@ import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
-import { Cons2 } from "../helpers/Cons2";
+import { Cons1 } from "../helpers/Cons1";
 import { Function2 } from "../helpers/Function2";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
-import { Cons1 } from "../helpers/Cons1";
 import { MATH_SIN } from "../sin/MATH_SIN";
 
 export class Builder implements OperatorBuilder<Cons> {

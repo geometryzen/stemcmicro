@@ -1,6 +1,5 @@
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
+import { Sym } from "math-expression-atoms";
+import { Cons, Cons2, U } from "math-expression-tree";
 import { is_binop } from "../helpers/is_binop";
 import { is_pow } from "./is_pow";
 

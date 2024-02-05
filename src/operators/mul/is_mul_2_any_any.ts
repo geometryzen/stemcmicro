@@ -1,9 +1,8 @@
-import { MATH_MUL } from "../../runtime/ns_math";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
+import { Sym } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { Cons, Cons2, U } from "math-expression-tree";
 import { is_opr_2_any_any } from "../helpers/is_opr_2_any_any";
 
 export function is_mul_2_any_any(expr: Cons): expr is Cons2<Sym, U, U> {
-    return is_opr_2_any_any(MATH_MUL)(expr);
+    return is_opr_2_any_any(native_sym(Native.multiply))(expr);
 }

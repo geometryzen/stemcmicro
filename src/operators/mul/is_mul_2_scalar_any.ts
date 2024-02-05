@@ -1,7 +1,6 @@
+import { Sym } from "math-expression-atoms";
+import { Cons2, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { is_cons, U } from "../../tree/tree";
-import { Cons2 } from "../helpers/Cons2";
 import { is_scalar as make_is_scalar } from "../helpers/is_scalar";
 import { is_mul_2_any_any } from "./is_mul_2_any_any";
 

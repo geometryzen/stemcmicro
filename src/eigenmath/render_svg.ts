@@ -1,6 +1,6 @@
 import { Blade, Boo, create_flt, create_sym, Flt, is_blade, is_boo, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, Sym, Tensor, Uom } from "math-expression-atoms";
 import { is_native, Native, native_sym } from "math-expression-native";
-import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
+import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { is_imu } from "../operators/imu/is_imu";
 import { cadddr, caddr, cadr, cddddr, cddr } from "../tree/helpers";
 import { Imu } from "../tree/imu/Imu";
@@ -88,7 +88,7 @@ function list(n: number, $: StackContext): void {
     }
 }
 function cons($: StackContext): void {
-    const pop1 = $.stack.pop()!;
+    const pop1 = assert_cons_or_nil($.stack.pop()!);
     const pop2 = $.stack.pop()!;
     $.stack.push(create_cons(pop2, pop1));
 }

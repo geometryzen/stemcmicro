@@ -1,8 +1,7 @@
 import { assert_str, create_sym, is_str, is_sym, Str, Sym } from "math-expression-atoms";
-import { nil, U } from "math-expression-tree";
+import { Cons3, nil, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { Err } from "../../tree/err/Err";
-import { Cons3 } from "../helpers/Cons3";
 import { Function3 } from "../helpers/Function3";
 import { is_any } from "../helpers/is_any";
 import { extract_def_args } from "./extract_def_args";

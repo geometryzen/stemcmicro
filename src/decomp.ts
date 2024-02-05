@@ -1,3 +1,4 @@
+import { assert_cons_or_nil } from 'math-expression-tree';
 import { add_terms } from './calculators/add/add_terms';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { guess } from './guess';
@@ -5,7 +6,7 @@ import { items_to_cons } from './makeList';
 import { multiply_items } from './multiply';
 import { is_add, is_multiply } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
-import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
+import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 // this function extract parts subtrees from a tree.
 // It is used in two
@@ -92,7 +93,7 @@ function decomp_sum(generalTransform: boolean, p1: U, p2: U, $: ExtensionEnv): U
     }
 
     // add together all constant terms
-    const constantPart = cdr(p1) as Cons;
+    const constantPart = assert_cons_or_nil(cdr(p1));
     const constantTerms = [...constantPart].filter((t) => !t.contains(p2));
     if (constantTerms.length) {
         const p3 = add_terms(constantTerms, $);

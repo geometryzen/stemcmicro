@@ -1,4 +1,5 @@
 import { is_blade } from "math-expression-atoms";
+import { assert_cons_or_nil } from "math-expression-tree";
 import { add_num_num } from "../../calculators/add/add_num_num";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
@@ -277,7 +278,7 @@ function combine_terms(terms: U[], $: ExtensionEnv): void {
             continue;
         }
 
-        const arg2 = t ? cons(MATH_MUL, lhs) : lhs;
+        const arg2 = t ? cons(MATH_MUL, assert_cons_or_nil(lhs)) : lhs;
 
         terms.splice(i, 2, $.multiply(p1, arg2));
         i--;

@@ -1,7 +1,7 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
-import { car, cdr, Cons, cons as create_cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
+import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { is_num } from '../operators/num/is_num';
@@ -543,12 +543,22 @@ function complexity(p: U): number {
 }
 
 /**
- * ( pop1 pop2 => Cons(pop2, pop1) )
+ * The stack is reduced as follows...
+ * 
+ * -----
+ * | b |
+ * ----- => --------------
+ * | a |    | Cons(a, b) |
+ * -----    --------------
+ * | X |    |      X     |
+ * -----    --------------
+ * 
+ * b must be cons or nil.
  */
 function cons($: ScriptVars): void {
-    const pop1 = pop($);
-    const pop2 = pop($);
-    push(create_cons(pop2, pop1), $);
+    const b = assert_cons_or_nil(pop($));
+    const a = pop($);
+    push(create_cons(a, b), $);
 }
 
 const ABS = native_sym(Native.abs);

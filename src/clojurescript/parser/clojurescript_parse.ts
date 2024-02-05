@@ -1,4 +1,5 @@
 import { Boo, create_flt, create_sym, create_sym_ns, create_tensor, Flt, Keyword, Map, Num, Str, Sym } from 'math-expression-atoms';
+import { assert_cons_or_nil } from 'math-expression-tree';
 import { CharStream, consume_signed_num, NumHandler } from "../../algebrite/consume_num";
 import { split_qualified_name } from '../../edn';
 import { FltTokenParser } from "../../operators/flt/FltTokenParser";
@@ -287,7 +288,7 @@ class Parser {
 function pairs_to_cons(expr: U): U {
     if (expr instanceof Pair) {
         const car = pairs_to_cons(expr.car);
-        const cdr = pairs_to_cons(expr.cdr);
+        const cdr = assert_cons_or_nil(pairs_to_cons(expr.cdr));
         return cons(car, cdr);
     }
     else {

@@ -1,11 +1,11 @@
 import { assert } from 'chai';
-import { Atom } from '../src/tree/atom/Atom';
-import { car, cdr, Cons, is_cons, is_nil, is_singleton, items_to_cons, nil, U } from '../src/tree/tree';
+import { Atom } from 'math-expression-atoms';
+import { car, cdr, Cons, is_cons, is_singleton, items_to_cons, nil, U } from 'math-expression-tree';
 
 /**
  * A simple atom for testing purposes.
  */
-class Int extends Atom<'Int'> {
+class Int extends Atom {
     constructor(public readonly value: number, pos?: number, end?: number) {
         super('Int', pos, end);
     }
@@ -77,7 +77,7 @@ describe('tree', function () {
     });
     describe('is_nil', function () {
         it('(NIL) should be true', function () {
-            assert.isTrue(is_nil(nil));
+            assert.isTrue(nil.isnil);
         });
     });
     describe('is_cons', function () {
@@ -197,18 +197,7 @@ describe('tree', function () {
             const x = items_to_cons(two, six);
             assert.strictEqual(x.item(0), two);
             assert.strictEqual(x.item(1), six);
-            try {
-                x.item(2);
-                assert.fail();
-            }
-            catch (e) {
-                if (e instanceof Error) {
-                    assert.strictEqual(e.message, 'index out of bounds.');
-                }
-                else {
-                    assert.fail();
-                }
-            }
+            assert.strictEqual(x.item(2).isnil, true);
         });
         it('(2)', function () {
             const x = items_to_cons(two);
@@ -216,18 +205,7 @@ describe('tree', function () {
         });
         it('()', function () {
             const x = items_to_cons();
-            try {
-                x.item(0);
-                assert.fail();
-            }
-            catch (e) {
-                if (e instanceof Error) {
-                    assert.strictEqual(e.message, 'index out of bounds.');
-                }
-                else {
-                    assert.fail();
-                }
-            }
+            assert.strictEqual(x.length, 0);
         });
     });
 });

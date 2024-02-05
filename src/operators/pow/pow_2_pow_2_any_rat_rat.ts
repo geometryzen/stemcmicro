@@ -1,13 +1,11 @@
+import { is_rat, Sym } from "math-expression-atoms";
+import { Cons, Cons2, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_cons_atom } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { Rat, two } from "../../tree/rat/Rat";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, is_cons, U } from "../../tree/tree";
 import { and } from "../helpers/and";
-import { Cons2 } from "../helpers/Cons2";
 import { Function2 } from "../helpers/Function2";
-import { is_rat } from "../rat/rat_extension";
 import { is_pow_2_any_rat } from "./is_pow_2_any_rat";
 
 class Builder implements OperatorBuilder<Cons> {

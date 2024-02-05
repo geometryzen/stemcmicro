@@ -170,7 +170,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     while (is_cons(p1) && is_cons(p2)) {
         const head1 = p1.car;
         const head2 = p2.car;
-        if (car(head1).equals(OPERATOR) && car(head2).equals(OPERATOR)) {
+        if (is_cons(head1) && car(head1).equals(OPERATOR) && is_cons(head2) && car(head2).equals(OPERATOR)) {
             factors.push(cons(OPERATOR, append(cdr(head1), cdr(head2))));
             p1 = p1.cdr;
             p2 = p2.cdr;
@@ -300,7 +300,7 @@ function base_and_expo(expr: U, $: ExtensionEnv): [base: U, expo: U] {
     }
 }
 
-export function append(p1: U, p2: U): U {
+export function append(p1: U, p2: U): Cons {
     // from https://github.com/gbl08ma/eigenmath/blob/8be989f00f2f6f37989bb7fd2e75a83f882fdc49/src/append.cpp
     const arr: U[] = [];
     if (is_cons(p1)) {

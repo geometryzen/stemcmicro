@@ -1,13 +1,11 @@
+import { is_flt, Sym } from 'math-expression-atoms';
+import { Cons1, U } from 'math-expression-tree';
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from '../../env/ExtensionEnv';
 import { HASH_ANY, hash_unaop_atom } from '../../hashing/hash_info';
 import { SGN } from '../../runtime/constants';
 import { cadr } from '../../tree/helpers';
-import { Sym } from '../../tree/sym/Sym';
-import { U } from '../../tree/tree';
-import { is_flt } from '../flt/is_flt';
 import { Function1 } from '../helpers/Function1';
 import { is_any } from '../helpers/is_any';
-import { Cons1 } from '../helpers/Cons1';
 
 class Builder implements OperatorBuilder<U> {
     create($: ExtensionEnv): Operator<U> {

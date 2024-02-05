@@ -1,13 +1,11 @@
+import { assert_cons_or_nil, cons, is_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { cons, is_cons, U } from '../../tree/tree';
 
 /**
  * BEWARE: The order of parameters does not match the scripting language which is (subst newExpr, oldExpr, expr).
  * @param expr 
  * @param oldExpr 
- * @param newExpr 
- * @param $ 
- * @returns 
+ * @param newExpr
  */
 export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'operatorFor'>): U {
     if (expr.equals(oldExpr)) {
@@ -22,7 +20,7 @@ export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'op
             const new_car = subst(car_expr, oldExpr, newExpr, $);
             if (replace_cdr) {
                 const new_cdr = subst(cdr_expr, oldExpr, newExpr, $);
-                return cons(new_car, new_cdr);
+                return cons(new_car, assert_cons_or_nil(new_cdr));
             }
             else {
                 return cons(new_car, cdr_expr);
@@ -31,7 +29,7 @@ export function subst(expr: U, oldExpr: U, newExpr: U, $: Pick<ExtensionEnv, 'op
         else {
             if (replace_cdr) {
                 const new_cdr = subst(cdr_expr, oldExpr, newExpr, $);
-                return cons(car_expr, new_cdr);
+                return cons(car_expr, assert_cons_or_nil(new_cdr));
             }
             else {
                 return expr;

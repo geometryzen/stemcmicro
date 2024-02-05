@@ -37,6 +37,9 @@ export class IllegalArgumentError extends Error {
     }
 }
 
+/**
+ * Move to math-expression-atoms?
+ */
 function assert_cons(expr: U, context?: Cons, needle?: Sym): Cons {
     if (is_cons(expr)) {
         return expr;

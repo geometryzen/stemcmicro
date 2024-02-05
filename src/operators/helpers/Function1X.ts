@@ -1,9 +1,8 @@
+import { Sym } from "math-expression-atoms";
+import { Cons1, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { Sym } from "../../tree/sym/Sym";
-import { U } from "../../tree/tree";
 import { Function1 } from "./Function1";
 import { GUARD } from "./GUARD";
-import { Cons1 } from "./Cons1";
 
 /**
  * A slightly more restrictive version of a unary function with a callback for testing the argument.

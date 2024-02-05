@@ -1,8 +1,8 @@
+import { Cons3 } from "math-expression-tree";
 import { diffFlag, ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { is_cons, items_to_cons, U } from "../../tree/tree";
 import { is_sym } from "../sym/is_sym";
-import { Cons3 } from "./Cons3";
 import { FunctionVarArgs } from "./FunctionVarArgs";
 import { GUARD } from "./GUARD";
 

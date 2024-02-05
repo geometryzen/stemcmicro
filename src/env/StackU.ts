@@ -1,4 +1,4 @@
-import { cons, nil, U } from "math-expression-tree";
+import { assert_cons_or_nil, cons, nil, U } from "math-expression-tree";
 import { Stack } from "./Stack";
 
 /**
@@ -20,7 +20,7 @@ export class StackU {
     list(n: number): void {
         this.#stack.push(nil);
         for (let i = 0; i < n; i++) {
-            const arg2 = this.#stack.pop();
+            const arg2 = assert_cons_or_nil(this.#stack.pop());
             const arg1 = this.#stack.pop();
             this.#stack.push(cons(arg1, arg2));
         }

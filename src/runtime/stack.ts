@@ -36,11 +36,3 @@ export function stack_push_items(items: U[]): void {
         stack_push(items.shift() as U);
     }
 }
-
-/**
- * @deprecated
- */
-export function stack_peek(): U {
-    // All this casting is making me queasy.
-    return defs.stack[defs.tos - 1] as U;
-}

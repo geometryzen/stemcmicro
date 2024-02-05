@@ -1,7 +1,9 @@
 import { SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { U } from './tree/tree';
 
-// Guess which symbol to use for derivative, integral, etc.
+/**
+ * Guess which symbol to use for derivative, integral, etc.
+ */
 export function guess(p: U): U {
     if (p.contains(SYMBOL_X)) {
         return SYMBOL_X;

@@ -32,8 +32,6 @@ export function Eval_power(expr: Cons, $: ExtensionEnv): U {
         // Eigenmath evaluates the base according to whether the exponent is a negative number?
         const expo = $.valueOf(expoArg);
         const base = value_of_base(baseArg, expo, $);
-        // console.lg("base", $.toInfixString(base));
-        // console.lg("expo", $.toInfixString(expo));
         if (base.equals(baseArg) && expo.equals(expoArg)) {
             return power_v1(base, expo, $);
         }

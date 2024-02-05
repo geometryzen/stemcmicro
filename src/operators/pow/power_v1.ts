@@ -1,6 +1,6 @@
 import { is_blade, is_flt, is_num, is_rat, is_tensor, is_uom, QQ } from "math-expression-atoms";
 import { is_native, Native, native_sym } from "math-expression-native";
-import { car, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
+import { car, is_cons, items_to_cons, U } from "math-expression-tree";
 import { nativeDouble, rational } from "../../bignum";
 import { complex_conjugate } from "../../complex_conjugate";
 import { Directive, ExtensionEnv } from "../../env/ExtensionEnv";
@@ -25,6 +25,19 @@ import { half, negOne, one, two } from "../../tree/rat/Rat";
 import { is_sym } from "../sym/is_sym";
 import { dpow } from "./dpow";
 import { pow } from "./pow";
+
+function multiply_terms(lhs: U[], rhs: U[], $: ExtensionEnv) {
+    const parts: U[] = [];
+    const nL = lhs.length;
+    const nR = rhs.length;
+    for (let i = 0; i < nL; i++) {
+        for (let j = 0; j < nR; j++) {
+            const part = $.multiply(lhs[i], rhs[j]);
+            parts.push(part);
+        }
+    }
+    return parts;
+}
 
 /**
  * 
@@ -228,7 +241,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
             }
             return hook(result, "P");
         }
-        if (is_nil(aList)) {
+        else {
             // Slightly strange case of no a's means (*) => 1, and then 1 ^ m is simply 1.
             return hook(one, "Q");
         }
@@ -273,10 +286,12 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // The exponent must be an integer and convertable to a JavaScript number.
     // We don't always want to do this. It can make otherwise simple expressions explode and can throw off symbolic integration.
     // console.lg("expanding =>", $.getDirective(Directive.expanding));
-    // console.lg("expandPowSum =>", $.getDirective(Directive.expandPowSum));
     // console.lg("expandPowSum", $.getDirective(Directive.expandPowSum));
     if ($.getDirective(Directive.expandPowSum)) {
         if (is_cons(base) && is_sym(base.opr) && is_native(base.opr, Native.add) && is_num(expo) && is_integer_and_in_safe_number_range(expo)) {
+            // console.lg("expandPowSum =>", $.getDirective(Directive.expandPowSum));
+            // console.lg("base", $.toInfixString(base));
+            // console.lg("expo", $.toInfixString(expo));
             if (expo.isOne()) {
                 // Do nothing.
             }
@@ -294,22 +309,17 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                     return hook(result, "T");
                 }
                 else {
-                    // We've already handled the cases of the exponent being zero and one.
-                    // We now handle some low values.
-                    if (is_rat(expo) && expo.isTwo()) {
-                        // This blows up the stack. It must be being converted back into a power.
-                        const n = terms.length;
-                        const parts: U[] = [];
-                        for (let i = 0; i < n; i++) {
-                            for (let j = 0; j < n; j++) {
-                                const part = $.multiply(terms[i], terms[j]);
-                                parts.push(part);
-                            }
+                    // console.lg("expandPowerSum", "base", `${$.toInfixString(base)}`, "expo", `${$.toInfixString(expo)}`);
+                    if (is_rat(expo) && expo.isInteger()) {
+                        let count = expo;
+                        let parts: U[] = [one];
+                        while (count.isNonNegativeInteger()) {
+                            parts = multiply_terms(parts, terms, $);
+                            count = count.pred();
                         }
                         const result = $.valueOf(items_to_cons(native_sym(Native.add), ...parts));
                         return hook(result, "T");
                     }
-                    // console.lg(`Ignoring expansion of power sum because some terms are not real.`, `${base}`, `${expo}`);
                 }
             }
             else if (expo.isNegative()) {
@@ -318,6 +328,25 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
                     const n = nativeInt(expo);
                     const result = $.divide(one, power_sum(-n, base, $));
                     return hook(result, "T");
+                }
+                else {
+                    // We can get into expensive expansions of polynomials.
+                    // console.lg("expandPowerSum", "base", `${$.toInfixString(base)}`, "expo", `${$.toInfixString(expo)}`);
+
+                    /*
+                    if (is_rat(expo) && expo.isInteger()) {
+                        let count = expo;
+                        let parts: U[] = [one];
+                        while (count.isNegative()) {
+                            parts = multiply_terms(parts, terms, $);
+                            count = count.succ();
+                        }
+                        const sum = items_to_cons(native_sym(Native.add), ...parts);
+                        const mus = pow(sum, negOne);
+                        const result = $.valueOf(mus);
+                        return hook(result, "T");
+                    }
+                    */
                 }
             }
         }

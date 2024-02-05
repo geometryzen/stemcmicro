@@ -639,7 +639,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // TODO: I don't think we should be using defineKeyword for (factor n) and factor(p, x)
-    $.defineKeyword(FACTOR, function ($: ExtensionEnv) {
+    $.defineKeyword(FACTOR, function ($: ExtensionEnv): void {
         const last = $.getBinding(RESERVED_KEYWORD_LAST);
         const factored = $.factor(last);
         $.setBinding(RESERVED_KEYWORD_LAST, factored);

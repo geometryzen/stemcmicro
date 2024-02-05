@@ -1,13 +1,13 @@
 
 import { assert } from "chai";
-import { is_sym } from "math-expression-atoms";
+import { is_rat } from "math-expression-atoms";
 import { U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 
 describe("arctan", function () {
-    it("sin(x)/cos(x)", function () {
+    it("(e1+e2)**2", function () {
         const lines: string[] = [
-            `arctan(sin(x)/cos(x))`
+            `(e1+e2)**2`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({});
@@ -23,11 +23,11 @@ describe("arctan", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), 'x');
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), 'x');
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), 'x');
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), 'x');
-        assert.strictEqual(is_sym(values[0]), true);
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), '2');
+        assert.strictEqual(is_rat(values[0]), true);
         engine.release();
     });
 });

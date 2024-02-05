@@ -2550,6 +2550,7 @@ describe("edge", function () {
         assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("2*pi"));
         engine.release();
     });
+    // Why does this take so long?
     it("taylor(f,x,n,a)", function () {
         const lines: string[] = [
             `taylor(1/(1-x),x,5)`

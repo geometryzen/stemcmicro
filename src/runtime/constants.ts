@@ -189,6 +189,9 @@ export const SYMBOL_N = create_sym('n');
 export const SYMBOL_R = create_sym('r');
 export const SYMBOL_S = create_sym('s');
 export const SYMBOL_T = create_sym('t');
+/**
+ * x
+ */
 export const SYMBOL_X = create_sym('x');
 export const SYMBOL_Y = create_sym('y');
 export const SYMBOL_Z = create_sym('z');

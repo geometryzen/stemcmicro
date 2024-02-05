@@ -38,6 +38,7 @@
         "unit-arg": "mocha 'units/arg.spec.ts'",
         "unit-assumptions": "mocha 'units/assumptions.spec.ts'",
         "unit-atom": "mocha 'units/atom.spec.ts'",
+        "unit-blade": "mocha 'units/blade.spec.ts'",
         "unit-calculus": "mocha 'units/calculus.spec.ts'",
         "unit-circexp": "mocha 'units/circexp.spec.ts'",
         "unit-clojurescript": "mocha 'units/clojurescript.spec.ts'",

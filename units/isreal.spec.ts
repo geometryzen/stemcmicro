@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -13,7 +12,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values, errors } = context.executeScript(sourceText, {});
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
@@ -31,7 +30,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values, errors } = context.executeScript(sourceText, {});
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
@@ -49,7 +48,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values, errors } = context.executeScript(sourceText, {});
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
@@ -66,7 +65,7 @@ describe("isreal", function () {
 
         const context = create_script_context({});
 
-        const { values, errors } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values, errors } = context.executeScript(sourceText, {});
         assert.isArray(errors);
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);

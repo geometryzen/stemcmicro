@@ -1,6 +1,6 @@
 import process from 'node:process';
 import repl from 'node:repl';
-import { create_script_context, human_readable_syntax_kind, SyntaxKind, syntaxKinds } from './dist/commonjs/index.js';
+import { create_script_context, human_readable_syntax_kind, syntaxKinds } from './dist/commonjs/index.js';
 
 /**
  * See https://nodejs.org/en/learn/command-line/how-to-use-the-nodejs-repl
@@ -31,7 +31,6 @@ function prompt(syntaxKind) {
 }
 
 const contextOptions = {
-    syntaxKind: SyntaxKind.STEMCscript,
     useCaretForExponentiation: false
 };
 

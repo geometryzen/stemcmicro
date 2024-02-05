@@ -9,7 +9,7 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const configEngine: Partial<EngineConfig> = { syntaxKind: SyntaxKind.STEMCscript };
+        const configEngine: Partial<EngineConfig> = {};
         const engine: ExprEngine = create_engine(configEngine);
         const configParse: ParseConfig = { useCaretForExponentiation: false, useParenForTensors: false };
         const { trees, errors } = engine.parse(sourceText, configParse);
@@ -26,7 +26,7 @@ describe("api", function () {
             `sqrt(x)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -40,7 +40,7 @@ describe("api", function () {
             `a**b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: false, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -55,7 +55,7 @@ describe("api", function () {
             `a**b`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -129,7 +129,7 @@ describe("api", function () {
             `x*x`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -171,7 +171,7 @@ describe("api", function () {
             `sqrt(-1)`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, { useCaretForExponentiation: true, useParenForTensors: false });
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {

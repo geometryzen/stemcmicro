@@ -3,7 +3,6 @@ import fs from 'fs';
 import process from 'process';
 import { create_engine, EngineConfig, ExprEngine } from './src/api/api';
 import { Predicates } from './src/env/ExtensionEnv';
-import { SyntaxKind } from './src/parser/parser';
 import { clear_patterns } from './src/pattern';
 import { stemc_prolog } from './src/runtime/init';
 import { U } from './src/tree/tree';
@@ -284,16 +283,14 @@ function harness_options_to_engine_options(options: TestOptions | undefined): Pa
         return {
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
-            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
-            syntaxKind: SyntaxKind.STEMCscript
+            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true
         };
     }
     else {
         return {
             useCaretForExponentiation: true,
             useDerivativeShorthandLowerD: true,
-            useIntegersForPredicates: true,
-            syntaxKind: SyntaxKind.STEMCscript
+            useIntegersForPredicates: true
         };
     }
 }

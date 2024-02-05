@@ -6,7 +6,7 @@ import { COS, LEGENDRE, SECRETX, SIN } from '../../runtime/constants';
 import { square } from '../../square';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
 import { create_int, half, one, zero } from '../../tree/rat/Rat';
-import { car, nil, U } from '../../tree/tree';
+import { car, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';
 import { subst } from '../subst/subst';
 import { is_sym } from '../sym/is_sym';
@@ -44,7 +44,7 @@ export function Eval_legendre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
-    const M = nil === p2 ? zero : p2;
+    const M = p2.isnil ? zero : p2;
 
     return legendre(X, N, M, $);
 }

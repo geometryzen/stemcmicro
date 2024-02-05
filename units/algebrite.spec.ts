@@ -2,7 +2,6 @@
 import { assert } from "chai";
 import { assert_boo, assert_keyword, assert_map, assert_rat } from "math-expression-atoms";
 import { create_engine, ExprEngine } from "../src/api/api";
-import { SyntaxKind } from "../src/parser/parser";
 
 describe("STEMCscript", function () {
     it("empty Map", function () {
@@ -10,7 +9,7 @@ describe("STEMCscript", function () {
             `{}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -29,7 +28,7 @@ describe("STEMCscript", function () {
             `{a: 1, b: 2}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -60,7 +59,7 @@ describe("STEMCscript", function () {
             `{visible: true}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -90,7 +89,7 @@ describe("STEMCscript", function () {
             `{visible: false}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -120,7 +119,7 @@ describe("STEMCscript", function () {
             `{visible:true}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -150,7 +149,7 @@ describe("STEMCscript", function () {
             `{visible:false}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);

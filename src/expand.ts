@@ -10,9 +10,10 @@ import { multiply, multiply_items } from './multiply';
 import { nativeInt } from './nativeInt';
 import { degree } from './operators/degree/degree';
 import { denominator } from './operators/denominator/denominator';
+import { factorize } from './operators/factor/factor';
 import { numerator } from './operators/numerator/numerator';
 import { is_tensor } from './operators/tensor/is_tensor';
-import { divpoly } from './quotient';
+import { quotient } from './quotient';
 import { doexpand_binary, doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
@@ -76,7 +77,7 @@ function expand(F: U, X: U, $: ExtensionEnv): U {
     }
 
     // Q = quotient
-    const Q = divpoly(B, A, X, $);
+    const Q = quotient(B, A, X, $);
 
     // remainder B = B - A * Q
     B = $.subtract(B, $.multiply(A, Q));
@@ -87,7 +88,7 @@ function expand(F: U, X: U, $: ExtensionEnv): U {
     }
 
     // A = factor(A)
-    A = $.factorize(A, X);
+    A = factorize(A, X, $);
 
     const C = expand_get_C(A, X, $);
     B = expand_get_B(B, C, X, $);

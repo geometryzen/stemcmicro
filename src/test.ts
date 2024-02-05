@@ -10,7 +10,7 @@ import { MSIGN } from './runtime/constants';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
 import { cadr, cddr } from './tree/helpers';
 import { one, zero } from './tree/rat/Rat';
-import { car, cdr, cons, Cons, is_cons, items_to_cons, nil, U } from './tree/tree';
+import { car, cdr, cons, Cons, is_cons, items_to_cons, U } from './tree/tree';
 
 const NOT = native_sym(Native.not);
 const TESTEQ = native_sym(Native.testeq);
@@ -29,7 +29,7 @@ function _test(p1: U, $: ExtensionEnv): U {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (nil === cdr(p1)) {
+        if (cdr(p1).isnil) {
             return $.valueOf(car(p1)); // default case
         }
 

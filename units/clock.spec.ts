@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { SyntaxKind } from "../src/parser/parser";
 import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -14,7 +13,7 @@ xdescribe("clock", function () {
 
         const context = create_script_context({});
 
-        const value = assert_one_value_execute(sourceText, context, { syntaxKind: SyntaxKind.STEMCscript });
+        const value = assert_one_value_execute(sourceText, context);
         assert.strictEqual(context.renderAsInfix(value), "(-1)**(1/2)");
         context.release();
     });
@@ -27,7 +26,7 @@ xdescribe("clock", function () {
 
         const context = create_script_context({});
 
-        const value = assert_one_value_execute(sourceText, context, { syntaxKind: SyntaxKind.STEMCscript });
+        const value = assert_one_value_execute(sourceText, context);
         assert.strictEqual(context.renderAsInfix(value), "1/(-1)**(1/2)");
         context.release();
     });

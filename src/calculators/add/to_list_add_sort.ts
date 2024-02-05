@@ -167,7 +167,7 @@ function decompose_multiply_num_times(expr: U): { denorm: boolean, lhs: Num, rhs
              * (a3 a4 ...) or NIL
              */
             const cdddr_expr = cdr(cddr_expr);
-            if (nil === cdddr_expr) {
+            if (cdddr_expr.isnil) {
                 // (multiply a1: Num a2)
                 /**
                  * a2 = caddr_expr

@@ -308,9 +308,7 @@ xdescribe("typhon", function () {
             `a[6]`
         ];
         const sourceText = lines.join('\n');
-        const context = create_script_context({
-            syntaxKind: SyntaxKind.STEMCscript
-        });
+        const context = create_script_context({});
         const { values } = context.executeScript(sourceText);
         assert.isArray(values);
         assert.strictEqual(values.length, 1, "values.length");

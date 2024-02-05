@@ -13,5 +13,5 @@ export interface EnvConfig {
     useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
     useParenForTensors: boolean;
-    syntaxKind: SyntaxKind;
+    syntaxKind?: SyntaxKind;
 }

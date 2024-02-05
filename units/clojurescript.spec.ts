@@ -418,7 +418,7 @@ describe("ClojureScript", function () {
             `["Alice", "Bob", "Carol"]`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine();
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];

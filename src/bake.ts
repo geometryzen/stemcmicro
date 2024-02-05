@@ -2,7 +2,7 @@ import { create_int } from 'math-expression-atoms';
 import { car, cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { equaln, is_poly_expanded_form } from './is';
-import { coeff } from './operators/coeff/coeff';
+import { coefficients } from './operators/coeff/coeff';
 import { ADD, FOR, MULTIPLY, POWER, SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply } from './runtime/helpers';
@@ -91,7 +91,7 @@ export function polyform(p1: U, p2: U, $: ExtensionEnv): U {
  */
 function bake_poly(p: U, x: U, $: ExtensionEnv): U {
     // console.lg(`bake_poly ${p} ${x}`);
-    const beans = coeff(p, x, $);
+    const beans = coefficients(p, x, $);
     // console.lg(`beans => ${beans}`);
     // We're not getting to see this because coeff blows up
     const result: U[] = [];

@@ -37,7 +37,7 @@ export function yycondense(P: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'mu
 
     // get gcd of all terms
     const terms_gcd = P.tail().reduce(function (x, y) {
-        return gcd(x, y, $);
+        return gcd(x, y, $ as ExtensionEnv);
     });
 
     // console.lg("terms_gcd", render_as_infix(terms_gcd, $));

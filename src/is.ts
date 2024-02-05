@@ -1,19 +1,14 @@
+import { is_flt, is_num, is_rat, Num, Rat } from 'math-expression-atoms';
+import { is_cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
 import { is_rat_and_integer } from './is_rat_and_integer';
 import { length_of_cons_otherwise_zero } from './length_of_cons_or_zero';
-import { is_flt } from './operators/flt/is_flt';
-import { is_num } from './operators/num/is_num';
-import { is_rat } from './operators/rat/is_rat';
-import { is_sym } from './operators/sym/is_sym';
 import { is_num_and_negative } from './predicates/is_negative_number';
 import { FLOAT, MEQUAL, MSIGN, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
-import { Num } from './tree/num/Num';
-import { Rat } from './tree/rat/Rat';
-import { is_cons, nil, U } from './tree/tree';
 
 //
 // TODO: In order not to torture our future selves, these should be documented and have coverage unit testing.
@@ -136,10 +131,6 @@ function ispolyfactoredorexpandedform_power(p: U, x: U): boolean {
 
 /**
  * Determines whether the expression, p, is a polynomial in the variable, x.
- * 
- * @param p 
- * @param x 
- * @returns 
  */
 export function is_poly_expanded_form(p: U, x: U): boolean {
     // console.lg(`is_poly_expanded_form ${print_expr(p, $)} ${x}`);
@@ -280,21 +271,6 @@ export function is_complex_number(expr: U, $: ExtensionEnv): boolean {
 
 export function is_rat_and_even_integer(expr: U): boolean {
     return is_rat_and_integer(expr) && expr.a.isEven();
-}
-
-// returns 1 if there's a symbol somewhere.
-// not used anywhere. Note that PI and POWER are symbols,
-// so for example 2^3 would be symbolic
-// while -1^(1/2) i.e. 'i' is not, so this can
-// be tricky to use.
-export function issymbolic(p: U): boolean {
-    if (is_sym(p)) {
-        return true;
-    }
-    if (is_cons(p)) {
-        return [...p].some(issymbolic);
-    }
-    return false;
 }
 
 // i.e. 2, 2^3, etc.

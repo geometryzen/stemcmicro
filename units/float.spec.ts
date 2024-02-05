@@ -1,7 +1,6 @@
 import { assert } from "chai";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";
-import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -145,7 +144,7 @@ describe("float", function () {
             float(-1)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);
@@ -174,7 +173,7 @@ describe("float", function () {
             float(e2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);
@@ -198,7 +197,7 @@ describe("float", function () {
             float(-e2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);
@@ -223,7 +222,7 @@ describe("float", function () {
             float(-1.0*e2)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);
@@ -250,7 +249,7 @@ describe("float", function () {
             -1.1*e2`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 4);
@@ -294,7 +293,7 @@ describe("float", function () {
             float(Fg/scaling)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 21);
@@ -335,7 +334,7 @@ describe("float", function () {
             float(Fg/scaling)`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine({});
         const { trees, errors } = engine.parse(sourceText, {});
         assert.strictEqual(errors.length, 0);
         assert.strictEqual(trees.length, 21);

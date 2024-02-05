@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { SyntaxKind } from "../src/parser/parser";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 
@@ -99,7 +98,6 @@ describe("trig", function () {
                 assumes: {},
                 dependencies: [],
                 disable: [],
-                syntaxKind: SyntaxKind.STEMCscript,
                 useCaretForExponentiation: false
             });
             const value = assert_one_value_execute(lines.join('\n'), engine);

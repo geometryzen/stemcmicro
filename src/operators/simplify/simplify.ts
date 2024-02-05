@@ -1,3 +1,5 @@
+import { is_num, is_rat, is_tensor, Sym, Tensor } from 'math-expression-atoms';
+import { car, cdr, Cons2, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
 import { condense, yycondense } from '../../condense';
@@ -6,7 +8,6 @@ import { divide } from '../../helpers/divide';
 import { inverse } from '../../helpers/inverse';
 import { is_num_and_equalq, is_num_and_eq_minus_one, is_plus_or_minus_one } from '../../is';
 import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
-import { items_to_cons } from '../../makeList';
 import { multiply_noexpand } from '../../multiply';
 import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { roots } from '../../roots';
@@ -18,22 +19,15 @@ import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
 import { caddr, cadr } from '../../tree/helpers';
 import { create_int, half, one, third, three, two, zero } from '../../tree/rat/Rat';
-import { Sym } from '../../tree/sym/Sym';
-import { Tensor } from '../../tree/tensor/Tensor';
-import { car, cdr, is_cons, nil, U } from '../../tree/tree';
 import { denominator } from "../denominator/denominator";
 import { factor } from "../factor/factor";
 import { evaluate_as_float } from '../float/float';
 import { areunivarpolysfactoredorexpandedform, gcd } from "../gcd/gcd";
-import { Cons2 } from '../helpers/Cons2';
 import { is_imu } from '../imu/is_imu';
-import { is_num } from '../num/is_num';
 import { numerator } from "../numerator/numerator";
 import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
-import { is_rat } from '../rat/is_rat';
 import { rationalize_factoring } from '../rationalize/rationalize';
 import { re } from '../real/real';
-import { is_tensor } from '../tensor/is_tensor';
 import { transpose_factoring } from '../transpose/transpose';
 
 function simplify_if_codegen(expr: U, $: ExtensionEnv): U {

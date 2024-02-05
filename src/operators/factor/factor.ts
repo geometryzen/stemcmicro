@@ -1,4 +1,7 @@
+import { is_sym } from 'math-expression-atoms';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { yyfactorpoly } from '../../factorpoly';
+import { is_poly_expanded_form } from '../../is';
 import { multiply_items_factoring } from '../../multiply';
 import { factor_rat } from '../../pollard';
 import { MAXPRIMETAB, primetab } from '../../runtime/constants';
@@ -31,12 +34,35 @@ function factor_term(arr: U[], arg1: U, arg2: U, $: ExtensionEnv): void {
 }
 
 export function factor(poly: U, x: U, $: ExtensionEnv): U {
+    // console.lg("factor", "poly", `${$.toInfixString(poly)}`, "x", `${x}`);
     if (is_rat(poly) && poly.isInteger()) {
-        return factor_rat(poly); // see pollard.cpp
+        return factor_rat(poly);
     }
 
-    return $.factorize(poly, x);
+    return factorize(poly, x, $);
 }
+
+export function factorize(p: U, x: U, $: Pick<ExtensionEnv, 'add' | 'equals' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'rect' | 'subtract' | 'valueOf'>): U {
+    // console.lg("factorize", ($ as ExtensionEnv).toInfixString(p));
+    if (!p.contains(x)) {
+        // console.lg(`Giving up b/c the polynomial does not contain the variable.`);
+        return p;
+    }
+
+    if (!is_poly_expanded_form(p, x)) {
+        // console.lg(`Giving up b/c the polynomial is not in expanded form.`);
+        return p;
+    }
+
+    if (is_sym(x)) {
+        return yyfactorpoly(p, x, $);
+    }
+    else {
+        // console.lg(`Giving up b/c the variable is not a symbol.`);
+        return p;
+    }
+}
+
 
 // for factoring small integers (2^32 or less)
 export function factor_small_number(n: number): Rat[] {

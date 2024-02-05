@@ -1,6 +1,7 @@
+import { create_int, one, zero } from 'math-expression-atoms';
+import { is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { bignum_factorial } from '../../bignum';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
-import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { FACTORIAL } from '../../runtime/constants';
 import { defs, move_top_of_stack, noexpand_unary } from '../../runtime/defs';
@@ -8,8 +9,6 @@ import { is_add, is_factorial, is_multiply, is_power } from '../../runtime/helpe
 import { stack_pop, stack_push } from '../../runtime/stack';
 import { doexpand_value_of } from '../../scripting/doexpand_eval';
 import { caddr, cadr } from '../../tree/helpers';
-import { create_int, one, zero } from '../../tree/rat/Rat';
-import { is_cons, nil, U } from '../../tree/tree';
 
 export function factorial(p1: U): U {
     const n = nativeInt(p1);
@@ -70,11 +69,11 @@ function sfac_product(p1: U, $: ExtensionEnv): U {
     }
 
     for (let i = 0; i < n - 1; i++) {
-        if (nil === defs.stack[s + i]) {
+        if (is_nil(defs.stack[s + i]!)) {
             continue;
         }
         for (let j = i + 1; j < n; j++) {
-            if (nil === defs.stack[s + j]) {
+            if (is_nil(defs.stack[s + j]!)) {
                 continue;
             }
             sfac_product_f(s, i, j, $);
@@ -84,7 +83,7 @@ function sfac_product(p1: U, $: ExtensionEnv): U {
     stack_push(one);
 
     for (let i = 0; i < n; i++) {
-        if (nil === defs.stack[s + i]) {
+        if (is_nil(defs.stack[s + i]!)) {
             continue;
         }
         const arg1 = stack_pop();

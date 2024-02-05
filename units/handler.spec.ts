@@ -209,7 +209,7 @@ describe("handler", function () {
             `draw(f,x)`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine = create_engine();
         assert.strictEqual(should_engine_render_svg(engine), true);
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);

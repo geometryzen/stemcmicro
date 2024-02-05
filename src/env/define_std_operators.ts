@@ -1,4 +1,4 @@
-import { is_blade, is_flt } from 'math-expression-atoms';
+import { create_sym, is_blade, is_flt } from 'math-expression-atoms';
 import { Eval_approxratio } from '../approxratio';
 import { AddComparator } from '../calculators/compare/comparator_add';
 import { MulComparator } from '../calculators/compare/comparator_mul';
@@ -84,6 +84,7 @@ import { circexp_any } from '../operators/circexp/circexp_any';
 import { clock_any } from '../operators/clock/clock_any';
 import { clock_imu } from '../operators/clock/clock_imu';
 import { coeff_varargs } from '../operators/coeff/coeff_varargs';
+import { Eval_coefficients } from '../operators/coeff/Eval_coefficients';
 import { cofactor_varargs } from '../operators/cofactor/cofactor_varargs';
 import { complex_2_any_any } from '../operators/complex/complex_2_any_any';
 import { condense_varargs } from '../operators/condense/condense_varargs';
@@ -789,6 +790,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(clock_any);
 
     $.defineOperator(coeff_varargs);
+    $.defineConsTransformer(create_sym("coefficients"), Eval_coefficients);
     $.defineOperator(cofactor_varargs);
     $.defineOperator(complex_2_any_any);
     $.defineOperator(condense_varargs);

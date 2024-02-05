@@ -423,7 +423,7 @@ export function Eval_integral(expr: Cons, $: ExtensionEnv): U {
     let p1 = cdr(argList);
 
     const p2 = $.valueOf(car(p1));
-    if (nil === p2) {
+    if (p2.isnil) {
         X = guess(F);
         N = nil;
     }

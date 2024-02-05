@@ -127,5 +127,5 @@ function __rationalize_tensor(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' |
 }
 
 function __lcm(p1: U, p2: U, $: Pick<ExtensionEnv, 'factorize' | 'multiply' | 'power' | 'subtract' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
-    return divide($.multiply(p1, p2), gcd(p1, p2, $), $);
+    return divide($.multiply(p1, p2), gcd(p1, p2, $ as ExtensionEnv), $);
 }

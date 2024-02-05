@@ -8,7 +8,8 @@ import { divide } from './helpers/divide';
 import { is_complex_number, is_poly_expanded_form } from './is';
 import { Native } from './native/Native';
 import { native_sym } from './native/native_sym';
-import { coeff } from './operators/coeff/coeff';
+import { coefficients } from './operators/coeff/coeff';
+import { factorize } from './operators/factor/factor';
 import { is_rat } from './operators/rat/is_rat';
 import { simplify } from './operators/simplify/simplify';
 import { ASSIGN, SECRETX } from './runtime/constants';
@@ -50,7 +51,7 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     // 2nd arg, x
     const arg2 = $.valueOf(caddr(expr));
 
-    const x = nil === arg2 ? guess(poly) : arg2;
+    const x = arg2.isnil ? guess(poly) : arg2;
 
     // console.lg(`poly=${print_expr(poly, $)}`);
     // console.lg(`var =${print_expr(x, $)}`);
@@ -65,8 +66,8 @@ export function Eval_roots(expr: Cons, $: ExtensionEnv): U {
     }
 }
 
-function is_some_coeff_complex_number(coefficients: U[], $: ExtensionEnv): boolean {
-    return coefficients.some((c) => is_complex_number(c, $));
+function is_some_coeff_complex_number(cs: U[], $: ExtensionEnv): boolean {
+    return cs.some((c) => is_complex_number(c, $));
 }
 
 /**
@@ -89,27 +90,19 @@ function is_simple_root(ks: U[], $: ExtensionEnv): boolean {
  * Computes the coefficients of the polynomial then divides each by the highest power coefficient.
  * The coefficients are returned in the order [c0, c1, c2, ..., 1] where c0 is the constant coefficient.
  */
-function normalized_coeff(poly: U, x: U, $: ExtensionEnv): U[] {
-    // console.lg(`normalized_coeff ${render_as_infix(poly, $)} in variable ${render_as_infix(x, $)}`);
-
-    const coefficients = coeff(poly, x, $);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    coefficients.forEach(function (coefficient) {
-        // console.lg("coefficient", render_as_infix(coefficient, $));
-    });
-    const divideBy = coefficients[coefficients.length - 1];
-    return coefficients.map((coe) => divide(coe, divideBy, $));
+function normalized_coeff(poly: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'operatorFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
+    const cs = coefficients(poly, x, $);
+    const highest = cs[cs.length - 1];
+    return cs.map((c) => divide(c, highest, $));
 }
 
 /**
- * 
- * @param poly 
+ * @param p 
  * @param x 
  * @returns 
  */
-export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
-    // eslint-disable-next-line no-console
-    // console.lg(`roots ${render_as_infix(poly, $)} in variable ${render_as_infix(x, $)}`);
+export function roots(p: U, x: U, $: ExtensionEnv): Tensor {
+    // console.lg("roots", $.toInfixString(p), $.toInfixString(x));
     // the simplification of nested radicals uses "roots", which in turn uses
     // simplification of nested radicals. Usually there is no problem, one level
     // of recursion does the job. Beyond that, we probably got stuck in a
@@ -121,7 +114,8 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
 
     // log.dbg(`checking if ${top()} is a case of simple roots`);
 
-    const ks = normalized_coeff(poly, x, $);
+    const ks: U[] = normalized_coeff(p, x, $);
+    // console.lg("coefficients (normalized)", $.toSExprString(items_to_cons(...ks)));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ks.forEach(function (k) {
         // console.lg("k", render_as_infix(k, $));
@@ -132,11 +126,11 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
         const kn = ks.length;
         const lastCoeff = ks[0];
         const leadingCoeff: U = ks.pop() as U;
-        const simpleRoots = getSimpleRoots(kn, leadingCoeff, lastCoeff, $);
+        const simpleRoots = roots1(kn, leadingCoeff, lastCoeff, $);
         results.push(...simpleRoots);
     }
     else {
-        const roots = roots2(poly, x, $);
+        const roots = roots2(p, x, $);
         // console.lg(`roots2 => ${roots}`);
         results.push(...roots);
     }
@@ -165,9 +159,8 @@ export function roots(poly: U, x: U, $: ExtensionEnv): Tensor {
 // http://www.wolframalpha.com/input/?i=roots+a*x%5E15+%2B+b
 // leadingCoeff    Coefficient of x^0
 // lastCoeff       Coefficient of x^(n-1)
-function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEnv): U[] {
-    // console.lg(`getSimpleRoots(n=${n}, leading=${render_as_infix(leadingCoeff, $)}, last=${render_as_infix(lastCoeff, $)})`);
-    // log.dbg('getSimpleRoots');
+function roots1(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEnv): U[] {
+    // console.lg("roots1", n, $.toInfixString(leadingCoeff), $.toInfixString(lastCoeff));
 
     n = n - 1;
 
@@ -196,43 +189,45 @@ function getSimpleRoots(n: number, leadingCoeff: U, lastCoeff: U, $: ExtensionEn
     return results;
 }
 
-function roots2(P: U, X: U, $: ExtensionEnv): U[] {
-    // console.lg(`roots2 ${render_as_infix(P, $)} in variable ${render_as_infix(X, $)}`);
-    const ks = normalized_coeff(P, X, $);
-    if (!is_some_coeff_complex_number(ks, $)) {
-        const factorized = $.factorize(P, X);
+function roots2(p: U, x: U, $: ExtensionEnv): U[] {
+    // console.lg("roots2", $.toInfixString(p));
+    const ks = normalized_coeff(p, x, $);
+    if (is_some_coeff_complex_number(ks, $)) {
+        if (is_multiply(p)) {
+            // scan through all the factors and find the roots of each of them
+            const mapped = p.tail().map((factor) => roots3(factor, x, $));
+            return mapped.flat();
+        }
+        return roots3(p, x, $);
+    }
+    else {
+        const factorized = factorize(p, x, $);
+        // console.lg("factorized", $.toInfixString(factorized));
         // console.lg("factorized", render_as_infix(factorized, $));
         if (is_multiply(factorized)) {
             // scan through all the factors and find the roots of each of them
-            const mapped = factorized.tail().map((p) => roots3(p, X, $));
+            const mapped = factorized.tail().map((p) => roots3(p, x, $));
             return mapped.flat();
         }
-        return roots3(factorized, X, $);
-    }
-    else {
-        if (is_multiply(P)) {
-            // scan through all the factors and find the roots of each of them
-            const mapped = P.tail().map((factor) => roots3(factor, X, $));
-            return mapped.flat();
-        }
-        return roots3(P, X, $);
+        return roots3(factorized, x, $);
     }
 }
 
-function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
+function roots3(p: U, x: U, $: ExtensionEnv): U[] {
+    // console.lg("roots3", $.toInfixString(p));
     // console.lg(`roots3 ${render_as_infix(poly, $)} in variable ${render_as_infix(X, $)}`);
-    if (is_power(poly)) {
-        const base = poly.base;
-        if (is_poly_expanded_form(base, X)) {
-            const expo = poly.expo;
+    if (is_power(p)) {
+        const base = p.base;
+        if (is_poly_expanded_form(base, x)) {
+            const expo = p.expo;
             if (is_rat(expo) && expo.isPositiveInteger()) {
-                const n = normalized_coeff(base, X, $);
+                const n = normalized_coeff(base, x, $);
                 return mini_solve(n, $);
             }
         }
     }
-    if (is_poly_expanded_form(poly, X)) {
-        const n = normalized_coeff(poly, X, $);
+    if (is_poly_expanded_form(p, x)) {
+        const n = normalized_coeff(p, x, $);
         return mini_solve(n, $);
     }
     else {
@@ -244,45 +239,45 @@ function roots3(poly: U, X: U, $: ExtensionEnv): U[] {
 // actually end up using the quadratic/cubic/quartic formulas in here,
 // since there is a chance we factored the polynomial and in so
 // doing we found some solutions and lowered the degree.
-function mini_solve(coefficients: U[], $: ExtensionEnv): U[] {
+function mini_solve(cs: U[], $: ExtensionEnv): U[] {
     // console.lg("mini_solve");
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    coefficients.forEach(function (coefficient) {
+    cs.forEach(function (coefficient) {
         // console.lg("coefficient", render_as_infix(coefficient, $));
     });
-    const n = coefficients.length;
+    const n = cs.length;
 
     // AX + B, X = -B/A
     if (n === 2) {
-        const A = coefficients.pop() as U;
-        const B = coefficients.pop() as U;
+        const A = cs.pop() as U;
+        const B = cs.pop() as U;
         return _solveDegree1(A, B, $);
     }
 
     // AX^2 + BX + C, X = (-B +/- (B^2 - 4AC)^(1/2)) / (2A)
     if (n === 3) {
-        const A = coefficients.pop() as U;
-        const B = coefficients.pop() as U;
-        const C = coefficients.pop() as U;
+        const A = cs.pop() as U;
+        const B = cs.pop() as U;
+        const C = cs.pop() as U;
         return _solveDegree2(A, B, C, $);
     }
 
     if (n === 4) {
-        const A = coefficients.pop() as U;
-        const B = coefficients.pop() as U;
-        const C = coefficients.pop() as U;
-        const D = coefficients.pop() as U;
+        const A = cs.pop() as U;
+        const B = cs.pop() as U;
+        const C = cs.pop() as U;
+        const D = cs.pop() as U;
         return _solveDegree3(A, B, C, D, $);
     }
 
     // See http://www.sscc.edu/home/jdavidso/Math/Catalog/Polynomials/Fourth/Fourth.html
     // for a description of general shapes and properties of fourth degree polynomials
     if (n === 5) {
-        const A = coefficients.pop() as U;
-        const B = coefficients.pop() as U;
-        const C = coefficients.pop() as U;
-        const D = coefficients.pop() as U;
-        const E = coefficients.pop() as U;
+        const A = cs.pop() as U;
+        const B = cs.pop() as U;
+        const C = cs.pop() as U;
+        const D = cs.pop() as U;
+        const E = cs.pop() as U;
         return _solveDegree4(A, B, C, D, E, $);
     }
 

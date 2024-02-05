@@ -3,9 +3,9 @@ import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 //  x^4 - 10*x^3 + 21*x^2 + 40*x - 100 => [-2,2,5]
 describe("roots", function () {
-    it("roots(x)", function () {
+    it("roots(x,x)", function () {
         const lines: string[] = [
-            `roots(x)`
+            `roots(x,x)`
         ];
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);

@@ -3,11 +3,9 @@ import { assert } from "chai";
 import { Cons, is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig, UndeclaredVars } from "../src/api/api";
 import { Stepper } from "../src/clojurescript/runtime/Stepper";
-import { SyntaxKind } from "../src/parser/parser";
 
 const engineOptions: Partial<EngineConfig> = {
-    allowUndeclaredVars: UndeclaredVars.Nil,
-    syntaxKind: SyntaxKind.STEMCscript
+    allowUndeclaredVars: UndeclaredVars.Nil
 };
 
 function stripWhitespace(s: string): string {

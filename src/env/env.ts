@@ -107,8 +107,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : false,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : false,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : false,
-            useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false,
-            syntaxKind: typeof options.syntaxKind !== 'undefined' ? options.syntaxKind : SyntaxKind.STEMCscript,
+            useParenForTensors: typeof options.useParenForTensors === 'boolean' ? options.useParenForTensors : false
         };
         // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;
@@ -124,8 +123,7 @@ function config_from_options(options: EnvOptions | undefined): EnvConfig {
             useCaretForExponentiation: false,
             useDerivativeShorthandLowerD: false,
             useIntegersForPredicates: false,
-            useParenForTensors: false,
-            syntaxKind: SyntaxKind.STEMCscript
+            useParenForTensors: false
         };
         // console.lg(`EnvConfig: ${config.allowUndeclaredVars}`);
         return config;

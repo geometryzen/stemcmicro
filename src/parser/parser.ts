@@ -154,9 +154,6 @@ export function clojurescript_parse(sourceText: string, options: ClojureScriptPa
 export function delegate_parse_script(sourceText: string, options?: ParseOptions): { trees: U[], errors: Error[] } {
     const syntaxKind = script_kind_from_options(options);
     switch (syntaxKind) {
-        case SyntaxKind.STEMCscript: {
-            return stemc_parse(sourceText, stemc_parse_options(options));
-        }
         case SyntaxKind.ClojureScript: {
             return clojurescript_parse(sourceText, clojurescript_parse_options(options));
         }
@@ -171,7 +168,7 @@ export function delegate_parse_script(sourceText: string, options?: ParseOptions
             return pythonscript_parse(sourceText, python_parse_options(options));
         }
         default: {
-            throw new Error(`options.syntaxKind ${syntaxKind} must be one of ${JSON.stringify(syntaxKinds.map(human_readable_syntax_kind).sort())}.`);
+            return stemc_parse(sourceText, stemc_parse_options(options));
         }
     }
 }

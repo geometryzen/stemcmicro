@@ -1,6 +1,6 @@
 import { booT, create_sym, is_blade, is_boo, is_flt, is_keyword, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Keyword, one, Rat, Sym, Tensor, zero } from 'math-expression-atoms';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { car, cdr, Cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
+import { car, cdr, Cons, is_atom, is_cons, U } from 'math-expression-tree';
 import { mp_denominator, mp_numerator } from '../bignum';
 import { lt_num_num } from '../calculators/compare/lt_num_num';
 import { Directive } from '../env/ExtensionEnv';
@@ -1051,7 +1051,7 @@ function print_TEST_latex(p: U, $: PrintConfig): string {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (nil === cdr(p)) {
+        if (cdr(p).isnil) {
             accumulator += '{';
             accumulator += render_using_non_sexpr_print_mode(car(p), $);
             accumulator += '} & otherwise ';
@@ -1082,7 +1082,7 @@ function print_TEST_codegen(p: U, $: PrintConfig): string {
         // odd number of parameters means that the
         // last argument becomes the default case
         // i.e. the one without a test.
-        if (nil === cdr(p)) {
+        if (cdr(p).isnil) {
             accumulator += 'else {';
             accumulator += 'return (' + render_using_non_sexpr_print_mode(car(p), $) + ');,$';
             accumulator += '}';
@@ -2069,7 +2069,7 @@ function print_factor_fallback(expr: U, omtPrns: boolean, $: PrintConfig): strin
         let str = '';
         str += print_factor(expr.car, false, false, $);
         expr = expr.cdr;
-        if (nil === expr) {
+        if (expr.isnil) {
             return str;
         }
         else {

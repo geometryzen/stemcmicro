@@ -27,7 +27,7 @@ export function unique(p: U) {
 
 function unique_f(p: U, p1: U, p2: U) {
     if (is_str(p)) {
-        if (nil === p1) {
+        if (p1.isnil) {
             p1 = p;
         }
         else if (p !== p1) {

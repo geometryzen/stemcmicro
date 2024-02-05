@@ -4,7 +4,7 @@ import { inverse } from '../../helpers/inverse';
 import { nativeInt } from '../../nativeInt';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
-import { one, create_int, zero } from '../../tree/rat/Rat';
+import { create_int, one, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { car, cdr, is_cons, U } from '../../tree/tree';
 import { factor_small_number } from '../factor/factor';
@@ -39,7 +39,7 @@ export function divisors(term: U, $: ExtensionEnv): U {
     return new Tensor([n], sort_factors(factors, $));
 }
 
-export function ydivisors(p1: U, $: ExtensionEnv): U[] {
+export function ydivisors(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
     const stack: U[] = [];
     // push all of the term's factors
     if (is_num(p1)) {
@@ -102,7 +102,7 @@ export function ydivisors(p1: U, $: ExtensionEnv): U[] {
 //    12
 //
 //-----------------------------------------------------------------------------
-function gen(stack: U[], h: number, k: number, $: ExtensionEnv): void {
+function gen(stack: U[], h: number, k: number, $: Pick<ExtensionEnv, 'multiply' | 'power'>): void {
     const ACCUM: U = stack.pop() as U;
 
     if (h === k) {
@@ -134,7 +134,7 @@ function gen(stack: U[], h: number, k: number, $: ExtensionEnv): void {
 //  by the exponent.
 //
 //-----------------------------------------------------------------------------
-function __factor_add(p1: U, $: ExtensionEnv): U[] {
+function __factor_add(p1: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'subtract' | 'valueOf'>): U[] {
     // get gcd of all terms
     const temp1 = is_cons(p1) ? p1.tail().reduce(function (x, y) {
         return gcd(x, y, $);

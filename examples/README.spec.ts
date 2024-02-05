@@ -10,9 +10,7 @@ describe("examples", function () {
         const lines: string[] = [
             `1 + 2 + 3 + 4`
         ];
-        const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.STEMCscript
-        };
+        const engineOptions: Partial<EngineConfig> = {};
         const engine: ExprEngine = create_engine(engineOptions);
 
         const parseOptions: Partial<ParseConfig> = {
@@ -137,10 +135,7 @@ describe("examples", function () {
         const lines: string[] = [
             `joule / coulomb`
         ];
-        const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.STEMCscript,
-            prolog: []
-        };
+        const engineOptions: Partial<EngineConfig> = { prolog: [] };
         const engine: ExprEngine = create_engine(engineOptions);
 
         const parseOptions: Partial<ParseConfig> = {
@@ -170,7 +165,6 @@ describe("examples", function () {
             `joule / coulomb`
         ];
         const engineOptions: Partial<EngineConfig> = {
-            syntaxKind: SyntaxKind.STEMCscript,
             prolog: [
                 `joule=uom("joule")`,
                 `coulomb=uom("coulomb")`

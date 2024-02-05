@@ -201,7 +201,7 @@ function assert_parse(trees: U[], errors: Error[], engine: ExprEngine) {
 describe("runscript", function () {
     xit("STEMCscript", function () {
         const sourceText = stemcscript_source.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine();
         const { trees, errors } = engine.parse(sourceText, {});
 
         assert_parse(trees, errors, engine);

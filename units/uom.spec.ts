@@ -2,7 +2,6 @@ import { assert } from 'chai';
 import { is_rat, is_uom } from 'math-expression-atoms';
 import { is_nil, U } from 'math-expression-tree';
 import { create_engine, ExprEngine } from '../src/api/api';
-import { SyntaxKind } from '../src/parser/parser';
 import { create_script_context } from '../src/runtime/script_engine';
 import { assert_one_value_execute } from './assert_one_value_execute';
 
@@ -18,7 +17,7 @@ describe("uom", function () {
             `g`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine();
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -37,7 +36,7 @@ describe("uom", function () {
             `k * m / s`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine();
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -85,7 +84,7 @@ describe("uom", function () {
             # NetF|en`,
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+        const engine: ExprEngine = create_engine();
         const { trees, errors } = engine.parse(sourceText);
         assert.strictEqual(errors.length, 0);
         for (const tree of trees) {
@@ -550,7 +549,7 @@ describe("uom", function () {
                 `second`
             ];
             const sourceText = lines.join('\n');
-            const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+            const engine: ExprEngine = create_engine();
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
             assert.strictEqual(trees.length, 2);
@@ -575,7 +574,7 @@ describe("uom", function () {
                 `second/second`
             ];
             const sourceText = lines.join('\n');
-            const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+            const engine: ExprEngine = create_engine();
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
             assert.strictEqual(trees.length, 2);
@@ -600,7 +599,7 @@ describe("uom", function () {
                 `second/second`
             ];
             const sourceText = lines.join('\n');
-            const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.STEMCscript });
+            const engine: ExprEngine = create_engine();
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
             assert.strictEqual(trees.length, 2);

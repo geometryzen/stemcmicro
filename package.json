@@ -1,5 +1,5 @@
 {
-    "name": "stemcscript",
+    "name": "stemcomega",
     "version": "0.0.170",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
@@ -87,6 +87,7 @@
         "unit-rect": "mocha 'units/rect.spec.ts'",
         "unit-refcount": "mocha 'units/refcount.spec.ts'",
         "unit-rendersvg": "mocha 'units/rendersvg.spec.ts'",
+        "unit-roots": "mocha 'units/roots.spec.ts'",
         "unit-runscript": "mocha 'units/runscript.spec.ts'",
         "unit-runtime": "mocha 'units/runtime.spec.ts'",
         "unit-schwarzchild": "mocha 'units/schwarzchild.spec.ts'",
@@ -121,7 +122,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/geometryzen/stemcscript.git"
+        "url": "git+https://github.com/geometryzen/stemcomega.git"
     },
     "keywords": [
         "algebrite",
@@ -143,9 +144,9 @@
     },
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/geometryzen/stemcscript/issues"
+        "url": "https://github.com/geometryzen/stemcomega/issues"
     },
-    "homepage": "https://github.com/geometryzen/stemcscript#readme",
+    "homepage": "https://github.com/geometryzen/stemcomega#readme",
     "dependencies": {
         "generic-rbtree": "^1.1.2",
         "typhon-lang": "^1.0.13"

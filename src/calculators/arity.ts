@@ -1,4 +1,4 @@
-import { Cons, is_cons, nil } from "../tree/tree";
+import { Cons, is_cons } from "math-expression-tree";
 
 export function arity(expr: Cons): number {
     const cdr_expr = expr.cdr;
@@ -10,10 +10,7 @@ export function arity(expr: Cons): number {
         throw new Error(``);
 
     }
-    else if (nil === cdr_expr) {
-        return 1;
-    }
     else {
-        throw new Error(``);
+        return 1;
     }
 }

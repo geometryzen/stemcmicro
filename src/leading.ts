@@ -4,7 +4,7 @@ import { guess } from './guess';
 import { divide } from './helpers/divide';
 import { degree } from './operators/degree/degree';
 import { caddr, cadr } from './tree/helpers';
-import { nil, U } from './tree/tree';
+import { U } from './tree/tree';
 
 /*
  Return the leading coefficient of a polynomial.
@@ -22,7 +22,7 @@ The result is undefined if P is not a polynomial.
 export function Eval_leading(p1: U, $: ExtensionEnv): U {
     const P = $.valueOf(cadr(p1));
     p1 = $.valueOf(caddr(p1));
-    const X = nil === p1 ? guess(P) : p1;
+    const X = p1.isnil ? guess(P) : p1;
     return leading(P, X, $);
 }
 

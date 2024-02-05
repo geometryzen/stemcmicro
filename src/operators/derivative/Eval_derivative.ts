@@ -76,7 +76,7 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
         F = temp;
 
         // if p5 (N) is NIL then arglist is exhausted
-        if (nil === N) {
+        if (N.isnil) {
             break;
         }
 
@@ -95,7 +95,7 @@ export function Eval_derivative(expr: Cons, $: ExtensionEnv): U {
         if (is_num(N)) {
             p1 = cdr(p1);
             N = $.valueOf(car(p1));
-            if (nil === N) {
+            if (N.isnil) {
                 break; // arglist exhausted
             }
             if (!is_num(N)) {

@@ -32,7 +32,7 @@ export function Eval_pattern(p1: U, $: ExtensionEnv): void {
     }
     const arg1 = car(cdr(p1));
     const arg2 = car(cdr(cdr(p1)));
-    if (nil === arg2) {
+    if (arg2.isnil) {
         halt('pattern needs at least a template and a transformed version');
     }
     // third argument is optional and contains the tests

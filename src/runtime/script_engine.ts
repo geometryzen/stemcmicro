@@ -166,8 +166,7 @@ export function env_options_from_script_context_options(options: ScriptContextOp
             useCaretForExponentiation: false,
             useDerivativeShorthandLowerD: false,
             useIntegersForPredicates: false,
-            useParenForTensors: false,
-            syntaxKind: SyntaxKind.STEMCscript
+            useParenForTensors: false
         };
         return hook(config, "B");
     }
@@ -184,7 +183,12 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
     const $ = create_env(envOptions);
     init_env($, contextOptions);
     switch (contextOptions.syntaxKind) {
-        case SyntaxKind.STEMCscript: {
+        case SyntaxKind.ClojureScript:
+        case SyntaxKind.Eigenmath:
+        case SyntaxKind.PythonScript: {
+            break;
+        }
+        default: {
             define_math_constant_pi($);
             define_spacetime_algebra($);
             define_si_units($);
@@ -221,7 +225,7 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         executeScript(sourceText: string, options: ScriptExecuteOptions): { values: U[], prints: string[], errors: Error[] } {
             // console.lg("executeScript", sourceText);
-            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind' | 'useIntegersForPredicates'> = { syntaxKind: SyntaxKind.STEMCscript };
+            const picks: Pick<ScriptContextOptions, 'catchExceptions' | 'syntaxKind' | 'useIntegersForPredicates'> = {};
             if (contextOptions) {
                 if (typeof contextOptions.catchExceptions === 'boolean') {
                     picks.catchExceptions = contextOptions.catchExceptions;
@@ -326,7 +330,6 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
     else {
         return {
             catchExceptions: false,
-            syntaxKind: SyntaxKind.STEMCscript,
             useCaretForExponentiation: false,
             useIntegersForPredicates: false,
             useParenForTensors: false,

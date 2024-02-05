@@ -1,11 +1,11 @@
-import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { divide } from '../../helpers/divide';
 import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { LAGUERRE, SECRETX } from '../../runtime/constants';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
-import { one, create_int, zero } from '../../tree/rat/Rat';
-import { nil, U } from '../../tree/tree';
+import { create_int, one, zero } from '../../tree/rat/Rat';
+import { U } from '../../tree/tree';
 import { subst } from '../subst/subst';
 import { is_sym } from '../sym/is_sym';
 
@@ -38,7 +38,7 @@ export function Eval_laguerre(p1: U, $: ExtensionEnv): U {
     const X = $.valueOf(cadr(p1));
     const N = $.valueOf(caddr(p1));
     const p2 = $.valueOf(cadddr(p1));
-    const K = nil === p2 ? zero : p2;
+    const K = p2.isnil ? zero : p2;
 
     return laguerre(X, N, K, $);
 }

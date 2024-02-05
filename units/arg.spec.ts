@@ -1,5 +1,4 @@
 import { assert } from "chai";
-import { SyntaxKind } from "../src/parser/parser";
 import { stemc_prolog } from "../src/runtime/init";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
@@ -17,7 +16,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "undefined");
@@ -31,7 +30,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "undefined");
@@ -46,7 +45,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "0");
@@ -61,7 +60,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/2 pi)");
@@ -76,7 +75,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "3.041924...");
@@ -91,7 +90,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/2 pi)");
@@ -106,7 +105,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 1/4 pi)");
@@ -121,7 +120,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* 3/4 pi)");
@@ -136,7 +135,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -1/4 pi)");
@@ -151,7 +150,7 @@ describe("arg", function () {
 
         const context = create_script_context({});
 
-        const { values } = context.executeScript(sourceText, { syntaxKind: SyntaxKind.STEMCscript });
+        const { values } = context.executeScript(sourceText, {});
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
         assert.strictEqual(context.renderAsSExpr(values[0]), "(* -3/4 pi)");

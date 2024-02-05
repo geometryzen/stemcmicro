@@ -1,5 +1,4 @@
 import { assert } from 'chai';
-import { SyntaxKind } from '../src/parser/parser';
 import { create_script_context } from '../src/runtime/script_engine';
 
 describe("scripts", function () {
@@ -9,9 +8,7 @@ describe("scripts", function () {
                 `x+y`
             ];
             const sourceText = lines.join('\n');
-            const context = create_script_context({
-                syntaxKind: SyntaxKind.STEMCscript
-            });
+            const context = create_script_context({});
             const { values } = context.executeScript(sourceText);
             assert.isArray(values);
             assert.strictEqual(values.length, 1, "values.length");
@@ -29,9 +26,7 @@ describe("scripts", function () {
                 `x*y`
             ];
             const sourceText = lines.join('\n');
-            const context = create_script_context({
-                syntaxKind: SyntaxKind.STEMCscript
-            });
+            const context = create_script_context({});
             const { values } = context.executeScript(sourceText);
             assert.isArray(values);
             assert.strictEqual(values.length, 1, "values.length");
@@ -51,7 +46,6 @@ describe("scripts", function () {
             ];
             const sourceText = lines.join('\n');
             const context = create_script_context({
-                syntaxKind: SyntaxKind.STEMCscript,
                 useCaretForExponentiation: true
             });
             const { values } = context.executeScript(sourceText);
@@ -73,7 +67,6 @@ describe("scripts", function () {
             ];
             const sourceText = lines.join('\n');
             const context = create_script_context({
-                syntaxKind: SyntaxKind.STEMCscript,
                 useCaretForExponentiation: true
             });
             const { values } = context.executeScript(sourceText);

@@ -1,11 +1,10 @@
-import { cadnr } from "../../calculators/cadnr";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { guess } from "../../guess";
 import { hash_nonop_cons } from "../../hashing/hash_info";
 import { Native } from "../../native/Native";
 import { native_sym } from "../../native/native_sym";
 import { cdddr } from "../../tree/helpers";
-import { Cons, is_cons, is_nil, U } from "../../tree/tree";
+import { Cons, is_cons, U } from "../../tree/tree";
 import { FunctionVarArgs } from "../helpers/FunctionVarArgs";
 import { factor, factor_again } from "./factor";
 
@@ -13,19 +12,22 @@ export const FACTOR = native_sym(Native.factor);
 
 /**
  * Factor a polynomial or integer.
+ * (factor P X) or (factor P X Y)
  */
 export function Eval_factor(expr: Cons, $: ExtensionEnv): U {
-    const arg1 = $.valueOf(cadnr(expr, 1));
-    const arg2 = $.valueOf(cadnr(expr, 2));
-    const X = is_nil(arg2) ? guess(arg1) : arg2;
-    let temp = factor(arg1, X, $);
+    const P = $.valueOf(expr.item1);
+    const arg2 = $.valueOf(expr.item2);
+    const X = arg2.isnil ? guess(P) : arg2;
+    const factors = factor(P, X, $);
 
     // more factoring?
-    const p1 = cdddr(expr);
-    if (is_cons(p1)) {
-        temp = [...p1].reduce((acc: U, p: U) => factor_again(acc, $.valueOf(p), $), temp);
+    const Y = cdddr(expr);
+    if (is_cons(Y)) {
+        return [...Y].reduce((acc: U, p: U) => factor_again(acc, $.valueOf(p), $), factors);
     }
-    return temp;
+    else {
+        return factors;
+    }
 }
 
 class Builder implements OperatorBuilder<U> {

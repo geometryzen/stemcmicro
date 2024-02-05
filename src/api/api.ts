@@ -158,9 +158,6 @@ export interface EngineConfig {
 function engine_kind_from_engine_options(options: Partial<EngineConfig>): EngineKind {
     if (options.syntaxKind) {
         switch (options.syntaxKind) {
-            case SyntaxKind.STEMCscript: {
-                return EngineKind.STEMCscript;
-            }
             case SyntaxKind.ClojureScript: {
                 return EngineKind.ClojureScript;
             }

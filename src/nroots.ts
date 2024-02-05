@@ -3,7 +3,7 @@ import { imu } from './env/imu';
 import { guess } from './guess';
 import { is_poly_expanded_form } from './is';
 import { sort_stack } from './misc';
-import { coeff } from './operators/coeff/coeff';
+import { coefficients } from './operators/coeff/coeff';
 import { evaluate_as_float } from './operators/float/float';
 import { is_flt } from './operators/flt/is_flt';
 import { im } from './operators/imag/imag';
@@ -79,16 +79,16 @@ export function Eval_nroots(expr: Cons, $: ExtensionEnv): U {
     const h = defs.tos;
 
     // get the coefficients
-    const coefficients = coeff(P, X, $);
-    let n = coefficients.length;
+    const cs = coefficients(P, X, $);
+    let n = cs.length;
     if (n > NROOTS_YMAX) {
         halt('nroots: degree?');
     }
 
     // convert the coefficients to real and imaginary doubles
     for (let i = 0; i < n; i++) {
-        P = $.valueOf(evaluate_as_float(re(coefficients[i], $), $));
-        X = $.valueOf(evaluate_as_float(im(coefficients[i], $), $));
+        P = $.valueOf(evaluate_as_float(re(cs[i], $), $));
+        X = $.valueOf(evaluate_as_float(im(cs[i], $), $));
         if (!is_flt(P) || !is_flt(X)) {
             halt('nroots: coefficients?');
         }

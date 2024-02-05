@@ -3,6 +3,7 @@ import { ExtensionEnv } from '../../env/ExtensionEnv';
 
 /**
  * BEWARE: The order of parameters does not match the scripting language which is (subst newExpr, oldExpr, expr).
+ * There is no evaluation performed; the ExtensionEnv is used to recurse into atoms.
  * @param expr 
  * @param oldExpr 
  * @param newExpr

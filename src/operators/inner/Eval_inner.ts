@@ -92,7 +92,7 @@ export function Eval_inner(p1: Cons, $: ExtensionEnv): U {
     const args: U[] = [];
     args.push(car(cdr(p1)));
     const secondArgument = car(cdr(cdr(p1)));
-    if (nil === secondArgument) {
+    if (secondArgument.isnil) {
         halt('pattern needs at least a template and a transformed version');
     }
 
@@ -213,7 +213,7 @@ export function get_innerprod_factors(tree: U, factors_accumulator: U[]): void {
         return;
     }
 
-    if (nil === cdr(tree)) {
+    if (cdr(tree).isnil) {
         get_innerprod_factors(car(tree), factors_accumulator);
         return;
     }

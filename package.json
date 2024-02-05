@@ -1,6 +1,6 @@
 {
     "name": "stemcomega",
-    "version": "0.0.170",
+    "version": "0.0.171",
     "description": "Computer Algebra System in TypeScript",
     "exports": {
         ".": {

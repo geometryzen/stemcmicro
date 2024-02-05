@@ -19,6 +19,7 @@ export function Eval_factor(expr: Cons, $: ExtensionEnv): U {
     const arg2 = $.valueOf(expr.item2);
     const X = arg2.isnil ? guess(P) : arg2;
     const factors = factor(P, X, $);
+    // console.lg("factors", $.toInfixString(factors));
 
     // more factoring?
     const Y = cdddr(expr);

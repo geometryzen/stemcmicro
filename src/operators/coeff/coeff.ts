@@ -47,7 +47,9 @@ export function Eval_coeff(expr: Cons, $: ExtensionEnv): U {
 //-----------------------------------------------------------------------------
 
 /**
- * The coefficients of the polynomial expression are returned in an array in the order [a0, a1, a2, ..., an]
+ * The coefficients of the polynomial expression are returned in an array in the order [a0, a1, a2, ..., an].
+ * 
+ * There are no gaps.
  */
 export function coefficients(expr: U, x: U, $: Pick<ExtensionEnv, 'add' | 'multiply' | 'negate' | 'operatorFor' | 'valueOf' | 'pushDirective' | 'popDirective'>): U[] {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

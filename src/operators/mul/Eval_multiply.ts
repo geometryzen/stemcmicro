@@ -61,38 +61,55 @@ export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
-    // console.lg(`lhs => ${render_as_infix(lhs, $)} rhs => ${render_as_infix(rhs, $)}`);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const hook = function (retval: U, description: string): U {
+        // console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`, $.toInfixString(retval), description);
+        return retval;
+    };
+    /*
+    if ($.getDirective(Directive.expanding)) {
+        // Fall through
+    }
+    else {
+        if (lhs.equals(rhs)) {
+            return hook(items_to_cons(native_sym(Native.pow), lhs, create_int(2)), "");
+        }
+        else {
+            return hook(items_to_cons(native_sym(Native.multiply), lhs, rhs), "");
+        }
+    }
+    */
     // TODO: Optimize handling of numbers, 0, 1.
 
     // TODO: This function should not known anything about Flt(s) and Rat(s).
     // These optimizations should be introduced by extensions to multiplication.
     if (is_num(lhs) && is_num(rhs)) {
-        return multiply_num_num(lhs, rhs);
+        return hook(multiply_num_num(lhs, rhs), "A");
     }
     // TODO: Move these out, just like Flt.
     if (is_rat(lhs)) {
         if (lhs.isZero()) {
-            return lhs;
+            return hook(lhs, "B");
         }
     }
     if (is_rat(rhs)) {
         if (rhs.isZero()) {
-            return rhs;
+            return hook(rhs, "C");
         }
     }
 
     // Distributive Law  (x1 + x2 + ...) * R => x1 * R + x2 * R + ...
     if ($.isExpanding() && is_add(lhs)) {
-        return lhs
+        return hook(lhs
             .tail()
-            .reduce((a: U, b: U) => $.add(a, multiply(b, rhs, $)), zero);
+            .reduce((a: U, b: U) => $.add(a, multiply(b, rhs, $)), zero), "D");
     }
 
     // Distributive Law  L * (x1 + x2 + ...) => L * x1 + L * x2 + ...
     if ($.isExpanding() && is_add(rhs)) {
-        return rhs
+        return hook(rhs
             .tail()
-            .reduce((a: U, b: U) => $.add(a, multiply(lhs, b, $)), zero);
+            .reduce((a: U, b: U) => $.add(a, multiply(lhs, b, $)), zero), "E");
     }
 
     const compareFactors = $.compareFn(MATH_MUL);
@@ -104,7 +121,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         const blade = bladeL.mul(bladeR);
         const residueL = remove_factors(lhs, is_blade);
         const residueR = remove_factors(rhs, is_blade);
-        return $.multiply($.multiply(residueL, residueR), blade);
+        return hook($.multiply($.multiply(residueL, residueR), blade), "F");
     }
 
     if (contains_single_uom(lhs) && contains_single_uom(rhs)) {
@@ -113,24 +130,24 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         const uom = uomL.mul(uomR);
         const residueL = remove_factors(lhs, is_uom);
         const residueR = remove_factors(rhs, is_uom);
-        return $.multiply($.multiply(residueL, residueR), uom);
+        return hook($.multiply($.multiply(residueL, residueR), uom), "G");
     }
 
     // Units of Measure shortcut.
     if (is_uom(lhs) && is_uom(rhs)) {
-        return lhs.mul(rhs);
+        return hook(lhs.mul(rhs), "H");
     }
 
     // scalar times tensor?
     if (!is_tensor(lhs) && is_tensor(rhs)) {
         // return scalar_times_tensor(lhs, rhs);
-        return $.multiply(lhs, rhs);
+        return hook($.multiply(lhs, rhs), "I");
     }
 
     // tensor times scalar?
     if (is_tensor(lhs) && !is_tensor(rhs)) {
         // return tensor_times_scalar(lhs, rhs);
-        return $.multiply(lhs, rhs);
+        return hook($.multiply(lhs, rhs), "J");
     }
 
     // console.lg("lhs", lhs.toString());
@@ -245,7 +262,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     if ($.isExpanding()) {
         for (let i = 0; i < factors.length; i++) {
             if (is_add(factors[i])) {
-                return multiply_all(factors, $);
+                return hook(multiply_all(factors, $), "K");
             }
         }
     }
@@ -255,7 +272,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     if (n === 1) {
         const retval = assert_not_undefined(factors.pop());
         // console.lg("retval 1", $.toSExprString(retval));
-        return retval;
+        return hook(retval, "L");
     }
 
     // discard integer 1
@@ -264,7 +281,7 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         if (n === 2) {
             const retval = assert_not_undefined(factors.pop());
             // console.lg("retval 2", $.toSExprString(retval));
-            return retval;
+            return hook(retval, "M");
         }
         else {
             // factors[0] is Rat(1) so we'll just replace it with the multiplication operand
@@ -277,13 +294,13 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
             factors.sort(compareFactors);
             const retval = items_to_cons(MATH_MUL, ...factors);
             // console.lg("retval 3", $.toSExprString(retval));
-            return retval;
+            return hook(retval, "N");
         }
     }
 
     const retval = cons(MATH_MUL, items_to_cons(...factors));
     // console.lg("retval 3", $.toSExprString(retval));
-    return retval;
+    return hook(retval, "O");
 }
 
 /**

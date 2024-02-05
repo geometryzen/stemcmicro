@@ -43,7 +43,6 @@ export function factor(poly: U, x: U, $: ExtensionEnv): U {
 }
 
 export function factorize(p: U, x: U, $: Pick<ExtensionEnv, 'add' | 'equals' | 'factorize' | 'isone' | 'iszero' | 'multiply' | 'negate' | 'operatorFor' | 'power' | 'pushDirective' | 'popDirective' | 'rect' | 'subtract' | 'valueOf'>): U {
-    // console.lg("factorize", ($ as ExtensionEnv).toInfixString(p));
     if (!p.contains(x)) {
         // console.lg(`Giving up b/c the polynomial does not contain the variable.`);
         return p;

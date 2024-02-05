@@ -1,4 +1,7 @@
 import { assert } from "chai";
+import { is_tensor } from "math-expression-atoms";
+import { U } from "math-expression-tree";
+import { create_engine } from "../src/api/api";
 import { create_script_context } from "../src/runtime/script_engine";
 import { assert_one_value_execute } from "./assert_one_value_execute";
 //  x^4 - 10*x^3 + 21*x^2 + 40*x - 100 => [-2,2,5]
@@ -172,6 +175,152 @@ describe("roots", function () {
         const engine = create_script_context({ useCaretForExponentiation: true });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         assert.strictEqual(engine.renderAsInfix(actual), "[4]");
+        engine.release();
+    });
+    it("roots(x,x)", function () {
+        const lines: string[] = [
+            `roots(x,x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!value.isnil) {
+                values.push(value);
+            }
+        }
+        // assert.strictEqual(values.length, 1);
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), '2');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '[0]');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), '2');
+        assert.strictEqual(is_tensor(values[0]), true);
+        engine.release();
+    });
+    it("roots x-a", function () {
+        const lines: string[] = [
+            `roots(x-a,x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!value.isnil) {
+                values.push(value);
+            }
+        }
+        // assert.strictEqual(values.length, 1);
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), '2');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '[a]');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), '2');
+        assert.strictEqual(is_tensor(values[0]), true);
+        engine.release();
+    });
+    it("roots (x-a)*(x-b)", function () {
+        const lines: string[] = [
+            `roots((x-a)*(x-b),x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!value.isnil) {
+                values.push(value);
+            }
+        }
+        // assert.strictEqual(values.length, 1);
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), '2');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '[a,b]');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), '2');
+        assert.strictEqual(is_tensor(values[0]), true);
+        engine.release();
+    });
+    it("roots (x-a)*(x-b)*(x-c)", function () {
+        const lines: string[] = [
+            `roots((x-a)*(x-b)*(x-c),x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!value.isnil) {
+                values.push(value);
+            }
+        }
+        // assert.strictEqual(values.length, 1);
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), '2');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '[a,b,c]');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), '2');
+        assert.strictEqual(is_tensor(values[0]), true);
+        engine.release();
+    });
+    it("roots (x-a)*(x-b)*(x-c)*(x-d)", function () {
+        const lines: string[] = [
+            `roots((x-a)*(x-b)*(x-c)*(x-d),x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!value.isnil) {
+                values.push(value);
+            }
+        }
+        // assert.strictEqual(values.length, 1);
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), '2');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), '2');
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '[a,b,c,d]');
+        // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), '2');
+        assert.strictEqual(is_tensor(values[0]), true);
+        engine.release();
+    });
+    it("roots of cubic", function () {
+        const lines: string[] = [
+            `roots(27+27*x+9*x**2+x**3,x)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine = create_engine();
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(trees.length, 1);
+
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!value.isnil) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '[-3,-3,-3]');
+        assert.strictEqual(is_tensor(values[0]), true);
         engine.release();
     });
 });

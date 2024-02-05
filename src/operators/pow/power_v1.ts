@@ -287,7 +287,7 @@ export function power_v1(base: U, expo: U, $: ExtensionEnv): U {
     // We don't always want to do this. It can make otherwise simple expressions explode and can throw off symbolic integration.
     // console.lg("expanding =>", $.getDirective(Directive.expanding));
     // console.lg("expandPowSum", $.getDirective(Directive.expandPowSum));
-    if ($.getDirective(Directive.expandPowSum)) {
+    if (/*$.getDirective(Directive.expanding) &&*/ $.getDirective(Directive.expandPowSum)) {
         if (is_cons(base) && is_sym(base.opr) && is_native(base.opr, Native.add) && is_num(expo) && is_integer_and_in_safe_number_range(expo)) {
             // console.lg("expandPowSum =>", $.getDirective(Directive.expandPowSum));
             // console.lg("base", $.toInfixString(base));

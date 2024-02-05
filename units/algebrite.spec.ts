@@ -9,7 +9,7 @@ describe("STEMCscript", function () {
             `{}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({});
+        const engine: ExprEngine = create_engine();
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -28,7 +28,7 @@ describe("STEMCscript", function () {
             `{a: 1, b: 2}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({});
+        const engine: ExprEngine = create_engine();
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -59,7 +59,7 @@ describe("STEMCscript", function () {
             `{visible: true}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({});
+        const engine: ExprEngine = create_engine();
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -89,7 +89,7 @@ describe("STEMCscript", function () {
             `{visible: false}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({});
+        const engine: ExprEngine = create_engine();
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -119,7 +119,7 @@ describe("STEMCscript", function () {
             `{visible:true}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({});
+        const engine: ExprEngine = create_engine();
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);
@@ -149,7 +149,7 @@ describe("STEMCscript", function () {
             `{visible:false}`
         ];
         const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine({});
+        const engine: ExprEngine = create_engine();
         try {
             const { trees, errors } = engine.parse(sourceText, {});
             assert.strictEqual(errors.length, 0);

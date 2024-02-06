@@ -61,7 +61,24 @@ class StrExtension implements Extension<Str> {
         // console.lg("StrExtension.toHumanString", `${str}`);
         const s = str.str;
         switch (s) {
+            // Experimenting here. May be better to look for use of units or to "smart" render to put the number in a reasonable range.
+            // https://en.wikipedia.org/wiki/Metric_prefix
+            case "deci": return 'd';
+            case "centi": return 'c';
+            case "milli": return 'm';
+            case "micro": return 'μ';
+            case "nano": return 'n';
+            case "pico": return 'p';
+            case "femto": return 'f';
+            case "atto": return 'a';
+            case "deka": return 'da';
+            case "hecto": return 'h';
+            case "kilo": return 'k';
             case "mega": return 'M';
+            case "giga": return 'G';
+            case "tera": return 'T';
+            case "peta": return 'P';
+            case "exa": return 'E';
             default: return JSON.stringify(str.str);
         }
     }

@@ -2,7 +2,7 @@ import { Boo, Cell, create_int, create_rat, create_sym, Flt, is_flt, is_rat, is_
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
-import { STEMCParseOptions, stemcmicro_parse } from '../algebrite/stemc_parse';
+import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { eval_draw } from '../eigenmath/eval_draw';
@@ -251,6 +251,9 @@ export function define_si_units($: ExtensionEnv): void {
     }
 }
 
+/**
+ * https://en.wikipedia.org/wiki/Metric_prefix
+ */
 export function define_metric_prefixes_for_si_units($: ExtensionEnv): void {
     // d
     const deci = create_rat(1, 10);

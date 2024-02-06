@@ -442,7 +442,7 @@ import { Eval_prime } from '../prime';
 import { get_last_print_mode_symbol } from '../print/print';
 import { render_using_print_mode } from '../print/render_using_print_mode';
 import { store_text_in_binding } from '../print/store_text_in_binding';
-import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE, TESTGE, TESTGT, TESTLE, TESTLT } from '../runtime/constants';
+import { AND, APPROXRATIO, CHECK, CLEAR, CLEARALL, DOT, FACTOR, ISREAL, NROOTS, POLAR, QUOTE } from '../runtime/constants';
 import { defs, PRINTMODE_ASCII, PRINTMODE_HUMAN, PRINTMODE_INFIX, PRINTMODE_LATEX, PRINTMODE_SEXPR } from '../runtime/defs';
 import { MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_RCO } from '../runtime/ns_math';
 import { RESERVED_KEYWORD_LAST } from '../runtime/ns_script';
@@ -470,8 +470,6 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     const PRIME = native_sym(Native.prime);
     const SIN = native_sym(Native.sin);
     const TEST = native_sym(Native.test);
-    const TESTEQ = native_sym(Native.testeq);
-    const TESTNE = native_sym(Native.testne);
 
     $.setSymbolOrder(MATH_ADD, new AddComparator());
     $.setSymbolOrder(MATH_MUL, new MulComparator());
@@ -1073,23 +1071,23 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineConsTransformer(TEST, Eval_test);
 
     $.defineOperator(testeq_sym_rat);
-    $.defineConsTransformer(TESTEQ, Eval_testeq);
-    $.defineConsTransformer(TESTLE, Eval_testle);
+    $.defineConsTransformer(native_sym(Native.testeq), Eval_testeq);
+    $.defineConsTransformer(native_sym(Native.testle), Eval_testle);
 
     $.defineOperator(testlt_flt_rat);
     $.defineOperator(testlt_rat_rat);
     $.defineOperator(testlt_sym_rat);
     $.defineOperator(testlt_mul_2_any_any_rat);
-    $.defineConsTransformer(TESTLT, Eval_testlt);
+    $.defineConsTransformer(native_sym(Native.testlt), Eval_testlt);
 
-    $.defineConsTransformer(TESTGE, Eval_testge);
+    $.defineConsTransformer(native_sym(Native.testge), Eval_testge);
 
     $.defineOperator(testgt_rat_rat);
     $.defineOperator(testgt_sym_rat);
     $.defineOperator(testgt_mul_2_any_any_rat);
-    $.defineConsTransformer(TESTGT, Eval_testgt);
+    $.defineConsTransformer(native_sym(Native.testgt), Eval_testgt);
 
-    $.defineConsTransformer(TESTNE, Eval_testne);
+    $.defineConsTransformer(native_sym(Native.testne), Eval_testne);
 
     $.defineOperator(transpose_varargs);
 

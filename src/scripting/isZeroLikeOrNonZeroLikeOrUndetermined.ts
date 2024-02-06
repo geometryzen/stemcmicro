@@ -7,6 +7,7 @@
 // Note that if one wants to check if we have a simple
 // zero atom or tensor in our hands, then the isZeroAtomOrTensor
 
+import { is_boo } from "math-expression-atoms";
 import { ExtensionEnv } from "../env/ExtensionEnv";
 import { imu } from "../env/imu";
 import { zzfloat } from "../operators/float/float";
@@ -28,7 +29,10 @@ export function isZeroLikeOrNonZeroLikeOrUndetermined(valueOrPredicate: U, $: Ex
 
     // OK first check if we already have
     // a simple zero (or simple zero tensor)
-    if ($.iszero(value)) {
+    if (is_boo(value)) {
+        return value.isTrue() ? true : value.isFalse() ? false : null;
+    }
+    else if ($.iszero(value)) {
         // console.lg("iszero", "true so returning false?");
         return false;
     }

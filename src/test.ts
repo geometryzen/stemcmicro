@@ -1,4 +1,5 @@
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from './env/ExtensionEnv';
+import { predicate_return_value } from './helpers/predicate_return_value';
 import { Native } from './native/Native';
 import { native_sym } from './native/native_sym';
 import { evaluate_as_float } from './operators/float/float';
@@ -9,7 +10,7 @@ import { simplify } from './operators/simplify/simplify';
 import { MSIGN } from './runtime/constants';
 import { isZeroLikeOrNonZeroLikeOrUndetermined } from './scripting/isZeroLikeOrNonZeroLikeOrUndetermined';
 import { cadr, cddr } from './tree/helpers';
-import { one, zero } from './tree/rat/Rat';
+import { zero } from './tree/rat/Rat';
 import { car, cdr, cons, Cons, is_cons, items_to_cons, U } from './tree/tree';
 
 const NOT = native_sym(Native.not);
@@ -85,10 +86,10 @@ export function Eval_testeq(expr: Cons, $: ExtensionEnv): U {
     const value = $.valueOf(replace_assign_with_testeq($.subtract(lhs, rhs)));
     let checkResult = isZeroLikeOrNonZeroLikeOrUndetermined(value, $);
     if (checkResult) {
-        return zero;
+        return predicate_return_value(false, $);
     }
     else if (checkResult != null && !checkResult) {
-        return one;
+        return predicate_return_value(true, $);
     }
 
     // we didn't get a simple numeric result but
@@ -99,10 +100,10 @@ export function Eval_testeq(expr: Cons, $: ExtensionEnv): U {
 
     checkResult = isZeroLikeOrNonZeroLikeOrUndetermined($.subtract(simpleLhs, simpleRhs), $);
     if (checkResult) {
-        return zero;
+        return predicate_return_value(false, $);
     }
     else if (checkResult != null && !checkResult) {
-        return one;
+        return predicate_return_value(true, $);
     }
 
     // if we didn't get to a number then we
@@ -121,10 +122,10 @@ export function Eval_testge(expr: Cons, $: ExtensionEnv): U {
     }
 
     if (comparison >= 0) {
-        return one;
+        return predicate_return_value(true, $);
     }
     else {
-        return zero;
+        return predicate_return_value(false, $);
     }
 }
 
@@ -137,10 +138,10 @@ export function Eval_testgt(expr: Cons, $: ExtensionEnv): U {
     }
 
     if (comparison > 0) {
-        return one;
+        return predicate_return_value(true, $);
     }
     else {
-        return zero;
+        return predicate_return_value(false, $);
     }
 }
 
@@ -153,10 +154,10 @@ export function Eval_testle(expr: Cons, $: ExtensionEnv): U {
     }
 
     if (comparison <= 0) {
-        return one;
+        return predicate_return_value(true, $);
     }
     else {
-        return zero;
+        return predicate_return_value(false, $);
     }
 }
 
@@ -171,10 +172,10 @@ export function Eval_testlt(expr: Cons, $: ExtensionEnv): U {
     }
 
     if (comparison < 0) {
-        return one;
+        return predicate_return_value(true, $);
     }
     else {
-        return zero;
+        return predicate_return_value(false, $);
     }
 }
 
@@ -190,12 +191,10 @@ export function Eval_not(expr: Cons, $: ExtensionEnv): U {
         return expr;
     }
     else if (checkResult) {
-        // true -> false
-        return zero;
+        return predicate_return_value(false, $);
     }
     else {
-        // false -> true
-        return one;
+        return predicate_return_value(true, $);
     }
 }
 
@@ -216,7 +215,7 @@ Logical-and of predicate expressions.
 */
 
 // and definition
-export function Eval_and(p1: U, $: ExtensionEnv): U {
+export function Eval_and(p1: Cons, $: ExtensionEnv): U {
     const wholeAndExpression = p1;
     let andPredicates = cdr(wholeAndExpression);
     let somePredicateUnknown = false;
@@ -243,7 +242,7 @@ export function Eval_and(p1: U, $: ExtensionEnv): U {
         }
         else if (!checkResult) {
             // found a false, enough to falsify everything and return
-            return zero;
+            return predicate_return_value(false, $);
         }
     }
 
@@ -257,7 +256,7 @@ export function Eval_and(p1: U, $: ExtensionEnv): U {
         return wholeAndExpression;
     }
     else {
-        return one;
+        return predicate_return_value(true, $);
     }
 }
 
@@ -286,7 +285,7 @@ export function Eval_or(p1: U, $: ExtensionEnv): U {
         }
         else if (checkResult) {
             // found a true, enough to return true
-            return one;
+            return predicate_return_value(true, $);
         }
         else if (!checkResult) {
             // found a false, move on to the next predicate
@@ -304,7 +303,7 @@ export function Eval_or(p1: U, $: ExtensionEnv): U {
         return wholeOrExpression;
     }
     else {
-        return zero;
+        return predicate_return_value(false, $);
     }
 }
 

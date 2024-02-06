@@ -1,5 +1,6 @@
 
 import { assert } from "chai";
+import { is_boo, is_tensor } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/api";
 
@@ -44,7 +45,7 @@ describe("coverage", function () {
     });
     xit("adj(x)", function () {
         const lines: string[] = [
-            `A=((a,b),(c,d))`,
+            `A=[[a,b],[c,d]]`,
             `adj(A) == det(A) * inv(A)`
         ];
         const sourceText = lines.join('\n');
@@ -78,7 +79,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("true"));
+        assert.strictEqual(is_boo(values[0]), true);
         engine.release();
     });
     it("arccos(x)", function () {
@@ -473,6 +475,31 @@ describe("coverage", function () {
         assert.strictEqual(strip_whitespace(engine.renderAsString(values[3], renderConfig)), strip_whitespace("d"));
         engine.release();
     });
+    it("coefficients(p)", function () {
+        const lines: string[] = [
+            `coefficients(a*x^3+b*x^2+c*x+d,x)`,
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            try {
+                const value = engine.valueOf(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[d,c,b,a]"));
+        assert.strictEqual(is_tensor(values[0]), true);
+        engine.release();
+    });
     it("cofactor(m,i,j)", function () {
         const lines: string[] = [
             `A=[[a,b],[c,d]]`,
@@ -495,7 +522,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("true"));
         engine.release();
     });
     it("conj(z)", function () {
@@ -1415,7 +1442,8 @@ describe("coverage", function () {
     it("hermite(x,n)", function () {
         const lines: string[] = [
             `hermite(x,0)`,
-            `hermite(x,1)`
+            `hermite(x,1)`,
+            `hermite(x,2)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -1433,9 +1461,10 @@ describe("coverage", function () {
                 assert.fail(`${e}`, "???");
             }
         }
-        assert.strictEqual(values.length, 2);
+        assert.strictEqual(values.length, 3);
         assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("2*x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[2], renderConfig)), strip_whitespace("-2+4*x^2"));
         engine.release();
     });
     xit("hilbert(n)", function () {
@@ -1703,7 +1732,8 @@ describe("coverage", function () {
     it("laguerre(x,n,a)", function () {
         const lines: string[] = [
             `laguerre(x,0)`,
-            `laguerre(x,1)`
+            `laguerre(x,1)`,
+            `laguerre(x,2)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -1721,9 +1751,10 @@ describe("coverage", function () {
                 assert.fail(`${e}`, "???");
             }
         }
-        assert.strictEqual(values.length, 2);
+        assert.strictEqual(values.length, 3);
         assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
         assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("1-x"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[2], renderConfig)), strip_whitespace("1-2*x+1/2*x^2"));
         engine.release();
     });
     it("lcm(a,b,...)", function () {
@@ -2018,7 +2049,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("0"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("false"));
+        assert.strictEqual(is_boo(values[0]), true);
         engine.release();
     });
     xit("nroots(p,x)", function () {
@@ -2091,7 +2123,8 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("true"));
+        assert.strictEqual(is_boo(values[0]), true);
         engine.release();
     });
     it("outer(a,b,...)", function () {

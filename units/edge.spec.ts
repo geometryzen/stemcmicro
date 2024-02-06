@@ -225,10 +225,10 @@ describe("edge", function () {
     });
     it("==", function () {
         const lines: string[] = [
-            `0==0`,
-            `0==1`,
-            `1==0`,
-            `1==1`
+            `0 == 0`,
+            `0 == 1`,
+            `1 == 0`,
+            `1 == 1`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineOptions);
@@ -236,18 +236,18 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 4);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`0`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`0`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`true`));
         engine.release();
     });
     it("!=", function () {
         const lines: string[] = [
-            `0!=0`,
-            `0!=1`,
-            `1!=0`,
-            `1!=1`
+            `0 != 0`,
+            `0 != 1`,
+            `1 != 0`,
+            `1 != 1`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineOptions);
@@ -255,18 +255,18 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 4);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`0`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`1`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`1`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`0`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`false`));
         engine.release();
     });
     it(">", function () {
         const lines: string[] = [
-            `0>0`,
-            `0>1`,
-            `1>0`,
-            `1>1`
+            `0 > 0`,
+            `0 > 1`,
+            `1 > 0`,
+            `1 > 1`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineOptions);
@@ -282,10 +282,10 @@ describe("edge", function () {
     });
     it(">=", function () {
         const lines: string[] = [
-            `0>=0`,
-            `0>=1`,
-            `1>=0`,
-            `1>=1`
+            `0 >= 0`,
+            `0 >= 1`,
+            `1 >= 0`,
+            `1 >= 1`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineOptions);
@@ -293,18 +293,18 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 4);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`0`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`1`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`true`));
         engine.release();
     });
     it("<", function () {
         const lines: string[] = [
-            `0<0`,
-            `0<1`,
-            `1<0`,
-            `1<1`
+            `0 < 0`,
+            `0 < 1`,
+            `1 < 0`,
+            `1 < 1`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineOptions);
@@ -320,10 +320,10 @@ describe("edge", function () {
     });
     it("<=", function () {
         const lines: string[] = [
-            `0<=0`,
-            `0<=1`,
-            `1<=0`,
-            `1<=1`
+            `0 <= 0`,
+            `0 <= 1`,
+            `1 <= 0`,
+            `1 <= 1`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineOptions);
@@ -331,10 +331,10 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 4);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`1`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`1`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`0`));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`1`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace(`true`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace(`false`));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace(`true`));
         engine.release();
     });
     it("A[i,j,...]=", function () {
@@ -415,10 +415,10 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 4);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("0"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("0"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("false"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("false"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("false"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("true"));
         engine.release();
     });
     it("arccos(x)", function () {
@@ -738,7 +738,7 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("true"));
         engine.release();
     });
     it("conj(z)", function () {
@@ -1877,8 +1877,8 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 2);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("0"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("true"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("false"));
         engine.release();
     });
     xit("nroots(p,x)", function () {
@@ -1932,10 +1932,10 @@ describe("edge", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = stepModule(module);
         assert.strictEqual(values.length, 4);
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("0"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("1"));
-        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("1"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[0], renderConfig)), stripWhitespace("false"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[1], renderConfig)), stripWhitespace("true"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[2], renderConfig)), stripWhitespace("true"));
+        assert.strictEqual(stripWhitespace(engine.renderAsString(values[3], renderConfig)), stripWhitespace("true"));
         engine.release();
     });
     it("outer(a,b,...)", function () {

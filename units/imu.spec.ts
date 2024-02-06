@@ -32,7 +32,7 @@ describe("imu", function () {
         });
         const actual = assert_one_value_execute(lines.join('\n'), engine);
         // assert.strictEqual(engine.renderAsSExpr(actual), "(* 2 i x)");
-        assert.strictEqual(engine.renderAsInfix(actual), `2*i*"hello"*x*sin(x)*e1*kg`);
+        assert.strictEqual(engine.renderAsInfix(actual), `2*i*x*sin(x)*e1*"hello"*kg`);
 
         engine.release();
     });

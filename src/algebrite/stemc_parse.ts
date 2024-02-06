@@ -55,7 +55,7 @@ function config_from_options(options: STEMCParseOptions | undefined): ScanConfig
  * @param sourceText The source text. May contain embedded newline characters.
  * @param options Determine how the parsing behaves.
  */
-export function stemc_parse(sourceText: string, options?: STEMCParseOptions): { trees: U[], errors: Error[] } {
+export function stemcmicro_parse(sourceText: string, options?: STEMCParseOptions): { trees: U[], errors: Error[] } {
     // console.lg(`scan(sourceText = ${JSON.stringify(sourceText)})`);
 
     const config: ScanConfig = config_from_options(options);

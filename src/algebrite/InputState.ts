@@ -131,13 +131,13 @@ export class InputState {
         return this.#token.pos - this.input_str;
     }
     /**
-     * The character at token.end
+     * The character at token.end. This property is dynamic. Changing token.end changes the return value.
      */
     get curr(): string {
         return this.sourceText.charAt(this.#token.end);
     }
     /**
-     * The character at token.end + 1
+     * The character at token.end + 1. This property is dynamic. Changing token.end changes the return value.
      */
     get next(): string {
         return this.sourceText[this.#token.end + 1];
@@ -254,11 +254,11 @@ export class InputState {
         if (consume_unsigned_num(this, {
             flt: () => {
                 this.#token.code = T_FLT;
-                this.update_token_text(this.#token.pos, this.#token.end);
+                this.update_token_text(this.#token.pos, this.#token.end, this.sourceText.substring(this.#token.pos, this.#token.end));
             },
             int: () => {
                 this.#token.code = T_INT;
-                this.update_token_text(this.#token.pos, this.#token.end);
+                this.update_token_text(this.#token.pos, this.#token.end, this.sourceText.substring(this.#token.pos, this.#token.end));
             }
         })) {
             return;
@@ -279,7 +279,7 @@ export class InputState {
             else {
                 this.#token.code = T_SYM;
             }
-            this.update_token_text(this.#token.pos, this.#token.end);
+            this.update_token_text(this.#token.pos, this.#token.end, this.sourceText.substring(this.#token.pos, this.#token.end));
             return;
         }
 
@@ -287,7 +287,36 @@ export class InputState {
         // TODO: Handle strings containing embedded double quotes
         if (this.curr === '"') {
             this.#token.end++;
+            let text = '';
+            let escaped = false;
             while (this.curr !== '"') {
+                if (this.curr === '\\') {
+                    escaped = true;
+                }
+                else if (this.curr === 'n') {
+                    if (escaped) {
+                        text += '\n';
+                        escaped = false;
+                    }
+                    else {
+                        text += this.curr;
+                    }
+                }
+                else if (this.curr === 'r') {
+                    if (escaped) {
+                        text += '\r';
+                        escaped = false;
+                    }
+                    else {
+                        text += this.curr;
+                    }
+                }
+                else if (this.curr === '\n') {
+                    this.scan_error(`Bad control character in string literal at position ${this.end} ${this.sourceText}`);
+                }
+                else {
+                    text += this.curr;
+                }
                 //if (scan_str == scanned.length || scanned[scan_str] == '\n' || scanned[scan_str] == '\r')
                 if (this.#token.end === this.sourceText.length - 1) {
                     this.#token.end++;
@@ -300,7 +329,7 @@ export class InputState {
             this.#token.end++;
             this.#token.code = T_STR;
             // Notice that the token.buf contains the entire un-parsed string.
-            this.update_token_text(this.#token.pos, this.#token.end);
+            this.update_token_text(this.#token.pos, this.#token.end, text);
             return;
         }
 
@@ -551,10 +580,10 @@ export class InputState {
      * TODO: In version 1.x there could be a problem with embedded string delimiters.
      * @param pos The end position of the token.
      * @param end The start position of the token.
+     * @param value The string that should be assumed by the token. Normally this.sourceText.substring(pos, end), but may differ due to string escaping.
      */
-    private update_token_text(pos: number, end: number): void {
-        this.#token.txt = this.sourceText.substring(pos, end);
-        // console.lg(`update_token_buf(pos => ${pos}, end => ${end}), token.buf => ${JSON.stringify(token.buf)}`);
+    private update_token_text(pos: number, end: number, text: string): void {
+        this.#token.txt = text;
     }
     public scan_error(errmsg: string): never {
         throw new TokenError(errmsg, this.#token.pos, this.#token.end);

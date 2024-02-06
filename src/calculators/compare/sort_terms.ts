@@ -1,6 +1,6 @@
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { MATH_ADD } from "../../runtime/ns_math";
-import { U } from "../../tree/tree";
 
 /**
  * Sorts an array of terms. Assumes that terms can commute under addition. 
@@ -8,12 +8,12 @@ import { U } from "../../tree/tree";
  * @param $ 
  * @returns A new array containing the sorted factors.
  */
-export function sort_terms(terms: U[], $: ExtensionEnv): U[] {
+export function sort_terms(terms: U[], $: Pick<ExtensionEnv, 'compareFn'>): U[] {
     // We don't use the index yet but it could be used to make the sort stable (see corresponding factors code).
     const sortable = terms.map(function (value, index) {
         return { value, index };
     });
-    const compareFn = $.compareFn(MATH_ADD);
+    const compareFn = $.compareFn(native_sym(Native.add));
     sortable.sort(function (x, y) {
         return compareFn(x.value, y.value);
     });

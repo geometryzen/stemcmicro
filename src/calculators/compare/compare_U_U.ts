@@ -19,8 +19,8 @@ import { has_imu_factor } from "./has_imu_factor";
  * @param rhs 
  * @returns 
  */
-export function compare(lhs: U, rhs: U): Sign {
-    // console.lg(`ENTERING compare ${lhs} ${rhs}`);
+export function compare_U_U(lhs: U, rhs: U): Sign {
+    // console.lg("compare_U_U", `${lhs}`, `${rhs}`);
     if (lhs.equals(rhs)) {
         return SIGN_EQ;
     }
@@ -114,7 +114,7 @@ export function compare(lhs: U, rhs: U): Sign {
         }
         else {
             if (is_cons(rhs)) {
-                return compare(lhs.opr, rhs.opr);
+                return compare_U_U(lhs.opr, rhs.opr);
             }
             else if (is_sym(rhs)) {
                 return SIGN_GT;

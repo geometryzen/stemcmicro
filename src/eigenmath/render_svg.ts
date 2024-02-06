@@ -2,6 +2,7 @@ import { Blade, Boo, create_flt, create_sym, Flt, is_blade, is_boo, is_flt, is_n
 import { is_native, Native, native_sym } from "math-expression-native";
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, is_nil, nil, U } from "math-expression-tree";
 import { is_imu } from "../operators/imu/is_imu";
+import { str_extension } from "../operators/str/str_extension";
 import { cadddr, caddr, cadr, cddddr, cddr } from "../tree/helpers";
 import { Imu } from "../tree/imu/Imu";
 import { bignum_itoa } from "./bignum_itoa";
@@ -943,8 +944,9 @@ function emit_roman_string(s: string, $: StackContext): void {
     }
 }
 
-function emit_string(p: Str, $: StackContext): void {
-    emit_roman_string(p.str, $);
+function emit_string(str: Str, $: StackContext): void {
+    const human = str_extension.toHumanString(str);
+    emit_roman_string(human, $);
 }
 
 function emit_subexpr(p: U, $: StackContext, ec: SvgRenderConfig): void {

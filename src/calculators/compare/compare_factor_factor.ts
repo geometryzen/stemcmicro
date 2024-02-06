@@ -1,22 +1,18 @@
-import { is_blade } from "math-expression-atoms";
+import { is_blade, is_num, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
+import { car, cdr, is_cons, is_nil, U } from "math-expression-tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { is_imu } from "../../operators/imu/is_imu";
-import { is_num } from "../../operators/num/is_num";
-import { is_str } from "../../operators/str/is_str";
 import { strcmp } from "../../operators/str/str_extension";
-import { is_sym } from "../../operators/sym/is_sym";
-import { is_tensor } from "../../operators/tensor/is_tensor";
-import { is_uom } from "../../operators/uom/is_uom";
 import { is_power } from "../../runtime/helpers";
-import { car, cdr, is_cons, is_nil, U } from "../../tree/tree";
-import { cmp_expr } from "./cmp_expr";
+import { compare_expr_expr } from "./compare_expr_expr";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
 
 export class MulComparator implements ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-        // console.lg("compare *", "lhs", $.toSExprString(lhs), "rhs", $.toSExprString(rhs));
+        // console.lg("compare_factor_factor", $.toInfixString(lhs), $.toInfixString(rhs));
+
         // We have to treat (pow base expo) as a special case because of the ambiguity in representing a symbol.
         // i.e. sym is the same as (pow sym expo).
         // So we have to order power expressions according to the base.
@@ -30,16 +26,6 @@ export class MulComparator implements ExprComparator {
         }
 
         if (lhs === rhs || lhs.equals(rhs)) {
-            return SIGN_EQ;
-        }
-
-        /*
-        if (contains_single_blade(lhs) && contains_single_blade(rhs)) {
-            return SIGN_EQ;
-        }
-        */
-
-        if (lhs === rhs) {
             return SIGN_EQ;
         }
 
@@ -79,18 +65,6 @@ export class MulComparator implements ExprComparator {
             return SIGN_GT;
         }
 
-        if (is_str(lhs) && is_str(rhs)) {
-            return strcmp(lhs.str, rhs.str);
-        }
-
-        if (is_str(lhs)) {
-            return SIGN_LT;
-        }
-
-        if (is_str(rhs)) {
-            return SIGN_GT;
-        }
-
         if (is_sym(lhs) && is_sym(rhs)) {
             return compare_sym_sym(lhs, rhs);
         }
@@ -116,7 +90,7 @@ export class MulComparator implements ExprComparator {
         }
 
         while (is_cons(lhs) && is_cons(rhs)) {
-            const n = cmp_expr(car(lhs), car(rhs), $);
+            const n = compare_expr_expr(car(lhs), car(rhs), $);
             if (n !== SIGN_EQ) {
                 return n;
             }
@@ -145,6 +119,18 @@ export class MulComparator implements ExprComparator {
             return SIGN_GT;
         }
 
+        if (is_str(lhs)) {
+            if (is_str(rhs)) {
+                return strcmp(lhs.str, rhs.str);
+            }
+            else {
+                return SIGN_LT;
+            }
+        }
+        else if (is_str(rhs)) {
+            return SIGN_GT;
+        }
+
         if (is_uom(lhs) && is_uom(rhs)) {
             return SIGN_EQ;
         }
@@ -158,6 +144,5 @@ export class MulComparator implements ExprComparator {
         }
 
         return SIGN_EQ;
-
     }
 }

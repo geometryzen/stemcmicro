@@ -1,11 +1,10 @@
+import { Str } from "math-expression-atoms";
 import { TokenParser } from "../../algebrite/ScanConfig";
-import { Str } from "../../tree/str/Str";
 
 export class StrTokenParser implements TokenParser {
-    parse(token: string, pos: number, end: number): Str {
-        // We remove the delimiters. Not very sophisticated, I know.
-        // TODO: Parsing of string with embedded and varying delimiters.
-        const parsedText = token.substring(1, token.length - 1);
-        return new Str(parsedText, pos, end);
+    parse(text: string, pos: number, end: number): Str {
+        // Notice that the text is the parsed representation.
+        // Delimiters have alreday been removed and account has been taken of escaped newlines.
+        return new Str(text, pos, end);
     }
 }

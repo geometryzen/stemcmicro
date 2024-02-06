@@ -8,6 +8,7 @@ import { Sym } from "../../tree/sym/Sym";
  * It takes no account of whether the symbols should be treated as vectors.
  */
 export function compare_sym_sym(lhs: Sym, rhs: Sym): Sign {
+    // console.lg("compare_sym_sym", `${lhs}`, `${rhs}`);
     if (is_pi(lhs) && is_pi(rhs)) {
         return SIGN_EQ;
     }

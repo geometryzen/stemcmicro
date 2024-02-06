@@ -1,14 +1,9 @@
-import { is_blade } from "math-expression-atoms";
+import { is_blade, is_num, is_str, is_sym, is_tensor, is_uom } from "math-expression-atoms";
+import { car, cdr, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_imu } from "../../operators/imu/is_imu";
-import { is_num } from "../../operators/num/is_num";
-import { is_str } from "../../operators/str/is_str";
 import { strcmp } from "../../operators/str/str_extension";
-import { is_sym } from "../../operators/sym/is_sym";
-import { is_tensor } from "../../operators/tensor/is_tensor";
-import { is_uom } from "../../operators/uom/is_uom";
-import { car, cdr, is_cons, U } from "../../tree/tree";
 import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 import { compare_tensors } from "./compare_tensors";
@@ -16,9 +11,8 @@ import { compare_tensors } from "./compare_tensors";
 /**
  * NIL, Num, Str, Sym, Tensor, Cons, Blade, Imu, Hyp, Uom
  */
-export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    // console.lg("ENTERING cmp_expr", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
-    let n: Sign = SIGN_EQ;
+export function compare_expr_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // console.lg("compare_expr_expr", $.toInfixString(lhs), $.toInfixString(rhs));
 
     if (lhs === rhs) {
         return SIGN_EQ;
@@ -122,8 +116,8 @@ export function cmp_expr(lhs: U, rhs: U, $: ExtensionEnv): Sign {
 
     // recursion here
     while (is_cons(lhs) && is_cons(rhs)) {
-        n = cmp_expr(car(lhs), car(rhs), $);
-        if (n !== 0) {
+        const n = compare_expr_expr(car(lhs), car(rhs), $);
+        if (n !== SIGN_EQ) {
             return n;
         }
         lhs = cdr(lhs);

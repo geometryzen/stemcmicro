@@ -1,4 +1,4 @@
-import { compare } from "../../calculators/compare/compare";
+import { compare_U_U } from "../../calculators/compare/compare_U_U";
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, PHASE_FLAGS_EXPANDING_UNION_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
@@ -35,7 +35,7 @@ function cross(lhs: LHS, rhs: RHS): boolean {
     const b1 = lhs.lhs.arg;
     const a2 = rhs.lhs.arg;
     const b2 = rhs.rhs.arg;
-    return a1.equals(a2) && b1.equals(b2) && compare(b1, a1) > 0;
+    return a1.equals(a2) && b1.equals(b2) && compare_U_U(b1, a1) > 0;
 }
 
 /**

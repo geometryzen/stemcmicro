@@ -1,12 +1,16 @@
 import { ExtensionEnv, Sign, SIGN_EQ } from "../../env/ExtensionEnv";
 import { Cons } from "../../tree/tree";
-import { cmp_terms } from "./comparator_add";
+import { compare_term_term } from "./compare_term_term";
 
 export function compare_cons_cons(lhs: Cons, rhs: Cons, $: ExtensionEnv): Sign {
     return compare_cons_cons_args(lhs, rhs, $, 0);
 }
 
+/**
+ * FIXME: Needs more testing.
+ */
 export function compare_cons_cons_args(lhs: Cons, rhs: Cons, $: ExtensionEnv, index: number): Sign {
+    // console.lg("compare_cons_cons", $.toInfixString(lhs), $.toInfixString(rhs));
     if (index < lhs.length) {
         // Fall through.
     }
@@ -19,7 +23,7 @@ export function compare_cons_cons_args(lhs: Cons, rhs: Cons, $: ExtensionEnv, in
     else {
         return SIGN_EQ;
     }
-    const indexSign = cmp_terms(lhs.item(index), rhs.item(index), $);
+    const indexSign = compare_term_term(lhs.item(index), rhs.item(index), $);
     switch (indexSign) {
         case SIGN_EQ: {
             return compare_cons_cons_args(lhs, rhs, $, index + 1);

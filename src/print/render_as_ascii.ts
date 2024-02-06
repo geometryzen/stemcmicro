@@ -8,6 +8,7 @@ import { is_flt } from '../operators/flt/is_flt';
 import { is_num } from '../operators/num/is_num';
 import { is_rat } from '../operators/rat/is_rat';
 import { is_str } from '../operators/str/is_str';
+import { str_extension } from '../operators/str/str_extension';
 import { is_sym } from '../operators/sym/is_sym';
 import { is_tensor } from '../operators/tensor/is_tensor';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
@@ -836,13 +837,12 @@ function emit_symbol(sym: Sym, $: PrintConfig): void {
     }
 }
 
-function emit_string(p: Str): void {
-    const pString = p.str;
-    __emit_char('"');
-    for (let i = 0; i < pString.length; i++) {
-        __emit_char(pString[i]);
+function emit_string(str: Str): void {
+    // We know that the Ascii representation will add double-quote delimiters. These should be included.
+    const chars = str_extension.toAsciiString(str);
+    for (let i = 0; i < chars.length; i++) {
+        __emit_char(chars[i]);
     }
-    __emit_char('"');
 }
 
 function fixup_fraction(x: number, k1: number, k2: number): void {

@@ -10,7 +10,7 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     // TODO: Not clear why we go to the trouble to scan the string when we'll just get a string.
     // It does not seem that reliable anyway given the simplistic escaping of the text.
     // Fails when the text is aleady contains double quotes.
-    const sourceText = '"' + text + '"';
+    const sourceText = JSON.stringify(text);
     // TOOD: Need a better routing to initialize the ScanOptions.
     const [scanned, tree] = scan(sourceText, 0, {
         useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),

@@ -2,7 +2,10 @@ import { Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { Sym } from "../../tree/sym/Sym";
 import { compare_sym_sym } from "./compare_sym_sym";
 
-export function compare_vars_vars(lhs: Sym[], rhs: Sym[]): Sign {
+/**
+ * FIXME: Needs more testing.
+ */
+ export function compare_vars_vars(lhs: Sym[], rhs: Sym[]): Sign {
     // console.lg(`compare_vars_vars lhs=${JSON.stringify(lhs)} rhs=${JSON.stringify(rhs)}`);
     let gtCount = 0;
     let eqCount = 0;

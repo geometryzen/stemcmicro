@@ -1,4 +1,4 @@
-import { Extension, ExtensionEnv, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
+import { Extension, Sign, TFLAGS, TFLAG_HALT, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { HASH_STR } from "../../hashing/hash_info";
 import { Str } from "../../tree/str/Str";
 import { cons, Cons, U } from "../../tree/tree";
@@ -22,8 +22,7 @@ export function is_str(arg: unknown): arg is Str {
 }
 
 class StrExtension implements Extension<Str> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor($: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
     }
     iscons(): false {
@@ -53,13 +52,24 @@ class StrExtension implements Extension<Str> {
         return expr;
     }
     toInfixString(str: Str): string {
-        return str.toInfixString();
+        return JSON.stringify(str.str);
+    }
+    toAsciiString(str: Str): string {
+        return JSON.stringify(str.str);
+    }
+    toHumanString(str: Str): string {
+        // console.lg("StrExtension.toHumanString", `${str}`);
+        const s = str.str;
+        switch (s) {
+            case "mega": return 'M';
+            default: return JSON.stringify(str.str);
+        }
     }
     toLatexString(str: Str): string {
-        return str.toInfixString();
+        return JSON.stringify(str.str);
     }
     toListString(str: Str): string {
-        return str.toListString();
+        return JSON.stringify(str.str);
     }
     evaluate(str: Str, argList: Cons): [TFLAGS, U] {
         return this.transform(cons(str, argList));
@@ -72,6 +82,8 @@ class StrExtension implements Extension<Str> {
     }
 }
 
-export const str_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new StrExtension($);
+export const str_extension = new StrExtension();
+
+export const str_operator_builder = new ExtensionOperatorBuilder(function () {
+    return str_extension;
 });

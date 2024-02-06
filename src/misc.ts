@@ -1,11 +1,9 @@
-import { cmp_terms } from './calculators/compare/comparator_add';
+import { is_str, Tensor, zero } from 'math-expression-atoms';
+import { car, cdr, is_cons, nil, U } from 'math-expression-tree';
+import { compare_term_term } from './calculators/compare/compare_term_term';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_str } from './operators/str/is_str';
 import { defs } from './runtime/defs';
-import { zero } from './tree/rat/Rat';
 import { create_tensor_elements } from './tree/tensor/create_tensor_elements';
-import { Tensor } from './tree/tensor/Tensor';
-import { car, cdr, is_cons, nil, U } from './tree/tree';
 
 // both ints
 export function zero_matrix(i: number, j: number): Tensor<U> {
@@ -54,7 +52,7 @@ export function sort_stack(n: number, $: ExtensionEnv) {
     const h = defs.tos - n;
     const subsetOfStack = defs.stack.slice(h, h + n) as U[];
     subsetOfStack.sort(function (a, b) {
-        return cmp_terms(a, b, $);
+        return compare_term_term(a, b, $);
     });
     defs.stack = defs.stack
         .slice(0, h)
@@ -69,6 +67,6 @@ export function sort_stack(n: number, $: ExtensionEnv) {
  */
 export function sort(arr: U[], $: ExtensionEnv): void {
     arr.sort(function (a, b) {
-        return cmp_terms(a, b, $);
+        return compare_term_term(a, b, $);
     });
 }

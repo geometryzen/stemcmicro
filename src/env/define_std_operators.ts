@@ -1,7 +1,7 @@
 import { create_sym, is_blade, is_flt } from 'math-expression-atoms';
 import { Eval_approxratio } from '../approxratio';
-import { AddComparator } from '../calculators/compare/comparator_add';
-import { MulComparator } from '../calculators/compare/comparator_mul';
+import { MulComparator } from '../calculators/compare/compare_factor_factor';
+import { AddComparator } from '../calculators/compare/compare_term_term';
 import { Eval_clear, Eval_clearall } from '../clear';
 import { Eval_filter } from '../filter';
 import { hash_binop_cons_atom, HASH_BLADE, HASH_FLT, HASH_RAT, HASH_SYM } from '../hashing/hash_info';
@@ -395,7 +395,7 @@ import { st_any } from '../operators/st/st_any';
 import { st_mul_2_rat_any } from '../operators/st/st_mul_2_rat_any';
 import { st_rat } from '../operators/st/st_rat';
 import { st_sym } from '../operators/st/st_sym';
-import { str_extension } from '../operators/str/str_extension';
+import { str_operator_builder } from '../operators/str/str_extension';
 import { subst_varargs } from '../operators/subst/subst_varargs';
 import { succ_any } from '../operators/succ/succ_any';
 import { succ_rat } from '../operators/succ/succ_rat';
@@ -471,8 +471,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     const SIN = native_sym(Native.sin);
     const TEST = native_sym(Native.test);
 
-    $.setSymbolOrder(MATH_ADD, new AddComparator());
-    $.setSymbolOrder(MATH_MUL, new MulComparator());
+    $.setSymbolOrder(native_sym(Native.add), new AddComparator());
+    $.setSymbolOrder(native_sym(Native.multiply), new MulComparator());
 
     $.defineOperator(make_lhs_distrib_expand_law(MATH_MUL, MATH_ADD));
     $.defineOperator(make_rhs_distrib_expand_law(MATH_MUL, MATH_ADD));
@@ -727,7 +727,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(boo_extension);
     $.defineOperator(rat_extension);
     $.defineOperator(flt_extension);
-    $.defineOperator(str_extension);
+    $.defineOperator(str_operator_builder);
     $.defineOperator(jsobject_extension);
 
     $.defineOperator(abs_add_blades);

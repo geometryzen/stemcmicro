@@ -1,6 +1,6 @@
+import { Native, native_sym } from "math-expression-native";
+import { U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { MATH_MUL } from "../../runtime/ns_math";
-import { U } from "../../tree/tree";
 
 /**
  * Sorts an array of factors while respecting whether the factors are scalars (can they commute?).
@@ -8,12 +8,12 @@ import { U } from "../../tree/tree";
  * @param $ 
  * @returns A new array containing the sorted factors.
  */
-export function sort_factors(factors: U[], $: ExtensionEnv): U[] {
+export function sort_factors(factors: U[], $: Pick<ExtensionEnv, 'compareFn' | 'isscalar'>): U[] {
     const sortable = factors.map(function (value, index) {
         return { value, index };
     });
     sortable.sort(function (x, y) {
-        const x_comp_y = $.compareFn(MATH_MUL)(x.value, y.value);
+        const x_comp_y = $.compareFn(native_sym(Native.multiply))(x.value, y.value);
         // If either side is a scalar then we are allowed to take the canonical reordering as is.
         if ($.isscalar(x.value) || $.isscalar(y.value)) {
             return x_comp_y;

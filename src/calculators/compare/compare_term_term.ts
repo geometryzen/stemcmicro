@@ -1,16 +1,16 @@
 import { is_blade } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { is_cons, U } from "math-expression-tree";
 import { ExprComparator, ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
 import { compare_blade_blade } from "../../operators/blade/blade_extension";
 import { is_imu } from "../../operators/imu/is_imu";
 import { is_cons_opr_eq_mul } from "../../operators/mul/is_cons_opr_eq_mul";
 import { is_num } from "../../operators/num/is_num";
 import { is_tensor } from "../../operators/tensor/is_tensor";
-import { MATH_ADD } from "../../runtime/ns_math";
-import { is_cons, U } from "../../tree/tree";
 import { count_factors } from "../count_factors";
 import { canonical_factor_num_lhs, canonical_factor_num_rhs } from "../factorize/canonical_factor_num";
 import { remove_factors } from "../remove_factors";
-import { cmp_expr } from "./cmp_expr";
+import { compare_expr_expr } from "./compare_expr_expr";
 import { compare_num_num } from "./compare_num_num";
 import { contains_single_blade } from "./contains_single_blade";
 import { extract_single_blade } from "./extract_single_blade";
@@ -19,7 +19,7 @@ export class AddComparator implements ExprComparator {
     compare(lhs: U, rhs: U, $: ExtensionEnv): Sign {
         const lhsR = canonical_factor_num_rhs(lhs);
         const rhsR = canonical_factor_num_rhs(rhs);
-        switch (cmp_terms_core(lhsR, rhsR, $)) {
+        switch (compare_terms_core(lhsR, rhsR, $)) {
             case SIGN_GT: {
                 return SIGN_GT;
             }
@@ -39,14 +39,12 @@ export class AddComparator implements ExprComparator {
     }
 }
 
-/**
- * @deprecated
- */
-export function cmp_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
-    return $.compareFn(MATH_ADD)(lhs, rhs);
+export function compare_term_term(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // console.lg("compare_term_term", $.toInfixString(lhs), $.toInfixString(rhs));
+    return $.compareFn(native_sym(Native.add))(lhs, rhs);
 }
 
-export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+export function compare_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     // console.lg("ENTERING", "cmp_terms", "lhs", render_as_sexpr(lhs, $), "rhs", render_as_sexpr(rhs, $));
     // numbers can be combined
     if (lhs.equals(rhs)) {
@@ -60,7 +58,7 @@ export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
             return compare_blade_blade(bladeL, bladeR);
         }
         else {
-            switch (cmp_terms(bladeL, bladeR, $)) {
+            switch (compare_term_term(bladeL, bladeR, $)) {
                 case SIGN_GT: {
                     return SIGN_GT;
                 }
@@ -68,7 +66,7 @@ export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
                     return SIGN_LT;
                 }
                 default: {
-                    return cmp_terms(remove_factors(lhs, is_blade), remove_factors(rhs, is_blade), $);
+                    return compare_term_term(remove_factors(lhs, is_blade), remove_factors(rhs, is_blade), $);
                 }
             }
         }
@@ -83,7 +81,7 @@ export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
     }
 
     if (contains_single_imu(lhs) && contains_single_imu(rhs)) {
-        return cmp_terms(remove_factors(lhs, is_imu), remove_factors(rhs, is_imu), $);
+        return compare_term_term(remove_factors(lhs, is_imu), remove_factors(rhs, is_imu), $);
     }
 
     // These probably belong in general expression comparision.
@@ -125,10 +123,10 @@ export function cmp_terms_core(lhs: U, rhs: U, $: ExtensionEnv): Sign {
 
     // I'd still like to compare as terms, but that would be recursive if we don't have a termination condition.
     if (lhsPart.equals(lhs) && rhsPart.equals(rhs)) {
-        return cmp_expr(lhsPart, rhsPart, $);
+        return compare_expr_expr(lhsPart, rhsPart, $);
     }
     else {
-        return cmp_terms(lhsPart, rhsPart, $);
+        return compare_term_term(lhsPart, rhsPart, $);
     }
 }
 

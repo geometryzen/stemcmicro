@@ -1,4 +1,4 @@
-import { compare } from "../../calculators/compare/compare";
+import { compare_U_U } from "../../calculators/compare/compare_U_U";
 import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, SIGN_GT, TFLAG_HALT, TFLAGS } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { items_to_cons } from "../../makeList";
@@ -45,7 +45,7 @@ class Op extends Function2<LHS, RHS> implements Operator<EXPR> {
         const $ = this.$;
         const argL = lhs.arg;
         const argR = rhs.arg;
-        switch (compare(argL, argR)) {
+        switch (compare_U_U(argL, argR)) {
             case SIGN_GT: {
                 return [TFLAG_DIFF, $.valueOf(items_to_cons(opr, orig.rhs, orig.lhs))];
             }

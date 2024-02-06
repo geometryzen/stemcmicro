@@ -1,6 +1,6 @@
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
-import { cmp_expr } from './calculators/compare/cmp_expr';
+import { compare_expr_expr } from './calculators/compare/compare_expr_expr';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { imu } from './env/imu';
 import { guess } from './guess';
@@ -144,7 +144,7 @@ export function roots(p: U, x: U, $: ExtensionEnv): Tensor {
     }
     results.sort(function (a: U, b: U) {
         // TODO: Make the comparitor for sorting the roots configurable?
-        return cmp_expr(a, b, $);
+        return compare_expr_expr(a, b, $);
     });
 
     const dims = [n];

@@ -11,6 +11,7 @@ import { is_hyp } from '../operators/hyp/is_hyp';
 import { is_imu } from '../operators/imu/is_imu';
 import { numerator } from '../operators/numerator/numerator';
 import { is_pi } from '../operators/pi/is_pi';
+import { str_extension } from '../operators/str/str_extension';
 import { is_base_of_natural_logarithm } from '../predicates/is_base_of_natural_logarithm';
 import { is_negative } from '../predicates/is_negative';
 import { is_num_and_negative } from '../predicates/is_negative_number';
@@ -368,20 +369,20 @@ export function print_additive_expr(p: U, $: PrintConfig): string {
  * For this to work correctly, it assumes that the term is in canonical form (with numbers move to the left).
  */
 export function sign_of_term(term: U): '+' | '-' {
-    // (* num ...) and num is less than zero.
+    // (* k ...) and k is a Num and less than zero.
     if (is_cons(term)) {
         if (is_multiply(term)) {
-            const cadr_p = car(term.cdr);
-            if (is_num(cadr_p)) {
-                if (lt_num_num(cadr_p, zero)) {
+            const k = car(term.cdr);
+            if (is_num(k)) {
+                if (k.isNegative()) {
                     return '-';
                 }
             }
         }
     }
 
-    //  term itslef is a number less tahn zero.
-    if (is_num(term) && lt_num_num(term, zero)) {
+    //  term itslef is a number less than zero.
+    if (is_num(term) && term.isNegative()) {
         return '-';
     }
     else {
@@ -1602,11 +1603,23 @@ function print_factor(expr: U, omitParens = false, pastFirstFactor = false, $: P
     }
 
     if (is_str(expr)) {
-        let str = '';
-        str += print_str('"');
-        str += print_str(expr.str);
-        str += print_str('"');
-        return str;
+        switch (defs.printMode) {
+            case PRINTMODE_HUMAN: {
+                return str_extension.toHumanString(expr);
+            }
+            case PRINTMODE_INFIX: {
+                return str_extension.toInfixString(expr);
+            }
+            case PRINTMODE_LATEX: {
+                return str_extension.toLatexString(expr);
+            }
+            case PRINTMODE_SEXPR: {
+                return str_extension.toListString(expr);
+            }
+            default: {
+                throw new Error(`${defs.printMode}`);
+            }
+        }
     }
 
     if (is_tensor(expr)) {

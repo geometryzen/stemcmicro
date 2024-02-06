@@ -27,9 +27,11 @@ import { compare_num_num } from "./compare_num_num";
 import { compare_sym_sym } from "./compare_sym_sym";
 
 /**
+ * FIXME: Needs more testing.
  * Dead code for reference only.
  */
 function compare_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
+    // console.lg("compare_terms", $.toInfixString(lhs), $.toInfixString(rhs));
     const lhsR = canonical_factor_num_rhs(lhs);
     const rhsR = canonical_factor_num_rhs(rhs);
     switch (compare_terms_core(lhsR, rhsR, $)) {

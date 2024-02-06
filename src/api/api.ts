@@ -2,7 +2,7 @@ import { Boo, Cell, create_int, create_rat, create_sym, Flt, is_flt, is_rat, is_
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
-import { STEMCParseOptions, stemc_parse } from '../algebrite/stemc_parse';
+import { STEMCParseOptions, stemcmicro_parse } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
 import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { eval_draw } from '../eigenmath/eval_draw';
@@ -317,7 +317,7 @@ export function define_metric_prefixes_for_si_units($: ExtensionEnv): void {
     $.setBinding(create_sym("exa"), exa);
 }
 
-class STEMCExprEngine implements ExprEngine {
+class STEMCmicroExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     readonly #options: Partial<EngineConfig>;
     constructor(options: Partial<EngineConfig>) {
@@ -372,7 +372,7 @@ class STEMCExprEngine implements ExprEngine {
         this.#env.defineFunction(match, lambda);
     }
     parse(sourceText: string, options: Partial<ParseConfig> = {}): { trees: U[]; errors: Error[]; } {
-        const { trees, errors } = stemc_parse(sourceText, stemc_parse_config(options));
+        const { trees, errors } = stemcmicro_parse(sourceText, stemc_parse_config(options));
         const visitor = new ExtensionEnvVisitor(this.#env);
         for (const tree of trees) {
             visit(tree, visitor);
@@ -940,7 +940,7 @@ export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_engine_options(options);
     switch (engineKind) {
         case EngineKind.STEMCscript: {
-            return new STEMCExprEngine(options);
+            return new STEMCmicroExprEngine(options);
         }
         case EngineKind.ClojureScript: {
             return new ClojureScriptExprEngine(options);

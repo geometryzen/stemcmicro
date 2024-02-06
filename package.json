@@ -120,6 +120,7 @@
         "test-integral": "mocha 'tests/integral.ts'",
         "test-log": "mocha 'tests/log.ts'",
         "test-sandbox": "mocha 'tests/sandbox.ts'",
+        "test-strings": "mocha 'tests/strings.ts'",
         "test-test": "mocha 'tests/test.ts'"
     },
     "repository": {
@@ -179,7 +180,7 @@
         "typescript": "^5.3.3"
     },
     "peerDependencies": {
-        "math-expression-atoms": "^0.9.29",
+        "math-expression-atoms": "^0.9.30",
         "math-expression-context": "^0.9.11",
         "math-expression-native": "^0.9.16",
         "math-expression-tree": "^0.9.22"

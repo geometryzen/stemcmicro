@@ -1,31 +1,35 @@
+import { Tensor } from "math-expression-atoms";
 import { ExtensionEnv, Sign, SIGN_EQ, SIGN_GT, SIGN_LT } from "../../env/ExtensionEnv";
-import { Tensor } from "../../tree/tensor/Tensor";
-import { cmp_expr } from "./cmp_expr";
+import { compare_expr_expr } from "./compare_expr_expr";
 
-export function compare_tensors(p1: Tensor, p2: Tensor, $: ExtensionEnv): Sign {
-    if (p1.ndim < p2.ndim) {
+/**
+ * FIXME: Needs more testing. When does it make sense to reorder tensors?
+ */
+ export function compare_tensors(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): Sign {
+    // console.lg("compare_term_tensors", $.toInfixString(lhs), $.toInfixString(rhs));
+    if (lhs.ndim < rhs.ndim) {
         return SIGN_LT;
     }
 
-    if (p1.ndim > p2.ndim) {
+    if (lhs.ndim > rhs.ndim) {
         return SIGN_GT;
     }
 
-    const ndim = p1.ndim;
+    const ndim = lhs.ndim;
 
     for (let i = 0; i < ndim; i++) {
-        if (p1.dim(i) < p2.dim(i)) {
+        if (lhs.dim(i) < rhs.dim(i)) {
             return SIGN_LT;
         }
-        if (p1.dim(i) > p2.dim(i)) {
+        if (lhs.dim(i) > rhs.dim(i)) {
             return SIGN_GT;
         }
     }
 
-    const nelem = p1.nelem;
+    const nelem = lhs.nelem;
 
     for (let i = 0; i < nelem; i++) {
-        switch (cmp_expr(p1.elem(i), p2.elem(i), $)) {
+        switch (compare_expr_expr(lhs.elem(i), rhs.elem(i), $)) {
             case SIGN_GT: {
                 return SIGN_GT;
             }

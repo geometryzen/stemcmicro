@@ -1,5 +1,5 @@
 import { Blade, is_blade } from "math-expression-atoms";
-import { cmp_terms } from "../../calculators/compare/comparator_add";
+import { compare_term_term } from "../../calculators/compare/compare_term_term";
 import { EnvConfig } from "../../env/EnvConfig";
 import { ExtensionEnv, Operator, OperatorBuilder, Sign, SIGN_EQ, SIGN_GT, TFLAGS, TFLAG_DIFF, TFLAG_HALT } from "../../env/ExtensionEnv";
 import { hash_binop_atom_atom, HASH_BLADE } from "../../hashing/hash_info";
@@ -28,7 +28,7 @@ function compare_blade_blade_terms(lhs: U, rhs: U, $: ExtensionEnv): Sign {
 class Builder implements OperatorBuilder<Cons> {
     create($: ExtensionEnv, config: EnvConfig): Operator<Cons> {
         if (config.noOptimize) {
-            return new Op($, cmp_terms);
+            return new Op($, compare_term_term);
         }
         else {
             return new Op($, compare_blade_blade_terms);

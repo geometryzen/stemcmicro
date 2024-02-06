@@ -5,12 +5,14 @@ import { Cons2 } from "../../operators/helpers/Cons2";
 import { Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
 import { factorizeL } from "../factorizeL";
-import { compare } from "./compare";
+import { compare_U_U } from "./compare_U_U";
 
 /**
+ * FIXME: Needs more testing.
  * Used for comparing expressions that are factorizable (either Multiply or Power).
  */
 export function compare_factorizable(lhs: Cons2<Sym, U, U>, rhs: Cons2<Sym, U, U>): Sign {
+    // console.lg("compare_factorizable", `${lhs}`, `${rhs}`);
     if (is_blade(lhs.rhs) && is_blade(rhs.rhs)) {
         switch (compare_blade_blade(lhs.rhs, rhs.rhs)) {
             case SIGN_GT: {
@@ -20,7 +22,7 @@ export function compare_factorizable(lhs: Cons2<Sym, U, U>, rhs: Cons2<Sym, U, U
                 return SIGN_LT;
             }
             default: {
-                return compare(lhs.lhs, rhs.lhs);
+                return compare_U_U(lhs.lhs, rhs.lhs);
             }
         }
     }
@@ -28,7 +30,7 @@ export function compare_factorizable(lhs: Cons2<Sym, U, U>, rhs: Cons2<Sym, U, U
     const [aR, bR, splitR] = factorizeL(rhs);
     // Important to determine whether factorization occured to prevent infinite loops.
     if (splitL || splitR) {
-        switch (compare(aL, aR)) {
+        switch (compare_U_U(aL, aR)) {
             case SIGN_GT: {
                 return SIGN_GT;
             }
@@ -36,7 +38,7 @@ export function compare_factorizable(lhs: Cons2<Sym, U, U>, rhs: Cons2<Sym, U, U
                 return SIGN_LT;
             }
             default: {
-                return compare(bL, bR);
+                return compare_U_U(bL, bR);
             }
         }
     }

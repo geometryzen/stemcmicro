@@ -12,19 +12,19 @@ function strip_whitespace(s: string): string {
 
 const parseConfig: ParseConfig = {
     useCaretForExponentiation: true,
-    useParenForTensors: true
+    useParenForTensors: false
 };
 
 const renderConfig: RenderConfig = {
     format: 'Infix',
     useCaretForExponentiation: true,
-    useParenForTensors: true
+    useParenForTensors: false
 };
 
 describe("coverage", function () {
     it("abs(x)", function () {
         const lines: string[] = [
-            `X=(x,y,z)`,
+            `X=[x,y,z]`,
             `abs(X)`
         ];
         const sourceText = lines.join('\n');
@@ -475,7 +475,7 @@ describe("coverage", function () {
     });
     it("cofactor(m,i,j)", function () {
         const lines: string[] = [
-            `A=((a,b),(c,d))`,
+            `A=[[a,b],[c,d]]`,
             `cofactor(A,1,2) == adj(A)[2,1]`
         ];
         const sourceText = lines.join('\n');
@@ -525,7 +525,7 @@ describe("coverage", function () {
     });
     it("contract(a,i,j)", function () {
         const lines: string[] = [
-            `A=((a,b),(c,d))`,
+            `A=[[a,b],[c,d]]`,
             `contract(A)`
         ];
         const sourceText = lines.join('\n');
@@ -746,7 +746,7 @@ describe("coverage", function () {
     });
     it("det(m)", function () {
         const lines: string[] = [
-            `A=((a,b),(c,d))`,
+            `A=[[a,b],[c,d]]`,
             `det(A)`
         ];
         const sourceText = lines.join('\n');
@@ -771,7 +771,7 @@ describe("coverage", function () {
     });
     it("dim(a,m)", function () {
         const lines: string[] = [
-            `A=((1,2),(3,4),(5,6))`,
+            `A=[[1,2],[3,4],[5,6]]`,
             `dim(A,1)`
         ];
         const sourceText = lines.join('\n');
@@ -844,8 +844,8 @@ describe("coverage", function () {
     });
     it("dot(a,b,...)", function () {
         const lines: string[] = [
-            `A=((1,2),(3,4))`,
-            `B=(5,6)`,
+            `A=[[1,2],[3,4]]`,
+            `B=[5,6]`,
             `X=dot(inv(A),B)`,
             `X`
         ];
@@ -866,7 +866,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(-4,9/2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[-4,9/2]"));
         engine.release();
     });
     it("draw(f,x)", function () {
@@ -1542,8 +1542,8 @@ describe("coverage", function () {
     });
     it("inner(a,b,...)", function () {
         const lines: string[] = [
-            `A=((a,b),(c,d))`,
-            `B=(x,y)`,
+            `A=[[a,b],[c,d]]`,
+            `B=[x,y]`,
             `inner(A,B)`
         ];
         const sourceText = lines.join('\n');
@@ -1563,7 +1563,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(a*x+b*y,c*x+d*y)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[a*x+b*y,c*x+d*y]"));
         engine.release();
     });
     it("integral(f,x)", function () {
@@ -1592,7 +1592,7 @@ describe("coverage", function () {
     });
     it("inv(m)", function () {
         const lines: string[] = [
-            `A=((1,2),(3,4))`,
+            `A=[[1,2],[3,4]]`,
             `inv(A)`
         ];
         const sourceText = lines.join('\n');
@@ -1612,7 +1612,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("((-2,1),(3/2,-1/2))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[-2,1],[3/2,-1/2]]"));
         engine.release();
     });
     it("isprime(n)", function () {
@@ -2096,8 +2096,8 @@ describe("coverage", function () {
     });
     it("outer(a,b,...)", function () {
         const lines: string[] = [
-            `A=(a,b,c)`,
-            `B=(x,y,z)`,
+            `A=[a,b,c]`,
+            `B=[x,y,z]`,
             `outer(A,B)`
         ];
         const sourceText = lines.join('\n');
@@ -2117,7 +2117,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("((a*x,a*y,a*z),(b*x,b*y,b*z),(c*x,c*y,c*z))"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[a*x,a*y,a*z],[b*x,b*y,b*z],[c*x,c*y,c*z]]"));
         engine.release();
     });
     it("pi", function () {
@@ -2466,7 +2466,7 @@ describe("coverage", function () {
     });
     it("rank(a)", function () {
         const lines: string[] = [
-            `A=((a,b),(c,d))`,
+            `A=[[a,b],[c,d]]`,
             `rank(A)`
         ];
         const sourceText = lines.join('\n');
@@ -2585,7 +2585,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(-1,2)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[-1,2]"));
         engine.release();
     });
     xit("rotate(u,s,k,...)", function () {
@@ -2639,7 +2639,7 @@ describe("coverage", function () {
     });
     it("shape(x)", function () {
         const lines: string[] = [
-            `shape((a,b,c))`
+            `shape([a,b,c])`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -2658,7 +2658,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(3)"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[3]"));
         engine.release();
     });
     it("simplify(x)", function () {
@@ -2948,7 +2948,7 @@ describe("coverage", function () {
     });
     it("transpose(a,i,j)", function () {
         const lines: string[] = [
-            `A=((a,b),(c,d))`,
+            `A=[[a,b],[c,d]]`,
             `transpose(A)`
         ];
         const sourceText = lines.join('\n');
@@ -2968,7 +2968,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`((a,c),(b,d))`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`[[a,c],[b,d]]`));
         engine.release();
     });
     it("tty", function () {
@@ -3017,7 +3017,7 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`((1,0,0),(0,1,0),(0,0,1))`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`[[1,0,0],[0,1,0],[0,0,1]]`));
         engine.release();
     });
     xit("zero(i,j,...)", function () {

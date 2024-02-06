@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Boo, Cell, CellHost, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_tensor, Keyword, Map as JsMap, Str, Tag } from 'math-expression-atoms';
+import { Boo, Cell, CellHost, create_sym, Flt, is_boo, is_cell, is_flt, is_jsobject, is_keyword, is_map, is_rat, is_str, is_sym, is_tensor, Keyword, Map as JsMap, negOne, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
-import { is_native } from 'math-expression-native';
-import { is_atom, nil } from 'math-expression-tree';
+import { is_native, Native, native_sym } from 'math-expression-native';
+import { cons, Cons, is_atom, is_cons, is_nil, items_to_cons, nil, U } from 'math-expression-tree';
 import { AtomListener, UndeclaredVars } from '../api/api';
 import { assert_sym_any_any } from '../clojurescript/runtime/eval_setq';
 import { Eval_function } from "../Eval_function";
 import { yyfactorpoly } from "../factorpoly";
 import { hash_for_atom, hash_info } from "../hashing/hash_info";
 import { is_poly_expanded_form } from "../is";
-import { Native } from "../native/Native";
-import { native_sym } from "../native/native_sym";
 import { algebra } from "../operators/algebra/algebra";
 import { setq } from '../operators/assign/assign_any_any';
 import { Eval_dotdot } from '../operators/dotdot/Eval_dotdot';
@@ -19,7 +17,6 @@ import { JsObjectExtension } from '../operators/jsobject/JsObjectExtension';
 import { is_lambda } from "../operators/lambda/is_lambda";
 import { Eval_let } from '../operators/let/Eval_let';
 import { assert_sym } from '../operators/sym/assert_sym';
-import { is_sym } from "../operators/sym/is_sym";
 import { wrap_as_transform } from "../operators/wrap_as_transform";
 import { SyntaxKind } from "../parser/parser";
 import { ProgrammingError } from '../programming/ProgrammingError';
@@ -29,10 +26,6 @@ import { createSymTab, SymTab } from "../runtime/symtab";
 import { SystemError } from "../runtime/SystemError";
 import { Err } from '../tree/err/Err';
 import { Lambda } from "../tree/lambda/Lambda";
-import { negOne, Rat } from "../tree/rat/Rat";
-import { create_sym, Sym } from "../tree/sym/Sym";
-import { Tensor } from "../tree/tensor/Tensor";
-import { cons, Cons, is_cons, is_nil, items_to_cons, U } from "../tree/tree";
 import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
 import { DirectiveStack } from "./DirectiveStack";
@@ -1450,7 +1443,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const hash_to_ops = currentOpsByHash();
                 // hashes are the buckets we should look in for operators from specific to generic.
                 const hashes: string[] = hash_info(expr);
-                // console.lg("keys", JSON.stringify(keys));
+                // console.lg("hashes", JSON.stringify(hashes));
                 for (const hash of hashes) {
                     const ops = hash_to_ops[hash];
                     // console.lg(`Looking for key: ${JSON.stringify(key)} expr: ${expr} choices: ${Array.isArray(ops) ? ops.length : 'None'}`);
@@ -1559,7 +1552,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         if (op) {
                             const composite = op.valueOf(expr);
                             // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
-                            console.log(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite)}`);
+                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite)}`);
                             return composite;
                         }
                     }

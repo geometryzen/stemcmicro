@@ -1,4 +1,5 @@
-import { is_sym } from 'math-expression-atoms';
+import { create_int, is_rat, is_sym, one, Rat } from 'math-expression-atoms';
+import { U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { yyfactorpoly } from '../../factorpoly';
 import { is_poly_expanded_form } from '../../is';
@@ -7,9 +8,6 @@ import { factor_rat } from '../../pollard';
 import { MAXPRIMETAB, primetab } from '../../runtime/constants';
 import { halt } from '../../runtime/defs';
 import { is_multiply } from '../../runtime/helpers';
-import { create_int, one, Rat } from '../../tree/rat/Rat';
-import { U } from '../../tree/tree';
-import { is_rat } from '../rat/is_rat';
 
 export function factor_again(p1: U, p2: U, $: ExtensionEnv): U {
     if (is_multiply(p1)) {

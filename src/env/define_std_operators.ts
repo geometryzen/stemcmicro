@@ -252,6 +252,7 @@ import { log_rat } from '../operators/log/log_rat';
 import { log_sym } from '../operators/log/log_sym';
 import { log_varargs } from '../operators/log/log_varargs';
 import { mod_varargs } from '../operators/mod/mod_varargs';
+import { Eval_multiply } from '../operators/mul/Eval_multiply';
 import { mul_2_any_flt } from '../operators/mul/mul_2_any_flt';
 import { mul_2_any_rat } from '../operators/mul/mul_2_any_rat';
 import { mul_2_blade_blade } from '../operators/mul/mul_2_blade_blade';
@@ -295,7 +296,6 @@ import { mul_2_uom_flt } from '../operators/mul/mul_2_uom_flt';
 import { mul_2_uom_rat } from '../operators/mul/mul_2_uom_rat';
 import { mul_2_uom_uom } from '../operators/mul/mul_2_uom_uom';
 import { mul_2_X_pow_2_X_rat } from '../operators/mul/mul_2_X_pow_2_X_rat';
-import { mul_varargs } from '../operators/mul/mul_varargs';
 import { nil_extension } from '../operators/nil/nil_extension';
 import { not_fn } from '../operators/not/not_fn';
 import { number_fn } from '../operators/number/number_fn';
@@ -616,7 +616,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(mul_2_blade_rat);
     $.defineOperator(mul_2_blade_blade);
     $.defineOperator(mul_2_sin_cos);
-    $.defineOperator(mul_varargs);
+    $.defineConsTransformer(native_sym(Native.multiply), Eval_multiply);
 
     $.defineConsTransformer(APPROXRATIO, Eval_approxratio);
     $.defineOperator(binomial_varargs);

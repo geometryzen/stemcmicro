@@ -1,4 +1,6 @@
-import { is_blade } from "math-expression-atoms";
+import { is_blade, is_num, is_rat, is_tensor, is_uom, Num, one, zero } from "math-expression-atoms";
+import { Native, native_sym } from "math-expression-native";
+import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "math-expression-tree";
 import { contains_single_blade } from "../../calculators/compare/contains_single_blade";
 import { contains_single_uom } from "../../calculators/compare/contains_single_uom";
 import { extract_single_blade } from "../../calculators/compare/extract_single_blade";
@@ -10,13 +12,6 @@ import { OPERATOR } from "../../runtime/constants";
 import { is_add, is_multiply, is_power } from "../../runtime/helpers";
 import { MATH_MUL } from "../../runtime/ns_math";
 import { cddr } from "../../tree/helpers";
-import { Num } from "../../tree/num/Num";
-import { one, zero } from "../../tree/rat/Rat";
-import { car, cdr, cons, Cons, is_cons, is_nil, items_to_cons, U } from "../../tree/tree";
-import { is_num } from "../num/is_num";
-import { is_rat } from "../rat/is_rat";
-import { is_tensor } from "../tensor/is_tensor";
-import { is_uom } from "../uom/is_uom";
 
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
@@ -30,7 +25,7 @@ export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
     const args = expr.argList;
     if (vals.equals(args)) {
         // For multiplication, the expression (*) evaluates to 1.
-        if (is_nil(vals)) {
+        if (vals.isnil) {
             return one;
         }
         else {
@@ -63,7 +58,9 @@ export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        // console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`, $.toInfixString(retval), description);
+        if (is_add(lhs) || is_add(rhs)) {
+            // console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`, $.toInfixString(retval), description);
+        }
         return retval;
     };
     /*
@@ -98,18 +95,39 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         }
     }
 
-    // Distributive Law  (x1 + x2 + ...) * R => x1 * R + x2 * R + ...
-    if ($.isExpanding() && is_add(lhs)) {
-        return hook(lhs
-            .tail()
-            .reduce((a: U, b: U) => $.add(a, multiply(b, rhs, $)), zero), "D");
+    // Right Distributive Law  (x1 + x2 + ...) * R => x1 * R + x2 * R + ...
+    if (is_add(lhs)) {
+        if ($.isExpanding()) {
+            return hook(lhs
+                .tail()
+                .reduce((a: U, b: U) => $.add(a, multiply(b, rhs, $)), zero), "D1");
+        }
+        else {
+            if (is_multiply(rhs)) {
+                return hook(items_to_cons(native_sym(Native.multiply), lhs, ...rhs.tail()), "D2");
+            }
+            else {
+                return hook(items_to_cons(native_sym(Native.multiply), lhs, rhs), "D3");
+            }
+        }
     }
 
-    // Distributive Law  L * (x1 + x2 + ...) => L * x1 + L * x2 + ...
-    if ($.isExpanding() && is_add(rhs)) {
-        return hook(rhs
-            .tail()
-            .reduce((a: U, b: U) => $.add(a, multiply(lhs, b, $)), zero), "E");
+    // Left Distributive Law  L * (x1 + x2 + ...) => L * x1 + L * x2 + ...
+    if (is_add(rhs)) {
+        if ($.isExpanding()) {
+            return hook(rhs
+                .tail()
+                .reduce((a: U, b: U) => $.add(a, multiply(lhs, b, $)), zero), "E1");
+        }
+        else {
+            if (is_multiply(lhs)) {
+                return hook(items_to_cons(native_sym(Native.multiply), ...lhs.tail(), rhs), "E2");
+
+            }
+            else {
+                return hook(items_to_cons(native_sym(Native.multiply), lhs, rhs), "E3");
+            }
+        }
     }
 
     const compareFactors = $.compareFn(MATH_MUL);

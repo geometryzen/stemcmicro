@@ -23,18 +23,15 @@ export enum SyntaxKind {
     PythonScript = 4,
 }
 
-export function human_readable_syntax_kind(syntaxKind: SyntaxKind): string {
+export function human_readable_syntax_kind(syntaxKind: SyntaxKind): 'STEMCscript' | 'ClojureScript' | 'Eigenmath' | 'PythonScript' {
     if (syntaxKind) {
         switch (syntaxKind) {
-            case SyntaxKind.STEMCscript: return "STEMCscript";
             case SyntaxKind.ClojureScript: return "ClojureScript";
             case SyntaxKind.Eigenmath: return "Eigenmath";
             case SyntaxKind.PythonScript: return "PythonScript";
         }
     }
-    else {
-        throw new Error("syntaxKind MUST be specified.");
-    }
+    return "STEMCscript";
 }
 
 export const syntaxKinds: SyntaxKind[] = [SyntaxKind.STEMCscript, SyntaxKind.ClojureScript, SyntaxKind.Eigenmath, SyntaxKind.PythonScript];

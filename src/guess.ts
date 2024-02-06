@@ -1,10 +1,11 @@
+import { Sym } from 'math-expression-atoms';
+import { U } from 'math-expression-tree';
 import { SYMBOL_S, SYMBOL_T, SYMBOL_X, SYMBOL_Y, SYMBOL_Z } from './runtime/constants';
-import { U } from './tree/tree';
 
 /**
  * Guess which symbol to use for derivative, integral, etc.
  */
-export function guess(p: U): U {
+export function guess(p: U): Sym {
     if (p.contains(SYMBOL_X)) {
         return SYMBOL_X;
     }

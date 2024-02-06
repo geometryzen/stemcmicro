@@ -1,33 +1,50 @@
 
 import { assert } from "chai";
-import { is_rat } from "math-expression-atoms";
-import { U } from "math-expression-tree";
-import { create_engine } from "../src/api/api";
+import { is_nil, U } from "math-expression-tree";
+import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/api";
 
-describe("arctan", function () {
-    xit("factor", function () {
+
+const engineConfig: Partial<EngineConfig> = {
+};
+
+function strip_whitespace(s: string): string {
+    return s.replace(/\s/g, '');
+}
+
+const parseConfig: ParseConfig = {
+    useCaretForExponentiation: true,
+    useParenForTensors: false
+};
+
+const renderConfig: RenderConfig = {
+    format: 'Infix',
+    useCaretForExponentiation: true,
+    useParenForTensors: false
+};
+
+describe("sandbox", function () {
+    it("(pow (+ 1 x) 2)", function () {
         const lines: string[] = [
-            `factor(27+27*x+9*x**2+x**3,x)`
+            `(x+1)^2`
         ];
         const sourceText = lines.join('\n');
-        const engine = create_engine();
-        const { trees, errors } = engine.parse(sourceText, {});
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
         assert.strictEqual(errors.length, 0);
-        assert.strictEqual(trees.length, 1);
-
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.valueOf(tree);
-            if (!value.isnil) {
-                values.push(value);
+            try {
+                const value = engine.valueOf(tree);
+                if (!is_nil(value)) {
+                    values.push(value);
+                }
+            }
+            catch (e) {
+                assert.fail(`${e}`, "???");
             }
         }
-        // assert.strictEqual(values.length, 1);
-        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Ascii' }), '2');
-        // assert.strictEqual(engine.renderAsString(values[0], { format: 'Human' }), '2');
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), '(x+3)**3');
-        // assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), '2');
-        assert.strictEqual(is_rat(values[0]), true);
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`1+2*x+x^2`));
         engine.release();
     });
 });

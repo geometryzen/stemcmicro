@@ -23,9 +23,10 @@ const renderConfig: RenderConfig = {
 };
 
 describe("sandbox", function () {
-    it("(pow (+ 1 x) 2)", function () {
+    it("det(A) * inv(A)", function () {
         const lines: string[] = [
-            `(x+1)^2`
+            `A=[[a,b],[c,d]]`,
+            `det(A) * inv(A)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -33,18 +34,13 @@ describe("sandbox", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            try {
-                const value = engine.valueOf(tree);
-                if (!is_nil(value)) {
-                    values.push(value);
-                }
-            }
-            catch (e) {
-                assert.fail(`${e}`, "???");
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace(`1+2*x+x^2`));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[a*d^2/(a*d-b*c)-b*c*d/(a*d-b*c),-a*b*d/(a*d-b*c)+b^2*c/(a*d-b*c)],[-a*c*d/(a*d-b*c)+b*c^2/(a*d-b*c),-a*b*c/(a*d-b*c)+a^2*d/(a*d-b*c)]]"));
         engine.release();
     });
 });

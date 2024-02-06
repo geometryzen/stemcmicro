@@ -15,7 +15,7 @@ import { cddr } from "../../tree/helpers";
 
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
-    // console.lg(`Eval_multiply ${$.toInfixString(expr)}`);
+    // console.lg(`Eval_multiply ${$.toSExprString(expr)}`);
     const args = expr.argList;
     const vals = args.map($.valueOf);
     return multiply_values(vals, expr, $);
@@ -44,6 +44,7 @@ export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
     }
     else {
         // Evaluation of the arguments has produced changes so we give other operators a chance to evaluate.
+        // console.lg("multiply_values", $.toSExprString(expr));
         return $.valueOf(cons(expr.car, vals));
     }
 }
@@ -56,11 +57,10 @@ export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
+    // console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {
-        if (is_add(lhs) || is_add(rhs)) {
-            // console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`, $.toInfixString(retval), description);
-        }
+        // console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`, $.toInfixString(retval), description);
         return retval;
     };
     /*
@@ -156,16 +156,12 @@ function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
         return hook(lhs.mul(rhs), "H");
     }
 
-    // scalar times tensor?
     if (!is_tensor(lhs) && is_tensor(rhs)) {
-        // return scalar_times_tensor(lhs, rhs);
-        return hook($.multiply(lhs, rhs), "I");
+        return hook(rhs.map((e) => $.multiply(lhs, e)), "I");
     }
 
-    // tensor times scalar?
     if (is_tensor(lhs) && !is_tensor(rhs)) {
-        // return tensor_times_scalar(lhs, rhs);
-        return hook($.multiply(lhs, rhs), "J");
+        return hook(lhs.map((e) => $.multiply(e, rhs)), "J");
     }
 
     // console.lg("lhs", lhs.toString());

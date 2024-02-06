@@ -43,6 +43,112 @@ describe("coverage", function () {
         assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("(x^2 + y^2 + z^2)^(1/2)"));
         engine.release();
     });
+    it("adj(x)", function () {
+        const lines: string[] = [
+            `A=[[a,b],[c,d]]`,
+            `adj(A)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[d,-b],[-c,a]]"));
+        engine.release();
+    });
+    it("det(x)", function () {
+        const lines: string[] = [
+            `A=[[a,b],[c,d]]`,
+            `det(A)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a*d-b*c"));
+        engine.release();
+    });
+    it("inv(x)", function () {
+        const lines: string[] = [
+            `A=[[a,b],[c,d]]`,
+            `inv(A)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[d/(a*d-b*c),-b/(a*d-b*c)],[-c/(a*d-b*c),a/(a*d-b*c)]]"));
+        engine.release();
+    });
+    it("det(A) * inv(A)", function () {
+        const lines: string[] = [
+            `A=[[a,b],[c,d]]`,
+            `det(A) * inv(A)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
+        // The result is correct bu requires factoring to discover the simplification
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[a*d^2/(a*d-b*c)-b*c*d/(a*d-b*c),-a*b*d/(a*d-b*c)+b^2*c/(a*d-b*c)],[-a*c*d/(a*d-b*c)+b*c^2/(a*d-b*c),-a*b*c/(a*d-b*c)+a^2*d/(a*d-b*c)]]"));
+        engine.release();
+    });
+    it("det(A) * inv(A)", function () {
+        const lines: string[] = [
+            `A = [[a,b],[c,d]]`,
+            `M = det(A) * inv(A)`,
+            `M[1,1]`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine(engineConfig);
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
+        // The result is correct bu requires factoring to discover the simplification
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a*d^2/(a*d-b*c)-b*c*d/(a*d-b*c)"));
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(+ (* a (pow d 2) (pow (+ (* a d) (* -1 b c)) -1)) (* -1 b c d (pow (+ (* a d) (* -1 b c)) -1)))");
+        engine.release();
+    });
     xit("adj(x)", function () {
         const lines: string[] = [
             `A=[[a,b],[c,d]]`,

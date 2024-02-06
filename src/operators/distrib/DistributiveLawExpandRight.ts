@@ -25,7 +25,7 @@ export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements O
     readonly #hash: string;
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv, upper: Sym, lower: Sym) {
-        super(`${upper} right-distributive over ${lower}`, upper, make_is_cons_and_opr_eq_sym(lower), is_any, $);
+        super(`${upper.key()} right-distributive over ${lower.key()}`, upper, make_is_cons_and_opr_eq_sym(lower), is_any, $);
         this.#hash = hash_binop_cons_atom(upper, lower, HASH_ANY);
     }
     get hash(): string {
@@ -33,14 +33,20 @@ export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements O
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const hook = (retval: U, description: string): U => {
+            // console.lg(this.name, `lhs => ${this.$.toInfixString(lhs)} rhs => ${this.$.toInfixString(rhs)}`, this.$.toInfixString(retval), description);
+            return retval;
+        };
         const $ = this.$;
         const lower = lhs.opr;
         const Z = rhs;
         const xs = lhs.tail();
-        const terms = xs.map(function (x) {
-            return $.valueOf(items_to_cons(upper, x, Z));
+        const terms = xs.map((x) => {
+            const uxz = items_to_cons(upper, x, Z);
+            return hook($.valueOf(uxz), "A");
         });
         const retval = $.valueOf(items_to_cons(lower, ...terms));
-        return [TFLAG_DIFF, retval];
+        return [TFLAG_DIFF, hook(retval, "B")];
     }
 }

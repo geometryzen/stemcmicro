@@ -84,6 +84,7 @@
         "unit-polar": "mocha 'units/polar.spec.ts'",
         "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-predicates": "mocha 'units/predicates.spec.ts'",
+        "unit-prefixes": "mocha 'units/prefixes.spec.ts'",
         "unit-product": "mocha 'units/product.spec.ts'",
         "unit-rect": "mocha 'units/rect.spec.ts'",
         "unit-refcount": "mocha 'units/refcount.spec.ts'",

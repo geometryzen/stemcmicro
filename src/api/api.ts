@@ -1,4 +1,4 @@
-import { Boo, Cell, create_int, create_sym, Flt, is_flt, is_rat, is_sym, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
+import { Boo, Cell, create_int, create_rat, create_sym, Flt, is_flt, is_rat, is_sym, Keyword, Map, Rat, Str, Sym, Tag, Tensor } from 'math-expression-atoms';
 import { LambdaExpr } from 'math-expression-context';
 import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
@@ -251,6 +251,72 @@ export function define_si_units($: ExtensionEnv): void {
     }
 }
 
+export function define_metric_prefixes_for_si_units($: ExtensionEnv): void {
+    // d
+    const deci = create_rat(1, 10);
+    $.setBinding(create_sym("deci"), deci);
+
+    // c
+    const centi = create_rat(1, 100);
+    $.setBinding(create_sym("centi"), centi);
+
+    // m
+    const milli = create_rat(1, 1000);
+    $.setBinding(create_sym("milli"), milli);
+
+    // mu
+    const micro = milli.mul(milli);
+    $.setBinding(create_sym("micro"), micro);
+
+    // n
+    const nano = micro.mul(milli);
+    $.setBinding(create_sym("nano"), nano);
+
+    // p
+    const pico = nano.mul(milli);
+    $.setBinding(create_sym("pico"), pico);
+
+    // f
+    const femto = pico.mul(milli);
+    $.setBinding(create_sym("femto"), femto);
+
+    // a
+    const atto = femto.mul(milli);
+    $.setBinding(create_sym("atto"), atto);
+
+    // da
+    const deka = create_rat(10, 1);
+    $.setBinding(create_sym("deka"), deka);
+
+    // h
+    const hecto = create_rat(100, 1);
+    $.setBinding(create_sym("hecto"), hecto);
+
+    // k
+    const kilo = create_rat(1000, 1);
+    $.setBinding(create_sym("kilo"), kilo);
+
+    // M
+    const mega = kilo.mul(kilo);
+    $.setBinding(create_sym("mega"), mega);
+
+    // G
+    const giga = mega.mul(kilo);
+    $.setBinding(create_sym("giga"), giga);
+
+    // T
+    const tera = giga.mul(kilo);
+    $.setBinding(create_sym("tera"), tera);
+
+    // P
+    const peta = tera.mul(kilo);
+    $.setBinding(create_sym("peta"), peta);
+
+    // E
+    const exa = peta.mul(kilo);
+    $.setBinding(create_sym("exa"), exa);
+}
+
 class STEMCExprEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     readonly #options: Partial<EngineConfig>;
@@ -269,6 +335,7 @@ class STEMCExprEngine implements ExprEngine {
         define_math_constant_pi(this.#env);
         define_spacetime_algebra(this.#env);
         define_si_units(this.#env);
+        define_metric_prefixes_for_si_units(this.#env);
     }
     clearBindings(): void {
         this.#env.clearBindings();

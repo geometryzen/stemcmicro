@@ -798,8 +798,8 @@ export function approxAll(theFloat: number): ApproxResult | null {
     return bestApproxSoFar;
 }
 
-function simpleComplexityMeasure(arr: ApproxResult): number;
-function simpleComplexityMeasure(a: number, b: number, c: number): number;
+// function simpleComplexityMeasure(arr: ApproxResult): number;
+// function simpleComplexityMeasure(a: number, b: number, c: number): number;
 function simpleComplexityMeasure(aResult: number | ApproxResult, b?: number, c?: number) {
     let theSum = 0;
 

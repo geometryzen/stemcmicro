@@ -20,6 +20,10 @@ export function is_add(expr: U): expr is Cons & { __ts_sym: '+' } {
     return is_cons(expr) && is_cons_opr_eq_add(expr);
 }
 
+export function is_exp(expr: U): expr is Cons2<Sym, U, U> & { __ts_sym: 'MATH_EXP' } {
+    return is_cons(expr) && is_sym(expr.opr) && is_native(expr.opr, Native.exp);
+}
+
 export function is_multiply(expr: U): expr is Cons & { __ts_sym: 'MATH_MUL' } {
     return is_cons(expr) && is_cons_opr_eq_sym(expr, MATH_MUL);
 }

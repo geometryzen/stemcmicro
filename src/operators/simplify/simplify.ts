@@ -1,4 +1,4 @@
-import { is_num, is_rat, is_tensor, Sym, Tensor } from 'math-expression-atoms';
+import { is_num, is_rat, is_tensor, Sym } from 'math-expression-atoms';
 import { car, cdr, Cons2, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
@@ -11,7 +11,7 @@ import { length_of_cons_otherwise_zero } from '../../length_of_cons_or_zero';
 import { multiply_noexpand } from '../../multiply';
 import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { roots } from '../../roots';
-import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, FUNCTION, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
+import { ADD, COS, do_simplify_nested_radicals, FACTORIAL, MULTIPLY, POWER, SECRETX, SIN, TRANSPOSE } from '../../runtime/constants';
 import { count, countOccurrencesOfSymbol } from '../../runtime/count';
 import { defs, noexpand_unary } from '../../runtime/defs';
 import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/helpers';
@@ -28,29 +28,8 @@ import { numerator } from "../numerator/numerator";
 import { is_pow_2_any_any } from '../pow/is_pow_2_any_any';
 import { rationalize_factoring } from '../rationalize/rationalize';
 import { re } from '../real/real';
+import { tensor_extension } from '../tensor/tensor_extension';
 import { transpose_factoring } from '../transpose/transpose';
-
-function simplify_if_codegen(expr: U, $: ExtensionEnv): U {
-    // when we do code generation, we proceed to
-    // fully evaluate and simplify the body of
-    // a function, so we resolve all variables
-    // indirections and we simplify everything
-    // we can given the current assignments.
-    if (defs.codeGen && is_cons(expr) && expr.opr.equals(FUNCTION)) {
-        const argList = expr.argList;
-        const fbody = argList.head;
-        // let's simplify the body so we give it a compact form
-        const body = simplify($.valueOf(fbody), $);
-
-        // replace the evaled body
-        const paramList = cadr(argList);
-
-        return items_to_cons(FUNCTION, body, paramList);
-    }
-    else {
-        return expr;
-    }
-}
 
 function simplify_if_contains_factorial(expr: U, $: ExtensionEnv): U {
     if (expr.contains(FACTORIAL)) {
@@ -64,17 +43,16 @@ function simplify_if_contains_factorial(expr: U, $: ExtensionEnv): U {
 }
 
 export function simplify(expr: U, $: ExtensionEnv): U {
-    // console.lg(`ENTERING simplify ${$.toInfixString(expr)}`);
     const hook = function (retval: U): U {
-        // console.lg(`LEAVING simplify ${$.toInfixString(expr)} => ${$.toInfixString(retval)}`);
-        // console.lg(`LEAVING simplify ${$.toListString(expr)} => ${$.toInfixString(retval)}`);
         return retval;
     };
 
-    const scode = simplify_if_codegen(expr, $);
+    const scode = expr;
 
+    // The following illustrates how we should be handling all atoms.
+    // Of course, the extension should be looked up from the context.
     if (is_tensor(scode)) {
-        return hook(simplify_tensor(scode, $));
+        return hook(tensor_extension.simplify(scode, $));
     }
 
     const sfact = simplify_if_contains_factorial(expr, $);
@@ -127,28 +105,6 @@ export function simplify(expr: U, $: ExtensionEnv): U {
     // console.lg(`K ${$.toInfixString(p1)}`);
 
     return hook(p1);
-}
-
-/**
- * Simplifying a tensor means that we try to simplify each element separately.
- * @param M 
- * @param $ 
- * @returns 
- */
-function simplify_tensor(M: Tensor, $: ExtensionEnv) {
-
-    const simple_M = M.map(
-        function (x) {
-            return simplify(x, $);
-        }
-    );
-
-    if ($.iszero(simple_M)) {
-        return simple_M;
-    }
-    else {
-        return simple_M;
-    }
 }
 
 // try rationalizing
@@ -253,11 +209,20 @@ export function simplify_trig(expr: U, $: ExtensionEnv): U {
     }
 
     const expr1 = convert_sin_to_cos(expr, $);
+    // console.lg("expr1", $.toInfixString(expr1));
 
     const expr2 = convert_cos_to_sin(expr, $);
+    // console.lg("expr2", $.toInfixString(expr2));
 
-    if (count(expr2) < count(expr1) || nterms(expr2) < nterms(expr1)) {
-        if (count(expr2) < count(expr) || nterms(expr2) < nterms(expr)) {
+    const c0 = count(expr);
+    const c1 = count(expr1);
+    const c2 = count(expr2);
+    const n0 = nterms(expr);
+    const n1 = nterms(expr1);
+    const n2 = nterms(expr2);
+
+    if (c2 < c1 || n2 < n1) {
+        if (c2 < c0 || n2 < n0) {
             return hook(expr2, "B");
         }
         else {
@@ -265,7 +230,7 @@ export function simplify_trig(expr: U, $: ExtensionEnv): U {
         }
     }
     else {
-        if (count(expr1) < count(expr) || nterms(expr1) < nterms(expr)) {
+        if (c1 < c0 || n1 < n0) {
             return hook(expr1, "B");
         }
         else {

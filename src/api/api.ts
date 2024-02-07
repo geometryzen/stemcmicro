@@ -4,7 +4,7 @@ import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, to_sexpr, TTY } from '../eigenmath/eigenmath';
+import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, pop, push, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { eval_draw } from '../eigenmath/eval_draw';
 import { eval_infixform } from '../eigenmath/eval_infixform';
 import { eval_print } from '../eigenmath/eval_print';
@@ -17,6 +17,7 @@ import { create_env } from '../env/env';
 import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
 import { create_algebra_as_blades } from '../operators/algebra/create_algebra_as_tensor';
 import { assert_U } from '../operators/helpers/is_any';
+import { simplify } from '../operators/simplify/simplify';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, UOM_NAMES } from '../operators/uom/uom';
 import { clojurescript_parse, SyntaxKind } from '../parser/parser';
@@ -104,6 +105,7 @@ export interface ExprEngine {
     parse(sourceText: string, options?: Partial<ParseConfig>): { trees: U[], errors: Error[] };
     parseModule(sourceText: string, options?: Partial<ParseConfig>): { module: Cons, errors: Error[] };
 
+    simplify(expr: U): U;
     valueOf(expr: U): U;
 
     getBinding(sym: Sym): U;
@@ -320,7 +322,7 @@ export function define_metric_prefixes_for_si_units($: ExtensionEnv): void {
     $.setBinding(create_sym("exa"), exa);
 }
 
-class STEMCmicroExprEngine implements ExprEngine {
+class MicroEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     readonly #options: Partial<EngineConfig>;
     constructor(options: Partial<EngineConfig>) {
@@ -387,8 +389,13 @@ class STEMCmicroExprEngine implements ExprEngine {
         const module = items_to_cons(create_sym('module'), ...trees);
         return { module, errors };
     }
+    simplify(expr: U): U {
+        return simplify(expr, this.#env);
+    }
     valueOf(expr: U): U {
         const { value } = transform_tree(expr, {}, this.#env);
+        // This seems harmless enough but it causes one unit test to hang.
+        // return simplify(value, this.#env);
         return value;
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
@@ -458,7 +465,7 @@ class STEMCmicroExprEngine implements ExprEngine {
     }
 }
 
-class ClojureScriptExprEngine implements ExprEngine {
+class ClojureScriptEngine implements ExprEngine {
     readonly #env: ExtensionEnv;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(options: Partial<EngineConfig>) {
@@ -531,6 +538,9 @@ class ClojureScriptExprEngine implements ExprEngine {
     setBinding(sym: Sym, binding: U): void {
         assert_sym(sym);
         this.#env.setBinding(sym, binding);
+    }
+    simplify(expr: U): U {
+        return simplify(expr, this.#env);
     }
     valueOf(expr: U): U {
         const { value } = transform_tree(expr, {}, this.#env);
@@ -725,7 +735,7 @@ class ScriptVarsPrintConfig implements PrintConfig {
     }
 }
 
-class EigenmathExprEngine implements ExprEngine {
+class EigenmathEngine implements ExprEngine {
     readonly #scriptVars: ScriptVars = new ScriptVars();
     constructor(options: Partial<EngineConfig>) {
         // Determine whether options requested are compatible with Eigenmath.
@@ -791,8 +801,14 @@ class EigenmathExprEngine implements ExprEngine {
         assert_sym(sym);
         return this.#scriptVars.getUserFunction(sym);
     }
+    simplify(expr: U): U {
+        push(expr, this.#scriptVars);
+        eigenmath_simplify(this.#scriptVars);
+        return pop(this.#scriptVars);
+    }
     valueOf(expr: U): U {
-        return evaluate_expression(expr, this.#scriptVars);
+        const value = evaluate_expression(expr, this.#scriptVars);
+        return value;
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         switch (config.format) {
@@ -856,7 +872,7 @@ class EigenmathExprEngine implements ExprEngine {
     }
 }
 
-class PythonExprEngine implements ExprEngine {
+class PythonEngine implements ExprEngine {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(options: Partial<EngineConfig>) {
 
@@ -897,8 +913,12 @@ class PythonExprEngine implements ExprEngine {
         throw new Error('parseModule method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    simplify(expr: U): U {
+        throw new Error('simplify method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     valueOf(expr: U): U {
-        throw new Error('evaluate method not implemented.');
+        throw new Error('valueOf method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getBinding(sym: Sym): U {
@@ -943,16 +963,16 @@ export function create_engine(options: Partial<EngineConfig> = {}): ExprEngine {
     const engineKind = engine_kind_from_engine_options(options);
     switch (engineKind) {
         case EngineKind.STEMCscript: {
-            return new STEMCmicroExprEngine(options);
+            return new MicroEngine(options);
         }
         case EngineKind.ClojureScript: {
-            return new ClojureScriptExprEngine(options);
+            return new ClojureScriptEngine(options);
         }
         case EngineKind.Eigenmath: {
-            return new EigenmathExprEngine(options);
+            return new EigenmathEngine(options);
         }
         case EngineKind.PythonScript: {
-            return new PythonExprEngine(options);
+            return new PythonEngine(options);
         }
         default: {
             throw new Error();

@@ -19,13 +19,13 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
 }
 
 /**
- * (upper A (lower x1 x2 x3 ...))
+ * (upper lhs (lower x1 x2 x3 ...))
  */
 export class DistributiveLawExpandLeft extends Function2<LHS, RHS> implements Operator<EXPR> {
     readonly #hash: string;
     readonly phases = MODE_EXPANDING;
     constructor($: ExtensionEnv, upper: Sym, lower: Sym) {
-        super(`${upper} left-distributive over ${lower}`, upper, is_any, make_is_cons_and_opr_eq_sym(lower), $);
+        super(`${upper.key()} left-distributive over ${lower.key()}`, upper, is_any, make_is_cons_and_opr_eq_sym(lower), $);
         this.#hash = hash_binop_atom_cons(upper, HASH_ANY, lower);
     }
     get hash(): string {
@@ -34,6 +34,7 @@ export class DistributiveLawExpandLeft extends Function2<LHS, RHS> implements Op
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(opr: Sym, lhs: LHS, rhs: RHS, orig: EXPR): [TFLAGS, U] {
         const $ = this.$;
+        // console.lg(this.name, $.toInfixString(lhs), $.toInfixString(rhs));
         const add = rhs.opr;
         const A = lhs;
         const xs = rhs.tail();

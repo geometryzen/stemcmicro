@@ -50,10 +50,6 @@ export class Defs {
 
     public recursionLevelNestedRadicalsRemoval = 0;
 
-    public symbolsDependencies: { [key: string]: string[] } = {};
-
-    public symbolsHavingReassignments: string[] = [];
-
     /**
      * top of stack
      */
@@ -71,8 +67,6 @@ export class Defs {
      * Causes the print output to render JavaScript.
      */
     public codeGen = false;
-    public userSimplificationsInListForm: U[] = [];
-    public userSimplificationsInStringForm: string[] = [];
 
     get printMode(): PrintMode {
         return this.$printMode;

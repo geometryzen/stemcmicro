@@ -48,7 +48,7 @@ import { add_2_tensor_tensor } from '../operators/add/add_2_tensor_tensor';
 import { add_2_uom_flt } from '../operators/add/add_2_uom_flt';
 import { add_2_uom_rat } from '../operators/add/add_2_uom_rat';
 import { add_2_xxx_mul_2_rm1_xxx } from '../operators/add/add_2_xxx_mul_2_rm1_xxx';
-import { add_varargs } from '../operators/add/add_varargs';
+import { Eval_add } from '../operators/add/Eval_add';
 import { adj_any } from '../operators/adj/adj_any';
 import { algebra_2_tensor_tensor } from '../operators/algebra/algebra_2_mat_mat';
 import { arccos_varargs } from '../operators/arccos/arccos_varargs';
@@ -312,7 +312,6 @@ import { polar_imu } from '../operators/polar/polar_imu';
 import { pow_2_imu_rat } from '../operators/pow/pow_2_imu_rat';
 import { pow_2_pow_2_any_rat_rat } from '../operators/pow/pow_2_pow_2_any_rat_rat';
 import { pow_2_pow_2_e_any_rat } from '../operators/pow/pow_2_pow_2_e_any_rat';
-import { cos_squared_expanding } from '../operators/pow/pow_cos_squared';
 import { pow_e_any } from '../operators/pow/pow_e_any';
 import { pow_e_log } from '../operators/pow/pow_e_log';
 import { pow_e_rat } from '../operators/pow/pow_e_rat';
@@ -372,7 +371,7 @@ import { sgn_any } from '../operators/sgn/sgn_any';
 import { sgn_flt } from '../operators/sgn/sgn_flt';
 import { sgn_rat } from '../operators/sgn/sgn_rat';
 import { shape_varargs } from '../operators/shape/shape_varargs';
-import { simplify_varargs } from '../operators/simplify/simplify_fn';
+import { Eval_simplify } from '../operators/simplify/eval_simplify';
 import { simplify_mul_2_blade_mul_2_blade_any } from '../operators/simplify/simplify_mul_2_blade_mul_2_blade_any';
 import { sin_add } from '../operators/sin/sin_add';
 import { sin_any } from '../operators/sin/sin_any';
@@ -411,7 +410,7 @@ import { tan_varargs } from '../operators/tan/tan_varargs';
 import { tanh_varargs } from '../operators/tanh/tanh_varargs';
 import { tau } from '../operators/tau/tau';
 import { taylor_varargs } from '../operators/taylor/taylor_varargs';
-import { tensor_extension } from '../operators/tensor/tensor_extension';
+import { tensor_operator_builder } from '../operators/tensor/tensor_extension';
 import { testeq_sym_rat } from '../operators/testeq/testeq_sym_rat';
 import { testgt_mul_2_any_any_rat } from '../operators/testgt/testgt_mul_2_any_any_rat';
 import { testgt_rat_rat } from '../operators/testgt/testgt_rat_rat';
@@ -521,12 +520,12 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(add_2_imu_flt);
     $.defineOperator(add_2_any_any_zero_sum);
     $.defineOperator(add_2_any_any_factorize_rhs);
-    $.defineOperator(add_varargs);
+    $.defineConsTransformer(native_sym(Native.add), Eval_add);
 
     $.defineAssociative(MATH_ADD, zero);
     $.defineAssociative(MATH_MUL, one);
 
-    $.defineOperator(cos_squared_expanding);
+    // $.defineOperator(cos_squared_expanding);
     // TODO: See what these do.
     $.defineOperator(pow_2_pow_2_e_any_rat);
     $.defineOperator(pow_2_pow_2_any_rat_rat);
@@ -1022,7 +1021,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(sgn_any);
 
     $.defineOperator(shape_varargs);
-    $.defineOperator(simplify_varargs);
+    $.defineConsTransformer(native_sym(Native.simplify), Eval_simplify);
 
     $.defineOperator(sinh_flt);
     $.defineOperator(sinh_rat);
@@ -1097,7 +1096,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(sym_math_pi);
 
     $.defineOperator(sym_extension);
-    $.defineOperator(tensor_extension);
+    $.defineOperator(tensor_operator_builder);
     $.defineOperator(blade_extension);
     $.defineOperator(uom_extension);
     $.defineOperator(hyp_extension);

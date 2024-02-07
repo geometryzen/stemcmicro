@@ -1,6 +1,5 @@
 import { scan } from '../algebrite/scan';
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
-import { clear_patterns } from '../pattern';
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs } from './defs';
 
@@ -8,7 +7,6 @@ import { defs } from './defs';
  * #deprecated
  */
 export function soft_reset($: ExtensionEnv): void {
-    clear_patterns();
 
     $.clearBindings();
 

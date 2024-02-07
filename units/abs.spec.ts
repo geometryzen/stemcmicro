@@ -308,7 +308,7 @@ describe("abs", function () {
         assert.strictEqual(errors.length, 0);
         assert.isArray(values);
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(context.renderAsInfix(values[0]), "exp(a)");
+        assert.strictEqual(context.renderAsInfix(context.simplify(values[0])), "exp(a)");
         context.release();
     });
     it("abs(1^a)", function () {

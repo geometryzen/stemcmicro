@@ -194,13 +194,13 @@ describe("derivative", function () {
     });
     it("derivative(1/(5+4*cos(x)),x)", function () {
         const lines: string[] = [
-            `derivative(1/(5+4*cos(x)),x)`
+            `derivative(1/(5+4*cos(x)),x)-(4*sin(x)/(41+40*cos(x)-16*sin(x)**2))`
         ];
         const engine = create_script_context({
             useDerivativeShorthandLowerD: true
         });
-        const actual = assert_one_value_execute(lines.join('\n'), engine);
-        assert.strictEqual(engine.renderAsInfix(actual), "4*sin(x)/(41+40*cos(x)-16*sin(x)**2)");
+        const actual = engine.simplify(assert_one_value_execute(lines.join('\n'), engine));
+        assert.strictEqual(engine.renderAsInfix(actual), "0");
         engine.release();
     });
     it("gradient of f", function () {

@@ -3,7 +3,6 @@ import fs from 'fs';
 import process from 'process';
 import { create_engine, EngineConfig, ExprEngine } from './src/api/api';
 import { Predicates } from './src/env/ExtensionEnv';
-import { clear_patterns } from './src/pattern';
 import { stemc_prolog } from './src/runtime/init';
 import { U } from './src/tree/tree';
 
@@ -184,13 +183,7 @@ export { test };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function setup_test(f: () => void, engine: ExprEngine, options: Partial<EngineConfig>) {
-    // TODO: Some global issues to be addressed...
-    // Inlining 'clearall' is illuminating.
-    // Reveals some objects that are still global.
-    // engine.executeScript('clearall');
-    clear_patterns();
 
-    // We need to redo these...
     engine.clearBindings();
 
     engine.executeProlog(stemc_prolog);

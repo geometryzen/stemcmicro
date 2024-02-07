@@ -1,4 +1,4 @@
-import { Sym } from 'math-expression-atoms';
+import { create_int, negOne, one, Sym, zero } from 'math-expression-atoms';
 import { Native, native_sym } from 'math-expression-native';
 import { items_to_cons, U } from 'math-expression-tree';
 import { rational } from './bignum';
@@ -19,7 +19,6 @@ import { ProgrammingError } from './programming/ProgrammingError';
 import { quotient } from './quotient';
 import { defs, halt, move_top_of_stack, noexpand_unary } from './runtime/defs';
 import { stack_pop, stack_push, stack_push_items } from './runtime/stack';
-import { create_int, negOne, one, zero } from './tree/rat/Rat';
 
 // Factor a polynomial
 

@@ -1452,8 +1452,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         const op = unambiguous_operator(expr, ops, $);
                         if (op) {
                             const composite = op.transform(expr);
-                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
-                            // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
+                            if ($.getDirective(Directive.convertSinToCos)) {
+                                // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
+                                // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite[1])} flags: ${composite[0]}`);
+                            }
                             return composite;
                         }
                     }

@@ -11,7 +11,7 @@ describe("d", function () {
             useDerivativeShorthandLowerD: true
         });
         const { values } = engine.executeScript(lines.join('\n'));
-        assert.strictEqual(engine.renderAsInfix(values[0]), "4*sin(x)/(41+40*cos(x)-16*sin(x)**2)");
+        assert.strictEqual(engine.renderAsInfix(values[0]), "4*sin(x)/(25+40*cos(x)+16*cos(x)**2)");
         engine.release();
     });
 });

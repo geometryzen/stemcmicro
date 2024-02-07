@@ -82,6 +82,7 @@
         "unit-parens": "mocha 'units/parens.spec.ts'",
         "unit-parse": "mocha 'units/parse.spec.ts'",
         "unit-polar": "mocha 'units/polar.spec.ts'",
+        "unit-power": "mocha 'units/power.spec.ts'",
         "unit-predicate": "mocha 'units/predicate.spec.ts'",
         "unit-predicates": "mocha 'units/predicates.spec.ts'",
         "unit-prefixes": "mocha 'units/prefixes.spec.ts'",
@@ -151,9 +152,14 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
+        "math-expression-atoms": "^0.9.30",
+        "math-expression-context": "^0.9.11",
+        "math-expression-native": "^0.9.16",
+        "math-expression-tree": "^0.9.22",
         "generic-rbtree": "^1.1.2",
         "typhon-lang": "^1.0.13"
     },
+    "peerDependencies": {},
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
         "@rollup/plugin-commonjs": "^25.0.7",
@@ -178,11 +184,5 @@
         "ts-node": "^10.9.2",
         "typedoc": "^0.25.7",
         "typescript": "^5.3.3"
-    },
-    "peerDependencies": {
-        "math-expression-atoms": "^0.9.30",
-        "math-expression-context": "^0.9.11",
-        "math-expression-native": "^0.9.16",
-        "math-expression-tree": "^0.9.22"
     }
 }

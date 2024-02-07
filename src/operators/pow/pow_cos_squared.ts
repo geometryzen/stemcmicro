@@ -1,7 +1,7 @@
 import { is_rat, one, Sym } from "math-expression-atoms";
 import { Native, native_sym } from "math-expression-native";
 import { Cons, is_cons, U } from "math-expression-tree";
-import { ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
+import { Directive, ExtensionEnv, MODE_EXPANDING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { hash_binop_cons_atom, HASH_RAT } from "../../hashing/hash_info";
 import { MATH_POW } from "../../runtime/ns_math";
 import { negOne, Rat } from "../../tree/rat/Rat";
@@ -41,12 +41,19 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
     get hash(): string {
         return this.#hash;
     }
-    transform2(opr: Sym, cosX: LHS, two: RHS): [TFLAGS, U] {
+    transform2(opr: Sym, cosX: LHS, two: RHS, orig: EXP): [TFLAGS, U] {
         const $ = this.$;
-        const X = cosX.arg;
-        const retval = add(one, multiply(negOne, pow(sin(X), two)));
-        return [TFLAG_DIFF, $.valueOf(retval)];
+        if ($.getDirective(Directive.convertSinToCos)) {
+            return [TFLAG_NONE, orig];
+        }
+        else {
+            const X = cosX.arg;
+            const retval = add(one, multiply(negOne, pow(sin(X), two)));
+            return [TFLAG_DIFF, $.valueOf(retval)];
+        }
     }
 }
 
+// Dead code.
+// There is a more general conversion of cos^2n and sin^2n in power evaluation.
 export const cos_squared_expanding = new Builder();

@@ -1,12 +1,9 @@
+import { is_sym } from 'math-expression-atoms';
+import { car, cdr, Cons, is_cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
-import { is_sym } from './operators/sym/is_sym';
-import { clear_patterns } from './pattern';
 import { halt } from './runtime/defs';
-import { car, cdr, Cons, is_cons, nil, U } from './tree/tree';
 
 export function Eval_clearall($: ExtensionEnv): U {
-
-    clear_patterns();
 
     $.clearBindings();
 

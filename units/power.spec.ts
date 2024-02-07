@@ -314,7 +314,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.valueOf(tree);
+            const value = engine.simplify(engine.valueOf(tree));
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -335,7 +335,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.valueOf(tree);
+            const value = engine.simplify(engine.valueOf(tree));
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -356,7 +356,7 @@ describe("Free Body Diagram", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.valueOf(tree);
+            const value = engine.simplify(engine.valueOf(tree));
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -403,15 +403,15 @@ describe("Free Body Diagram", function () {
         }
         assert.strictEqual(values.length, 6);
         // Fn
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "-g*m*cos(theta)*sin(theta)*e1+g*m*e2-g*m*sin(theta)**2*e2");
+        assert.strictEqual(engine.renderAsString(values[0], { format: 'Infix' }), "-g*m*cos(theta)*sin(theta)*e1+g*m*cos(theta)**2*e2");
         // Fs
         assert.strictEqual(engine.renderAsString(values[1], { format: 'Infix' }), "g*m*cos(theta)*sin(theta)*e1+g*m*sin(theta)**2*e2");
         // Fg
-        assert.strictEqual(engine.renderAsString(values[2], { format: 'Infix' }), "-g*m*e2");
+        assert.strictEqual(engine.renderAsString(engine.simplify(values[2]), { format: 'Infix' }), "-g*m*e2");
         // Fg / scaling
-        assert.strictEqual(engine.renderAsString(values[3], { format: 'Infix' }), "-e2");
+        assert.strictEqual(engine.renderAsString(engine.simplify(values[3]), { format: 'Infix' }), "-e2");
         // Fn / scaling
-        assert.strictEqual(engine.renderAsString(values[4], { format: 'Infix' }), "-cos(theta)*sin(theta)*e1+e2-sin(theta)**2.0*e2");
+        assert.strictEqual(engine.renderAsString(values[4], { format: 'Infix' }), "-cos(theta)*sin(theta)*e1+cos(theta)**2.0*e2");
         // Fs / scaling
         assert.strictEqual(engine.renderAsString(values[5], { format: 'Infix' }), "cos(theta)*sin(theta)*e1+sin(theta)**2.0*e2");
 

@@ -58,10 +58,9 @@ class StrExtension implements Extension<Str> {
         return JSON.stringify(str.str);
     }
     toHumanString(str: Str): string {
-        // console.lg("StrExtension.toHumanString", `${str}`);
         const s = str.str;
         switch (s) {
-            // Experimenting here. May be better to look for use of units or to "smart" render to put the number in a reasonable range.
+            // Experimenting here. Better to look for use of units and "smart" render to put the number in a reasonable range.
             // https://en.wikipedia.org/wiki/Metric_prefix
             case "deci": return 'd';
             case "centi": return 'c';

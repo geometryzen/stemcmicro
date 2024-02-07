@@ -6959,6 +6959,7 @@ function eval_power(expr: U, $: ScriptVars) {
         push(powerExpr.expo, $);
         value_of($);
         dupl($);
+        // expo has been evaluated with a decremented expanding value.
         const expo = pop($);
 
         // if exponent is negative then evaluate base without expanding,
@@ -6968,6 +6969,7 @@ function eval_power(expr: U, $: ScriptVars) {
             const t = $.expanding;
             $.expanding = 0;
             try {
+                // base is evaluated with zero expanding.
                 value_of($);
             }
             finally {
@@ -8216,28 +8218,30 @@ function sgn($: ScriptVars): void {
         push_integer(1, $);
 }
 
-function eval_simplify(p1: U, $: ScriptVars): void {
-    push(cadr(p1), $);
+function eval_simplify(expr: Cons, $: ScriptVars): void {
+    push(expr.arg, $);
     value_of($);
     simplify($);
 }
 
-function simplify($: ScriptVars): void {
-    const p1 = pop($);
-    if (is_tensor(p1))
-        simplify_tensor(p1, $);
-    else
-        simplify_scalar(p1, $);
+export function simplify($: ScriptVars): void {
+    const expr = pop($);
+    if (is_tensor(expr)) {
+        simplify_tensor(expr, $);
+    }
+    else {
+        simplify_scalar(expr, $);
+    }
 }
 
-function simplify_tensor(p1: Tensor, $: ScriptVars): void {
-    p1 = copy_tensor(p1);
-    push(p1, $);
-    const n = p1.nelem;
+function simplify_tensor(M: Tensor, $: ScriptVars): void {
+    M = copy_tensor(M);
+    push(M, $);
+    const n = M.nelem;
     for (let i = 0; i < n; i++) {
-        push(p1.elems[i], $);
+        push(M.elems[i], $);
         simplify($);
-        p1.elems[i] = pop($);
+        M.elems[i] = pop($);
     }
 }
 
@@ -8295,17 +8299,17 @@ function simplify_pass1($: ScriptVars): void {
 
     push(T, $);
     numerator($);
-    let NUM = pop($);
+    let numer = pop($);
 
     push(T, $);
     denominator($);
     value_of($); // to expand denominator
-    let DEN = pop($);
+    let denom = pop($);
 
     // if DEN is a sum then rationalize it
 
-    if (car(DEN).equals(ADD)) {
-        push(DEN, $);
+    if (car(denom).equals(ADD)) {
+        push(denom, $);
         rationalize($);
         T = pop($);
         if (!car(T).equals(ADD)) {
@@ -8313,22 +8317,22 @@ function simplify_pass1($: ScriptVars): void {
             push(T, $);
             denominator($);
             value_of($); // to expand denominator
-            push(NUM, $);
+            push(numer, $);
             multiply($);
-            NUM = pop($);
+            numer = pop($);
             // update DEN
             push(T, $);
             numerator($);
-            DEN = pop($);
+            denom = pop($);
         }
     }
 
     // are NUM and DEN congruent sums?
 
-    if (!car(NUM).equals(ADD) || !car(DEN).equals(ADD) || lengthf(NUM) !== lengthf(DEN)) {
+    if (!car(numer).equals(ADD) || !car(denom).equals(ADD) || lengthf(numer) !== lengthf(denom)) {
         // no, but NUM over DEN might be simpler than p1
-        push(NUM, $);
-        push(DEN, $);
+        push(numer, $);
+        push(denom, $);
         divide($);
         T = pop($);
         if (complexity(T) < complexity(p1))
@@ -8337,17 +8341,17 @@ function simplify_pass1($: ScriptVars): void {
         return;
     }
 
-    push(cadr(NUM), $); // push first term of numerator
-    push(cadr(DEN), $); // push first term of denominator
+    push(cadr(numer), $); // push first term of numerator
+    push(cadr(denom), $); // push first term of denominator
     divide($);
 
     const R = pop($); // provisional ratio
 
     push(R, $);
-    push(DEN, $);
+    push(denom, $);
     multiply($);
 
-    push(NUM, $);
+    push(numer, $);
     subtract($);
 
     T = pop($);
@@ -11349,7 +11353,7 @@ function erfc(x: number): number {
     return 1.0 - erf(x);
 }
 
-function pop($: ScriptVars): U {
+export function pop($: ScriptVars): U {
     if ($.stack.length === 0) {
         stopf("stack error");
     }

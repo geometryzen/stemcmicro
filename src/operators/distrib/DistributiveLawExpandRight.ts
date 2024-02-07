@@ -19,7 +19,7 @@ function make_is_cons_and_opr_eq_sym(lower: Sym) {
 }
 
 /**
- * (upper (lower x1 x2 x3 ...) Z)
+ * (upper (lower x1 x2 x3 ...) rhs)
  */
 export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements Operator<EXP> {
     readonly #hash: string;
@@ -33,6 +33,7 @@ export class DistributiveLawExpandRight extends Function2<LHS, RHS> implements O
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     transform2(upper: Sym, lhs: LHS, rhs: RHS, orig: EXP): [TFLAGS, U] {
+        // console.lg(this.name);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const hook = (retval: U, description: string): U => {
             // console.lg(this.name, `lhs => ${this.$.toInfixString(lhs)} rhs => ${this.$.toInfixString(rhs)}`, this.$.toInfixString(retval), description);

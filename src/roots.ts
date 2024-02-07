@@ -1,3 +1,5 @@
+import { is_rat, Tensor } from 'math-expression-atoms';
+import { car, Cons, nil, U } from 'math-expression-tree';
 import { rational } from './bignum';
 import { add_terms } from './calculators/add/add_terms';
 import { compare_expr_expr } from './calculators/compare/compare_expr_expr';
@@ -10,7 +12,6 @@ import { Native } from './native/Native';
 import { native_sym } from './native/native_sym';
 import { coefficients } from './operators/coeff/coeff';
 import { factorize } from './operators/factor/factor';
-import { is_rat } from './operators/rat/is_rat';
 import { simplify } from './operators/simplify/simplify';
 import { ASSIGN, SECRETX } from './runtime/constants';
 import { defs, halt } from './runtime/defs';
@@ -18,8 +19,6 @@ import { is_multiply, is_power } from './runtime/helpers';
 import { float_eval_abs_eval } from './scripting/float_eval_abs_eval';
 import { caddr, cadr } from './tree/helpers';
 import { create_int, eight, four, half, negFour, negOne, nine, one, third, three, two } from './tree/rat/Rat';
-import { Tensor } from './tree/tensor/Tensor';
-import { car, Cons, nil, U } from './tree/tree';
 
 const testeq = native_sym(Native.testeq);
 

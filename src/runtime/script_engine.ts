@@ -4,6 +4,7 @@ import { define_math_constant_pi, define_metric_prefixes_for_si_units, define_si
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
 import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
+import { simplify } from "../operators/simplify/simplify";
 import { assert_sym } from "../operators/sym/assert_sym";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
 import { render_as_ascii } from "../print/render_as_ascii";
@@ -129,6 +130,7 @@ export interface ScriptContext {
     renderAsInfix(expr: U): string;
     renderAsLaTeX(expr: U): string;
     renderAsSExpr(expr: U): string;
+    simplify(expr: U): U;
     addRef(): void;
     release(): void;
 }
@@ -266,6 +268,9 @@ export function create_script_context(contextOptions: ScriptContextOptions = {})
         },
         renderAsSExpr(expr: U): string {
             return render_as_sexpr(expr, $);
+        },
+        simplify(expr: U): U {
+            return simplify(expr, $);
         },
         addRef(): void {
             ref_count++;

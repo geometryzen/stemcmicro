@@ -7,6 +7,7 @@ import { defs, PrintMode, PRINTMODE_SEXPR } from "../../runtime/defs";
 import { Tensor } from "../../tree/tensor/Tensor";
 import { cons, Cons, nil, U } from "../../tree/tree";
 import { ExtensionOperatorBuilder } from "../helpers/ExtensionOperatorBuilder";
+import { simplify } from "../simplify/simplify";
 import { subst } from "../subst/subst";
 import { is_tensor } from "./is_tensor";
 
@@ -79,8 +80,7 @@ export function outer_tensor_tensor(lhs: Tensor, rhs: Tensor, $: ExtensionEnv): 
 }
 
 class TensorExtension implements Extension<Tensor> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(private readonly $: ExtensionEnv) {
+    constructor() {
         // Nothing to see here.
     }
     iscons(): false {
@@ -129,11 +129,17 @@ class TensorExtension implements Extension<Tensor> {
             defs.setPrintMode(printMode);
         }
     }
-    evaluate(matrix: Tensor, argList: Cons): [TFLAGS, U] {
-        return this.transform(cons(matrix, argList));
+    evaluate(matrix: Tensor, argList: Cons, $: ExtensionEnv): [TFLAGS, U] {
+        return this.transform(cons(matrix, argList), $);
     }
-    transform(expr: U): [TFLAGS, U] {
-        const $ = this.$;
+    simplify(M: Tensor, $: ExtensionEnv) {
+        return M.map(
+            function (x) {
+                return simplify(x, $);
+            }
+        );
+    }
+    transform(expr: U, $: ExtensionEnv): [TFLAGS, U] {
         if (this.isKind(expr)) {
             const new_elements = expr.mapElements(function (element) {
                 return $.valueOf(element);
@@ -162,6 +168,8 @@ class TensorExtension implements Extension<Tensor> {
     }
 }
 
-export const tensor_extension = new ExtensionOperatorBuilder(function ($: ExtensionEnv) {
-    return new TensorExtension($);
+export const tensor_extension = new TensorExtension();
+
+export const tensor_operator_builder = new ExtensionOperatorBuilder(function () {
+    return tensor_extension;
 });

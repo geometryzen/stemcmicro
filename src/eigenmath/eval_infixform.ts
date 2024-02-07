@@ -1,12 +1,15 @@
 import { U } from "math-expression-tree";
 import { cadr } from "../tree/helpers";
-import { push_string, ScriptVars, value_of } from "./eigenmath";
+import { push_string, value_of } from "./eigenmath";
 import { infixform_expr, infix_config_from_options } from "./infixform";
+import { ProgramControl } from "./ProgramControl";
+import { ProgramEnv } from "./ProgramEnv";
+import { ProgramStack } from "./ProgramStack";
 
-export function eval_infixform(p1: U, $: ScriptVars): void {
-    $.stack.push(cadr(p1));
-    value_of($);
-    p1 = $.stack.pop()!;
+export function eval_infixform(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    $.push(cadr(p1));
+    value_of(env, ctrl, $);
+    p1 = $.pop();
 
     const outbuf: string[] = [];
     const config = infix_config_from_options({});

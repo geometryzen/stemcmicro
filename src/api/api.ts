@@ -4,11 +4,11 @@ import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, pop, push, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
-import { eval_draw } from '../eigenmath/eval_draw';
+import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
+import { make_eval_draw } from '../eigenmath/eval_draw';
 import { eval_infixform } from '../eigenmath/eval_infixform';
-import { eval_print } from '../eigenmath/eval_print';
-import { eval_run } from '../eigenmath/eval_run';
+import { make_eval_print } from '../eigenmath/eval_print';
+import { make_eval_run } from '../eigenmath/eval_run';
 import { InfixOptions, to_infix } from '../eigenmath/infixform';
 import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_and_input_as_svg_or_infix';
 import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
@@ -742,10 +742,10 @@ class EigenmathEngine implements ExprEngine {
         // TODO: 
         // const allowUndeclaredVars = allow_undeclared_vars(options, true);
         this.#scriptVars.init();
-        define_cons_function(create_sym("draw"), eval_draw);
+        define_cons_function(create_sym("draw"), make_eval_draw(this.#scriptVars));
         define_cons_function(create_sym("infixform"), eval_infixform);
-        define_cons_function(create_sym("print"), eval_print);
-        define_cons_function(create_sym("run"), eval_run);
+        define_cons_function(create_sym("print"), make_eval_print(this.#scriptVars));
+        define_cons_function(create_sym("run"), make_eval_run(this.#scriptVars));
         if (options.prolog) {
             if (Array.isArray(options.prolog)) {
                 this.#scriptVars.executeProlog(options.prolog);
@@ -761,9 +761,14 @@ class EigenmathEngine implements ExprEngine {
     executeProlog(prolog: string[]): void {
         this.#scriptVars.executeProlog(prolog);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
-        throw new Error('executeScript method not implemented.');
+        const values: U[] = [];
+        const { trees, errors } = this.parse(sourceText);
+        for (let i = 0; i < trees.length; i++) {
+            const value = this.valueOf(trees[i]);
+            values.push(value);
+        }
+        return { values, errors, prints: [] };
     }
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
@@ -802,12 +807,12 @@ class EigenmathEngine implements ExprEngine {
         return this.#scriptVars.getUserFunction(sym);
     }
     simplify(expr: U): U {
-        push(expr, this.#scriptVars);
-        eigenmath_simplify(this.#scriptVars);
-        return pop(this.#scriptVars);
+        this.#scriptVars.push(expr);
+        eigenmath_simplify(this.#scriptVars, this.#scriptVars, this.#scriptVars);
+        return this.#scriptVars.pop();
     }
     valueOf(expr: U): U {
-        const value = evaluate_expression(expr, this.#scriptVars);
+        const value = evaluate_expression(expr, this.#scriptVars, this.#scriptVars, this.#scriptVars);
         return value;
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
@@ -886,7 +891,7 @@ class PythonEngine implements ExprEngine {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     executeScript(sourceText: string): { values: U[]; prints: string[]; errors: Error[]; } {
-        throw new Error('executeScript method not implemented.');
+        throw new Error('PythonEngine.executeScript method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     hasBinding(sym: Sym): boolean {

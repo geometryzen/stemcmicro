@@ -1,10 +1,14 @@
 import { create_sym, is_str } from "math-expression-atoms";
 import { is_nil, nil, U } from "math-expression-tree";
 import { cadr } from "../tree/helpers";
-import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, ScriptVars, set_symbol, stopf, value_of } from "./eigenmath";
+import { EigenmathParseConfig, evaluate_expression, get_binding, scan_inbuf, set_symbol, stopf, value_of } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
 import { make_should_annotate } from "./make_should_annotate";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
+import { ProgramControl } from "./ProgramControl";
+import { ProgramEnv } from "./ProgramEnv";
+import { ProgramIO } from "./ProgramIO";
+import { ProgramStack } from "./ProgramStack";
 import { SvgRenderConfig } from "./render_svg";
 import { should_render_svg } from "./should_eigenmath_render_svg";
 /**
@@ -14,63 +18,65 @@ const I_LOWER = create_sym("i");
 const J_LOWER = create_sym("j");
 const LAST = create_sym("last");
 
-/**
- * run("https://...")
- * @param expr 
- * @param $ 
- */
-export function eval_run(expr: U, $: ScriptVars): void {
+export function make_eval_run(io: ProgramIO) {
+    /**
+     * run("https://...")
+     * @param expr 
+     * @param $ 
+     */
+    return function (expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    $.stack.push(cadr(expr));
-    value_of($);
-    const url = $.stack.pop()!;
+        $.push(cadr(expr));
+        value_of(env, ctrl, $);
+        const url = $.pop();
 
-    if (!is_str(url))
-        stopf("run: string expected");
+        if (!is_str(url))
+            stopf("run: string expected");
 
-    const f = new XMLHttpRequest();
-    f.open("GET", url.str, false);
-    f.onerror = function () {
-        stopf("run: network error");
-    };
-    f.send();
-
-    if (f.status === 404 || f.responseText.length === 0)
-        stopf("run: file not found");
-
-    const save_inbuf = $.inbuf;
-    const save_trace1 = $.trace1;
-    const save_trace2 = $.trace2;
-
-    $.inbuf = f.responseText;
-
-    let k = 0;
-
-    for (; ;) {
-
-        // This would have to come from an argument to run...
-        const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
-
-        k = scan_inbuf(k, $, config);
-
-        if (k === 0)
-            break; // end of input
-
-        const input = $.stack.pop()!;
-        const result = evaluate_expression(input, $);
-        const ec: SvgRenderConfig = {
-            useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
-            useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
+        const f = new XMLHttpRequest();
+        f.open("GET", url.str, false);
+        f.onerror = function () {
+            stopf("run: network error");
         };
-        print_value_and_input_as_svg_or_infix(result, input, should_render_svg($), ec, $.listeners, make_should_annotate($));
-        if (!is_nil(result)) {
-            set_symbol(LAST, result, nil, $);
+        f.send();
+
+        if (f.status === 404 || f.responseText.length === 0)
+            stopf("run: file not found");
+
+        const save_inbuf = io.inbuf;
+        const save_trace1 = io.trace1;
+        const save_trace2 = io.trace2;
+
+        io.inbuf = f.responseText;
+
+        let k = 0;
+
+        for (; ;) {
+
+            // This would have to come from an argument to run...
+            const config: EigenmathParseConfig = { useCaretForExponentiation: true, useParenForTensors: true };
+
+            k = scan_inbuf(k, env, ctrl, $, io, config);
+
+            if (k === 0)
+                break; // end of input
+
+            const input = $.pop();
+            const result = evaluate_expression(input, env, ctrl, $);
+            const ec: SvgRenderConfig = {
+                useImaginaryI: isimaginaryunit(get_binding(I_LOWER, env)),
+                useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, env))
+            };
+            print_value_and_input_as_svg_or_infix(result, input, should_render_svg(env), ec, io.listeners, make_should_annotate(env));
+            if (!is_nil(result)) {
+                set_symbol(LAST, result, nil, env);
+            }
         }
-    }
 
-    $.inbuf = save_inbuf;
-    $.trace1 = save_trace1;
-    $.trace2 = save_trace2;
+        io.inbuf = save_inbuf;
+        io.trace1 = save_trace1;
+        io.trace2 = save_trace2;
 
-    $.stack.push(nil);
+        $.push(nil);
+    };
 }

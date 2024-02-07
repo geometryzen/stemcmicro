@@ -113,6 +113,7 @@
         "unit-vars": "mocha 'units/vars.spec.ts'",
         "unit-visitor": "mocha 'units/visitor.spec.ts'",
         "test-abs": "mocha 'tests/abs.ts'",
+        "test-arctan": "mocha 'tests/arctan.ts'",
         "test-bake": "mocha 'tests/bake.ts'",
         "test-check": "mocha 'tests/check.ts'",
         "test-cos": "mocha 'tests/cos.ts'",

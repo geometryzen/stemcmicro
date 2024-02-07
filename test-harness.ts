@@ -3,6 +3,7 @@ import fs from 'fs';
 import process from 'process';
 import { create_engine, EngineConfig, ExprEngine } from './src/api/api';
 import { Predicates } from './src/env/ExtensionEnv';
+import { SyntaxKind } from './src/parser/parser';
 import { stemc_prolog } from './src/runtime/init';
 import { U } from './src/tree/tree';
 
@@ -229,6 +230,7 @@ export interface TestOptions {
     useCaretForExponentiation?: boolean;
     useDerivativeShorthandLowerD?: boolean;
     useIntegersForPredicates?: boolean;
+    syntaxKind?: SyntaxKind;
     verbose?: boolean;
     name?: string;
 }
@@ -239,6 +241,7 @@ interface TestConfig {
     useCaretForExponentiation: boolean;
     useDerivativeShorthandLowerD: boolean;
     useIntegersForPredicates: boolean;
+    syntaxKind: SyntaxKind;
     verbose: boolean;
 }
 
@@ -251,6 +254,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
             useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
+            syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.STEMCscript,
             verbose: typeof options.verbose === 'boolean' ? options.verbose : false
         };
         return config;
@@ -262,6 +266,7 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
             useCaretForExponentiation: true,
             useDerivativeShorthandLowerD: true,
             useIntegersForPredicates: true,
+            syntaxKind: SyntaxKind.STEMCscript,
             verbose: false
         };
         return config;
@@ -274,13 +279,15 @@ function test_config_from_options(options: TestOptions | undefined): TestConfig 
 function harness_options_to_engine_options(options: TestOptions | undefined): Partial<EngineConfig> {
     if (options) {
         return {
+            syntaxKind: typeof options.syntaxKind === 'number' ? options.syntaxKind : SyntaxKind.STEMCscript,
             useCaretForExponentiation: typeof options.useCaretForExponentiation === 'boolean' ? options.useCaretForExponentiation : true,
             useDerivativeShorthandLowerD: typeof options.useDerivativeShorthandLowerD === 'boolean' ? options.useDerivativeShorthandLowerD : true,
-            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true
+            useIntegersForPredicates: typeof options.useIntegersForPredicates === 'boolean' ? options.useIntegersForPredicates : true,
         };
     }
     else {
         return {
+            syntaxKind: SyntaxKind.STEMCscript,
             useCaretForExponentiation: true,
             useDerivativeShorthandLowerD: true,
             useIntegersForPredicates: true

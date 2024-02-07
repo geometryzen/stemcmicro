@@ -20,6 +20,7 @@ import { isnegativeterm } from "./isnegativeterm";
 import { isnumerator } from "./isnumerator";
 import { isposint } from "./isposint";
 import { printname_from_symbol } from "./printname_from_symbol";
+import { ProgramStack } from "./ProgramStack";
 
 const ADD = native_sym(Native.add);
 const ASSIGN = native_sym(Native.assign);
@@ -82,16 +83,16 @@ const ITALIC_FONT = 2;
 const SMALL_ROMAN_FONT = 3;
 const SMALL_ITALIC_FONT = 4;
 
-function list(n: number, $: StackContext): void {
-    $.stack.push(nil);
+function list(n: number, $: ProgramStack): void {
+    $.push(nil);
     for (let i = 0; i < n; i++) {
         cons($);
     }
 }
-function cons($: StackContext): void {
-    const pop1 = assert_cons_or_nil($.stack.pop()!);
-    const pop2 = $.stack.pop()!;
-    $.stack.push(create_cons(pop2, pop1));
+function cons($: ProgramStack): void {
+    const pop1 = assert_cons_or_nil($.pop());
+    const pop2 = $.pop();
+    $.push(create_cons(pop2, pop1));
 }
 
 function get_cap_height(font_num: number): number {
@@ -290,12 +291,50 @@ export function set_emit_small_font(): void {
     emit_level = 1;
 }
 
-interface StackContext {
-    stack: U[];
-}
-
-class SvgStackContext implements StackContext {
-    readonly stack: U[] = [];
+class SvgProgramStack implements ProgramStack {
+    readonly #stack: U[] = [];
+    get frameLength(): number {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    frameSplice(start: number, deleteCount?: number): U[] {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    framePush(expr: U): void {
+        throw new Error("Method not implemented.");
+    }
+    get length(): number {
+        return this.#stack.length;
+    }
+    set length(length: number) {
+        throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    concat(exprs: U[]): void {
+        throw new Error("concat method not implemented.");
+    }
+    push(expr: U): void {
+        this.#stack.push(expr);
+    }
+    pop(): U {
+        return this.#stack.pop()!;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getAt(i: number): U {
+        return this.#stack[i];
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setAt(i: number, expr: U): void {
+        throw new Error("setAt method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    splice(start: number, deleteCount?: number): U[] {
+        throw new Error("splice method not implemented.");
+    }
+    fpop(): U {
+        throw new Error("fpop method not implemented.");
+    }
 }
 
 export interface SvgRenderConfig {
@@ -304,13 +343,13 @@ export interface SvgRenderConfig {
 }
 
 export function render_svg(expr: U, options: SvgRenderConfig): string {
-    const $ = new SvgStackContext();
+    const $ = new SvgProgramStack();
 
     emit_level = 0;
 
     emit_list(expr, $, options);
 
-    const codes = $.stack.pop()!;
+    const codes = $.pop()!;
 
     const h0 = height(codes);
     const d0 = depth(codes);
@@ -338,13 +377,13 @@ export function render_svg(expr: U, options: SvgRenderConfig): string {
 /**
  * Converts an expression into an encoded form with opcode, height, depth, width, and data (depends on opcode).
  */
-export function emit_list(expr: U, $: StackContext, ec: SvgRenderConfig): void {
-    const t = $.stack.length;
+export function emit_list(expr: U, $: ProgramStack, ec: SvgRenderConfig): void {
+    const t = $.length;
     emit_expr(expr, $, ec);
     emit_update_list(t, $);
 }
 
-function emit_expr(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_expr(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     if (isnegativeterm(p) || (car(p).equals(ADD) && isnegativeterm(cadr(p)))) {
         emit_roman_char(MINUS_SIGN, $);
         emit_thin_space($);
@@ -356,7 +395,7 @@ function emit_expr(p: U, $: StackContext, ec: SvgRenderConfig): void {
         emit_term(p, $, ec);
 }
 
-function emit_expr_nib(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_expr_nib(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     p = cdr(p);
     emit_term(car(p), $, ec);
     p = cdr(p);
@@ -370,7 +409,7 @@ function emit_expr_nib(p: U, $: StackContext, ec: SvgRenderConfig): void {
     }
 }
 
-function emit_args(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_args(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
 
     p = cdr(p);
 
@@ -380,7 +419,7 @@ function emit_args(p: U, $: StackContext, ec: SvgRenderConfig): void {
         return;
     }
 
-    const t = $.stack.length;
+    const t = $.length;
 
     emit_expr(car(p), $, ec);
 
@@ -398,16 +437,16 @@ function emit_args(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_update_subexpr($);
 }
 
-function emit_base(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_base(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     if (is_num(p) && isnegativenumber(p) || (is_rat(p) && isfraction(p)) || is_flt(p) || car(p).equals(ADD) || car(p).equals(MULTIPLY) || car(p).equals(POWER))
         emit_subexpr(p, $, ec);
     else
         emit_expr(p, $, ec);
 }
 
-function emit_denominators(p: Cons, $: StackContext, ec: SvgRenderConfig) {
+function emit_denominators(p: Cons, $: ProgramStack, ec: SvgRenderConfig) {
 
-    const t = $.stack.length;
+    const t = $.length;
     const n = count_denominators(p);
     p = cdr(p);
 
@@ -419,7 +458,7 @@ function emit_denominators(p: Cons, $: StackContext, ec: SvgRenderConfig) {
         if (!isdenominator(q))
             continue;
 
-        if ($.stack.length > t)
+        if ($.length > t)
             emit_medium_space($);
 
         if (is_rat(q)) {
@@ -444,7 +483,7 @@ function emit_denominators(p: Cons, $: StackContext, ec: SvgRenderConfig) {
     emit_update_list(t, $);
 }
 
-function emit_double(p: Flt, $: StackContext): void {
+function emit_double(p: Flt, $: ProgramStack): void {
     let i: number;
     let j: number;
 
@@ -488,7 +527,7 @@ function emit_double(p: Flt, $: StackContext): void {
 
     emit_level++;
 
-    const t = $.stack.length;
+    const t = $.length;
 
     // sign of exponent
 
@@ -514,7 +553,7 @@ function emit_double(p: Flt, $: StackContext): void {
     emit_update_superscript($);
 }
 
-function emit_exponent(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_exponent(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     if (is_num(p) && !isnegativenumber(p)) {
         emit_numeric_exponent(p, $); // sign is not emitted
         return;
@@ -527,7 +566,7 @@ function emit_exponent(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_update_superscript($);
 }
 
-function emit_factor(p: U, $: StackContext, ec: SvgRenderConfig) {
+function emit_factor(p: U, $: ProgramStack, ec: SvgRenderConfig) {
     if (is_rat(p)) {
         emit_rational(p, $);
         return;
@@ -596,13 +635,13 @@ function emit_factor(p: U, $: StackContext, ec: SvgRenderConfig) {
     }
 }
 
-function emit_fraction(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
+function emit_fraction(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     emit_numerators(p, $, ec);
     emit_denominators(p, $, ec);
     emit_update_fraction($);
 }
 
-function emit_function(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_function(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     // d(f(x),x)
 
     if (car(p).equals(DERIVATIVE)) {
@@ -682,7 +721,7 @@ function emit_function(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_args(p, $, ec);
 }
 
-function emit_indices(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_indices(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     emit_roman_string("[", $);
 
     p = cdr(p);
@@ -701,13 +740,13 @@ function emit_indices(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_roman_string("]", $);
 }
 
-function emit_infix_operator(char_num: number, $: StackContext): void {
+function emit_infix_operator(char_num: number, $: ProgramStack): void {
     emit_thick_space($);
     emit_roman_char(char_num, $);
     emit_thick_space($);
 }
 
-function emit_italic_char(char_num: number, $: StackContext): void {
+function emit_italic_char(char_num: number, $: ProgramStack): void {
     let font_num: number;
 
     if (emit_level === 0)
@@ -719,12 +758,12 @@ function emit_italic_char(char_num: number, $: StackContext): void {
     const d = get_char_depth(font_num, char_num);
     const w = get_char_width(font_num, char_num);
 
-    $.stack.push(create_flt(EMIT_CHAR));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(create_flt(font_num));
-    $.stack.push(create_flt(char_num));
+    $.push(create_flt(EMIT_CHAR));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(create_flt(font_num));
+    $.push(create_flt(char_num));
 
     list(6, $);
 
@@ -732,12 +771,12 @@ function emit_italic_char(char_num: number, $: StackContext): void {
         emit_thin_space($);
 }
 
-function emit_italic_string(s: 'i' | 'j', $: StackContext): void {
+function emit_italic_string(s: 'i' | 'j', $: ProgramStack): void {
     for (let i = 0; i < s.length; i++)
         emit_italic_char(s.charCodeAt(i), $);
 }
 
-function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: SvgRenderConfig): void {
+function emit_matrix(p: Tensor, d: number, k: number, $: ProgramStack, ec: SvgRenderConfig): void {
 
     if (d === p.ndim) {
         emit_list(p.elems[k], $, ec);
@@ -763,7 +802,7 @@ function emit_matrix(p: Tensor, d: number, k: number, $: StackContext, ec: SvgRe
     emit_update_table(n, m, $);
 }
 
-function emit_medium_space($: StackContext): void {
+function emit_medium_space($: ProgramStack): void {
     let w: number;
 
     if (emit_level === 0)
@@ -771,17 +810,17 @@ function emit_medium_space($: StackContext): void {
     else
         w = 0.5 * get_char_width(SMALL_ROMAN_FONT, LOWER_N);
 
-    $.stack.push(create_flt(EMIT_SPACE));
-    $.stack.push(create_flt(0.0));
-    $.stack.push(create_flt(0.0));
-    $.stack.push(create_flt(w));
+    $.push(create_flt(EMIT_SPACE));
+    $.push(create_flt(0.0));
+    $.push(create_flt(0.0));
+    $.push(create_flt(w));
 
     list(4, $);
 }
 
-function emit_numerators(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
+function emit_numerators(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
 
-    const t = $.stack.length;
+    const t = $.length;
     const n = count_numerators(p);
     p = cdr(p);
 
@@ -793,7 +832,7 @@ function emit_numerators(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
         if (!isnumerator(q))
             continue;
 
-        if ($.stack.length > t)
+        if ($.length > t)
             emit_medium_space($);
 
         if (is_rat(q)) {
@@ -808,7 +847,7 @@ function emit_numerators(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
             emit_factor(q, $, ec);
     }
 
-    if ($.stack.length === t)
+    if ($.length === t)
         emit_roman_string("1", $); // no numerators
 
     emit_update_list(t, $);
@@ -816,11 +855,11 @@ function emit_numerators(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
 
 // p is rational or double, sign is not emitted
 
-function emit_numeric_exponent(p: Num, $: StackContext) {
+function emit_numeric_exponent(p: Num, $: ProgramStack) {
 
     emit_level++;
 
-    const t = $.stack.length;
+    const t = $.length;
 
     if (is_rat(p)) {
         let s = bignum_itoa(p.a);
@@ -842,7 +881,7 @@ function emit_numeric_exponent(p: Num, $: StackContext) {
     emit_update_superscript($);
 }
 
-function emit_power(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_power(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     if (cadr(p).equals(DOLLAR_E)) {
         emit_roman_string("exp", $);
         emit_args(cdr(p), $, ec);
@@ -870,7 +909,7 @@ function emit_power(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_exponent(caddr(p), $, ec);
 }
 
-function emit_rational(p: Rat, $: StackContext): void {
+function emit_rational(p: Rat, $: ProgramStack): void {
 
     if (isinteger(p)) {
         const s = bignum_itoa(p.a);
@@ -880,12 +919,12 @@ function emit_rational(p: Rat, $: StackContext): void {
 
     emit_level++;
 
-    let t = $.stack.length;
+    let t = $.length;
     let s = bignum_itoa(p.a);
     emit_roman_string(s, $);
     emit_update_list(t, $);
 
-    t = $.stack.length;
+    t = $.length;
     s = bignum_itoa(p.b);
     emit_roman_string(s, $);
     emit_update_list(t, $);
@@ -897,11 +936,11 @@ function emit_rational(p: Rat, $: StackContext): void {
 
 // p = y^x where x is a negative number
 
-function emit_reciprocal(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_reciprocal(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
 
     emit_roman_string("1", $); // numerator
 
-    const t = $.stack.length;
+    const t = $.length;
 
     if (isminusone(caddr(p)))
         emit_expr(cadr(p), $, ec);
@@ -915,7 +954,7 @@ function emit_reciprocal(p: U, $: StackContext, ec: SvgRenderConfig): void {
     emit_update_fraction($);
 }
 
-function emit_roman_char(char_num: number, $: StackContext): void {
+function emit_roman_char(char_num: number, $: ProgramStack): void {
     let font_num: number;
 
     if (emit_level === 0)
@@ -927,34 +966,34 @@ function emit_roman_char(char_num: number, $: StackContext): void {
     const d = get_char_depth(font_num, char_num);
     const w = get_char_width(font_num, char_num);
 
-    $.stack.push(create_flt(EMIT_CHAR));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(create_flt(font_num));
-    $.stack.push(create_flt(char_num));
+    $.push(create_flt(EMIT_CHAR));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(create_flt(font_num));
+    $.push(create_flt(char_num));
 
     list(6, $);
 }
 
-function emit_roman_string(s: string, $: StackContext): void {
+function emit_roman_string(s: string, $: ProgramStack): void {
 
     for (let i = 0; i < s.length; i++) {
         emit_roman_char(s.charCodeAt(i), $);
     }
 }
 
-function emit_string(str: Str, $: StackContext): void {
+function emit_string(str: Str, $: ProgramStack): void {
     const human = str_extension.toHumanString(str);
     emit_roman_string(human, $);
 }
 
-function emit_subexpr(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_subexpr(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     emit_list(p, $, ec);
     emit_update_subexpr($);
 }
 
-function emit_symbol(sym: Sym, $: StackContext): void {
+function emit_symbol(sym: Sym, $: ProgramStack): void {
     if (is_native(sym, Native.PI)) {
         emit_symbol_as_fragments('pi', $);
     }
@@ -970,7 +1009,7 @@ function emit_symbol(sym: Sym, $: StackContext): void {
  * Used to render symbols as Roman fonts.
  * This is the standard for most mathematics. 
  */
-function emit_symbol_roman(sym: Sym, $: StackContext): void {
+function emit_symbol_roman(sym: Sym, $: ProgramStack): void {
 
     if (sym.equalsSym(DOLLAR_E)) {
         emit_roman_string("exp(1)", $);
@@ -986,7 +1025,7 @@ function emit_symbol_roman(sym: Sym, $: StackContext): void {
  * Used to render symbols as a leading character then a suffix.
  * We use this when there is some cue that the symbol.
  */
-export function emit_symbol_as_fragments(s: string, $: StackContext): void {
+export function emit_symbol_as_fragments(s: string, $: ProgramStack): void {
 
     let k = emit_symbol_fragment(s, 0, $);
 
@@ -998,7 +1037,7 @@ export function emit_symbol_as_fragments(s: string, $: StackContext): void {
 
     emit_level++;
 
-    const t = $.stack.length;
+    const t = $.length;
 
     while (k < s.length) {
         k = emit_symbol_fragment(s, k, $);
@@ -1076,7 +1115,7 @@ const symbol_italic_tab = [
     0,
 ];
 
-function emit_symbol_fragment(s: string, k: number, $: StackContext): number {
+function emit_symbol_fragment(s: string, k: number, $: ProgramStack): number {
     let i: number;
     let t: string = "";
 
@@ -1106,17 +1145,17 @@ function emit_symbol_fragment(s: string, k: number, $: StackContext): number {
     return k + t.length;
 }
 
-function emit_blade(blade: Blade, $: StackContext): void {
+function emit_blade(blade: Blade, $: ProgramStack): void {
     const str = blade.toInfixString();
     emit_roman_string(str, $);
 }
 
-function emit_atom(atom: U, $: StackContext): void {
+function emit_atom(atom: U, $: ProgramStack): void {
     const str = atom.toString();
     emit_roman_string(str, $);
 }
 
-function emit_imaginary_unit(imu: Imu, $: StackContext, ec: SvgRenderConfig): void {
+function emit_imaginary_unit(imu: Imu, $: ProgramStack, ec: SvgRenderConfig): void {
     if (ec.useImaginaryI) {
         emit_italic_string("i", $);
     }
@@ -1128,14 +1167,14 @@ function emit_imaginary_unit(imu: Imu, $: StackContext, ec: SvgRenderConfig): vo
     }
 }
 
-function emit_tensor(p: Tensor, $: StackContext, ec: SvgRenderConfig): void {
+function emit_tensor(p: Tensor, $: ProgramStack, ec: SvgRenderConfig): void {
     if (p.ndim % 2 === 1)
         emit_vector(p, $, ec); // odd rank
     else
         emit_matrix(p, 0, 0, $, ec); // even rank
 }
 
-function emit_boo(boo: Boo, $: StackContext): void {
+function emit_boo(boo: Boo, $: ProgramStack): void {
     if (boo.isTrue()) {
         emit_roman_string('true', $);
     }
@@ -1147,21 +1186,21 @@ function emit_boo(boo: Boo, $: StackContext): void {
     }
 }
 
-function emit_uom(uom: Uom, $: StackContext): void {
+function emit_uom(uom: Uom, $: ProgramStack): void {
     const str = uom.toInfixString();
     const sym = create_sym(str);
     emit_symbol(sym, $);
     // emit_roman_string(str, $);
 }
 
-function emit_term(p: U, $: StackContext, ec: SvgRenderConfig): void {
+function emit_term(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     if (is_cons(p) && p.opr.equals(MULTIPLY))
         emit_term_nib(p, $, ec);
     else
         emit_factor(p, $, ec);
 }
 
-function emit_term_nib(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
+function emit_term_nib(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     if (find_denominator(p)) {
         emit_fraction(p, $, ec);
         return;
@@ -1185,7 +1224,7 @@ function emit_term_nib(p: Cons, $: StackContext, ec: SvgRenderConfig): void {
     }
 }
 
-function emit_thick_space($: StackContext): void {
+function emit_thick_space($: ProgramStack): void {
     let w: number;
 
     if (emit_level === 0)
@@ -1193,15 +1232,15 @@ function emit_thick_space($: StackContext): void {
     else
         w = get_char_width(SMALL_ROMAN_FONT, LOWER_N);
 
-    $.stack.push(create_flt(EMIT_SPACE));
-    $.stack.push(create_flt(0.0));
-    $.stack.push(create_flt(0.0));
-    $.stack.push(create_flt(w));
+    $.push(create_flt(EMIT_SPACE));
+    $.push(create_flt(0.0));
+    $.push(create_flt(0.0));
+    $.push(create_flt(w));
 
     list(4, $);
 }
 
-function emit_thin_space($: StackContext): void {
+function emit_thin_space($: ProgramStack): void {
     let w: number;
 
     if (emit_level === 0)
@@ -1209,18 +1248,18 @@ function emit_thin_space($: StackContext): void {
     else
         w = 0.25 * get_char_width(SMALL_ROMAN_FONT, LOWER_N);
 
-    $.stack.push(create_flt(EMIT_SPACE));
-    $.stack.push(create_flt(0.0));
-    $.stack.push(create_flt(0.0));
-    $.stack.push(create_flt(w));
+    $.push(create_flt(EMIT_SPACE));
+    $.push(create_flt(0.0));
+    $.push(create_flt(0.0));
+    $.push(create_flt(w));
 
     list(4, $);
 }
 
-function emit_update_fraction($: StackContext): void {
+function emit_update_fraction($: ProgramStack): void {
 
-    const p2 = $.stack.pop()!; // denominator
-    const p1 = $.stack.pop()!; // numerator
+    const p2 = $.pop()!; // denominator
+    const p1 = $.pop()!; // numerator
 
     let h = height(p1) + depth(p1);
     let d = height(p2) + depth(p2);
@@ -1247,19 +1286,19 @@ function emit_update_fraction($: StackContext): void {
 
     w += get_char_width(font_num, LOWER_N) / 2; // make horizontal line a bit wider
 
-    $.stack.push(create_flt(opcode));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(p1);
-    $.stack.push(p2);
+    $.push(create_flt(opcode));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(p1);
+    $.push(p2);
 
     list(6, $);
 }
 
-function emit_update_list(t: number, $: StackContext): void {
+function emit_update_list(t: number, $: ProgramStack): void {
 
-    if ($.stack.length - t === 1) {
+    if ($.length - t === 1) {
         return;
     }
 
@@ -1269,28 +1308,28 @@ function emit_update_list(t: number, $: StackContext): void {
 
     let p1: U;
 
-    for (let i = t; i < $.stack.length; i++) {
-        p1 = $.stack[i];
+    for (let i = t; i < $.length; i++) {
+        p1 = $.getAt(i);
         h = Math.max(h, height(p1));
         d = Math.max(d, depth(p1));
         w += width(p1);
     }
 
-    list($.stack.length - t, $);
-    p1 = $.stack.pop()!;
+    list($.length - t, $);
+    p1 = $.pop()!;
 
-    $.stack.push(create_flt(EMIT_LIST));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(p1);
+    $.push(create_flt(EMIT_LIST));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(p1);
 
     list(5, $);
 }
 
-function emit_update_subexpr($: StackContext): void {
+function emit_update_subexpr($: ProgramStack): void {
 
-    const p1 = $.stack.pop()!;
+    const p1 = $.pop()!;
 
     let h = height(p1);
     let d = depth(p1);
@@ -1321,18 +1360,18 @@ function emit_update_subexpr($: StackContext): void {
 
     w += 2 * get_char_width(font_num, LEFT_PAREN);
 
-    $.stack.push(create_flt(opcode));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(p1);
+    $.push(create_flt(opcode));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(p1);
 
     list(5, $);
 }
 
-function emit_update_subscript($: StackContext): void {
+function emit_update_subscript($: ProgramStack): void {
 
-    const p1 = $.stack.pop()!;
+    const p1 = $.pop()!;
 
     let font_num: number;
 
@@ -1352,21 +1391,21 @@ function emit_update_subscript($: StackContext): void {
 
     d += dy;
 
-    $.stack.push(create_flt(EMIT_SUBSCRIPT));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(create_flt(dx));
-    $.stack.push(create_flt(dy));
-    $.stack.push(p1);
+    $.push(create_flt(EMIT_SUBSCRIPT));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(create_flt(dx));
+    $.push(create_flt(dy));
+    $.push(p1);
 
     list(7, $);
 }
 
-function emit_update_superscript($: StackContext): void {
+function emit_update_superscript($: ProgramStack): void {
 
-    const p2 = $.stack.pop()!; // exponent
-    const p1 = $.stack.pop()!; // base
+    const p2 = $.pop()!; // exponent
+    const p1 = $.pop()!; // base
 
     let font_num: number;
 
@@ -1402,70 +1441,70 @@ function emit_update_superscript($: StackContext): void {
         w = Math.max(0, w - width(p1));
     }
 
-    $.stack.push(p1); // base
+    $.push(p1); // base
 
-    $.stack.push(create_flt(EMIT_SUPERSCRIPT));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(create_flt(dx));
-    $.stack.push(create_flt(dy));
-    $.stack.push(p2);
+    $.push(create_flt(EMIT_SUPERSCRIPT));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(create_flt(dx));
+    $.push(create_flt(dy));
+    $.push(p2);
 
     list(7, $);
 }
 
-function emit_update_table(n: number, m: number, $: StackContext): void {
+function emit_update_table(n: number, m: number, $: ProgramStack): void {
 
     let total_height = 0;
     let total_width = 0;
 
-    const t = $.stack.length - n * m;
+    const t = $.length - n * m;
 
     // max height for each row
 
     for (let i = 0; i < n; i++) { // for each row
         let h = 0;
         for (let j = 0; j < m; j++) { // for each column
-            const p1 = $.stack[t + i * m + j];
+            const p1 = $.getAt(t + i * m + j);
             h = Math.max(h, height(p1));
         }
-        $.stack.push(create_flt(h));
+        $.push(create_flt(h));
         total_height += h;
     }
 
     list(n, $);
-    const p2 = $.stack.pop()!;
+    const p2 = $.pop()!;
 
     // max depth for each row
 
     for (let i = 0; i < n; i++) { // for each row
         let d = 0;
         for (let j = 0; j < m; j++) { // for each column
-            const p1 = $.stack[t + i * m + j];
+            const p1 = $.getAt(t + i * m + j);
             d = Math.max(d, depth(p1));
         }
-        $.stack.push(create_flt(d));
+        $.push(create_flt(d));
         total_height += d;
     }
 
     list(n, $);
-    const p3 = $.stack.pop()!;
+    const p3 = $.pop()!;
 
     // max width for each column
 
     for (let j = 0; j < m; j++) { // for each column
         let w = 0;
         for (let i = 0; i < n; i++) { // for each row
-            const p1 = $.stack[t + i * m + j];
+            const p1 = $.getAt(t + i * m + j);
             w = Math.max(w, width(p1));
         }
-        $.stack.push(create_flt(w));
+        $.push(create_flt(w));
         total_width += w;
     }
 
     list(m, $);
-    const p4 = $.stack.pop()!;
+    const p4 = $.pop()!;
 
     // padding
 
@@ -1479,23 +1518,23 @@ function emit_update_table(n: number, m: number, $: StackContext): void {
     const w = total_width + 2 * get_char_width(ROMAN_FONT, LEFT_PAREN);
 
     list(n * m, $);
-    const p1 = $.stack.pop()!;
+    const p1 = $.pop()!;
 
-    $.stack.push(create_flt(EMIT_TABLE));
-    $.stack.push(create_flt(h));
-    $.stack.push(create_flt(d));
-    $.stack.push(create_flt(w));
-    $.stack.push(create_flt(n));
-    $.stack.push(create_flt(m));
-    $.stack.push(p1);
-    $.stack.push(p2);
-    $.stack.push(p3);
-    $.stack.push(p4);
+    $.push(create_flt(EMIT_TABLE));
+    $.push(create_flt(h));
+    $.push(create_flt(d));
+    $.push(create_flt(w));
+    $.push(create_flt(n));
+    $.push(create_flt(m));
+    $.push(p1);
+    $.push(p2);
+    $.push(p3);
+    $.push(p4);
 
     list(10, $);
 }
 
-function emit_vector(p: Tensor, $: StackContext, ec: SvgRenderConfig): void {
+function emit_vector(p: Tensor, $: ProgramStack, ec: SvgRenderConfig): void {
     // compute element span
 
     let span = 1;

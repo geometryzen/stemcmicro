@@ -1,9 +1,13 @@
 import { assert_sym, create_flt, create_sym, Flt, is_num, is_sym, is_tensor, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
 import { assert_cons } from "../tree/cons/assert_cons";
-import { broadcast, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, ScriptVars, set_symbol } from "./eigenmath";
+import { broadcast, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
-import { draw_formula, SvgRenderConfig, emit_list, height, set_emit_small_font, width } from "./render_svg";
+import { ProgramControl } from "./ProgramControl";
+import { ProgramEnv } from "./ProgramEnv";
+import { ProgramIO } from "./ProgramIO";
+import { ProgramStack } from "./ProgramStack";
+import { draw_formula, emit_list, height, set_emit_small_font, SvgRenderConfig, width } from "./render_svg";
 
 interface DrawContext {
     /**
@@ -45,78 +49,81 @@ const DRAW_BOTTOM_PAD = 40;
 const DRAW_XLABEL_BASELINE = 30;
 const DRAW_YLABEL_MARGIN = 15;
 
-export function eval_draw(expr: U, $: ScriptVars): void {
+export function make_eval_draw(io: ProgramIO) {
 
-    if ($.drawing) {
-        // Do nothing
-    }
-    else {
-        $.drawing = 1;
-        try {
+    return function (expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-            const F = assert_cons(expr).item(1);
-            let T = assert_cons(expr).item(2);
-
-            if (!(is_sym(T) && $.hasUserFunction(T))) {
-                T = X_LOWER;
-            }
-
-            save_symbol(assert_sym(T), $);
+        if (ctrl.drawing) {
+            // Do nothing
+        }
+        else {
+            ctrl.drawing = 1;
             try {
-                const dc: DrawContext = {
-                    tmax: +Math.PI,
-                    tmin: -Math.PI,
-                    xmax: +10,
-                    xmin: -10,
-                    ymax: +10,
-                    ymin: -10
-                };
-                setup_trange($, dc);
-                setup_xrange($, dc);
-                setup_yrange($, dc);
 
-                setup_final(F, assert_sym(T), $, dc);
+                const F = assert_cons(expr).item(1);
+                let T = assert_cons(expr).item(2);
 
-                const draw_array: { t: number; x: number; y: number }[] = [];
+                if (!(is_sym(T) && env.hasUserFunction(T))) {
+                    T = X_LOWER;
+                }
 
-                // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
-                draw_pass1(F, T, draw_array, $, dc);
-                draw_pass2(F, T, draw_array, $, dc);
+                save_symbol(assert_sym(T), env, $);
+                try {
+                    const dc: DrawContext = {
+                        tmax: +Math.PI,
+                        tmin: -Math.PI,
+                        xmax: +10,
+                        xmin: -10,
+                        ymax: +10,
+                        ymin: -10
+                    };
+                    setup_trange(env, ctrl, $, dc);
+                    setup_xrange(env, ctrl, $, dc);
+                    setup_yrange(env, ctrl, $, dc);
 
-                const outbuf: string[] = [];
+                    setup_final(F, assert_sym(T), env, ctrl, $, dc);
 
-                const ec: SvgRenderConfig = {
-                    useImaginaryI: isimaginaryunit(get_binding(I_LOWER, $)),
-                    useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, $))
-                };
-                emit_graph(draw_array, $, dc, ec, outbuf);
+                    const draw_array: { t: number; x: number; y: number }[] = [];
 
-                const output = outbuf.join('');
+                    // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
+                    draw_pass1(F, T, draw_array, env, ctrl, $, dc);
+                    draw_pass2(F, T, draw_array, env, ctrl, $, dc);
 
-                broadcast(output, $);
+                    const outbuf: string[] = [];
+
+                    const ec: SvgRenderConfig = {
+                        useImaginaryI: isimaginaryunit(get_binding(I_LOWER, env)),
+                        useImaginaryJ: isimaginaryunit(get_binding(J_LOWER, env))
+                    };
+                    emit_graph(draw_array, $, dc, ec, outbuf);
+
+                    const output = outbuf.join('');
+
+                    broadcast(output, io);
+                }
+                finally {
+                    restore_symbol(env, $);
+                }
             }
             finally {
-                restore_symbol($);
+                ctrl.drawing = 0;
             }
         }
-        finally {
-            $.drawing = 0;
-        }
-    }
 
-    $.stack.push(nil); // return value
+        $.push(nil); // return value
+    };
 }
 
-function setup_trange($: ScriptVars, dc: DrawContext): void {
+function setup_trange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
     dc.tmin = -Math.PI;
     dc.tmax = Math.PI;
 
-    let p1: U = lookup(create_sym("trange"), $);
-    $.stack.push(p1);
-    eval_nonstop($);
-    floatfunc($);
-    p1 = $.stack.pop()!;
+    let p1: U = lookup(create_sym("trange"), env);
+    $.push(p1);
+    eval_nonstop(env, ctrl, $);
+    floatfunc(env, ctrl, $);
+    p1 = $.pop()!;
 
     if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2)
         return;
@@ -132,19 +139,20 @@ function setup_trange($: ScriptVars, dc: DrawContext): void {
     dc.tmax = p3.toNumber();
 }
 
-function setup_xrange($: ScriptVars, dc: DrawContext): void {
+function setup_xrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
     dc.xmin = -10;
     dc.xmax = 10;
 
-    let p1: U = lookup(create_sym("xrange"), $);
-    $.stack.push(p1);
-    eval_nonstop($);
-    floatfunc($);
-    p1 = $.stack.pop()!;
+    let p1: U = lookup(create_sym("xrange"), env);
+    $.push(p1);
+    eval_nonstop(env, ctrl, $);
+    floatfunc(env, ctrl, $);
+    p1 = $.pop()!;
 
-    if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2)
+    if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2) {
         return;
+    }
 
     const p2 = p1.elems[0];
     const p3 = p1.elems[1];
@@ -156,19 +164,20 @@ function setup_xrange($: ScriptVars, dc: DrawContext): void {
     dc.xmax = p3.toNumber();
 }
 
-function setup_yrange($: ScriptVars, dc: DrawContext): void {
+function setup_yrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
     dc.ymin = -10;
     dc.ymax = 10;
 
-    let p1: U = lookup(create_sym("yrange"), $);
-    $.stack.push(p1);
-    eval_nonstop($);
-    floatfunc($);
-    p1 = $.stack.pop()!;
+    let p1: U = lookup(create_sym("yrange"), env);
+    $.push(p1);
+    eval_nonstop(env, ctrl, $);
+    floatfunc(env, ctrl, $);
+    p1 = $.pop()!;
 
-    if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2)
+    if (!is_tensor(p1) || p1.ndim !== 1 || p1.dims[0] !== 2) {
         return;
+    }
 
     const p2 = p1.elems[0];
     const p3 = p1.elems[1];
@@ -180,15 +189,15 @@ function setup_yrange($: ScriptVars, dc: DrawContext): void {
     dc.ymax = p3.toNumber();
 }
 
-function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext): void {
+function draw_pass1(F: U, T: U, draw_array: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
     for (let i = 0; i <= DRAW_WIDTH; i++) {
         const t = dc.tmin + (dc.tmax - dc.tmin) * i / DRAW_WIDTH;
-        sample(F, T, t, draw_array, $, dc);
+        sample(F, T, t, draw_array, env, ctrl, $, dc);
     }
 }
 //    draw_array: { t: number; x: number; y: number }[] = [];
 
-function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext): void {
+function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
     // var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
     const n = draw_array.length - 1;
@@ -217,20 +226,20 @@ function draw_pass2(F: U, T: U, draw_array: { t: number; x: number; y: number }[
 
         for (let j = 1; j < m; j++) {
             const t = t1 + dt * j / m;
-            sample(F, T, t, draw_array, $, dc);
+            sample(F, T, t, draw_array, env, ctrl, $, dc);
         }
     }
 }
 
-function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
+function setup_final(F: U, T: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
-    $.stack.push(create_flt(dc.tmin));
-    let p1 = $.stack.pop()!;
-    set_symbol(T, p1, nil, $);
+    $.push(create_flt(dc.tmin));
+    let p1 = $.pop()!;
+    set_symbol(T, p1, nil, env);
 
-    $.stack.push(F);
-    eval_nonstop($);
-    p1 = $.stack.pop()!;
+    $.push(F);
+    eval_nonstop(env, ctrl, $);
+    p1 = $.pop()!;
 
     if (!is_tensor(p1)) {
         dc.tmin = dc.xmin;
@@ -238,26 +247,26 @@ function setup_final(F: U, T: Sym, $: ScriptVars, dc: DrawContext): void {
     }
 }
 
-function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext): void {
+function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
     let X: U;
     let Y: U;
 
-    $.stack.push(create_flt(t));
-    let p1 = $.stack.pop()!;
-    set_symbol(assert_sym(T), p1, nil, $);
+    $.push(create_flt(t));
+    let p1 = $.pop();
+    set_symbol(assert_sym(T), p1, nil, env);
 
-    $.stack.push(F);
-    eval_nonstop($);
-    floatfunc($);
-    p1 = $.stack.pop()!;
+    $.push(F);
+    eval_nonstop(env, ctrl, $);
+    floatfunc(env, ctrl, $);
+    p1 = $.pop();
 
     if (is_tensor(p1)) {
         X = p1.elems[0];
         Y = p1.elems[1];
     }
     else {
-        $.stack.push(create_flt(t));
-        X = $.stack.pop()!;
+        $.push(create_flt(t));
+        X = $.pop();
         Y = p1;
     }
 
@@ -276,7 +285,7 @@ function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: nu
     draw_array.push({ t: t, x: x, y: y });
 }
 
-function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ScriptVars, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
+function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
 
     const h = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_BOTTOM_PAD;
     const w = DRAW_LEFT_PAD + DRAW_WIDTH + DRAW_RIGHT_PAD;
@@ -323,31 +332,31 @@ function emit_box(dc: DrawContext, outbuf: string[]): void {
     draw_line(x2, y1, x2, y2, 0.5, outbuf); // right line
 }
 
-function emit_labels($: ScriptVars, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
+function emit_labels($: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {
     set_emit_small_font();
     emit_list(new Flt(dc.ymax), $, ec);
-    const YMAX = $.stack.pop()!;
+    const YMAX = $.pop()!;
     let x = DRAW_LEFT_PAD - width(YMAX) - DRAW_YLABEL_MARGIN;
     let y = DRAW_TOP_PAD + height(YMAX);
     draw_formula(x, y, YMAX, outbuf);
 
     set_emit_small_font();
     emit_list(new Flt(dc.ymin), $, ec);
-    const YMIN = $.stack.pop()!;
+    const YMIN = $.pop();
     x = DRAW_LEFT_PAD - width(YMIN) - DRAW_YLABEL_MARGIN;
     y = DRAW_TOP_PAD + DRAW_HEIGHT;
     draw_formula(x, y, YMIN, outbuf);
 
     set_emit_small_font();
     emit_list(new Flt(dc.xmin), $, ec);
-    const XMIN = $.stack.pop()!;
+    const XMIN = $.pop();
     x = DRAW_LEFT_PAD - width(XMIN) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, XMIN, outbuf);
 
     set_emit_small_font();
     emit_list(new Flt(dc.xmax), $, ec);
-    const XMAX = $.stack.pop()!;
+    const XMAX = $.pop();
     x = DRAW_LEFT_PAD + DRAW_WIDTH - width(XMAX) / 2;
     y = DRAW_TOP_PAD + DRAW_HEIGHT + DRAW_XLABEL_BASELINE;
     draw_formula(x, y, XMAX, outbuf);

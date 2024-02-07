@@ -1,5 +1,6 @@
 import { create_sym } from "math-expression-atoms";
-import { get_binding, iszero, ScriptVars } from "./eigenmath";
+import { get_binding, ScriptVars } from "./eigenmath";
+import { iszero } from "./iszero";
 
 const TTY = create_sym("tty");
 

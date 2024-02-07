@@ -1,6 +1,6 @@
 import { is_nil } from "math-expression-tree";
 import { Concept, ExprEngine } from "../api/api";
-import { iszero } from "./eigenmath";
+import { iszero } from "./iszero";
 
 export function should_engine_render_svg($: ExprEngine): boolean {
     const sym = $.symbol(Concept.TTY);

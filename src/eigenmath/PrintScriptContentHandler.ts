@@ -1,8 +1,9 @@
 import { create_sym, Sym } from "math-expression-atoms";
 import { is_native_sym } from "math-expression-native";
 import { is_nil, U } from "math-expression-tree";
-import { get_binding, iszero, ScriptContentHandler, ScriptOutputListener, ScriptVars } from "./eigenmath";
+import { get_binding, ScriptContentHandler, ScriptOutputListener, ScriptVars } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
+import { iszero } from "./iszero";
 import { print_value_and_input_as_svg_or_infix } from "./print_value_and_input_as_svg_or_infix";
 import { SvgRenderConfig } from "./render_svg";
 

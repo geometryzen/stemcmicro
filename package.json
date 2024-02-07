@@ -35,6 +35,7 @@
         "unit-algebrite": "mocha 'units/algebrite.spec.ts'",
         "unit-api": "mocha 'units/api.spec.ts'",
         "unit-arccos": "mocha 'units/arccos.spec.ts'",
+        "unit-arctan": "mocha 'units/arctan.spec.ts'",
         "unit-arg": "mocha 'units/arg.spec.ts'",
         "unit-assumptions": "mocha 'units/assumptions.spec.ts'",
         "unit-atom": "mocha 'units/atom.spec.ts'",

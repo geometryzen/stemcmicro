@@ -3,6 +3,7 @@ import { assert } from "chai";
 import { is_boo, is_tensor } from "math-expression-atoms";
 import { is_nil, U } from "math-expression-tree";
 import { create_engine, EngineConfig, ExprEngine, ParseConfig, RenderConfig } from "../src/api/api";
+import { SyntaxKind } from "../src/parser/parser";
 
 const engineConfig: Partial<EngineConfig> = {
 };
@@ -114,7 +115,7 @@ describe("coverage", function () {
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
-            const value = engine.valueOf(tree);
+            const value = engine.simplify(engine.valueOf(tree));
             if (!is_nil(value)) {
                 values.push(value);
             }
@@ -122,34 +123,10 @@ describe("coverage", function () {
         assert.strictEqual(values.length, 1);
         // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
         // The result is correct bu requires factoring to discover the simplification
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[a*d^2/(a*d-b*c)-b*c*d/(a*d-b*c),-a*b*d/(a*d-b*c)+b^2*c/(a*d-b*c)],[-a*c*d/(a*d-b*c)+b*c^2/(a*d-b*c),-a*b*c/(a*d-b*c)+a^2*d/(a*d-b*c)]]"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("[[d,-b],[-c,a]]"));
         engine.release();
     });
-    it("det(A) * inv(A)", function () {
-        const lines: string[] = [
-            `A = [[a,b],[c,d]]`,
-            `M = det(A) * inv(A)`,
-            `M[1,1]`
-        ];
-        const sourceText = lines.join('\n');
-        const engine: ExprEngine = create_engine(engineConfig);
-        const { trees, errors } = engine.parse(sourceText, parseConfig);
-        assert.strictEqual(errors.length, 0);
-        const values: U[] = [];
-        for (const tree of trees) {
-            const value = engine.valueOf(tree);
-            if (!is_nil(value)) {
-                values.push(value);
-            }
-        }
-        assert.strictEqual(values.length, 1);
-        // A DistributiveLawExpandRight is breaking apart the determinant before multiplying by the inverse.
-        // The result is correct bu requires factoring to discover the simplification
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("a*d^2/(a*d-b*c)-b*c*d/(a*d-b*c)"));
-        assert.strictEqual(engine.renderAsString(values[0], { format: 'SExpr' }), "(+ (* a (pow d 2) (pow (+ (* a d) (* -1 b c)) -1)) (* -1 b c d (pow (+ (* a d) (* -1 b c)) -1)))");
-        engine.release();
-    });
-    xit("adj(x)", function () {
+    it("adj(x)", function () {
         const lines: string[] = [
             `A=[[a,b],[c,d]]`,
             `adj(A) == det(A) * inv(A)`
@@ -166,12 +143,19 @@ describe("coverage", function () {
             }
         }
         assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("1"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("true"));
         engine.release();
     });
     it("and(a,b,...)", function () {
         const lines: string[] = [
-            `and(1=1,2=2)`
+            `and(false,false)`,
+            `and(false,true)`,
+            `and(true,false)`,
+            `and(true,true)`,
+            `and(0,0)`,
+            `and(0,1)`,
+            `and(1,0)`,
+            `and(1,1)`
         ];
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine(engineConfig);
@@ -184,8 +168,15 @@ describe("coverage", function () {
                 values.push(value);
             }
         }
-        assert.strictEqual(values.length, 1);
-        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("true"));
+        assert.strictEqual(values.length, 8);
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("false"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[1], renderConfig)), strip_whitespace("false"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[2], renderConfig)), strip_whitespace("false"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[3], renderConfig)), strip_whitespace("true"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[4], renderConfig)), strip_whitespace("false"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[5], renderConfig)), strip_whitespace("false"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[6], renderConfig)), strip_whitespace("false"));
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[7], renderConfig)), strip_whitespace("true"));
         assert.strictEqual(is_boo(values[0]), true);
         engine.release();
     });
@@ -265,7 +256,26 @@ describe("coverage", function () {
         assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], renderConfig)), strip_whitespace("arcsinh(1/2)"));
         engine.release();
     });
-    xit("arctan(y,x)", function () {
+    it("Eigenmath arctan(y,x)", function () {
+        const lines: string[] = [
+            `arctan(1,0)`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
+        const { trees, errors } = engine.parse(sourceText, parseConfig);
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(strip_whitespace(engine.renderAsString(values[0], { format: 'Infix' })), strip_whitespace("1/2pi"));
+        engine.release();
+    });
+    it("arctan(y,x)", function () {
         const lines: string[] = [
             `arctan(1,0)`
         ];

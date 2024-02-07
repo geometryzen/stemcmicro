@@ -16,6 +16,7 @@ import { EigenmathReadScope } from './EigenmathReadScope';
 import { EigenmathScope } from './EigenmathScope';
 import { ColorCode, html_escape_and_colorize } from './html_escape_and_colorize';
 import { isdigit } from './isdigit';
+import { isdoublez } from './isdoublez';
 import { isequaln } from './isequaln';
 import { isequalq } from './isequalq';
 import { isfraction } from './isfraction';
@@ -24,7 +25,10 @@ import { isinteger } from './isinteger';
 import { isminusone } from './isminusone';
 import { isnegativenumber } from './isnegativenumber';
 import { isnegativeterm } from './isnegativeterm';
+import { isplusone } from './isplusone';
 import { isposint } from './isposint';
+import { iszero } from './iszero';
+import { lengthf } from './lengthf';
 
 function alloc_tensor(): Tensor {
     return new Tensor([], []);
@@ -864,6 +868,9 @@ function decomp_product(F: U, X: U, $: ScriptVars): void {
     }
 }
 
+/**
+ * 
+ */
 function divide($: ScriptVars): void {
     reciprocate($);
     multiply($);
@@ -1973,29 +1980,35 @@ function arcsinh($: ScriptVars): void {
     list(2, $);
 }
 
-function eval_arctan(p1: U, $: ScriptVars): void {
-    push(cadr(p1), $);
+/**
+ * (arctan y x)
+ */
+function eval_arctan(expr: Cons, $: ScriptVars): void {
+    const y = expr.item1;
+    const x = expr.item2;
+    push(y, $);
     value_of($);
-    if (is_cons(cddr(p1))) {
-        push(caddr(p1), $);
+    if (is_cons(cddr(expr))) {
+        push(x, $);
         value_of($);
     }
-    else
+    else {
         push_integer(1, $);
+    }
     arctan($);
 }
 
 function arctan($: ScriptVars): void {
 
-    const X = pop($);
-    const Y = pop($);
+    const x = pop($);
+    const y = pop($);
 
-    if (is_tensor(Y)) {
-        const T = copy_tensor(Y);
+    if (is_tensor(y)) {
+        const T = copy_tensor(y);
         const n = T.nelem;
         for (let i = 0; i < n; i++) {
             push(T.elems[i], $);
-            push(X, $);
+            push(x, $);
             arctan($);
             T.elems[i] = pop($);
         }
@@ -2003,16 +2016,16 @@ function arctan($: ScriptVars): void {
         return;
     }
 
-    if (is_num(X) && is_num(Y)) {
-        arctan_numbers(X, Y, $);
+    if (is_num(x) && is_num(y)) {
+        arctan_numbers(x, y, $);
         return;
     }
 
     // arctan(z) = -1/2 i log((i - z) / (i + z))
 
-    if (!iszero(X) && (isdoublez(X) || isdoublez(Y))) {
-        push(Y, $);
-        push(X, $);
+    if (!iszero(x) && (isdoublez(x) || isdoublez(y))) {
+        push(y, $);
+        push(x, $);
         divide($);
         const Z = pop($);
         push_double(-0.5, $);
@@ -2032,23 +2045,23 @@ function arctan($: ScriptVars): void {
 
     // arctan(-y,x) = -arctan(y,x)
 
-    if (isnegativeterm(Y)) {
-        push(Y, $);
+    if (isnegativeterm(y)) {
+        push(y, $);
         negate($);
-        push(X, $);
+        push(x, $);
         arctan($);
         negate($);
         return;
     }
 
-    if (car(Y).equals(TAN) && isplusone(X)) {
-        push(cadr(Y), $); // x of tan(x)
+    if (car(y).equals(TAN) && isplusone(x)) {
+        push(cadr(y), $); // x of tan(x)
         return;
     }
 
     push(ARCTAN, $);
-    push(Y, $);
-    push(X, $);
+    push(y, $);
+    push(x, $);
     list(3, $);
 }
 
@@ -10578,41 +10591,6 @@ function isdoublesomewhere(p: U) {
     return 0;
 }
 
-function isdoublez(p: U): 0 | 1 {
-    if (car(p).equals(ADD)) {
-
-        if (lengthf(p) !== 3)
-            return 0;
-
-        if (!is_flt(cadr(p))) // x
-            return 0;
-
-        p = caddr(p);
-    }
-
-    if (!car(p).equals(MULTIPLY))
-        return 0;
-
-    if (lengthf(p) !== 3)
-        return 0;
-
-    if (!is_flt(cadr(p))) // y
-        return 0;
-
-    p = caddr(p);
-
-    if (!car(p).equals(POWER))
-        return 0;
-
-    if (!isminusone(cadr(p)))
-        return 0;
-
-    if (!isequalq(caddr(p), 1, 2))
-        return 0;
-
-    return 1;
-}
-
 function isimaginarynumber(p: U): boolean {
     return isimaginaryunit(p) || (lengthf(p) === 3 && car(p).equals(MULTIPLY) && is_num(cadr(p)) && isimaginaryunit(caddr(p)));
 }
@@ -10627,10 +10605,6 @@ function isminusoneoversqrttwo(p: U) {
 
 function isoneoversqrttwo(p: U): boolean {
     return car(p).equals(POWER) && isequaln(cadr(p), 2) && isequalq(caddr(p), -1, 2);
-}
-
-function isplusone(p: U): boolean {
-    return isequaln(p, 1);
 }
 
 function isradical(p: U): boolean {
@@ -10687,43 +10661,15 @@ function isusersymbolsomewhere(p: U, scope: EigenmathReadScope): 0 | 1 {
     return 0;
 }
 
-export function iszero(p: U): boolean {
-
-    if (is_rat(p))
-        return bignum_iszero(p.a);
-
-    if (is_flt(p))
-        return p.d === 0;
-
-    if (is_tensor(p)) {
-        const n = p.nelem;
-        for (let i = 0; i < n; i++) {
-            if (!iszero(p.elems[i]))
-                return false;
-        }
-        return true;
-    }
-
-    return false;
-}
-
-function lengthf(p: U): number {
-    let n = 0;
-    while (is_cons(p)) {
-        n++;
-        p = cdr(p);
-    }
-    return n;
-}
-
 function lessp(p1: U, p2: U): boolean {
     return cmp(p1, p2) < 0;
 }
 
 function list(n: number, $: ScriptVars): void {
     push(nil, $);
-    for (let i = 0; i < n; i++)
+    for (let i = 0; i < n; i++) {
         cons($);
+    }
 }
 
 /**
@@ -12284,6 +12230,10 @@ function promote_tensor($: ScriptVars): void {
     push(p3, $);
 }
 
+/**
+ * pushes the expression onto the stack.
+ * There is no evaluation of the expression.
+ */
 export function push(expr: U, $: ScriptVars): void {
     $.stack.push(expr);
 }
@@ -12311,6 +12261,9 @@ export function push_string(s: string, $: ScriptVars) {
     push(new Str(s), $);
 }
 
+/**
+ * x --> (pow x -1)
+ */
 function reciprocate($: ScriptVars): void {
     push_integer(-1, $);
     power($);

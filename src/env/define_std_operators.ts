@@ -55,7 +55,7 @@ import { arccos_varargs } from '../operators/arccos/arccos_varargs';
 import { arccosh_varargs } from '../operators/arccosh/arccosh_varargs';
 import { arcsin_varargs } from '../operators/arcsin/arcsin_varargs';
 import { arcsinh_any } from '../operators/arcsinh/arcsinh_any';
-import { arctan_varargs } from '../operators/arctan/arctan_varargs';
+import { Eval_arctan } from '../operators/arctan/arctan';
 import { arctanh_varargs } from '../operators/arctanh/arctanh_varargs';
 import { arg_abs } from '../operators/arg/arg_abs';
 import { arg_add } from '../operators/arg/arg_add';
@@ -753,7 +753,7 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(arcsin_varargs);
     $.defineOperator(arcsinh_any);
 
-    $.defineOperator(arctan_varargs);
+    $.defineConsTransformer(native_sym(Native.arctan), Eval_arctan);
 
     $.defineOperator(arctanh_varargs);
 

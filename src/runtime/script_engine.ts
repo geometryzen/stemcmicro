@@ -3,7 +3,7 @@ import { LambdaExpr } from "math-expression-context";
 import { define_math_constant_pi, define_metric_prefixes_for_si_units, define_si_units, define_spacetime_algebra, UndeclaredVars } from "../api/api";
 import { define_std_operators } from "../env/define_std_operators";
 import { create_env, EnvOptions } from "../env/env";
-import { ALL_FEATURES, Directive, ExtensionEnv, Predicates } from "../env/ExtensionEnv";
+import { ALL_FEATURES, Directive, ExtensionEnv, flag_from_directive, Predicates } from "../env/ExtensionEnv";
 import { simplify } from "../operators/simplify/simplify";
 import { assert_sym } from "../operators/sym/assert_sym";
 import { ParseOptions, SyntaxKind } from "../parser/parser";
@@ -326,9 +326,9 @@ function parse_options_from_script_context_options(options: Pick<ScriptContextOp
         return {
             catchExceptions: options.catchExceptions,
             syntaxKind: options.syntaxKind,
-            useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
+            useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
             useIntegersForPredicates: !!options.useIntegersForPredicates,
-            useParenForTensors: $.getDirective(Directive.useParenForTensors),
+            useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
             explicitAssocAdd: false,
             explicitAssocMul: false,
         };

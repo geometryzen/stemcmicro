@@ -1,3 +1,5 @@
+import { one, Sym, Tensor, zero } from 'math-expression-atoms';
+import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { divide } from './helpers/divide';
 import { adj } from './operators/adj/adj';
@@ -7,10 +9,6 @@ import { halt } from './runtime/defs';
 import { is_identity_matrix, is_inner_or_dot, is_num_or_tensor_or_identity_matrix, is_opr_eq_inv } from './runtime/helpers';
 import { is_square_matrix } from './tensor';
 import { Err } from './tree/err/Err';
-import { one, zero } from './tree/rat/Rat';
-import { Sym } from './tree/sym/Sym';
-import { Tensor } from './tree/tensor/Tensor';
-import { Cons, is_cons, items_to_cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------
 //

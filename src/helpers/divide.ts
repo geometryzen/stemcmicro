@@ -1,8 +1,8 @@
 
+import { is_num } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 import { divide_numbers } from "../bignum";
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
-import { is_num } from "../operators/num/is_num";
-import { U } from "../tree/tree";
 import { inverse } from "./inverse";
 
 /**
@@ -19,7 +19,7 @@ export function divide(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'multiply' | 'value
 }
 
 export function divide_expand(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'multiply' | 'valueOf' | 'pushDirective' | 'popDirective'>): U {
-    $.pushDirective(Directive.expanding, true);
+    $.pushDirective(Directive.expanding, 1);
     try {
         return divide(lhs, rhs, $);
     }

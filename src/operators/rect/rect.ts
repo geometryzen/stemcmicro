@@ -1,3 +1,5 @@
+import { is_sym, zero } from 'math-expression-atoms';
+import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { cadnr } from '../../calculators/cadnr';
 import { count_factors } from '../../calculators/count_factors';
 import { remove_factors } from '../../calculators/remove_factors';
@@ -9,10 +11,7 @@ import { has_clock_form, has_exp_form } from '../../runtime/find';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { MATH_SIN } from '../../runtime/ns_math';
 import { cadr } from '../../tree/helpers';
-import { zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { is_imu } from '../imu/is_imu';
-import { is_sym } from '../sym/is_sym';
 
 /**
  * Convert complex z to rectanglar from.
@@ -21,7 +20,7 @@ import { is_sym } from '../sym/is_sym';
 export function Eval_rect(rectExpr: Cons, $: ExtensionEnv): U {
     // console.lg("Eval_rect", $.toInfixString(rectExpr));
     const arg = cadnr(rectExpr, 1);
-    $.pushDirective(Directive.complexAsRectangular, true);
+    $.pushDirective(Directive.complexAsRectangular, 1);
     try {
         const valueOfArg = $.valueOf(arg);
         const result = rect(valueOfArg, $);

@@ -1,3 +1,5 @@
+import { is_tensor, one, zero } from 'math-expression-atoms';
+import { Cons, is_cons, U } from 'math-expression-tree';
 import { condense } from '../../condense';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
@@ -5,10 +7,7 @@ import { inverse } from '../../helpers/inverse';
 import { is_num_and_negative } from '../../predicates/is_negative_number';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
-import { one, zero } from '../../tree/rat/Rat';
-import { Cons, is_cons, U } from '../../tree/tree';
 import { gcd } from '../gcd/gcd';
-import { is_tensor } from '../tensor/is_tensor';
 
 export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
     // const infix = render_as_infix(expr, $);
@@ -21,7 +20,7 @@ export function Eval_rationalize(expr: Cons, $: ExtensionEnv): U {
 }
 
 export function rationalize_factoring(argList: U, $: Pick<ExtensionEnv, 'add' | 'factorize' | 'multiply' | 'power' | 'subtract' | 'pushDirective' | 'popDirective' | 'valueOf'>): U {
-    $.pushDirective(Directive.factoring, true);
+    $.pushDirective(Directive.factoring, 1);
     try {
         return yyrationalize(argList, $);
     }

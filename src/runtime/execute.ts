@@ -1,6 +1,6 @@
 import { ScanOptions } from '../algebrite/scan';
 import { Eval_bake } from "../bake";
-import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
+import { Directive, directive_from_flag, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
 import { imu } from '../env/imu';
 import { items_to_cons } from "../makeList";
 import { Native } from "../native/Native";
@@ -29,8 +29,8 @@ const RECT = native_sym(Native.rect);
 
 function scan_options($: ExtensionEnv): ScanOptions {
     return {
-        useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
-        useParenForTensors: $.getDirective(Directive.useParenForTensors),
+        useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
+        useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
         explicitAssocAdd: false,
         explicitAssocMul: false,
     };
@@ -163,7 +163,7 @@ function isNotDisabled(sym: Sym, $: ExtensionEnv): boolean {
  */
 export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: ExtensionEnv,): U {
     // console.lg("multi_pass_transform", JSON.stringify(options));
-    $.pushDirective(Directive.useIntegersForPredicates, !!options.useIntegersForPredicates);
+    $.pushDirective(Directive.useIntegersForPredicates, directive_from_flag(options.useIntegersForPredicates));
     try {
         const wrappers: Sym[] = detect_wrappers(tree);
         wrappers.reverse();
@@ -175,7 +175,7 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
         const box = new Box(tree);
 
         if (options.autoExpand) {
-            $.pushDirective(Directive.expanding, true);
+            $.pushDirective(Directive.expanding, 1);
             try {
                 box.push(transform(apply_wrappers(box.pop(), wrappers), $));
             }
@@ -188,7 +188,7 @@ export function multi_pass_transform(tree: U, options: ExprTransformOptions, $: 
         }
 
         if (options.autoFactor) {
-            $.pushDirective(Directive.factoring, true);
+            $.pushDirective(Directive.factoring, 1);
             try {
                 box.push(transform(apply_wrappers(box.pop(), wrappers), $));
             }

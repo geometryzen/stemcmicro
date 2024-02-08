@@ -7,6 +7,7 @@ import { ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_sexpr } from "
 import { execute_eigenmath_script } from '../src/eigenmath/execute_eigenmath_script';
 import { to_infix } from "../src/eigenmath/infixform";
 import { SyntaxKind } from "../src/parser/parser";
+import { ProgrammingError } from "../src/programming/ProgrammingError";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const plotLambda = function (argList: Cons, $: ExprContext): U {
@@ -34,9 +35,15 @@ class TestContentHandler implements ScriptContentHandler {
 }
 
 class TestErrorHandler implements ScriptErrorHandler {
+    readonly errors: Error[] = [];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
-        throw new Error(`${inbuf} ${start} ${end} ${err}`);
+        if (err instanceof Error) {
+            this.errors.push(err);
+        }
+        else {
+            throw new ProgrammingError(`${inbuf} ${start} ${end} ${err}`);
+        }
     }
 }
 
@@ -106,6 +113,14 @@ describe("eigenmath", function () {
         const contentHandler = new TestContentHandler();
         const errorHandler = new TestErrorHandler();
         execute_eigenmath_script(scriptText, contentHandler, errorHandler, { useCaretForExponentiation: true, useParenForTensors: true });
+        const errors = errorHandler.errors;
+        if (errors.length>0) {
+            for (let i=0;i<errors.length;i++) {
+                // eslint-disable-next-line no-console
+                console.log(errors[i]);
+            }
+        }
+        assert.strictEqual(errors.length, 0);
         const values = contentHandler.values;
         assert.strictEqual(values.length, 6);
         assert.strictEqual(to_infix(values[0]), "nil");

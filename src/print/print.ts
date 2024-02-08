@@ -74,10 +74,10 @@ const COMPONENT = native_sym(Native.component);
 export interface PrintConfig {
     add(...args: U[]): U;
     factorize(poly: U, x: U): U;
-    pushDirective(directive: Directive, value: boolean): void;
+    pushDirective(directive: number, value: number): void;
     popDirective(): void;
     getBinding(sym: Sym): U;
-    getDirective(directive: Directive): boolean;
+    getDirective(directive: number): number;
     getSymbolPrintName(sym: Sym): string;
     isone(expr: U): boolean;
     iszero(expr: U): boolean;
@@ -317,14 +317,10 @@ function print_a_over_b(p: Cons, $: PrintConfig): string {
  * @returns 
  */
 export function render_using_non_sexpr_print_mode(expr: U, $: PrintConfig): string {
-    // console.lg(`render_using_non_sexpr_print_mode ${expr}`, $.getDirective(Directive.useCaretForExponentiation));
-    // console.lg(`render_using_non_sexpr_print_mode: ${expr}`);
     return print_additive_expr(expr, $);
 }
 
 export function print_additive_expr(p: U, $: PrintConfig): string {
-    // console.lg(`print_additive_expr ${p}`, $.getDirective(Directive.useCaretForExponentiation));
-    // console.lg(`print_additive_expr ${p}`);
     let str = '';
     if (is_add(p)) {
         p = cdr(p);
@@ -490,8 +486,6 @@ function print_multiply_when_no_denominators(expr: Cons, $: PrintConfig) {
 }
 
 export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
-    // console.lg(`print_multiplicative_expr ${expr}`, $.getDirective(Directive.useCaretForExponentiation));
-    // console.lg(`print_multiplicative_expr ${expr}`);
     if (is_cons(expr) && is_multiply(expr)) {
         if (any_denominators(expr, $)) {
             return print_a_over_b(expr, $);
@@ -506,8 +500,6 @@ export function print_multiplicative_expr(expr: U, $: PrintConfig): string {
 }
 
 export function print_outer_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: PrintConfig): string {
-    // console.lg(`print_outer_expr ${expr}`, $.getDirective(Directive.useCaretForExponentiation));
-    // console.lg(`print_outer_expr ${expr}`);
     if (is_cons(expr) && is_outer(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
@@ -544,7 +536,6 @@ function print_outer_operator(): string {
 }
 
 export function print_inner_expr(expr: U, omitParens: boolean, pastFirstFactor: boolean, $: PrintConfig): string {
-    // console.lg(`print_inner_expr ${expr}`, $.getDirective(Directive.useCaretForExponentiation));
     if (is_cons(expr) && is_inner_or_dot(expr)) {
         let argList = expr.argList;
         if (is_cons(argList)) {
@@ -1285,7 +1276,6 @@ function should_tweak_exponent_syntax(base: U, $: PrintConfig): boolean {
 }
 
 function print_power(base: U, expo: U, $: PrintConfig) {
-    // console.lg(`print_power base = ${base} expo = ${expo}`, $.getDirective(Directive.useCaretForExponentiation));
 
     let str = '';
 
@@ -1512,7 +1502,6 @@ function print_power(base: U, expo: U, $: PrintConfig) {
             str += print_str('^');
         }
         else {
-            // console.lg("Directive.useCaretForExponentiation", $.getDirective(Directive.useCaretForExponentiation));
             if ($.getDirective(Directive.useCaretForExponentiation)) {
                 str += print_str('^');
             }

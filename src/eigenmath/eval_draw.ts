@@ -1,5 +1,6 @@
 import { assert_sym, create_flt, create_sym, Flt, is_num, is_sym, is_tensor, Sym } from "math-expression-atoms";
 import { nil, U } from "math-expression-tree";
+import { Directive } from "../env/ExtensionEnv";
 import { assert_cons } from "../tree/cons/assert_cons";
 import { broadcast, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
@@ -53,11 +54,11 @@ export function make_eval_draw(io: ProgramIO) {
 
     return function (expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-        if (ctrl.drawing) {
+        if (ctrl.getDirective(Directive.drawing)) {
             // Do nothing
         }
         else {
-            ctrl.drawing = 1;
+            ctrl.pushDirective(Directive.drawing, 1);
             try {
 
                 const F = assert_cons(expr).item(1);
@@ -106,7 +107,7 @@ export function make_eval_draw(io: ProgramIO) {
                 }
             }
             finally {
-                ctrl.drawing = 0;
+                ctrl.popDirective();
             }
         }
 
@@ -248,41 +249,47 @@ function setup_final(F: U, T: Sym, env: ProgramEnv, ctrl: ProgramControl, $: Pro
 }
 
 function sample(F: U, T: U, t: number, draw_array: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
-    let X: U;
-    let Y: U;
 
-    $.push(create_flt(t));
-    let p1 = $.pop();
-    set_symbol(assert_sym(T), p1, nil, env);
+    const t_as_flt = create_flt(t);
+
+    set_symbol(assert_sym(T), t_as_flt, nil, env);
 
     $.push(F);
     eval_nonstop(env, ctrl, $);
     floatfunc(env, ctrl, $);
-    p1 = $.pop();
+    const F_of_t = $.pop();
+    try {
+        let X: U;
+        let Y: U;
 
-    if (is_tensor(p1)) {
-        X = p1.elems[0];
-        Y = p1.elems[1];
+        if (is_tensor(F_of_t)) {
+            X = F_of_t.elems[0];
+            Y = F_of_t.elems[1];
+        }
+        else {
+            X = t_as_flt;
+            Y = F_of_t;
+        }
+
+        if (!is_num(X) || !is_num(Y)) {
+            return;
+        }
+
+        const xUnscaled = X.toNumber();
+        const yUnscaled = Y.toNumber();
+
+        if (!isFinite(xUnscaled) || !isFinite(yUnscaled)) {
+            return;
+        }
+
+        const x = DRAW_WIDTH * (xUnscaled - dc.xmin) / (dc.xmax - dc.xmin);
+        const y = DRAW_HEIGHT * (yUnscaled - dc.ymin) / (dc.ymax - dc.ymin);
+
+        draw_array.push({ t: t, x: x, y: y });
     }
-    else {
-        $.push(create_flt(t));
-        X = $.pop();
-        Y = p1;
+    finally {
+        F_of_t.release();
     }
-
-    if (!is_num(X) || !is_num(Y))
-        return;
-
-    let x = X.toNumber();
-    let y = Y.toNumber();
-
-    if (!isFinite(x) || !isFinite(y))
-        return;
-
-    x = DRAW_WIDTH * (x - dc.xmin) / (dc.xmax - dc.xmin);
-    y = DRAW_HEIGHT * (y - dc.ymin) / (dc.ymax - dc.ymin);
-
-    draw_array.push({ t: t, x: x, y: y });
 }
 
 function emit_graph(draw_array: { t: number; x: number; y: number }[], $: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outbuf: string[]): void {

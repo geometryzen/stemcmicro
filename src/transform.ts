@@ -262,7 +262,7 @@ function f_equals_a(stack: U[], generalTransform: boolean, F: U, A: U, C: U, $: 
             // console.lg("F   ", $.toInfixString(F), $.toInfixString($.valueOf(F)));
             // console.lg("arg2", $.toInfixString(arg2));
 
-            $.pushDirective(Directive.expandPowSum, true);
+            $.pushDirective(Directive.expandPowSum, 1);
             try {
                 const diff = $.subtract(F, arg2);
 

@@ -240,7 +240,7 @@ export function simplify_trig(expr: U, $: ExtensionEnv): U {
 }
 
 function convert_sin_to_cos(expr: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.convertSinToCos, true);
+    $.pushDirective(Directive.convertSinToCos, 1);
     try {
         return $.valueOf(expr);
     }
@@ -250,7 +250,7 @@ function convert_sin_to_cos(expr: U, $: ExtensionEnv): U {
 }
 
 function convert_cos_to_sin(expr: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.convertCosToSin, true);
+    $.pushDirective(Directive.convertCosToSin, 1);
     try {
         return $.valueOf(expr);
     }

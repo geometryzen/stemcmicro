@@ -1,5 +1,5 @@
 import { scan } from '../algebrite/scan';
-import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
 import { DEFAULT_MAX_FIXED_PRINTOUT_DIGITS, VARNAME_MAX_FIXED_PRINTOUT_DIGITS } from "./constants";
 import { defs } from './defs';
 
@@ -58,15 +58,15 @@ export function execute_definition(sourceText: string, $: ExtensionEnv): void {
     defs.codeGen = false;
     try {
         const [scanned, tree] = scan(sourceText, 0, {
-            useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
-            useParenForTensors: $.getDirective(Directive.useParenForTensors),
+            useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
+            useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
             explicitAssocAdd: false,
             explicitAssocMul: false
         });
         try {
             if (scanned > 0) {
                 // Evaluating the tree for the side-effect which is to establish a binding.
-                $.pushDirective(Directive.expanding, true);
+                $.pushDirective(Directive.expanding, 1);
                 try {
                     $.valueOf(tree);
                 }

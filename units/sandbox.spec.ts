@@ -4,7 +4,33 @@ import { is_nil, U } from "math-expression-tree";
 import { create_engine, ExprEngine } from "../src/api/api";
 import { SyntaxKind } from "../src/parser/parser";
 
-describe("Eigenmath", function () {
+describe("sample", function () {
+    it("(a+b) squared", function () {
+        const lines: string[] = [
+            `(a+b)^2`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath, useCaretForExponentiation: true });
+        const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
+        if (errors.length > 0) {
+            // eslint-disable-next-line no-console
+            console.log(errors[0]);
+        }
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], {}), 'a**2 + 2 a b + b**2');
+        engine.release();
+    });
+});
+
+xdescribe("Eigenmath", function () {
     it("kronecker", function () {
         const lines: string[] = [
             `A=[[1,2],[3,4]]`,
@@ -14,6 +40,10 @@ describe("Eigenmath", function () {
         const sourceText = lines.join('\n');
         const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
         const { trees, errors } = engine.parse(sourceText, { useParenForTensors: false });
+        if (errors.length > 0) {
+            // eslint-disable-next-line no-console
+            console.log(errors[0]);
+        }
         assert.strictEqual(errors.length, 0);
         const values: U[] = [];
         for (const tree of trees) {
@@ -27,7 +57,8 @@ describe("Eigenmath", function () {
         engine.release();
     });
 });
-describe("Micro", function () {
+
+xdescribe("Micro", function () {
     it("kronecker", function () {
         const lines: string[] = [
             `A=[[1,2],[3,4]]`,

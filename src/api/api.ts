@@ -4,7 +4,7 @@ import { is_native_sym, Native, native_sym } from 'math-expression-native';
 import { Cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { stemcmicro_parse, STEMCParseOptions } from '../algebrite/stemc_parse';
 import { Scope, Stepper } from '../clojurescript/runtime/Stepper';
-import { define_cons_function, EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
+import { EigenmathParseConfig, evaluate_expression, get_binding, LAST, parse_eigenmath_script, ScriptErrorHandler, ScriptOutputListener, ScriptVars, set_binding, set_user_function, simplify as eigenmath_simplify, to_sexpr, TTY } from '../eigenmath/eigenmath';
 import { make_eval_draw } from '../eigenmath/eval_draw';
 import { eval_infixform } from '../eigenmath/eval_infixform';
 import { make_eval_print } from '../eigenmath/eval_print';
@@ -14,7 +14,7 @@ import { print_value_and_input_as_svg_or_infix } from '../eigenmath/print_value_
 import { render_svg, SvgRenderConfig } from '../eigenmath/render_svg';
 import { should_engine_render_svg } from '../eigenmath/should_engine_render_svg';
 import { create_env } from '../env/env';
-import { ALL_FEATURES, Directive, ExtensionEnv } from '../env/ExtensionEnv';
+import { ALL_FEATURES, Directive, directive_from_flag, ExtensionEnv } from '../env/ExtensionEnv';
 import { create_algebra_as_blades } from '../operators/algebra/create_algebra_as_tensor';
 import { assert_U } from '../operators/helpers/is_any';
 import { simplify } from '../operators/simplify/simplify';
@@ -27,6 +27,7 @@ import { render_as_human } from '../print/render_as_human';
 import { render_as_infix } from '../print/render_as_infix';
 import { render_as_latex } from '../print/render_as_latex';
 import { render_as_sexpr } from '../print/render_as_sexpr';
+import { ProgrammingError } from '../programming/ProgrammingError';
 import { execute_script, transform_tree } from '../runtime/execute';
 import { RESERVED_KEYWORD_LAST, RESERVED_KEYWORD_TTY } from '../runtime/ns_script';
 import { env_term, init_env } from '../runtime/script_engine';
@@ -72,7 +73,12 @@ export class EigenmathErrorHandler implements ScriptErrorHandler {
     errors: Error[] = [];
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     error(inbuf: string, start: number, end: number, err: unknown, $: ScriptVars): void {
-        this.errors.push(new Error(`${err}`));
+        if (err instanceof Error) {
+            this.errors.push(err);
+        }
+        else {
+            throw new ProgrammingError();
+        }
     }
 }
 
@@ -201,9 +207,9 @@ class ExtensionEnvVisitor implements Visitor {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     keyword(keyword: Keyword): void {
     }
-    sym(sym: Sym): void {
-        if (!this.#env.hasBinding(sym)) {
-            this.#env.defineUserSymbol(sym);
+    sym(name: Sym): void {
+        if (!this.#env.hasBinding(name)) {
+            this.#env.defineUserSymbol(name);
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -399,8 +405,8 @@ class MicroEngine implements ExprEngine {
         return value;
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
-        this.#env.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
-        this.#env.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
+        this.#env.pushDirective(Directive.useCaretForExponentiation, directive_from_flag(config.useCaretForExponentiation));
+        this.#env.pushDirective(Directive.useParenForTensors, directive_from_flag(config.useParenForTensors));
         try {
             switch (config.format) {
                 case 'Ascii': {
@@ -548,8 +554,8 @@ class ClojureScriptEngine implements ExprEngine {
     }
     renderAsString(expr: U, config: Partial<RenderConfig> = {}): string {
         assert_U(expr, "ExprEngine.renderAsString(expr, config)", "expr");
-        this.#env.pushDirective(Directive.useCaretForExponentiation, !!config.useCaretForExponentiation);
-        this.#env.pushDirective(Directive.useParenForTensors, !!config.useParenForTensors);
+        this.#env.pushDirective(Directive.useCaretForExponentiation, directive_from_flag(config.useCaretForExponentiation));
+        this.#env.pushDirective(Directive.useParenForTensors, directive_from_flag(config.useParenForTensors));
         try {
             switch (config.format) {
                 case 'Ascii': {
@@ -646,7 +652,7 @@ class ScriptVarsPrintConfig implements PrintConfig {
         throw new Error('Method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    pushDirective(directive: Directive, value: boolean): void {
+    pushDirective(directive: number, value: number): void {
         throw new Error('Method not implemented.');
     }
     popDirective(): void {
@@ -672,7 +678,7 @@ class ScriptVarsPrintConfig implements PrintConfig {
         // return binding;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getDirective(directive: Directive): boolean {
+    getDirective(directive: number): number {
         throw new Error('getDirective method not implemented.');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -742,10 +748,10 @@ class EigenmathEngine implements ExprEngine {
         // TODO: 
         // const allowUndeclaredVars = allow_undeclared_vars(options, true);
         this.#scriptVars.init();
-        define_cons_function(create_sym("draw"), make_eval_draw(this.#scriptVars));
-        define_cons_function(create_sym("infixform"), eval_infixform);
-        define_cons_function(create_sym("print"), make_eval_print(this.#scriptVars));
-        define_cons_function(create_sym("run"), make_eval_run(this.#scriptVars));
+        this.#scriptVars.define_cons_function(create_sym("draw"), make_eval_draw(this.#scriptVars));
+        this.#scriptVars.define_cons_function(create_sym("infixform"), eval_infixform);
+        this.#scriptVars.define_cons_function(create_sym("print"), make_eval_print(this.#scriptVars));
+        this.#scriptVars.define_cons_function(create_sym("run"), make_eval_run(this.#scriptVars));
         if (options.prolog) {
             if (Array.isArray(options.prolog)) {
                 this.#scriptVars.executeProlog(options.prolog);
@@ -1181,3 +1187,4 @@ export class PrintScriptHandler implements ScriptHandler<ExprEngine> {
         this.element.innerHTML += text;
     }
 }
+

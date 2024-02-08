@@ -1,15 +1,19 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { is_native, Native, native_sym } from 'math-expression-native';
-import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
+import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
+import { DirectiveStack } from '../env/DirectiveStack';
+import { Directive } from '../env/ExtensionEnv';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
+import { is_lambda } from '../operators/lambda/is_lambda';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
-import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
+import { Err } from '../tree/err/Err';
+import { Lambda } from '../tree/lambda/Lambda';
 import { two } from '../tree/rat/Rat';
 import { bignum_equal } from './bignum_equal';
 import { bignum_itoa } from './bignum_itoa';
@@ -982,17 +986,21 @@ function absfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     list(2, $);
 }
 
-function eval_add(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function eval_add(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const h = $.length;
-    ctrl.expanding--; // undo expanding++ in evalf
-    p1 = cdr(p1);
-    while (is_cons(p1)) {
-        push(car(p1), $);
-        value_of(env, ctrl, $);
-        p1 = cdr(p1);
+    ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
+    try {
+        let p1 = cdr(expr);
+        while (is_cons(p1)) {
+            push(car(p1), $);
+            value_of(env, ctrl, $);
+            p1 = cdr(p1);
+        }
+        add_terms($.length - h, env, ctrl, $);
     }
-    add_terms($.length - h, env, ctrl, $);
-    ctrl.expanding++;
+    finally {
+        ctrl.popDirective();
+    }
 }
 
 function add(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -6506,7 +6514,7 @@ function mod_integers(p1: Rat, p2: Rat, $: ProgramStack): void {
 
 function eval_multiply(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const h0 = $.length;
-    ctrl.expanding--; // undo expanding++ in evalf
+    ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
         let p1 = cdr(expr);
         while (is_cons(p1)) {
@@ -6518,45 +6526,49 @@ function eval_multiply(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Pro
         multiply_factors(n, env, ctrl, $);
     }
     finally {
-        ctrl.expanding++;
+        ctrl.popDirective();
     }
 }
 
 function eval_noexpand(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const t = ctrl.expanding;
-    ctrl.expanding = 0;
+    ctrl.pushDirective(Directive.expanding, 0);
+    try {
+        push(cadr(p1), $);
+        value_of(env, ctrl, $);
+    }
+    finally {
+        ctrl.popDirective();
 
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-
-    ctrl.expanding = t;
+    }
 }
 
 /**
  * This isn't actually a function that is matched, hence the ProgramFrame
  */
 export function eval_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    if (ctrl.nonstop) {
-        pop($);
-        push(nil, $);
-        return; // not reentrant
+    if (ctrl.getDirective(Directive.nonstop)) {
+        const expr = pop($);
+        try {
+            push(nil, $);
+            return; // not reentrant    
+        }
+        finally {
+            expr.release();
+        }
     }
 
-    ctrl.nonstop = 1;
+    ctrl.pushDirective(Directive.nonstop, 1);
     try {
         eval_nonstop_nib(env, ctrl, $);
     }
     finally {
-        ctrl.nonstop = 0;
+        ctrl.popDirective();
     }
 }
 
 function eval_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const save_tos = $.length - 1;
     const save_tof = frame.length;  // TODO: Why the off-by-one?
-
-    const save_eval_level = ctrl.eval_level;
-    const save_expanding = ctrl.expanding;
 
     try {
         value_of(env, ctrl, $);
@@ -6565,9 +6577,6 @@ function eval_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
 
         $.splice(save_tos);
         frame.splice(save_tof);
-
-        ctrl.eval_level = save_eval_level;
-        ctrl.expanding = save_expanding;
 
         push(nil, $); // return value
     }
@@ -7004,41 +7013,73 @@ function polar(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     multiply(env, ctrl, $);
 }
 
-function eval_power(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
-    const powerExpr = assert_cons(expr);
-    ctrl.expanding--;
+function eval_power(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+    ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
     try {
-        push(powerExpr.base, $);
-        push(powerExpr.expo, $);
+        push(expr.base, $);
+        push(expr.expo, $);
         value_of(env, ctrl, $);
         dupl($);
         // expo has been evaluated with a decremented expanding value.
         const expo = pop($);
-
-        // if exponent is negative then evaluate base without expanding,
-        // otherwise, evaluate the base normally.
-        swap($);
-        if (is_num(expo) && expo.isNegative()) {
-            const t = ctrl.expanding;
-            ctrl.expanding = 0;
+        try {
+            // if exponent is negative then evaluate base without expanding,
+            // otherwise, evaluate the base normally.
+            swap($);
             try {
-                // base is evaluated with zero expanding.
-                value_of(env, ctrl, $);
+                if (is_num(expo) && expo.isNegative()) {
+                    ctrl.pushDirective(Directive.expanding, 0);
+                    try {
+                        // base is evaluated with zero expanding.
+                        value_of(env, ctrl, $);
+                    }
+                    finally {
+                        ctrl.popDirective();
+                    }
+                }
+                else {
+                    // base is evaluated with decremented expanding.
+                    value_of(env, ctrl, $);
+                }
             }
             finally {
-                ctrl.expanding = t;
+                swap($);
             }
-        }
-        else {
-            value_of(env, ctrl, $);
-        }
-        swap($);
 
-        power(env, ctrl, $);
+            power(env, ctrl, $);
+        }
+        finally {
+            expo.release();
+        }
     }
     finally {
-        ctrl.expanding++;
+        ctrl.popDirective();
     }
+}
+
+/**
+ * Expects top elements of stack to be...
+ * 
+ * --------
+ * | expo |
+ * --------
+ * | base |
+ * --------
+ * 
+ * Both expressions have been evaluated.
+ */
+function power_args($: ProgramStack): [base: U, expo: U] {
+    const expo = pop($);
+    const base = pop($);
+    if (is_sym(base) && is_flt(expo)) {
+        if (base.equals(DOLLAR_E)) {
+            return [create_flt(Math.E), expo];
+        }
+        else if (base.equals(PI)) {
+            return [create_flt(Math.PI), expo];
+        }
+    }
+    return [base, expo];
 }
 
 /**
@@ -7054,193 +7095,187 @@ function eval_power(expr: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
  */
 function power(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    const expo = pop($);
-    let base = pop($);
-
-    if (is_tensor(base) && istensor(expo)) {
-        push(POWER, $);
-        push(base, $);
-        push(expo, $);
-        list(3, $);
-        return;
-    }
-
-    if (is_tensor(expo)) {
-        const T = copy_tensor(expo);
-        const n = T.nelem;
-        for (let i = 0; i < n; i++) {
+    const [base, expo] = power_args($);
+    try {
+        if (is_tensor(base) && istensor(expo)) {
+            push(POWER, $);
             push(base, $);
-            push(T.elems[i], $);
-            power(env, ctrl, $);
-            T.elems[i] = pop($);
+            push(expo, $);
+            list(3, $);
+            return;
         }
-        push(T, $);
-        return;
-    }
 
-    if (is_tensor(base)) {
-        const T = copy_tensor(base);
-        const n = T.nelem;
-        for (let i = 0; i < n; i++) {
-            push(T.elems[i], $);
+        if (is_tensor(expo)) {
+            const T = copy_tensor(expo);
+            const n = T.nelem;
+            for (let i = 0; i < n; i++) {
+                push(base, $);
+                push(T.elems[i], $);
+                power(env, ctrl, $);
+                T.elems[i] = pop($);
+            }
+            push(T, $);
+            return;
+        }
+
+        if (is_tensor(base)) {
+            const T = copy_tensor(base);
+            const n = T.nelem;
+            for (let i = 0; i < n; i++) {
+                push(T.elems[i], $);
+                push(expo, $);
+                power(env, ctrl, $);
+                T.elems[i] = pop($);
+            }
+            push(T, $);
+            return;
+        }
+
+        if (is_num(base) && is_num(expo)) {
+            power_numbers(base, expo, env, ctrl, $);
+            return;
+        }
+
+        // expr^0
+
+        if (iszero(expo)) {
+            push_integer(1, $);
+            return;
+        }
+
+        // 0^expr
+
+        if (iszero(base)) {
+            push(POWER, $);
+            push(base, $);
+            push(expo, $);
+            list(3, $);
+            return;
+        }
+
+        // 1^expr
+
+        if (isplusone(base)) {
+            push_integer(1, $);
+            return;
+        }
+
+        // expr^1
+
+        if (isplusone(expo)) {
+            push(base, $);
+            return;
+        }
+
+        // BASE is an integer?
+
+        if (is_rat(base) && isinteger(base)) {
+            // raise each factor in BASE to power EXPO
+            // EXPO is not numerical, that case was handled by power_numbers() above
+            const h = $.length;
+            push(base, $);
+            factor_factor(env, ctrl, $);
+            const n = $.length - h;
+            for (let i = 0; i < n; i++) {
+                const p1 = $.getAt(h + i);
+                if (car(p1).equals(POWER)) {
+                    push(POWER, $);
+                    push(cadr(p1), $); // base
+                    push(caddr(p1), $); // expo
+                    push(expo, $);
+                    multiply(env, ctrl, $);
+                    list(3, $);
+                }
+                else {
+                    push(POWER, $);
+                    push(p1, $);
+                    push(expo, $);
+                    list(3, $);
+                }
+                $.setAt(h + i, pop($));
+            }
+            if (n > 1) {
+                sort_factors(h, $);
+                list(n, $);
+                push(MULTIPLY, $);
+                swap($);
+                cons($); // prepend MULTIPLY to list
+            }
+            return;
+        }
+
+        // BASE is a numerical fraction?
+
+        if (is_rat(base) && isfraction(base)) {
+            // power numerator, power denominator
+            // EXPO is not numerical, that case was handled by power_numbers() above
+            push(base, $);
+            numerator(env, ctrl, $);
             push(expo, $);
             power(env, ctrl, $);
-            T.elems[i] = pop($);
+            push(base, $);
+            denominator(env, ctrl, $);
+            push(expo, $);
+            negate(env, ctrl, $);
+            power(env, ctrl, $);
+            multiply(env, ctrl, $);
+            return;
         }
-        push(T, $);
-        return;
-    }
 
-    if (base.equals(DOLLAR_E) && is_flt(expo)) {
-        push_double(Math.E, $);
-        base = pop($);
-    }
+        // BASE = e ?
 
-    if (base.equals(PI) && is_flt(expo)) {
-        push_double(Math.PI, $);
-        base = pop($);
-    }
+        if (base.equals(DOLLAR_E)) {
+            power_natural_number(expo, env, ctrl, $);
+            return;
+        }
 
-    if (is_num(base) && is_num(expo)) {
-        power_numbers(base, expo, env, ctrl, $);
-        return;
-    }
+        // (a + b) ^ c
 
-    // expr^0
+        if (car(base).equals(ADD)) {
+            power_sum(base, expo, env, ctrl, $);
+            return;
+        }
 
-    if (iszero(expo)) {
-        push_integer(1, $);
-        return;
-    }
+        // (a1 * a2 * a3) ^ c  -->  (a1 ^ c) * (a2 ^ c) * (a3 ^ c)
 
-    // 0^expr
+        if (car(base).equals(MULTIPLY)) {
+            const h = $.length;
+            let argList = cdr(base);
+            while (is_cons(argList)) {
+                push(car(argList), $);
+                push(expo, $);
+                power(env, ctrl, $);
+                argList = cdr(argList);
+            }
+            multiply_factors($.length - h, env, ctrl, $);
+            return;
+        }
 
-    if (iszero(base)) {
+        // (x ^ a) ^ b  -->  x ^ (a * c)
+
+        if (is_power(base)) {
+            const x = base.base;
+            const a = base.expo;
+            const b = expo;
+            push(x, $);
+            push(a, $);
+            push(b, $);
+            multiply_expand(env, ctrl, $); // always expand products of exponents
+            power(env, ctrl, $);
+            return;
+        }
+
+        // none of the above
+
         push(POWER, $);
         push(base, $);
         push(expo, $);
         list(3, $);
-        return;
     }
-
-    // 1^expr
-
-    if (isplusone(base)) {
-        push_integer(1, $);
-        return;
+    finally {
+        expo.release();
+        base.release();
     }
-
-    // expr^1
-
-    if (isplusone(expo)) {
-        push(base, $);
-        return;
-    }
-
-    // BASE is an integer?
-
-    if (is_rat(base) && isinteger(base)) {
-        // raise each factor in BASE to power EXPO
-        // EXPO is not numerical, that case was handled by power_numbers() above
-        const h = $.length;
-        push(base, $);
-        factor_factor(env, ctrl, $);
-        const n = $.length - h;
-        for (let i = 0; i < n; i++) {
-            const p1 = $.getAt(h + i);
-            if (car(p1).equals(POWER)) {
-                push(POWER, $);
-                push(cadr(p1), $); // base
-                push(caddr(p1), $); // expo
-                push(expo, $);
-                multiply(env, ctrl, $);
-                list(3, $);
-            }
-            else {
-                push(POWER, $);
-                push(p1, $);
-                push(expo, $);
-                list(3, $);
-            }
-            $.setAt(h + i, pop($));
-        }
-        if (n > 1) {
-            sort_factors(h, $);
-            list(n, $);
-            push(MULTIPLY, $);
-            swap($);
-            cons($); // prepend MULTIPLY to list
-        }
-        return;
-    }
-
-    // BASE is a numerical fraction?
-
-    if (is_rat(base) && isfraction(base)) {
-        // power numerator, power denominator
-        // EXPO is not numerical, that case was handled by power_numbers() above
-        push(base, $);
-        numerator(env, ctrl, $);
-        push(expo, $);
-        power(env, ctrl, $);
-        push(base, $);
-        denominator(env, ctrl, $);
-        push(expo, $);
-        negate(env, ctrl, $);
-        power(env, ctrl, $);
-        multiply(env, ctrl, $);
-        return;
-    }
-
-    // BASE = e ?
-
-    if (base.equals(DOLLAR_E)) {
-        power_natural_number(expo, env, ctrl, $);
-        return;
-    }
-
-    // (a + b) ^ c
-
-    if (car(base).equals(ADD)) {
-        power_sum(base, expo, env, ctrl, $);
-        return;
-    }
-
-    // (a1 * a2 * a3) ^ c  -->  (a1 ^ c) * (a2 ^ c) * (a3 ^ c)
-
-    if (car(base).equals(MULTIPLY)) {
-        const h = $.length;
-        let argList = cdr(base);
-        while (is_cons(argList)) {
-            push(car(argList), $);
-            push(expo, $);
-            power(env, ctrl, $);
-            argList = cdr(argList);
-        }
-        multiply_factors($.length - h, env, ctrl, $);
-        return;
-    }
-
-    // (x ^ a) ^ b  -->  x ^ (a * c)
-
-    if (is_power(base)) {
-        const x = base.base;
-        const a = base.expo;
-        const b = expo;
-        push(x, $);
-        push(a, $);
-        push(b, $);
-        multiply_expand(env, ctrl, $); // always expand products of exponents
-        power(env, ctrl, $);
-        return;
-    }
-
-    // none of the above
-
-    push(POWER, $);
-    push(base, $);
-    push(expo, $);
-    list(3, $);
 }
 
 function eval_prefixform(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -9447,9 +9482,13 @@ function eval_user_function(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 
     if (FUNC_DEFN.isnil) {
         if (FUNC_NAME.equals(D_LOWER)) {
-            ctrl.expanding++;
-            eval_derivative(p1, env, ctrl, $);
-            ctrl.expanding--;
+            ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
+            try {
+                eval_derivative(p1, env, ctrl, $);
+            }
+            finally {
+                ctrl.popDirective();
+            }
             return;
         }
         const h = $.length;
@@ -9507,13 +9546,13 @@ function eval_user_function(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: 
 }
 
 // TODO: It should be possible to type p1: Sym (changes to math-expression-atoms needed)
-function eval_user_symbol(p1: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const p2 = get_binding(assert_sym(p1), env);
-    if (p1.equals(p2)) {
-        push(p1, $); // symbol evaluates to itself
+function eval_user_symbol(name: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const binding = get_binding(assert_sym(name), env);
+    if (name.equals(binding)) {
+        push(name, $); // symbol evaluates to itself
     }
     else {
-        push(p2, $); // evaluate symbol binding
+        push(binding, $); // evaluate symbol binding
         value_of(env, ctrl, $);
     }
 }
@@ -9556,66 +9595,63 @@ function eval_zero(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
 }
 
 export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    ctrl.eval_level++;
+    ctrl.pushDirective(Directive.depth, ctrl.getDirective(Directive.depth) + 1);
     try {
-        evalf_nib(env, ctrl, $);
+        if (ctrl.getDirective(Directive.depth) === 200) {
+            stopf("circular definition?");
+        }
+
+        const p1 = pop($);
+
+        const sym = car(p1);
+        if (is_cons(p1) && issymbol(sym)) {
+            if (env.hasBinding(sym)) {
+                ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) + 1);
+                try {
+                    const binding = env.getBinding(sym);
+                    if (is_lambda(binding)) {
+                        const ctxt = new ExprContextFromEigenmath(env, ctrl, $);
+                        const value = binding.body(p1.argList, ctxt);
+                        $.push(value);
+                    }
+                    else {
+                        $.push(binding);
+                    }
+                }
+                finally {
+                    ctrl.popDirective();
+                }
+                return;
+            }
+            if (env.hasUserFunction(sym)) {
+                eval_user_function(p1, env, ctrl, $);
+                return;
+            }
+        }
+
+        if (is_sym(p1) && env.hasBinding(p1)) { // bare keyword
+            push(p1, $);
+            push(LAST, $); // default arg
+            list(2, $);
+            value_of(env, ctrl, $);
+            return;
+        }
+
+        if (is_sym(p1) && env.hasUserFunction(p1)) {
+            eval_user_symbol(p1, env, ctrl, $);
+            return;
+        }
+
+        if (is_tensor(p1)) {
+            eval_tensor(p1, env, ctrl, $);
+            return;
+        }
+
+        push(p1, $); // rational, double, or string
     }
     finally {
-        ctrl.eval_level--;
+        ctrl.popDirective();
     }
-}
-
-function evalf_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
-    if (ctrl.eval_level === 200) {
-        stopf("circular definition?");
-    }
-
-    const p1 = pop($);
-
-    const sym = car(p1);
-    if (is_cons(p1) && issymbol(sym)) {
-        if (env.hasBinding(sym)) {
-            ctrl.expanding++;
-            try {
-                const evalFunction: ConsFunction = consFunctions.get(sym.key())!;
-                if (evalFunction) {
-                    evalFunction(p1, env, ctrl, $);
-                }
-                else {
-                    throw new ProgrammingError(`consFunction missing symbol ${sym.key()}`);
-                }
-            }
-            finally {
-                ctrl.expanding--;
-            }
-            return;
-        }
-        if (env.hasUserFunction(sym)) {
-            eval_user_function(p1, env, ctrl, $);
-            return;
-        }
-    }
-
-    if (is_sym(p1) && env.hasBinding(p1)) { // bare keyword
-        push(p1, $);
-        push(LAST, $); // default arg
-        list(2, $);
-        value_of(env, ctrl, $);
-        return;
-    }
-
-    if (is_sym(p1) && env.hasUserFunction(p1)) {
-        eval_user_symbol(p1, env, ctrl, $);
-        return;
-    }
-
-    if (is_tensor(p1)) {
-        eval_tensor(p1, env, ctrl, $);
-        return;
-    }
-
-    push(p1, $); // rational, double, or string
 }
 
 function evalp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -10740,13 +10776,12 @@ function multiply(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void 
  * A convenience function for multiplying 2 factors on the stack with the expanding flag set.
  */
 function multiply_expand(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const t = ctrl.expanding;
-    ctrl.expanding = 1;
+    ctrl.pushDirective(Directive.expanding, 1);
     try {
         multiply(env, ctrl, $);
     }
     finally {
-        ctrl.expanding = t;
+        ctrl.popDirective();
     }
 }
 /**
@@ -10793,10 +10828,13 @@ function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramControl, $: P
 }
 
 function multiply_noexpand(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const t = ctrl.expanding;
-    ctrl.expanding = 0;
-    multiply(env, ctrl, $);
-    ctrl.expanding = t;
+    ctrl.pushDirective(Directive.expanding, 0);
+    try {
+        multiply(env, ctrl, $);
+    }
+    finally {
+        ctrl.popDirective();
+    }
 }
 
 /**
@@ -10870,7 +10908,7 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
     if (!isplusone(k2) || is_flt(k2))
         push(k2, $);
 
-    if (ctrl.expanding) {
+    if (ctrl.getDirective(Directive.expanding)) {
         expand_sum_factors(start, env, ctrl, $); // success leaves one expr on stack
     }
 
@@ -11867,63 +11905,68 @@ function power_natural_number(EXPO: U, env: ProgramEnv, ctrl: ProgramControl, $:
     push(EXPO, $);
     list(3, $);
 }
-// BASE and EXPO are numbers
 
-function power_numbers(BASE: Num, EXPO: Num, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function power_numbers(base: Num, expo: Num, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // n^0
 
-    if (iszero(EXPO)) {
+    if (iszero(expo)) {
         push_integer(1, $);
         return;
     }
 
     // 0^n
 
-    if (iszero(BASE)) {
-        if (isnegativenumber(EXPO))
-            stopf("divide by zero");
-        push_integer(0, $);
-        return;
+    if (iszero(base)) {
+        if (isnegativenumber(expo)) {
+            // divide by zero
+            $.push(new Err(items_to_cons(native_sym(Native.pow), base, expo)));
+            // stopf("divide by zero");
+            return;
+        }
+        else {
+            push_integer(0, $);
+            return;
+        }
     }
 
     // 1^n
 
-    if (isplusone(BASE)) {
+    if (isplusone(base)) {
         push_integer(1, $);
         return;
     }
 
     // n^1
 
-    if (isplusone(EXPO)) {
-        push(BASE, $);
+    if (isplusone(expo)) {
+        push(base, $);
         return;
     }
 
-    if (is_flt(BASE) || is_flt(EXPO)) {
-        power_double(BASE, EXPO, env, ctrl, $);
+    if (is_flt(base) || is_flt(expo)) {
+        power_double(base, expo, env, ctrl, $);
         return;
     }
 
     // integer exponent?
 
-    if (isinteger(EXPO)) {
+    if (isinteger(expo)) {
         // TODO: Move this into Rat.pow(Rat)
         // We can forget about EXPO.b because EXPO is an integer.
         // It's crucial that we handle negative exponents carefully.
-        if (EXPO.isNegative()) {
+        if (expo.isNegative()) {
             // (a/b)^(-n) = (b/a)^n = (b^n)/(a^n)
-            const n = EXPO.a.negate();
-            const a = bignum_pow(BASE.a, n);
-            const b = bignum_pow(BASE.b, n);
+            const n = expo.a.negate();
+            const a = bignum_pow(base.a, n);
+            const b = bignum_pow(base.b, n);
             const X = new Rat(b, a);
             push(X, $);
         }
         else {
-            const n = EXPO.a;
-            const a = bignum_pow(BASE.a, n);
-            const b = bignum_pow(BASE.b, n);
+            const n = expo.a;
+            const a = bignum_pow(base.a, n);
+            const b = bignum_pow(base.b, n);
             const X = new Rat(a, b);
             push(X, $);
         }
@@ -11937,8 +11980,8 @@ function power_numbers(BASE: Num, EXPO: Num, env: ProgramEnv, ctrl: ProgramContr
     // put factors on stack
 
     push(POWER, $);
-    push(BASE, $);
-    push(EXPO, $);
+    push(base, $);
+    push(expo, $);
     list(3, $);
 
     factor_factor(env, ctrl, $);
@@ -11950,9 +11993,9 @@ function power_numbers(BASE: Num, EXPO: Num, env: ProgramEnv, ctrl: ProgramContr
     for (let i = 0; i < n; i++) {
         const p1 = $.getAt(h + i);
         if (car(p1).equals(POWER)) {
-            BASE = cadr(p1) as Num;
-            EXPO = caddr(p1) as Num;
-            power_numbers_factor(BASE as Rat, EXPO as Rat, env, ctrl, $);
+            base = cadr(p1) as Num;
+            expo = caddr(p1) as Num;
+            power_numbers_factor(base as Rat, expo as Rat, env, ctrl, $);
             $.setAt(h + i, pop($)); // fill hole
         }
     }
@@ -12106,18 +12149,19 @@ function power_double(BASE: Num, EXPO: Num, env: ProgramEnv, ctrl: ProgramContro
 // BASE is a sum of terms
 
 function power_sum(base: U, expo: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    // console.lg("power_sum", `${base}`, `${expo}`, "expanding => ", $.expanding);
+    // console.lg("power_sum", `${base}`, `${expo}`, "expanding => ", ctrl.expanding);
 
     if (iscomplexnumber(base) && is_num(expo)) {
         power_complex_number(base, expo, env, ctrl, $);
         return;
     }
 
-    if (ctrl.expanding === 0 || !issmallinteger(expo) || (is_num(expo) && isnegativenumber(expo))) {
-        push(POWER, $);
-        push(base, $);
-        push(expo, $);
-        list(3, $);
+    if (ctrl.getDirective(Directive.expanding) === 0 || !issmallinteger(expo) || (is_num(expo) && isnegativenumber(expo))) {
+        $.push(items_to_cons(native_sym(Native.pow), base, expo));
+        // $.push(native_sym(Native.pow));
+        // $.push(base);
+        // $.push(expo);
+        // list(3, $);
         return;
     }
 
@@ -13294,31 +13338,38 @@ export interface ScriptOutputListener {
 }
 
 class ExprContextAdapter implements ExprContext {
-    /**
-     * @param env 
-     * @param ctrl 
-     * @param $
-     */
     constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
-
+        // Nothing to see here.
     }
-    hasBinding(sym: Sym): boolean {
-        return this.env.hasBinding(sym);
+    getDirective(directive: number): number {
+        return this.ctrl.getDirective(directive);
     }
-    getBinding(sym: Sym): U {
-        return this.env.getBinding(sym);
+    pushDirective(directive: number, value: number): void {
+        this.ctrl.pushDirective(directive, value);
     }
-    setBinding(sym: Sym, binding: U): void {
-        this.env.setBinding(sym, binding);
+    popDirective(): void {
+        this.ctrl.popDirective();
     }
-    hasUserFunction(sym: Sym): boolean {
-        return this.env.hasUserFunction(sym);
+    hasBinding(name: Sym): boolean {
+        return this.env.hasBinding(name);
     }
-    getUserFunction(sym: Sym): U {
-        return this.env.getUserFunction(sym);
+    getBinding(name: Sym): U {
+        return this.env.getBinding(name);
     }
-    setUserFunction(sym: Sym, usrfunc: U): void {
-        this.env.setUserFunction(sym, usrfunc);
+    setBinding(name: Sym, binding: U): void {
+        this.env.setBinding(name, binding);
+    }
+    hasUserFunction(name: Sym): boolean {
+        return this.env.hasUserFunction(name);
+    }
+    getUserFunction(name: Sym): U {
+        return this.env.getUserFunction(name);
+    }
+    setUserFunction(name: Sym, userfunc: U): void {
+        this.env.setUserFunction(name, userfunc);
+    }
+    defineUserSymbol(name: Sym): void {
+        this.env.defineUserSymbol(name);
     }
     valueOf(expr: U): U {
         this.$.push(expr);
@@ -13338,13 +13389,12 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
      */
     trace2: number = -1;
     stack: U[] = [];
-    // TODO: Change this to a Map
-    binding: { [key: string]: U } = {};
+    readonly #bindings: Map<string, U> = new Map();
+    readonly #consFunctions: Map<string, ConsFunction> = new Map();
     usrfunc: { [key: string]: U } = {};
-    eval_level: number = -1;
+
     expanding: number = -1;
-    drawing: number = -1;
-    nonstop: number = -1;
+    readonly #directiveStack: DirectiveStack = new DirectiveStack();
     listeners: ScriptOutputListener[] = [];
     readonly #prolog: string[] = [];
     readonly #userFunctions: Map<string, UserFunction> = new Map();
@@ -13374,16 +13424,119 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.defineUserSymbol(ARG7);
         this.defineUserSymbol(ARG8);
         this.defineUserSymbol(ARG9);
+
+        this.define_cons_function(ABS, eval_abs);
+        this.define_cons_function(ADD, eval_add);
+        this.define_cons_function(ADJ, eval_adj);
+        this.define_cons_function(ALGEBRA, eval_algebra);
+        this.define_cons_function(ARCCOS, eval_arccos);
+        this.define_cons_function(ARCCOSH, eval_arccosh);
+        this.define_cons_function(ARCSIN, eval_arcsin);
+        this.define_cons_function(ARCSINH, eval_arcsinh);
+        this.define_cons_function(ARCTAN, eval_arctan);
+        this.define_cons_function(ARCTANH, eval_arctanh);
+        this.define_cons_function(AND, eval_and);
+        this.define_cons_function(ARG, eval_arg);
+        this.define_cons_function(BINDING, eval_binding);
+        this.define_cons_function(CEILING, eval_ceiling);
+        this.define_cons_function(CHECK, eval_check);
+        this.define_cons_function(CIRCEXP, eval_circexp);
+        this.define_cons_function(CLEAR, eval_clear);
+        this.define_cons_function(CLOCK, eval_clock);
+        this.define_cons_function(COFACTOR, eval_cofactor);
+        this.define_cons_function(CONJ, eval_conj);
+        this.define_cons_function(CONTRACT, eval_contract);
+        this.define_cons_function(COS, eval_cos);
+        this.define_cons_function(COSH, eval_cosh);
+        this.define_cons_function(DEFINT, eval_defint);
+        this.define_cons_function(DENOMINATOR, eval_denominator);
+        this.define_cons_function(DET, eval_det);
+        this.define_cons_function(DERIVATIVE, eval_derivative);
+        this.define_cons_function(DIM, eval_dim);
+        this.define_cons_function(DO, eval_do);
+        this.define_cons_function(DOT, eval_dot);
+        this.define_cons_function(EIGENVEC, eval_eigenvec);
+        this.define_cons_function(ERF, eval_erf);
+        this.define_cons_function(ERFC, eval_erfc);
+        this.define_cons_function(EVAL, eval_eval);
+        this.define_cons_function(EXIT, eval_exit);
+        this.define_cons_function(EXP, eval_exp);
+        this.define_cons_function(EXPCOS, eval_expcos);
+        this.define_cons_function(EXPCOSH, eval_expcosh);
+        this.define_cons_function(EXPSIN, eval_expsin);
+        this.define_cons_function(EXPSINH, eval_expsinh);
+        this.define_cons_function(EXPTAN, eval_exptan);
+        this.define_cons_function(EXPTANH, eval_exptanh);
+        this.define_cons_function(FACTORIAL, eval_factorial);
+        this.define_cons_function(FLOAT, eval_float);
+        this.define_cons_function(FLOOR, eval_floor);
+        this.define_cons_function(INTEGRAL, eval_integral);
+        this.define_cons_function(LOG, eval_log);
+        this.define_cons_function(MULTIPLY, eval_multiply);
+        this.define_cons_function(POWER, eval_power);
+        this.define_cons_function(ROTATE, eval_rotate);
+        this.define_cons_function(INDEX, eval_index);
+        this.define_cons_function(ASSIGN, eval_assign);
+        this.define_cons_function(SIN, eval_sin);
+        this.define_cons_function(SINH, eval_sinh);
+        this.define_cons_function(SQRT, eval_sqrt);
+        this.define_cons_function(TAN, eval_tan);
+        this.define_cons_function(TANH, eval_tanh);
+        this.define_cons_function(TAU, eval_tau);
+        this.define_cons_function(TESTEQ, eval_testeq);
+        this.define_cons_function(TESTGE, eval_testge);
+        this.define_cons_function(TESTGT, eval_testgt);
+        this.define_cons_function(TESTLE, eval_testle);
+        this.define_cons_function(TESTLT, eval_testlt);
+
+        this.define_cons_function(FOR, eval_for);
+        this.define_cons_function(HADAMARD, eval_hadamard);
+        this.define_cons_function(IMAG, eval_imag);
+        this.define_cons_function(INNER, eval_inner);
+        this.define_cons_function(INV, eval_inv);
+        this.define_cons_function(KRONECKER, eval_kronecker);
+        this.define_cons_function(MAG, eval_mag);
+        this.define_cons_function(MINOR, eval_minor);
+        this.define_cons_function(MINORMATRIX, eval_minormatrix);
+        this.define_cons_function(MOD, eval_mod);
+        this.define_cons_function(NOEXPAND, eval_noexpand);
+        this.define_cons_function(NOT, eval_not);
+        this.define_cons_function(NROOTS, eval_nroots);
+        this.define_cons_function(NUMBER, eval_number);
+        this.define_cons_function(NUMERATOR, eval_numerator);
+        this.define_cons_function(OR, eval_or);
+        this.define_cons_function(OUTER, eval_outer);
+        this.define_cons_function(POLAR, eval_polar);
+        this.define_cons_function(PREFIXFORM, eval_prefixform);
+        this.define_cons_function(PRODUCT, eval_product);
+        this.define_cons_function(QUOTE, eval_quote);
+        this.define_cons_function(RANK, eval_rank);
+        this.define_cons_function(RATIONALIZE, eval_rationalize);
+        this.define_cons_function(REAL, eval_real);
+        this.define_cons_function(RECT, eval_rect);
+        this.define_cons_function(ROOTS, eval_roots);
+        this.define_cons_function(SGN, eval_sgn);
+        this.define_cons_function(SIMPLIFY, eval_simplify);
+        this.define_cons_function(STATUS, eval_status);
+        this.define_cons_function(STOP, eval_stop);
+        this.define_cons_function(SUBST, eval_subst);
+        this.define_cons_function(SUM, eval_sum);
+        this.define_cons_function(TAYLOR, eval_taylor);
+        this.define_cons_function(TEST, eval_test);
+        this.define_cons_function(TRANSPOSE, eval_transpose);
+        this.define_cons_function(UNIT, eval_unit);
+        this.define_cons_function(UOM, eval_uom);
+        this.define_cons_function(ZERO, eval_zero);
     }
     init(): void {
-        this.eval_level = 0;
         this.expanding = 1;
-        this.drawing = 0;
-        this.nonstop = 0;
+        this.#directiveStack.push(Directive.drawing, 0);
+        this.#directiveStack.push(Directive.expanding, 1);
+        this.#directiveStack.push(Directive.nonstop, 0);
 
         this.stack = [];
 
-        this.binding = {};
+        this.#bindings.clear();
         this.usrfunc = {};
 
         push(POWER, this);
@@ -13393,7 +13546,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         imaginaryunit = pop(this);
     }
     clearBindings(): void {
-        this.binding = {};
+        this.#bindings.clear();
         this.usrfunc = {};
     }
     executeProlog(script: string[]): void {
@@ -13412,20 +13565,41 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     }
     getBinding(sym: Sym): U {
         assert_sym(sym);
-        return this.binding[sym.key()];
+        const key = sym.key();
+        if (this.#bindings.has(key)) {
+            return this.#bindings.get(key)!;
+        }
+        else if (this.#consFunctions.has(key)) {
+            const consFunction: ConsFunction = this.#consFunctions.get(key)!;
+            const bodyExpr = make_lambda_expr_from_cons_function(sym, consFunction);
+            return new Lambda(bodyExpr, "???");
+        }
+        else {
+            return nil;
+        }
     }
     getUserFunction(sym: Sym): U {
         assert_sym(sym);
         return this.usrfunc[sym.key()];
     }
     hasBinding(sym: Sym): boolean {
-        return consFunctions.has(sym.key());
+        assert_sym(sym);
+        const key = sym.key();
+        if (this.#bindings.has(key)) {
+            return true;
+        }
+        else if (this.#consFunctions.has(key)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     hasUserFunction(sym: Sym): boolean {
         return this.#userFunctions.has(sym.key());
     }
     setBinding(sym: Sym, binding: U): void {
-        this.binding[sym.key()] = binding;
+        this.#bindings.set(sym.key(), binding);
     }
     setUserFunction(sym: Sym, usrfunc: U): void {
         this.usrfunc[sym.key()] = usrfunc;
@@ -13434,6 +13608,9 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         push(expr, this);
         value_of(this, this, this);
         return pop(this);
+    }
+    define_cons_function(sym: Sym, func: ConsFunction): void {
+        this.#consFunctions.set(sym.key(), func);
     }
     /**
      * 
@@ -13445,7 +13622,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
             const retval = lambda(assert_cons(expr).argList, adapter);
             push(retval, $);
         };
-        consFunctions.set(name.key(), handler);
+        this.define_cons_function(name, handler);
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addOutputListener(listener: ScriptOutputListener): void {
@@ -13487,25 +13664,15 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
             return this.stack.splice(start);
         }
     }
-    /*
-    framePush(expr: U): void {
-        this.frame.push(expr);
+    getDirective(directive: number): number {
+        return this.#directiveStack.get(directive);
     }
-    fpop(): U {
-        if (this.frame.length === 0) {
-            stopf("frame error");
-        }
-        else {
-            return this.frame.pop()!;
-        }
+    pushDirective(directive: number, value: number): void {
+        this.#directiveStack.push(directive, value);
     }
-    get frameLength(): number {
-        return this.frame.length;
+    popDirective(): void {
+        this.#directiveStack.pop();
     }
-    frameSplice(start: number, deleteCount?: number): U[] {
-        return this.frame.splice(start, deleteCount);
-    }
-    */
 }
 
 const zero: Rat = create_int(0);
@@ -13517,121 +13684,99 @@ interface ConsFunction {
     (x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
 }
 
-interface UserFunction {
+/**
+ * This would not be need if ProgramEnv supported clearBindings.
+ * executeProlog is possible redundant?
+ */
+class ProgramEnvFromExprContext implements ProgramEnv {
+    constructor(readonly ctxt: ExprContext) {
+
+    }
+    clearBindings(): void {
+        throw new Error('Method not implemented.');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    executeProlog(script: string[]): void {
+        throw new Error('Method not implemented.');
+    }
+    getBinding(name: Sym): U {
+        return this.ctxt.getBinding(name);
+    }
+    getUserFunction(name: Sym): U {
+        return this.ctxt.getUserFunction(name);
+    }
+    hasBinding(name: Sym): boolean {
+        return this.ctxt.hasBinding(name);
+    }
+    hasUserFunction(name: Sym): boolean {
+        return this.ctxt.hasUserFunction(name);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    defineUserSymbol(name: Sym): void {
+        this.ctxt.defineUserSymbol(name);
+    }
+    setBinding(name: Sym, binding: U): void {
+        this.ctxt.setBinding(name, binding);
+    }
+    setUserFunction(name: Sym, userfunc: U): void {
+        this.ctxt.setUserFunction(name, userfunc);
+    }
+}
+
+function make_lambda_expr_from_cons_function(sym: Sym, consFunction: ConsFunction): LambdaExpr {
+    return function (argList: Cons, ctxt: ExprContext): U {
+        const $ = new StackU();
+        const env = new ProgramEnvFromExprContext(ctxt);
+        consFunction(create_cons(sym, argList), env, ctxt, $);
+        return $.pop();
+    };
+}
+
+class ExprContextFromEigenmath implements ExprContext {
+    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
+        // Nothing to see here.
+        // env.clearBindings();
+    }
+    getDirective(directive: number): number {
+        return this.ctrl.getDirective(directive);
+    }
+    pushDirective(directive: number, value: number): void {
+        this.ctrl.pushDirective(directive, value);
+    }
+    popDirective(): void {
+        this.ctrl.popDirective();
+    }
+    hasBinding(name: Sym): boolean {
+        return this.env.hasBinding(name);
+    }
+    getBinding(name: Sym): U {
+        return this.env.getBinding(name);
+    }
+    setBinding(name: Sym, binding: U): void {
+        this.env.setBinding(name, binding);
+    }
+    hasUserFunction(name: Sym): boolean {
+        return this.env.hasUserFunction(name);
+    }
+    getUserFunction(name: Sym): U {
+        return this.env.getUserFunction(name);
+    }
+    setUserFunction(name: Sym, userfunc: U): void {
+        this.env.setUserFunction(name, userfunc);
+    }
+    defineUserSymbol(name: Sym): void {
+        this.env.defineUserSymbol(name);
+    }
+    valueOf(expr: U): U {
+        this.$.push(expr);
+        value_of(this.env, this.ctrl, this.$);
+        return this.$.pop();
+    }
+}
+
+export interface UserFunction {
     (x: Sym, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
 }
-
-/**
- * TODO: Move inside ScriptVars
- */
-const consFunctions: Map<string, ConsFunction> = new Map();
-
-export function define_cons_function(sym: Sym, func: ConsFunction): void {
-    consFunctions.set(sym.key(), func);
-}
-
-define_cons_function(ABS, eval_abs);
-define_cons_function(ADD, eval_add);
-define_cons_function(ADJ, eval_adj);
-define_cons_function(ALGEBRA, eval_algebra);
-define_cons_function(ARCCOS, eval_arccos);
-define_cons_function(ARCCOSH, eval_arccosh);
-define_cons_function(ARCSIN, eval_arcsin);
-define_cons_function(ARCSINH, eval_arcsinh);
-define_cons_function(ARCTAN, eval_arctan);
-define_cons_function(ARCTANH, eval_arctanh);
-define_cons_function(AND, eval_and);
-define_cons_function(ARG, eval_arg);
-define_cons_function(BINDING, eval_binding);
-define_cons_function(CEILING, eval_ceiling);
-define_cons_function(CHECK, eval_check);
-define_cons_function(CIRCEXP, eval_circexp);
-define_cons_function(CLEAR, eval_clear);
-define_cons_function(CLOCK, eval_clock);
-define_cons_function(COFACTOR, eval_cofactor);
-define_cons_function(CONJ, eval_conj);
-define_cons_function(CONTRACT, eval_contract);
-define_cons_function(COS, eval_cos);
-define_cons_function(COSH, eval_cosh);
-define_cons_function(DEFINT, eval_defint);
-define_cons_function(DENOMINATOR, eval_denominator);
-define_cons_function(DET, eval_det);
-define_cons_function(DERIVATIVE, eval_derivative);
-define_cons_function(DIM, eval_dim);
-define_cons_function(DO, eval_do);
-define_cons_function(DOT, eval_dot);
-define_cons_function(EIGENVEC, eval_eigenvec);
-define_cons_function(ERF, eval_erf);
-define_cons_function(ERFC, eval_erfc);
-define_cons_function(EVAL, eval_eval);
-define_cons_function(EXIT, eval_exit);
-define_cons_function(EXP, eval_exp);
-define_cons_function(EXPCOS, eval_expcos);
-define_cons_function(EXPCOSH, eval_expcosh);
-define_cons_function(EXPSIN, eval_expsin);
-define_cons_function(EXPSINH, eval_expsinh);
-define_cons_function(EXPTAN, eval_exptan);
-define_cons_function(EXPTANH, eval_exptanh);
-define_cons_function(FACTORIAL, eval_factorial);
-define_cons_function(FLOAT, eval_float);
-define_cons_function(FLOOR, eval_floor);
-define_cons_function(INTEGRAL, eval_integral);
-define_cons_function(LOG, eval_log);
-define_cons_function(MULTIPLY, eval_multiply);
-define_cons_function(POWER, eval_power);
-define_cons_function(ROTATE, eval_rotate);
-define_cons_function(INDEX, eval_index);
-define_cons_function(ASSIGN, eval_assign);
-define_cons_function(SIN, eval_sin);
-define_cons_function(SINH, eval_sinh);
-define_cons_function(SQRT, eval_sqrt);
-define_cons_function(TAN, eval_tan);
-define_cons_function(TANH, eval_tanh);
-define_cons_function(TAU, eval_tau);
-define_cons_function(TESTEQ, eval_testeq);
-define_cons_function(TESTGE, eval_testge);
-define_cons_function(TESTGT, eval_testgt);
-define_cons_function(TESTLE, eval_testle);
-define_cons_function(TESTLT, eval_testlt);
-
-define_cons_function(FOR, eval_for);
-define_cons_function(HADAMARD, eval_hadamard);
-define_cons_function(IMAG, eval_imag);
-define_cons_function(INNER, eval_inner);
-define_cons_function(INV, eval_inv);
-define_cons_function(KRONECKER, eval_kronecker);
-define_cons_function(MAG, eval_mag);
-define_cons_function(MINOR, eval_minor);
-define_cons_function(MINORMATRIX, eval_minormatrix);
-define_cons_function(MOD, eval_mod);
-define_cons_function(NOEXPAND, eval_noexpand);
-define_cons_function(NOT, eval_not);
-define_cons_function(NROOTS, eval_nroots);
-define_cons_function(NUMBER, eval_number);
-define_cons_function(NUMERATOR, eval_numerator);
-define_cons_function(OR, eval_or);
-define_cons_function(OUTER, eval_outer);
-define_cons_function(POLAR, eval_polar);
-define_cons_function(PREFIXFORM, eval_prefixform);
-define_cons_function(PRODUCT, eval_product);
-define_cons_function(QUOTE, eval_quote);
-define_cons_function(RANK, eval_rank);
-define_cons_function(RATIONALIZE, eval_rationalize);
-define_cons_function(REAL, eval_real);
-define_cons_function(RECT, eval_rect);
-define_cons_function(ROOTS, eval_roots);
-define_cons_function(SGN, eval_sgn);
-define_cons_function(SIMPLIFY, eval_simplify);
-define_cons_function(STATUS, eval_status);
-define_cons_function(STOP, eval_stop);
-define_cons_function(SUBST, eval_subst);
-define_cons_function(SUM, eval_sum);
-define_cons_function(TAYLOR, eval_taylor);
-define_cons_function(TEST, eval_test);
-define_cons_function(TRANSPOSE, eval_transpose);
-define_cons_function(UNIT, eval_unit);
-define_cons_function(UOM, eval_uom);
-define_cons_function(ZERO, eval_zero);
 
 function vector(h: number, $: ProgramStack): void {
     const n = $.length - h;

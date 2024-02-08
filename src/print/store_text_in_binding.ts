@@ -1,6 +1,6 @@
 import { assert_str, Sym } from "math-expression-atoms";
 import { scan } from "../algebrite/scan";
-import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
+import { Directive, ExtensionEnv, flag_from_directive } from "../env/ExtensionEnv";
 
 /**
  * @param text The text that will be the binding value.
@@ -13,8 +13,8 @@ export function store_text_in_binding(text: string, sym: Sym, $: ExtensionEnv): 
     const sourceText = JSON.stringify(text);
     // TOOD: Need a better routing to initialize the ScanOptions.
     const [scanned, tree] = scan(sourceText, 0, {
-        useCaretForExponentiation: $.getDirective(Directive.useCaretForExponentiation),
-        useParenForTensors: $.getDirective(Directive.useParenForTensors),
+        useCaretForExponentiation: flag_from_directive($.getDirective(Directive.useCaretForExponentiation)),
+        useParenForTensors: flag_from_directive($.getDirective(Directive.useParenForTensors)),
         explicitAssocAdd: false,
         explicitAssocMul: false
     });

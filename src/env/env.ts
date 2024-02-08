@@ -30,7 +30,7 @@ import { visit } from '../visitor/visit';
 import { Visitor } from '../visitor/Visitor';
 import { DirectiveStack } from "./DirectiveStack";
 import { EnvConfig } from "./EnvConfig";
-import { CompareFn, ConsExpr, Directive, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
+import { CompareFn, ConsExpr, Directive, directive_from_flag, ExprComparator, Extension, ExtensionEnv, FEATURE, KeywordRunner, MODE_EXPANDING, MODE_FACTORING, MODE_FLAGS_ALL, MODE_SEQUENCE, Operator, OperatorBuilder, Predicates, PrintHandler, Sign, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "./ExtensionEnv";
 import { NoopPrintHandler } from "./NoopPrintHandler";
 import { operator_from_keyword_runner } from "./operator_from_keyword_runner";
 import { hash_from_match, operator_from_cons_expression, opr_from_match } from "./operator_from_legacy_transformer";
@@ -227,8 +227,8 @@ export class DerivedEnv implements ExtensionEnv {
     defineAssociative(opr: Sym, id: Rat): void {
         this.#baseEnv.defineAssociative(opr, id);
     }
-    defineUserSymbol(sym: Sym): void {
-        this.#baseEnv.defineUserSymbol(sym);
+    defineUserSymbol(name: Sym): void {
+        this.#baseEnv.defineUserSymbol(name);
     }
     derivedEnv(): ExtensionEnv {
         return new DerivedEnv(this);
@@ -260,7 +260,7 @@ export class DerivedEnv implements ExtensionEnv {
     getCustomDirective(directive: string): boolean {
         throw new Error('getCustomDirective method not implemented.');
     }
-    getDirective(directive: Directive): boolean {
+    getDirective(directive: number): number {
         return this.#baseEnv.getDirective(directive);
     }
     getSymbolPredicates(sym: Sym): Predicates {
@@ -373,7 +373,7 @@ export class DerivedEnv implements ExtensionEnv {
     setCustomDirective(directive: string, value: boolean): void {
         throw new Error('setCustomDirective method not implemented.');
     }
-    pushDirective(directive: Directive, value: boolean): void {
+    pushDirective(directive: number, value: number): void {
         this.#baseEnv.pushDirective(directive, value);
     }
     popDirective(): void {
@@ -941,16 +941,16 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         defineKeyword(sym: Sym, runner: KeywordRunner): void {
             $.defineOperator(operator_from_keyword_runner(sym, runner));
         },
-        defineUserSymbol(sym: Sym): void {
+        defineUserSymbol(name: Sym): void {
             // The most important thing to do is to keep track of which symbols are user symbols.
             // This will allow us to report back correctly later in hasUserFunction(sym), which is used for SVG rendering.
-            userSymbols.set(sym.key(), sym);
+            userSymbols.set(name.key(), name);
 
             // Given that we already have an Operator for Sym installed,
             // which has the same (standard) implementation of valueOf as the user symbol runner,
             // there's really no value in adding the following operator.
             // Leaving it for now as it does no harm and may have utility later.
-            $.defineKeyword(sym, make_user_symbol_runner(sym));
+            $.defineKeyword(name, make_user_symbol_runner(name));
             $.buildOperators();
         },
         defineOperator(builder: OperatorBuilder<U>): void {
@@ -1096,10 +1096,10 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
             return $.is(ISCOMPLEX, expr);
         },
         isExpanding(): boolean {
-            return native_directives.get(Directive.expanding);
+            return native_directives.get(Directive.expanding) > 0;
         },
         isFactoring(): boolean {
-            return native_directives.get(Directive.factoring);
+            return native_directives.get(Directive.factoring) > 0;
         },
         isimag(expr: U): boolean {
             if (is_nil(expr)) {
@@ -1205,7 +1205,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         getCustomDirective(directive: string): boolean {
             return !!custom_directives[directive];
         },
-        getDirective(directive: Directive): boolean {
+        getDirective(directive: number): number {
             return native_directives.get(directive);
         },
         getSymbolPrintName(sym: Sym): string {
@@ -1317,7 +1317,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
         setCustomDirective(directive: string, value: boolean): void {
             custom_directives[directive] = value;
         },
-        pushDirective(directive: Directive, value: boolean): void {
+        pushDirective(directive: number, value: number): void {
             native_directives.push(directive, value);
         },
         popDirective(): void {
@@ -1416,7 +1416,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     if (symTab.hasBinding(head)) {
                         const value = $.getBinding(head);
                         if (is_lambda(value)) {
-                            return wrap_as_transform(value.evaluate(expr.argList, $), expr);
+                            return wrap_as_transform(value.body(expr.argList, $), expr);
                         }
                         else {
                             // And if it is not we fall through to the operator stuff.
@@ -1521,7 +1521,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                     // The generalization here is that a symbol may have multiple bindings that we need to disambiguate.
                     const value = $.getBinding(head);
                     if (is_lambda(value)) {
-                        return value.evaluate(expr.argList, $);
+                        return value.body(expr.argList, $);
                     }
                 }
                 else if (is_rat(head)) {
@@ -1623,23 +1623,23 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
     $.setSymbolPrintName(native_sym(Native.exp), 'exp');
 
     // Backwards compatible, but we should simply set this to false, or leave undefined.
-    if ($.getDirective(Directive.useCaretForExponentiation) !== config.useCaretForExponentiation) {
-        $.pushDirective(Directive.useCaretForExponentiation, config.useCaretForExponentiation);
+    if ($.getDirective(Directive.useCaretForExponentiation) !== directive_from_flag(config.useCaretForExponentiation)) {
+        $.pushDirective(Directive.useCaretForExponentiation, directive_from_flag(config.useCaretForExponentiation));
     }
-    if ($.getDirective(Directive.useIntegersForPredicates) !== config.useIntegersForPredicates) {
-        $.pushDirective(Directive.useIntegersForPredicates, config.useIntegersForPredicates);
+    if ($.getDirective(Directive.useIntegersForPredicates) !== directive_from_flag(config.useIntegersForPredicates)) {
+        $.pushDirective(Directive.useIntegersForPredicates, directive_from_flag(config.useIntegersForPredicates));
     }
-    if ($.getDirective(Directive.useParenForTensors) !== config.useParenForTensors) {
-        $.pushDirective(Directive.useParenForTensors, config.useParenForTensors);
+    if ($.getDirective(Directive.useParenForTensors) !== directive_from_flag(config.useParenForTensors)) {
+        $.pushDirective(Directive.useParenForTensors, directive_from_flag(config.useParenForTensors));
     }
     for (const directive of config.enable) {
-        if ($.getDirective(directive) !== true) {
-            $.pushDirective(directive, true);
+        if ($.getDirective(directive) !== 1) {
+            $.pushDirective(directive, 1);
         }
     }
     for (const directive of config.disable) {
-        if ($.getDirective(directive) !== false) {
-            $.pushDirective(directive, false);
+        if ($.getDirective(directive) !== 0) {
+            $.pushDirective(directive, 0);
         }
     }
     // Here we could wrap in the DerivedEnv as a way to test nested scopes.

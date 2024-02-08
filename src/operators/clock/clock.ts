@@ -1,7 +1,7 @@
+import { negOne } from 'math-expression-atoms';
+import { U } from 'math-expression-tree';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { DynamicConstants } from '../../runtime/defs';
-import { negOne } from '../../tree/rat/Rat';
-import { U } from '../../tree/tree';
 
 /*
  Convert complex z to clock form
@@ -31,7 +31,7 @@ import { U } from '../../tree/tree';
  * @returns 
  */
 export function clock(z: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.complexAsClock, true);
+    $.pushDirective(Directive.complexAsClock, 1);
     try {
         // console.lg();
         // console.lg(`clockform z=${print_expr(z, $)}`);

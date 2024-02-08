@@ -1,6 +1,6 @@
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
-import { Cons, U } from '../../tree/tree';
+import { Cons, U } from 'math-expression-tree';
 
 /*
 Convert complex z to polar form
@@ -17,7 +17,7 @@ export function Eval_polar(expr: Cons, $: ExtensionEnv): U {
 
 function polar(z: U, $: ExtensionEnv): U {
     // console.lg("polar", $.toInfixString(z));
-    $.pushDirective(Directive.complexAsPolar, true);
+    $.pushDirective(Directive.complexAsPolar, 1);
     try {
         const r = $.abs(z);
         // console.lg("r =", $.toInfixString(r));

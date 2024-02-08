@@ -197,7 +197,7 @@ export function transpose(p1: U, p2: U, p3: U, $: Pick<ExtensionEnv, 'add' | 'eq
 }
 
 export function transpose_factoring(p1: U, p2: U, p3: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.factoring, true);
+    $.pushDirective(Directive.factoring, 1);
     try {
         return transpose(p1, p2, p3, $);
     }

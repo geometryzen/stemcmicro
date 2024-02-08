@@ -8,7 +8,7 @@ export interface ProgramEnv {
     getUserFunction(name: Sym): U;
     hasBinding(name: Sym): boolean;
     hasUserFunction(name: Sym): boolean;
-    defineUserSymbol(name: Sym): void;
     setBinding(name: Sym, binding: U): void;
     setUserFunction(name: Sym, userfunc: U): void;
+    defineUserSymbol(name: Sym): void;
 }

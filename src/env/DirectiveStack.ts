@@ -1,14 +1,14 @@
 import { Directive } from "./ExtensionEnv";
 import { Stack } from "./Stack";
 
-type Directives = { [directive: number]: boolean };
+type Directives = { [directive: number]: number };
 
 export class DirectiveStack {
     readonly #data = new Stack<Directives>();
     constructor() {
         this.#data.push(initial_directives());
     }
-    push(directive: Directive, value: boolean): void {
+    push(directive: number, value: number): void {
         const directives = copy_directives(this.#data.top);
         update_directives(directives, directive, value);
         const frozen = Object.freeze(directives);
@@ -17,7 +17,7 @@ export class DirectiveStack {
     pop(): void {
         this.#data.pop();
     }
-    get(directive: Directive): boolean {
+    get(directive: number): number {
         const directives = this.#data.top;
         const value = directives[directive];
         return value;
@@ -28,84 +28,84 @@ function copy_directives(directives: Directives): Directives {
     return { ...directives };
 }
 
-function update_directives(directives: Directives, directive: Directive, value: boolean): void {
+function update_directives(directives: Directives, directive: number, value: number): void {
     switch (directive) {
         case Directive.canonicalize: {
             if (value) {
-                directives[Directive.familiarize] = false;
+                directives[Directive.familiarize] = 0;
             }
             break;
         }
         case Directive.familiarize: {
             if (value) {
-                directives[Directive.canonicalize] = false;
+                directives[Directive.canonicalize] = 0;
             }
             break;
         }
         case Directive.expanding: {
             if (value) {
-                directives[Directive.factoring] = false;
+                directives[Directive.factoring] = 0;
             }
             else {
                 // console.lg("Directive.expand has been set to false, Directive.factor becoming true");
-                directives[Directive.factoring] = true;
+                directives[Directive.factoring] = 1;
             }
             break;
         }
         case Directive.factoring: {
             if (value) {
-                directives[Directive.expanding] = false;
+                directives[Directive.expanding] = 0;
             }
             else {
                 // console.lg("Directive.factor has been set to false, Directive.expand becoming true");
-                directives[Directive.expanding] = true;
+                directives[Directive.expanding] = 1;
             }
             break;
         }
         case Directive.complexAsClock: {
             if (value) {
-                update_directives(directives, Directive.complexAsPolar, false);
-                update_directives(directives, Directive.complexAsRectangular, false);
+                update_directives(directives, Directive.complexAsPolar, 0);
+                update_directives(directives, Directive.complexAsRectangular, 0);
             }
             break;
         }
         case Directive.complexAsPolar: {
             if (value) {
-                update_directives(directives, Directive.complexAsClock, false);
-                update_directives(directives, Directive.complexAsRectangular, false);
-                directives[Directive.convertExpToTrig] = false;
+                update_directives(directives, Directive.complexAsClock, 0);
+                update_directives(directives, Directive.complexAsRectangular, 0);
+                directives[Directive.convertExpToTrig] = 0;
             }
             break;
         }
         case Directive.complexAsRectangular: {
             if (value) {
-                update_directives(directives, Directive.complexAsClock, false);
-                update_directives(directives, Directive.complexAsPolar, false);
+                update_directives(directives, Directive.complexAsClock, 0);
+                update_directives(directives, Directive.complexAsPolar, 0);
             }
             break;
         }
         case Directive.convertCosToSin: {
             if (value) {
-                directives[Directive.convertSinToCos] = false;
+                directives[Directive.convertSinToCos] = 0;
             }
             break;
         }
         case Directive.convertSinToCos: {
             if (value) {
-                directives[Directive.convertCosToSin] = false;
+                directives[Directive.convertCosToSin] = 0;
             }
             break;
         }
         case Directive.convertExpToTrig: {
             if (value) {
-                directives[Directive.convertTrigToExp] = false;
-                directives[Directive.complexAsPolar] = false;
+                directives[Directive.convertTrigToExp] = 0;
+                directives[Directive.complexAsPolar] = 0;
             }
             break;
         }
         case Directive.convertTrigToExp: {
             if (value) {
-                directives[Directive.convertExpToTrig] = false;
+                directives[Directive.convertExpToTrig] = 0;
             }
             break;
         }
@@ -124,22 +124,25 @@ function mutex(directives: Directives, value: boolean, a: Directive, b: Directiv
 
 function initial_directives(): Directives {
     const directives: Directives = {};
-    update_directives(directives, Directive.complexAsClock, false);
-    update_directives(directives, Directive.complexAsPolar, false);
-    update_directives(directives, Directive.complexAsRectangular, false);
-    update_directives(directives, Directive.convertExpToTrig, false);
-    update_directives(directives, Directive.convertTrigToExp, false);
-    update_directives(directives, Directive.evaluatingAsFloat, false);
-    update_directives(directives, Directive.expanding, false);
-    update_directives(directives, Directive.expandAbsSum, false);
-    update_directives(directives, Directive.expandCosSum, false);
-    update_directives(directives, Directive.expandPowSum, true);
-    update_directives(directives, Directive.expandSinSum, false);
-    update_directives(directives, Directive.factoring, false);
-    update_directives(directives, Directive.keepZeroTermsInSums, false);
+    update_directives(directives, Directive.complexAsClock, 0);
+    update_directives(directives, Directive.complexAsPolar, 0);
+    update_directives(directives, Directive.complexAsRectangular, 0);
+    update_directives(directives, Directive.convertExpToTrig, 0);
+    update_directives(directives, Directive.convertTrigToExp, 0);
+    update_directives(directives, Directive.evaluatingAsFloat, 0);
+    update_directives(directives, Directive.expanding, 1);
+    update_directives(directives, Directive.expandAbsSum, 0);
+    update_directives(directives, Directive.expandCosSum, 0);
+    update_directives(directives, Directive.expandPowSum, 1);
+    update_directives(directives, Directive.expandSinSum, 0);
+    update_directives(directives, Directive.factoring, 0);
+    update_directives(directives, Directive.keepZeroTermsInSums, 0);
     // TODO: These two don't seem like Directive(s).
-    update_directives(directives, Directive.renderFloatAsEcmaScript, false);
-    update_directives(directives, Directive.useCaretForExponentiation, false);
-    update_directives(directives, Directive.useParenForTensors, false);
+    update_directives(directives, Directive.renderFloatAsEcmaScript, 0);
+    update_directives(directives, Directive.useCaretForExponentiation, 0);
+    update_directives(directives, Directive.useParenForTensors, 0);
+    update_directives(directives, Directive.depth, 0);
+    update_directives(directives, Directive.drawing, 0);
+    update_directives(directives, Directive.nonstop, 0);
     return Object.freeze(directives);
 }

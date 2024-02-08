@@ -1,6 +1,6 @@
 import { create_sym } from 'math-expression-atoms';
 import { nil } from 'math-expression-tree';
-import { define_cons_function, EigenmathParseConfig, eigenmath_prolog, evaluate_expression, scan_inbuf, ScriptContentHandler, ScriptErrorHandler, ScriptVars, set_symbol } from './eigenmath';
+import { EigenmathParseConfig, eigenmath_prolog, evaluate_expression, scan_inbuf, ScriptContentHandler, ScriptErrorHandler, ScriptVars, set_symbol } from './eigenmath';
 import { make_eval_draw } from './eval_draw';
 import { eval_infixform } from './eval_infixform';
 import { make_eval_print } from './eval_print';
@@ -28,10 +28,10 @@ export function execute_eigenmath_script(sourceText: string, contentHandler: Scr
     const $: ProgramStack = vars;
     const io: ProgramIO = vars;
     vars.init();
-    define_cons_function(create_sym("draw"), make_eval_draw(io));
-    define_cons_function(create_sym("infixform"), eval_infixform);
-    define_cons_function(create_sym("print"), make_eval_print(io));
-    define_cons_function(create_sym("run"), make_eval_run(io));
+    vars.define_cons_function(create_sym("draw"), make_eval_draw(io));
+    vars.define_cons_function(create_sym("infixform"), eval_infixform);
+    vars.define_cons_function(create_sym("print"), make_eval_print(io));
+    vars.define_cons_function(create_sym("run"), make_eval_run(io));
     contentHandler.begin($);
     try {
         io.inbuf = sourceText;

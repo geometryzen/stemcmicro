@@ -167,7 +167,23 @@ export enum Directive {
      * The default value is false.
      */
     useIntegersForPredicates,
-    useParenForTensors
+    useParenForTensors,
+    depth,
+    drawing,
+    nonstop
+}
+
+export function flag_from_directive(value: number): boolean {
+    return value > 0;
+}
+
+export function directive_from_flag(value: boolean | undefined): number {
+    if (typeof value === 'boolean') {
+        return value ? 1 : 0;
+    }
+    else {
+        return 0;
+    }
 }
 
 /**
@@ -311,7 +327,7 @@ export interface ExtensionEnv extends ExprContext {
     defineKeyword(sym: Sym, runner: KeywordRunner): void;
     defineOperator(builder: OperatorBuilder<U>): void;
     defineAssociative(opr: Sym, id: Rat): void;
-    defineUserSymbol(sym: Sym): void;
+    defineUserSymbol(name: Sym): void;
     derivedEnv(): ExtensionEnv;
     divide(lhs: U, rhs: U): U;
     /**
@@ -328,7 +344,7 @@ export interface ExtensionEnv extends ExprContext {
     factorize(poly: U, x: U): U;
     float(expr: U): U;
     getCustomDirective(directive: string): boolean;
-    getDirective(directive: Directive): boolean;
+    getDirective(directive: number): number;
     getSymbolPredicates(sym: Sym): Predicates;
     /**
      * Used during rendering.
@@ -352,13 +368,7 @@ export interface ExtensionEnv extends ExprContext {
      */
     is(predicate: Sym, expr: U): boolean;
     iscomplex(expr: U): boolean;
-    /**
-     * @deprecated Use getDirective(Directive.expanding)
-     */
     isExpanding(): boolean;
-    /**
-     * @deprecated Use getDirective(Directive.factoring)
-     */
     isFactoring(): boolean;
     /**
      * Meaning is imaginary valued. i.e. evaluates to i times a real number.
@@ -414,7 +424,7 @@ export interface ExtensionEnv extends ExprContext {
     rect(expr: U): U;
     remove(varName: Sym): void;
     setCustomDirective(directive: string, value: boolean): void;
-    pushDirective(directive: Directive, value: boolean): void;
+    pushDirective(directive: number, value: number): void;
     popDirective(): void;
     setSymbolOrder(sym: Sym, order: ExprComparator): void;
     setSymbolPredicates(sym: Sym, predicates: Partial<Predicates>): void;

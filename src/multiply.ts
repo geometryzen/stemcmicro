@@ -1,9 +1,9 @@
+import { one } from 'math-expression-atoms';
+import { U } from 'math-expression-tree';
 import { binop } from './calculators/binop';
 import { Directive, ExtensionEnv } from './env/ExtensionEnv';
 import { noexpand_binary, noexpand_unary } from './runtime/defs';
 import { MATH_MUL } from './runtime/ns_math';
-import { one } from './tree/rat/Rat';
-import { U } from './tree/tree';
 
 export function multiply(lhs: U, rhs: U, $: Pick<ExtensionEnv, 'valueOf'>): U {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,7 +47,7 @@ export function multiply_items(items: U[], $: Pick<ExtensionEnv, 'multiply'>): U
 
 // n an integer
 export function multiply_items_factoring(items: U[], $: ExtensionEnv): U {
-    $.pushDirective(Directive.factoring, true);
+    $.pushDirective(Directive.factoring, 1);
     try {
         return multiply_items(items, $);
     }

@@ -1,13 +1,12 @@
+import { is_rat, is_tensor } from 'math-expression-atoms';
+import { Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { rat_to_flt } from '../../bignum';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { is_base_of_natural_logarithm } from '../../predicates/is_base_of_natural_logarithm';
 import { eAsFlt, Flt, piAsFlt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
 import { Tensor } from '../../tree/tensor/Tensor';
-import { Cons, is_cons, items_to_cons, U } from '../../tree/tree';
 import { is_pi } from '../pi/is_pi';
-import { is_rat } from '../rat/is_rat';
-import { is_tensor } from '../tensor/is_tensor';
 
 export function Eval_float(expr: Cons, $: ExtensionEnv): U {
     // console.lg("Eval_float", $.toInfixString(expr));
@@ -29,7 +28,7 @@ export function Eval_float(expr: Cons, $: ExtensionEnv): U {
  * @returns 
  */
 export function zzfloat(expr: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.evaluatingAsFloat, true);
+    $.pushDirective(Directive.evaluatingAsFloat, 1);
     try {
         return $.valueOf(evaluate_as_float($.valueOf(expr), $));
     }
@@ -49,7 +48,7 @@ export function zzfloat(expr: U, $: ExtensionEnv): U {
  */
 export function evaluate_as_float(expr: U, $: ExtensionEnv): U {
     // console.lg(`yyfloat`, render_as_sexpr(expr, $));
-    $.pushDirective(Directive.evaluatingAsFloat, true);
+    $.pushDirective(Directive.evaluatingAsFloat, 1);
     try {
         return yyfloat_(expr, $);
     }

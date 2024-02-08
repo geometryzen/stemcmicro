@@ -2,11 +2,10 @@
 // WARNING This module should not depend on anything.
 // The imports below are for types only and will not create a dependency.
 //
+import { Flt, negOne, Rat, Sym } from "math-expression-atoms";
+import { U } from "math-expression-tree";
 import { Directive, ExtensionEnv } from "../env/ExtensionEnv";
-import { Flt, negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
-import { negOne, Rat } from "../tree/rat/Rat";
-import { Sym } from "../tree/sym/Sym";
-import { U } from "../tree/tree";
+import { negOneAsFlt, piAsFlt } from "../tree/flt/Flt";
 import { MATH_PI } from "./ns_math";
 
 export const PRINTOUTRESULT = false;
@@ -109,7 +108,7 @@ export function move_top_of_stack(stackPos: number) {
 }
 
 export function noexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
-    $.pushDirective(Directive.expanding, false);
+    $.pushDirective(Directive.expanding, 0);
     try {
         return func(arg, $);
     }
@@ -119,7 +118,7 @@ export function noexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: P
 }
 
 export function noexpand_binary<T extends keyof ExtensionEnv>(func: (lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
-    $.pushDirective(Directive.expanding, false);
+    $.pushDirective(Directive.expanding, 0);
     try {
         return func(lhs, rhs, $);
     }
@@ -129,7 +128,7 @@ export function noexpand_binary<T extends keyof ExtensionEnv>(func: (lhs: U, rhs
 }
 
 export function doexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, arg: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
-    $.pushDirective(Directive.expanding, true);
+    $.pushDirective(Directive.expanding, 1);
     try {
         return func(arg, $);
     }
@@ -139,7 +138,7 @@ export function doexpand_unary<T extends keyof ExtensionEnv>(func: (arg: U, $: P
 }
 
 export function doexpand_binary<T extends keyof ExtensionEnv>(func: (lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>) => U, lhs: U, rhs: U, $: Pick<ExtensionEnv, T | 'pushDirective' | 'popDirective'>): U {
-    $.pushDirective(Directive.expanding, true);
+    $.pushDirective(Directive.expanding, 1);
     try {
         return func(lhs, rhs, $);
     }

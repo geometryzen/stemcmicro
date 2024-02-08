@@ -1,3 +1,5 @@
+import { negOne, one } from "math-expression-atoms";
+import { items_to_cons, U } from "math-expression-tree";
 import { Native } from "../native/Native";
 import { native_sym } from "../native/native_sym";
 import { is_flt } from "../operators/flt/is_flt";
@@ -5,8 +7,6 @@ import { is_rat } from "../operators/rat/is_rat";
 import { MATH_POW } from "../runtime/ns_math";
 import { Err } from "../tree/err/Err";
 import { oneAsFlt } from "../tree/flt/Flt";
-import { negOne, one } from "../tree/rat/Rat";
-import { items_to_cons, U } from "../tree/tree";
 
 /**
  * Constructs (divide 1 expr) without any further evaluation.

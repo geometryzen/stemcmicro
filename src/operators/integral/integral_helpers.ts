@@ -379,7 +379,7 @@ const itab: string[] = [
  * that could throw off symbolic integration.
  */
 function value_of_integrand(expr: U, $: ExtensionEnv): U {
-    $.pushDirective(Directive.expandPowSum, false);
+    $.pushDirective(Directive.expandPowSum, 0);
     try {
         return $.valueOf(expr);
     }

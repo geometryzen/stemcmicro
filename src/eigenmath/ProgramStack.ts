@@ -9,9 +9,4 @@ export interface ProgramStack {
     getAt(i: number): U;
     setAt(i: number, expr: U): void;
     splice(start: number, deleteCount?: number): U[];
-
-    get frameLength(): number;
-    frameSplice(start: number, deleteCount?: number): U[];
-    fpop(): U;
-    framePush(expr: U): void;
 }

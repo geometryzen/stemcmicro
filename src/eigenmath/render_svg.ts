@@ -409,7 +409,7 @@ function emit_expr_nib(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
     }
 }
 
-function emit_args(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_args(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
 
     p = cdr(p);
 
@@ -641,31 +641,33 @@ function emit_fraction(p: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     emit_update_fraction($);
 }
 
-function emit_function(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
+function emit_function(expr: Cons, $: ProgramStack, ec: SvgRenderConfig): void {
     // d(f(x),x)
 
-    if (car(p).equals(DERIVATIVE)) {
+    if (car(expr).equals(DERIVATIVE)) {
         emit_roman_string("d", $);
-        emit_args(p, $, ec);
+        emit_args(expr, $, ec);
         return;
     }
 
     // n!
 
-    if (car(p).equals(FACTORIAL)) {
-        p = cadr(p);
-        if (is_rat(p) && isposint(p) || is_sym(p))
+    if (car(expr).equals(FACTORIAL)) {
+        const p = cadr(expr);
+        if (is_rat(p) && isposint(p) || is_sym(p)) {
             emit_expr(p, $, ec);
-        else
+        }
+        else {
             emit_subexpr(p, $, ec);
+        }
         emit_roman_string("!", $);
         return;
     }
 
     // A[1,2]
 
-    if (car(p).equals(INDEX)) {
-        p = cdr(p);
+    if (car(expr).equals(INDEX)) {
+        const p = cdr(expr);
         const leading = car(p);
         if (is_sym(leading))
             emit_symbol(leading, $);
@@ -675,50 +677,50 @@ function emit_function(p: U, $: ProgramStack, ec: SvgRenderConfig): void {
         return;
     }
 
-    if (is_cons(p) && (p.opr.equals(ASSIGN) || p.opr.equals(TESTEQ))) {
-        emit_expr(cadr(p), $, ec);
+    if (is_cons(expr) && (expr.opr.equals(ASSIGN) || expr.opr.equals(TESTEQ))) {
+        emit_expr(cadr(expr), $, ec);
         emit_infix_operator(EQUALS_SIGN, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(expr), $, ec);
         return;
     }
 
-    if (car(p).equals(TESTGE)) {
-        emit_expr(cadr(p), $, ec);
+    if (car(expr).equals(TESTGE)) {
+        emit_expr(cadr(expr), $, ec);
         emit_infix_operator(GREATEREQUAL, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(expr), $, ec);
         return;
     }
 
-    if (car(p).equals(TESTGT)) {
-        emit_expr(cadr(p), $, ec);
+    if (car(expr).equals(TESTGT)) {
+        emit_expr(cadr(expr), $, ec);
         emit_infix_operator(GREATER_SIGN, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(expr), $, ec);
         return;
     }
 
-    if (car(p).equals(TESTLE)) {
-        emit_expr(cadr(p), $, ec);
+    if (car(expr).equals(TESTLE)) {
+        emit_expr(cadr(expr), $, ec);
         emit_infix_operator(LESSEQUAL, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(expr), $, ec);
         return;
     }
 
-    if (car(p).equals(TESTLT)) {
-        emit_expr(cadr(p), $, ec);
+    if (car(expr).equals(TESTLT)) {
+        emit_expr(cadr(expr), $, ec);
         emit_infix_operator(LESS_SIGN, $);
-        emit_expr(caddr(p), $, ec);
+        emit_expr(caddr(expr), $, ec);
         return;
     }
 
     // default
 
-    const leading = car(p);
+    const leading = car(expr);
     if (is_sym(leading))
         emit_symbol(leading, $);
     else
         emit_subexpr(leading, $, ec);
 
-    emit_args(p, $, ec);
+    emit_args(expr, $, ec);
 }
 
 function emit_indices(p: U, $: ProgramStack, ec: SvgRenderConfig): void {

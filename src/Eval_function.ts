@@ -1,16 +1,11 @@
+import { is_num, is_str, is_sym, is_tensor, Tensor } from 'math-expression-atoms';
+import { car, cdr, Cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { StackU } from './env/StackU';
-import { items_to_cons } from './makeList';
 import { Eval_derivative } from './operators/derivative/Eval_derivative';
-import { is_num } from './operators/num/is_num';
-import { is_str } from './operators/str/is_str';
-import { is_sym } from './operators/sym/is_sym';
-import { is_tensor } from './operators/tensor/is_tensor';
 import { EVAL, FUNCTION, SYMBOL_D } from './runtime/constants';
 import { halt } from './runtime/defs';
 import { cadr, cddr } from './tree/helpers';
-import { Tensor } from './tree/tensor/Tensor';
-import { car, cdr, Cons, is_cons, U } from './tree/tree';
 
 // Evaluate a user defined function
 

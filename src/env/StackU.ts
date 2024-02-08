@@ -14,6 +14,25 @@ export class StackU {
         }
         this.#stack = new Stack(elements);
     }
+    concat(exprs: U[]): void {
+        for (let i = 0; i < exprs.length; i++) {
+            this.#stack.push(exprs[i]);
+        }
+    }
+    getAt(i: number): U {
+        return this.#stack.getAt(i);
+    }
+    setAt(i: number, expr: U): void {
+        this.#stack.setAt(i, expr);
+    }
+    splice(start: number, deleteCount?: number): U[] {
+        if (typeof deleteCount === 'number') {
+            return this.#stack.splice(start, deleteCount);
+        }
+        else {
+            return this.#stack.splice(start);
+        }
+    }
     get length(): number {
         return this.#stack.length;
     }

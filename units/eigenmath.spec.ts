@@ -1,10 +1,12 @@
 import { assert } from "chai";
 import { create_sym } from "math-expression-atoms";
 import { ExprContext } from "math-expression-context";
-import { Cons, nil, U } from "math-expression-tree";
+import { Cons, is_nil, nil, U } from "math-expression-tree";
+import { create_engine, ExprEngine } from "../src/api/api";
 import { ScriptContentHandler, ScriptErrorHandler, ScriptVars, to_sexpr } from "../src/eigenmath/eigenmath";
 import { execute_eigenmath_script } from '../src/eigenmath/execute_eigenmath_script';
 import { to_infix } from "../src/eigenmath/infixform";
+import { SyntaxKind } from "../src/parser/parser";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const plotLambda = function (argList: Cons, $: ExprContext): U {
@@ -276,5 +278,24 @@ describe("eigenmath", function () {
         assert.strictEqual(values.length, 1);
         const value = values[0];
         assert.strictEqual(to_infix(value, { useParenForTensors: false }), "a**2 + 2 a b + b**2");
+    });
+    it("R", function () {
+        const lines: string[] = [
+            `b*a`
+        ];
+        const sourceText = lines.join('\n');
+        const engine: ExprEngine = create_engine({ syntaxKind: SyntaxKind.Eigenmath });
+        const { trees, errors } = engine.parse(sourceText, {});
+        assert.strictEqual(errors.length, 0);
+        const values: U[] = [];
+        for (const tree of trees) {
+            const value = engine.valueOf(tree);
+            if (!is_nil(value)) {
+                values.push(value);
+            }
+        }
+        assert.strictEqual(values.length, 1);
+        assert.strictEqual(engine.renderAsString(values[0], {}), "a b");
+        engine.release();
     });
 });

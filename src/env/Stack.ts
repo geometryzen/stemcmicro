@@ -12,6 +12,12 @@ export class Stack<T> {
     get top(): T {
         return this.#elements[this.#elements.length - 1];
     }
+    getAt(i: number): T {
+        return this.#elements[i];
+    }
+    setAt(i: number, element: T): void {
+        this.#elements[i] = element;
+    }
     peek(index: number): T {
         return this.#elements[this.#elements.length - 1 - index];
     }
@@ -44,6 +50,14 @@ export class Stack<T> {
     copy(): Stack<T> {
         const elements = this.#elements.slice();
         return new Stack<T>(elements);
+    }
+    splice(start: number, deleteCount?: number): T[] {
+        if (typeof deleteCount === 'number') {
+            return this.#elements.splice(start, deleteCount);
+        }
+        else {
+            return this.#elements.splice(start);
+        }
     }
     /**
      * Changes the order of the top two elements on the stack.

@@ -1,5 +1,6 @@
 import { U } from "math-expression-tree";
 
 export interface ProgramFrame {
-    fpop(): U;
+    get length(): number;
+    splice(start: number): U[];
 }

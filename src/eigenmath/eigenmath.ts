@@ -1,10 +1,10 @@
-import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, is_blade, is_flt, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
+import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
 import { Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
+import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
-import { is_num } from '../operators/num/is_num';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
 import { is_power } from '../runtime/helpers';
@@ -307,10 +307,10 @@ function cmp(lhs: U, rhs: U): 1 | 0 | -1 {
     return 0;
 }
 
-function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
+function cmp_factors(lhs: U, rhs: U): 0 | 1 | -1 {
 
-    const a = order_factor(p1);
-    const b = order_factor(p2);
+    const a = order_factor(lhs);
+    const b = order_factor(rhs);
 
     if (a < b)
         return -1;
@@ -323,21 +323,21 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
     let expo1: U;
     let expo2: U;
 
-    if (is_cons(p1) && p1.opr.equals(POWER)) {
-        base1 = p1.base;
-        expo1 = p1.expo;
+    if (is_cons(lhs) && lhs.opr.equals(POWER)) {
+        base1 = lhs.base;
+        expo1 = lhs.expo;
     }
     else {
-        base1 = p1;
+        base1 = lhs;
         expo1 = one;
     }
 
-    if (is_cons(p2) && p2.opr.equals(POWER)) {
-        base2 = p2.base;
-        expo2 = p2.expo;
+    if (is_cons(rhs) && rhs.opr.equals(POWER)) {
+        base2 = rhs.base;
+        expo2 = rhs.expo;
     }
     else {
-        base2 = p2;
+        base2 = rhs;
         expo2 = one;
     }
 
@@ -350,11 +350,14 @@ function cmp_factors(p1: U, p2: U): 0 | 1 | -1 {
 }
 
 function cmp_factors_provisional(p1: U, p2: U): 0 | 1 | -1 {
-    if (is_cons(p1) && p1.opr.equals(POWER))
-        p1 = p1.base;
 
-    if (is_cons(p2) && p2.opr.equals(POWER))
+    if (is_cons(p1) && p1.opr.equals(POWER)) {
+        p1 = p1.base;
+    }
+
+    if (is_cons(p2) && p2.opr.equals(POWER)) {
         p2 = p2.base;
+    }
 
     return cmp(p1, p2);
 }
@@ -437,12 +440,10 @@ function coeffs(P: U, X: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramSta
     }
 }
 
-function combine_factors(h: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    // console.lg(`before sort factors provisional: ${$.stack}`);
-    sort_factors_provisional(h, $);
-    // console.lg(`after sort factors provisional: ${$.stack}`);
+function combine_factors(start: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    sort_factors_provisional(start, $);
     let n = $.length;
-    for (let i = h; i < n - 1; i++) {
+    for (let i = start; i < n - 1; i++) {
         if (combine_factors_nib(i, i + 1, env, ctrl, $)) {
             $.splice(i + 1, 1); // remove factor
             i--; // use same index again
@@ -1213,10 +1214,10 @@ function combine_terms_nib(i: number, j: number, $: ProgramStack): 1 | 0 {
     return 1;
 }
 
-function sort_terms(h: number, $: ProgramStack): void {
+function sort_terms(start: number, $: ProgramStack): void {
     const compareFn = (lhs: U, rhs: U) => cmp_terms(lhs, rhs);
-    const t = $.splice(h).sort(compareFn);
-    $.concat(t);
+    const sorted: U[] = $.splice(start).sort(compareFn);
+    $.concat(sorted);
 }
 
 function cmp_terms(p1: U, p2: U): 0 | 1 | -1 {
@@ -6471,18 +6472,18 @@ function mod_integers(p1: Rat, p2: Rat, $: ProgramStack): void {
     push_bignum(p1.sign, a, b, $);
 }
 
-function eval_multiply(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    const h = $.length;
+function eval_multiply(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const h0 = $.length;
     ctrl.expanding--; // undo expanding++ in evalf
     try {
-        p1 = cdr(p1);
+        let p1 = cdr(expr);
         while (is_cons(p1)) {
             push(car(p1), $);
             value_of(env, ctrl, $);
             p1 = cdr(p1);
         }
-        // console.lg(`stack: ${$.stack}`);
-        multiply_factors($.length - h, env, ctrl, $);
+        const n = $.length - h0;
+        multiply_factors(n, env, ctrl, $);
     }
     finally {
         ctrl.expanding++;
@@ -6499,6 +6500,9 @@ function eval_noexpand(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: Progr
     ctrl.expanding = t;
 }
 
+/**
+ * This isn't actually a function that is matched, hence the ProgramFrame
+ */
 export function eval_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     if (ctrl.nonstop) {
         pop($);
@@ -6507,13 +6511,17 @@ export function eval_nonstop(env: ProgramEnv, ctrl: ProgramControl, $: ProgramSt
     }
 
     ctrl.nonstop = 1;
-    eval_nonstop_nib(env, ctrl, $);
-    ctrl.nonstop = 0;
+    try {
+        eval_nonstop_nib(env, ctrl, $);
+    }
+    finally {
+        ctrl.nonstop = 0;
+    }
 }
 
 function eval_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const save_tos = $.length - 1;
-    const save_tof = $.frameLength;
+    const save_tof = frame.length;  // TODO: Why the off-by-one?
 
     const save_eval_level = ctrl.eval_level;
     const save_expanding = ctrl.expanding;
@@ -6524,7 +6532,7 @@ function eval_nonstop_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
     catch (errmsg) {
 
         $.splice(save_tos);
-        $.frameSplice(save_tof);
+        frame.splice(save_tof);
 
         ctrl.eval_level = save_eval_level;
         ctrl.expanding = save_expanding;
@@ -9538,7 +9546,7 @@ function evalf_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
         if (env.hasBinding(sym)) {
             ctrl.expanding++;
             try {
-                const evalFunction = consFunctions.get(sym.key()) as ConsFunction;
+                const evalFunction: ConsFunction = consFunctions.get(sym.key())!;
                 evalFunction(p1, env, ctrl, $);
             }
             finally {
@@ -9584,18 +9592,18 @@ function evalp(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     }
 }
 
-function expand_sum_factors(h: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+function expand_sum_factors(start: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     let n = $.length;
 
-    if (n - h < 2)
+    if (n - start < 2)
         return;
 
     // search for a sum factor
     let i: number;
     let p2: U = nil;
 
-    for (i = h; i < n; i++) {
+    for (i = start; i < n; i++) {
         p2 = $.getAt(i);
         if (car(p2).equals(ADD))
             break;
@@ -9608,10 +9616,10 @@ function expand_sum_factors(h: number, env: ProgramEnv, ctrl: ProgramControl, $:
 
     $.splice(i, 1);
 
-    n = $.length - h;
+    n = $.length - start;
 
     if (n > 1) {
-        sort_factors(h, $);
+        sort_factors(start, $);
         list(n, $);
         push(MULTIPLY, $);
         swap($);
@@ -9629,7 +9637,7 @@ function expand_sum_factors(h: number, env: ProgramEnv, ctrl: ProgramControl, $:
         p2 = cdr(p2);
     }
 
-    add_terms($.length - h, env, ctrl, $);
+    add_terms($.length - start, env, ctrl, $);
 }
 // N is bignum, M is rational
 
@@ -10706,7 +10714,7 @@ function multiply_expand(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
 }
 /**
  * 
- * @param n number of factors on stack
+ * @param n number of factors on stack to be multiplied.
  */
 function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
@@ -10714,6 +10722,9 @@ function multiply_factors(n: number, env: ProgramEnv, ctrl: ProgramControl, $: P
         return;
     }
 
+    /**
+     * The start of the factors on the stack.
+     */
     const start = $.length - n;
 
     flatten_factors(start, $);
@@ -10782,15 +10793,21 @@ function multiply_rationals(lhs: Rat, rhs: Rat, $: ProgramStack): void {
     push(x, $);
 }
 
+/**
+ * 
+ * @param start the start of the factors on the stack.
+ * @param env 
+ * @param ctrl 
+ * @param $ 
+ * @returns 
+ */
 function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    let COEFF = combine_numerical_factors(start, one, $);
+    const k0 = combine_numerical_factors(start, one, $);
 
-    // console.lg(`after combine numerical factors: ${$.stack}`);
-
-    if (iszero(COEFF) || start === $.length) {
+    if (iszero(k0) || start === $.length) {
         $.splice(start); // pop all
-        push(COEFF, $);
+        push(k0, $);
         return;
     }
 
@@ -10803,21 +10820,22 @@ function multiply_scalar_factors(start: number, env: ProgramEnv, ctrl: ProgramCo
     // console.lg(`after combine factors: ${$.stack}`);
     normalize_power_factors(start, env, ctrl, $);
 
-    COEFF = combine_numerical_factors(start, COEFF, $);
+    const k1 = combine_numerical_factors(start, k0, $);
 
-    if (iszero(COEFF) || start === $.length) {
+    if (iszero(k1) || start === $.length) {
         $.splice(start); // pop all
-        push(COEFF, $);
+        push(k1, $);
         return;
     }
 
-    COEFF = reduce_radical_factors(start, COEFF, env, ctrl, $);
+    const k2 = reduce_radical_factors(start, k1, env, ctrl, $);
 
-    if (!isplusone(COEFF) || is_flt(COEFF))
-        push(COEFF, $);
+    if (!isplusone(k2) || is_flt(k2))
+        push(k2, $);
 
-    if (ctrl.expanding)
+    if (ctrl.expanding) {
         expand_sum_factors(start, env, ctrl, $); // success leaves one expr on stack
+    }
 
     const n = $.length - start;
 
@@ -12388,10 +12406,23 @@ function reduce_radical_rational(h: number, COEFF: Rat, env: ProgramEnv, ctrl: P
     return COEFF;
 }
 
+/**
+ * TODO: Why do we have this global frame:
+ */
+const frame: StackU = new StackU();
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function save_symbol(p: Sym, env: ProgramEnv, $: ProgramStack): void {
+    frame.push(p);
+    frame.push(get_binding(p, env));
+    frame.push(get_usrfunc(p, env));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function restore_symbol(env: ProgramEnv, $: ProgramStack): void {
-    const p3 = $.fpop();
-    const p2 = $.fpop();
-    const p1 = assert_sym($.fpop());
+    const p3 = frame.pop();
+    const p2 = frame.pop();
+    const p1 = assert_sym(frame.pop());
     set_symbol(p1, p2, p3, env);
 }
 
@@ -12458,11 +12489,6 @@ export function parse_eigenmath_script(sourceText: string, config: EigenmathPars
     return exprs;
 }
 
-export function save_symbol(p: Sym, env: ProgramEnv, $: ProgramStack): void {
-    $.framePush(p);
-    $.framePush(get_binding(p, env));
-    $.framePush(get_usrfunc(p, env));
-}
 const T_INTEGER = 1001;
 const T_DOUBLE = 1002;
 const T_SYMBOL = 1003;
@@ -13090,19 +13116,21 @@ export function set_user_function(sym: Sym, usrfunc: U, env: ProgramEnv): void {
 
 function sort(n: number, $: ProgramStack): void {
     const compareFn = (lhs: U, rhs: U) => cmp(lhs, rhs);
-    const t = $.splice($.length - n).sort(compareFn);
-    $.concat(t);
+    const sorted = $.splice($.length - n).sort(compareFn);
+    $.concat(sorted);
 }
 
-function sort_factors(h: number, $: ProgramStack): void {
+function sort_factors(start: number, $: ProgramStack): void {
     const compareFn = (lhs: U, rhs: U) => cmp_factors(lhs, rhs);
-    const t = $.splice(h).sort(compareFn);
+    const parts = $.splice(start);
+    const t = parts.sort(compareFn);
     $.concat(t);
 }
 
-function sort_factors_provisional(h: number, $: ProgramStack): void {
+function sort_factors_provisional(start: number, $: ProgramStack): void {
     const compareFn = (lhs: U, rhs: U) => cmp_factors_provisional(lhs, rhs);
-    const t = $.splice(h).sort(compareFn);
+    const parts = $.splice(start);
+    const t = parts.sort(compareFn);
     $.concat(t);
 }
 
@@ -13230,13 +13258,11 @@ export interface ScriptOutputListener {
 
 class ExprContextAdapter implements ExprContext {
     /**
-     * TODO: We could simply use ScriptVars instead?
      * @param env 
      * @param ctrl 
-     * @param $ 
-     * @param vars 
+     * @param $
      */
-    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack, readonly vars: ScriptVars) {
+    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
 
     }
     hasBinding(sym: Sym): boolean {
@@ -13258,11 +13284,13 @@ class ExprContextAdapter implements ExprContext {
         this.env.setUserFunction(sym, usrfunc);
     }
     valueOf(expr: U): U {
-        return this.vars.valueOf(expr);
+        this.$.push(expr);
+        value_of(this.env, this.ctrl, this.$);
+        return this.$.pop();
     }
 }
 
-export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, ProgramStack, ProgramFrame, ProgramIO, ProgramFrame {
+export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, ProgramStack, ProgramFrame, ProgramIO {
     inbuf: string = "";
     /**
      * The start index into inbuf.
@@ -13273,7 +13301,6 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
      */
     trace2: number = -1;
     stack: U[] = [];
-    frame: U[] = [];
     // TODO: Change this to a Map
     binding: { [key: string]: U } = {};
     usrfunc: { [key: string]: U } = {};
@@ -13318,7 +13345,6 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.nonstop = 0;
 
         this.stack = [];
-        this.frame = [];
 
         this.binding = {};
         this.usrfunc = {};
@@ -13377,8 +13403,8 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
      */
     defineFunction(name: Sym, lambda: LambdaExpr): void {
         assert_sym(name);
-        const handler: ConsFunction = (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) => {
-            const adapter = new ExprContextAdapter(env, ctrl, $, this);
+        const handler: ConsFunction = (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void => {
+            const adapter = new ExprContextAdapter(env, ctrl, $);
             const retval = lambda(assert_cons(expr).argList, adapter);
             push(retval, $);
         };
@@ -13416,8 +13442,15 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.stack[i] = expr;
     }
     splice(start: number, deleteCount?: number): U[] {
-        return this.stack.splice(start, deleteCount);
+        // Beware! An explicit undefined gets converted to zero.
+        if (typeof deleteCount === 'number') {
+            return this.stack.splice(start, deleteCount);
+        }
+        else {
+            return this.stack.splice(start);
+        }
     }
+    /*
     framePush(expr: U): void {
         this.frame.push(expr);
     }
@@ -13435,6 +13468,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     frameSplice(start: number, deleteCount?: number): U[] {
         return this.frame.splice(start, deleteCount);
     }
+    */
 }
 
 const zero: Rat = create_int(0);

@@ -154,14 +154,14 @@
     },
     "homepage": "https://github.com/geometryzen/stemcmicro#readme",
     "dependencies": {
+        "typhon-lang": "^1.0.13"
+    },
+    "peerDependencies": {
         "math-expression-atoms": "^0.9.30",
         "math-expression-context": "^0.9.11",
         "math-expression-native": "^0.9.16",
-        "math-expression-tree": "^0.9.23",
-        "generic-rbtree": "^1.1.2",
-        "typhon-lang": "^1.0.13"
+        "math-expression-tree": "^0.9.23"
     },
-    "peerDependencies": {},
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.2",
         "@rollup/plugin-commonjs": "^25.0.7",

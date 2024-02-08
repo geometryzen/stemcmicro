@@ -1,8 +1,8 @@
+import { create_int, Rat } from 'math-expression-atoms';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { nativeInt } from './nativeInt';
 import { MAXPRIMETAB, primetab } from './runtime/constants';
 import { halt } from './runtime/defs';
-import { create_int, Rat } from './tree/rat/Rat';
 import { Cons, U } from './tree/tree';
 
 //-----------------------------------------------------------------------------

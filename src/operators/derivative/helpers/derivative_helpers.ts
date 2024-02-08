@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { create_int, negOne, one, zero } from 'math-expression-atoms';
 import { is_native, Native, native_sym } from 'math-expression-native';
 import { rational } from '../../../bignum';
 import { add_terms } from '../../../calculators/add/add_terms';
@@ -29,7 +30,7 @@ import { DynamicConstants } from '../../../runtime/defs';
 import { is_abs, is_add } from '../../../runtime/helpers';
 import { MATH_ADD } from '../../../runtime/ns_math';
 import { caddr, cadr } from '../../../tree/helpers';
-import { create_int, negOne, one, two, zero } from '../../../tree/rat/Rat';
+import { two } from '../../../tree/rat/Rat';
 import { Sym } from '../../../tree/sym/Sym';
 import { car, Cons, is_cons, items_to_cons, U } from '../../../tree/tree';
 import { besselj } from '../../besselj/besselj';

@@ -1,7 +1,7 @@
+import { create_int, zero } from 'math-expression-atoms';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { cadr } from '../../tree/helpers';
-import { create_int, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { U } from '../../tree/tree';
 import { is_tensor } from '../tensor/is_tensor';

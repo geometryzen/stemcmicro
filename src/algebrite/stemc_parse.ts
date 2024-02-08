@@ -1,6 +1,6 @@
+import { U } from "math-expression-tree";
 import { move_top_of_stack } from "../runtime/defs";
 import { normalize_unicode_dots } from "../runtime/normalize_dots";
-import { U } from "../tree/tree";
 import { scan } from "./scan";
 
 export interface STEMCParseOptions {

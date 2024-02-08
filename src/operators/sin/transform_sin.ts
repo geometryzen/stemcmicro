@@ -1,3 +1,4 @@
+import { create_int, negOne, one, zero } from 'math-expression-atoms';
 import { rational } from '../../bignum';
 import { ExtensionEnv, TFLAGS, TFLAG_DIFF, TFLAG_NONE } from "../../env/ExtensionEnv";
 import { divide } from '../../helpers/divide';
@@ -9,7 +10,7 @@ import { DynamicConstants } from '../../runtime/defs';
 import { is_add } from '../../runtime/helpers';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from "../../tree/helpers";
-import { create_int, half, negOne, one, three, two, zero } from '../../tree/rat/Rat';
+import { half, three, two } from '../../tree/rat/Rat';
 import { car, Cons, is_cons, U } from "../../tree/tree";
 import { is_flt } from '../flt/is_flt';
 

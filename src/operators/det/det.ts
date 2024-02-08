@@ -1,9 +1,9 @@
-import { divide } from '../../helpers/divide';
+import { create_int, one, zero } from 'math-expression-atoms';
 import { ExtensionEnv, Sign } from '../../env/ExtensionEnv';
+import { divide } from '../../helpers/divide';
 import { items_to_cons } from '../../makeList';
 import { DET } from '../../runtime/constants';
 import { is_square_matrix } from '../../tensor';
-import { one, create_int, zero } from '../../tree/rat/Rat';
 import { Tensor } from '../../tree/tensor/Tensor';
 import { U } from '../../tree/tree';
 import { is_num } from '../num/is_num';

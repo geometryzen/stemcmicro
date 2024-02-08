@@ -1,9 +1,9 @@
+import { create_int } from 'math-expression-atoms';
+import { Cons, nil, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
-import { create_int } from '../../tree/rat/Rat';
-import { Cons, nil, U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 
 // 'for' function

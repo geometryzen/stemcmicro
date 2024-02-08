@@ -1,17 +1,17 @@
-import { TFLAG_DIFF, ExtensionEnv, Operator, OperatorBuilder, MODE_FACTORING, TFLAGS } from "../../env/ExtensionEnv";
+import { Rat } from "math-expression-atoms";
+import { ExtensionEnv, MODE_FACTORING, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { hash_binop_cons_cons } from "../../hashing/hash_info";
 import { MATH_ADD, MATH_MUL } from "../../runtime/ns_math";
-import { is_rat } from "../rat/is_rat";
-import { Rat } from "../../tree/rat/Rat";
 import { Sym } from "../../tree/sym/Sym";
 import { Cons, is_cons, items_to_cons, U } from "../../tree/tree";
 import { MATH_COS } from "../cos/MATH_COS";
 import { and } from "../helpers/and";
+import { Cons1 } from "../helpers/Cons1";
 import { Cons2 } from "../helpers/Cons2";
 import { Function2X } from "../helpers/Function2X";
 import { is_opr_1_any } from "../helpers/is_opr_1_any";
 import { is_opr_2_lhs_rhs } from "../helpers/is_opr_2_lhs_rhs";
-import { Cons1 } from "../helpers/Cons1";
+import { is_rat } from "../rat/is_rat";
 import { MATH_SIN } from "../sin/MATH_SIN";
 
 class Builder implements OperatorBuilder<Cons> {

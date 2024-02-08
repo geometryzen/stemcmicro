@@ -1,10 +1,10 @@
+import { create_int, one, zero } from 'math-expression-atoms';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { LAGUERRE, SECRETX } from '../../runtime/constants';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
-import { create_int, one, zero } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { subst } from '../subst/subst';
 import { is_sym } from '../sym/is_sym';

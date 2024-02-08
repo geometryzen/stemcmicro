@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { create_tensor } from "math-expression-atoms";
+import { create_int, create_tensor } from "math-expression-atoms";
 import {
     Add,
     AnnAssign,
@@ -46,7 +46,6 @@ import { FltTokenParser } from '../operators/flt/FltTokenParser';
 import { IntTokenParser } from "../operators/int/IntTokenParser";
 import { ASSIGN } from "../runtime/constants";
 import { MATH_ADD, MATH_DIV, MATH_INNER, MATH_LCO, MATH_MUL, MATH_OUTER, MATH_POW, MATH_RCO, MATH_SUB } from "../runtime/ns_math";
-import { create_int } from "../tree/rat/Rat";
 import { Str } from "../tree/str/Str";
 import { create_sym } from "../tree/sym/Sym";
 import { items_to_cons, nil, U } from "../tree/tree";

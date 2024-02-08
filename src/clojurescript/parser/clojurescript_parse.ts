@@ -1,11 +1,9 @@
-import { Boo, create_flt, create_sym, create_sym_ns, create_tensor, Flt, Keyword, Map, Num, Str, Sym } from 'math-expression-atoms';
-import { assert_cons_or_nil } from 'math-expression-tree';
+import { Boo, create_flt, create_int, create_sym, create_sym_ns, create_tensor, Flt, Keyword, Map, Num, Str, Sym } from 'math-expression-atoms';
+import { assert_cons_or_nil, cons, nil, U } from 'math-expression-tree';
 import { CharStream, consume_signed_num, NumHandler } from "../../algebrite/consume_num";
 import { split_qualified_name } from '../../edn';
 import { FltTokenParser } from "../../operators/flt/FltTokenParser";
 import { IntTokenParser } from "../../operators/int/IntTokenParser";
-import { create_int } from "../../tree/rat/Rat";
-import { cons, nil, U } from "../../tree/tree";
 import { CommentMarker } from "../atoms/CommentMarker";
 import { EOS } from "../atoms/EOS";
 import { Char } from "./char";

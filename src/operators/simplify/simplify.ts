@@ -1,4 +1,4 @@
-import { is_num, is_rat, is_tensor, Sym } from 'math-expression-atoms';
+import { create_int, is_num, is_rat, is_tensor, one, Sym, zero } from 'math-expression-atoms';
 import { car, cdr, Cons2, is_cons, items_to_cons, nil, U } from 'math-expression-tree';
 import { nativeDouble } from '../../bignum';
 import { add_terms } from '../../calculators/add/add_terms';
@@ -18,7 +18,7 @@ import { is_add, is_inner_or_dot, is_multiply, is_power } from '../../runtime/he
 import { stack_pop } from '../../runtime/stack';
 import { simfac } from '../../simfac';
 import { caddr, cadr } from '../../tree/helpers';
-import { create_int, half, one, third, three, two, zero } from '../../tree/rat/Rat';
+import { half, third, three, two } from '../../tree/rat/Rat';
 import { denominator } from "../denominator/denominator";
 import { factor } from "../factor/factor";
 import { evaluate_as_float } from '../float/float';

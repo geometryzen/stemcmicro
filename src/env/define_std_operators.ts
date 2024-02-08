@@ -236,6 +236,7 @@ import { iszero_sym_builder } from '../operators/iszero/iszero_sym';
 import { iszero_tensor_builder } from '../operators/iszero/iszero_tensor';
 import { jsobject_extension } from '../operators/jsobject/JsObjectExtension';
 import { keyword_extension } from '../operators/keyword/KeywordExtension';
+import { Eval_kronecker } from '../operators/kronecker/Eval_kronecker';
 import { laguerre_varargs } from '../operators/laguerre/laguerre_varargs';
 import { lcm_varargs } from '../operators/lcm/lcm_varargs';
 import { lco_2_any_any } from '../operators/lco/lco_2_any_any';
@@ -672,6 +673,8 @@ export function define_std_operators($: ExtensionEnv, config: DefineStandardOper
     $.defineOperator(inner_2_any_rat);
     $.defineOperator(inner_2_any_imu);
     $.defineOperator(inner_product_builder);
+
+    $.defineConsTransformer(create_sym("kronecker"), Eval_kronecker);
 
     $.defineOperator(laguerre_varargs);
 

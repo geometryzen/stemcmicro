@@ -1,13 +1,10 @@
-import { assert_cons_or_nil } from 'math-expression-tree';
+import { create_int, Flt, is_flt, Rat } from 'math-expression-atoms';
+import { assert_cons_or_nil, Cons, cons, is_cons, items_to_cons, U } from 'math-expression-tree';
 import { rational } from './bignum';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { zzfloat } from './operators/float/float';
-import { is_flt } from './operators/flt/is_flt';
 import { is_tensor } from './operators/tensor/is_tensor';
 import { APPROXRATIO } from './runtime/constants';
-import { Flt } from './tree/flt/Flt';
-import { create_int, Rat } from './tree/rat/Rat';
-import { Cons, cons, is_cons, items_to_cons, U } from './tree/tree';
 
 /*
  Guesses a rational for each float in the passed expression

@@ -1,3 +1,4 @@
+import { create_int, one, zero } from 'math-expression-atoms';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { items_to_cons } from '../../makeList';
@@ -5,7 +6,7 @@ import { nativeInt } from '../../nativeInt';
 import { COS, LEGENDRE, SECRETX, SIN } from '../../runtime/constants';
 import { square } from '../../square';
 import { cadddr, caddr, cadr } from '../../tree/helpers';
-import { create_int, half, one, zero } from '../../tree/rat/Rat';
+import { half } from '../../tree/rat/Rat';
 import { car, U } from '../../tree/tree';
 import { derivative } from '../derivative/derivative';
 import { subst } from '../subst/subst';

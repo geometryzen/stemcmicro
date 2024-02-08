@@ -1,10 +1,10 @@
+import { Rat } from "math-expression-atoms";
 import { ExtensionEnv, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_RAT, hash_unaop_atom } from "../../hashing/hash_info";
-import { Rat } from "../../tree/rat/Rat";
 import { create_sym, Sym } from "../../tree/sym/Sym";
 import { U } from "../../tree/tree";
-import { Function1 } from "../helpers/Function1";
 import { Cons1 } from "../helpers/Cons1";
+import { Function1 } from "../helpers/Function1";
 import { is_rat } from "../rat/is_rat";
 
 class Builder implements OperatorBuilder<U> {

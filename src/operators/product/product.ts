@@ -1,8 +1,8 @@
+import { create_int, one } from 'math-expression-atoms';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { halt } from '../../runtime/defs';
 import { evaluate_integer } from '../../scripting/evaluate_integer';
 import { caddddr, cadddr, caddr, cadr } from '../../tree/helpers';
-import { create_int, one } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { is_sym } from '../sym/is_sym';
 

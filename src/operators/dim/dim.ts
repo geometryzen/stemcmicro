@@ -1,9 +1,8 @@
+import { create_int, is_tensor, one } from "math-expression-atoms";
+import { Cons, is_cons, U } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
 import { evaluate_integer } from "../../scripting/evaluate_integer";
 import { caddr, cadr, cddr } from "../../tree/helpers";
-import { create_int, one } from "../../tree/rat/Rat";
-import { Cons, is_cons, U } from "../../tree/tree";
-import { is_tensor } from "../tensor/is_tensor";
 
 /* dim =====================================================================
  

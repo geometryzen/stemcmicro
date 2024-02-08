@@ -1,12 +1,13 @@
 import { Adapter, BasisBlade, BigInteger, Blade, create_algebra, create_flt, create_int, create_rat, create_sym, Flt, is_blade, is_flt, is_num, is_rat, is_str, is_sym, is_tensor, is_uom, Num, Rat, Str, SumTerm, Sym, Tensor } from 'math-expression-atoms';
 import { ExprContext, LambdaExpr } from 'math-expression-context';
-import { Native, native_sym } from 'math-expression-native';
+import { is_native, Native, native_sym } from 'math-expression-native';
 import { assert_cons_or_nil, car, cdr, Cons, cons as create_cons, is_atom, is_cons, nil, U } from 'math-expression-tree';
 import { StackU } from '../env/StackU';
 import { convert_tensor_to_strings } from '../helpers/convert_tensor_to_strings';
 import { convertMetricToNative } from '../operators/algebra/create_algebra_as_tensor';
 import { assert_sym } from '../operators/sym/assert_sym';
 import { create_uom, is_uom_name } from '../operators/uom/uom';
+import { ProgrammingError } from '../programming/ProgrammingError';
 import { is_power } from '../runtime/helpers';
 import { assert_cons } from '../tree/cons/assert_cons';
 import { two } from '../tree/rat/Rat';
@@ -5992,91 +5993,122 @@ function inv(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     divide(env, ctrl, $);
 }
 
-function eval_kronecker(p1: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    p1 = cddr(p1);
-    while (is_cons(p1)) {
-        push(car(p1), $);
+/**
+ * (kronecker a b ...)
+ */
+function eval_kronecker(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const argList = expr.argList;
+    try {
+        const a = argList.head;
+        push(a, $);
         value_of(env, ctrl, $);
-        kronecker(env, ctrl, $);
-        p1 = cdr(p1);
+        let bs = argList.rest;
+        while (is_cons(bs)) {
+            const b = bs.head;
+            push(b, $);
+            value_of(env, ctrl, $);
+            kronecker(env, ctrl, $);
+            bs = bs.rest;
+        }
+    }
+    finally {
+        argList.release();
     }
 }
 
-function kronecker(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+/**
+ * kronecker(a,b)
+ */
+export function kronecker(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    const p2 = pop($);
-    const p1 = pop($);
+    const b = pop($);
+    const a = pop($);
 
-    if (!istensor(p1) || !istensor(p2)) {
-        push(p1, $);
-        push(p2, $);
+    if (!istensor(a) || !istensor(b)) {
+        push(a, $);
+        push(b, $);
         multiply(env, ctrl, $);
         return;
     }
 
-    if (p1.ndim > 2 || p2.ndim > 2)
+    if (a.ndim > 2 || b.ndim > 2) {
         stopf("kronecker");
+    }
 
-    const m = p1.dims[0];
-    const n = p1.ndim === 1 ? 1 : p1.dims[1];
+    const m = a.dims[0];
+    const n = a.ndim === 1 ? 1 : a.dims[1];
 
-    const p = p2.dims[0];
-    const q = p2.ndim === 1 ? 1 : p2.dims[1];
+    const p = b.dims[0];
+    const q = b.ndim === 1 ? 1 : b.dims[1];
 
-    const p3 = alloc_tensor();
+    const ab = alloc_tensor();
 
     // result matrix has (m * p) rows and (n * q) columns
 
     let h = 0;
 
-    for (let i = 0; i < m; i++)
-        for (let j = 0; j < p; j++)
-            for (let k = 0; k < n; k++)
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < p; j++) {
+            for (let k = 0; k < n; k++) {
                 for (let l = 0; l < q; l++) {
-                    push(p1.elems[n * i + k], $);
-                    push(p2.elems[q * j + l], $);
+                    push(a.elems[n * i + k], $);
+                    push(b.elems[q * j + l], $);
                     multiply(env, ctrl, $);
-                    p3.elems[h++] = pop($);
+                    ab.elems[h++] = pop($);
                 }
+            }
+        }
+    }
 
     // dim info
 
-    p3.dims[0] = m * p;
+    ab.dims[0] = m * p;
 
-    if (n * q > 1)
-        p3.dims[1] = n * q;
+    if (n * q > 1) {
+        ab.dims[1] = n * q;
+    }
 
-    push(p3, $);
+    push(ab, $);
 }
 
-function eval_log(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    logfunc(env, ctrl, $);
+function eval_log(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
+    const argList = expr.argList;
+    try {
+        const x = argList.head;
+        try {
+            $.push(x);
+            value_of(env, ctrl, $);
+            logfunc(env, ctrl, $);
+        }
+        finally {
+            x.release();
+        }
+    }
+    finally {
+        argList.release();
+    }
 }
 
 function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
-    let p1 = pop($);
+    let x = pop($);
 
-    if (is_tensor(p1)) {
-        push(elementwise(p1, logfunc, env, ctrl, $), $);
+    if (is_tensor(x)) {
+        push(elementwise(x, logfunc, env, ctrl, $), $);
         return;
     }
 
     // log of zero is not evaluated
 
-    if (iszero(p1)) {
+    if (iszero(x)) {
         push(LOG, $);
         push_integer(0, $);
         list(2, $);
         return;
     }
 
-    if (is_flt(p1)) {
-        const d = p1.toNumber();
+    if (is_flt(x)) {
+        const d = x.toNumber();
         if (d > 0.0) {
             push_double(Math.log(d), $);
             return;
@@ -6085,11 +6117,11 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // log(z) -> log(mag(z)) + i arg(z)
 
-    if (is_flt(p1) || isdoublez(p1)) {
-        push(p1, $);
+    if (is_flt(x) || isdoublez(x)) {
+        push(x, $);
         mag(env, ctrl, $);
         logfunc(env, ctrl, $);
-        push(p1, $);
+        push(x, $);
         arg(env, ctrl, $);
         push(imaginaryunit, $);
         multiply(env, ctrl, $);
@@ -6099,20 +6131,20 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // log(1) -> 0
 
-    if (isplusone(p1)) {
+    if (isplusone(x)) {
         push_integer(0, $);
         return;
     }
 
     // log(e) -> 1
 
-    if (p1.equals(DOLLAR_E)) {
+    if (x.equals(DOLLAR_E)) {
         push_integer(1, $);
         return;
     }
 
-    if (is_num(p1) && isnegativenumber(p1)) {
-        push(p1, $);
+    if (is_num(x) && isnegativenumber(x)) {
+        push(x, $);
         negate(env, ctrl, $);
         logfunc(env, ctrl, $);
         push(imaginaryunit, $);
@@ -6124,16 +6156,16 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // log(10) -> log(2) + log(5)
 
-    if (is_rat(p1)) {
+    if (is_rat(x)) {
         const h = $.length;
-        push(p1, $);
+        push(x, $);
         factor_factor(env, ctrl, $);
         for (let i = h; i < $.length; i++) {
             const p2 = $.getAt(i);
-            if (car(p2).equals(POWER)) {
-                push(caddr(p2), $); // exponent
+            if (is_cons(p2) && is_sym(p2.opr) && is_native(p2.opr, Native.pow)) {
+                push(p2.expo, $);
                 push(LOG, $);
-                push(cadr(p2), $); // base
+                push(p2.base, $);
                 list(2, $);
                 multiply(env, ctrl, $);
             }
@@ -6150,9 +6182,9 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // log(a ^ b) -> b log(a)
 
-    if (car(p1).equals(POWER)) {
-        push(caddr(p1), $);
-        push(cadr(p1), $);
+    if (car(x).equals(POWER)) {
+        push(caddr(x), $);
+        push(cadr(x), $);
         logfunc(env, ctrl, $);
         multiply(env, ctrl, $);
         return;
@@ -6160,20 +6192,20 @@ function logfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
 
     // log(a * b) -> log(a) + log(b)
 
-    if (car(p1).equals(MULTIPLY)) {
+    if (car(x).equals(MULTIPLY)) {
         const h = $.length;
-        p1 = cdr(p1);
-        while (is_cons(p1)) {
-            push(car(p1), $);
+        x = cdr(x);
+        while (is_cons(x)) {
+            push(car(x), $);
             logfunc(env, ctrl, $);
-            p1 = cdr(p1);
+            x = cdr(x);
         }
         add_terms($.length - h, env, ctrl, $);
         return;
     }
 
     push(LOG, $);
-    push(p1, $);
+    push(x, $);
     list(2, $);
 }
 
@@ -9547,7 +9579,12 @@ function evalf_nib(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
             ctrl.expanding++;
             try {
                 const evalFunction: ConsFunction = consFunctions.get(sym.key())!;
-                evalFunction(p1, env, ctrl, $);
+                if (evalFunction) {
+                    evalFunction(p1, env, ctrl, $);
+                }
+                else {
+                    throw new ProgrammingError(`consFunction missing symbol ${sym.key()}`);
+                }
             }
             finally {
                 ctrl.expanding--;

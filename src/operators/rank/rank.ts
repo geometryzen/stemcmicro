@@ -1,7 +1,6 @@
+import { create_int, is_tensor, zero } from "math-expression-atoms";
+import { Cons } from "math-expression-tree";
 import { ExtensionEnv } from "../../env/ExtensionEnv";
-import { create_int, zero } from "../../tree/rat/Rat";
-import { Cons } from "../../tree/tree";
-import { is_tensor } from "../tensor/is_tensor";
 
 export function Eval_rank(expr: Cons, $: ExtensionEnv) {
     const value = $.valueOf(expr.argList.car);

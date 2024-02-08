@@ -1,15 +1,13 @@
+import { create_int, is_num, one, Tensor, zero } from 'math-expression-atoms';
+import { car, cdr, is_cons, U } from 'math-expression-tree';
 import { sort_factors } from '../../calculators/compare/sort_factors';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { inverse } from '../../helpers/inverse';
 import { nativeInt } from '../../nativeInt';
 import { is_add, is_multiply, is_power } from '../../runtime/helpers';
 import { caddr, cadr } from '../../tree/helpers';
-import { create_int, one, zero } from '../../tree/rat/Rat';
-import { Tensor } from '../../tree/tensor/Tensor';
-import { car, cdr, is_cons, U } from '../../tree/tree';
 import { factor_small_number } from '../factor/factor';
 import { gcd } from '../gcd/gcd';
-import { is_num } from '../num/is_num';
 
 function signum(n: number): 1 | -1 | 0 {
     if (n < 0) {

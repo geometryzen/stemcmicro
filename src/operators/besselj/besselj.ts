@@ -1,3 +1,4 @@
+import { create_int, negOne, one, zero } from 'math-expression-atoms';
 import { Directive, ExtensionEnv } from '../../env/ExtensionEnv';
 import { divide } from '../../helpers/divide';
 import { items_to_cons } from '../../makeList';
@@ -7,7 +8,7 @@ import { BESSELJ, MEQUAL, MSIGN } from '../../runtime/constants';
 import { MATH_PI } from '../../runtime/ns_math';
 import { create_flt } from '../../tree/flt/Flt';
 import { caddr, cadr } from '../../tree/helpers';
-import { create_int, half, negOne, one, two, zero } from '../../tree/rat/Rat';
+import { half, two } from '../../tree/rat/Rat';
 import { U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 import { is_rat } from '../rat/is_rat';

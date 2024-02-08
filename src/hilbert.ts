@@ -1,8 +1,8 @@
+import { create_int } from 'math-expression-atoms';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { inverse } from './helpers/inverse';
 import { nativeInt } from './nativeInt';
 import { HILBERT } from './runtime/constants';
-import { create_int } from './tree/rat/Rat';
 import { Sym } from './tree/sym/Sym';
 import { Tensor } from './tree/tensor/Tensor';
 import { Cons, items_to_cons, U } from './tree/tree';

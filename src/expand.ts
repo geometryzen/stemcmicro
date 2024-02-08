@@ -1,3 +1,5 @@
+import { create_int, one, Tensor, zero } from 'math-expression-atoms';
+import { Cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from './env/ExtensionEnv';
 import { factors } from './factors';
 import { filter } from './filter';
@@ -17,9 +19,6 @@ import { quotient } from './quotient';
 import { doexpand_binary, doexpand_unary } from './runtime/defs';
 import { is_add, is_multiply, is_power } from './runtime/helpers';
 import { caddr, cadr } from './tree/helpers';
-import { create_int, one, zero } from './tree/rat/Rat';
-import { Tensor } from './tree/tensor/Tensor';
-import { Cons, U } from './tree/tree';
 
 // Partial fraction expansion
 //

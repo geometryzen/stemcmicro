@@ -1,6 +1,7 @@
+import { create_int, negOne, one, zero } from 'math-expression-atoms';
 import { rational } from '../../bignum';
-import { divide } from '../../helpers/divide';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
+import { divide } from '../../helpers/divide';
 import { items_to_cons } from '../../makeList';
 import { nativeInt } from '../../nativeInt';
 import { is_negative } from '../../predicates/is_negative';
@@ -8,7 +9,7 @@ import { ARCTAN, TAN } from '../../runtime/constants';
 import { DynamicConstants } from '../../runtime/defs';
 import { create_flt } from '../../tree/flt/Flt';
 import { cadr } from '../../tree/helpers';
-import { half, negOne, one, third, three, create_int, zero } from '../../tree/rat/Rat';
+import { half, third, three } from '../../tree/rat/Rat';
 import { car, Cons, U } from '../../tree/tree';
 import { is_flt } from '../flt/is_flt';
 

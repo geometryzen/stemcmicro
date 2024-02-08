@@ -13399,7 +13399,6 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
     readonly #consFunctions: Map<string, ConsFunction> = new Map();
     usrfunc: { [key: string]: U } = {};
 
-    expanding: number = -1;
     readonly #directiveStack: DirectiveStack = new DirectiveStack();
     listeners: ScriptOutputListener[] = [];
     readonly #prolog: string[] = [];
@@ -13535,7 +13534,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         this.define_cons_function(ZERO, eval_zero);
     }
     init(): void {
-        this.expanding = 1;
+        this.#directiveStack.push(Directive.depth, 0);
         this.#directiveStack.push(Directive.drawing, 0);
         this.#directiveStack.push(Directive.expanding, 1);
         this.#directiveStack.push(Directive.nonstop, 0);
@@ -13563,7 +13562,7 @@ export class ScriptVars implements ExprContext, ProgramEnv, ProgramControl, Prog
         for (let i = 0; i < n; i++) {
             scan(script[i], 0, this, this, this, this, config);
             value_of(this, this, this);
-            pop(this);
+            this.pop().release();
         }
     }
     defineUserSymbol(sym: Sym): void {

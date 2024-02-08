@@ -9610,7 +9610,7 @@ export function value_of(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack)
                 try {
                     const binding = env.getBinding(sym);
                     if (is_lambda(binding)) {
-                        const ctxt = new ExprContextFromEigenmath(env, ctrl, $);
+                        const ctxt = new ExprContextAdapter(env, ctrl, $);
                         const value = binding.body(p1.argList, ctxt);
                         $.push(value);
                     }
@@ -13341,6 +13341,12 @@ class ExprContextAdapter implements ExprContext {
     constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
         // Nothing to see here.
     }
+    clearBindings(): void {
+        this.env.clearBindings();
+    }
+    executeProlog(script: string[]): void {
+        this.env.executeProlog(script);
+    }
     getDirective(directive: number): number {
         return this.ctrl.getDirective(directive);
     }
@@ -13684,94 +13690,12 @@ interface ConsFunction {
     (x: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void
 }
 
-/**
- * This would not be need if ProgramEnv supported clearBindings.
- * executeProlog is possible redundant?
- */
-class ProgramEnvFromExprContext implements ProgramEnv {
-    constructor(readonly ctxt: ExprContext) {
-
-    }
-    clearBindings(): void {
-        throw new Error('Method not implemented.');
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    executeProlog(script: string[]): void {
-        throw new Error('Method not implemented.');
-    }
-    getBinding(name: Sym): U {
-        return this.ctxt.getBinding(name);
-    }
-    getUserFunction(name: Sym): U {
-        return this.ctxt.getUserFunction(name);
-    }
-    hasBinding(name: Sym): boolean {
-        return this.ctxt.hasBinding(name);
-    }
-    hasUserFunction(name: Sym): boolean {
-        return this.ctxt.hasUserFunction(name);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    defineUserSymbol(name: Sym): void {
-        this.ctxt.defineUserSymbol(name);
-    }
-    setBinding(name: Sym, binding: U): void {
-        this.ctxt.setBinding(name, binding);
-    }
-    setUserFunction(name: Sym, userfunc: U): void {
-        this.ctxt.setUserFunction(name, userfunc);
-    }
-}
-
 function make_lambda_expr_from_cons_function(sym: Sym, consFunction: ConsFunction): LambdaExpr {
     return function (argList: Cons, ctxt: ExprContext): U {
         const $ = new StackU();
-        const env = new ProgramEnvFromExprContext(ctxt);
-        consFunction(create_cons(sym, argList), env, ctxt, $);
+        consFunction(create_cons(sym, argList), ctxt, ctxt, $);
         return $.pop();
     };
-}
-
-class ExprContextFromEigenmath implements ExprContext {
-    constructor(readonly env: ProgramEnv, readonly ctrl: ProgramControl, readonly $: ProgramStack) {
-        // Nothing to see here.
-        // env.clearBindings();
-    }
-    getDirective(directive: number): number {
-        return this.ctrl.getDirective(directive);
-    }
-    pushDirective(directive: number, value: number): void {
-        this.ctrl.pushDirective(directive, value);
-    }
-    popDirective(): void {
-        this.ctrl.popDirective();
-    }
-    hasBinding(name: Sym): boolean {
-        return this.env.hasBinding(name);
-    }
-    getBinding(name: Sym): U {
-        return this.env.getBinding(name);
-    }
-    setBinding(name: Sym, binding: U): void {
-        this.env.setBinding(name, binding);
-    }
-    hasUserFunction(name: Sym): boolean {
-        return this.env.hasUserFunction(name);
-    }
-    getUserFunction(name: Sym): U {
-        return this.env.getUserFunction(name);
-    }
-    setUserFunction(name: Sym, userfunc: U): void {
-        this.env.setUserFunction(name, userfunc);
-    }
-    defineUserSymbol(name: Sym): void {
-        this.env.defineUserSymbol(name);
-    }
-    valueOf(expr: U): U {
-        this.$.push(expr);
-        value_of(this.env, this.ctrl, this.$);
-        return this.$.pop();
-    }
 }
 
 export interface UserFunction {

@@ -1,12 +1,10 @@
 
+import { Flt, is_flt, Sym } from "math-expression-atoms";
+import { Cons, Cons2, U } from "math-expression-tree";
 import { ExtensionEnv, FEATURE, Operator, OperatorBuilder, TFLAGS, TFLAG_DIFF } from "../../env/ExtensionEnv";
 import { HASH_ANY, hash_binop_atom_atom, HASH_FLT } from "../../hashing/hash_info";
 import { MATH_MUL } from "../../runtime/ns_math";
-import { Flt } from "../../tree/flt/Flt";
-import { Sym } from "../../tree/sym/Sym";
-import { Cons, U } from "../../tree/tree";
-import { is_flt } from "../flt/is_flt";
-import { Cons2 } from "../helpers/Cons2";
+import { is_err } from "../err/is_err";
 import { Function2 } from "../helpers/Function2";
 import { is_any } from "../helpers/is_any";
 
@@ -43,8 +41,10 @@ class Op extends Function2<LHS, RHS> implements Operator<EXP> {
         }
     }
     transform2(opr: Sym, lhs: LHS, rhs: RHS): [TFLAGS, U] {
-        // console.lg(this.name, render_as_infix(lhs, this.$), render_as_infix(rhs, this.$), render_as_infix(orig, this.$));
-        if (rhs.isZero()) {
+        if (is_err(lhs)) {
+            return [TFLAG_DIFF, lhs];
+        }
+        else if (rhs.isZero()) {
             // TODO: We could be wrong here. e.g. if the lhs is a Tensor, we lose the structure.
             return [TFLAG_DIFF, rhs];
         }

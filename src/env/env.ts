@@ -1272,7 +1272,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                 const head = expr.head;
                 try {
                     if (is_cons(head)) {
-                        throw new Error("!!!!!!!!!!!!!!!!!!!!!!!!");
+                        throw new Error(`${expr}`);
                     }
                     // if (is_sym(head)) {
                     // console.lg("head", `${head}`);
@@ -1572,7 +1572,7 @@ export function create_env(options?: EnvOptions): ExtensionEnv {
                         const op = unambiguous_operator(expr, ops, $);
                         if (op) {
                             const composite = op.valueOf(expr);
-                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite[1])} flags: ${composite[0]}`);
+                            // console.lg(`${op.name} ${$.toSExprString(expr)} => ${$.toSExprString(composite)}`);
                             // console.lg(`${op.name} ${$.toInfixString(expr)} => ${$.toInfixString(composite)}`);
                             return composite;
                         }

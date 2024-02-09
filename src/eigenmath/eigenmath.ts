@@ -4335,80 +4335,94 @@ export function floatfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack
 }
 
 function floatfunc_subst($: ProgramStack): void {
-    let expr = pop($);
+    const expr = pop($);
+    try {
 
-    if (is_tensor(expr)) {
-        const T = copy_tensor(expr);
-        const n = T.nelem;
-        for (let i = 0; i < n; i++) {
-            push(T.elems[i], $);
-            floatfunc_subst($);
-            T.elems[i] = pop($);
+        if (is_tensor(expr)) {
+            const T = copy_tensor(expr);
+            const n = T.nelem;
+            for (let i = 0; i < n; i++) {
+                push(T.elems[i], $);
+                floatfunc_subst($);
+                T.elems[i] = pop($);
+            }
+            push(T, $);
+            return;
         }
-        push(T, $);
-        return;
-    }
 
-    if (expr.equals(PI)) {
-        push_double(Math.PI, $);
-        return;
-    }
-
-    if (expr.equals(DOLLAR_E)) {
-        push_double(Math.E, $);
-        return;
-    }
-
-    if (is_rat(expr)) {
-        push_double(expr.toNumber(), $);
-        return;
-    }
-
-    // don't float exponential
-
-    if (car(expr).equals(POWER) && cadr(expr).equals(DOLLAR_E)) {
-        push(POWER, $);
-        push(DOLLAR_E, $);
-        push(caddr(expr), $);
-        floatfunc_subst($);
-        list(3, $);
-        return;
-    }
-
-    // don't float imaginary unit, but multiply it by 1.0
-
-    if (car(expr).equals(POWER) && isminusone(cadr(expr))) {
-        push(MULTIPLY, $);
-        push_double(1.0, $);
-        push(POWER, $);
-        push(cadr(expr), $);
-        push(caddr(expr), $);
-        floatfunc_subst($);
-        list(3, $);
-        list(3, $);
-        return;
-    }
-
-    if (is_cons(expr)) {
-        const h = $.length;
-        push(car(expr), $);
-        expr = cdr(expr);
-        while (is_cons(expr)) {
-            push(car(expr), $);
-            floatfunc_subst($);
-            expr = cdr(expr);
+        if (expr.equals(PI)) {
+            push_double(Math.PI, $);
+            return;
         }
-        list($.length - h, $);
-        return;
-    }
 
-    push(expr, $);
+        if (expr.equals(DOLLAR_E)) {
+            push_double(Math.E, $);
+            return;
+        }
+
+        if (is_rat(expr)) {
+            push_double(expr.toNumber(), $);
+            return;
+        }
+
+        // don't float exponential
+
+        if (car(expr).equals(POWER) && cadr(expr).equals(DOLLAR_E)) {
+            push(POWER, $);
+            push(DOLLAR_E, $);
+            push(caddr(expr), $);
+            floatfunc_subst($);
+            list(3, $);
+            return;
+        }
+
+        // don't float imaginary unit, but multiply it by 1.0
+
+        if (car(expr).equals(POWER) && isminusone(cadr(expr))) {
+            push(MULTIPLY, $);
+            push_double(1.0, $);
+            push(POWER, $);
+            push(cadr(expr), $);
+            push(caddr(expr), $);
+            floatfunc_subst($);
+            list(3, $);
+            list(3, $);
+            return;
+        }
+
+        if (is_cons(expr)) {
+            const h = $.length;
+            $.push(expr);
+            head($);
+            let xs = expr.rest;
+            while (is_cons(xs)) {
+                $.push(xs);
+                head($);
+                floatfunc_subst($);
+                xs = xs.rest;
+            }
+            list($.length - h, $);
+            return;
+        }
+
+        push(expr, $);
+    }
+    finally {
+        expr.release();
+    }
 }
 
-function eval_floor(p1: U, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
-    push(cadr(p1), $);
-    value_of(env, ctrl, $);
-    floorfunc(env, ctrl, $);
+function eval_floor(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack) {
+    const argList = expr.argList;
+    try {
+        $.push(argList);
+        head($);
+        value_of(env, ctrl, $);
+        floorfunc(env, ctrl, $);
+    }
+    finally {
+        argList.release();
+    }
 }
 
 function floorfunc(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
@@ -6539,19 +6553,26 @@ function mod_integers(p1: Rat, p2: Rat, $: ProgramStack): void {
 
 function eval_multiply(expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
     const h0 = $.length;
-    ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
+    const argList = expr.argList;
     try {
-        let p1 = cdr(expr);
-        while (is_cons(p1)) {
-            push(car(p1), $);
-            value_of(env, ctrl, $);
-            p1 = cdr(p1);
+        ctrl.pushDirective(Directive.expanding, ctrl.getDirective(Directive.expanding) - 1);
+        try {
+            let factors = argList;
+            while (is_cons(factors)) {
+                $.push(factors);
+                head($);
+                value_of(env, ctrl, $);
+                factors = factors.rest;
+            }
+            const n = $.length - h0;
+            multiply_factors(n, env, ctrl, $);
         }
-        const n = $.length - h0;
-        multiply_factors(n, env, ctrl, $);
+        finally {
+            ctrl.popDirective();
+        }
     }
     finally {
-        ctrl.popDirective();
+        argList.release();
     }
 }
 
@@ -12462,6 +12483,25 @@ function promote_tensor($: ProgramStack): void {
  */
 function push(expr: U, $: ProgramStack): void {
     $.push(expr);
+}
+
+/**
+ * Replaces the top expr on the stack with expr.head
+ */
+function head($: ProgramStack): void {
+    const expr = $.pop();
+    try {
+        const head = car(expr);
+        try {
+            $.push(head);
+        }
+        finally {
+            head.release();
+        }
+    }
+    finally {
+        expr.release();
+    }
 }
 
 function push_double(d: number, $: ProgramStack): void {

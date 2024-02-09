@@ -15,7 +15,7 @@ import { cddr } from "../../tree/helpers";
 
 export function Eval_multiply(expr: Cons, $: ExtensionEnv): U {
     // The only reason we should be here is that all other handlers for this multiplication do not match.
-    // console.lg(`Eval_multiply ${$.toInfixString(expr)}`);
+    /// console.log(`Eval_multiply ${$.toInfixString(expr)}`);
     const args = expr.argList;
     const vals = args.map($.valueOf);
     return multiply_values(vals, expr, $);
@@ -58,7 +58,7 @@ export function multiply_values(vals: Cons, expr: Cons, $: ExtensionEnv): U {
  */
 function multiply(lhs: U, rhs: U, $: ExtensionEnv): U {
     // if (is_cons(lhs) && is_power(lhs) && is_exp(lhs.base) && is_cons(rhs) && is_add(rhs)) {
-    //     console.lg("multiply", `lhs => ${$.toInfixString(lhs)} rhs => ${$.toInfixString(rhs)}`);
+    // console.lg("multiply", `lhs => ${lhs} rhs => ${rhs}`);
     // }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hook = function (retval: U, description: string): U {

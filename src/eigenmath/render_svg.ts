@@ -1718,52 +1718,52 @@ const html_name_tab = [
 const ASCII_CODE_MIDDOT = 183;
 
 function draw_char(x: number, y: number, font_num: number, char_num: number, outbuf: string[]): void {
-    let s: string;
-    let t: string;
+    let text: string;
+    let buffer: string;
 
     if (char_num === ASCII_CODE_MIDDOT) {
-        s = "&middot;";
+        text = "&middot;";
     }
     else if (char_num < 32 || char_num > 181) {
         // console.lg(`char_num => ${char_num}`);
-        s = "?";
+        text = "?";
     }
     else if (char_num === 34)
-        s = "&quot;";
+        text = "&quot;";
     else if (char_num === 38)
-        s = "&amp;";
+        text = "&amp;";
     else if (char_num === 60)
-        s = "&lt;";
+        text = "&lt;";
     else if (char_num === 62)
-        s = "&gt;";
+        text = "&gt;";
     else if (char_num < 128)
-        s = String.fromCharCode(char_num);
+        text = String.fromCharCode(char_num);
     else
-        s = html_name_tab[char_num - 128];
+        text = html_name_tab[char_num - 128];
 
-    t = "<text style='font-family:\"Times New Roman\";";
+    buffer = `<text style='font-family:"Times New Roman";`;
 
     switch (font_num) {
         case ROMAN_FONT:
-            t += "font-size:" + FONT_SIZE + "px;";
+            buffer += "font-size:" + FONT_SIZE + "px;";
             break;
         case ITALIC_FONT:
-            t += "font-size:" + FONT_SIZE + "px;font-style:italic;";
+            buffer += "font-size:" + FONT_SIZE + "px;font-style:italic;";
             break;
         case SMALL_ROMAN_FONT:
-            t += "font-size:" + SMALL_FONT_SIZE + "px;";
+            buffer += "font-size:" + SMALL_FONT_SIZE + "px;";
             break;
         case SMALL_ITALIC_FONT:
-            t += "font-size:" + SMALL_FONT_SIZE + "px;font-style:italic;";
+            buffer += "font-size:" + SMALL_FONT_SIZE + "px;font-style:italic;";
             break;
     }
 
     const xeq = "x='" + x + "'";
     const yeq = "y='" + y + "'";
 
-    t += "'" + xeq + yeq + ">" + s + "</text>";
+    buffer += `' ${xeq} ${yeq}>${text}</text>`;
 
-    outbuf.push(t);
+    outbuf.push(buffer);
 }
 
 function draw_delims(x: number, y: number, h: number, d: number, w: number, stroke_width: number, font_num: number, outbuf: string[]): void {

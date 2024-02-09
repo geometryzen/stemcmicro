@@ -1,16 +1,16 @@
+import { create_flt } from 'math-expression-atoms';
+import { Native, native_sym } from 'math-expression-native';
+import { items_to_cons, U } from 'math-expression-tree';
 import { ExtensionEnv } from '../../env/ExtensionEnv';
 import { imu } from '../../env/imu';
-import { Native } from '../../native/Native';
-import { native_sym } from '../../native/native_sym';
 import { Err } from '../../tree/err/Err';
-import { create_flt } from '../../tree/flt/Flt';
-import { items_to_cons, U } from '../../tree/tree';
 
 // power function for double precision floating point
 export function dpow(base: number, expo: number, $: ExtensionEnv): U {
 
     if (base === 0.0 && expo < 0.0) {
-        // throw new Error('divide by zero');
+        // console.lg(new Error().stack);
+        // return new Err(new Str('divide by zero'));
         return new Err(items_to_cons(native_sym(Native.pow), create_flt(base), create_flt(expo)));
     }
 

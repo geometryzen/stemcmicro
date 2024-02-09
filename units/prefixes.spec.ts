@@ -5,13 +5,13 @@ import { create_engine } from "../src/api/api";
 
 const svg: string = [
     `<svg height='36'width='135'>`,
-    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>1</text>`,
-    `<text style='font-family:"Times New Roman";font-size:24px;'x='22'y='26'>5</text>`,
-    `<text style='font-family:"Times New Roman";font-size:24px;'x='34'y='26'>9</text>`,
-    `<text style='font-family:"Times New Roman";font-size:24px;'x='52'y='26'>e</text>`,
-    `<text style='font-family:"Times New Roman";font-size:24px;'x='62.65234375'y='26'>1</text>`,
-    `<text style='font-family:"Times New Roman";font-size:24px;'x='80.65234375'y='26'>M</text>`,
-    `<text style='font-family:"Times New Roman";font-size:24px;'x='107.9921875'y='26'>N</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;' x='10' y='26'>1</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;' x='22' y='26'>5</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;' x='34' y='26'>9</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;' x='52' y='26'>e</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;' x='62.65234375' y='26'>1</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;' x='80.65234375' y='26'>M</text>`,
+    `<text style='font-family:"Times New Roman";font-size:24px;' x='107.9921875' y='26'>N</text>`,
     `</svg>`
 ].join('');
 

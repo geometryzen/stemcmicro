@@ -12,12 +12,12 @@ describe("svg", function () {
 
     const svg_J: string = [
         `<svg height='36'width='29'>`,
-        `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>J</text>`,
+        `<text style='font-family:"Times New Roman";font-size:24px;' x='10' y='26'>J</text>`,
         `</svg>`
     ].join('');
 
     const svg_Omega: string = [
-        `<svg height='36'width='38'><text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>&Omega;</text></svg>`
+        `<svg height='36'width='38'><text style='font-family:"Times New Roman";font-size:24px;' x='10' y='26'>&Omega;</text></svg>`
     ].join('');
 
     describe("uom", function () {

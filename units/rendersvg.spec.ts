@@ -141,8 +141,8 @@ describe("rendersvg", function () {
                 const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false });
                 const parts: string[] = [
                     `<svg height='36'width='43'>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='10'y='26'>e</text>`,
-                    `<text style='font-family:"Times New Roman";font-size:24px;'x='20.65234375'y='26'>1</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='10' y='26'>e</text>`,
+                    `<text style='font-family:"Times New Roman";font-size:24px;' x='20.65234375' y='26'>1</text>`,
                     `</svg>`
                 ];
                 assert.strictEqual(svg, parts.join(''));
@@ -163,7 +163,7 @@ describe("rendersvg", function () {
             const svg = render_svg(value, { useImaginaryI: true, useImaginaryJ: false });
             const parts: string[] = [
                 `<svg height='36'width='27'>`,
-                `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;'x='10'y='26'>i</text>`,
+                `<text style='font-family:"Times New Roman";font-size:24px;font-style:italic;' x='10' y='26'>i</text>`,
                 `</svg>`
             ];
             assert.strictEqual(svg, parts.join(''));

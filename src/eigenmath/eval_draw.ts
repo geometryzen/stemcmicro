@@ -1,6 +1,7 @@
 import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_num, is_tensor, Sym } from "math-expression-atoms";
 import { Cons, nil, U } from "math-expression-tree";
 import { Directive } from "../env/ExtensionEnv";
+import { is_err } from "../operators/err/is_err";
 import { assert_cons } from "../tree/cons/assert_cons";
 import { broadcast, ConsFunction, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
@@ -12,11 +13,11 @@ import { draw_formula, emit_list, height, set_emit_small_font, SvgRenderConfig, 
 
 interface DrawContext {
     /**
-     * -Math.PI
+     * Usually -Math.PI.
      */
     tmin: number;
     /**
-     * +Math.PI
+     * Usually, +Math.PI
      */
     tmax: number;
     /**
@@ -92,6 +93,8 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
                 }
                 */
 
+                // The approach here is to save and restore the varName symbol.
+                // What we really should be doing is to create a new derived scope.
                 save_symbol(assert_sym(varName), env);
                 try {
                     const dc: DrawContext = {
@@ -112,7 +115,10 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
 
                     // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
                     draw_pass1(F, varName, n, points, env, ctrl, $, dc);
-                    draw_pass2(F, varName, points, env, ctrl, $, dc);
+                    // eslint-disable-next-line no-constant-condition
+                    if (false) {
+                        draw_pass2(F, varName, points, env, ctrl, $, dc);
+                    }
 
                     const outbuf: string[] = [];
 
@@ -142,7 +148,7 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
 function setup_trange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
     dc.tmin = -Math.PI;
-    dc.tmax = Math.PI;
+    dc.tmax = +Math.PI;
 
     let p1: U = lookup(create_sym("trange"), env);
     $.push(p1);
@@ -167,7 +173,7 @@ function setup_trange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
 function setup_xrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
     dc.xmin = -10;
-    dc.xmax = 10;
+    dc.xmax = +10;
 
     let p1: U = lookup(create_sym("xrange"), env);
     $.push(p1);
@@ -192,7 +198,7 @@ function setup_xrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
 function setup_yrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
     dc.ymin = -10;
-    dc.ymax = 10;
+    dc.ymax = +10;
 
     let p1: U = lookup(create_sym("yrange"), env);
     $.push(p1);
@@ -268,42 +274,60 @@ function setup_final(F: U, varName: Sym, env: ProgramEnv, ctrl: ProgramControl, 
     }
 }
 
-function sample(F: U, varName: Sym, t: number, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+function sample(funcExpr: U, varName: Sym, t: number, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
 
-    let X: U = create_flt(t);
-
-    set_symbol(assert_sym(varName), X, nil, env);
-
-    $.push(F);
-    eval_nonstop(env, ctrl, $);
-    floatfunc(env, ctrl, $);
-    let Y = $.pop();
+    $.push(funcExpr);
+    value_of(env, ctrl, $);
+    const F = $.pop();
     try {
-        if (is_tensor(Y)) {
-            X = Y.elems[0];
-            Y = Y.elems[1];
-        }
+        let X: U = create_flt(t);
 
-        if (!is_num(X) || !is_num(Y)) {
+        set_symbol(assert_sym(varName), X, nil, env);
+
+        $.push(F);
+        value_of(env, ctrl, $);
+        const temp = $.pop();
+        if (is_err(temp)) {
+            // For example, divide by zero is undefined so we don't get a point.
             return;
         }
+        else {
+            // The following appears to be redundant because temp is already a Flt.
+            $.push(temp);
+            // eval_nonstop(env, ctrl, $);
+            floatfunc(env, ctrl, $);
+            let Y = $.pop();
+            try {
+                if (is_tensor(Y)) {
+                    X = Y.elems[0];
+                    Y = Y.elems[1];
+                }
 
-        const xUnscaled = X.toNumber();
-        const yUnscaled = Y.toNumber();
+                if (!is_num(X) || !is_num(Y)) {
+                    return;
+                }
 
-        if (!isFinite(xUnscaled) || !isFinite(yUnscaled)) {
-            return;
+                const x = X.toNumber();
+                const y = Y.toNumber();
+
+                if (!isFinite(x) || !isFinite(y)) {
+                    return;
+                }
+
+                const px = DRAW_WIDTH * (x - dc.xmin) / (dc.xmax - dc.xmin);
+                const py = DRAW_HEIGHT * (y - dc.ymin) / (dc.ymax - dc.ymin);
+
+                const point = { t: t, x: px, y: py };
+
+                points.push(point);
+            }
+            finally {
+                Y.release();
+            }
         }
-
-        const x = DRAW_WIDTH * (xUnscaled - dc.xmin) / (dc.xmax - dc.xmin);
-        const y = DRAW_HEIGHT * (yUnscaled - dc.ymin) / (dc.ymax - dc.ymin);
-
-        const point = { t: t, x: x, y: y };
-
-        points.push(point);
     }
     finally {
-        Y.release();
+        F.release();
     }
 }
 
@@ -333,11 +357,13 @@ function emit_axes(dc: DrawContext, outbuf: string[]): void {
     const dx = DRAW_WIDTH * (x - dc.xmin) / (dc.xmax - dc.xmin);
     const dy = DRAW_HEIGHT - DRAW_HEIGHT * (y - dc.ymin) / (dc.ymax - dc.ymin);
 
-    if (dx > 0 && dx < DRAW_WIDTH)
+    if (dx > 0 && dx < DRAW_WIDTH) {
         draw_line(dx, 0, dx, DRAW_HEIGHT, 0.5, outbuf); // vertical axis
+    }
 
-    if (dy > 0 && dy < DRAW_HEIGHT)
+    if (dy > 0 && dy < DRAW_HEIGHT) {
         draw_line(0, dy, DRAW_WIDTH, dy, 0.5, outbuf); // horizontal axis
+    }
 }
 
 function emit_box(dc: DrawContext, outbuf: string[]): void {
@@ -384,30 +410,28 @@ function emit_labels($: ProgramStack, dc: DrawContext, ec: SvgRenderConfig, outb
     draw_formula(x, y, XMAX, outbuf);
 }
 
-function emit_points(draw_array: { t: number; x: number; y: number }[], $: DrawContext, outbuf: string[]): void {
+function emit_points(points: { t: number; x: number; y: number }[], $: DrawContext, outbuf: string[]): void {
 
-    const n = draw_array.length;
+    const n = points.length;
 
     for (let i = 0; i < n; i++) {
 
-        let x = draw_array[i].x;
-        let y = draw_array[i].y;
+        const x = points[i].x;
+        const y = points[i].y;
 
-        if (!inrange(x, y)) {
-            continue;
+        if (inrange(x, y)) {
+            const cx = x + DRAW_LEFT_PAD;
+            const cy = DRAW_HEIGHT - y + DRAW_TOP_PAD;
+
+            const cxeq = `cx='${cx}'`;
+            const cyeq = `cy='${cy}'`;
+
+            outbuf.push(`<circle ${cxeq} ${cyeq} r='1.5' style='stroke:black;fill:black'/>`);
         }
-
-        x += DRAW_LEFT_PAD;
-        y = DRAW_HEIGHT - y + DRAW_TOP_PAD;
-
-        const xeq = "cx='" + x + "'";
-        const yeq = "cy='" + y + "'";
-
-        outbuf.push("<circle " + xeq + yeq + "r='1.5' style='stroke:black;fill:black'/>\n");
     }
 }
 
-function draw_line(x1: number, y1: number, x2: number, y2: number, t: number, outbuf: string[]): void {
+function draw_line(x1: number, y1: number, x2: number, y2: number, strokeWidth: number, outbuf: string[]): void {
     x1 += DRAW_LEFT_PAD;
     x2 += DRAW_LEFT_PAD;
 
@@ -420,7 +444,7 @@ function draw_line(x1: number, y1: number, x2: number, y2: number, t: number, ou
     const y1eq = "y1='" + y1 + "'";
     const y2eq = "y2='" + y2 + "'";
 
-    outbuf.push("<line " + x1eq + y1eq + x2eq + y2eq + "style='stroke:black;stroke-width:" + t + "'/>\n");
+    outbuf.push(`<line ${x1eq} ${y1eq} ${x2eq} ${y2eq} style='stroke:black;stroke-width:${strokeWidth}'/>`);
 }
 
 const DRAW_WIDTH = 300;

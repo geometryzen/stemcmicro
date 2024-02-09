@@ -1,8 +1,8 @@
-import { assert_sym, create_flt, create_sym, Flt, is_num, is_tensor, Sym } from "math-expression-atoms";
+import { assert_rat, assert_sym, create_flt, create_sym, Flt, is_num, is_tensor, Sym } from "math-expression-atoms";
 import { Cons, nil, U } from "math-expression-tree";
 import { Directive } from "../env/ExtensionEnv";
 import { assert_cons } from "../tree/cons/assert_cons";
-import { broadcast, ConsFunction, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol } from "./eigenmath";
+import { broadcast, ConsFunction, eval_nonstop, floatfunc, get_binding, lookup, restore_symbol, save_symbol, set_symbol, value_of } from "./eigenmath";
 import { isimaginaryunit } from "./isimaginaryunit";
 import { ProgramControl } from "./ProgramControl";
 import { ProgramEnv } from "./ProgramEnv";
@@ -50,19 +50,42 @@ const DRAW_BOTTOM_PAD = 40;
 const DRAW_XLABEL_BASELINE = 30;
 const DRAW_YLABEL_MARGIN = 15;
 
+function draw_args(argList: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): [F: U, varName: Sym, n: number] {
+    const F = argList.item0;
+    const varName = assert_sym(argList.item1);
+    const item2 = argList.item2;
+    try {
+        $.push(item2);
+        value_of(env, ctrl, $);
+        const N = $.pop();
+        try {
+            if (N.isnil) {
+                return [F, varName, DRAW_WIDTH + 1];
+            }
+            else {
+                return [F, varName, assert_rat(N).toNumber()];
+            }
+        }
+        finally {
+            N.release();
+        }
+    }
+    finally {
+        item2.release();
+    }
+}
+
 export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
 
     return function (expr: Cons, env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack): void {
-
+        assert_cons(expr);
         if (ctrl.getDirective(Directive.drawing)) {
             // Do nothing
         }
         else {
             ctrl.pushDirective(Directive.drawing, 1);
             try {
-
-                const F = assert_cons(expr).item1;
-                const varName = assert_sym(assert_cons(expr).item2);
+                const [F, varName, n] = draw_args(expr.argList, env, ctrl, $);
                 /*
                 if (!(is_sym(T) && env.hasUserFunction(T))) {
                     T = X_LOWER;
@@ -88,7 +111,7 @@ export function make_eval_draw(io: Pick<ProgramIO, 'listeners'>): ConsFunction {
                     const points: { t: number; x: number; y: number }[] = [];
 
                     // TODO: Why do we use the theta range? How do we ensure integrity across function calls?
-                    draw_pass1(F, varName, points, env, ctrl, $, dc);
+                    draw_pass1(F, varName, n, points, env, ctrl, $, dc);
                     draw_pass2(F, varName, points, env, ctrl, $, dc);
 
                     const outbuf: string[] = [];
@@ -191,16 +214,15 @@ function setup_yrange(env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc
     dc.ymax = p3.toNumber();
 }
 
-function draw_pass1(F: U, varName: Sym, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
-    for (let i = 0; i <= DRAW_WIDTH; i++) {
-        const t = dc.tmin + (dc.tmax - dc.tmin) * i / DRAW_WIDTH;
+function draw_pass1(F: U, varName: Sym, n: number, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
+    const n_minus_one = n - 1;
+    for (let i = 0; i < n; i++) {
+        const t = dc.tmin + (dc.tmax - dc.tmin) * i / n_minus_one;
         sample(F, varName, t, points, env, ctrl, $, dc);
     }
 }
-//    draw_array: { t: number; x: number; y: number }[] = [];
 
 function draw_pass2(F: U, varName: Sym, points: { t: number; x: number; y: number }[], env: ProgramEnv, ctrl: ProgramControl, $: ProgramStack, dc: DrawContext): void {
-    // var dt, dx, dy, i, j, m, n, t, t1, t2, x1, x2, y1, y2;
 
     const n = points.length - 1;
 
@@ -215,16 +237,15 @@ function draw_pass2(F: U, varName: Sym, points: { t: number; x: number; y: numbe
         const y1 = points[i].y;
         const y2 = points[i + 1].y;
 
-        if (!inrange(x1, y1) && !inrange(x2, y2))
+        if (!inrange(x1, y1) && !inrange(x2, y2)) {
             continue;
+        }
 
         const dt = t2 - t1;
         const dx = x2 - x1;
         const dy = y2 - y1;
 
-        let m = Math.sqrt(dx * dx + dy * dy);
-
-        m = Math.floor(m);
+        const m = Math.floor(Math.sqrt(dx * dx + dy * dy));
 
         for (let j = 1; j < m; j++) {
             const t = t1 + dt * j / m;

@@ -12465,7 +12465,13 @@ function push(expr: U, $: ProgramStack): void {
 }
 
 function push_double(d: number, $: ProgramStack): void {
-    push(new Flt(d), $);
+    const n = new Flt(d);
+    try {
+        push(n, $);
+    }
+    finally {
+        n.release();
+    }
 }
 /**
  * Pushes a Rat onto the stack.
@@ -12480,11 +12486,23 @@ function push_integer(n: number, $: ProgramStack): void {
  * @param b 
  */
 function push_rational(a: number, b: number, $: ProgramStack): void {
-    push(create_rat(a, b), $);
+    const n = create_rat(a, b);
+    try {
+        push(n, $);
+    }
+    finally {
+        n.release();
+    }
 }
 
 export function push_string(s: string, $: ProgramStack) {
-    push(new Str(s), $);
+    const str = new Str(s);
+    try {
+        push(str, $);
+    }
+    finally {
+        str.release();
+    }
 }
 
 /**
